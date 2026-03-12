@@ -45,7 +45,6 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     private configSvc: ConfigurationsService,
     private matSnackBar: MatSnackBar,
   ) {
-    console.log('configSvc', this.configSvc.instanceConfig)
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -172,14 +171,15 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroySubject$))
       .subscribe(
         (response: any) => {
-          console.log('IGOT course details response', response)
           const results: any[] = response?.result?.content || []
           const nameMap = new Map<string, string>(results.map((item: any) => [item.identifier, item.name]))
           this.filteredIGOTCourses = this.filteredIGOTCourses.map((course: any) => ({
             ...course,
             name: nameMap.get(course.acquiredContextId) || course.name || '',
           }))
-          this.assignData('iGOTCourses')
+          if (this.activeTab === 'iGOTCourses') {
+            this.assignData('iGOTCourses')
+          }
         },
         (error: HttpErrorResponse) => {
           if (!error.ok) {
@@ -190,7 +190,33 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   }
 
   fetchSelfAchievementCourseDetails(): void {
+    const identifiers = this.filteredSelfAchievements.map((course: any) => course.acquiredContextId)
+    const payload = {
+      request: {
+        achievementIds: identifiers,
+      }
 
+    }
+    this.cpService.getAcheivementsList(payload)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          const results: any[] = response?.result?.search_results?.data || []
+          const nameMap = new Map<string, string>(results.map((item: any) => [item.id, item.contextData.title]))
+          this.filteredSelfAchievements = this.filteredSelfAchievements.map((course: any) => ({
+            ...course,
+            name: nameMap.get(course.acquiredContextId) || course.name || '',
+          }))
+          if (this.activeTab === 'selfAchievement') {
+            this.assignData('selfAchievement')
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to fetch self achievement details!')
+          }
+        }
+      )
   }
 
   fetchExtCourseDetails(): void {
@@ -215,7 +241,9 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
             ...course,
             name: nameMap.get(course.acquiredContextId) || course.name || '',
           }))
-          this.assignData('extCourses')
+          if (this.activeTab === 'extCourses') {
+            this.assignData('extCourses')
+          }
         },
         (error: HttpErrorResponse) => {
           if (!error.ok) {
@@ -318,7 +346,6 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     } else if (tabName === 'selfAchievement') {
       this.currentTabData = this.filteredSelfAchievements
     }
-    console.log('currentTabData', this.currentTabData)
   }
 
   resetAllViewMore(): void {
@@ -331,6 +358,11 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     this.resetAllViewMore()
     this.activeTab = tabName
     this.assignData(tabName)
+  }
+
+  handleView(eachCert: any): void {
+    const url = eachCert.certificateId
+    window.open(url, '_blank')
   }
 
   ngOnDestroy(): void {

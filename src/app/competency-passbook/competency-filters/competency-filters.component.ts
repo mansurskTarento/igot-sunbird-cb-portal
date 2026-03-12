@@ -239,7 +239,6 @@ export class CompetencyFiltersComponent implements OnInit {
       theme: selectedThemes,
       subtheme: selectedSubThemes,
     }
-    console.log('Emitting filter data with obj:', filterObj)
     this.getFilterData.emit(filterObj)
   }
 
@@ -262,7 +261,6 @@ export class CompetencyFiltersComponent implements OnInit {
       theme: [],
       subtheme: [],
     }
-    console.log('Emitting clear filter with obj:', emptyFilter)
     this.clearFilterObj.emit(emptyFilter)
   }
 

@@ -308,12 +308,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
       }
     })
     this.filteredCompetencyArray = this.myCompetencies
-
     this.findCounts()
-
-
-
-    console.log('My Competency Map:', this.myCompetencies)
   }
 
   findCounts(): void {
@@ -352,10 +347,6 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
             this.allCompetencies = this.apiResponse.filter((v: any) => v.code === 'competencyarea')[0].terms
             this.allThemeData = this.apiResponse.filter((v: any) => v.code === 'theme')[0].terms
             this.allSubThemeData = this.apiResponse.filter((v: any) => v.code === 'subtheme')[0].terms
-
-            console.log('All Competencies:', this.allCompetencies)
-            console.log('All Theme Data:', this.allThemeData)
-            console.log('All SubTheme Data:', this.allSubThemeData)
           }
         },
         (error: HttpErrorResponse) => {
@@ -497,8 +488,6 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
 
           this.competencyArray = (this.isMobile) ? this.competency.all.slice(0, 3) : this.competency.all
           this.competency.skeletonLoading = false
-
-          console.log('Competency after merging with enrollment data:', this.competency)
         },
         (error: HttpErrorResponse) => {
           if (!error.ok) {
@@ -583,7 +572,6 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
 
   handleNavigate(obj: any): void {
     localStorage.setItem('details_page_competency', JSON.stringify(obj))
-    console.log('Navigating to details page with data:', obj)
     this.router.navigate(['/page/competency-passbook/details'])
   }
 

@@ -8,7 +8,8 @@ const API_POINTS = {
     ALL_COMPETENCY_LIST: `apis/proxies/v8/framework/v1/read/kcmfinal_fw`,
     MY_COMPETENCY_LIST: 'apis/proxies/v8/learner/v1/competency/read',
     IGOT_COURSE_LIST: 'apis/proxies/v8/sunbirdigot/v4/search',
-    EXT_COURSE_LIST: 'apis/proxies/v8/cios/v1/search/content'
+    EXT_COURSE_LIST: 'apis/proxies/v8/cios/v1/search/content',
+    ACHIEVEMENTS_LIST: 'apis/proxies/v8/learner/achievement/v2/list'
 }
 
 @Injectable({ providedIn: 'root' })
@@ -38,5 +39,9 @@ export class CompetencyPassbookService {
 
     getExternalCourseList(payload: any): Observable<any> {
         return this.http.post(API_POINTS.EXT_COURSE_LIST, payload)
+    }
+
+    getAcheivementsList(payload: any): Observable<any> {
+        return this.http.post(API_POINTS.ACHIEVEMENTS_LIST, payload)
     }
 }
