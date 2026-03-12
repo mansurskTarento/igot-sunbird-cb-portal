@@ -9,7 +9,7 @@ import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { CompetencyPassbookService } from '../competency-passbook.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
@@ -42,7 +42,6 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     private langtranslations: MultilingualTranslationsService,
     private events: EventService,
     private dialog: MatDialog,
-    private configSvc: ConfigurationsService,
     private matSnackBar: MatSnackBar,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {

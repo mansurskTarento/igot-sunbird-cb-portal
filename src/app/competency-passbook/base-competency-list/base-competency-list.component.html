@@ -1,7 +1,7 @@
-<ng-container *ngIf="version === 'new'">
+<ng-container *ngIf="!showOldVersion">
   <ws-competency-list-v2></ws-competency-list-v2>
 </ng-container>
 
-<ng-container *ngIf="version !== 'new'">
+<ng-container *ngIf="showOldVersion">
   <ws-competency-list></ws-competency-list>
 </ng-container>
