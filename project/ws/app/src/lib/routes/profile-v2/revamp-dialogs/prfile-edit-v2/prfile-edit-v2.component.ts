@@ -111,6 +111,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   enableWR = false
   approvalPendingFields: any[] = []
   submitbtnLoading: boolean = false
+  emailOtp: string | undefined
+  phoneOtp: string | undefined
 
 
   constructor(
@@ -1036,8 +1038,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.contextToken = data.token
       if (data.type === 'email') {
         this.verifyEmail = false
+        this.emailOtp = data.otp || ''
       } else {
         this.verifyMobile = false
+        this.phoneOtp = data.otp || ''
       }
     })
   }
@@ -1052,6 +1056,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
     otpValue$.pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
+        this.emailOtp = ''
+        this.phoneOtp = ''
         if (data.type === 'email') {
           this.openSnackbar(this.handleTranslateTo('otpSentEmail'))
         } else {
@@ -1183,13 +1189,15 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
       if (emailChanged) {
         postData.request.profileDetails.personalDetails.primaryEmail = formValue.primaryEmail
+        postData.request['emailOtp'] = this.emailOtp || ''
       }
 
       if (mobileChanged) {
         postData.request.profileDetails.personalDetails.mobile = formValue.mobile
+        postData.request['phoneOtp'] = this.phoneOtp || ''
       }
 
-      this.userProfileService.editProfileDetails(postData)
+      this.userProfileService.editProfileDetailsV3(postData)
         .pipe(takeUntil(this.destroySubject$))
         .subscribe({
           next: (_res: any) => {
@@ -1249,6 +1257,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
       }
     }
+    formBody['phoneOtp'] = this.phoneOtp || ''
+    formBody['emailOtp'] = this.emailOtp || ''
     this.dialogRef.close(formBody)
   }
 

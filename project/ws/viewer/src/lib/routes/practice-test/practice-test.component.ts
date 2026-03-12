@@ -6,7 +6,6 @@ import { NsContent } from '@sunbird-cb/collection/src/lib/_services/widget-conte
 import { WidgetContentService } from '@sunbird-cb/toc'
 import { NSQuiz } from '../../plugins/quiz/quiz.model'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-// import { ViewerDataService } from '../../viewer-data.service'
 /// **
 // * this will not be available for any Preview.
 // **/
@@ -43,7 +42,6 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
         private contentSvc: WidgetContentService,
         private log: LoggerService,
         private viewerSvc: ViewerUtilService,
-        // private _viewerDataService: ViewerDataService,
     ) {
         // this._viewerDataService.resourceChangedSubject.subscribe(() => {
         //     // console.log(this._viewerDataService.resource)

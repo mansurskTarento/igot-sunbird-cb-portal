@@ -1,0 +1,168 @@
+<div class="section-results-container p-4 md:p-6 custom-tabs">
+
+  <!-- Header Section -->
+  <div class="flex md:items-center justify-between mb-6 flex-col md:flex-row" *ngIf="!hideSectionHeader">
+    <div class="flex gap-4">
+      <mat-icon class="text-3xl text-primary cursor-pointer" (click)="goBack()">
+        arrow_back
+      </mat-icon>
+      <div>
+        <h1 class="section-title mb-6">{{sectionData?.name}} </h1>
+        <div class="divider md:hidden mt-1"></div>
+      </div>
+    </div>
+    <ng-container *ngIf="sectionData?.minimumPassPercentage">
+      <div class="min-score-box flex items-center justify-center">
+        {{ 'quizresult.minimumScoreToPass' | translate }} {{ sectionData?.minimumPassPercentage }}%
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Tabs Component -->
+  <div class="hidden md:block">
+    <mat-tab-group class="custom-tabs" animationDuration="300">
+
+      <!-- Tab: All Questions -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">{{ 'quizresult.allQuestions' | translate }} </span>
+          <span class="tab-count">({{ allQuestions.length }})</span>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="questionTableTemplate; context: { questions: allQuestions }"></ng-container>
+      </mat-tab>
+
+      <!-- Tab: Correct Questions -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">{{ 'quizresult.correct' | translate }} </span>
+          <span class="tab-count">({{ correctQuestions.length }})</span>
+        </ng-template>
+        <ng-container
+          *ngTemplateOutlet="questionTableTemplate; context: { questions: correctQuestions }"></ng-container>
+      </mat-tab>
+
+      <!-- Tab: Incorrect Questions -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">{{ 'quizresult.incorrect' | translate }} </span>
+          <span class="tab-count">({{ incorrectQuestions.length }})</span>
+        </ng-template>
+        <ng-container
+          *ngTemplateOutlet="questionTableTemplate; context: { questions: incorrectQuestions }"></ng-container>
+      </mat-tab>
+
+      <!-- Tab: Blank Questions -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <span class="tab-label">{{ 'quizresult.blank' | translate }} </span>
+          <span class="tab-count">({{ blankQuestions.length }})</span>
+        </ng-template>
+        <ng-container *ngTemplateOutlet="questionTableTemplate; context: { questions: blankQuestions }"></ng-container>
+      </mat-tab>
+
+    </mat-tab-group>
+  </div>
+
+  <div class="block md:hidden">
+    <ng-container *ngTemplateOutlet="questionCardsTemplate; context: { questions: allQuestions }"></ng-container>
+  </div>
+
+</div>
+
+<!-- Reusable Template for Questions Table -->
+<ng-template #questionTableTemplate let-questions="questions">
+  <div class="table-content">
+    <div class="questions-table-wrapper bg-white">
+      <div class="questions-table">
+        <div class="table-header-row">
+          <div class="col-question header-cell">{{ 'quizresult.question' | translate }}</div>
+          <div class="col-status header-cell">{{ 'quizresult.status' | translate }}</div>
+          <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+            <div class="col-time header-cell">{{ 'quizresult.questionTagging' | translate }}</div>
+            <div class="col-time header-cell">{{ 'quizresult.timeTaken' | translate }}</div>
+          </ng-container>
+        </div>
+
+        <ng-container *ngFor="let question of questions">
+          <!-- Data Row -->
+          <div class="table-data-row" [class.expanded]="isRowExpanded(question.identifier)">
+            <div class="col-question">
+              <div class="question-text" [innerHTML]="question.question"></div>
+            </div>
+            <div class="col-status">
+              {{ question.result }}
+            </div>
+            <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+              <div class="col-time">
+                {{ question.questionLevel }}
+              </div>
+              <div class="col-time">
+                <div class="time-with-action flex items-center justify-between w-full">
+                  <span class="time-value">{{ question.formattedTime }}</span>
+                  <!-- <button class="expand-btn" (click)="toggleRowExpansion(question.identifier)"
+                    [attr.aria-expanded]="isRowExpanded(question.identifier)">
+                    <mat-icon>{{ isRowExpanded(question.identifier) ? 'expand_less' : 'expand_more' }}</mat-icon>
+                  </button> -->
+                </div>
+              </div>
+            </ng-container>
+          </div>
+
+          <!-- Detail Row -->
+          <div class="details-row" *ngIf="isRowExpanded(question.identifier)" [@slideDown]>
+            <ng-container *ngTemplateOutlet="questionDetailsTemplate; context: { $implicit: question }"></ng-container>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Mobile View: Accordion Style -->
+<ng-template #questionCardsTemplate let-questions="questions">
+  <div class="mobile-section-performance flex flex-col gap-4">
+    <ng-container *ngFor="let question of questions; let i = index">
+      <div class="section-card bg-white flex flex-col gap-4">
+        <div class="section-card-header flex flex-col gap-2">
+          <div>{{ 'quizresult.question' | translate }} {{ i + 1 }}:</div>
+          <div class="question-text break-words overflow-hidden" [innerHTML]="question.question"></div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <span class="label">{{ 'quizresult.status' | translate }} <span class="ml-4"
+              [ngClass]="question.result === 'correct' ? 'pass-text' : 'fail-text'">{{ question.result
+              }}</span></span>
+          <ng-container *ngIf="selectedAssessmentCompatibilityLevel >= 7">
+            <span class="label">{{ 'quizresult.questionTagging' | translate }} <span class="ml-4">
+                {{ question.questionLevel }}</span>
+            </span>
+            <span class="label ">{{ 'quizresult.timeTaken' | translate }} <span>{{
+                question.formattedTime }}</span></span>
+          </ng-container>
+        </div>
+        <!-- <div>
+          <ng-container *ngTemplateOutlet="answerSectionTemplate; context: { $implicit: question }"></ng-container>
+        </div> -->
+      </div>
+    </ng-container>
+  </div>
+</ng-template>
+
+<!-- Reusable Template for Question Details -->
+<ng-template #questionDetailsTemplate let-question>
+  <div class="question-details flex flex-col gap-5 pl-4">
+    <h4 class="question-label">{{ 'quizresult.question' | translate }}:</h4>
+    <p class="question-text" [innerHTML]="question.question"></p>
+
+    <!-- <ng-container *ngTemplateOutlet="answerSectionTemplate; context: { $implicit: question }"></ng-container> -->
+  </div>
+</ng-template>
+
+<!-- Reusable Template for Answer Section -->
+<ng-template #answerSectionTemplate let-question>
+  <div class="answer-section flex md:items-center md:gap-4 flex-col md:flex-row">
+    <h4 class="answer-label">{{ 'quizresult.yourAnswer' | translate }}</h4>
+    <p class="answer-text" [ngClass]="question.result === 'correct' ? 'text-pass' : 'text-fail'">
+      {{ question.result | uppercase }}
+    </p>
+  </div>
+</ng-template>

@@ -78,9 +78,10 @@
                                         <div class="text-xs font-light" *ngIf="eachCert?.identifier">{{'competencyList.issued' | translate }} {{
                                             eachCert?.lastIssuedOn | date: 'MMM y' }}
                                         </div>
-                                        <div class="source text-xs">
+                                        <!-- Moved this to Sprint 35 -->
+                                        <!-- <div class="source text-xs">
                                             {{'competencyList.source' | translate }} : {{'competencyList.igot' | translate }}
-                                        </div>
+                                        </div> -->
                                     </div>
                                 </div>
                                 <div class="flex justify-center">

@@ -65,12 +65,20 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       identifier: 'certificateCount'
     },
     {
+      state: 'My Badges',
+      totalPoints: '0',
+      iconUrl: './assets/icons/Medal.svg',
+      vewAllUrl: '/badges',
+      identifier: 'certificateCount'
+    },
+    {
       state: 'NetworkV2Profile.myPosts',
       totalPoints: '0',
       iconUrl: './assets/icons/edit.svg',
       vewAllUrl: '/app/discussion-forum-v2',
       identifier: 'postCount'
-    }
+    },
+
   ];
   profileRoutes: profileRoutes[] = [
     {
@@ -328,7 +336,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
         }, 500)
       } else {
-        this.commonSvc.mandatoryDetails()
+        this.commonSvc.mandatoryDetails(false)
       }
     })
   }
@@ -644,7 +652,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateProfileDetails(formBody: any) {
-    this.profileV2RevampSvc.updateProfileDetails(formBody).subscribe({
+    this.profileV2RevampSvc.updateProfileDetailsV3(formBody).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileDetails()
@@ -944,6 +952,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       })
 
       if (hasChanges) {
+        if (_.get(formBody, 'request.profileDetails.personalDetails') && formBody.request) {
+          if (_.get(formBody, 'request.profileDetails.personalDetails.primaryEmail')) {
+            formBody.request['emailOtp'] = result['emailOtp'] || ''
+          }
+          if (_.get(formBody, 'request.profileDetails.personalDetails.mobile')) {
+            formBody.request['phoneOtp'] = result['phoneOtp'] || ''
+          }
+        }
         this.updateProfileDetails(formBody)
       }
       else {

@@ -12,6 +12,7 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
+  UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch',
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
   BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
@@ -101,6 +102,13 @@ export class ProfileV2RevampService {
 
   updateProfileDetails(requestBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.UPDATE_PROFILE_DETAILS, requestBody)
+      .pipe(map(res => {
+        return res
+      }))
+  }
+
+  updateProfileDetailsV3(requestBody: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.UPDATE_PROFILE_DETAILS_V3, requestBody)
       .pipe(map(res => {
         return res
       }))

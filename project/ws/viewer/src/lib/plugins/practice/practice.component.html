@@ -89,8 +89,9 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question"
@@ -339,10 +340,11 @@
 
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
         [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
         (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-      </viewer-result>
+      </viewer-result> -->
     </ng-container>
     <!-- </div> -->
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
@@ -648,8 +650,9 @@
             <ng-container *ngIf="current_Question && !process">
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-                [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+                [viewState]="viewState" [question]="current_Question"
+                [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
                 [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
                 [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
                 [currentQuestion]="current_Question" [showOnlyQuestion]="false" [mobileQuestionSetExpand]="!expandFalse"
@@ -713,10 +716,11 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
         [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
         (fetchResult)="getQuizResult()" [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-      </viewer-result>
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -1192,8 +1196,9 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
@@ -1222,8 +1227,9 @@
 
               <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
                 [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-                [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+                [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+                [viewState]="viewState" [question]="current_Question"
+                [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
                 [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
                 (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
                 [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
@@ -1359,7 +1365,8 @@
                   </div>
                   <div class="flex gap-2  align-center">
                     <div class="flex justify-center items-center question-guide marked-question-standalone-background">
-                      <span class="question-guide-text-legend"></span></div>
+                      <span class="question-guide-text-legend"></span>
+                    </div>
                     <div class="question-guide-text">{{ 'practiceoverview.marked' | translate}}</div>
                   </div>
                 </div>
@@ -1391,8 +1398,9 @@
           <div>
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
@@ -1434,11 +1442,12 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
         [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
         (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
         [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-      </viewer-result>
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -1786,8 +1795,9 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
@@ -1955,8 +1965,9 @@
           <ng-container *ngIf="current_Question && !process">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" (itemSelected)="fillSelectedItems(current_Question, $event)"
               [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [showOnlyQuestion]="false"
@@ -1990,8 +2001,9 @@
           <div *ngIf="assessmentType !== 'optionalWeightage'">
             <viewer-question #questionsReference [id]="'question' + (currentQuestionIndex + 1)"
               [markedQuestions]="markedQuestions" [artifactUrl]="artifactUrl"
-              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length" [viewState]="viewState"
-              [question]="current_Question" [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
+              [questionNumber]="getSelectedQuestionNumber(currentQuestionIndex)" [total]="secQuestions.length"
+              [viewState]="viewState" [question]="current_Question"
+              [itemSelectedList]="questionAnswerHash[(current_Question?.questionId)]"
               [primaryCategory]="primaryCategory" [ePrimaryCategory]="ePrimaryCategory" [totalQCount]="totalQCount"
               (itemSelected)="fillSelectedItems(current_Question, $event)" [showAnswer]="showAnswer"
               [currentQuestion]="current_Question" [coursePrimaryCategory]="coursePrimaryCategory"
@@ -2035,11 +2047,12 @@
     </div>
     <div id="quiz-end"></div>
     <ng-container *ngIf="isSubmitted && (viewState === 'answer' || viewState === 'review')">
-      <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
+      <ng-container [ngTemplateOutlet]="caresult"></ng-container>
+      <!-- <viewer-result [quizCategory]="primaryCategory" [quizResponse]="finalResponse" [percentage]="result"
         [canAttempt]="canAttempt" [isPassed]="finalResponse?.pass" (userSelection)="action($event)"
         (fetchResult)="getQuizResult()" [coursePrimaryCategory]="coursePrimaryCategory"
         [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel">
-      </viewer-result>
+      </viewer-result> -->
     </ng-container>
     <div *ngIf="viewState === 'detail'" class="flex flex-1 flex-column">
       <ng-container *ngIf="this.paperSections && this.paperSections?.length > 0">
@@ -2375,4 +2388,11 @@
       </form>
     </div>
   </div>
+</ng-template>
+
+
+<ng-template #caresult>
+  <viewer-ca-results-view [results]="finalResponse" [canAttempt]="canAttempt"
+    [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [v4questionSet]="v4questionSet"
+    (userSelection)="action($event)"></viewer-ca-results-view>
 </ng-template>
