@@ -1195,17 +1195,16 @@ export class ProfileEntryEditComponent implements OnInit {
     const area = this.seletedCompetencyArea
     const theme = this.seletedCompetencyTheme
     const subTheme = this.seletedCompetencySubTheme
-
     const obj = {
       // Area
       competencyAreaIdentifier: area.identifier || area.id || area.name,
-      competencyAreaRefId: area.code || area.identifier || '',
+      competencyAreaRefId: area.refId || area.identifier || '',
       competencyAreaName: area.name,
       competencyAreaDescription: area.description || '',
 
       // Theme
       competencyThemeIdentifier: theme.identifier || theme.id || theme.name,
-      competencyThemeRefId: theme.code || theme.identifier || '',
+      competencyThemeRefId: theme.refId || theme.identifier || '',
       competencyThemeName: theme.name,
       competencyThemeType: theme.category || 'theme',
       competencyThemeDescription: theme.description || '',
@@ -1213,7 +1212,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
       // Sub-theme
       competencySubThemeIdentifier: subTheme.identifier || subTheme.id || subTheme.name,
-      competencySubThemeRefId: subTheme.code || subTheme.identifier || '',
+      competencySubThemeRefId: subTheme.refId || subTheme.identifier || '',
       competencySubThemeName: subTheme.name,
       competencySubThemeDescription: subTheme.description || '',
       competencySubThemeAdditionalProperties: subTheme.additionalProperties || {},
