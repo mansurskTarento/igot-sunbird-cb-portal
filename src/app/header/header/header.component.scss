@@ -328,3 +328,50 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
+
+
+.scorm-banner {
+ background: linear-gradient(
+  60deg,
+  #b30000 0%,
+  #b30000 40%,
+  #ff4d4d 50%,
+  #b30000 60%,
+  #b30000 100%
+);
+  background-size: 200% 100%;
+  border: 1px solid #ffeeba;
+  padding: 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 13px;
+  color: white;
+  animation: flash 4s linear infinite;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+
+  &.sideNav-open {
+    width: 94% !important;
+  }
+
+  &.sideNav-close {
+    width: 85% !important;
+  }
+}
+
+.horn-cls {
+  width: 20px;
+  height: 20px;
+  vertical-align: middle;
+  margin-right: 6px;
+}
+
+.imp-clr {
+  color: white;
+  font-weight: 700;
+}

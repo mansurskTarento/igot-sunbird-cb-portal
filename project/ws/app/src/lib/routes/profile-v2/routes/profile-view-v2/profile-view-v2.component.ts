@@ -644,10 +644,32 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       },
       error: (error: HttpErrorResponse) => {
         if (error) {
-          this.openSnackbar('Something went wrong please try again')
+          const errorMessage = this.getErrorMessage(error, formBody)
+          this.openSnackbar(errorMessage)
         }
       }
     })
+  }
+
+  getErrorMessage(error: HttpErrorResponse, formBody: any): string {
+    const errorMsg = _.get(error, 'error.params.errmsg', '') || _.get(error, 'error.message', '')
+    
+    // Check if email or mobile is being updated
+    const isEmailUpdate = _.get(formBody, 'request.profileDetails.personalDetails.primaryEmail')
+    const isMobileUpdate = _.get(formBody, 'request.profileDetails.personalDetails.mobile')
+    
+    // Check for duplicate email error
+    if (isEmailUpdate && (errorMsg.toLowerCase().includes('email') || errorMsg.toLowerCase().includes('already exists'))) {
+      return 'This email is already registered. Please use a different email address.'
+    }
+    
+    // Check for duplicate mobile error
+    if (isMobileUpdate && (errorMsg.toLowerCase().includes('mobile') || errorMsg.toLowerCase().includes('phone') || errorMsg.toLowerCase().includes('already exists'))) {
+      return 'This mobile number is already registered. Please use a different mobile number.'
+    }
+    
+    // Return specific error message if available, otherwise return generic message
+    return errorMsg || 'Something went wrong please try again'
   }
 
   fetchProfileDetails() {
