@@ -66,9 +66,9 @@ export class CommonDataService {
 
     if ((diffDays && diffDays > 90) || userProfileUpdateDate === null) {
       let userData = {
-        ...this.configSvc.userProfile,
-        mobile: this.configSvc.unMappedUser.profileDetails?.personalDetails?.mobile || '',
-        primaryEmail: this.configSvc.unMappedUser.profileDetails?.personalDetails?.primaryEmail || '',
+        ...this.configSvc?.userProfile,
+        mobile: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.mobile || '',
+        primaryEmail: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.primaryEmail || '',
       }
       let dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
         data: {
@@ -170,7 +170,7 @@ export class CommonDataService {
 
   fetchMandatoryNotification() {
     this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
-      if (notification && Object.keys(notification).length > 0 && !notification?.read) {
+      if (notification && !notification.error && Object.keys(notification).length > 0 && !notification?.read) {
         this.mandatoryNotificationData = notification
         this.showMandatoryNotification = true
         this.openMandatoryNotificationModal()
@@ -178,6 +178,7 @@ export class CommonDataService {
         this.showMandatoryNotification = false
       }
     }, error => {
+      this.showMandatoryNotification = false
       console.error('Error fetching mandatory notification:', error)
     })
   }

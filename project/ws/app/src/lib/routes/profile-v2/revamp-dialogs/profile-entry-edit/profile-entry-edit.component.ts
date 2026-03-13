@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
+import { AbstractControl, FormBuilder, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { HttpErrorResponse } from '@angular/common/http'
 import * as _ from 'lodash'
@@ -107,8 +107,28 @@ export class ProfileEntryEditComponent implements OnInit {
   yeasersList: string[] = [];
   //#endregion (educational qualifications variables)
 
-  disableUpload = false;
-  disableUrl = false;
+  disableUpload = false
+  disableUrl = false
+
+  // competencies
+  allCompetencies: any[] = []
+  filteredallCompetencies: any[] = []
+  allCompetencyTheme: any[] = []
+  filteredallCompetencyTheme: any[] = []
+  allCompetencySubtheme: any[] = []
+  filteredallCompetencySubtheme: any[] = []
+  enableCompetencyAdd = false
+  seletedCompetencyArea: any
+  seletedCompetencyTheme: any
+  seletedCompetencySubTheme: any
+  queryThemeControl = new UntypedFormControl('')
+  querySubThemeControl = new UntypedFormControl('')
+  isTableExpanded = true
+  listView = true
+  allThemeData: any
+  allSubThemeData: any
+  viewMode: string = ''
+
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
@@ -1022,21 +1042,23 @@ export class ProfileEntryEditComponent implements OnInit {
 
   //#region (achievements)
   private createAchievementsForm(): void {
+
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
-      //deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
-      //startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
-      //endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
-      issuedDate: [_.get(this.entryDetails, 'issuedDate', ''), [Validators.required]],
-      //learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
-      //trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
-      uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
-      fileName: [_.get(this.entryDetails, 'fileName', '')],
-      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+      startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+      endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+      uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
+      fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
+      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
+      competencies_v6: ['', [Validators.required]]
     })
-    if (_.get(this.entryDetails, 'fileName', '')) {
+    if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
       urlControl.patchValue('')
       urlControl.disable()
@@ -1050,7 +1072,255 @@ export class ProfileEntryEditComponent implements OnInit {
       this.disableUpload = true
       this.disableUrl = false
     }
+    if (this.entryDetails && this.entryDetails.contextData && this.entryDetails.contextData.competencies_v6) {
+      const competencies = this.entryDetails.contextData.competencies_v6
+      this.entryForm.get('competencies_v6')?.patchValue(competencies)
+    }
     this.valueChanges()
+    this.addCompetencyMeta()
+  }
+
+  get competenciesValue(): any[] {
+    const control = this.entryForm?.get('competencies_v6') as UntypedFormControl | null
+    return (control && control.value) || []
+  }
+
+  addCompetencyMeta(): void {
+    if (!this.entryForm.get('competencies_v6')) {
+      this.entryForm.addControl('competencies_v6', new UntypedFormControl([]))
+    }
+
+    this.loadCompetencyMaster()
+
+    this.queryThemeControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        this.filteredallCompetencyTheme = this.filterValues(value || '', this.allCompetencyTheme)
+      })
+
+    this.querySubThemeControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        this.filteredallCompetencySubtheme = this.filterValues(value || '', this.allCompetencySubtheme)
+      })
+  }
+
+  filterValues(searchValue: string, array: any[]) {
+    if (!searchValue) {
+      return array
+    }
+    const lower = searchValue.toLowerCase()
+    return array.filter((value: any) =>
+      (value.name || '').toLowerCase().includes(lower),
+    )
+  }
+
+  loadCompetencyMaster() {
+    this.ProfileV2RevampService.fetchCompetencyV6().subscribe(response => {
+      if (response && response.params && response.params.status && response.params.status.toLowerCase() === 'successful') {
+        this.allCompetencies = response.result.framework.categories.filter((v: any) => v.code === 'competencyarea')[0].terms
+        this.allThemeData = response.result.framework.categories.filter((v: any) => v.code === 'theme')[0].terms
+        this.allSubThemeData = response.result.framework.categories.filter((v: any) => v.code === 'subtheme')[0].terms
+        this.filteredallCompetencies = this.allCompetencies
+      } else {
+        this.allCompetencies = []
+        this.filteredallCompetencies = []
+      }
+    })
+  }
+
+  compAreaSelected(option: any) {
+    this.resetCompSubfields()
+    this.allCompetencies.forEach((val: any) => {
+      if (option.identifier === val.identifier) {
+        this.seletedCompetencyArea = val
+        this.allCompetencyTheme = val.associations
+        this.filteredallCompetencyTheme = this.allCompetencyTheme
+      }
+    })
+  }
+
+  compThemeSelected(option: any) {
+    this.enableCompetencyAdd = false
+    this.allCompetencyTheme.forEach((val: any) => {
+      if (option.identifier === val.identifier) {
+        this.seletedCompetencyTheme = val
+        this.allCompetencySubtheme = this.allThemeData.filter((v: any) => v.identifier === val.identifier)[0].associations
+        this.filteredallCompetencySubtheme = this.allCompetencySubtheme
+      }
+    })
+  }
+
+  compSubThemeSelected(option: any) {
+    this.seletedCompetencySubTheme = option
+    this.enableCompetencyAdd = true
+  }
+
+  resetCompfields() {
+    this.enableCompetencyAdd = false
+    this.seletedCompetencyArea = null
+    this.seletedCompetencyTheme = null
+    this.seletedCompetencySubTheme = null
+    this.allCompetencyTheme = []
+    this.allCompetencySubtheme = []
+    this.filteredallCompetencyTheme = []
+    this.filteredallCompetencySubtheme = []
+    this.queryThemeControl.setValue('')
+    this.querySubThemeControl.setValue('')
+  }
+
+  resetCompSubfields() {
+    this.enableCompetencyAdd = false
+    this.seletedCompetencyTheme = null
+    this.seletedCompetencySubTheme = null
+    this.allCompetencySubtheme = []
+    this.filteredallCompetencySubtheme = []
+    this.queryThemeControl.setValue('')
+    this.querySubThemeControl.setValue('')
+  }
+
+  canPush(arr: any[], obj: any) {
+    return !arr.some(item =>
+      item.competencyAreaIdentifier === obj.competencyAreaIdentifier &&
+      item.competencyThemeIdentifier === obj.competencyThemeIdentifier &&
+      item.competencySubThemeIdentifier === obj.competencySubThemeIdentifier,
+    )
+  }
+
+  addCompetency() {
+    if (!this.seletedCompetencyArea || !this.seletedCompetencyTheme || !this.seletedCompetencySubTheme) {
+      return
+    }
+
+    const area = this.seletedCompetencyArea
+    const theme = this.seletedCompetencyTheme
+    const subTheme = this.seletedCompetencySubTheme
+    const obj = {
+      // Area
+      competencyAreaIdentifier: area.identifier || area.id || area.name,
+      competencyAreaRefId: area.refId || area.identifier || '',
+      competencyAreaName: area.name,
+      competencyAreaDescription: area.description || '',
+
+      // Theme
+      competencyThemeIdentifier: theme.identifier || theme.id || theme.name,
+      competencyThemeRefId: theme.refId || theme.identifier || '',
+      competencyThemeName: theme.name,
+      competencyThemeType: theme.category || 'theme',
+      competencyThemeDescription: theme.description || '',
+      competencyThemeAdditionalProperties: theme.additionalProperties || {},
+
+      // Sub-theme
+      competencySubThemeIdentifier: subTheme.identifier || subTheme.id || subTheme.name,
+      competencySubThemeRefId: subTheme.refId || subTheme.identifier || '',
+      competencySubThemeName: subTheme.name,
+      competencySubThemeDescription: subTheme.description || '',
+      competencySubThemeAdditionalProperties: subTheme.additionalProperties || {},
+    }
+
+    const control = this.entryForm.get('competencies_v6') as UntypedFormControl
+    const value = control.value || []
+    if (this.canPush(value, obj)) {
+      value.push(obj)
+      control.setValue(value)
+      control.markAsDirty()
+      control.markAsTouched()
+    }
+  }
+
+  get uniqueAreas(): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    return Array.from(new Set(
+      this.competenciesValue.map((comp: any) => comp.competencyAreaName),
+    ))
+  }
+
+  getUniqueThemesForArea(areaName: string): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    const themesForArea = this.competenciesValue
+      .filter((comp: any) => comp.competencyAreaName === areaName)
+      .map((comp: any) => comp.competencyThemeName)
+
+    return Array.from(new Set(themesForArea))
+  }
+
+  getSubthemesForAreaAndTheme(areaName: string, themeName: string): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    return this.competenciesValue
+      .filter((comp: any) =>
+        comp.competencyAreaName === areaName &&
+        comp.competencyThemeName === themeName,
+      )
+      .map((comp: any) => comp.competencySubThemeName)
+  }
+
+  getTotalRowsForArea(areaName: string): number {
+    let totalRows = 0
+    for (const theme of this.getUniqueThemesForArea(areaName)) {
+      totalRows += this.getSubthemesForAreaAndTheme(areaName, theme).length
+    }
+    return totalRows
+  }
+
+  removeCompetencyV2(area: string, theme: string, subtheme: string): void {
+    const control = this.entryForm.get('competencies_v6') as UntypedFormControl | null
+    if (!control || !control.value) {
+      return
+    }
+
+    const competenciesValue = control.value
+    const index = competenciesValue.findIndex((comp: any) =>
+      comp.competencyAreaName === area &&
+      comp.competencyThemeName === theme &&
+      comp.competencySubThemeName === subtheme,
+    )
+
+    if (index !== -1) {
+      const updatedCompetencies = [
+        ...competenciesValue.slice(0, index),
+        ...competenciesValue.slice(index + 1),
+      ]
+      control.setValue(updatedCompetencies)
+      control.markAsDirty()
+      control.markAsTouched()
+    }
+  }
+
+  updateQuery(key: string, field: 'theme' | 'subtheme') {
+    if (field === 'theme') {
+      this.filteredallCompetencyTheme = this.filterValues(key, this.allCompetencyTheme)
+    } else {
+      this.filteredallCompetencySubtheme = this.filterValues(key, this.allCompetencySubtheme)
+    }
+  }
+
+  resetSearch(field: 'theme' | 'subtheme') {
+    if (field === 'theme') {
+      this.queryThemeControl.setValue('')
+      this.filteredallCompetencyTheme = this.allCompetencyTheme
+      if (!this.seletedCompetencySubTheme) {
+        this.filteredallCompetencySubtheme = []
+        this.querySubThemeControl.setValue('')
+      } else {
+        this.querySubThemeControl.setValue('')
+      }
+    } else {
+      this.querySubThemeControl.setValue('')
+      this.filteredallCompetencySubtheme = this.allCompetencySubtheme
+    }
+  }
+
+  toggleTable() {
+    this.isTableExpanded = !this.isTableExpanded
   }
 
   valueChanges(): void {

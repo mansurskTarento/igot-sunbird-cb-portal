@@ -8,33 +8,49 @@ import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { CompetencyPassbookRoutingModule } from './competency-passbook-routing.module'
 
 import { CompetencyPassbookComponent } from './competency-passbook/competency-passbook.component'
-import { CompetencyListComponent } from './competency-list/competency-list.component'
 import { CompetencyCardDetailsComponent } from './competency-card-details/competency-card-details.component'
 // tslint:disable-next-line: max-line-length
 import { CompetencyPassbookSideBarComponent } from './../component/competency-passbook-side-bar/competency-passbook-side-bar.component'
 import { CompetencySearchComponent } from './competency-search/competency-search.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { DialogComponentsModule } from '@sunbird-cb/consumption'
+import { FormsModule } from '@angular/forms'
 import { MatIconModule } from '@angular/material/icon'
 import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
 import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatExpansionModule } from '@angular/material/expansion'
+import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
+import { CompetencyFiltersComponent } from './competency-filters/competency-filters.component'
+import { CompetencyListV2Component } from './competency-list-v2/competency-list-v2.component'
+import { BaseCompetencyListComponent } from './base-competency-list/base-competency-list.component'
+import { CompetencyListComponent } from './competency-list/competency-list.component'
+import { BaseCompetencyCardDetailsComponent } from './base-competency-card-details/base-competency-card-details.component'
+import { CompetencyCardDetailsV2Component } from './competency-card-details-v2/competency-card-details-v2.component'
 
 @NgModule({
   declarations: [
     CompetencyPassbookComponent,
     CompetencyPassbookSideBarComponent,
     CompetencySearchComponent,
-    CompetencyListComponent,
+    CompetencyListV2Component,
     CompetencyCardDetailsComponent,
+    CompetencyFiltersComponent,
+    BaseCompetencyListComponent,
+    CompetencyListComponent,
+    BaseCompetencyCardDetailsComponent,
+    CompetencyCardDetailsV2Component,
   ],
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     MatIconModule,
     MatMenuModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatExpansionModule,
+    MatCheckboxModule,
     CompetencyPassbookRoutingModule,
     SkeletonLoaderModule,
     PipeSafeSanitizerModule,
