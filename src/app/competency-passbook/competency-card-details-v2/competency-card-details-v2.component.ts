@@ -31,7 +31,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   filteredSelfAchievements: any[] = []
   filteredIGOTCourses: any[] = []
   filteredExtCourses: any[] = []
-  filteredProviderReported: any[] = []
+  filteredexternalTrainings: any[] = []
   activeTab = ''
   currentTabData: any[] = []
   @ViewChildren('certificate') certificateElements!: QueryList<ElementRef>
@@ -101,18 +101,20 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     const selfAchievementMap = new Map<string, any>()
     const iGOTCoursesMap = new Map<string, any>()
     const extCoursesMap = new Map<string, any>()
+    const externalTrainingMap = new Map<string, any>()
 
     const courseMaps: { [key: string]: Map<string, any> } = {
       selfAchievement: selfAchievementMap,
       iGOTCourses: iGOTCoursesMap,
       extCourses: extCoursesMap,
+      externalTraining: externalTrainingMap,
     }
 
     for (const comp of matchedCompetencies) {
       const subThemeName = subThemeMap.get(comp.competencySubThemeId) || comp.competencySubThemeId
       const details = comp.competencyDetails || {}
 
-      for (const type of ['selfAchievement', 'iGOTCourses', 'extCourses']) {
+      for (const type of ['selfAchievement', 'iGOTCourses', 'extCourses', 'externalTraining']) {
         const courses = details[type]
         if (courses && courses.length) {
           const map = courseMaps[type]
@@ -137,6 +139,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     this.filteredSelfAchievements = Array.from(selfAchievementMap.values()).map(item => ({ ...item, viewMore: false }))
     this.filteredIGOTCourses = Array.from(iGOTCoursesMap.values()).map(item => ({ ...item, viewMore: false }))
     this.filteredExtCourses = Array.from(extCoursesMap.values()).map(item => ({ ...item, viewMore: false }))
+    this.filteredexternalTrainings = Array.from(externalTrainingMap.values()).map(item => ({ ...item, viewMore: false }))
     if (this.filteredIGOTCourses.length) {
       this.fetchIGOTCourseDetails()
     }
@@ -146,14 +149,52 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     if (this.filteredSelfAchievements.length) {
       this.fetchSelfAchievementCourseDetails()
     }
+    if (this.filteredexternalTrainings.length) {
+      this.fetchExternalTrainingDetails()
+    }
     if (this.filteredIGOTCourses.length) {
       this.activeTab = 'iGOTCourses'
     } else if (this.filteredExtCourses.length) {
       this.activeTab = 'extCourses'
     } else if (this.filteredSelfAchievements.length) {
       this.activeTab = 'selfAchievement'
+    } else if (this.filteredexternalTrainings.length) {
+      this.activeTab = 'externalTraining'
     }
     this.assignData(this.activeTab)
+  }
+
+  fetchExternalTrainingDetails(): void {
+    const identifiers = this.filteredexternalTrainings.map((course: any) => course.acquiredContextId)
+    const payload = {
+      request: {
+        filters: {
+          identifier: identifiers,
+        },
+        fields: ['identifier', 'name'],
+        limit: identifiers.length,
+      },
+    }
+    this.cpService.getIGOTCourseList(payload)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (response: any) => {
+          const results: any[] = response?.result?.Event || []
+          const nameMap = new Map<string, string>(results.map((item: any) => [item.identifier, item.name]))
+          this.filteredexternalTrainings = this.filteredexternalTrainings.map((course: any) => ({
+            ...course,
+            name: nameMap.get(course.acquiredContextId) || course.name || '',
+          }))
+          if (this.activeTab === 'externalTraining') {
+            this.assignData('externalTraining')
+          }
+        },
+        (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.matSnackBar.open('Unable to fetch external training details!')
+          }
+        }
+      )
   }
 
   fetchIGOTCourseDetails(): void {
@@ -349,6 +390,8 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
       this.currentTabData = this.filteredExtCourses
     } else if (tabName === 'selfAchievement') {
       this.currentTabData = this.filteredSelfAchievements
+    } else if (tabName === 'externalTraining') {
+      this.currentTabData = this.filteredexternalTrainings
     }
   }
 
@@ -356,6 +399,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     this.filteredSelfAchievements.forEach(item => item.viewMore = false)
     this.filteredIGOTCourses.forEach(item => item.viewMore = false)
     this.filteredExtCourses.forEach(item => item.viewMore = false)
+    this.filteredexternalTrainings.forEach(item => item.viewMore = false)
   }
 
   handleActiveTab(tabName: string): void {
