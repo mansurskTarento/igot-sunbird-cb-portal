@@ -25,6 +25,15 @@ export class ZohoFormService {
   ];
   private userProfileData: any = null;
 
+  // Attachment tracking
+  private zsAttachedAttachmentsCount = 0;
+  private zsAttachmentFileBrowserIdsList = [1, 2, 3, 4, 5];
+
+  // Getter for attachment count (used in validation)
+  getAttachedFilesCount(): number {
+    return this.zsAttachedAttachmentsCount;
+  }
+
   constructor(
     private configSvc: ConfigurationsService,
     private http: HttpClient,
@@ -153,8 +162,31 @@ export class ZohoFormService {
   }
 
   // ===== Attachment Handler =====
+  initializeAttachmentZone(): void {
+    // Set up click handler for attachment zone after DOM is ready
+    setTimeout(() => {
+      const zone = document.querySelector('.attachment-zone') as HTMLElement;
+      if (zone) {
+        zone.onclick = () => {
+          this.triggerFileInputClick();
+        };
+      }
+    }, 100);
+  }
+
+  private triggerFileInputClick(): void {
+    if (this.zsAttachmentFileBrowserIdsList.length > 0) {
+      const nextId = this.zsAttachmentFileBrowserIdsList[0];
+      const fileInput = document.getElementById('zsattachment_' + nextId) as HTMLInputElement;
+      if (fileInput) {
+        fileInput.click();
+      }
+    }
+  }
+
   handleFileAttachment(filePath: string, element: any): void {
     if (!filePath) return;
+
     const els = element.files;
     if (els && els[0]) {
       const size = els[0].size / (1024 * 1024);
@@ -176,6 +208,75 @@ export class ZohoFormService {
       element.value = '';
       alert('File extension not supported.');
       return;
+    }
+
+    // Get the current file input ID and remove it from available list
+    const elementId = element.id;
+    const curId = parseInt(elementId.split('_')[1], 10);
+    const removeIdx = this.zsAttachmentFileBrowserIdsList.indexOf(curId);
+    if (removeIdx > -1) {
+      this.zsAttachmentFileBrowserIdsList.splice(removeIdx, 1);
+    }
+
+    // Add file to display
+    this.addFileToDisplay(fileName, curId);
+    this.zsAttachedAttachmentsCount++;
+  }
+
+  private addFileToDisplay(fileName: string, fileId: number): void {
+    const container = document.getElementById('zsFileBrowseAttachments');
+    if (!container) return;
+
+    const fileDiv = document.createElement('div');
+    fileDiv.className = 'filenamecls';
+    fileDiv.id = 'file_' + fileId;
+
+    const fileNameSpan = document.createElement('span');
+    fileNameSpan.textContent = fileName;
+
+    const closeLink = document.createElement('a');
+    closeLink.href = 'javascript:;';
+    closeLink.className = 'zsfilebrowseAttachment';
+    closeLink.id = 'fileclose_' + fileId;
+    closeLink.textContent = '×';
+    closeLink.onclick = () => this.removeFileAttachment(fileId);
+
+    fileDiv.appendChild(fileNameSpan);
+    fileDiv.appendChild(closeLink);
+    container.appendChild(fileDiv);
+  }
+
+  removeFileAttachment(fileId: number): void {
+    const fileInput = document.getElementById('zsattachment_' + fileId) as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+
+    const fileDiv = document.getElementById('file_' + fileId);
+    if (fileDiv) {
+      fileDiv.remove();
+    }
+
+    this.zsAttachedAttachmentsCount--;
+    this.zsAttachmentFileBrowserIdsList.push(fileId);
+    this.zsAttachmentFileBrowserIdsList.sort((a, b) => a - b);
+  }
+
+  resetAttachmentState(): void {
+    this.zsAttachedAttachmentsCount = 0;
+    this.zsAttachmentFileBrowserIdsList = [1, 2, 3, 4, 5];
+
+    const container = document.getElementById('zsFileBrowseAttachments');
+    if (container) {
+      container.innerHTML = '';
+    }
+
+    // Reset all file inputs
+    for (let i = 1; i <= 5; i++) {
+      const fileInput = document.getElementById('zsattachment_' + i) as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = '';
+      }
     }
   }
 
@@ -246,6 +347,7 @@ export class ZohoFormService {
       this.resetOthersBlock();
       this.resetSubjectField();
       this.resetConsentCheckbox();
+      this.resetAttachmentState();
     } catch (error) {
       console.error('Error resetting Zoho form:', error);
     }

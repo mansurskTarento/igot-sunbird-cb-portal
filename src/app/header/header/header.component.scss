@@ -341,6 +341,15 @@ ws-app-nav-bar {
   }
 }
 
+@keyframes flash {
+  0% {
+    background-position: -100% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
 
 .scorm-banner {
   background: linear-gradient(60deg, #1B4CA1 0%, #1B4CA1 40%, #6b6a6a 50%, #1B4CA1 60%, #1B4CA1 100%);
@@ -352,7 +361,7 @@ ws-app-nav-bar {
   text-align: center;
   font-size: 13px;
   color: #fff;
-  animation: 4s linear infinite;
+  animation: flash 4s linear infinite;
   font-weight: 700;
   display: flex;
   align-items: center;

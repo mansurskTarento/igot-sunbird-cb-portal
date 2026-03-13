@@ -124,9 +124,11 @@ export class HeaderComponent implements OnInit {
       (window as any).zsRegenerateCaptcha = () => { this.zohoFormService.loadCaptcha(); return true }
       (window as any).zsResetWebForm = (id: string) => { this.zohoFormService.resetForm(id); return true }
       (window as any).zsValidateMandatoryFields = () => { return this.zohoFormService.validateAndSubmitForm() }
+      (window as any).zsGetAttachedFilesCount = () => { return this.zohoFormService.getAttachedFilesCount() }
       
       this.zohoFormService.loadCaptcha()
       this.zohoFormService.patchUserDataFromConfig()
+      this.zohoFormService.initializeAttachmentZone()
     } catch (error) {
       console.error('Error initializing Zoho form:', error)
       this.zohoFormService.loadCaptcha()
