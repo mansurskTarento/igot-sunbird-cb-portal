@@ -773,8 +773,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (section && section.expectedDuration) {
-      this.quizJson.timeLimit = section.expectedDuration
-      this.timeLeft = section.expectedDuration
+      // Fixed Assessment timing Issue fixed It was taking as per section (CAP:- CAG department)
+      // this.quizJson.timeLimit = section.expectedDuration
+      // this.timeLeft = section.expectedDuration
       this.sectionalTimer = true
     } else {
       this.sectionalTimer = false
