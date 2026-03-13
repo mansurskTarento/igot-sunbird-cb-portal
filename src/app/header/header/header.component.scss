@@ -114,11 +114,11 @@ ws-app-nav-bar {
     padding: 16px;
     border-bottom: 1px solid #ccc;
     z-index: 1000;
-    top:0;
+    top: 0;
   }
 
   .mobile-download-app-desc {
-    margin-left:8px;
+    margin-left: 8px;
   }
 
 
@@ -132,7 +132,8 @@ ws-app-nav-bar {
     border: 1px solid rgba(239, 149, 30, 0.24);
     margin-left: 4px;
   }
-  .kb-symbol img{
+
+  .kb-symbol img {
     vertical-align: middle;
   }
 
@@ -145,13 +146,14 @@ ws-app-nav-bar {
     color: rgba(0, 0, 0, 0.16)
   }
 
- 
+
   .mobile-download-app-desc-heading {
     margin: 0 !important;
     padding: 0;
     line-height: 1;
     font-weight: 900;
   }
+
   .mobile-download-app-desc-sub-heading {
     margin: 0 !important;
     font-size: 12px;
@@ -174,15 +176,15 @@ ws-app-nav-bar {
 
   .top-nav-bar {
     position: fixed;
-    top:60px;
-    margin-top:5px;
+    top: 60px;
+    margin-top: 5px;
   }
 
 }
 
-@media (min-width : 360px) and (max-width : 360px){  
+@media (min-width : 360px) and (max-width : 360px) {
   .mobile-download-app-desc {
-    margin-left:8px;
+    margin-left: 8px;
     width: 38%
   }
 
@@ -195,6 +197,7 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
+
 @media (min-width : 300px) and (max-width : 358px) {
   .download-app-chip-top-header {
     font-size: 10px;
@@ -202,14 +205,15 @@ ws-app-nav-bar {
     margin-right: 12px;
     line-height: 20px !important;
   }
+
   .mobile-download-app-top-header {
-    padding:16px 12px;
+    padding: 16px 12px;
   }
 }
 
-@media (min-width : 375px) and (max-width : 375px){  
+@media (min-width : 375px) and (max-width : 375px) {
   .mobile-download-app-desc {
-    margin-left:8px;
+    margin-left: 8px;
     width: 38%
   }
 
@@ -221,11 +225,12 @@ ws-app-nav-bar {
     padding: 6px 8px !important;
     list-style: none;
   }
-  
+
 }
-@media (min-width : 393px) and (max-width : 393px){  
+
+@media (min-width : 393px) and (max-width : 393px) {
   .mobile-download-app-desc {
-    margin-left:8px;
+    margin-left: 8px;
     width: 38%
   }
 
@@ -239,9 +244,9 @@ ws-app-nav-bar {
   }
 }
 
-@media (min-width : 412px) and (max-width : 412px){  
+@media (min-width : 412px) and (max-width : 412px) {
   .mobile-download-app-desc {
-    margin-left:8px;
+    margin-left: 8px;
     width: 38%
   }
 
@@ -254,7 +259,8 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
-@media (min-width : 414px) and (max-width : 414px){  
+
+@media (min-width : 414px) and (max-width : 414px) {
   .mobile-download-app-desc {
     margin-left: 8px;
     width: 47%
@@ -269,7 +275,8 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
-@media (min-width : 390px) and (max-width : 390px){  
+
+@media (min-width : 390px) and (max-width : 390px) {
   .mobile-download-app-desc {
     margin-left: 8px;
     width: 36%
@@ -284,12 +291,13 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
-@media (min-width : 768px) and (max-width : 768px){  
+
+@media (min-width : 768px) and (max-width : 768px) {
   .mobile-download-app-desc {
     margin-left: 8px;
     width: 60%
   }
-  
+
   .download-app-chip-top-header {
     border-radius: 64px;
     background: #F3962F;
@@ -300,11 +308,13 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
-@media (min-width : 540px) and (max-width : 540px){  
+
+@media (min-width : 540px) and (max-width : 540px) {
   .mobile-download-app-desc {
-    margin-left:8px;
-    width:50%
+    margin-left: 8px;
+    width: 50%
   }
+
   .download-app-chip-top-header {
     border-radius: 63px;
     background: #F3962F;
@@ -314,11 +324,13 @@ ws-app-nav-bar {
     list-style: none;
   }
 }
-@media (min-width : 280px) and (max-width : 280px){  
+
+@media (min-width : 280px) and (max-width : 280px) {
   .mobile-download-app-desc {
-    margin-left:8px;
-    width:20%
+    margin-left: 8px;
+    width: 20%
   }
+
   .download-app-chip-top-header {
     border-radius: 63px;
     background: #F3962F;
@@ -331,14 +343,7 @@ ws-app-nav-bar {
 
 
 .scorm-banner {
- background: linear-gradient(
-  60deg,
-  #b30000 0%,
-  #b30000 40%,
-  #ff4d4d 50%,
-  #b30000 60%,
-  #b30000 100%
-);
+  background: linear-gradient(60deg, #1B4CA1 0%, #1B4CA1 40%, #6b6a6a 50%, #1B4CA1 60%, #1B4CA1 100%);
   background-size: 200% 100%;
   border: 1px solid #ffeeba;
   padding: 10px;
@@ -346,22 +351,14 @@ ws-app-nav-bar {
   border-radius: 5px;
   text-align: center;
   font-size: 13px;
-  color: white;
-  animation: flash 4s linear infinite;
+  color: #fff;
+  animation: 4s linear infinite;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
   width: 100%;
-
-  &.sideNav-open {
-    width: 94% !important;
-  }
-
-  &.sideNav-close {
-    width: 85% !important;
-  }
 }
 
 .horn-cls {
