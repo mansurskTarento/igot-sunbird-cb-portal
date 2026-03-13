@@ -71,15 +71,16 @@
                 (keyup)="handleActiveTab('selfAchievement')">
                 {{'competencyCardDetails.selfDeclared' | translate}} ({{ filteredSelfAchievements?.length }})
             </div>
-            <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredProviderReported?.length !== 0"
-                [ngClass]="{'pill-active': activeTab === 'providerReported'}" (click)="handleActiveTab('providerReported')"
-                (keyup)="handleActiveTab('providerReported')">
-                {{'competencyCardDetails.ATI/CTIReported' | translate}} ({{ filteredProviderReported?.length }})
+            <div class="pill rounded-full px-4 py-2 text-xs cursor-pointer font-bold" *ngIf="filteredexternalTrainings?.length !== 0"
+                [ngClass]="{'pill-active': activeTab === 'externalTraining'}" (click)="handleActiveTab('externalTraining')"
+                (keyup)="handleActiveTab('externalTraining')">
+                {{'competencyCardDetails.ATI/CTIReported' | translate}} ({{ filteredexternalTrainings?.length }})
             </div>
         </div>
 
         <div class="flex flex-wrap gap-6">
-            <ng-container *ngIf="filteredSelfAchievements?.length === 0 && filteredIGOTCourses?.length === 0 && filteredExtCourses?.length === 0">
+            <ng-container
+                *ngIf="filteredSelfAchievements?.length === 0 && filteredIGOTCourses?.length === 0 && filteredExtCourses?.length === 0 && filteredexternalTrainings?.length === 0">
                 <div class="p-12 no-data-div rounded-md">
                     <div class="flex flex-col justify-center items-center gap-2">
                         <div class="text-lg font-semibold">{{'competencyCardDetails.noCertificates' | translate}}</div>
