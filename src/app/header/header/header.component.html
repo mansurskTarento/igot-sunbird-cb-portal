@@ -26,11 +26,13 @@
     [ngClass]="mobileTopHeaderVisibilityStatus ? 'height-on-top':'height-on-top-without-mobile-header'">
     <ws-widget-grid-layout [widgetData]="widgetData" [fromHeader]="true"></ws-widget-grid-layout>
     <div class="scorm-banner" (click)="openSupportForm()" style="cursor: pointer;">
-        <span>
+        <div class="scroll-text">
             <span class="imp-clr">
                 <img class="horn-cls" src="assets/icons/horn-icon.png" alt="horn" />
             </span>
-            "Click here for any issues on APAR training plan, Comprehensive Assessment or iGOT-SPARROW Integration"
-        </span>
+            <span class="banner-text">
+                Click here for any issues on APAR training plan, Comprehensive Assessment or iGOT-SPARROW Integration
+            </span>
+        </div>
     </div>
 </div>
