@@ -354,7 +354,7 @@
           </div>
           <div class="error-text" *ngIf="phoneExists"
             style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
-            User with this mobile number already exists in the system
+            This mobile number already exists.
           </div>
           <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
             <span class="get-otp" (click)="handleGenerateOTP('phone')">{{ 'NetworkV2Profile.getOTP' | translate}}</span>
@@ -374,7 +374,7 @@
           </mat-form-field>
           <div class="error-text" *ngIf="emailExists"
             style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
-            User with this email already exists in the system
+            This email ID already exists.
           </div>
           <div class="flex justify-end" *ngIf="verifyEmail && !emailExists">
             <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'NetworkV2Profile.getOTP' |
@@ -536,7 +536,7 @@
           </mat-form-field>
           <div class="error-text" *ngIf="emailExists"
             style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
-            User with this email already exists in the system
+            This email ID already exists.
           </div>
           <div class="flex justify-end" *ngIf="verifyEmail && !emailExists">
             <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'NetworkV2Profile.getOTP' |
@@ -601,7 +601,7 @@
           </div>
           <div class="error-text" *ngIf="phoneExists"
             style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
-            User with this mobile number already exists in the system
+            This mobile number already exists.
           </div>
           <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
             <span class="get-otp" (click)="handleGenerateOTP('phone')">{{ 'NetworkV2Profile.getOTP' | translate}}</span>
