@@ -370,6 +370,26 @@ ws-app-nav-bar {
   width: 100%;
 }
 
+/* container for moving text */
+.scroll-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  animation: scroll-left 12s linear infinite;
+}
+
+/* animation */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(100%);
+  }
+
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
 .horn-cls {
   width: 20px;
   height: 20px;

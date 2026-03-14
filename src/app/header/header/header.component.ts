@@ -71,12 +71,12 @@ export class HeaderComponent implements OnInit {
     }
 
     if (/android/i.test(userAgent)) {
-        window.open('https://play.google.com/store/apps/details?id=com.igot.karmayogibharat&hl=en&gl=US', '_blank')
+      window.open('https://play.google.com/store/apps/details?id=com.igot.karmayogibharat&hl=en&gl=US', '_blank')
     }
 
     // iOS detection from: http://stackoverflow.com/a/9039885/177710
     if (/iPad|iPhone|iPod/.test(userAgent)) {
-        window.open('https://apps.apple.com/in/app/igot-karmayogi/id6443949491', '_blank')
+      window.open('https://apps.apple.com/in/app/igot-karmayogi/id6443949491', '_blank')
     }
   }
 
@@ -125,7 +125,7 @@ export class HeaderComponent implements OnInit {
       (window as any).zsResetWebForm = (id: string) => { this.zohoFormService.resetForm(id); return true }
       (window as any).zsValidateMandatoryFields = () => { return this.zohoFormService.validateAndSubmitForm() }
       (window as any).zsGetAttachedFilesCount = () => { return this.zohoFormService.getAttachedFilesCount() }
-      
+
       this.zohoFormService.loadCaptcha()
       this.zohoFormService.patchUserDataFromConfig()
       this.zohoFormService.initializeAttachmentZone()
