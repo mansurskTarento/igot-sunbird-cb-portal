@@ -352,7 +352,11 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div class="flex justify-end" *ngIf="verifyMobile">
+          <div class="error-text" *ngIf="phoneExists"
+            style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+            User with this mobile number already exists in the system
+          </div>
+          <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
             <span class="get-otp" (click)="handleGenerateOTP('phone')">{{ 'NetworkV2Profile.getOTP' | translate}}</span>
           </div>
         </div>
@@ -368,7 +372,11 @@
               {{ 'NetworkV2Profile.invalidEmail' | translate }}
             </mat-error>
           </mat-form-field>
-          <div class="flex justify-end" *ngIf="verifyEmail">
+          <div class="error-text" *ngIf="emailExists"
+            style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+            User with this email already exists in the system
+          </div>
+          <div class="flex justify-end" *ngIf="verifyEmail && !emailExists">
             <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'NetworkV2Profile.getOTP' |
               translate}}</span>
           </div>
@@ -526,7 +534,11 @@
               {{ 'NetworkV2Profile.invalidEmail' | translate }}
             </mat-error>
           </mat-form-field>
-          <div class="flex justify-end" *ngIf="verifyEmail">
+          <div class="error-text" *ngIf="emailExists"
+            style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+            User with this email already exists in the system
+          </div>
+          <div class="flex justify-end" *ngIf="verifyEmail && !emailExists">
             <span class="get-otp" (click)="handleGenerateEmailOTP('email')">{{ 'NetworkV2Profile.getOTP' |
               translate}}</span>
           </div>
@@ -587,7 +599,11 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <div class="flex justify-end" *ngIf="verifyMobile">
+          <div class="error-text" *ngIf="phoneExists"
+            style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+            User with this mobile number already exists in the system
+          </div>
+          <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
             <span class="get-otp" (click)="handleGenerateOTP('phone')">{{ 'NetworkV2Profile.getOTP' | translate}}</span>
           </div>
         </div>
