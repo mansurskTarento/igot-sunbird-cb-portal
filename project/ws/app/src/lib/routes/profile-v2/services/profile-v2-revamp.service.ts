@@ -284,6 +284,9 @@ export class ProfileV2RevampService {
    * @param value - The value to search for
    */
   searchUserByField(filterField: string, value: string): Observable<any> {
+    if (filterField === 'email') {
+      value = value.toLowerCase()
+    }
     const payload = {
       request: {
         limit: 1,
