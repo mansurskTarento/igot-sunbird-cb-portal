@@ -526,7 +526,7 @@ export class ZohoFormService {
   // ===== Form Validation and Submission =====
   validateAndSubmitForm(): boolean {
     try {
-      const mandatoryFields = ['Contact Name', 'Email', 'Phone', 'Subject']
+      const mandatoryFields = ['Contact Name', 'Email', 'Phone', 'Subject', "Issues related to Training Plan and Comprehensive"]
       const form = document.forms.namedItem('zsWebToCase_120349000138968626') as HTMLFormElement
 
       if (!form) {
