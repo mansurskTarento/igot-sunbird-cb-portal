@@ -317,12 +317,13 @@ body {
     font-style: normal;
       font-weight: 400;
       line-height: normal;
+      margin-bottom: 0px !important;
 }
 
 .badge-progress-item .continue-btn {
   border-radius: 75px;
     border: 1px solid var(--Primary-KB-Primary-Light, #1B4CA1);
-    color: #1B4CA1;
+    color: #1B4CA1 !important;
   border-radius: 20px;
   padding: 6px 16px;
   font-size: 12px;
@@ -336,7 +337,7 @@ body {
   background: white;
     color: var(--Primary-KB-Primary-Light, #1B4CA1);
     text-align: center;
-  
+
     /* Button */
     font-family: Lato;
     font-size: 14px;
@@ -465,3 +466,6 @@ body {
 // .glow-orange {
 //   box-shadow: 0 0 30px #FBAC5B inset;
 // }
+.course-name {
+  font-size: 12px !important;
+}
