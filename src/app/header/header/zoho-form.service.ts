@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { HttpClient } from '@angular/common/http'
-const GET_USER_BASIC_DETAILS = '/apis/proxies/v8/user/profile/v1/basic'
 
 @Injectable({
   providedIn: 'root',
@@ -45,7 +43,6 @@ export class ZohoFormService {
 
   constructor(
     private configSvc: ConfigurationsService,
-    private http: HttpClient,
   ) {
     if (!this.userProfileData) {
       this.initializeUserData()
@@ -53,18 +50,7 @@ export class ZohoFormService {
   }
 
   private initializeUserData(): void {
-    this.http
-      .get(GET_USER_BASIC_DETAILS + '/' + this.configSvc.userProfileV2?.userId)
-      .subscribe({
-        next: (response: any) => {
-          this.userProfileData = response?.result?.response || null
-        },
-        error: () => {
-          if (this.configSvc?.userProfileV2) {
-            this.userProfileData = this.configSvc.userProfileV2
-          }
-        },
-      })
+      this.userProfileData = this.configSvc.unMappedUser
   }
 
   // ===== Issue Type Handler =====
@@ -466,25 +452,19 @@ export class ZohoFormService {
     }
   }
 
-  patchUserDataFromConfig(): void {
-    let userProfile = this.userProfileData
-    if (!userProfile && this.configSvc && this.configSvc.userProfileV2) {
-      userProfile = this.configSvc.userProfileV2
-    }
-
-    if (!userProfile) return
+   patchUserDataFromConfig(): void {
+    if (!this.userProfileData) return;
 
     const personalDetails =
-      userProfile['profileDetails']['personalDetails'] || {}
+      this.userProfileData['profileDetails']['personalDetails'] || {};
     const professionalDetails =
-      userProfile['profileDetails']['professionalDetails'] || {}
+      this.userProfileData['profileDetails']['professionalDetails'] || {};
 
     // Map user data directly from profile
     const userData = {
-      name: personalDetails['firstname'] || userProfile['firstName'] || '',
-      email:
-        personalDetails['primaryEmail'] || userProfile['primaryEmail'] || '',
-      phone: personalDetails['mobile'] || userProfile['mobile'] || '',
+      name: personalDetails['firstname'] || '',
+      email: personalDetails['primaryEmail'] || '',
+      phone: personalDetails['mobile'] || '',
       designation: professionalDetails?.length
         ? professionalDetails[0]['designation']
         : '',
