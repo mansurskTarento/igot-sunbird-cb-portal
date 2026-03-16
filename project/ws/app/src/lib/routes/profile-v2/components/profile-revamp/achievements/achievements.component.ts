@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core';
-import { achievement } from '../../../models/profile-revamp.model';
-import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialog, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
-import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import * as _ from 'lodash';
-import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core'
+import { achievement } from '../../../models/profile-revamp.model'
+import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialog, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
+import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
+import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import * as _ from 'lodash'
+import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
 
 @Component({
   selector: 'ws-app-achievements',
@@ -30,34 +30,33 @@ export class AchievementsComponent implements OnInit {
     private cdr: ChangeDetectorRef
   ) {
     if (this.data && this.data.userId) {
-      this.userId = data.userId;
+      this.userId = data.userId
       this.isPopup = true
-      this.isCurrentUser = data.isCurrentUser || false;
+      this.isCurrentUser = data.isCurrentUser || false
     }
   }
 
   ngOnInit() {
     if (this.isPopup) {
-      this.getAchievementsList();
+      this.getAchievementsList()
     } else {
       this.cdr.detectChanges()
     }
   }
-
+  // Moved this to Sprint 35
   //#region (functions)
-
-  getAchievementsList(userId?:any): void {
+  getAchievementsList(userId?: any): void {
     if (this.userId || userId) {
-      this.profileV2RevampSvc.fetchProfileEntries(this.userId || userId, 'achievement').subscribe({
+      this.profileV2RevampSvc.listAchievements().subscribe({
         next: (res: any) => {
           if (res) {
-            this.achievementsList = _.get(res, 'result.response.achievements', []);
+            this.achievementsList = _.get(res, 'result.search_results.data', [])
             this.cdr.detectChanges()
           }
         },
         error: (err: any) => {
           if (err) {
-            this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000);
+            this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000)
           }
         }
       })
@@ -65,18 +64,18 @@ export class AchievementsComponent implements OnInit {
   }
 
   openEditDialog(entry: any = {}): void {
-    if(this.isPopup) { 
-      this.dialogRef.close(entry);
+    if (this.isPopup) {
+      this.dialogRef.close(entry)
     } else {
-      this.openProfileEntryEditDialog.emit(entry);
+      this.openProfileEntryEditDialog.emit(entry)
     }
   }
 
   viewMore(achievement: any): void {
     if (achievement && achievement.showMore) {
-      achievement.showMore = false;
+      achievement.showMore = false
     } else {
-      achievement['showMore'] = true;
+      achievement['showMore'] = true
     }
   }
 
@@ -95,12 +94,12 @@ export class AchievementsComponent implements OnInit {
   }
 
   openUrl(url: string): void {
-    window.open(url, '_blank');
+    window.open(url, '_blank')
   }
 
   closePopup(): void {
-    if(this.isPopup) {
-      this.dialogRef.close();
+    if (this.isPopup) {
+      this.dialogRef.close()
     }
   }
 
@@ -111,10 +110,10 @@ export class AchievementsComponent implements OnInit {
   }
   //#endregion (functions)
   deleteAchievement(achievement: achievement): void {
-    if(this.isPopup) { 
-      this.dialogRef.close({achievement, action: 'delete'});
+    if (this.isPopup) {
+      this.dialogRef.close({ achievement, action: 'delete' })
     } else {
-      this.openProfileEntryDeleteDialog.emit(achievement);
+      this.openProfileEntryDeleteDialog.emit(achievement)
     }
   }
 }

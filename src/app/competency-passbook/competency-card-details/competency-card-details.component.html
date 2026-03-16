@@ -1,7 +1,8 @@
 <div class="flex flex-col gap-8 mobile-container">
     <!-- Breadcrumbs -->
     <div class="flex flex-row gap-1 items-center">
-        <div class="ws-mat-default-text font-semibold cursor-pointer" [routerLink]="['/page/competency-passbook/list']">{{'competencyCardDetails.passbookList' | translate}}</div>
+        <div class="ws-mat-default-text font-semibold cursor-pointer" [routerLink]="['/page/competency-passbook/list']">
+            {{'competencyCardDetails.passbookList' | translate}}</div>
         <mat-icon>navigate_next</mat-icon>
         <div class="">{{'competencyCardDetails.passbookDetails' | translate}}</div>
     </div>
@@ -11,30 +12,36 @@
             <div class="flex-1">
                 <div class="flex flex-col gap-2 justify-center">
                     <div class="text-2xl font-semibold header text-primary">{{ themeDetails?.[compentencyKey.vCompetencyTheme] }}</div>
-                    <div class="text-sm" *ngIf="updatedTime">{{'competencyCardDetails.lastUpdatedOn' | translate}} {{ updatedTime | date: 'MMM yyyy' }} </div>
+                    <div class="text-sm" *ngIf="updatedTime">{{'competencyCardDetails.lastUpdatedOn' | translate}} {{ updatedTime | date: 'MMM yyyy'
+                        }} </div>
                 </div>
             </div>
             <div class="flex justify-center items-center">
-                <img alt='' src="assets/icons/competency/{{ (themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral' ? 'behavioural' :  themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase()) }}-light.svg" class="stamp-img" alt="{{ themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() }} image" />
+                <img alt=''
+                    src="assets/icons/competency/{{ (themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral' ? 'behavioural' :  themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase()) }}-light.svg"
+                    class="stamp-img" alt="{{ themeDetails?.[compentencyKey.vCompetencyArea].toLowerCase() }} image" />
             </div>
         </div>
 
         <div class="chips-container">
             <div class="flex flex-col gap-3">
-                <div class="text-base font-semibold">{{'competencyCardDetails.competencySubTheme' | translate}} ({{ themeDetails?.subTheme?.length }})</div>
+                <div class="text-base font-semibold">{{'competencyCardDetails.competencySubTheme' | translate}} ({{ themeDetails?.subTheme?.length }})
+                </div>
                 <div class="flex flex-wrap gap-3">
-                    <div class="flex items-center text-center" *ngIf="!themeDetails?.subTheme || !themeDetails?.subTheme?.length" >{{'competencyCardDetails.noSubTheme' | translate}}</div>
+                    <div class="flex items-center text-center" *ngIf="!themeDetails?.subTheme || !themeDetails?.subTheme?.length">
+                        {{'competencyCardDetails.noSubTheme' | translate}}</div>
                     <ng-container *ngFor="let chip of themeDetails?.subTheme; let i = index">
                         <div class="chip rounded-full p-2 text-xs" [ngClass]="{'hide': ((isMobile) ? i > 2 : i > 9) && !viewMoreST}">
                             {{ chip }}
                         </div>
                     </ng-container>
                     <div class="flex items-center text-primary underline cursor-pointer text-xs"
-                     *ngIf="((isMobile) ? themeDetails?.subTheme?.length > 3 : themeDetails?.subTheme?.length > 10 )  && !viewMoreST" 
+                        *ngIf="((isMobile) ? themeDetails?.subTheme?.length > 3 : themeDetails?.subTheme?.length > 10 )  && !viewMoreST"
                         (click)="viewMoreST = !viewMoreST">
                         {{'competencyCardDetails.viewMore' | translate}}
                     </div>
-                    <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="viewMoreST" (click)="viewMoreST = !viewMoreST">
+                    <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="viewMoreST"
+                        (click)="viewMoreST = !viewMoreST">
                         {{'competencyCardDetails.viewLess' | translate}}
                     </div>
                 </div>
@@ -63,30 +70,45 @@
                         <div class="flex flex-col certificate-info p-4 gap-3">
                             <div class="flex flex-row">
                                 <div class="flex-1 course-name-div">
-                                    <div class="text-base font-semibold cursor-pointer" #courseName (click)="handleNavigate(eachCert)" [ngClass]="{'course-name': eachCert.courseEllipsis && eachCert.courseEllipsis === true}" title="{{ eachCert?.courseName }}" >{{ eachCert?.courseName }}</div>
-                                    <div class="text-xs font-light" *ngIf="eachCert?.identifier" >{{'competencyList.issued' | translate }} {{ eachCert?.lastIssuedOn | date: 'MMM y' }}</div>
+                                    <div class="text-base font-semibold cursor-pointer name-of-the-course" #courseName
+                                        (click)="handleNavigate(eachCert)"
+                                        [ngClass]="{'course-name': eachCert.courseEllipsis && eachCert.courseEllipsis === true}"
+                                        title="{{ eachCert?.courseName }}">{{ eachCert?.courseName }}</div>
+                                    <div class="flex gap-4 items-center pt-1">
+                                        <div class="text-xs font-light" *ngIf="eachCert?.identifier">{{'competencyList.issued' | translate }} {{
+                                            eachCert?.lastIssuedOn | date: 'MMM y' }}
+                                        </div>
+                                        <!-- Moved this to Sprint 35 -->
+                                        <!-- <div class="source text-xs">
+                                            {{'competencyList.source' | translate }} : {{'competencyList.igot' | translate }}
+                                        </div> -->
+                                    </div>
                                 </div>
                                 <div class="flex justify-center">
                                     <ng-container *ngIf="eachCert?.loading">
-                                        <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'32px'" [height]="'32px'"></ws-widget-skeleton-loader>
+                                        <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'32px'"
+                                            [height]="'32px'"></ws-widget-skeleton-loader>
                                     </ng-container>
                                     <ng-container *ngIf="!eachCert?.loading && !eachCert.error && eachCert?.identifier">
-                                        <mat-icon class="icon cursor-pointer" (click)="getCertificateSVG(eachCert, 'DOWNLOAD')" >arrow_downward</mat-icon>
-                                        <mat-icon class="icon cursor-pointer share-icon" (click)="getCertificateSVG(eachCert, 'SHARE')">share</mat-icon>
+                                        <mat-icon class="icon cursor-pointer"
+                                            (click)="getCertificateSVG(eachCert, 'DOWNLOAD')">arrow_downward</mat-icon>
+                                        <mat-icon class="icon cursor-pointer share-icon"
+                                            (click)="getCertificateSVG(eachCert, 'SHARE')">share</mat-icon>
                                     </ng-container>
                                 </div>
                             </div>
                             <div class="flex justify-center">
-                                <ng-container >
+                                <ng-container>
                                     <ng-container *ngIf="!eachCert.error && eachCert?.identifier">
                                         <div class="flex justify-center items-center img-div img-container">
-                                            
-                                             <ng-container  *ngIf="!eachCert?.printURI">
-                                                <img [src]="'/assets/icons/toc/no-certificate.svg'"  alt="{{ eachCert?.courseName }} certificate" />
-                                             </ng-container>
-                                             <ng-container  *ngIf="!eachCert?.loading && eachCert?.printURI">
-                                                <img [src]="eachCert?.printURI | pipeSafeSanitizer: 'url'"  alt="{{ eachCert?.courseName }} certificate" />
-                                             </ng-container>
+
+                                            <ng-container *ngIf="!eachCert?.printURI">
+                                                <img [src]="'/assets/icons/toc/no-certificate.svg'" alt="{{ eachCert?.courseName }} certificate" />
+                                            </ng-container>
+                                            <ng-container *ngIf="!eachCert?.loading && eachCert?.printURI">
+                                                <img [src]="eachCert?.printURI | pipeSafeSanitizer: 'url'"
+                                                    alt="{{ eachCert?.courseName }} certificate" />
+                                            </ng-container>
                                             <div [ngClass]="{'view-certificate': eachCert?.loading, 'view-cert': !eachCert?.loading}">
                                                 <button type="button" (click)="getCertificateSVG(eachCert)">
                                                     <span *ngIf="!eachCert?.loading">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
@@ -111,11 +133,14 @@
                     <ng-container *ngIf="themeDetails?.courseSubThemes?.length">
                         <div class="chips-card flex flex-wrap gap-3">
                             <ng-container *ngFor="let subTheme of themeDetails.courseSubThemes[i]; let j = index">
-                                <div class="chip rounded-full p-2 text-xs" [ngClass]="{'hide': (j > 1 && !eachCert?.viewMore), 'chip-ellipsis': !eachCert?.viewMore && themeDetails.courseSubThemes[i]?.length > 1 }" [title]="subTheme" >
+                                <div class="chip rounded-full p-2 text-xs"
+                                    [ngClass]="{'hide': (j > 1 && !eachCert?.viewMore), 'chip-ellipsis': !eachCert?.viewMore && themeDetails.courseSubThemes[i]?.length > 1 }"
+                                    [title]="subTheme">
                                     {{ subTheme }}
                                 </div>
                             </ng-container>
-                            <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="themeDetails.courseSubThemes[i]?.length > 2 && !eachCert.viewMore" (click)="handleViewMore(eachCert)">
+                            <div class="flex items-center text-primary underline cursor-pointer text-xs"
+                                *ngIf="themeDetails.courseSubThemes[i]?.length > 2 && !eachCert.viewMore" (click)="handleViewMore(eachCert)">
                                 {{'competencyCardDetails.viewMore' | translate}}
                             </div>
                             <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="eachCert?.viewMore"

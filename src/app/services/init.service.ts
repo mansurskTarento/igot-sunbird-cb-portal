@@ -34,6 +34,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '../../../library/ws-widget/collection/src/public-api'
+import { GlobalService } from './global.service'
 declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */
@@ -74,7 +75,7 @@ export class InitService {
   }
 
   isAnonymousTelemetry = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-    || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
+    || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
 
   constructor(
     private logger: LoggerService,
@@ -90,6 +91,7 @@ export class InitService {
     private enrollSvc: WidgetEnrollService,
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
+    private globalService: GlobalService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     // private router: Router,
@@ -209,7 +211,7 @@ export class InitService {
 
   get isAnonymousTelemetryRequired(): boolean {
     this.isAnonymousTelemetry = window.location.href.includes('/public/')
-      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
+      || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
     return this.isAnonymousTelemetry
   }
 
@@ -228,6 +230,7 @@ export class InitService {
     await this.profileNudgeConfig()
     await this.themeOverrideConfig()
     await this.netCoreConfig()
+    await this.globalConfigData()
 
     // const authenticated = await this.authSvc.initAuth()
     // if (!authenticated) {
@@ -240,7 +243,7 @@ export class InitService {
     try {
       const path = window.location.pathname
       const isPublic = window.location.href.includes('/public/')
-        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/crp/')
+        || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
@@ -297,6 +300,7 @@ export class InitService {
         window.location.href.includes('/public/') ||
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
+        window.location.href.includes('/achievements') ||
         window.location.href.includes('/viewer')
       )
     ) {
@@ -432,6 +436,20 @@ export class InitService {
     return publicConfig
   }
 
+  private async globalConfigData(): Promise<NsInstanceConfig.IConfig> {
+    let payload = {
+      "request": {
+        "type": "page",
+        "subType": "globalConfig",
+        "action": "page-configuration",
+        "component": "portal", "rootOrgId": "*"
+      }
+    }
+    const publicConfig: any = await this.globalService.globalConfigReadData(payload).toPromise()
+    this.configSvc.globalConfig = publicConfig.globalConfig
+    return publicConfig
+  }
+
   private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
     // const publicConfig: any = await this.http
     //   .get<any>(`${this.baseUrl}/netcore.json`)
@@ -489,6 +507,7 @@ export class InitService {
         if (userProfile.rootOrgId) {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe((orgData) => {
             //console.log('orgData--', orgData)
+            this.configSvc.orgReadData = orgData
             if (orgData && orgData['netcoreDisabled']) {
 
             } else {

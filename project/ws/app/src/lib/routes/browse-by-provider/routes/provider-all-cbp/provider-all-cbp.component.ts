@@ -4,8 +4,8 @@ import { Subscription, Subject, Observable } from 'rxjs'
 import { ActivatedRoute } from '@angular/router'
 // tslint:disable
 import _ from 'lodash'
-import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
-import { debounceTime, switchMap, takeUntil } from 'rxjs/operators';
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
+import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
 import { TranslateService } from '@ngx-translate/core'
 import { NsContent } from '@sunbird-cb/collection'
 
@@ -31,17 +31,13 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
   searchQuery = ''
   primaryCategory = NsContent.EPrimaryCategory
   searchForm: UntypedFormGroup | undefined
-  disableLoadMore =  false
+  disableLoadMore = false
   private unsubscribe = new Subject<void>()
-  searchReq = {
+  searchReq: any = {
     request: {
       filters: {
-        primaryCategory: [
-          this.primaryCategory.COURSE,
-          this.primaryCategory.BLENDED_PROGRAM,
-          this.primaryCategory.PROGRAM,
-          this.primaryCategory.STANDALONE_ASSESSMENT,
-          this.primaryCategory.CURATED_PROGRAM
+        contentType: [
+          this.primaryCategory.COURSE
         ],
         source: [''],
       },
@@ -71,11 +67,16 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.displayLoader = this.browseProviderSvc.isLoading()
-    if(this.activatedRoute.parent){
+    if (this.activatedRoute.parent) {
       this.paramSubscription = this.activatedRoute.parent.params.subscribe(async (params: any) => {
         this.provider = _.get(params, 'provider')
+        let orgId = _.get(params, 'orgId')
         this.stateData = { param: this.provider, path: 'all-CBP' }
-        this.searchReq.request.filters.source.splice(0,1, this.provider)
+        this.searchReq.request.filters.source.splice(0, 1, this.provider)
+        this.searchReq.request.filters = {
+          ...this.searchReq.request.filters,
+          "secureSettings.organisation": orgId
+        }
         this.getAllCbps()
       })
     }
@@ -96,14 +97,14 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
 
   getAllCbps(req?: any) {
     const request = req || this.searchReq
-    this.browseProviderSvc.fetchSearchData(request).subscribe((res: any) => {
+    this.browseProviderSvc.fetchSearchV4Data(request).subscribe((res: any) => {
       // console.log('res ::', res)
-      if(res.result.count === 0) {
+      if (res.result.count === 0) {
         this.disableLoadMore = true
         this.cbps = []
         this.totalCount = res.result.count
       }
-      if (res && res.result &&  res.result && res.result.content) {
+      if (res && res.result && res.result && res.result.content) {
         this.cbps = res.result.content
         this.totalCount = res.result.count
         if ((this.page * this.defaultLimit) >= this.totalCount) {
@@ -133,9 +134,9 @@ export class ProviderAllCbpComponent implements OnInit, OnDestroy {
     this.getAllCbps()
     if ((this.page * this.defaultLimit) >= this.totalCount) {
       this.disableLoadMore = true
-      } else {
-        this.disableLoadMore = false
-      }
+    } else {
+      this.disableLoadMore = false
+    }
   }
 
   ngOnDestroy() {

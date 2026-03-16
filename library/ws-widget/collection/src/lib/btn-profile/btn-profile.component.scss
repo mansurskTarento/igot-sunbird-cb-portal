@@ -33,32 +33,36 @@
 .text-new {
     line-height: normal;
 }
+
 .border-bottom {
-    border-bottom: 1px solid rgba(0,0,0,0.08);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
 }
+
 section {
     .pfname {
         p {
             margin-bottom: 0 !important
         }
     }
-    
+
     .portal-name {
         vertical-align: super;
         color: #000000 !important;
     }
 }
+
 ::ng-deep.mat-menu-content {
     padding-bottom: 0 !important;
     background-color: #fff;
+
     .mat-menu-item {
         line-height: 30px;
         height: 44px;
         padding: 0 6px;
         font: 400 14px/21px Lato !important
-        
     }
 }
+
 ::ng-deep.circle-m {
     width: 40px !important;
     height: 40px !important;
@@ -69,7 +73,7 @@ section {
     }
 }
 
-.csicon { 
+.csicon {
     font-size: 22px !important;
 }
 

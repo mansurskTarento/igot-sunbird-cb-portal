@@ -6,13 +6,12 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { RootService } from '../../../../../src/app/component/root/root.service'
-import { TStatus, ViewerDataService } from './viewer-data.service'
 import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
+import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService, TStatus, ViewerDataService } from '@sunbird-cb/toc'
 
 
 export enum ErrorType {
@@ -216,7 +215,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (!this.hierarchyData || !this.hierarchyData.children) return
 
     // Create new references for change detection
-    this.hierarchyData = { 
+    this.hierarchyData = {
       ...this.hierarchyData,
       children: this.hierarchyData.children.map((child: any) => {
         if (child.primaryCategory === 'Milestone' && child.identifier) {
@@ -278,13 +277,91 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       } else {
         this.hierarchyData = contentData.result.content
         this.leafNodesCount = contentData.result.content.leafNodesCount
-        // Map progress data for regular courses (like we do for Learning Pathways)
-        this.tocV2Svc.mapContentHierarchyProgressUpdate(this.hierarchyData, this.enrollmentList?.courses)
-        // Build hashmap for regular courses (non-Learning Pathway)
-        // This ensures hierarchyMapData is populated for child components like top-bar
-        this.tocSvc.callHirarchyProgressHashmap(this.hierarchyData)
+
+        // CRITICAL: For regular courses, call manipulateHierarchyData which does the mapping
+        await this.manipulateHierarchyData()
+
+
+        // manipulateHierarchyData created the hashmap, but we need to add the root entry
+        // and get completion data from enrollment list (like TOC does)
+        if (this.enrollmentList && this.enrollmentList.courses && this.collectionId) {
+          const enrolledCourse = this.enrollmentList.courses.find((c: any) =>
+            c.identifier === this.collectionId ||
+            c.content?.identifier === this.collectionId ||
+            c.courseId === this.collectionId
+          )
+
+
+          if (enrolledCourse) {
+            // Add root course entry to hashmap with actual completion data from enrollment
+            if (!this.tocSvc.hashmap[this.collectionId]) {
+              this.tocSvc.hashmap[this.collectionId] = {
+                identifier: this.collectionId,
+                leafNodesCount: this.leafNodesCount,
+                leafNodes: this.hierarchyData?.leafNodes || [],
+                completionPercentage: enrolledCourse.completionPercentage || 0,
+                completionStatus: enrolledCourse.status || 0,
+                name: this.hierarchyData?.name || '',
+                primaryCategory: this.hierarchyData?.primaryCategory || '',
+                courseCategory: this.hierarchyData?.courseCategory || '',
+                mimeType: this.hierarchyData?.mimeType || '',
+                artifactUrl: this.hierarchyData?.artifactUrl || null,
+                contentType: this.hierarchyData?.contentType || '',
+                expectedDuration: this.hierarchyData?.expectedDuration || 0,
+                isLocked: false,
+                isCollection: true,
+                isModule: false,
+                isResource: false,
+                isMilestone: false,
+                isLearningPathway: false,
+              }
+            }
+
+            // Update completion data for leaf nodes from enrollment's contentStatus
+            // Check multiple sources: contentList, langContentStatus, or contentStatus
+            let contentStatusMap: any = {}
+
+            // Priority 1: Build from contentList array (most reliable)
+            if (enrolledCourse.contentList && Array.isArray(enrolledCourse.contentList)) {
+              enrolledCourse.contentList.forEach((item: any) => {
+                if (item.contentId && item.status !== undefined) {
+                  contentStatusMap[item.contentId] = item.status
+                }
+              })
+            }
+
+            // Priority 2: Check langContentStatus (for multilingual courses)
+            if (Object.keys(contentStatusMap).length === 0 && enrolledCourse.langContentStatus) {
+              const lang = enrolledCourse.recent_language || 'english'
+              if (enrolledCourse.langContentStatus[lang]) {
+                contentStatusMap = enrolledCourse.langContentStatus[lang]
+              }
+            }
+
+            // Priority 3: Fall back to contentStatus
+            if (Object.keys(contentStatusMap).length === 0 && enrolledCourse.contentStatus) {
+              contentStatusMap = enrolledCourse.contentStatus
+            }
+
+            // Apply the completion data to leaf nodes
+            if (Object.keys(contentStatusMap).length > 0) {
+              Object.keys(contentStatusMap).forEach((contentId: string) => {
+                if (this.tocSvc.hashmap[contentId]) {
+                  const status = contentStatusMap[contentId]
+                  this.tocSvc.hashmap[contentId].completionStatus = status || 0
+                  this.tocSvc.hashmap[contentId].status = status || 0
+                  this.tocSvc.hashmap[contentId].completionPercentage = status === 2 ? 100 : 0
+
+                }
+              })
+            }
+
+          }
+        }
+
+        // Set hierarchyMapData for child components
+        this.hierarchyMapData = { ...this.tocSvc.hashmap }
       }
-      await this.manipulateHierarchyData()
       this.resetAndFetchTocStructure()
       // Recompute leafNodesCount after hierarchy has been fully manipulated
       try {
@@ -322,11 +399,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
             // Initialize local hierarchyMapData for child components
             this.hierarchyMapData = { ...this.tocSvc.hashmap }
-            console.debug('viewer.component wrote leafNodesCount to tocSvc.hashmap', {
-              mlId,
-              writtenLeafNodesCount: this.leafNodesCount,
-              hashmapKeys: Object.keys(this.tocSvc.hashmap || {}),
-            })
           }
         } catch (_e) {
           // ignore
@@ -439,7 +511,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       if (this.error && this.error.errorType === this.errorType.previewUnAuthorised) {
       }
     })
-    
+
     // Subscribe to hashmap updates for real-time progress synchronization
     // Use the observable pattern (hashmapUpdated$) for proper change detection
     this.hashmapUpdatedSubscription = this.tocSvc.hashmapUpdated$.subscribe((updatedHashmap: any) => {
@@ -447,12 +519,12 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         // Update local hierarchyMapData to trigger Angular change detection
         // This ensures child components (viewer-top-bar, toc) receive updated data
         this.hierarchyMapData = { ...this.tocSvc.hashmap }
-        
+
         if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
           // Sync lock status from hashmap to hierarchyData content tree
           this.syncMilestoneLockStatus()
         }
-        
+
         // Force change detection to update UI
         this.changeDetector.detectChanges()
         console.log('🔄 [VIEWER] Hashmap updated - hierarchyMapData refreshed for child components')
@@ -464,7 +536,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     this.progressUpdateSubscription = this.viewerUtilSvc.markAsCompleteSubject.subscribe(() => {
       if (this.contentReadData?.courseCategory === NsContent.ECourseCategory.LEARNING_PATHWAY) {
         console.log('🔄 [VIEWER] Content completed - recalculating parent progress and milestone locks')
-        
+
         // CRITICAL: Recalculate parent progress when content completes
         // This ensures that when videos/audios complete, the parent course progress updates
         // which then allows milestone assessments to unlock
@@ -477,7 +549,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
               name: currentResource.name,
               parent: currentResource.parent
             })
-            
+
             // Recalculate parent progress recursively
             if (currentResource.parent && this.tocSvc.hashmap[currentResource.parent]) {
               this.recalculateParentProgressRecursive(currentResource.parent)
@@ -488,22 +560,22 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         } catch (error) {
           console.error('❌ [VIEWER] Error recalculating parent progress:', error)
         }
-        
+
         // Hashmap already updated by viewer-util.service after progress update
         // Just recompute milestone locking with existing data
         const isEnrolled = true
         this.tocSvc.computeMilestoneLockingStatus(isEnrolled)
-        
+
         // Sync lock status from hashmap to content tree
         this.syncMilestoneLockStatus()
-        
+
         // Force change detection
         this.changeDetector.detectChanges()
-        
+
         console.log('✅ [VIEWER] Parent progress recalculated and milestone locks recomputed')
       }
     })
-    
+
     // if (this.collectionId) {
     //   if (!this.forPreview) {
     //     const enrollCourseData = this.enrolledCourseData
@@ -595,7 +667,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         completionPercentage: child.completionPercentage,
         isComplete: isComplete ? '✅' : '❌'
       })
-      
+
       if (isComplete) {
         completedCount++
       }
@@ -605,20 +677,10 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     const newCompletionPercentage = Math.round((completedCount / totalCount) * 100)
     const newCompletionStatus = newCompletionPercentage === 100 ? 2 : (newCompletionPercentage > 0 ? 1 : 0)
 
-    console.log('📊 [VIEWER PROGRESS] Result:', {
-      parent: parentData.name,
-      completedCount,
-      totalCount,
-      newPercentage: newCompletionPercentage,
-      oldPercentage: parentData.completionPercentage,
-      newStatus: newCompletionStatus,
-      oldStatus: parentData.completionStatus
-    })
-
     // Update parent's progress if it changed
-    if (parentData.completionPercentage !== newCompletionPercentage || 
-        parentData.completionStatus !== newCompletionStatus) {
-      
+    if (parentData.completionPercentage !== newCompletionPercentage ||
+      parentData.completionStatus !== newCompletionStatus) {
+
       parentData.completionPercentage = newCompletionPercentage
       parentData.completionStatus = newCompletionStatus
       parentData.status = newCompletionStatus
@@ -731,7 +793,17 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
   async manipulateHierarchyData() {
     if (!this.forPreview) {
-      this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
+      // First, map completion percentage to hierarchy structure
+      await this.tocSvc.mapCompletionPercentageProgram(this.hierarchyData, this.enrollmentList.courses, this.collectionId || '')
+
+      // Then check and update module-wise data
+      this.tocSvc.checkModuleWiseData(this.hierarchyData)
+
+      // CRITICAL: Create the initial hashmap which will contain the completion data
+      // This is what the TOC page does - it creates hashmap after mapping completion
+      this.tocSvc.createHirarchyProgressHashmap(this.hierarchyData)
+
+      this.content = this.hierarchyData
 
     } else {
       this.loadAllHierarchyData = true

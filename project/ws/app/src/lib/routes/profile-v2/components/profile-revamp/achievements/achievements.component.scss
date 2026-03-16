@@ -1,7 +1,7 @@
 .popup-header {
   padding: 15px 24px;
   border-bottom: 2px solid #00000014;
-  
+
   .header-title {
     color: #000000DE;
     /* stylelint-disable */
@@ -45,6 +45,26 @@
       width: calc(100% - 20px);
     }
 
+    .status {
+      text-transform: uppercase;
+      padding: 3px 10px;
+      color: white;
+      border-radius: 20px;
+      font-size: 12px;
+    }
+
+    .rejected {
+      background-color: #F3962F
+    }
+
+    .approved {
+      background-color: #1d8922;
+    }
+
+    .pending {
+      background-color: rgb(209, 57, 36);
+    }
+
     .edit-icon {
       color: #1B4CA1;
       width: 16px;
@@ -53,6 +73,7 @@
       pointer-events: all;
       cursor: pointer;
     }
+
     .delete-icon {
       color: rgb(209, 57, 36);
       width: 16px;
@@ -106,45 +127,45 @@
 }
 
 .description {
-    color: #000000;
-    /* stylelint-disable */
-    font: 400 12px Lato;
-    /* stylelint-enable */
-    height: 30px;
-    overflow: hidden;
-    word-break: break-word;
-  }
+  color: #000000;
+  /* stylelint-disable */
+  font: 400 12px Lato;
+  /* stylelint-enable */
+  height: 30px;
+  overflow: hidden;
+  word-break: break-word;
+}
 
 .extend-description {
-    // overflow: auto !important;
-    // height: 100px !important;
-    height: fit-content !important;
-  }
+  // overflow: auto !important;
+  // height: 100px !important;
+  height: fit-content !important;
+}
 
-  .view-more {
+.view-more {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 800 12px Lato;
+  /* stylelint-enable */
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.linke {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+  cursor: pointer;
+  pointer-events: all;
+
+  .link-icon {
     color: #1B4CA1;
-    /* stylelint-disable */
-    font: 800 12px Lato;
-    /* stylelint-enable */
-    cursor: pointer;
-    pointer-events: all;
+    width: 13px;
+    height: 13px;
+    font-size: 13px;
   }
-
-  .linke {
-    color: #1B4CA1;
-    /* stylelint-disable */
-    font: 700 14px Lato;
-    /* stylelint-enable */
-    cursor: pointer;
-    pointer-events: all;
-
-    .link-icon {
-      color: #1B4CA1;
-      width: 13px;
-      height: 13px;
-      font-size: 13px;
-    }
-  }
+}
 
 .document-card {
   border: 1px solid #00000014;

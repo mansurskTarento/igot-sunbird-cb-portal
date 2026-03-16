@@ -1,6 +1,7 @@
 .user-details {
   scroll-margin-top: 100px;
 }
+
 .profileLeftSection {
   width: 858px;
   max-width: 100vw;
@@ -12,6 +13,7 @@
   .profile {
     position: relative;
     background-color: #FFFFFF;
+
     .cover-picture {
       width: 100%;
       height: 215px;
@@ -39,6 +41,7 @@
       .profile-info {
         width: calc(100% - 140px);
       }
+
       .profile-picture {
         height: 100px;
         width: 100px;
@@ -121,7 +124,7 @@
       width: 84px;
       height: 84px;
     }
-      
+
   }
 }
 
@@ -161,7 +164,7 @@
     background-color: #1B4CA1;
     color: #FFFFFF !important;
 
-    .route-card-icon { 
+    .route-card-icon {
       color: #FFFFFF !important;
       filter: brightness(0) invert(1);
     }
@@ -199,13 +202,11 @@
 .dividing-line {
   width: 150px;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    #FFFFFF00 0%,
-    #F3962F ,
-    #F3962F ,
-    #FFFFFF00 100%
-  );
+  background: linear-gradient(90deg,
+      #FFFFFF00 0%,
+      #F3962F,
+      #F3962F,
+      #FFFFFF00 100%);
   margin: 16px 0 10px 0;
 }
 
@@ -274,40 +275,45 @@
 .progress-wrapper {
   position: relative;
   margin-top: -7px;
+
   path {
     stroke-linecap: round;
     stroke-width: 6;
   }
+
   .grey {
     stroke: #e5e5e5;
   }
+
   .progress-clr {
     stroke: rgb(73, 201, 81);
     stroke-dasharray: 248;
     stroke-dashoffset: var(--i);
   }
-  .user-img{
+
+  .user-img {
+    position: absolute;
+    top: 12px;
+    left: 7px;
+
+    span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 11px;
+      opacity: 1;
+      background-color: white;
+      width: 63px;
       position: absolute;
-      top: 12px;
-      left: 7px;
-      span {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 11px;
-        opacity: 1;
-        background-color: white;
-        width: 63px;
-        position: absolute;
-        top: 71px;
-        left: 12px;
-        height: 21px;
-        color: #000000DE;
-        /* stylelint-disable */
-        font: 400 12px Lato;
-        /* stylelint-enable */
-        text-align: center;
-      }
+      top: 71px;
+      left: 12px;
+      height: 21px;
+      color: #000000DE;
+      /* stylelint-disable */
+      font: 400 12px Lato;
+      /* stylelint-enable */
+      text-align: center;
+    }
   }
 
   .other-user-img {
@@ -346,7 +352,7 @@
 
 .disable-button {
   opacity: 0.5;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 .not-my-user-container {
@@ -407,11 +413,11 @@
 }
 
 .connection-sent {
-    border: 1px solid #999999 !important;
-    color: #999999 !important;
-    pointer-events: none;
-    height: 30px;
-    border-radius: 15px;
+  border: 1px solid #999999 !important;
+  color: #999999 !important;
+  pointer-events: none;
+  height: 30px;
+  border-radius: 15px;
 }
 
 .not-my-user-menu {
@@ -476,7 +482,7 @@
   font: 700 14px Lato;
   /* stylelint-enable */
   color: #1B4CA1 !important;
-  
+
   .connect-icon {
     width: 24px;
     height: 24px;
@@ -490,4 +496,12 @@
     margin-bottom: 20px;
     background-color: #FFFFFF;
   }
+}
+
+.link-to-passbook {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 600 14px Lato;
+  /* stylelint-enable */
+  cursor: pointer;
 }

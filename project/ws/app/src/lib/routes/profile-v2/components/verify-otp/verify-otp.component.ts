@@ -48,7 +48,7 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
         clearInterval(this.interval)
         this.showResendOTP = true
       }
-    },                          1000)
+    }, 1000)
   }
 
   handleVerifyOTP(): void {
@@ -60,33 +60,33 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
   }
 
   verifyEmailOTP(): void {
-    this.otpService.verifyEmailOTP(this.otpEntered, this.data.value)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
-      this.handleCloseModal()
-      this.otpVerified.emit({type: 'email', token: _res.result.contextToken})
-    }, (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.matSnackbar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+    this.otpService.verifyEmailOTPV4(this.otpEntered, this.data.value)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
         this.handleCloseModal()
-      }
-    })
+        this.otpVerified.emit({ type: 'email', token: _res.result.contextToken, otp: this.otpEntered })
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackbar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+          this.handleCloseModal()
+        }
+      })
   }
 
   verifyMobileOTP(): void {
-    this.otpService.verifyOTP(this.otpEntered, this.data.value)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
-      this.handleCloseModal()
-      this.otpVerified.emit({type: 'mobile'})
-    }, (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.matSnackbar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+    this.otpService.verifyOTPV4(this.otpEntered, this.data.value)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
         this.handleCloseModal()
-      }
-    })
+        this.otpVerified.emit({ type: 'mobile', otp: this.otpEntered })
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackbar.open(_.get(error, 'error.params.errmsg') || this.handleTranslateTo('OTPVerifyFailed'))
+          this.handleCloseModal()
+        }
+      })
   }
 
   handleCloseModal(): void {

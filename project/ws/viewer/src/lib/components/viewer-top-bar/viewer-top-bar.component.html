@@ -36,11 +36,16 @@
       <div class="flex flex-1 flex-col  margin-right-l progress-container"
         *ngIf="collectionId && hierarchyMapData && !loadingOverallPRogress && !forPreview && !isPreAssessment ">
         <div class="flex flex-row justify-between w-ful">
-          <div class="flex items-center mb-2">
+          <div class="flex items-center mb-2"  *ngIf="baseContentReadData?.courseCategory !== 'Learning Pathway'">
             <span class="mat-body-2 mr-2">{{'playerbrief.items' | translate}}
               ({{completedCount}}/{{overallLeafNodes}})</span>
             <mat-icon class="cursor-pointe infoIcon"
               matTooltip="{{'playerbrief.topProgress' | translate}}">info_outline</mat-icon>
+          </div>
+          <div class="flex items-center mb-2"  *ngIf="baseContentReadData?.courseCategory === 'Learning Pathway'">
+            <span class="mat-body-2 mr-2">Progress</span>
+            <mat-icon class="cursor-pointe infoIcon"
+              matTooltip="Your progress updates only when mandatory courses and assessments are completed (Updates within a minute)">info_outline</mat-icon>
           </div>
           <span class="mat-body-2"> {{overallProgress}}%</span>
         </div>

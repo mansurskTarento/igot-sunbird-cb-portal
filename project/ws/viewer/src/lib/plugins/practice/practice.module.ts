@@ -9,7 +9,7 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/utils-v2'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import {
-  BtnFullscreenModule
+    BtnFullscreenModule
 } from '@sunbird-cb/collection'
 import { ResultComponent } from './components/result/result.component'
 import { FillInTheBlankComponent } from './components/question/fitb/fitb.component'
@@ -46,6 +46,10 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
 import { NbspModule } from '@sunbird-cb/consumption'
+import { CaResultsViewComponent } from './components/ca-results-view/ca-results-view.component'
+import { OverallResultViewComponent } from './components/overall-result-view/overall-result-view.component'
+import { SectionResultsViewComponent } from './components/section-results-view/section-results-view.component'
+import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
 @NgModule({
     declarations: [
         FillInTheBlankComponent,
@@ -66,6 +70,9 @@ import { NbspModule } from '@sunbird-cb/consumption'
         AssessmentPerformanceInsightSummaryComponent,
         FinalAssessmentPopupComponent,
         QuestionSafeUrlPipe,
+        CaResultsViewComponent,
+        OverallResultViewComponent,
+        SectionResultsViewComponent,
     ],
     imports: [
         CommonModule,
@@ -93,8 +100,9 @@ import { NbspModule } from '@sunbird-cb/consumption'
         TranslateModule,
         MatMenuModule,
         MatSelectModule,
+        MatLegacyTabsModule,
         NbspModule
-        
+
     ],
     exports: [
         PracticeComponent,

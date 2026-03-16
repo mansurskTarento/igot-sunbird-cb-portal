@@ -1338,7 +1338,7 @@ $title-line-count: 2;
       background-color: rgba(29, 137, 35, 0.16);
       border-radius: 16px;
     }
-    
+
     .video-icon {
       opacity: 1;
       color: rgba(239, 149, 30, 1);
@@ -1936,6 +1936,7 @@ $title-line-count: 2;
   font-size: 12px !important;
   color: #FFFFFFF2 !important;
 }
+
 .knowledge-level-container {
   // margin-left: auto;
   flex-shrink: 0;
@@ -1954,7 +1955,7 @@ $title-line-count: 2;
   line-height: 16px;
   white-space: nowrap;
   max-width: 100px;
-  
+
   .level-text {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1986,4 +1987,12 @@ $title-line-count: 2;
 
 .level-badge svg {
   flex-shrink: 0;
+}
+
+.cbp-primary {
+  border-radius: 2px;
+  border: 1px solid #1B4CA1;
+  background-color: #1B4CA1 !important;
+  color: rgba(255, 255, 255, 1) !important;
+  opacity: 1;
 }

@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { environment } from 'src/environments/environment'
 import { Subscription, timer } from 'rxjs'
 import { Storage } from './SCORMAdapter/storage'
-import { AppTocService } from '@sunbird-cb/toc'
+import { AppTocService, ViewerUtilService } from '@sunbird-cb/toc'
 /* tslint:enable */
 import { WidgetContentService } from '@sunbird-cb/toc'
 
@@ -68,6 +68,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private loggerSvc: LoggerService,
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
+    private viewerUtilSvc: ViewerUtilService,
   ) {
     (window as any).API = this.scormAdapterService
     // if (window.addEventListener) {
@@ -99,6 +100,27 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
         this.scormAdapterService.scormInitialized$.subscribe(value => {
           this.playScormContentFlag = value
+          // After loadDataV2 completes (LMSPositive/LMSNegative = data loaded from server),
+          // sync the stored completion status into tocSvc.hashmap so the top-bar shows
+          // correct progress on initial load.
+          if (value !== scormLMSStatus.LMSWating && this.htmlContent) {
+            const storedStatus = this.store.getItem('completionStatus')
+            const storedPercentage = this.store.getItem('completionPercentage')
+            const completionStatus = Number(storedStatus) || 0
+            const completionPercentage = Number(storedPercentage) || 0
+            if (completionStatus > 0 && this.tocSvc.hashmap && this.tocSvc.hashmap[this.htmlContent.identifier]) {
+              const currentStatus = this.tocSvc.hashmap[this.htmlContent.identifier]['completionStatus'] || 0
+              if (completionStatus > currentStatus) {
+                this.tocSvc.hashmap[this.htmlContent.identifier]['completionPercentage'] = completionPercentage
+                this.tocSvc.hashmap[this.htmlContent.identifier]['completionStatus'] = completionStatus
+                this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+                if (this.tocSvc.triggerMilestoneLockUpdate) {
+                  this.tocSvc.triggerMilestoneLockUpdate()
+                }
+                this.viewerUtilSvc.markAsCompleteSubject.next(true)
+              }
+            }
+          }
         })
       }
     }
@@ -179,6 +201,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             this.tocSvc.hashmap[htmlContent.identifier]['completionPercentage'] = req.completionPercentage
             this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] = req.status
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+            if (this.tocSvc.triggerMilestoneLockUpdate) {
+              this.tocSvc.triggerMilestoneLockUpdate()
+            }
+            this.viewerUtilSvc.markAsCompleteSubject.next(true)
           }
         }
         // this.store.clearAll()
