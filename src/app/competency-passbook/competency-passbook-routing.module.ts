@@ -2,8 +2,8 @@ import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 
 import { CompetencyPassbookComponent } from './competency-passbook/competency-passbook.component'
-import { CompetencyListComponent } from './competency-list/competency-list.component'
-import { CompetencyCardDetailsComponent } from './competency-card-details/competency-card-details.component'
+import { BaseCompetencyListComponent } from './base-competency-list/base-competency-list.component'
+import { BaseCompetencyCardDetailsComponent } from './base-competency-card-details/base-competency-card-details.component'
 
 const routes: Routes = [
   {
@@ -12,11 +12,11 @@ const routes: Routes = [
     children: [
       {
         path: 'list',
-        component: CompetencyListComponent,
+        component: BaseCompetencyListComponent,
       },
       {
         path: 'details',
-        component: CompetencyCardDetailsComponent,
+        component: BaseCompetencyCardDetailsComponent,
       },
     ],
   },

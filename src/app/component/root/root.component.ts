@@ -277,7 +277,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       // Extract fragment from URL
       const fragment = this.route.snapshot.fragment || ''
       // Initialize mandatory details from common data service
-      if (!['mandatorySection', 'orgDetails'].includes(fragment)) {
+      if (this.configSvc?.unMappedUser && !['mandatorySection', 'orgDetails'].includes(fragment)) {
         this.commonDataSvc.mandatoryDetails(isPlayer)
       }
       // Check and show mandatory notification on route change

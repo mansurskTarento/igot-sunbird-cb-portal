@@ -209,93 +209,92 @@
   }
 }
 
-// Moved this to Sprint 35
 
-// .learning-progress {
-//   .card {
-//     border: 1px solid rgba(0, 0, 0, 0.0392156863);
-//     background-color: rgba(27, 76, 161, 0.0392156863);
-//     border-radius: 8px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: space-between;
-//     padding: 12px 16px;
-//   }
+.learning-progress {
+  .card {
+    border: 1px solid rgba(0, 0, 0, 0.0392156863);
+    background-color: rgba(27, 76, 161, 0.0392156863);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+  }
 
-//   .info-div {
-//     display: flex;
-//     align-items: center;
-//     gap: 8px;
-//     justify-content: flex-start;
-//   }
+  .info-div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-start;
+  }
 
-//   .line {
-//     line-height: 19px;
-//     opacity: 0.7;
-//     font-size: 12px;
-//     margin-top: 4px;
-//     max-width: 420px;
-//     font-family: 'Lato';
-//   }
+  .line {
+    line-height: 19px;
+    opacity: 0.7;
+    font-size: 12px;
+    margin-top: 4px;
+    max-width: 420px;
+    font-family: 'Lato';
+  }
 
-//   .full {
-//     width: 100%;
-//   }
+  .full {
+    width: 100%;
+  }
 
-//   .verify {
-//     font-size: 18px !important;
-//     color: #1B4CA1 !important;
-//     height: 18px;
-//     width: 18px;
-//     display: flex;
-//     align-items: center;
-//     justify-content: center;
-//   }
+  .verify {
+    font-size: 18px !important;
+    color: #1B4CA1 !important;
+    height: 18px;
+    width: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-//   .title {
-//     font-size: 14px;
-//     color: #000000;
-//     font-weight: 600;
-//     font-family: 'Montserrat';
-//   }
+  .title {
+    font-size: 14px;
+    color: #000000;
+    font-weight: 600;
+    font-family: 'Montserrat';
+  }
 
 
-//   .view-passbook-btn {
-//     background-color: #1B4CA1;
-//     color: white;
-//     border-radius: 8px;
-//     padding: 4px 16px;
-//     min-width: 0;
-//     box-shadow: none;
+  .view-passbook-btn {
+    background-color: #1B4CA1;
+    color: white;
+    border-radius: 8px;
+    padding: 4px 16px;
+    min-width: 0;
+    box-shadow: none;
 
-//   }
+  }
 
-//   .view-passbook-btn .book {
-//     font-size: 16px;
-//     height: 16px;
-//     width: 16px;
-//     color: white;
-//   }
+  .view-passbook-btn .book {
+    font-size: 16px;
+    height: 16px;
+    width: 16px;
+    color: white;
+  }
 
-//   @media (max-width: 640px) {
-//     .card {
-//       flex-direction: column;
-//       align-items: flex-start;
-//       gap: 12px;
-//     }
+  @media (max-width: 640px) {
+    .card {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+    }
 
-//     .content-div {
-//       width: 100%;
-//     }
+    .content-div {
+      width: 100%;
+    }
 
-//     .full {
-//       width: unset !important;
-//     }
+    .full {
+      width: unset !important;
+    }
 
-//     .view-passbook-btn {
-//       align-self: stretch;
-//       width: 100%;
-//       justify-content: center;
-//     }
-//   }
-// }
+    .view-passbook-btn {
+      align-self: stretch;
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
