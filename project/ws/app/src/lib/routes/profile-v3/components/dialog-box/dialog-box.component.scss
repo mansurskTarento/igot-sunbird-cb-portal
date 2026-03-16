@@ -5,3 +5,13 @@ a.close_btn {
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
     display: none!important;
 }
+
+.zoho-close-btn {
+    position: absolute;
+    top: 18px;
+    right: 20px;
+    z-index: 1;
+    mat-icon {
+        color: #fff;
+    }
+}
