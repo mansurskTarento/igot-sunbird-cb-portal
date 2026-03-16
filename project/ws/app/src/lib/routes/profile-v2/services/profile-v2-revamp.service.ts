@@ -48,6 +48,7 @@ const API_END_POINTS = {
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
 
   SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search',
+  SEARCH_USER_PUBLIC: '/apis/proxies/v8/user/v5/public/search',
 
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
@@ -304,6 +305,26 @@ export class ProfileV2RevampService {
 
   deleteAchievementEntry(payload: any): Observable<any> {
     return this.http.delete<any>(API_END_POINTS.DELETE_ACHIEVEMENT, { body: payload })
+  }
+  /**
+   * Search if a user already exists by email or mobile.
+   * @param filterField - The profile field path, e.g. 'profileDetails.personalDetails.primaryEmail'
+   * @param value - The value to search for
+   */
+  searchUserByField(filterField: string, value: string): Observable<any> {
+    if (filterField === 'email') {
+      value = value.toLowerCase()
+    }
+    const payload = {
+      request: {
+        limit: 1,
+        offset: 0,
+        filters: {
+          [filterField]: [value],
+        },
+      },
+    }
+    return this.http.post<any>(API_END_POINTS.SEARCH_USER_PUBLIC, payload)
   }
 
 }
