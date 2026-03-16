@@ -10,13 +10,14 @@ import { NSPeerValidation } from '../../../../models/peer-validation.model'
 export class SurveyQuestionsComponent {
   @Input() questions: NSPeerValidation.ISurveyQuestion[] = []
   @Input() form!: FormGroup
+  @Input() courseName: string = ''
 
   get responses(): FormArray {
     return this.form.get('responses') as FormArray
   }
 
-  getRatingArray(max: number): number[] {
-    return Array.from({ length: max }, (_, i) => i + 1)
+  getRatingArray(count: number = 5): number[] {
+    return Array.from({ length: count }, (_, i) => i + 1)
   }
 
   selectRating(index: number, rating: number) {

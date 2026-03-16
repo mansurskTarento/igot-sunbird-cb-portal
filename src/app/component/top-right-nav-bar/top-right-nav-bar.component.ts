@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
@@ -12,6 +13,8 @@ import { NotificationsService } from 'src/app/services/notifications.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from '../../../environments/environment'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
+import { SurveyPopupComponent } from '@ws/app/src/lib/routes/peer-validation/components/survey-popup/survey-popup.component'
+import { VerificationRequestDialogComponent } from '@ws/app/src/lib/routes/peer-validation/components/verification-request-dialog/verification-request-dialog.component'
 import { RootService } from '../root/root.service'
 // const rightNavConfig = [
 //   {
@@ -60,8 +63,9 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
     private http: HttpClient, private sanitizer: DomSanitizer,
     private events: EventService, private snackBar: MatSnackBar,
-    private router: Router, private notificationsService: NotificationsService, 
-  private rootService: RootService) {
+    private router: Router, private notificationsService: NotificationsService,
+    private rootService: RootService,
+    private matDialog: MatDialogNew) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -127,7 +131,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     this.showDropdown = false
     setTimeout(() => {
       this.showDropdown = true
-    });
+    })
   }
 
   onMenuClosed() {
@@ -206,12 +210,87 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   viewAllClick(event: any) {
-    if (event.category) {
+    if (event.category === 'PEER_VALIDATION' || event.sub_type === 'PEER_VALIDATION') {
+      this.raiseTelemetryEventForNotification(event)
+      if (event.sub_category === 'PEER_REVIEW_ASSIGNED') {
+        this.openVerificationPopup(event)
+      } else {
+        this.openSurveypopup(event)
+      }
+    } else if (event.category) {
       this.raiseTelemetryEventForNotification(event)
       this.notificationsService.handleRedirection(event, environment, this.roles, this.snackBar)
     } else {
       this.router.navigate(['/app/notifications'], { queryParams: { tab: event } })
     }
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return ''
+    const date = new Date(dateStr)
+    if (isNaN(date.getTime())) return dateStr
+    const dd = String(date.getDate()).padStart(2, '0')
+    const mm = String(date.getMonth() + 1).padStart(2, '0')
+    const yyyy = date.getFullYear()
+    return `${dd}-${mm}-${yyyy}`
+  }
+
+  openSurveypopup(notification: any) {
+    const profile = this.configSvc.userProfile
+    const learnerName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
+    const notifData = notification.message?.data?.[0] || {}
+    if (notifData.isSurveySubmitted === true) {
+      this.snackBar.open('You have already completed the survey.', 'X', { duration: 3000 })
+      return
+    }
+    if (notifData.surveyEndDate && new Date(notifData.surveyEndDate) < new Date()) {
+      this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
+      return
+    }
+    this.matDialog.open(SurveyPopupComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        learnerName: learnerName || '',
+        courseName: notifData.courseName || '',
+        completionDate: this.formatDate(notifData.completionDate || ''),
+        formId: notifData.formId || '',
+        isSurveySubmitted: notifData.isSurveySubmitted || false,
+        surveyCreatedById: notifData.surveyCreatedById || '',
+        notificationId: notification.notification_id || '',
+        createdAt: notification.created_at || '',
+        contextOrgId: notifData.contextOrgId || '',
+        contextId: notifData.contextId || '',
+      },
+    })
+  }
+
+  openVerificationPopup(notification: any) {
+    const notifData = notification.message?.data?.[0] || {}
+    if (notifData.isReviewSubmitted === true) {
+      this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
+      return
+    }
+    if (notifData.surveyEndDate && new Date(notifData.surveyEndDate) < new Date()) {
+      this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
+      return
+    }
+    this.matDialog.open(VerificationRequestDialogComponent, {
+      width: '440px',
+      maxWidth: '90vw',
+      disableClose: true,
+      data: {
+        requestedName: notifData.requestedName || notifData.learnerName || '',
+        courseName: notifData.courseName || '',
+        formId: notifData.formId || '',
+        isReviewSubmitted: notifData.isReviewSubmitted || false,
+        surveyEndDate: notifData.surveyEndDate || '',
+        notificationId: notification.notification_id || '',
+        createdAt: notification.created_at || '',
+        contextOrgId: notifData.contextOrgId || '',
+        contextId: notifData.contextId || '',
+      },
+    })
   }
 
   reCountNotifications(event: any) {
@@ -246,18 +325,18 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     )
   }
 
-openSupportChatBot() {
-  if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-    this.enableSupportAI = true
-    this.rootService.openSupportAIChatbot.next(true)  
-  } else if(this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length 
-    && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.configSvc.userProfile?.rootOrgId)
-  ) {
-    this.enableSupportAI = true
-    this.rootService.openSupportAIChatbot.next(true)  
-  } else {
+  openSupportChatBot() {
+    if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+      this.enableSupportAI = true
+      this.rootService.openSupportAIChatbot.next(true)
+    } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+      && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.configSvc.userProfile?.rootOrgId)
+    ) {
+      this.enableSupportAI = true
+      this.rootService.openSupportAIChatbot.next(true)
+    } else {
       this.getZohoForm()
     }
   }
-  
+
 }

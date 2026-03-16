@@ -4,6 +4,7 @@ import { NSPeerValidation } from '../../../../models/peer-validation.model'
 import { PeerValidationService } from '../../../../services/peer-validation.service'
 import { MatDialog } from '@angular/material/dialog'
 import { VideoPreviewDialogComponent } from '../video-preview-dialog/video-preview-dialog.component'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-document-upload',
@@ -12,6 +13,7 @@ import { VideoPreviewDialogComponent } from '../video-preview-dialog/video-previ
 })
 export class DocumentUploadComponent {
   @Input() documents: NSPeerValidation.IUploadedDocument[] = []
+  @Input() formId: string = ''
   @Output() documentsChanged = new EventEmitter<NSPeerValidation.IUploadedDocument[]>()
 
   isUploading = false
@@ -101,8 +103,9 @@ export class DocumentUploadComponent {
 
   uploadFile(file: File) {
     this.isUploading = true
-    this.peerValidationService.uploadDocument(file).subscribe({
+    this.peerValidationService.uploadDocument(file, this.formId).subscribe({
       next: (uploadedDoc: NSPeerValidation.IUploadedDocument) => {
+        uploadedDoc.url = this.generateUrl(uploadedDoc.url)
         this.documents = [...this.documents, uploadedDoc]
         this.documentsChanged.emit(this.documents)
         this.isUploading = false
@@ -139,6 +142,22 @@ export class DocumentUploadComponent {
         }
       })
     }
+  }
+
+  generateUrl(oldUrl: string): string {
+    const chunk = oldUrl ? oldUrl.split('/') : []
+    const newChunk = environment.azureHost.split('/')
+    const newLink: string[] = []
+    for (let i = 0; i < chunk.length; i += 1) {
+      if (i === 2) {
+        newLink.push(newChunk[i])
+      } else if (i === 3) {
+        newLink.push('content-store')
+      } else {
+        newLink.push(chunk[i])
+      }
+    }
+    return newLink.join('/')
   }
 
   private showSnack(message: string) {

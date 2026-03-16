@@ -107,92 +107,44 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   }
 
-  // Card 1: Filters
+  // Card 1: Info Panel
   .filter-card {
     @include card-style;
-    margin-bottom: 24px; // Gap between cards
+    margin-bottom: 24px;
 
     .filter-header-content {
       display: flex;
-      justify-content: flex-start; // Changed from space-between
-      gap: 60px; // Added gap
-      align-items: center;
+      align-items: flex-start;
 
-      @media (max-width: 1024px) {
-        gap: 30px;
-      }
-
-      @media (max-width: 768px) {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-      }
-
-      .results-count {
+      .results-info {
         strong {
           display: block;
+          font-family: 'Montserrat', sans-serif;
           font-size: 16px;
-          color: #333;
-          margin-bottom: 4px;
-
-          @media (max-width: 768px) {
-            font-size: 14px;
-          }
+          font-weight: 600;
+          line-height: 1;
+          letter-spacing: 0;
+          color: rgba(0, 0, 0, 0.87);
+          margin-bottom: 12px;
         }
 
-        span {
-          font-size: 12px;
-          color: #666;
-        }
-      }
-
-      .controls {
-        display: flex;
-        gap: 24px;
-        align-items: center;
-
-        @media (max-width: 768px) {
-          width: 100%;
-          flex-direction: column;
-          gap: 12px;
+        p {
+          font-family: 'Lato', sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: 0;
+          color: rgba(0, 0, 0, 0.87);
+          margin: 0 0 12px;
         }
 
-        .search-box {
-          min-width: 150px;
-          width: 320px; // Fixed width instead of 100%
-          height: 36px;
-          border: 1px solid #E0E0E0;
-          border-radius: 20px;
-          background-color: white;
-          padding: 0 16px;
-          display: flex;
-          align-items: center;
-          font-size: 13px;
-
-          @media (max-width: 768px) {
-            width: 100%;
-          }
-
-          mat-icon {
-            color: #999;
-            font-size: 20px;
-            width: 20px;
-            height: 20px;
-            margin-right: 8px;
-          }
-
-          input {
-            border: none;
-            outline: none;
-            font-size: 13px;
-            width: 100%;
-            color: #333;
-            background: transparent;
-
-            &::placeholder {
-              color: #999;
-            }
-          }
+        .items-count {
+          font-family: 'Lato', sans-serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: 0;
+          color: #666666;
         }
       }
     }
@@ -350,6 +302,12 @@
             color: #007107; // Figma: ACTIVE text color
             border: 1px solid #49C951; // Figma: ACTIVE border
             background-color: rgba(73, 201, 81, 0.2); // Figma: #49C951 at 20%
+          }
+
+          &.pending {
+            color: #8B5700;
+            border: 1px solid #F5A623;
+            background-color: rgba(245, 166, 35, 0.2);
           }
 
           &.ended,
@@ -547,4 +505,25 @@
 
   }
 
+}
+
+// CDK overlay panel fix — must be at root level to reach the overlay container
+::ng-deep .mat-select-panel,
+::ng-deep .mat-mdc-select-panel {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+
+  .mat-option,
+  .mat-mdc-option {
+    &:hover:not(.mat-option-disabled):not(.mdc-list-item--disabled) {
+      background-color: #e8edf7 !important;
+    }
+
+    &.mat-selected:not(.mat-option-multiple),
+    &.mdc-list-item--selected {
+      background-color: #d0daf0 !important;
+      color: #1B4CA1 !important;
+      font-weight: 600;
+    }
+  }
 }

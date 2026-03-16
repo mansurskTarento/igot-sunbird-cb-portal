@@ -1,4 +1,4 @@
-<div class="review-page" *ngIf="requestData">
+<div class="review-page">
   <!-- Header / Breadcrumb approach -->
   <div class="back-nav" (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
@@ -7,8 +7,8 @@
 
   <div class="user-header">
     <div class="user-info">
-      <div class="name">{{ learnerName }} <span class="badge">{{ designation }} </span></div>
-      <div class="course">Course : {{ requestData.courseName }}</div>
+      <div class="name">{{ requestedName }} <span class="badge">Learner</span></div>
+      <div class="course">Course : {{ courseName }}</div>
     </div>
   </div>
 
@@ -16,18 +16,16 @@
   <div class="review-content">
 
     <!-- Survey Responses (Read Only) -->
-    <div class="question-item" *ngFor="let question of surveyQuestions; let i = index">
+    <div class="question-item" *ngFor="let response of requestData?.responses; let i = index">
       <div class="q-header">
-        <span class="q-req" *ngIf="question.required">{{ i + 1 }}. {{ question.text }} <span class="red">*</span></span>
-        <span class="q-req" *ngIf="!question.required">{{ i + 1 }}. {{ question.text }}</span>
+        <span class="q-req">{{ i + 1 }}. {{ response.question }}</span>
       </div>
 
       <!-- Rating Display -->
-      <div class="q-response-rating" *ngIf="question.type === 'rating'">
+      <div class="q-response-rating" *ngIf="response.answerType === 'numericRating'">
         <div class="label-side left">NOT AT ALL</div>
         <div class="rating-pills">
-          <div class="pill" *ngFor="let val of getRange(5)"
-            [class.selected]="getResponseForQuestion(question.id) === val">
+          <div class="pill" *ngFor="let val of getRange(5)" [class.selected]="+response.answer === val">
             {{ val }}
           </div>
         </div>
@@ -35,44 +33,28 @@
       </div>
 
       <!-- Text Display -->
-      <div class="q-response-text" *ngIf="question.type === 'text'">
+      <div class="q-response-text" *ngIf="response.answerType === 'textarea' || response.answerType === 'textArea'">
         <div class="text-box">
-          {{ getResponseForQuestion(question.id) || 'No response provided.' }}
-        </div>
-      </div>
-
-      <!-- Single Select Display -->
-      <div class="q-response-text" *ngIf="question.type === 'single-select'">
-        <div class="text-box">
-          {{ getResponseForQuestion(question.id) || 'No response provided.' }}
-        </div>
-      </div>
-
-      <!-- Multi Select Display -->
-      <div class="q-response-text" *ngIf="question.type === 'multi-select'">
-        <div class="text-box">
-          <span *ngIf="getMultiSelectResponse(question.id).length > 0">
-            {{ getMultiSelectResponse(question.id).join(', ') }}
-          </span>
-          <span *ngIf="getMultiSelectResponse(question.id).length === 0">
-            No response provided.
-          </span>
+          {{ response.answer || 'No response provided.' }}
         </div>
       </div>
     </div>
 
     <!-- File Attachments -->
-    <div class="attachments" *ngIf="requestData.documents && requestData.documents.length > 0">
-      <div class="attachment-item" *ngFor="let doc of requestData.documents"
-        [ngClass]="{'video': doc.type.includes('video'), 'doc': doc.type.includes('pdf')}">
+    <div class="attachments" *ngIf="requestData?.attachments?.length">
+      <div class="attachment-item" *ngFor="let url of requestData.attachments"
+        [ngClass]="{'video': isVideo(url), 'doc': isPdf(url), 'img': isImage(url)}">
         <div class="attachment-icon">
-          <mat-icon *ngIf="doc.type.includes('video')" class="icon-video">play_circle_filled</mat-icon>
-          <img *ngIf="doc.type.includes('pdf')" src="assets/icons/PDF_alternate.svg" class="icon-file" width="24"
-            height="24" alt="File Icon">
+          <mat-icon *ngIf="isVideo(url)" class="icon-video">play_circle_filled</mat-icon>
+          <img *ngIf="isPdf(url)" src="assets/icons/PDF_alternate.svg" class="icon-file" width="24" height="24"
+            alt="File Icon">
+          <mat-icon *ngIf="isImage(url)" class="icon-image">image</mat-icon>
+          <mat-icon *ngIf="!isVideo(url) && !isPdf(url) && !isImage(url)">attach_file</mat-icon>
         </div>
         <div class="attachment-info">
-          <span class="filename" (click)="previewDocument(doc)" [title]="doc.name">{{ doc.name }}</span>
-          <span class="filesize">({{ formatFileSize(doc.size) }})</span>
+          <span class="filename clickable" (click)="previewDocument(url)" [title]="getAttachmentName(url)">
+            {{ getAttachmentName(url) }}
+          </span>
         </div>
       </div>
     </div>

@@ -2,7 +2,7 @@
   border: 1px solid #E0E0E0; // Border around everything
   border-radius: 4px;
   padding: 16px; // Reduced padding from 24px
-  margin-bottom: 16px; // Reduced from 24px
+  margin: 0 34px 16px 34px;
 
   @media (max-width: 768px) {
     padding: 12px;
@@ -66,6 +66,10 @@
         font-weight: 600;
         color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
         text-transform: uppercase;
+
+        &.rating-label-max {
+          color: #1B4CA1;
+        }
 
         @media (max-width: 768px) {
           text-align: center;

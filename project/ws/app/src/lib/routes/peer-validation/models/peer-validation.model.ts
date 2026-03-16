@@ -3,10 +3,13 @@ export namespace NSPeerValidation {
   export interface ISurveyQuestion {
     id: string
     text: string
-    type: 'rating' | 'text' | 'single-select' | 'multi-select'
+    type: 'numericRating' | 'textArea' | 'radio' | 'checkbox'
     required: boolean
     maxLength?: number
-    options?: string[] // For single-select and multi-select questions
+    options?: string[] // For radio and checkbox questions
+    minLabel?: string  // For numericRating
+    maxLabel?: string  // For numericRating
+    ratingCount?: number // Number of rating buttons
   }
 
   // Survey Response
@@ -21,7 +24,7 @@ export namespace NSPeerValidation {
     name: string
     type: string
     size: number
-    url: string
+    url: string          // converted URL used for both preview and submit
     uploadedAt: Date
   }
 
@@ -33,12 +36,32 @@ export namespace NSPeerValidation {
     designation: string
   }
 
-  // Survey Submission
+  // Submit Response item — matches POST /apis/proxies/v8/forms/peersurvey/submit
+  export interface ISubmitResponse {
+    questionId: string
+    question: string
+    answer: number | string | string[]
+    answerType: string
+  }
+
+  // Survey Submission — matches POST /apis/proxies/v8/forms/peersurvey/submit
   export interface ISurveySubmission {
-    courseId: string
-    responses: ISurveyResponse[]
-    documents: IUploadedDocument[]
-    peers: any[]
+    formId: string
+    contextId: string
+    contextName: string
+    contextOrgId: string
+    version: number
+    status: string
+    notificationId: string
+    createdAt: string
+    peerIds: string[]
+    attachments: string[]
+    responses: ISubmitResponse[]
+    submissionMeta: {
+      submittedFrom: string
+      userAgent: string
+      ipAddress: string
+    }
   }
 
   // Survey Popup Data
@@ -46,18 +69,46 @@ export namespace NSPeerValidation {
     learnerName: string
     courseName: string
     completionDate: string
-    courseId: string
+    formId: string
+    courseId?: string
+    contextId?: string
+    contextOrgId?: string
+    isSurveySubmitted?: boolean
+    surveyCreatedById?: string
+    surveyEndDate?: string
+    notificationId?: string
+    createdAt?: string
   }
 
-  // Dashboard Item
+  // Dashboard Item — mirrors raw API response structure
   export interface IDashboardItem {
-    id: string
-    learnerName?: string
-    courseName: string
-    status: ESurveyStatus
-    endDate: string
-    thumbnail?: string
-    type?: 'incoming' | 'outgoing' // Added for better mock filtering
+    notification_id: string
+    status: string                 // root-level status: "PENDING", "COMPLETED", "EXPIRED" etc.
+    sub_category?: string          // optional — determined by query subType, not in response body
+    survey_end_date: string
+    created_at: string
+    updated_at: string | null
+    user_id: string
+    action: string | null
+    action_at: string | null
+    isExpired?: boolean
+    metadata: {
+      contextId: string
+      formId: string
+      courseName: string
+      isSurveySubmitted: boolean
+      completionDate: string
+      surveyCreatedById: string
+      surveyEndDate: string
+      surveyName?: string          // survey title from real API
+      learnerName: string
+      courceImageUrl?: string      // optional — not present in real API response
+      requestedName?: string
+      submittedBy?: string
+      learnerId?: string            // learner's user ID from incoming request API
+      courseId?: string
+      contextOrgId?: string
+    }
   }
 
   // Dashboard Filters
@@ -70,33 +121,43 @@ export namespace NSPeerValidation {
     pageSize: number
   }
 
-  // Review Request
-  export interface IReviewRequest {
-    id: string
-    learnerName: string
-    designation: string
-    courseName: string
-    completionDate: string
-    responses: ISurveyResponse[]
-    documents: IUploadedDocument[]
-    reportingOfficer: IPeerInfo
-    reportingOfficerStatus: 'agreed' | 'pending' | 'rejected'
-    forwardedTo?: IPeerInfo
-    peer?: IPeerInfo
-    subordinate?: IPeerInfo
+  // Individual submission response item (from API)
+  export interface ISubmissionResponse {
+    questionId: string
+    question: string
+    answer: string | number
+    answerType: string
   }
 
-  // Review Submission
+  // Review Request — maps to result.response.content[0] from submission search API
+  export interface IReviewRequest {
+    submissionId: string
+    formId: string
+    submittedBy: string
+    learnerName: string     // fullName
+    courseName: string      // contextName
+    completionDate: string  // formatted submittedDate
+    contextId: string
+    contextOrgId: string
+    status: string
+    responses: ISubmissionResponse[]
+    attachments: string[]
+  }
+
+  // Review Submission — matches POST /apis/proxies/v8/forms/peersurvey/submit
   export interface IReviewSubmission {
-    requestId: string
-    ratings: { questionId: string; rating: number }[]
-    decision: 'approved' | 'rejected'
+    actionType: 'REVIEW'
+    submissionId: string
+    reviewStatus: 'APPROVED' | 'REJECTED'
+    notificationId: string
+    createdAt: string
   }
 
   // Enums
   export enum ESurveyStatus {
     ACTIVE = 'Active',
-    EXPIRED = 'Expired',
-    COMPLETED = 'Completed', // Added COMPLETED status
+    EXPIRED = 'Ended',
+    PENDING = 'PENDING',
+    COMPLETED = 'COMPLETED',
   }
 }

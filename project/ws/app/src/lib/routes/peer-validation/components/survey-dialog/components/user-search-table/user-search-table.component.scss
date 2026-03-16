@@ -9,7 +9,7 @@
     position: sticky;
     top: 0;
     z-index: 10;
-    min-width: 900px; // Min width for horizontal scroll
+    min-width: 900px; // Min width — triggers horizontal scroll on small dialogs
     display: grid;
     grid-template-columns: 50px 1.5fr 1.5fr 1.5fr 1fr; // Same columns
     gap: 0;
@@ -79,6 +79,11 @@
       cursor: not-allowed;
     }
 
+    &.current-user {
+      background-color: #F5F5F5;
+      cursor: not-allowed;
+    }
+
     .col-name {
       display: flex;
       align-items: center;
@@ -86,6 +91,17 @@
       font-size: 14px;
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
+
+      .you-badge {
+        font-size: 11px;
+        font-weight: 600;
+        color: #1976D2;
+        background: #E3F2FD;
+        border-radius: 10px;
+        padding: 1px 8px;
+        margin-left: 4px;
+        white-space: nowrap;
+      }
 
       .user-avatar {
         width: 32px;

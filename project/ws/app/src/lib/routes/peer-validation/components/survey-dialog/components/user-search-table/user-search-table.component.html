@@ -9,7 +9,8 @@
     </div>
 
     <div class="table-row" *ngFor="let user of filteredUsers" [class.selected]="isSelected(user)"
-      [class.disabled]="isDisabled(user)" (click)="toggleUser(user)">
+      [class.disabled]="isDisabled(user)" [class.current-user]="isCurrentUser(user)"
+      [matTooltip]="isCurrentUser(user) ? 'You cannot select yourself' : ''" (click)="toggleUser(user)">
       <div class="col-select">
         <mat-checkbox [checked]="isSelected(user)" [disabled]="isDisabled(user)"
           (click)="$event.stopPropagation(); toggleUser(user, $event)" color="primary">
@@ -22,6 +23,7 @@
           <span *ngIf="!user.profileDetails?.profileImageUrl">{{ getUserInitials(user) }}</span>
         </div>
         <span>{{ getUserFullName(user) }}</span>
+        <span class="you-badge" *ngIf="isCurrentUser(user)">You</span>
       </div>
       <div class="col-email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email || '--' }}</div>
       <div class="col-org">{{ user.rootOrgName || '--' }}</div>

@@ -4,10 +4,11 @@
     <p class="hint">Choose at lease 2 and maximum 3 reviewers.</p>
   </div>
 
-  <!-- Search Input -->
-  <div class="search-box">
+  <!-- Search Input (Accordion Trigger) -->
+  <div class="search-box" [class.open]="isTableOpen" (click)="toggleTable()">
     <mat-icon>search</mat-icon>
     <input type="text" placeholder="Search by name or email" [(ngModel)]="searchQuery" (input)="onSearchInput()">
+    <mat-icon class="chevron-icon" [class.rotated]="isTableOpen">expand_more</mat-icon>
   </div>
 
   <!-- Selected Peer Chips -->
@@ -28,10 +29,12 @@
     </div>
   </div>
 
-  <!-- User Search Table -->
-  <ws-app-user-search-table [selectedUserIds]="selectedPeerIds" [searchQuery]="searchQuery" [maxSelect]="3"
-    (userToggled)="onUserToggled($event)">
-  </ws-app-user-search-table>
+  <!-- User Search Table (Accordion Body) -->
+  <div class="accordion-body" [class.accordion-open]="isTableOpen">
+    <ws-app-user-search-table [selectedUserIds]="selectedPeerIds" [searchQuery]="searchQuery" [maxSelect]="3"
+      [surveyCreatedById]="surveyCreatedById" (userToggled)="onUserToggled($event)">
+    </ws-app-user-search-table>
+  </div>
 
   <!-- Info Banner -->
   <div class="info-banner">

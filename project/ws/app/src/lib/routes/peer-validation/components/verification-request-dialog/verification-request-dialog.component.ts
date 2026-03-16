@@ -10,14 +10,42 @@ import { Router } from '@angular/router'
 export class VerificationRequestDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<VerificationRequestDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { learnerName: string, requestId: string },
+    @Inject(MAT_DIALOG_DATA) public data: {
+      requestedName: string
+      courseName: string
+      formId: string
+      isReviewSubmitted: boolean
+      surveyEndDate: string
+      notificationId: string
+      createdAt: string
+    },
     private router: Router
   ) { }
 
   onYes() {
     this.dialogRef.close()
-    // Navigate to the review page
-    this.router.navigate(['/app/peer-validation/review', this.data.requestId])
+    this.router.navigate(['/app/peer-validation/review', this.data.formId], {
+      queryParams: {
+        courseName: this.data.courseName || '',
+        requestedName: this.data.requestedName || '',
+        formId: this.data.formId || '',
+        notificationId: this.data.notificationId || '',
+        surveyEndDate: this.data.surveyEndDate || '',
+        createdAt: this.data.createdAt || '',
+      },
+      state: {
+        requestedName: this.data.requestedName,
+        courseName: this.data.courseName,
+        formId: this.data.formId,
+        isReviewSubmitted: this.data.isReviewSubmitted,
+        surveyEndDate: this.data.surveyEndDate,
+        notificationId: this.data.notificationId || '',
+        createdAt: this.data.createdAt || ''
+      },
+    })
+  }
+  onNoButton() {
+    this.dialogRef.close()
   }
 
   onNo() {

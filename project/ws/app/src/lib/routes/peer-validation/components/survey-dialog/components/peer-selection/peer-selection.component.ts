@@ -10,11 +10,13 @@ const MAX_PEERS = 3
 })
 export class PeerSelectionComponent implements OnInit {
   @Input() selectedPeers: any
+  @Input() surveyCreatedById: string = ''
   @Output() peersChanged = new EventEmitter<any>()
 
   selectedPeersList: any[] = []   // Full user objects for selected peers
   selectedPeerIds: string[] = []  // IDs only – passed to the table
   searchQuery = ''
+  isTableOpen = false
 
   readonly minPeers = MIN_PEERS
   readonly maxPeers = MAX_PEERS
@@ -27,9 +29,14 @@ export class PeerSelectionComponent implements OnInit {
     }
   }
 
+  toggleTable() {
+    this.isTableOpen = !this.isTableOpen
+  }
+
   onSearchInput() {
-    // Propagated via ngModel binding on input inside user-search-table will be handled differently
-    // The user-search-table has its own internal searchQuery – we keep this for future extension
+    if (!this.isTableOpen) {
+      this.isTableOpen = true
+    }
   }
 
   onUserToggled(user: any) {

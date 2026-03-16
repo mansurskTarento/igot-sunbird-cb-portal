@@ -17,6 +17,7 @@ import { MatTableModule } from '@angular/material/table'
 import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { PlayerVideoModule, PlayerPdfModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 // Routing
@@ -24,7 +25,6 @@ import { PeerValidationRoutingModule } from './peer-validation-routing.module'
 
 // Services
 import { PeerValidationService } from './services/peer-validation.service'
-import { PeerValidationMockService } from './services/peer-validation-mock.service'
 
 // Survey Components
 import { SurveyPopupComponent } from './components/survey-popup/survey-popup.component'
@@ -74,13 +74,13 @@ import { UserSearchTableComponent } from './components/survey-dialog/components/
     MatPaginatorModule,
     MatTabsModule,
     MatProgressSpinnerModule,
+    MatSnackBarModule,
     PlayerVideoModule,
     PlayerPdfModule,
     WidgetResolverModule,
   ],
   providers: [
     PeerValidationService,
-    PeerValidationMockService,
   ],
 })
 export class PeerValidationModule { }

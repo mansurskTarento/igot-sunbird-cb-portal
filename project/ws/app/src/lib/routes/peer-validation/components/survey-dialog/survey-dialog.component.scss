@@ -53,17 +53,20 @@
 
     .mat-horizontal-stepper-header-container {
       pointer-events: none !important;
-      padding: 16px 24px !important;
+      padding: 0px !important;
       background-color: #F6F8FB; // Figma: #F6F8FB
-      margin-bottom: 24px !important;
+      margin: 10px 0 !important;
+      justify-content: center !important;
     }
 
     .mat-step-header {
       flex-direction: column !important;
       height: auto !important;
-      padding: 16px 0 !important;
+      padding: 16px 8px !important;
       box-sizing: content-box !important;
       border-radius: 0 !important;
+      flex: 0 0 auto !important;
+      min-width: 100px !important;
 
       &:hover {
         background-color: transparent !important;
@@ -133,8 +136,8 @@
         color: #666;
         font-weight: 500;
         text-align: center;
-        white-space: normal;
-        max-width: 100px;
+        white-space: nowrap;
+        max-width: unset;
         line-height: 1.2;
 
         &.mat-step-label-selected {
@@ -149,6 +152,81 @@
       border-top-width: 2px !important;
       border-top-color: #E0E0E0 !important;
       margin: 0 -16px !important;
+      flex: 0 0 80px !important;
+      min-width: 80px !important;
+      max-width: 120px !important;
+    }
+  }
+
+  @media (max-width: 600px) {
+    ::ng-deep .survey-stepper {
+      .mat-horizontal-stepper-header-container {
+        padding: 8px 4px !important;
+        justify-content: space-between !important;
+      }
+
+      .mat-step-header {
+        padding: 8px 4px !important;
+        min-width: unset !important;
+        flex: 1 1 0 !important;
+      }
+
+      .mat-step-label {
+        font-size: 10px !important;
+        white-space: normal !important;
+        max-width: 64px !important;
+        text-align: center !important;
+      }
+
+      .mat-stepper-horizontal-line {
+        flex: 0 0 24px !important;
+        min-width: 24px !important;
+        max-width: 40px !important;
+        margin: 0 !important;
+      }
+    }
+  }
+
+  .questions-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    gap: 16px;
+    margin: 0 34px;
+
+    p {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      margin: 0;
+    }
+  }
+
+  .questions-error {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+    gap: 12px;
+    margin: 0 34px;
+    border: 1px solid #FFCCBC;
+    border-radius: 4px;
+    background: #FFF3E0;
+
+    mat-icon {
+      font-size: 36px;
+      width: 36px;
+      height: 36px;
+      color: #E64A19;
+    }
+
+    p {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+      margin: 0;
+      text-align: center;
     }
   }
 
@@ -169,6 +247,12 @@
       &:not(:disabled) {
         border-color: #1B4CA1 !important; // Figma: Primary/KB-Primary-Light
         color: #1B4CA1 !important;
+      }
+
+      &.submit-valid {
+        background-color: #1B4CA1 !important;
+        color: white !important;
+        border-color: #1B4CA1 !important;
       }
     }
   }

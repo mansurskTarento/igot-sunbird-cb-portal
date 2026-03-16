@@ -1,19 +1,19 @@
-import { Component, OnInit } from '@angular/core'
-import { Router } from '@angular/router'
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Router, NavigationEnd } from '@angular/router'
 import { MatDialog } from '@angular/material/dialog'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NSPeerValidation } from '../../models/peer-validation.model'
 import { PeerValidationService } from '../../services/peer-validation.service'
-import { SurveyPopupComponent } from '../survey-popup/survey-popup.component'
 import { SurveyDialogComponent } from '../survey-dialog/survey-dialog.component'
+import { Subscription } from 'rxjs'
+import { filter } from 'rxjs/operators'
 @Component({
   selector: 'ws-app-peer-dashboard',
   templateUrl: './peer-dashboard.component.html',
   styleUrls: ['./peer-dashboard.component.scss'],
 })
-export class PeerDashboardComponent implements OnInit {
+export class PeerDashboardComponent implements OnInit, OnDestroy {
   activeTab: 'pending' | 'incoming' = 'pending'
-  searchQuery = ''
   sortBy = 'oldest'
   dateFilter = 'all'
 
@@ -33,12 +33,31 @@ export class PeerDashboardComponent implements OnInit {
     private configSvc: ConfigurationsService
   ) { }
 
+  private routerSub!: Subscription
+  private isDashboardActive = false
+
   // Tab Counts
   tabCounts = { pending: 0, incoming: 0 }
 
   ngOnInit() {
+    this.isDashboardActive = true
     this.fetchData()
     this.fetchCounts()
+    this.routerSub = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      if (this.isDashboardActive && event.urlAfterRedirects === '/app/peer-validation') {
+        this.fetchData()
+        this.fetchCounts()
+      }
+    })
+  }
+
+  ngOnDestroy() {
+    this.isDashboardActive = false
+    if (this.routerSub) {
+      this.routerSub.unsubscribe()
+    }
   }
 
   fetchCounts() {
@@ -55,7 +74,7 @@ export class PeerDashboardComponent implements OnInit {
     this.totalItems = 0
     const filters: NSPeerValidation.IDashboardFilters = {
       tab: this.activeTab === 'pending' ? 0 : 1,
-      search: this.searchQuery,
+      search: '',
       sortBy: this.sortBy,
       dateFilter: this.dateFilter,
       pageIndex: this.pageIndex,
@@ -63,6 +82,7 @@ export class PeerDashboardComponent implements OnInit {
     }
 
     this.peerValidationService.getDashboardData(filters).subscribe(response => {
+      console.log('Dashboard response:', response)
       this.totalItems = response.count
       if (this.activeTab === 'incoming') {
         this.incomingRequests = response.data
@@ -90,61 +110,77 @@ export class PeerDashboardComponent implements OnInit {
     this.fetchData()
   }
 
-  startReview(requestId: string) {
+  startReview(notificationId: string) {
     if (this.isIncomingTab) {
-      // For incoming requests, navigate to review page
-      this.router.navigate(['/app/peer-validation/review', requestId])
+      const item = this.incomingRequests.find(i => i.notification_id === notificationId)
+      if (!item) return
+      this.router.navigate(['/app/peer-validation/review', item.metadata.formId], {
+        queryParams: {
+          courseName: item.metadata.courseName,
+          requestedName: item.metadata.learnerName,
+          formId: item.metadata.formId,
+          submittedBy: item.metadata.learnerId || item.metadata.submittedBy || '',
+          courseId: item.metadata.contextId || item.metadata.courseId || '',
+          notificationId: item.notification_id || '',
+          surveyEndDate: item.survey_end_date || '',
+          createdAt: item.created_at || '',
+        },
+      })
     } else {
-      // For pending surveys, open the survey dialog
-      this.openSurveyForCourse(requestId)
+      this.openSurveyForCourse(notificationId)
     }
   }
 
-  openSurveyForCourse(itemId: string) {
-    // Find the dashboard item from pending surveys
-    const dashboardItem = this.pendingSurveys.find(item => item.id === itemId)
-
+  openSurveyForCourse(notificationId: string) {
+    const dashboardItem = this.pendingSurveys.find(item => item.notification_id === notificationId)
     if (!dashboardItem) {
-      console.error('Dashboard item not found:', itemId)
+      console.error('Dashboard item not found:', notificationId)
       return
     }
-
-    // Get current user's name from config service
-    // Try to get the full name from userProfile (matches what's shown in profile page)
     const userName = `${this.configSvc?.userProfile?.firstName || ''} ${this.configSvc?.userProfile?.lastName || ''}`.trim()
     const mockData: NSPeerValidation.ISurveyPopupData = {
-      courseId: dashboardItem.id,
-      courseName: dashboardItem.courseName,
+      formId: dashboardItem.metadata.formId,
+      contextId: dashboardItem.metadata.contextId || dashboardItem.metadata.courseId || '',
+      contextOrgId: dashboardItem.metadata.contextOrgId || '',
+      courseName: dashboardItem.metadata.courseName,
       learnerName: userName,
-      completionDate: dashboardItem.endDate,
+      completionDate: dashboardItem.metadata.completionDate,
+      surveyCreatedById: dashboardItem.metadata.surveyCreatedById || '',
+      notificationId: dashboardItem.notification_id || '',
+      createdAt: dashboardItem.created_at || '',
     }
 
     // Directly open SurveyDialogComponent, bypassing the popup
-    this.dialog.open(SurveyDialogComponent, {
-      width: '700px',
-      maxWidth: '90vw',
+    const dialogRef = this.dialog.open(SurveyDialogComponent, {
+      width: '980px',
+      maxWidth: '95vw',
       disableClose: true,
       data: mockData
     })
-  }
 
-  openSurvey() {
-    const mockData: NSPeerValidation.ISurveyPopupData = {
-      courseId: 'do_111111111111111111',
-      courseName: 'Effective Communication Strategies',
-      learnerName: 'Test Learner',
-      completionDate: new Date().toLocaleDateString(),
-    }
-
-    this.dialog.open(SurveyPopupComponent, {
-      width: '600px',
-      panelClass: 'custom-survey-popup',
-      disableClose: true,
-      data: mockData
+    dialogRef.afterClosed().subscribe(() => {
+      this.fetchData()
+      this.fetchCounts()
     })
   }
 
   get isIncomingTab() {
     return this.activeTab === 'incoming'
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status?.toUpperCase()) {
+      case 'PENDING': return 'Active'
+      case 'EXPIRED': return 'Ended'
+      default: return status
+    }
+  }
+
+  getStatusClass(status: string): string {
+    switch (status?.toUpperCase()) {
+      case 'PENDING': return 'active'
+      case 'EXPIRED': return 'ended'
+      default: return status?.toLowerCase() || ''
+    }
   }
 }

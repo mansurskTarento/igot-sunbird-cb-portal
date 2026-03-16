@@ -42,12 +42,28 @@
       <!-- Step 1: Survey Questions -->
       <mat-step [completed]="canProceedToStep2()">
         <ng-template matStepLabel>Survey Questions</ng-template>
-        <ws-app-survey-questions [questions]="surveyQuestions" [form]="questionForm">
+
+        <!-- Loading State -->
+        <div *ngIf="isLoadingQuestions" class="questions-loading">
+          <mat-spinner diameter="36"></mat-spinner>
+          <p>Loading survey questions...</p>
+        </div>
+
+        <!-- Error State -->
+        <div *ngIf="!isLoadingQuestions && questionsError" class="questions-error">
+          <mat-icon>error_outline</mat-icon>
+          <p>{{ questionsError }}</p>
+        </div>
+
+        <!-- Questions -->
+        <ws-app-survey-questions *ngIf="!isLoadingQuestions && !questionsError" [questions]="surveyQuestions"
+          [form]="questionForm" [courseName]="data.courseName">
         </ws-app-survey-questions>
 
         <div class="stepper-actions">
           <button mat-stroked-button color="primary" disabled>Back</button>
-          <button mat-stroked-button color="primary" matStepperNext [disabled]="!canProceedToStep2()">
+          <button mat-stroked-button color="primary" matStepperNext
+            [disabled]="!canProceedToStep2() || !!questionsError">
             Next
           </button>
         </div>
@@ -56,7 +72,8 @@
       <!-- Step 2: Upload Documents -->
       <mat-step [completed]="isStep2Completed">
         <ng-template matStepLabel>Upload Documents</ng-template>
-        <ws-app-document-upload [documents]="uploadedDocuments" (documentsChanged)="onDocumentsChanged($event)">
+        <ws-app-document-upload [documents]="uploadedDocuments" [formId]="data.formId"
+          (documentsChanged)="onDocumentsChanged($event)">
         </ws-app-document-upload>
 
         <div class="stepper-actions">
@@ -68,13 +85,16 @@
       <!-- Step 3: Peer Selection -->
       <mat-step completed="false">
         <ng-template matStepLabel>Peer Selection</ng-template>
-        <ws-app-peer-selection [selectedPeers]="selectedPeers" (peersChanged)="onPeersChanged($event)">
+        <ws-app-peer-selection [selectedPeers]="selectedPeers" [surveyCreatedById]="data.surveyCreatedById || ''"
+          (peersChanged)="onPeersChanged($event)">
         </ws-app-peer-selection>
 
         <div class="stepper-actions">
           <button mat-stroked-button color="primary" matStepperPrevious>Back</button>
-          <button mat-stroked-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit()">
-            Submit
+          <button mat-stroked-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit() || isSubmitting"
+            [class.submit-valid]="canSubmit() && !isSubmitting">
+            <span *ngIf="!isSubmitting">Submit</span>
+            <span *ngIf="isSubmitting">Submitting...</span>
           </button>
         </div>
       </mat-step>

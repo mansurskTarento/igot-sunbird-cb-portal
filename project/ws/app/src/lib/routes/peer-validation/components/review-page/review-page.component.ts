@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core'
+import { Location } from '@angular/common'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { PeerValidationService } from '../../services/peer-validation.service'
 import { NSPeerValidation } from '../../models/peer-validation.model'
 import { SuccessDialogComponent } from '../survey-dialog/components/success-dialog/success-dialog.component'
 import { VideoPreviewDialogComponent } from '../survey-dialog/components/video-preview-dialog/video-preview-dialog.component'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-review-page',
@@ -15,128 +16,144 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 export class ReviewPageComponent implements OnInit {
   requestId: string | null = null
   requestData: NSPeerValidation.IReviewRequest | null = null
-  learnerName: string | null = null
-  designation: string | null = null
+  // From navigation state (passed by VerificationRequestDialogComponent)
+  requestedName: string | null = null
+  requestedRole: string | null = null
+  courseName: string | null = null
+  formId: string | null = null
+  submittedBy: string | null = null
+  courseId: string | null = null
+  isReviewSubmitted = false
+  isLoadingSubmission = false
+  notificationId: string | null = null
+  createdAt: string | null = null
   // Confirmation Checkbox
   clarificationChecked = false
-  currentUserId: string | null = null
-
-  surveyQuestions: any[] = [] // Ideally retrieve from service map
-
-  // Peer Selection
-  availablePeers: NSPeerValidation.IPeerInfo[] = []
-  selectedForwardPeer: NSPeerValidation.IPeerInfo | null = null
-  excludedIds: string[] = []
 
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private location: Location,
     private peerValidationService: PeerValidationService,
     private dialog: MatDialog,
-    private configSvc: ConfigurationsService,
+    private snackBar: MatSnackBar,
   ) { }
 
   ngOnInit() {
+    // Read data from query params (reliable) with router state as fallback
+    const queryParams = this.route.snapshot.queryParams
+    const nav = this.router.getCurrentNavigation()
+    const state = nav?.extras?.state || (window.history.state || {})
+
+    this.requestedName = queryParams['requestedName'] || state['requestedName'] || null
+    this.requestedRole = queryParams['requestedRole'] || state['requestedRole'] || null
+    this.courseName = queryParams['courseName'] || state['courseName'] || null
+    this.formId = queryParams['formId'] || state['formId'] || null
+    this.submittedBy = queryParams['submittedBy'] || state['submittedBy'] || null
+    this.courseId = queryParams['courseId'] || state['courseId'] || null
+    this.notificationId = queryParams['notificationId'] || state['notificationId'] || null
+    this.createdAt = queryParams['createdAt'] || state['createdAt'] || null
+    this.isReviewSubmitted = state['isReviewSubmitted'] || false
+    const surveyEndDate = queryParams['surveyEndDate'] || state['surveyEndDate'] || null
+
+    if (this.isReviewSubmitted) {
+      this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
+      this.location.back()
+      return
+    }
+
+    if (surveyEndDate && new Date(surveyEndDate) < new Date()) {
+      this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
+      this.location.back()
+      return
+    }
+
     this.requestId = this.route.snapshot.paramMap.get('id')
-    if (this.requestId) {
-      this.fetchRequestData(this.requestId)
+    if (this.submittedBy && this.formId) {
+      this.fetchSubmission(this.submittedBy, this.formId, this.courseId || '')
     }
-
-    this.currentUserId = this.configSvc.userProfile?.userId || null
-
-    // Exclude current user from search (e.g. Harshit Rao)
-    if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {
-      this.excludedIds = [this.configSvc.userProfile.userId]
-    }
-
-    this.loadQuestions()
-    this.learnerName = `${this.configSvc.userProfile?.firstName || ''} ${this.configSvc.userProfile?.lastName || ''}`
-    this.designation = this.configSvc?.userProfile?.professionalDetails?.[0]?.designation
   }
 
-  loadQuestions() {
-    this.peerValidationService.getSurveyQuestions().subscribe(qs => {
-      this.surveyQuestions = qs
+  fetchSubmission(submittedBy: string, formId: string, courseId: string) {
+    this.isLoadingSubmission = true
+    this.peerValidationService.getSubmission(submittedBy, formId, courseId).subscribe({
+      next: data => {
+        this.isLoadingSubmission = false
+        if (!data) return
+        this.requestData = data
+        if (!this.courseName) this.courseName = data.courseName || null
+        if (!this.requestedName) this.requestedName = data.learnerName || null
+      },
+      error: () => {
+        this.isLoadingSubmission = false
+      },
     })
   }
 
-  fetchRequestData(id: string) {
-    this.peerValidationService.getReviewRequest(id).subscribe(data => {
-      this.requestData = data
-      this.selectedForwardPeer = null // cleared by default as per request
-      this.updateExcludedIds()
-    })
+  // Attachment URL helpers
+  getAttachmentName(url: string): string {
+    return url.split('/').pop()?.split('?')[0] || url
   }
 
-  updateExcludedIds() {
-    const ids = new Set<string>()
-    if (this.currentUserId) ids.add(this.currentUserId)
-
-    if (this.requestData) {
-      if (this.requestData.reportingOfficer?.id) ids.add(this.requestData.reportingOfficer.id)
-      // Use optional chaining carefully if types are not strictly defined yet in TS
-      // @ts-ignore
-      if (this.requestData.peer?.id) ids.add(this.requestData.peer.id)
-      // @ts-ignore
-      if (this.requestData.subordinate?.id) ids.add(this.requestData.subordinate.id)
-    }
-
-    this.excludedIds = Array.from(ids)
+  isPdf(url: string): boolean {
+    return /\.pdf(\?|$)/i.test(url)
   }
 
-  getResponseForQuestion(questionId: string): any {
-    if (!this.requestData) return null
-    const response = this.requestData.responses.find(r => r.questionId === questionId)
-    return response ? response.value : null
+  isVideo(url: string): boolean {
+    return /\.(mp4|webm|ogg|mov)(\?|$)/i.test(url)
   }
 
-  getMultiSelectResponse(questionId: string): string[] {
-    const value = this.getResponseForQuestion(questionId)
-    return Array.isArray(value) ? value : []
+  isImage(url: string): boolean {
+    return /\.(png|jpg|jpeg|gif|webp)(\?|$)/i.test(url)
+  }
+
+  openAttachment(url: string) {
+    window.open(url, '_blank')
   }
 
   goBack() {
-    this.router.navigate(['/app/peer-validation'])
+    this.location.back()
   }
 
-  approve() {
-    if (!this.requestId) return
-
-    const submission: NSPeerValidation.IReviewSubmission = {
-      requestId: this.requestId,
-      ratings: [], // Fill if there are reviewer ratings
-      decision: 'approved',
+  submitDecision(reviewStatus: 'APPROVED' | 'REJECTED') {
+    const submissionId = this.requestData?.submissionId || ''
+    if (!submissionId || !this.notificationId) {
+      this.snackBar.open('Missing submission or notification details.', 'X', { duration: 3000 })
+      return
     }
-    this.peerValidationService.submitReview(submission).subscribe(() => {
-      const dialogRef = this.dialog.open(SuccessDialogComponent, {
-        width: '400px',
-        panelClass: 'custom-success-dialog',
-      })
-
-      dialogRef.afterClosed().subscribe(() => {
-        this.goBack()
-      })
-    })
-  }
-
-  reject() {
-    if (!this.requestId) return
-      const submission: NSPeerValidation.IReviewSubmission = {
-        requestId: this.requestId,
-        ratings: [],
-        decision: 'rejected',
-      }
-      this.peerValidationService.submitReview(submission).subscribe(() => {
-
+    const submission: NSPeerValidation.IReviewSubmission = {
+      actionType: 'REVIEW',
+      submissionId,
+      reviewStatus,
+      notificationId: this.notificationId,
+      createdAt: this.createdAt || '',
+    }
+    this.peerValidationService.submitReview(submission).subscribe({
+      next: (res: any) => {
+        if (res?.params?.status === 'failed' || res?.responseCode === 'BAD_REQUEST') {
+          const errMsg = res?.params?.errMsg || 'Failed to submit review. Please try again.'
+          this.snackBar.open(errMsg, 'X', { duration: 4000 })
+          return
+        }
         const dialogRef = this.dialog.open(SuccessDialogComponent, {
           width: '400px',
           panelClass: 'custom-success-dialog',
         })
+        dialogRef.afterClosed().subscribe(() => this.goBack())
+      },
+      error: err => {
+        const errMsg = err?.error?.params?.errMsg || 'Failed to submit review. Please try again.'
+        this.snackBar.open(errMsg, 'X', { duration: 4000 })
+      },
+    })
+  }
 
-        dialogRef.afterClosed().subscribe(() => {
-          this.goBack()
-        })
-      })
+  approve() {
+    this.submitDecision('APPROVED')
+  }
+
+  reject() {
+    this.submitDecision('REJECTED')
   }
 
   // Helper for array generation for read-only rating
@@ -151,37 +168,20 @@ export class ReviewPageComponent implements OnInit {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB'
   }
 
-  // Preview document (video or PDF)
-  previewDocument(doc: NSPeerValidation.IUploadedDocument) {
+  // Preview document in VideoPreviewDialogComponent
+  previewDocument(url: string) {
+    const name = this.getAttachmentName(url)
+    const type = this.isPdf(url) ? 'application/pdf' : this.isVideo(url) ? 'video/mp4' : ''
+    if (!type) {
+      window.open(url, '_blank')
+      return
+    }
     this.dialog.open(VideoPreviewDialogComponent, {
       width: '800px',
       maxWidth: '90vw',
-      height: doc.type.includes('pdf') ? '90vh' : 'auto',
-      data: {
-        url: doc.url,
-        name: doc.name,
-        type: doc.type,
-      },
+      height: this.isPdf(url) ? '90vh' : 'auto',
+      data: { url, name, type },
     })
   }
 
-  // Search Table Logic
-  showForwardPeerSearch = false
-
-  toggleSearch() {
-    this.showForwardPeerSearch = !this.showForwardPeerSearch
-  }
-
-  onPeerSelected(peer: any) {
-    this.selectedForwardPeer = peer
-    this.showForwardPeerSearch = false
-  }
-
-  getDisplayName(user: any): string {
-    if (!user) return ''
-    if (user.firstName || user.lastName) {
-      return `${user.firstName || ''} ${user.lastName || ''}`.trim()
-    }
-    return user.name || ''
-  }
 }

@@ -8,7 +8,7 @@
   </div>
 
   <p class="message">
-    You have a verification request from {{ data?.learnerName || 'Learner' }}.<br>
+    You have a verification request from {{ data?.requestedName || 'Learner' }}.<br>
     Can you verify?
   </p>
 
@@ -16,8 +16,12 @@
     <button mat-stroked-button color="primary" (click)="onYes()" class="action-btn">
       Yes
     </button>
-    <button mat-stroked-button (click)="onNo()" class="action-btn">
+    <button mat-stroked-button (click)="onNoButton()" class="action-btn">
       No
     </button>
+  </div>
+
+  <div class="skip-section">
+    <span class="skip-link" (click)="onNo()">Skip for now</span>
   </div>
 </div>

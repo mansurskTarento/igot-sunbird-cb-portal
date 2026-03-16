@@ -1,8 +1,8 @@
 .document-upload {
-  border: 1px solid #E0E0E0; // Border around everything
+  border: 1px solid #E0E0E0;
   border-radius: 4px;
-  padding: 16px; // Padding inside the box
-  margin-bottom: 16px; // Spacing
+  padding: 16px;
+  margin: 0 34px 16px 34px;
 
   .upload-header {
     margin-bottom: 16px;
@@ -97,7 +97,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          flex: 1;
+          flex: 0 1 auto;
           min-width: 0;
 
           &.clickable {
