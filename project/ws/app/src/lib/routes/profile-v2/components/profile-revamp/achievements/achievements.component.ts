@@ -5,11 +5,13 @@ import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.serv
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
+import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-achievements',
   templateUrl: './achievements.component.html',
-  styleUrls: ['./achievements.component.scss']
+  styleUrls: ['./achievements.component.scss'],
+  providers: [PipeCertificateImageURL]
 })
 export class AchievementsComponent implements OnInit {
   //#region (global variables)
@@ -27,7 +29,8 @@ export class AchievementsComponent implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private dialog: MatLegacyDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private pipeImgUrl: PipeCertificateImageURL
   ) {
     if (this.data && this.data.userId) {
       this.userId = data.userId
@@ -115,5 +118,15 @@ export class AchievementsComponent implements OnInit {
     } else {
       this.openProfileEntryDeleteDialog.emit(achievement)
     }
+  }
+
+  getUrl(url: string): string {
+    if (url.includes('storage.googleapis')) {
+      const folderNameToSplit = '/userAchievements/'
+      const urlSplice = url.split(folderNameToSplit)[1]
+      const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
+      return uploadedFile
+    }
+    return url
   }
 }
