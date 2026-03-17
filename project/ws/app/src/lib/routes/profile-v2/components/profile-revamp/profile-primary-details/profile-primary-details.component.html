@@ -224,7 +224,7 @@
     </div>
 
     <div class="learning-progress mt-5">
-      <div class="flex card">
+      <div class="flex card gap-10">
         <div class="content-div">
           <div class="flex flex-row gap-2 info-div">
             <mat-icon class="verify">verified_user</mat-icon>
@@ -232,7 +232,7 @@
           </div>
           <div class="line">{{'NetworkV2Profile.learningProgressDescription' | translate}}</div>
         </div>
-        <div class="full flex items-center justify-center">
+        <div class="flex items-center justify-end">
           <button mat-raised-button class="view-passbook-btn" (click)="handleRedirectToCompetencyPassbook()"
             (keyup)="handleRedirectToCompetencyPassbook()">
             <div class="flex items-center justify-between gap-2 rounded">
