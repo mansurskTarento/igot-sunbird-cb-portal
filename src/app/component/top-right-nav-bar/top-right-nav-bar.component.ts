@@ -296,7 +296,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   reCountNotifications(event: any) {
-    console.log("reCountNotifications", event)
     this.notificationsService.nofificationsCount.next(event)
   }
 

@@ -52,7 +52,7 @@ export class VideoPreviewDialogComponent implements OnInit {
       video.play().then(() => {
         this.isPlaying = true
       }).catch(err => {
-        console.log('Auto-play prevented:', err)
+        console.error('Auto-play prevented:', err)
       })
     }
   }

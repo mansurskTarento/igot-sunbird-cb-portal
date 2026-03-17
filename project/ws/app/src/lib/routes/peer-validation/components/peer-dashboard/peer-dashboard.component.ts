@@ -82,7 +82,6 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
     }
 
     this.peerValidationService.getDashboardData(filters).subscribe(response => {
-      console.log('Dashboard response:', response)
       this.totalItems = response.count
       if (this.activeTab === 'incoming') {
         this.incomingRequests = response.data
