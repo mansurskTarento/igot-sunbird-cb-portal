@@ -12,7 +12,7 @@
     <h2 class="font-semibold text-lg sm:text-xl md:text-2xl font-montserrat">
       Welcome Back, Learner!
     </h2>
-  
+
     <p class="text-sm text-gray-500 mt-1">
       Continue your learning journey and earn badges
     </p>
@@ -35,12 +35,12 @@
   <div class="inner-tab-row flex border-b border-gray-200 mb-6">
     <div class="tab px-4 py-2 text-sm cursor-pointer whitespace-nowrap" [class.active]="activeTab === 'earned'"
       (click)="showTab('earned')">
-      Earned Badges ({{ data.earnedBadges.length }})
+      Earned Badges ({{badgeDetails?.summary?.totalBadgesEarned}})
     </div>
 
     <div class="tab px-4 py-2 text-sm cursor-pointer whitespace-nowrap" [class.active]="activeTab === 'inprogress'"
       (click)="showTab('inprogress')">
-      In Progress ({{ data.inProgress.length }})
+      In Progress ({{ badgeDetails?.summary?.inProgressCount }})
     </div>
   </div>
 
@@ -48,22 +48,24 @@
 
     <div class="panel-header flex items-center mb-5">
       <span class="panel-icon">
-        <img class="w-6 h-6 mr-2" src="assets/icons/level 2.svg" alt="badge">
+        <img class="w-6 h-6 mr-2" src="assets/icons/badges/level 2.svg" alt="badge">
       </span>
 
       <span class="panel-title font-semibold text-sm sm:text-base flex-1">Badge Activity</span>
 
-      <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div>
+      <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
     </div>
 
     <div class="earned-badges-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
 
       <div
         class="badge-card relative border rounded-lg bg-white flex flex-col items-center p-2 cursor-pointer hover:shadow-md transition"
-        *ngFor="let badge of data.earnedBadges" (click)="openModal()">
+        *ngFor="let badge of data.earnedBadges"
+        >
+        <!-- (click)="openModal()" -->
 
         <div class="badge-img-wrap w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center" [ngClass]="badge.glow">
-          <img class="w-full h-full object-cover" [src]="badge.image" alt="badge">
+          <img class="w-full h-full object-cover" [src]="badge.image | pipePublicURL" alt="badge">
         </div>
 
         <div class="badge-label text-center text-xs mt-2 font-semibold leading-tight">
@@ -87,16 +89,18 @@
 
       <span class="panel-title font-semibold text-sm sm:text-base flex-1">Badge In Progress</span>
 
-      <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div>
+      <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
     </div>
 
     <div class="badge-progress-list divide-y">
 
       <div class="badge-progress-item flex items-center py-3 gap-3" *ngFor="let badge of data.inProgress">
 
-        <img class="badge-icon w-8 h-8" [src]="badge.icon" alt="">
+        <img class="badge-icon w-8 h-8" [src]="badge.icon | pipePublicURL" alt="">
 
-        <span class="badge-name flex-1 text-sm">{{ badge.name }}</span>
+        <p class="badge-name flex-1 text-sm mb-0"><span> {{ badge.badgeTitle }}</span> <span class="course-name flex-6 text-sm">
+            <{{badge.courseName}}>
+          </span> </p>
 
         <button *ngIf="badge.continue"
           class="continue-btn hidden sm:flex text-white text-xs px-4 py-1 rounded-full items-center gap-1">

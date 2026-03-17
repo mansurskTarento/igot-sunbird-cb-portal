@@ -48,6 +48,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isIgotOrg = false
   isNotMyUser = false
   isNotMyUserAndIgotOrg = false
+  myBadgesCount: any = 0
   userStats: UserStats[] = [
     {
       state: 'NetworkV2Profile.myKarmaPoints',
@@ -67,9 +68,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     {
       state: 'My Badges',
       totalPoints: '0',
-      iconUrl: './assets/icons/Medal.svg',
+      iconUrl: './assets/icons/badges/Medal.svg',
       vewAllUrl: '/badges',
-      identifier: 'certificateCount'
+      identifier: 'myBadges'
     },
     {
       state: 'NetworkV2Profile.myPosts',
@@ -499,6 +500,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   setUserStats() {
     if (this.userStats && this.userStats.length > 0 && this.profileData) {
       this.userStats.forEach((userStat: UserStats) => {
+        this.myBadgesCount = _.get(this.profileData, 'badgeCount', 0)
         switch (userStat.identifier) {
           case 'karmaPoints':
             userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
@@ -508,6 +510,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             break
           case 'postCount':
             userStat.totalPoints = _.get(this.profileData, 'postCount', 0)
+            break
+          case 'myBadges':
+            userStat.totalPoints = this.myBadgesCount
             break
         }
       })

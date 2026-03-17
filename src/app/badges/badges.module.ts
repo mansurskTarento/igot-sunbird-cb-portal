@@ -5,6 +5,7 @@ import { BadgeDetailsComponent } from './badge-details/badge-details.component'
 import { BadgeModalComponent } from '@sunbird-cb/consumption'
 import { BtnPageBackModule } from '../../../library/ws-widget/collection/src/public-api'
 import { BadgeStatsComponent } from '@sunbird-cb/consumption'
+import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { BadgeStatsComponent } from '@sunbird-cb/consumption'
   imports: [
     CommonModule,
     BadgesRoutingModule,
-    BtnPageBackModule
+    BtnPageBackModule,
+    PipePublicURLModule
   ],
   exports: [
     BadgeDetailsComponent
