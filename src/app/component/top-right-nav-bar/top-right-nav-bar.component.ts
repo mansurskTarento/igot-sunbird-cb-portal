@@ -239,7 +239,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     const profile = this.configSvc.userProfile
     const learnerName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
     const notifData = notification.message?.data?.[0] || {}
-    if (notifData.isSurveySubmitted === true) {
+    if (notifData.status === "SUBMITTED") {
       this.snackBar.open('You have already completed the survey.', 'X', { duration: 3000 })
       return
     }
@@ -268,7 +268,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   openVerificationPopup(notification: any) {
     const notifData = notification.message?.data?.[0] || {}
-    if (notifData.isReviewSubmitted === true) {
+    if (notification.status === "SUBMITTED") {
       this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
       return
     }

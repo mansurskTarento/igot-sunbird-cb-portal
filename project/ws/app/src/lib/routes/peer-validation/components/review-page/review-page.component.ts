@@ -56,11 +56,6 @@ export class ReviewPageComponent implements OnInit {
     this.isReviewSubmitted = state['isReviewSubmitted'] || false
     const surveyEndDate = queryParams['surveyEndDate'] || state['surveyEndDate'] || null
 
-    if (this.isReviewSubmitted) {
-      this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
-      this.location.back()
-      return
-    }
 
     if (surveyEndDate && new Date(surveyEndDate) < new Date()) {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
