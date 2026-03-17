@@ -54,6 +54,7 @@ export namespace NSPeerValidation {
     status: string
     notificationId: string
     createdAt: string
+    thumbnail: string
     peerIds: string[]
     attachments: string[]
     responses: ISubmitResponse[]
@@ -78,6 +79,7 @@ export namespace NSPeerValidation {
     surveyEndDate?: string
     notificationId?: string
     createdAt?: string
+    thumbnail?: string
   }
 
   // Dashboard Item — mirrors raw API response structure
@@ -102,6 +104,7 @@ export namespace NSPeerValidation {
       surveyEndDate: string
       surveyName?: string          // survey title from real API
       learnerName: string
+      thumbnail?: string           // course thumbnail image from notification data
       courceImageUrl?: string      // optional — not present in real API response
       requestedName?: string
       submittedBy?: string

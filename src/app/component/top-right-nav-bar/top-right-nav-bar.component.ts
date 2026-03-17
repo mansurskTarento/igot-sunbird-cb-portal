@@ -261,6 +261,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         createdAt: notification.created_at || '',
         contextOrgId: notifData.contextOrgId || '',
         contextId: notifData.contextId || '',
+        thumbnail: notifData.thumbnail || '',
       },
     })
   }
@@ -289,6 +290,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         createdAt: notification.created_at || '',
         contextOrgId: notifData.contextOrgId || '',
         contextId: notifData.contextId || '',
+        thumbnail: notifData.thumbnail || '',
       },
     })
   }

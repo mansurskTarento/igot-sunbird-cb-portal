@@ -148,6 +148,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       surveyCreatedById: dashboardItem.metadata.surveyCreatedById || '',
       notificationId: dashboardItem.notification_id || '',
       createdAt: dashboardItem.created_at || '',
+      thumbnail: dashboardItem.metadata.thumbnail || '',
     }
 
     // Directly open SurveyDialogComponent, bypassing the popup

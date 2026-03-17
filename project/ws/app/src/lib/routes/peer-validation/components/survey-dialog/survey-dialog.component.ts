@@ -177,6 +177,7 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
       status: 'SUBMITTED',
       notificationId: this.data.notificationId || '',
       createdAt: this.data.createdAt || '',
+      thumbnail: this.data.thumbnail || '',
       peerIds,
       attachments,
       responses,
