@@ -1,0 +1,52 @@
+<div class="video-preview-container">
+  <div class="header">
+    <h3 class="title">{{ data.name }}</h3>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <div class="content-wrapper" *ngIf="viewType === 'video'">
+    <video #videoPlayer class="native-video" (timeupdate)="onTimeUpdate()" (loadedmetadata)="onLoadedMetadata()"
+      (ended)="onVideoEnded()">
+      <source [src]="data.url" [type]="getMimeType()" />
+      Your browser does not support the video tag.
+    </video>
+
+    <!-- Custom Video Controls -->
+    <div class="video-controls" [class.visible]="showControls" (mouseenter)="showControls = true"
+      (mouseleave)="hideControlsDelayed()">
+      <div class="controls-row">
+        <button mat-icon-button (click)="togglePlay()" class="control-btn">
+          <mat-icon>{{ isPlaying ? 'pause' : 'play_arrow' }}</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="toggleMute()" class="control-btn">
+          <mat-icon>{{ isMuted ? 'volume_off' : 'volume_up' }}</mat-icon>
+        </button>
+
+        <div class="progress-bar" (click)="seek($event)">
+          <div class="progress-filled" [style.width.%]="(currentTime / duration) * 100"></div>
+        </div>
+
+        <span class="time-display">{{ formatTime(currentTime) }} / {{ formatTime(duration) }}</span>
+
+        <button mat-button (click)="toggleSpeed()" class="speed-btn">
+          {{ playbackSpeed }}x
+        </button>
+
+        <button mat-icon-button (click)="togglePictureInPicture()" class="control-btn">
+          <mat-icon>picture_in_picture_alt</mat-icon>
+        </button>
+
+        <button mat-icon-button (click)="toggleFullscreen()" class="control-btn">
+          <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper pdf-content" *ngIf="viewType === 'pdf'">
+    <iframe [src]="sanitizedPdfUrl" class="native-pdf" frameborder="0"></iframe>
+  </div>
+</div>

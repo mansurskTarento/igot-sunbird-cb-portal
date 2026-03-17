@@ -1,0 +1,314 @@
+.review-page {
+  padding: 24px 0px;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+  background-color: transparent;
+  min-height: 100vh;
+
+  .back-nav {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 24px;
+    color: #333;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+
+    span {
+      font-size: 20px;
+      font-weight: bold;
+    }
+  }
+
+  .user-header {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+
+    .user-info {
+      .name {
+        font-size: 18px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+
+        .badge {
+          font-size: 11px;
+          font-weight: 500;
+          color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+          border: 1px solid #1B4CA1;
+          border-radius: 15px;
+          padding: 2px 8px;
+          margin-left: 12px;
+        }
+      }
+
+      .course {
+        font-family: 'Lato', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        font-style: normal;
+        line-height: 100%;
+        letter-spacing: 0%;
+        color: rgba(0, 0, 0, 0.87);
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .review-content {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .question-item {
+      margin-bottom: 24px;
+      background-color: #F5F5F5; // Figma: Generic 8pt Shades/KB-Greys-Light-Grey
+      padding: 24px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
+      // Remove old divider style
+      // border-bottom: 1px solid #eee;
+
+      &:last-child {
+        margin-bottom: 0;
+        // border-bottom: none;
+      }
+
+      .q-header {
+        font-weight: 500;
+        margin-bottom: 16px;
+        font-size: 16px;
+
+        .red {
+          color: red;
+        }
+      }
+
+      .q-response-rating {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 600px;
+        margin-bottom: 16px;
+
+        @media (max-width: 768px) {
+          flex-direction: column;
+          align-items: stretch;
+          gap: 8px;
+          max-width: 100%;
+        }
+
+        .label-side {
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
+          font-weight: 500;
+
+          @media (max-width: 768px) {
+            text-align: center;
+            font-size: 10px;
+            text-transform: uppercase;
+          }
+
+          @media (max-width: 480px) {
+            font-size: 9px;
+          }
+        }
+
+        .rating-pills {
+          display: flex;
+          gap: 12px;
+
+          @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+          }
+
+          @media (max-width: 480px) {
+            gap: 6px;
+          }
+
+          .pill {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: rgba(0, 0, 0, 0.4); // Figma: AccessibilityShades/KB-Greys-Black-40%
+            background: white;
+
+            @media (max-width: 480px) {
+              width: 36px;
+              height: 36px;
+              font-size: 13px;
+            }
+
+            &.selected {
+              background: #00000066; // Figma: Primary/KB-Primary-Light
+              color: white;
+              border-color: #00000014;
+              box-shadow: 0 2px 4px rgba(27, 76, 161, 0.3);
+            }
+          }
+        }
+      }
+
+      .q-response-text {
+        .text-box {
+          background: #FFFFFF;
+          padding: 16px;
+          border-radius: 4px;
+          border: 1px solid rgba(0, 0, 0, 0.16); // Figma: Borders/Border-16% Black
+          color: rgba(0, 0, 0, 0.87);
+          min-height: 60px;
+        }
+      }
+    }
+
+    // Standalone attachments block (no longer inside meta-section)
+    .attachments {
+      margin-top: 16px;
+
+      .attachment-item {
+        display: flex;
+        align-items: center;
+        padding: 10px 16px;
+        background: #e8f0fe;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        border: 1px solid #d2e3fc;
+
+        .attachment-icon {
+          margin-right: 12px;
+          display: flex;
+          align-items: center;
+
+          .icon-video {
+            color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+          }
+
+          .icon-file {
+            width: 24px;
+            height: 24px;
+          }
+        }
+
+        .attachment-info {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          flex: 1;
+          min-width: 0;
+
+          .filename {
+            font-weight: 500;
+            color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 14px;
+            flex: 0 1 auto;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+
+            &:hover {
+              color: #163d84;
+            }
+          }
+
+          .filesize {
+            color: rgba(0, 0, 0, 0.54);
+            font-size: 13px;
+            flex-shrink: 0;
+            white-space: nowrap;
+          }
+        }
+      }
+    }
+
+    .declaration {
+      margin-top: 32px;
+      margin-bottom: 32px;
+
+      .declaration-text {
+        color: #1B4CA1;
+        font-size: 14px;
+      }
+
+      ::ng-deep mat-checkbox {
+        color: #1B4CA1 !important; // Figma: Primary/KB-Primary-Light
+      }
+
+      ::ng-deep .mat-checkbox-label {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+
+      ::ng-deep .mat-checkbox-label-content {
+        color: rgba(0, 0, 0, 0.87) !important;
+        font-size: 14px;
+      }
+
+      ::ng-deep .mat-checkbox-layout {
+        color: rgba(0, 0, 0, 0.87) !important;
+      }
+    }
+
+    .inline-actions {
+      display: flex;
+      justify-content: flex-end; // Align buttons to the right
+      gap: 16px;
+
+      button {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 0 24px;
+        height: 40px;
+        border-radius: 24px; // Pill shape
+        background: white;
+        border: 1px solid;
+
+        &.btn-approve {
+          color: #007107; // Figma: ACTIVE/green text
+          border-color: #49C951; // Figma: ACTIVE border
+
+          &:hover {
+            background: rgba(73, 201, 81, 0.1);
+          }
+        }
+
+        &.btn-reject {
+          color: #D13924; // Figma: States/KB-States-Negative/Light
+          border-color: #D13924;
+
+          &:hover {
+            background: rgba(209, 57, 36, 0.1);
+          }
+        }
+
+        &:disabled {
+          color: #aaa;
+          border-color: #ddd;
+          background: transparent;
+        }
+      }
+    }
+  }
+}
