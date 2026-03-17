@@ -1,44 +1,44 @@
 <ng-template #competencyCard>
-    <ng-container *ngFor="let obj of filteredCompetencyArray">
-        <div class="flex-1 flex-col" *ngFor="let theme of obj?.themes">
+    <ng-container *ngFor="let item of shuffledThemes">
+        <div class="flex-1 flex-col">
             <div class="competency-passbook-theme"
-                [ngClass]="{'behavioral': obj?.name?.toLowerCase() === TYPE_CONST.behavioral.otherValue, 'functional': obj?.name?.toLowerCase() === TYPE_CONST.functional.value, 'domain': obj?.name?.toLowerCase() === TYPE_CONST.domain.value}">
+                [ngClass]="{'behavioral': item?.areaName?.toLowerCase() === TYPE_CONST.behavioral.otherValue, 'functional': item?.areaName?.toLowerCase() === TYPE_CONST.functional.value, 'domain': item?.areaName?.toLowerCase() === TYPE_CONST.domain.value}">
             </div>
             <div class="detail flex flex-col">
                 <div class="flex flex-col">
-                    <div class="flex flex-row justify-between p-4 cursor-pointer gap-6" (click)="handleNavigate(theme)">
+                    <div class="flex flex-row justify-between p-4 cursor-pointer gap-6" (click)="handleNavigate(item?.theme)">
                         <div class="flex flex-col gap-3 text-primary">
                             <div class="flex flex-row gap-2 align-baseline">
-                                <div class="competency-name font-semibold" [title]="theme?.name">{{
-                                    theme?.name }}</div>
+                                <div class="competency-name font-semibold" [title]="item?.theme?.name">{{
+                                    item?.theme?.name }}</div>
                                 <div class="flex items-baseline">
                                     <img src="assets/icons/competency/cp-arrow.svg" class="arrow-img" alt="cp arrow img" />
                                 </div>
                             </div>
                             <div class="flex flex-row gap-3">
                                 <mat-icon>school</mat-icon>
-                                <div class="text-base">{{ theme?.counts?.total || 0 }}</div>
+                                <div class="text-base">{{ item?.theme?.counts?.total || 0 }}</div>
                             </div>
                         </div>
                         <div class="flex items-baseline">
-                            <img src="assets/icons/competency/{{(obj?.name?.toLowerCase() === 'behavioral') ? 'behavioural' : obj?.name?.toLowerCase() }}-light.svg"
-                                alt="{{ obj?.name?.toLowerCase() }} image" />
+                            <img src="assets/icons/competency/{{(item?.areaName?.toLowerCase() === 'behavioral') ? 'behavioural' : item?.areaName?.toLowerCase() }}-light.svg"
+                                alt="{{ item?.areaName?.toLowerCase() }} image" />
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-3 p-4 chip-container">
-                        <ng-container *ngFor="let child of theme?.subThemes; let i = index">
+                        <ng-container *ngFor="let child of item?.theme?.subThemes; let i = index">
                             <div class="chip rounded-full p-2 text-xs"
-                                [ngClass]="{'hide': (i > 1 && !theme?.viewMore), 'chip-ellipsis': !theme?.viewMore && theme?.subThemes?.length > 1 }"
+                                [ngClass]="{'hide': (i > 1 && !item?.theme?.viewMore), 'chip-ellipsis': !item?.theme?.viewMore && item?.theme?.subThemes?.length > 1 }"
                                 [title]="child?.name">
                                 {{ child?.name }}
                             </div>
                         </ng-container>
                         <div class="flex items-center text-primary underline cursor-pointer text-xs"
-                            *ngIf="theme?.subThemes?.length > 2 && !theme?.viewMore" (click)="handleViewMore(theme)">
+                            *ngIf="item?.theme?.subThemes?.length > 2 && !item?.theme?.viewMore" (click)="handleViewMore(item?.theme)">
                             {{'competencyList.viewMore' | translate }}
                         </div>
-                        <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="theme?.viewMore"
-                            (click)="handleViewMore(theme, 'less')">
+                        <div class="flex items-center text-primary underline cursor-pointer text-xs" *ngIf="item?.theme?.viewMore"
+                            (click)="handleViewMore(item?.theme, 'less')">
                             {{'competencyList.viewLess' | translate }}
                         </div>
                     </div>
