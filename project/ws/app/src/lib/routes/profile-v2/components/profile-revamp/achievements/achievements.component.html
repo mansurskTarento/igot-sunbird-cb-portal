@@ -29,7 +29,7 @@
           </div>
         </ng-container>
       </ng-container>
-      <ng-container *ngIf="achievement?.uploadedDocumentUrl && achievement?.fileName">
+      <ng-container *ngIf="achievement?.contextData?.uploadedDocumentUrl && achievement?.contextData?.fileName">
         <div class="document-card flex justify-between items-center">
           <div class="flex items-center gap-4 w-full">
             <img [src]="achievement?.contextData?.uploadedDocumentUrl" class="certificate" alt="certificate">

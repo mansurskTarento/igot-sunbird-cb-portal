@@ -479,10 +479,10 @@
         <!-- Add competencies -->
 
         <div class="flex flex-col gap-1 round-control">
-          <div class="lable required">Competencies</div>
+          <div class="lable required">{{'common.competencies' | translate}}</div>
           <div class="flex-1">
             <div class="margin-bottom-m mt-2">
-              <p class="mat-subheading-2">Competency Area</p>
+              <p class="mat-subheading-2">{{'widgetCbpFilters.competencyArea' | translate}}</p>
               <mat-radio-group name="competencyArea" class="flex flex-row tgl-group margin-top-s flex-wrap">
                 <mat-radio-button *ngFor="let option of filteredallCompetencies" [value]="option.name" (change)="compAreaSelected(option)"
                   class="flex flex-row itm-center margin-right-s">
@@ -492,7 +492,7 @@
             </div>
 
             <div class="margin-bottom-m" *ngIf="allCompetencyTheme && allCompetencyTheme.length > 0">
-              <p class="mat-subheading-2">Competency Theme</p>
+              <p class="mat-subheading-2">{{'widgetCbpFilters.competencyTheme' | translate}}</p>
               <div class="flex flex-col profile-control w-full">
                 <mat-form-field appearance="outline" class="full-width search-input-new">
                   <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="queryThemeControl" maxlength="50"
@@ -512,7 +512,7 @@
             </div>
 
             <div class="margin-bottom-m" *ngIf="allCompetencySubtheme && allCompetencySubtheme.length > 0">
-              <p class="mat-subheading-2">Competency Sub theme</p>
+              <p class="mat-subheading-2">{{'widgetCbpFilters.competencySubTheme' | translate}}</p>
               <div class="flex flex-col profile-control w-full">
                 <mat-form-field appearance="outline" class="full-width search-input-new">
                   <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="querySubThemeControl" maxlength="50"
@@ -535,7 +535,7 @@
             <div class="margin-bottom-l">
               <button mat-raised-button type="button" class="ws-mat-default-text compbutton"
                 [ngClass]="!enableCompetencyAdd ? '' : 'ws-mat-accent-border-active'" [disabled]="!enableCompetencyAdd" (click)="addCompetency()">
-                <span class="mat-subheading-2 padding-xs">Add</span>
+                <span class="mat-subheading-2 padding-xs">{{'addtopicdialog.add' | translate}}</span>
               </button>
             </div>
 
@@ -546,10 +546,10 @@
                 <div *ngIf="isTableExpanded">
                   <table aria-label="Competencies" class="compt-table width-1-1 text-left">
                     <tr>
-                      <th class="padding-xs mat-body-1 bold-text font-bold">Area</th>
-                      <th class="padding-xs mat-body-1 bold-text font-bold">Theme</th>
+                      <th class="padding-xs mat-body-1 bold-text font-bold">{{'apptocsinglepage.area' | translate}}</th>
+                      <th class="padding-xs mat-body-1 bold-text font-bold">{{'apptocsinglepage.theme' | translate}}</th>
                       <th class="padding-xs mat-body-1 flex justify-between bold-text font-bold">
-                        Sub theme
+                        {{'apptocsinglepage.subTheme' | translate}}
                         <img *ngIf="entryForm?.controls?.competencies_v6?.value.length > 10" class="arrow-down cursor-pointer"
                           src="assets/icons/collections/arrow-down.svg" alt="icon" [ngClass]="{'rotate-icon': !listView}"
                           (click)="listView = !listView" (keyup)="listView = !listView" />
