@@ -164,16 +164,15 @@
         <div [innerHTML]="instructionAssessment[currentPage]"></div>
       </ng-container>
     </div>
-    <ng-container>
-      <div>
-        <!-- if noOfQuestion is 1 it should display "1 question", else it should display "noOfQuestion questions" -->
-        <p>{{'playerbrief.instructionNew' | translate}} {{ noOfQuestions }} {{ noOfQuestions <=1 ? 'question' : 'questions' }} {{'playerbrief.instructionNew1' | translate}}
-        {{ quizData?.minimumPassPercentage ? quizData?.minimumPassPercentage + '% ' : '0%'}} {{'playerbrief.instructionNew2' | translate}} {{ ( timeLimit | pipeDurationTransform: 'hms') }}.</p>
-      </div>
+    <div class="consent-checkbox" *ngIf="courseCategory.toLowerCase() === 'comprehensive assessment program'; else otherCategory">
+      <p>{{'playerbrief.instructionNew' | translate}} {{ noOfQuestions }} {{ noOfQuestions <= 1 ? 'question' : 'questions' }} {{'playerbrief.instructionNew1' | translate}} {{ quizData?.minimumPassPercentage ? quizData?.minimumPassPercentage + '% ' : '0%'}} {{'playerbrief.instructionNew2' | translate}} {{ ( timeLimit | pipeDurationTransform: 'hms') }}.</p>
+      <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOneComprehensive' | translate}}</mat-checkbox>
+    </div>
+    <ng-template #otherCategory>
       <div class="consent-checkbox">
-        <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOne' | translate}}</mat-checkbox>
+        <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOne' | translate}}<b>{{'playerbrief.instructionTwo' | translate}}</b>{{'playerbrief.instructionThree' | translate}}</mat-checkbox>
       </div>
-    </ng-container>
+    </ng-template>
   </div>
 
 
