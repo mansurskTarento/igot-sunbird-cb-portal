@@ -132,6 +132,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   showOverlay = false
   showToolTip = false
   coursePrimaryCategory: any
+  courseCategory: any
   currentSetNumber = 0
   noOfQuestionsPerSet = 20
   totalQuestionsCount = 0
@@ -432,6 +433,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.coursePrimaryCategory = this.widgetContentService.currentMetaData.primaryCategory
+    if (this.widgetContentService?.currentMetaData?.courseCategory) {
+      this.courseCategory = this.widgetContentService?.currentMetaData?.courseCategory
+    }
     if (this.widgetContentService.currentMetaData.children && this.widgetContentService.currentMetaData.children.length) {
       let activeResourceFound = false
       this.widgetContentService.currentMetaData.children.forEach((item: any) => {
