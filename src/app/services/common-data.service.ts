@@ -170,7 +170,7 @@ export class CommonDataService {
 
   fetchMandatoryNotification() {
     this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
-      if (notification && Object.keys(notification).length > 0 && !notification?.read) {
+      if (notification && !notification.error && Object.keys(notification).length > 0 && !notification?.read) {
         this.mandatoryNotificationData = notification
         this.showMandatoryNotification = true
         this.openMandatoryNotificationModal()
@@ -178,6 +178,7 @@ export class CommonDataService {
         this.showMandatoryNotification = false
       }
     }, error => {
+      this.showMandatoryNotification = false
       console.error('Error fetching mandatory notification:', error)
     })
   }

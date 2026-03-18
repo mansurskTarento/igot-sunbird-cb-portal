@@ -1,0 +1,37 @@
+<div class="user-search-table">
+  <div class="user-table">
+    <div class="table-header">
+      <div class="col-select"></div>
+      <div class="col-name">Full Name</div>
+      <div class="col-email">Email</div>
+      <div class="col-org">Organisation</div>
+      <div class="col-designation">Designation</div>
+    </div>
+
+    <div class="table-row" *ngFor="let user of filteredUsers" [class.selected]="isSelected(user)"
+      [class.disabled]="isDisabled(user)" [class.current-user]="isCurrentUser(user)"
+      [matTooltip]="isCurrentUser(user) ? 'You cannot select yourself' : ''" (click)="toggleUser(user)">
+      <div class="col-select">
+        <mat-checkbox [checked]="isSelected(user)" [disabled]="isDisabled(user)"
+          (click)="$event.stopPropagation(); toggleUser(user, $event)" color="primary">
+        </mat-checkbox>
+      </div>
+      <div class="col-name">
+        <div class="user-avatar">
+          <img *ngIf="user.profileDetails?.profileImageUrl" [src]="user.profileDetails?.profileImageUrl"
+            alt="User Photo" class="user-photo">
+          <span *ngIf="!user.profileDetails?.profileImageUrl">{{ getUserInitials(user) }}</span>
+        </div>
+        <span>{{ getUserFullName(user) }}</span>
+        <span class="you-badge" *ngIf="isCurrentUser(user)">You</span>
+      </div>
+      <div class="col-email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email || '--' }}</div>
+      <div class="col-org">{{ user.rootOrgName || '--' }}</div>
+      <div class="col-designation">{{ getUserDesignation(user) }}</div>
+    </div>
+
+    <div class="no-data" *ngIf="filteredUsers.length === 0">
+      No users found.
+    </div>
+  </div>
+</div>

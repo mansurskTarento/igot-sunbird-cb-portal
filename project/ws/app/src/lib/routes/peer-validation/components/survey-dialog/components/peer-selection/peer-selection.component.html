@@ -1,0 +1,44 @@
+<div class="peer-selection">
+  <div class="selection-header">
+    <strong>Select Reporting Officer/Peers/Subordinate</strong>
+    <p class="hint">Choose at lease 2 and maximum 3 reviewers.</p>
+  </div>
+
+  <!-- Search Input (Accordion Trigger) -->
+  <div class="search-box" [class.open]="isTableOpen" (click)="toggleTable()">
+    <mat-icon>search</mat-icon>
+    <input type="text" placeholder="Search by name or email" [(ngModel)]="searchQuery" (input)="onSearchInput()">
+    <mat-icon class="chevron-icon" [class.rotated]="isTableOpen">expand_more</mat-icon>
+  </div>
+
+  <!-- Selected Peer Chips -->
+  <div class="selected-chips" *ngIf="selectedPeersList.length > 0">
+    <div class="chip" *ngFor="let peer of selectedPeersList">
+      <div class="chip-avatar">
+        <img *ngIf="peer.profileDetails?.profileImageUrl" [src]="peer.profileDetails?.profileImageUrl" alt="User Photo"
+          class="chip-photo">
+        <span *ngIf="!peer.profileDetails?.profileImageUrl">{{ getUserInitials(peer) }}</span>
+      </div>
+      <div class="chip-info">
+        <div class="chip-name">{{ getUserFullName(peer) }}</div>
+        <div class="chip-designation">{{ getUserDesignation(peer) }}</div>
+      </div>
+      <button class="chip-remove" (click)="removePeer(peer)">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- User Search Table (Accordion Body) -->
+  <div class="accordion-body" [class.accordion-open]="isTableOpen">
+    <ws-app-user-search-table [selectedUserIds]="selectedPeerIds" [searchQuery]="searchQuery" [maxSelect]="3"
+      [surveyCreatedById]="surveyCreatedById" (userToggled)="onUserToggled($event)">
+    </ws-app-user-search-table>
+  </div>
+
+  <!-- Info Banner -->
+  <div class="info-banner">
+    <mat-icon>info</mat-icon>
+    <span>Your selected peer will receive a notification to review your submission.</span>
+  </div>
+</div>

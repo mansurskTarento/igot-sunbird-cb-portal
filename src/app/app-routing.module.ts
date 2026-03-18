@@ -96,6 +96,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'app/peer-validation',
+    loadChildren: () => import('./routes/route-peer-validation.module').then(u => u.RoutePeerValidationModule),
+    canActivate: [GeneralGuard],
+    data: {
+      pageId: 'app/peer-validation',
+      module: 'Peer Validation',
+    },
+  },
+  {
     path: 'app/frac',
     loadChildren: () => import('./routes/route-frac.module').then(u => u.RouteFracModule),
     canActivate: [GeneralGuard],
@@ -1206,6 +1215,16 @@ const routes: Routes = [
   {
     path: 'surveyml/:id',
     component: SurveyShikshaComponent,
+  },
+  {
+    path: 'badges',
+    loadChildren: () =>
+      import('./badges/badges.module').then(m => m.BadgesModule),
+    canActivate: [GeneralGuard],
+    data: {
+      pageId: 'badges',
+      module: 'Badges',
+    },
   },
   {
     path: '**',
