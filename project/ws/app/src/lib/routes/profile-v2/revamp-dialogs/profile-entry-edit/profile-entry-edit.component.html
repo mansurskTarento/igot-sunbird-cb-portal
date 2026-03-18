@@ -414,7 +414,7 @@
             <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
             </div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10 hours">
+              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10">
               <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
               <mat-error
                 *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'min')">{{'NetworkV2Profile.learningHoursMustBeGreaterThanZero'
