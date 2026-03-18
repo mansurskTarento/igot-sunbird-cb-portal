@@ -38,6 +38,24 @@
           {{ response.answer || 'No response provided.' }}
         </div>
       </div>
+
+      <!-- Radio Display -->
+      <div class="q-response-radio" *ngIf="response.answerType === 'radio'">
+        <div class="radio-answer">
+          <mat-icon class="radio-icon">radio_button_checked</mat-icon>
+          <span>{{ response.answer || 'No response provided.' }}</span>
+        </div>
+      </div>
+
+      <!-- Checkbox Display -->
+      <div class="q-response-checkbox" *ngIf="response.answerType === 'checkbox'">
+        <ng-container *ngIf="getCheckboxItems(response.answer).length">
+          <div class="checkbox-answer" *ngFor="let item of getCheckboxItems(response.answer)">
+            <mat-icon class="checkbox-icon">check_box</mat-icon>
+            <span>{{ item }}</span>
+          </div>
+        </ng-container>
+      </div>
     </div>
 
     <!-- File Attachments -->
