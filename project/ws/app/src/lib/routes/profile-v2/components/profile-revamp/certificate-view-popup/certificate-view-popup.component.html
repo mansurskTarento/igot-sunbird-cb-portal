@@ -1,7 +1,7 @@
 <div class="flex flex-col gap-4">
   <div class="flex justify-between items-center">
     <div class="section-header">{{ 'NetworkV2Profile.certificate' | translate }}</div>
-    <mat-icon class="close-icon" (click)="closePopup()">close</mat-icon>
+    <mat-icon class="close-icon-new" (click)="closePopup()" (keyup)="closePopup()">close</mat-icon>
   </div>
 
   <div class="w-full">
