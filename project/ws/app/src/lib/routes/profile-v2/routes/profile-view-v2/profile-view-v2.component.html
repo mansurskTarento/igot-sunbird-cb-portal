@@ -262,7 +262,8 @@
           <div class="flex flex-col gap-4">
             <ng-container *ngIf="isCurrentUser && isMobile">
               <div>
-                <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile" [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
+                <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"
+                  [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
               </div>
             </ng-container>
 
@@ -295,7 +296,8 @@
                 [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
                 [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
                 (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
-                (updateWithdrawalStatus)="updateWithdrawalStatus()"></ws-app-profile-primary-details>
+                (updateWithdrawalStatus)="updateWithdrawalStatus()"
+                (designationApprovedTimeChange)="designationApprovedTimeChange($event)"></ws-app-profile-primary-details>
             </div>
             <ng-container *ngIf="isCurrentUser">
               <ws-app-view-custom-fields></ws-app-view-custom-fields>

@@ -24,6 +24,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service'
+import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 //#endregion
 
 @Component({
@@ -205,8 +206,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isMobile = false;
   showProfileSection = true;
   blockedMessage = '';
+  private initCallCount = 0
+  private readonly INIT_CALL_TOTAL = 4
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>
+  designationApprovedTime: number = 0
   //#endregion
 
   constructor(
@@ -221,7 +225,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private datePipe: DatePipe,
     private events: EventService,
     private langtranslations: MultilingualTranslationsService,
-    private commonSvc: CommonDataService
+    private commonSvc: CommonDataService,
+    private netCoreService: NetCoreService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -434,12 +439,51 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.primaryDetails['cadreControllingAuthorityName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', '')
       this.primaryDetails['isOnCentralDeputation'] = _.get(this.profesionalDetails, 'cadreDetails.isOnCentralDeputation', false)
     }
+    this.onInitCallComplete()
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
     if (!this.isCurrentUser && this.aboutme === '') {
       this.filterProfileRoutes('about-me')
     }
     this.getInitials()
+  }
+
+  designationApprovedTimeChange(designationApprovedTime: number) {
+    this.designationApprovedTime = designationApprovedTime
+    this.onInitCallComplete()
+  }
+
+  private onInitCallComplete() {
+    this.initCallCount++
+    if (this.initCallCount === this.INIT_CALL_TOTAL) {
+      if (!this.showWithdrawRequestBtn && !this.showApprovalStatus &&
+        this.primaryDetails?.profileDesignationStatus === 'VERIFIED'
+      ) {
+        const obj = {
+          organisationName: _.get(this.profesionalDetails, 'refRootOrg.orgName', ''),
+          departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
+        }
+        this.netCoreUserProfileUpdateEvent(obj)
+      }
+    }
+  }
+
+  get showWithdrawRequestBtn(): boolean {
+    if (this.enableWR && this.isCurrentUser && !(this.isNotMyUser && this.isIgotOrg)) {
+      return true
+    }
+    return false
+  }
+
+  get showApprovalStatus(): boolean {
+    if (
+      (this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
+        this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
+      this.isCurrentUser
+    ) {
+      return true
+    }
+    return false
   }
 
   getDateFromText(dateString: string): any {
@@ -640,6 +684,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           } else {
             this.openSnackbar('Updated Successfully')
           }
+
+          // if (_.get(formBody, 'request.profileDetails.profileImageUrl')) {
+          //   this.netCoreUserProfilePhotoUpdateEvent(_.get(formBody, 'request.profileDetails.profileImageUrl'))
+          // }
+          if (_.get(formBody, 'request.profileDetails.personalDetails.firstname')) {
+            this.netCoreUserProfileNameUpdateEvent(_.get(formBody, 'request.profileDetails.personalDetails.firstname'))
+          } else {
+            this.netCoreUserProfileUpdateEvent(formBody)
+          }
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -651,23 +704,260 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
+  netCoreUserProfilePhotoUpdateEvent(profileImageUrl?: string) {
+    /* tslint:disable */
+    // console.log('this.content', this.portalProfile)
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
+
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+      let payload: any = {}
+      if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+        payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      }
+      if (profileImageUrl) {
+        payload['PROFILE_PHOTO'] = profileImageUrl
+      }
+
+      this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
+      this.netCoreService.trackEvent('profile_update', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+    }
+
+
+  }
+
+  netCoreUserProfileNameUpdateEvent(firstname?: string) {
+    /* tslint:disable */
+    // console.log('this.content', this.portalProfile)
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+      let payload: any = {}
+      if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+        payload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      }
+      if (firstname) {
+        payload['FULL_NAME'] = this.toTitleCase(firstname.trim().toLowerCase())
+      }
+
+      this.netCoreService.netCoreUserNameUpdate(payload)
+      this.netCoreService.trackEvent('profile_update', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), payload)
+    }
+  }
+
+  netCoreUserProfileUpdateEvent(formBody?: any) {
+    /* tslint:disable */
+    // console.log('this.content', this.portalProfile)
+    /* tslint:enable */
+    // smartech('contact', '2', {
+    //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
+    //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
+    // })
+    //let formValueChanges:any
+    if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
+      && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update
+      && this.configSvc.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
+    ) {
+      let profileUpdateObj: any = {}
+      let profileUpdateEventObj: any = []
+      if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
+        profileUpdateObj['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+        //profileUpdateEventObj['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
+      }
+
+
+
+
+
+      // if (this.profileName) {
+      //   profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+      //  // profileUpdateEventObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
+      //  profileUpdateEventObj.push('FULL_NAME')
+      // }
+      // if (this.photoUrl) {
+      //   profileUpdateObj['PROFILE_PHOTO'] = this.photoUrl
+      //   profileUpdateEventObj['PROFILE_PHOTO'] = this.photoUrl
+      // }
+      if (formBody) {
+
+        const EMPLOYEE_ID = _.get(formBody, 'request.profileDetails.employmentDetails.employeeCode')
+        const EMAIL = _.get(formBody, 'request.profileDetails.personalDetails.primaryEmail')
+        const MOBILE = _.get(formBody, 'request.profileDetails.personalDetails.mobile')
+        const MOTHER_TONGUE = _.get(formBody, 'request.profileDetails.personalDetails.domicileMedium')
+        const IS_CADRE = _.get(formBody, 'request.profileDetails.personalDetails.isCadre')
+        const ORGANISATION = _.get(formBody, 'organisationName')
+        const PARENT_DEPARTMENT = _.get(formBody, 'departmentName')
+
+        if (EMPLOYEE_ID) {
+          profileUpdateEventObj.push('EMPLOYEE_ID')
+        }
+        if (EMAIL) {
+          profileUpdateEventObj.push('EMAIL')
+        }
+        if (MOBILE) {
+          profileUpdateEventObj.push('MOBILE')
+        }
+        if (MOTHER_TONGUE) {
+          profileUpdateEventObj.push('MOTHER_TONGUE')
+        }
+        if (IS_CADRE) {
+          profileUpdateEventObj.push('IS_CADRE')
+        }
+        if (ORGANISATION) {
+          profileUpdateEventObj.push('ORGANISATION')
+        }
+        if (PARENT_DEPARTMENT) {
+          profileUpdateEventObj.push('PARENT_DEPARTMENT')
+        }
+        // if (this.portalProfile.personalDetails.gender) {
+        //   profileUpdateObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
+        //   profileUpdateEventObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
+        // }
+        // if (this.portalProfile.personalDetails.primaryEmail) {
+        //   profileUpdateObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
+        //   // profileUpdateEventObj['EMAIL'] = this.portalProfile.personalDetails.primaryEmail.trim()
+        //   profileUpdateEventObj.push('EMAIL')
+        // }
+        // if (this.portalProfile.personalDetails.mobile) {
+        //   profileUpdateObj['MOBILE'] = this.portalProfile.personalDetails.mobile
+        //   // profileUpdateEventObj['MOBILE'] = this.portalProfile.personalDetails.mobile
+        //   profileUpdateEventObj.push('MOBILE')
+        // }
+        // if (this.portalProfile.personalDetails.dob) {
+        //   profileUpdateEventObj['DOB'] = this.portalProfile.personalDetails.dob.trim()
+        // }
+        // if (this.portalProfile.personalDetails.domicileMedium) {
+        //   profileUpdateObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
+        //   // profileUpdateEventObj['MOTHER_TONGUE'] = this.toTitleCase(this.portalProfile.personalDetails.domicileMedium.trim().toLowerCase())
+        //   profileUpdateEventObj.push('MOTHER_TONGUE')
+        // }
+        // if (this.portalProfile.personalDetails.category) {
+        //   profileUpdateEventObj['CATEGORY'] = this.toTitleCase(this.portalProfile.personalDetails.category.trim().toLowerCase())
+        // }
+        // if (this.portalProfile.personalDetails.pincode) {
+        //   profileUpdateEventObj['PIN_CODE'] = this.portalProfile.personalDetails.pincode.trim()
+        // }
+
+
+
+
+
+
+        // if (this.portalProfile.id) {
+        //   // profileUpdateEventObj['EMPLOYEE_ID'] = this.portalProfile.employmentDetails?.employeeCode.trim()
+
+        // }
+        // if (this.portalProfile.personalDetails.hasOwnProperty('isCadre')) {
+        //   profileUpdateEventObj['IS_CADRE'] = this.portalProfile.personalDetails.hasOwnProperty('isCadre')
+        //   profileUpdateEventObj.push('IS_CADRE')
+        // }
+
+      }
+
+      const PROFILE_GROUP = _.get(formBody, 'request.profileDetails.professionalDetails[0].group')
+      const PROFILE_DESIGNATION = _.get(formBody, 'request.profileDetails.professionalDetails[0].designation')
+
+      if (PROFILE_GROUP) {
+        profileUpdateEventObj.push('PROFILE_GROUP')
+      }
+      if (PROFILE_DESIGNATION) {
+        profileUpdateEventObj.push('PROFILE_DESIGNATION')
+      }
+
+      if (this.profesionalDetails && this.profesionalDetails.profileDetails) {
+        profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.profesionalDetails.profileDetails.professionalDetails.group.trim().toLowerCase())
+        //profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+        // profileUpdateEventObj.push('PROFILE_GROUP')
+      }
+
+      if (this.profesionalDetails && this.profesionalDetails.profileDetails) {
+        profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.profesionalDetails.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+        //profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.profesionalDetails.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+        // profileUpdateEventObj.push('PROFILE_DESIGNATION')
+      }
+
+
+      if (this.profesionalDetails &&
+        this.profesionalDetails.cadreDetails) {
+        // if (this.profesionalDetails.cadreDetails.civilServiceType) {
+        //   profileUpdateEventObj['CIVIL_SERVICE_TYPE'] = this.profesionalDetails.cadreDetails.civilServiceType
+        // }
+        // if (this.portalProfile.cadreDetails.civilServiceName) {
+        //   profileUpdateEventObj['CIVIL_SERVICE_NAME'] = this.portalProfile.cadreDetails.civilServiceName
+        // }
+        // if (this.portalProfile.cadreDetails.cadreName) {
+        //   profileUpdateEventObj['CADRE_NAME'] = this.portalProfile.cadreDetails.cadreName
+        // }
+        // if (this.portalProfile.cadreDetails.cadreBatch) {
+        //   profileUpdateEventObj['CADRE_BATCH'] = this.portalProfile.cadreDetails.cadreBatch
+        // }
+        // if (this.portalProfile.cadreDetails.cadreControllingAuthorityName) {
+        //   profileUpdateEventObj['CADRE_CONTROLLING_AUTHORITY'] = this.portalProfile.cadreDetails.cadreControllingAuthorityName
+        // }
+      }
+
+      if (this.profesionalDetails && this.profesionalDetails.additionalProperties) {
+        // if (this.profesionalDetails.additionalProperties.externalSystemId) {
+        //   profileUpdateEventObj['EHRMS_ID'] = this.toTitleCase(this.profesionalDetails.additionalProperties.externalSystemId.trim().toLowerCase())
+        // }
+        // if (this.profesionalDetails.additionalProperties.externalSystemDor) {
+        //   profileUpdateEventObj['DOR'] = this.profesionalDetails.additionalProperties.externalSystemDor.trim()
+        // }
+      }
+
+
+      // profileUpdateEventObj = profileUpdateEventObj.toString()
+      console.log('profileUpdateEventObj', profileUpdateEventObj)
+
+      this.netCoreService.netCoreUserProfilepdate(profileUpdateObj)
+      // this.netCoreService.netCoreUserProfileUpdateEvent(profileUpdateEventObj, 'profile_update',this.configSvc.unMappedUser.identifier.trim().toLowerCase())
+      this.netCoreService.trackEvent('profile_update', this.configSvc.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
+    }
+  }
+
+  toTitleCase(str: string): string {
+    return str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   getErrorMessage(error: HttpErrorResponse, formBody: any): string {
     const errorMsg = _.get(error, 'error.params.errmsg', '') || _.get(error, 'error.message', '')
-    
+
     // Check if email or mobile is being updated
     const isEmailUpdate = _.get(formBody, 'request.profileDetails.personalDetails.primaryEmail')
     const isMobileUpdate = _.get(formBody, 'request.profileDetails.personalDetails.mobile')
-    
+
     // Check for duplicate email error
     if (isEmailUpdate && (errorMsg.toLowerCase().includes('email') || errorMsg.toLowerCase().includes('already exists'))) {
       return 'This email is already registered. Please use a different email address.'
     }
-    
+
     // Check for duplicate mobile error
     if (isMobileUpdate && (errorMsg.toLowerCase().includes('mobile') || errorMsg.toLowerCase().includes('phone') || errorMsg.toLowerCase().includes('already exists'))) {
       return 'This mobile number is already registered. Please use a different mobile number.'
     }
-    
+
     // Return specific error message if available, otherwise return generic message
     return errorMsg || 'Something went wrong please try again'
   }
@@ -978,6 +1268,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
         if (this.approvalPendingFields && this.approvalPendingFields.length === 0) {
           this.enableWTR = false
+          this.onInitCallComplete()
           return
         }
         const exists = this.approvalPendingFields.filter((obj: any) => {
@@ -1000,10 +1291,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         } else {
           this.enableWR = true
         }
+        this.onInitCallComplete()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('approvalStatusFailed'))
         }
+        this.onInitCallComplete()
       })
   }
 
@@ -1036,10 +1329,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             }
           })
         }
+        this.onInitCallComplete()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('rejectedStatusFailed'))
         }
+        this.onInitCallComplete()
       })
   }
 
