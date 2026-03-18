@@ -206,8 +206,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isMobile = false;
   showProfileSection = true;
   blockedMessage = '';
+  private initCallCount = 0
+  private readonly INIT_CALL_TOTAL = 4
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>
+  designationApprovedTime: number = 0
   //#endregion
 
   constructor(
@@ -436,12 +439,51 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.primaryDetails['cadreControllingAuthorityName'] = _.get(this.profesionalDetails, 'cadreDetails.cadreControllingAuthorityName', '')
       this.primaryDetails['isOnCentralDeputation'] = _.get(this.profesionalDetails, 'cadreDetails.isOnCentralDeputation', false)
     }
+    this.onInitCallComplete()
     this.aboutme = _.get(this.profesionalDetails, 'employmentDetails.aboutme', '')
     this.setAboutMeButton()
     if (!this.isCurrentUser && this.aboutme === '') {
       this.filterProfileRoutes('about-me')
     }
     this.getInitials()
+  }
+
+  designationApprovedTimeChange(designationApprovedTime: number) {
+    this.designationApprovedTime = designationApprovedTime
+    this.onInitCallComplete()
+  }
+
+  private onInitCallComplete() {
+    this.initCallCount++
+    if (this.initCallCount === this.INIT_CALL_TOTAL) {
+      if (!this.showWithdrawRequestBtn && !this.showApprovalStatus &&
+        this.primaryDetails?.profileDesignationStatus === 'VERIFIED'
+      ) {
+        const obj = {
+          organisationName: _.get(this.profesionalDetails, 'refRootOrg.orgName', ''),
+          departmentName: _.get(this.profesionalDetails, 'employmentDetails.departmentName', ''),
+        }
+        this.netCoreUserProfileUpdateEvent(obj)
+      }
+    }
+  }
+
+  get showWithdrawRequestBtn(): boolean {
+    if (this.enableWR && this.isCurrentUser && !(this.isNotMyUser && this.isIgotOrg)) {
+      return true
+    }
+    return false
+  }
+
+  get showApprovalStatus(): boolean {
+    if (
+      (this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
+        this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
+      this.isCurrentUser
+    ) {
+      return true
+    }
+    return false
   }
 
   getDateFromText(dateString: string): any {
@@ -648,8 +690,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           // }
           if (_.get(formBody, 'request.profileDetails.personalDetails.firstname')) {
             this.netCoreUserProfileNameUpdateEvent(_.get(formBody, 'request.profileDetails.personalDetails.firstname'))
+          } else {
+            this.netCoreUserProfileUpdateEvent(formBody)
           }
-          this.netCoreUserProfileUpdateEvent(formBody)
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -760,23 +803,30 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         const MOBILE = _.get(formBody, 'request.profileDetails.personalDetails.mobile')
         const MOTHER_TONGUE = _.get(formBody, 'request.profileDetails.personalDetails.domicileMedium')
         const IS_CADRE = _.get(formBody, 'request.profileDetails.personalDetails.isCadre')
+        const ORGANISATION = _.get(formBody, 'organisationName')
+        const PARENT_DEPARTMENT = _.get(formBody, 'departmentName')
 
-        if (EMPLOYEE_ID?.dirty) {
+        if (EMPLOYEE_ID) {
           profileUpdateEventObj.push('EMPLOYEE_ID')
         }
-        if (EMAIL?.dirty) {
+        if (EMAIL) {
           profileUpdateEventObj.push('EMAIL')
         }
-        if (MOBILE?.dirty) {
+        if (MOBILE) {
           profileUpdateEventObj.push('MOBILE')
         }
-        if (MOTHER_TONGUE?.dirty) {
+        if (MOTHER_TONGUE) {
           profileUpdateEventObj.push('MOTHER_TONGUE')
         }
-        if (IS_CADRE?.dirty) {
+        if (IS_CADRE) {
           profileUpdateEventObj.push('IS_CADRE')
         }
-
+        if (ORGANISATION) {
+          profileUpdateEventObj.push('ORGANISATION')
+        }
+        if (PARENT_DEPARTMENT) {
+          profileUpdateEventObj.push('PARENT_DEPARTMENT')
+        }
         // if (this.portalProfile.personalDetails.gender) {
         //   profileUpdateObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
         //   profileUpdateEventObj['GENDER'] = this.toTitleCase(this.portalProfile.personalDetails.gender.trim())
@@ -825,10 +875,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       const PROFILE_GROUP = _.get(formBody, 'request.profileDetails.professionalDetails[0].group')
       const PROFILE_DESIGNATION = _.get(formBody, 'request.profileDetails.professionalDetails[0].designation')
 
-      if (PROFILE_GROUP?.dirty) {
+      if (PROFILE_GROUP) {
         profileUpdateEventObj.push('PROFILE_GROUP')
       }
-      if (PROFILE_DESIGNATION?.dirty) {
+      if (PROFILE_DESIGNATION) {
         profileUpdateEventObj.push('PROFILE_DESIGNATION')
       }
 
@@ -1218,6 +1268,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
         if (this.approvalPendingFields && this.approvalPendingFields.length === 0) {
           this.enableWTR = false
+          this.onInitCallComplete()
           return
         }
         const exists = this.approvalPendingFields.filter((obj: any) => {
@@ -1240,10 +1291,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         } else {
           this.enableWR = true
         }
+        this.onInitCallComplete()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('approvalStatusFailed'))
         }
+        this.onInitCallComplete()
       })
   }
 
@@ -1276,10 +1329,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             }
           })
         }
+        this.onInitCallComplete()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('rejectedStatusFailed'))
         }
+        this.onInitCallComplete()
       })
   }
 
