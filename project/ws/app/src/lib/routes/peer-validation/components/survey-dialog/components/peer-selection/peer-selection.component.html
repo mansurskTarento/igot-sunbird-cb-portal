@@ -1,7 +1,7 @@
 <div class="peer-selection">
   <div class="selection-header">
     <strong>Select Reporting Officer/Peers/Subordinate</strong>
-    <p class="hint">Choose at lease 2 and maximum 3 reviewers.</p>
+    <p class="hint">Choose at least 2 and maximum 3 reviewers.</p>
   </div>
 
   <!-- Search Input (Accordion Trigger) -->
@@ -32,7 +32,7 @@
   <!-- User Search Table (Accordion Body) -->
   <div class="accordion-body" [class.accordion-open]="isTableOpen">
     <ws-app-user-search-table [selectedUserIds]="selectedPeerIds" [searchQuery]="searchQuery" [maxSelect]="3"
-      [surveyCreatedById]="surveyCreatedById" (userToggled)="onUserToggled($event)">
+      [contextOrgId]="contextOrgId" (userToggled)="onUserToggled($event)">
     </ws-app-user-search-table>
   </div>
 

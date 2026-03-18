@@ -95,7 +95,15 @@ export class MyNotificationsComponent {
       this.snackBar.open('You have already completed the survey.', 'X', { duration: 3000 })
       return
     }
+    if (notification.status === "IGNORED") {
+      this.snackBar.open('You have already submitted the response.', 'X', { duration: 3000 })
+      return
+    }
     if (notifData.surveyEndDate && new Date(notifData.surveyEndDate) < new Date()) {
+      this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
+      return
+    }
+    if (notification.survey_end_date && new Date(notification.survey_end_date) < new Date()) {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
       return
     }
@@ -120,11 +128,19 @@ export class MyNotificationsComponent {
 
   openVerificationPopup(notification: any) {
     const notifData = notification.message?.data?.[0] || {}
-    if (notification.status === "SUBMITTED") {
+    if (notification.status === "APPROVED" || notification.status === "REJECTED") {
       this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
       return
     }
+    if (notification.status === "IGNORED") {
+      this.snackBar.open('You have already submitted the response.', 'X', { duration: 3000 })
+      return
+    }
     if (notifData.surveyEndDate && new Date(notifData.surveyEndDate) < new Date()) {
+      this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
+      return
+    }
+    if (notification.survey_end_date && new Date(notification.survey_end_date) < new Date()) {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
       return
     }
@@ -137,11 +153,12 @@ export class MyNotificationsComponent {
         courseName: notifData.courseName || '',
         formId: notifData.formId || '',
         isReviewSubmitted: notifData.isReviewSubmitted || false,
-        surveyEndDate: notifData.surveyEndDate || '',
+        surveyEndDate: notifData.surveyEndDate || notification.survey_end_date || '',
         notificationId: notification.notification_id || '',
         createdAt: notification.created_at || '',
         contextOrgId: notifData.contextOrgId || '',
         contextId: notifData.contextId || '',
+        submittedBy: notifData.learnerId || notifData.submittedBy || '',
         thumbnail: notifData.thumbnail || '',
       },
     })

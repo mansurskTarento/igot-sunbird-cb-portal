@@ -130,6 +130,7 @@ export class ReviewPageComponent implements OnInit {
           this.snackBar.open(errMsg, 'X', { duration: 4000 })
           return
         }
+        this.peerValidationService.dashboardRefresh$.next()
         const dialogRef = this.dialog.open(SuccessDialogComponent, {
           width: '400px',
           panelClass: 'custom-success-dialog',
@@ -149,6 +150,15 @@ export class ReviewPageComponent implements OnInit {
 
   reject() {
     this.submitDecision('REJECTED')
+  }
+
+  // Helper to normalise checkbox answer (array or comma-separated string) to string[]
+  getCheckboxItems(answer: string | number): string[] {
+    if (Array.isArray(answer)) return (answer as string[]).filter(Boolean)
+    if (typeof answer === 'string' && answer.trim()) {
+      return answer.split(',').map(s => s.trim()).filter(Boolean)
+    }
+    return []
   }
 
   // Helper for array generation for read-only rating

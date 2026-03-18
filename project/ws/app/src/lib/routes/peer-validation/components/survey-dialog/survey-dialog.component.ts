@@ -200,6 +200,7 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
           })
           return
         }
+        this.peerValidationService.dashboardRefresh$.next()
         this.dialogRef.close()
         this.showSuccessDialog()
       },

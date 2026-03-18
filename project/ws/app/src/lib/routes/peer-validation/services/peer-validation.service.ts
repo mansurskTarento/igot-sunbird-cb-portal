@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Observable, forkJoin } from 'rxjs'
+import { Observable, forkJoin, Subject } from 'rxjs'
 import { map, switchMap } from 'rxjs/operators'
 import { NSPeerValidation } from '../models/peer-validation.model'
 import { HttpClient } from '@angular/common/http'
@@ -14,12 +14,16 @@ const API_END_POINTS = {
   UPLOAD_FILE: (formId: string) => `/apis/proxies/v8/peersurvey/upload?formId=${formId}`,
   GET_NOTIFICATIONS: (subType: string, page: number, size: number) =>
     `/apis/proxies/v8/v1/notifications/peervalidation/list?subType=${subType}&page=${page}&size=${size}`,
+  MARK_NOTIFICATION_READ: '/apis/proxies/v8/v1/notifications/v2/read',
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class PeerValidationService {
+  /** Emits whenever a survey or review is successfully submitted — dashboard subscribes to trigger a refresh. */
+  readonly dashboardRefresh$ = new Subject<void>()
+
   constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
 
 
@@ -131,18 +135,24 @@ export class PeerValidationService {
     return this.http.get<any>(API_END_POINTS.GET_NOTIFICATIONS(subType, filters.pageIndex, filters.pageSize)).pipe(
       map((res: any) => {
         const notifications: NSPeerValidation.IDashboardItem[] = res?.result?.notifications || []
-        // Sort by survey_end_date ascending (soonest ending first)
-        notifications.sort((a, b) => {
-          const dateA = a.survey_end_date ? new Date(a.survey_end_date).getTime() : Infinity
-          const dateB = b.survey_end_date ? new Date(b.survey_end_date).getTime() : Infinity
-          return dateA - dateB
-        })
         return {
           data: notifications,
           count: res?.result?.totalCount || 0,
         }
       })
     )
+  }
+
+  markNotificationIgnored(notificationId: string, createdAt: string): Observable<any> {
+    const body = {
+      request: {
+        type: 'individual',
+        ids: [notificationId],
+        created_at: createdAt,
+        status: 'IGNORED',
+      },
+    }
+    return this.http.patch(API_END_POINTS.MARK_NOTIFICATION_READ, body)
   }
 
   getDashboardCounts(): Observable<{ all: number, pending: number, incoming: number }> {

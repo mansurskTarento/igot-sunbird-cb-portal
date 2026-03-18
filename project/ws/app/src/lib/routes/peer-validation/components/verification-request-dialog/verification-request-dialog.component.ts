@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { Router } from '@angular/router'
+import { PeerValidationService } from '../../services/peer-validation.service'
 
 @Component({
   selector: 'ws-app-verification-request-dialog',
@@ -18,8 +19,11 @@ export class VerificationRequestDialogComponent {
       surveyEndDate: string
       notificationId: string
       createdAt: string
+      contextId: string
+      submittedBy: string
     },
-    private router: Router
+    private router: Router,
+    private peerValidationService: PeerValidationService,
   ) { }
 
   onYes() {
@@ -29,6 +33,8 @@ export class VerificationRequestDialogComponent {
         courseName: this.data.courseName || '',
         requestedName: this.data.requestedName || '',
         formId: this.data.formId || '',
+        submittedBy: this.data.submittedBy || '',
+        courseId: this.data.contextId || '',
         notificationId: this.data.notificationId || '',
         surveyEndDate: this.data.surveyEndDate || '',
         createdAt: this.data.createdAt || '',
@@ -37,6 +43,8 @@ export class VerificationRequestDialogComponent {
         requestedName: this.data.requestedName,
         courseName: this.data.courseName,
         formId: this.data.formId,
+        submittedBy: this.data.submittedBy || '',
+        courseId: this.data.contextId || '',
         isReviewSubmitted: this.data.isReviewSubmitted,
         surveyEndDate: this.data.surveyEndDate,
         notificationId: this.data.notificationId || '',
@@ -45,7 +53,16 @@ export class VerificationRequestDialogComponent {
     })
   }
   onNoButton() {
-    this.dialogRef.close()
+    if (this.data.notificationId && this.data.createdAt) {
+      this.peerValidationService
+        .markNotificationIgnored(this.data.notificationId, this.data.createdAt)
+        .subscribe({
+          next: () => this.dialogRef.close(),
+          error: () => this.dialogRef.close()
+        })
+    } else {
+      this.dialogRef.close()
+    }
   }
 
   onNo() {

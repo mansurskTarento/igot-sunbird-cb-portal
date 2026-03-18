@@ -85,7 +85,7 @@
       <!-- Step 3: Peer Selection -->
       <mat-step completed="false">
         <ng-template matStepLabel>Peer Selection</ng-template>
-        <ws-app-peer-selection [selectedPeers]="selectedPeers" [surveyCreatedById]="data.surveyCreatedById || ''"
+        <ws-app-peer-selection [selectedPeers]="selectedPeers" [contextOrgId]="data.contextOrgId || ''"
           (peersChanged)="onPeersChanged($event)">
         </ws-app-peer-selection>
 

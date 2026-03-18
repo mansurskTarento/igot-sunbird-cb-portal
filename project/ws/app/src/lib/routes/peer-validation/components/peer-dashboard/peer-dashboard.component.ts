@@ -34,6 +34,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
   ) { }
 
   private routerSub!: Subscription
+  private refreshSub!: Subscription
   private isDashboardActive = false
 
   // Tab Counts
@@ -51,12 +52,21 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
         this.fetchCounts()
       }
     })
+    // Refresh the list whenever any survey or review is submitted,
+    // regardless of which dialog/page triggered the submission.
+    this.refreshSub = this.peerValidationService.dashboardRefresh$.subscribe(() => {
+      this.fetchData()
+      this.fetchCounts()
+    })
   }
 
   ngOnDestroy() {
     this.isDashboardActive = false
     if (this.routerSub) {
       this.routerSub.unsubscribe()
+    }
+    if (this.refreshSub) {
+      this.refreshSub.unsubscribe()
     }
   }
 

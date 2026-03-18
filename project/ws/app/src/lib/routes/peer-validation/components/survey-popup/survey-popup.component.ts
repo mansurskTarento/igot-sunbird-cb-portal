@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { NSPeerValidation } from '../../models/peer-validation.model'
 import { SurveyDialogComponent } from '../survey-dialog/survey-dialog.component'
+import { PeerValidationService } from '../../services/peer-validation.service'
 
 @Component({
   selector: 'ws-app-survey-popup',
@@ -13,12 +14,10 @@ export class SurveyPopupComponent {
     public dialogRef: MatDialogRef<SurveyPopupComponent>,
     @Inject(MAT_DIALOG_DATA) public data: NSPeerValidation.ISurveyPopupData,
     private dialog: MatDialog,
+    private peerValidationService: PeerValidationService,
   ) { }
 
   onYes() {
-    // Open the survey dialog FIRST before closing this popup.
-    // This prevents the screen blink caused by the backdrop disappearing
-    // in the gap between close() and the next open() call.
     this.dialog.open(SurveyDialogComponent, {
       width: '980px',
       maxWidth: '95vw',
@@ -27,8 +26,17 @@ export class SurveyPopupComponent {
     })
     this.dialogRef.close()
   }
-  onNoButton(){
-    this.dialogRef.close()
+  onNoButton() {
+    if (this.data.notificationId && this.data.createdAt) {
+      this.peerValidationService
+        .markNotificationIgnored(this.data.notificationId, this.data.createdAt)
+        .subscribe({
+          next: () => this.dialogRef.close(),
+          error: () => this.dialogRef.close()
+        })
+    } else {
+      this.dialogRef.close()
+    }
   }
   onNo() {
     this.dialogRef.close()

@@ -13,7 +13,7 @@ export class UserSearchTableComponent implements OnInit, OnChanges {
   @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)
   @Input() maxSelect = 3
   @Input() searchQuery = ''                 // Driven by parent search input
-  @Input() surveyCreatedById: string = ''   // Used to resolve rootOrgId for user search
+  @Input() contextOrgId: string = ''   // contextOrgId passed directly from notification data
   @Output() userToggled = new EventEmitter<any>()   // Emits user object when toggled
 
   filteredUsers: any[] = []
@@ -41,9 +41,7 @@ export class UserSearchTableComponent implements OnInit, OnChanges {
   }
 
   getAllUsers() {
-    const request$ = this.surveyCreatedById
-      ? this.peerValidationService.getAllUsersBySurveyCreator(this.surveyCreatedById)
-      : this.peerValidationService.getAllUsers()
+    const request$ = this.peerValidationService.getAllUsers(this.contextOrgId || undefined)
 
     request$.subscribe({
       next: (res: any) => {
