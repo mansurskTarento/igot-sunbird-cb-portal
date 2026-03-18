@@ -118,9 +118,14 @@
                                                 (click)="getCertificateSVG(eachCert, 'SHARE')">share</mat-icon>
                                         </ng-container>
                                         <ng-container *ngIf="activeTab === 'selfAchievement'">
-                                            <mat-icon class="icon cursor-pointer" (click)="handleView(eachCert)">visibility</mat-icon>
+                                            <ng-container *ngIf="eachCert?.externallyUploaded === 'true'">
+                                                <mat-icon class="icon cursor-pointer"
+                                                    (click)="openDocument(eachCert?.certificateId)">visibility</mat-icon>
+                                            </ng-container>
+                                            <ng-container *ngIf="eachCert?.externallyUploaded === 'false'">
+                                                <mat-icon class="icon cursor-pointer" (click)="handleView(eachCert)">visibility</mat-icon>
+                                            </ng-container>
                                         </ng-container>
-
                                     </ng-container>
                                 </div>
                             </div>
@@ -128,14 +133,15 @@
                                 <ng-container>
                                     <ng-container *ngIf="!eachCert.error && eachCert?.certificateId">
                                         <div class="flex justify-center items-center img-div img-container">
-
-                                            <ng-container *ngIf="!eachCert?.printURI">
-                                                <img [src]="'/assets/icons/toc/no-certificate.svg'" alt="{{ eachCert?.courseName }} certificate" />
-                                            </ng-container>
-                                            <ng-container *ngIf="!eachCert?.loading && eachCert?.printURI">
-                                                <img [src]="eachCert?.printURI | pipeSafeSanitizer: 'url'" alt="{{ eachCert?.name }} certificate" />
-                                            </ng-container>
                                             <ng-container *ngIf="activeTab !== 'selfAchievement'">
+                                                <ng-container *ngIf="!eachCert?.printURI">
+                                                    <img [src]="'/assets/icons/toc/no-certificate.svg'"
+                                                        alt="{{ eachCert?.courseName }} certificate" />
+                                                </ng-container>
+                                                <ng-container *ngIf="!eachCert?.loading && eachCert?.printURI">
+                                                    <img [src]="eachCert?.printURI | pipeSafeSanitizer: 'url'"
+                                                        alt="{{ eachCert?.name }} certificate" />
+                                                </ng-container>
                                                 <div [ngClass]="{'view-certificate': eachCert?.loading, 'view-cert': !eachCert?.loading}">
                                                     <button type="button" (click)="getCertificateSVG(eachCert)">
                                                         <span *ngIf="!eachCert?.loading">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
@@ -146,13 +152,29 @@
                                                 </div>
                                             </ng-container>
                                             <ng-container *ngIf="activeTab === 'selfAchievement'">
-                                                <div class="view-cert">
-                                                    <button type="button" (click)="handleView(eachCert)">
-                                                        <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
-                                                    </button>
-                                                </div>
-                                            </ng-container>
+                                                <ng-container *ngIf="eachCert?.externallyUploaded === 'true'">
+                                                    <ng-container>
+                                                        <img [src]="eachCert?.certificateId" alt="{{ eachCert?.courseName }} certificate" />
+                                                    </ng-container>
+                                                    <div class="view-cert">
+                                                        <button type="button" (click)="openDocument(eachCert?.certificateId)">
+                                                            <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
+                                                        </button>
+                                                    </div>
+                                                </ng-container>
+                                                <ng-container *ngIf="eachCert?.externallyUploaded === 'false'">
+                                                    <ng-container>
+                                                        <img [src]="'/assets/icons/toc/no-certificate.svg'"
+                                                            alt="{{ eachCert?.courseName }} certificate" />
+                                                    </ng-container>
+                                                    <div class="view-cert">
+                                                        <button type="button" (click)="handleView(eachCert)">
+                                                            <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
+                                                        </button>
+                                                    </div>
+                                                </ng-container>
 
+                                            </ng-container>
                                         </div>
                                     </ng-container>
                                     <ng-container *ngIf="eachCert?.error || !eachCert?.certificateId">

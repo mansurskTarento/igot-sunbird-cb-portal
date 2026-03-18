@@ -14,6 +14,7 @@ import { environment } from 'src/environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { CertificateViewPopupComponent } from '../../../../project/ws/app/src/lib/routes/profile-v2/components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
 
 @Component({
   selector: 'ws-competency-card-details-v2',
@@ -427,5 +428,19 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.destroySubject$.unsubscribe()
+  }
+
+  openDocument(url: string): void {
+    if (url) {
+      this.dialog.open(CertificateViewPopupComponent, {
+        width: '600px',
+        panelClass: 'cover-photo-edit-popup',
+        data: {
+          certificateUrl: url
+        },
+        disableClose: true,
+        autoFocus: false,
+      })
+    }
   }
 }
