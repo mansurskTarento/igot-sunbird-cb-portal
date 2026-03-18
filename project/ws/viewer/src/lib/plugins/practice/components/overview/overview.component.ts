@@ -21,6 +21,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() noOfQuestions = 0
   @Input() canAttempt!: NSPractice.IRetakeAssessment
   @Input() coursePrimaryCategory: any
+  @Input() courseCategory: any
   @Input() instructionAssessment: any
   @Input() selectedAssessmentCompatibilityLevel: any
   @Output() userSelection = new EventEmitter<NSPractice.TUserSelectionType>()

@@ -109,12 +109,12 @@ export class ZohoFormService {
         if (radioElement.value === 'Centre') {
           if (btnCentre) btnCentre.classList.add('active')
           ministryLabel.textContent = 'Ministry / Department / Organization'
-          ministryInput.placeholder = 'Enter ministry or department name'
+          ministryInput.placeholder = 'Enter ministry, department or organization name'
         } else if (radioElement.value === 'State') {
           if (btnState) btnState.classList.add('active')
           ministryLabel.textContent = 'State / Department / Organization'
           ministryInput.placeholder =
-            'Enter state department or organization name'
+            'Enter state, department or organization name'
         }
       }
     } catch (error) {
@@ -475,6 +475,7 @@ export class ZohoFormService {
     ) as HTMLInputElement
     if (contactNameInput && userData.name) {
       contactNameInput.value = userData.name
+      contactNameInput.readOnly = true
       contactNameInput.dispatchEvent(new Event('change', { bubbles: true }))
     }
 
@@ -483,6 +484,7 @@ export class ZohoFormService {
     ) as HTMLInputElement
     if (emailInput && userData.email) {
       emailInput.value = userData.email
+      emailInput.readOnly = true
       emailInput.dispatchEvent(new Event('change', { bubbles: true }))
     }
 
@@ -491,6 +493,7 @@ export class ZohoFormService {
     ) as HTMLInputElement
     if (phoneInput && userData.phone) {
       phoneInput.value = userData.phone
+      phoneInput.readOnly = true
       phoneInput.dispatchEvent(new Event('change', { bubbles: true }))
     }
 
@@ -538,6 +541,45 @@ export class ZohoFormService {
           if (!/^\d{10}$/.test(phone)) {
             alert('Enter a valid 10 digit phone number')
             field.focus()
+            return false
+          }
+        }
+      }
+
+      // Check if Centre/State is selected and validate accordingly
+      const centreRadio = document.getElementById('CASECF21_centre') as HTMLInputElement
+      const stateRadio = document.getElementById('CASECF21_state') as HTMLInputElement
+      
+      if ((!centreRadio || !centreRadio.checked) && (!stateRadio || !stateRadio.checked)) {
+        alert('Please select Centre or State')
+        return false
+      }
+
+      // If Centre or State is selected, validate the Ministry/Organization field
+      const ministryInput = document.getElementById('ministry-input') as HTMLInputElement
+      if (!ministryInput || !ministryInput.value.trim()) {
+        if (centreRadio && centreRadio.checked) {
+          alert('Ministry / Department / Organization cannot be empty')
+        } else if (stateRadio && stateRadio.checked) {
+          alert('State / Department / Organization cannot be empty')
+        }
+        if (ministryInput) ministryInput.focus()
+        return false
+      }
+
+      // Check if AIS checkbox is selected, then validate AIS fields
+      const aisToggle = document.getElementById('ais-toggle') as HTMLInputElement
+      if (aisToggle && aisToggle.checked) {
+        const aisMandatoryFields = ['CASECF24', 'CASECF27', 'CASECF26'] // Service, Batch Year, Cadre
+        for (const fieldId of aisMandatoryFields) {
+          const field = document.getElementById(fieldId) as HTMLSelectElement
+          if (!field || !field.value.trim()) {
+            let fieldLabel = ''
+            if (fieldId === 'CASECF24') fieldLabel = 'AIS Service'
+            else if (fieldId === 'CASECF27') fieldLabel = 'Batch Year'
+            else if (fieldId === 'CASECF26') fieldLabel = 'Cadre'
+            alert(`${fieldLabel} cannot be empty`)
+            if (field) field.focus()
             return false
           }
         }

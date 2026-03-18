@@ -2,7 +2,7 @@
 <viewer-overview *ngIf="viewState === 'initial'" [learningObjective]="learningObjective"
   [complexityLevel]="complexityLevel" [duration]="duration" [timeLimit]="getTimeLimit"
   [primaryCategory]="primaryCategory" [canAttempt]="canAttempt" [noOfQuestions]="noOfQuestions"
-  (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory"
+  (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory" [courseCategory]="courseCategory"
   [instructionAssessment]="instructionAssessment" [quizData]="quizData"
   [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [forPreview]="forPreview">
 </viewer-overview>
