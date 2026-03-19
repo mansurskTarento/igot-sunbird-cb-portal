@@ -51,6 +51,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
 
   leftStatus: { id: string, count: number, consumedCourse: number }[] = []
   filteredCompetencyArray: any[] = []
+  shuffledThemes: { areaName: string, theme: any }[] = []
   myCompetencies: {
     id: string
     name: string
@@ -311,6 +312,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     })
     this.filteredCompetencyArray = this.myCompetencies
     this.findCounts()
+    this.updateShuffledThemes()
 
   }
 
@@ -398,6 +400,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
           || (tab === 'behavioral' && areaName === 'behavioural')
       })
     }
+    this.updateShuffledThemes()
   }
 
   handleTabChange(event: MatTabChangeEvent): void {
@@ -418,6 +421,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     } else {
       this.filteredCompetencyArray = this.myCompetencies.slice(0, 3)
     }
+    this.updateShuffledThemes()
   }
 
   handleClick(param: string): void {
@@ -446,6 +450,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         }))
         .filter((area: any) => area.themes.length > 0)
     }
+    this.updateShuffledThemes()
   }
 
   // Filters related functionalities...
@@ -536,6 +541,22 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     }
 
     this.filteredCompetencyArray = filtered
+    this.updateShuffledThemes()
+  }
+
+  updateShuffledThemes(): void {
+    const flat: { areaName: string, theme: any }[] = []
+    this.filteredCompetencyArray.forEach((area: any) => {
+      (area.themes || []).forEach((theme: any) => {
+        flat.push({ areaName: area.name, theme })
+      })
+    })
+    // Fisher-Yates shuffle
+    for (let i = flat.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [flat[i], flat[j]] = [flat[j], flat[i]]
+    }
+    this.shuffledThemes = flat
   }
 
   ngOnDestroy(): void {

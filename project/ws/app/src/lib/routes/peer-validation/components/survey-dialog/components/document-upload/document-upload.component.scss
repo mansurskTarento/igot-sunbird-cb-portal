@@ -1,0 +1,159 @@
+.document-upload {
+  border: 1px solid #E0E0E0;
+  border-radius: 4px;
+  padding: 16px;
+  margin: 0 34px 16px 34px;
+
+  .upload-header {
+    margin-bottom: 16px;
+
+    strong {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.87);
+    }
+
+    .hint {
+      font-size: 13px;
+      color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
+      margin: 4px 0;
+    }
+  }
+
+  .upload-area {
+    border: 1px dashed #1B4CA1; // Figma: dashed border #1B4CA1
+    border-radius: 4px;
+    padding: 24px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: rgba(27, 76, 161, 0.04); // Figma: #1B4CA1 at 4%
+
+    &:hover,
+    &.drag-over {
+      background: rgba(27, 76, 161, 0.08);
+    }
+
+    .upload-text {
+      strong {
+        font-size: 14px;
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+        display: block;
+        margin-bottom: 4px;
+      }
+
+      .upload-info {
+        font-size: 12px;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 1.4;
+
+        .size-hint {
+          font-weight: 500;
+        }
+
+        .pdf-size {
+          color: #F44336;
+        }
+
+        .mp4-size {
+          color: #F44336;
+        }
+      }
+    }
+  }
+
+  .file-note {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
+    margin-top: 8px;
+  }
+
+  .uploaded-files {
+    margin-top: 16px; // Reduced margin
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px; // Reduced padding
+      border: 1px solid #E0E0E0;
+      border-radius: 4px;
+      margin-bottom: 8px;
+
+      .file-icon {
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+        margin-right: 12px;
+      }
+
+      .file-info {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        min-width: 0;
+
+        .file-name {
+          font-size: 14px;
+          color: rgba(0, 0, 0, 0.87);
+          font-weight: 500;
+          margin-right: 8px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          flex: 0 1 auto;
+          min-width: 0;
+
+          &.clickable {
+            cursor: pointer;
+            color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+            text-decoration: underline;
+            font-weight: 700;
+
+            &:hover {
+              color: #163d84;
+            }
+          }
+        }
+
+        .file-size {
+          font-size: 12px;
+          color: rgba(0, 0, 0, 0.54);
+          flex-shrink: 0;
+          white-space: nowrap;
+        }
+      }
+
+      .remove-btn {
+        color: rgba(0, 0, 0, 0.54);
+      }
+    }
+  }
+
+  .uploading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+    color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+    font-size: 14px;
+  }
+}
+
+// Centered snackbar styling for file validation messages
+::ng-deep .mat-snack-bar-container.center-snackbar {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  min-width: 200px;
+  max-width: 80vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px !important;
+  box-sizing: border-box;
+}
+
+// Fallback: target deeper overlay structure if panelClass is not applied to container
+::ng-deep .cdk-global-overlay-wrapper .cdk-overlay-pane .mat-snack-bar-container.center-snackbar {
+  position: fixed !important;
+}
