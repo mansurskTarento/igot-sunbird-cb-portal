@@ -40,6 +40,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   @Output() openProfileEditDialog = new EventEmitter();
   @Output() getApprovalStatus = new EventEmitter();
   @Output() updateWithdrawalStatus = new EventEmitter();
+  @Output() designationApprovedTimeChange = new EventEmitter();
 
 
   groupApprovedTime = 0
@@ -86,6 +87,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
               obj.lastUpdatedOn : this.designationApprovedTime
           })
         }
+        this.designationApprovedTimeChange.emit(this.designationApprovedTime)
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.openSnackbar(this.handleTranslateTo('somethingWentWrongPleaseTryAgain'))
