@@ -1,5 +1,5 @@
 
-<a class="close_btn flex flex-end" (click)="dialogClose()">
+<a class="close_btn flex flex-end" (click)="dialogClose()" [ngClass]="{'zoho-close-btn': data.view === 'zohoform'}">
     <mat-icon>close</mat-icon>
 </a>
 <ng-container  [ngTemplateOutlet]="roles" *ngIf="data.view === 'roles'">
