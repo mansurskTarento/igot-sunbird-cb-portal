@@ -302,8 +302,8 @@ body {
 .badge-progress-item .badge-icon {
   margin-right: 12px;
   display: flex;
-    width: 24px;
-    height: 24px;
+  width: 38px;
+    height: 38px;
     justify-content: center;
     align-items: center;
 }
@@ -468,4 +468,15 @@ body {
 // }
 .course-name {
   font-size: 12px !important;
+  color: gray;
+    font-style: italic;
+}
+.earnedcourseName {
+  margin-bottom: 0px !important;
+  color: gray;
+  font-style: italic;
+}
+
+.mat-mdc-menu-item {
+  background-color: white !important;
 }

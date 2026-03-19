@@ -15,6 +15,7 @@ export class CourseCompletionDialogComponent implements OnInit {
   userRating: any = {}
   showRating = false
   isEditMode = false
+  badge: any = null
   collectionId = ''
   constructor(
     private ratingSvc: RatingService,
@@ -33,6 +34,11 @@ export class CourseCompletionDialogComponent implements OnInit {
   }
 
   ngOnInit() {
+    const badgeDetails = this.data?.baseContentReadData?.badgeDetails_v1
+
+    if (badgeDetails && badgeDetails.length) {
+      this.badge = badgeDetails[0]
+    }
     const app: any = document.getElementById('viewer-conatiner-backdrop')
     if (app) {
       app.style.filter = 'blur(5px)'

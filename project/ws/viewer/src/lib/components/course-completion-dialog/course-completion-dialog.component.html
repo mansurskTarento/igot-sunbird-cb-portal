@@ -1,4 +1,3 @@
-
 <!-- <h1 mat-dialog-title >  Congratulations for completing the Overview of Administrative Law!</h1>
 <div mat-dialog-content class="text-base hide-overflow" >
     You have completed the course successfully. Please check back in some time to view your
@@ -10,7 +9,7 @@
   class=" actbutton mat-body-2 blue-border" [mat-dialog-close]="true" >
     Close
   </button> -->
-  <!-- class ="ws-mat-accent-border-active mat-accent" -->
+<!-- class ="ws-mat-accent-border-active mat-accent" -->
 <!-- </div> -->
 
 <!-- <mat-card class="no-shadow" *ngIf="!showRating">
@@ -63,36 +62,62 @@
 <mat-card class="no-shadow" *ngIf="showRating">
 <ws-widget-content-rating-v2-dialog [ccuserRating]="userRating"  [navigatetoTOC]="true"></ws-widget-content-rating-v2-dialog>
 </mat-card> -->
-<div class="congrats-container" *ngIf="!showRating">    
- 
-    <div class="header">
-      <div><img src="assets/icons/final-assessment/congrats_badge.svg"/></div>
-      
-      <div class="heading-text"><span >{{ translateLabels('congratulations', 'coursecompletiondialog') }}</span></div>
-      <div class="subheading-text" *ngIf="data?.courseCategory?.toLowerCase() !== 'case study'"><span >{{ 'coursecompletiondialog.yourCertificateAvailableShortly' | translate }}</span></div>
+<div class="congrats-container" *ngIf="!showRating">
+
+  <div class="header">
+    <div><img src="assets/icons/final-assessment/congrats_badge.svg" /></div>
+
+    <div class="heading-text"><span>{{ translateLabels('congratulations', 'coursecompletiondialog')
+        }}</span></div>
+    <div class="subheading-text" *ngIf="data?.courseCategory?.toLowerCase() !== 'case study'"><span>{{
+        'coursecompletiondialog.yourCertificateAvailableShortly' | translate }}</span></div>
     </div>
+    <!-- <div class="badge-section" *ngIf="badge">
     
-    <div class="seperator"></div>
-    <div class="rating-panel">
-        <div class="" (click)="$event.stopPropagation();">
-          <ng-container *ngFor="let start of [1, 2, 3, 4, 5]; let i = index">
-              <button i18n-aria-label aria-label="Rating" aria-labelledby="rate-heading"
-                  name="user-content-rating-star-{{i+1}}"
-                  class="rating-button mr-2" mat-icon-button (click)="addRating(i); $event.stopPropagation();"
-                  color="primary">
-                  <mat-icon class="rating-icon ws-mat-white16-text"
-                      [ngClass]="{'ws-mat-orange-text':(userRating?.rating || -1) > i}">
-                      star
-                  </mat-icon>
-              </button>
-          </ng-container>
-      </div>
-      <div class="subheading-text-bold">Rate this {{data?.courseCategory}}</div>
+                              <div class="badge-icon">
+                                <img [src]="badge.badgeTemplate" alt="badge" />
+                              </div>
+    
+                              <div class="badge-text">
+                                <div class="badge-title">
+                                  {{ badge?.badgeTitle }}
+                                </div>
+    
+                                <div class="badge-subtitle">
+                                  {{ badge?.badgeSubTitle }}
+                                </div>
     </div>
+
+        </div> -->
+        <div class="badge-wrapper" *ngIf="badge">
+          <img [src]="badge?.badgeTemplate | pipePublicURL" class="badge-image" />
+        
+          <div class="badge-label">
+            <span class="badge-name">{{ badge?.badgeTitle }}</span>
+            <!-- <span class="badge-level">{{ badge?.badgeSubTitle }}</span> -->
+          </div>
+        </div>
+  <div class="seperator"></div>
+  <div class="rating-panel">
+    <div class="" (click)="$event.stopPropagation();">
+      <ng-container *ngFor="let start of [1, 2, 3, 4, 5]; let i = index">
+        <button i18n-aria-label aria-label="Rating" aria-labelledby="rate-heading"
+          name="user-content-rating-star-{{i+1}}" class="rating-button mr-2" mat-icon-button
+          (click)="addRating(i); $event.stopPropagation();" color="primary">
+          <mat-icon class="rating-icon ws-mat-white16-text"
+            [ngClass]="{'ws-mat-orange-text':(userRating?.rating || -1) > i}">
+            star
+          </mat-icon>
+        </button>
+      </ng-container>
+    </div>
+    <div class="subheading-text-bold">Rate this {{data?.courseCategory}}</div>
   </div>
+</div>
 <div>
-<mat-card class="no-shadow" *ngIf="showRating">
-  <!-- In case of multilingual course, redirection should happen to base collectionID -->
-  <ws-widget-content-rating-v2-dialog [isEditMode]="isEditMode" [ccuserRating]="userRating"  [navigatetoTOC]="true" [collectionId]="collectionId"></ws-widget-content-rating-v2-dialog>
+  <mat-card class="no-shadow" *ngIf="showRating">
+    <!-- In case of multilingual course, redirection should happen to base collectionID -->
+    <ws-widget-content-rating-v2-dialog [isEditMode]="isEditMode" [ccuserRating]="userRating" [navigatetoTOC]="true"
+      [collectionId]="collectionId"></ws-widget-content-rating-v2-dialog>
   </mat-card>
 </div>

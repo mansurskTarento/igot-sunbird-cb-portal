@@ -140,13 +140,14 @@
                 <span  *ngIf="insightsData?.weeklyClaps?.total_claps > 1 else elseWeeklyClaps">{{insightsData?.weeklyClaps?.total_claps}} {{ 'weeklyclaps.weeks' | translate }}</span>
                 <ng-template #elseWeeklyClaps>{{insightsData?.weeklyClaps?.total_claps || 0}} {{ 'weeklyclaps.weeks' | translate }}</ng-template>
             </div> -->
-            
+
             <div class="text-center " [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}"
               (click)="this.router.navigate(['/badges'])">
               <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
                 <div class="flex items-center">
                   <span>My Badges</span>
-                  <img class="margin-left-s cursor-pointer" (click)="openInfo(myDialog)" width="20px" height="20px"
+                  <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.badgetooltip' | translate" width="20px"
+                    height="20px"
                     src="assets/icons/home/help_icon.svg">
                 </div>
               </div>

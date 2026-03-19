@@ -1,13 +1,14 @@
 import { Component, HostListener } from '@angular/core'
 import * as _ from 'lodash'
 import { BadgeService } from '../../services/badge.service'
+import { Router } from '@angular/router'
 @Component({
   selector: 'app-badge-details',
   templateUrl: './badge-details.component.html',
   styleUrls: ['./badge-details.component.scss'],
 })
 export class BadgeDetailsComponent {
-  constructor(private userProfileService: BadgeService) {
+  constructor(private userProfileService: BadgeService, private router: Router) {
   }
   activeTab: 'earned' | 'inprogress' = 'earned'
   @HostListener('document:click')
@@ -33,7 +34,7 @@ export class BadgeDetailsComponent {
 
     this.userProfileService.fetchBadgeDetails(payload).subscribe(
       (res: any) => {
-
+        console.log('badgeDetails', res?.result)
         this.badgeDetails = res?.result || {}
         this.data.stats[0].value = this.badgeDetails?.summary?.totalBadgesEarned
         this.data.stats[1].value = this.badgeDetails?.summary?.courseCompleted
@@ -45,6 +46,7 @@ export class BadgeDetailsComponent {
           this.data.earnedBadges = badges.flatMap((badge: any) =>
             (badge.badgeDetails_v1 || []).map((detail: any) => ({
               image: detail.badgeTemplate,
+              courseName: `${badge.courseName}`,
               glow: 'glow-orange',
               title: detail.badgeTitle,
               level: detail.badgeSubTitle,
@@ -60,7 +62,8 @@ export class BadgeDetailsComponent {
             badgeTitle: `${badge?.badgeDetails_v1?.[0]?.badgeTitle}`,
             courseName: `${badge.courseName}`,
             progress: badge.completionPercentage + '%',
-            continue: badge.completionPercentage < 100 && badge.completionPercentage > 0
+            continue: badge.completionPercentage < 100 && badge.completionPercentage > 0,
+            courseId: badge?.courseId
           }))
 
         }
@@ -70,6 +73,18 @@ export class BadgeDetailsComponent {
         console.log('Badge API Error', error)
       }
     )
+
+  }
+  goToContent = (badge: any) => {
+    const id = badge?.courseId
+
+    if (!id) return
+
+    if (id.startsWith('do_')) {
+      this.router.navigate(['/app/toc', id, 'overview'])
+    } else if (id.startsWith('ext_')) {
+      this.router.navigateByUrl(`/app/toc/ext/${id}`)
+    }
   }
   showModal = false
 
@@ -122,7 +137,7 @@ export class BadgeDetailsComponent {
         value: this.badgeDetails?.summary?.totalBadgesEarned,
       },
       {
-        label: 'Course Completed',
+        label: 'Content Completed',
         icon: 'assets/icons/badges/course.svg',
         iconClass: 'blue',
         value: this.badgeDetails?.summary?.courseCompleted,
@@ -131,7 +146,7 @@ export class BadgeDetailsComponent {
         label: 'Badge Completion Rate',
         icon: 'assets/icons/badges/line_chart.svg',
         iconClass: 'yellow',
-        value: this.badgeDetails?.summary?.completionRate,
+        value: `${this.badgeDetails?.summary?.completionRate}%`,
       },
     ],
 
