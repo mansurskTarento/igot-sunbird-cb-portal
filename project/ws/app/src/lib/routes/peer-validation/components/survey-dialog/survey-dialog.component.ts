@@ -85,18 +85,21 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
     const responsesArray = this.questionForm.get('responses') as FormArray
     this.surveyQuestions.forEach(question => {
       if (question.type === 'numericRating') {
-        responsesArray.push(this.fb.control(null, Validators.required))
+        responsesArray.push(this.fb.control(null, question.required ? Validators.required : []))
       } else if (question.type === 'radio') {
         // Radio: single selection from options, starts as null (nothing selected)
-        responsesArray.push(this.fb.control(null, Validators.required))
+        responsesArray.push(this.fb.control(null, question.required ? Validators.required : []))
       } else if (question.type === 'checkbox') {
         // For checkbox, we need a custom validator to ensure at least one option is selected
-        responsesArray.push(this.fb.control([], [Validators.required, (control: any) => {
-          return control.value && control.value.length > 0 ? null : { required: true }
-        }]))
+        const checkboxValidators = question.required
+          ? [Validators.required, (control: any) => {
+              return control.value && control.value.length > 0 ? null : { required: true }
+            }]
+          : []
+        responsesArray.push(this.fb.control([], checkboxValidators))
       } else {
         // textArea and any other types
-        responsesArray.push(this.fb.control('', Validators.required))
+        responsesArray.push(this.fb.control('', question.required ? Validators.required : []))
       }
     })
   }
