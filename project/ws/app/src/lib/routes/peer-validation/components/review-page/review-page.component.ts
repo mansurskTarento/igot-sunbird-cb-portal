@@ -107,6 +107,12 @@ export class ReviewPageComponent implements OnInit {
   }
 
   goBack() {
+    this.clearHistoryStateAndGoBack()
+  }
+
+  clearHistoryStateAndGoBack() {
+    const dashboardUrl = this.router.serializeUrl(this.router.createUrlTree(['/app/peer-validation']))
+    window.history.replaceState({}, '', dashboardUrl)
     this.location.back()
   }
 
@@ -135,7 +141,7 @@ export class ReviewPageComponent implements OnInit {
           width: '400px',
           panelClass: 'custom-success-dialog',
         })
-        dialogRef.afterClosed().subscribe(() => this.goBack())
+        dialogRef.afterClosed().subscribe(() => this.clearHistoryStateAndGoBack())
       },
       error: err => {
         const errMsg = err?.error?.params?.errMsg || 'Failed to submit review. Please try again.'
