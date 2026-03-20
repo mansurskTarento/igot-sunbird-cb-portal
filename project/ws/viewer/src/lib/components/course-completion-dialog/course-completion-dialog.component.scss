@@ -82,7 +82,7 @@
 }
 
 ::ng-deep .rating-button.mat-icon-button{
-  margin:0 8px !important;   
+  margin: 0 8px !important;
 }
 
 #app-bg {
@@ -98,4 +98,86 @@
     z-index: 9999;
     width: 100%;
   }
+}
+.badge-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 16px;
+  padding: 8px 13px 8px 14px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  // border: 1px solid var(--borders-black-border-16-black, rgba(0, 0, 0, 0.16));
+  // background: #FFF;
+  // width: 138px;
+  // height: 138px;
+  // border-radius: 8px;
+  // border: 1px solid var(--borders-black-border-16-black, rgba(0, 0, 0, 0.16));
+  border: none;
+  background: transparent;
+  margin-top: 5px;
+
+}
+
+.badge-image {
+  display: flex;
+  width: 240px;
+  height: 223px;
+  justify-content: center;
+
+}
+
+.badge-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 6px;
+  color: var(--Primary-KB-Primary-Light, #1B4CA1);
+  text-align: center;
+  font-family: Montserrat;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.badge-name {
+  font-size: 26px;
+  font-weight: 600;
+  color: white;
+}
+
+.badge-level {
+  font-size: 12px;
+  color: #1a73c8;
+  color: var(--accessbility-shades-without-opacity-kb-greys-black-60, #666);
+  font-family: Montserrat;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  color: var(--accessbility-shades-without-opacity-kb-greys-black-60, #666);
+  font-family: Montserrat;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+}
+
+.modal-description {
+  font-size: 13px;
+  color: #333;
+  margin: 0 0 20px;
+  line-height: 1.5;
+  color: var(--accessbility-shades-without-opacity-kb-greys-black-87, #212121);
+  text-align: center;
+
+  /* Body 2 */
+  font-family: Lato;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
