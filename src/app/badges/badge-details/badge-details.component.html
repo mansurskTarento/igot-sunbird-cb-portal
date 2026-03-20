@@ -71,10 +71,23 @@
         <div class="badge-label text-center text-xs mt-2 font-semibold leading-tight">
           <span class="blue text-blue-700">{{ badge.title }}</span>
           <span class="gray text-gray-500"> {{ badge.level }}</span>
+          <p class="earnedcourseName mb-0 italic"> ({{ badge.courseName }})</p>
         </div>
 
-        <div class="badge-menu absolute top-1 right-2 text-gray-400 text-lg"></div>
+    <div class="badge-menu absolute top-1 right-2 text-gray-400 text-lg">
+      <button mat-icon-button [matMenuTriggerFor]="coverPhotoMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
 
+      <mat-menu #coverPhotoMenu="matMenu" panelClass="custom-menu bg-white ">
+        <button class="bg-white" mat-menu-item (click)="openModal(badge)">
+          View
+        </button>
+        <button class="bg-white" mat-menu-item>
+          Download
+        </button>
+      </mat-menu>
+      </div>
       </div>
 
     </div>
@@ -99,10 +112,10 @@
         <img class="badge-icon w-8 h-8" [src]="badge.icon | pipePublicURL" alt="">
 
         <p class="badge-name flex-1 text-sm mb-0"><span> {{ badge.badgeTitle }}</span> <span class="course-name flex-6 text-sm">
-            <{{badge.courseName}}>
+            ({{badge.courseName}})
           </span> </p>
 
-        <button *ngIf="badge.continue"
+        <button (click)="goToContent(badge)"
           class="continue-btn hidden sm:flex text-white text-xs px-4 py-1 rounded-full items-center gap-1">
           Continue Learning
         </button>

@@ -90,11 +90,7 @@ export class BadgeDetailsComponent {
 
   openModal(badge: any) {
     console.log('badge', badge)
-    this.selectedBadge = {
-      title: 'Beginner',
-      image: 'assets/icons/badges/BronzeBadge.svg',
-      level: ''
-    }
+    this.selectedBadge = badge
     this.showModal = true
   }
 
