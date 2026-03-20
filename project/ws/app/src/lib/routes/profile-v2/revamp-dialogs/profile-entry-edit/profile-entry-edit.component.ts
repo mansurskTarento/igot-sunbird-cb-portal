@@ -1458,8 +1458,9 @@ export class ProfileEntryEditComponent implements OnInit {
       return
     }
     const mimeType = files[0].type
-    if (!mimeType.startsWith('image/')) {
-      this.openSnackbar('Only images are supported')
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!allowedTypes.includes(mimeType.toLowerCase())) {
+      this.openSnackbar('Only PNG, JPG, and JPEG images are supported')
       return
     }
     const reader = new FileReader()
