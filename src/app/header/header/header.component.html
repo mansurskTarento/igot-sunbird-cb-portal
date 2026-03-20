@@ -1,5 +1,7 @@
-<div [ngClass]="mobileTopHeaderVisibilityStatus ? 'mobile-download-app-top-header' : 'mobile-download-app-without-top-header'" *ngIf="mobileTopHeaderVisibilityStatus">
-    <!-- //NOSONAR --><div class="cross-mobile-download-app" (click)="hideMobileTopHeader()">
+<div [ngClass]="mobileTopHeaderVisibilityStatus ? 'mobile-download-app-top-header' : 'mobile-download-app-without-top-header'"
+    *ngIf="mobileTopHeaderVisibilityStatus">
+    <!-- //NOSONAR -->
+    <div class="cross-mobile-download-app" (click)="hideMobileTopHeader()">
         <span>X</span>
     </div>
     <div class="kb-symbol">
@@ -10,12 +12,27 @@
         <p class="mobile-download-app-desc-sub-heading">Download the mobile app</p>
     </div>
     <div class="flex-1 flex justify-end pr-4">
-        <!-- //NOSONAR --><li class="download-app-chip-top-header" (click)="downloadApp()">
+        <!-- //NOSONAR -->
+        <li class="download-app-chip-top-header" (click)="downloadApp()">
             <span>Download App </span>
         </li>
     </div>
 </div>
-<ws-app-nav-bar *ngIf="isNavBarRequired" [ngClass]="mobileTopHeaderVisibilityStatus ? 'top-nav-bar':'top-nav-bar-without-mobile-header'" [mode]="mode" [headerFooterConfigData]="headerFooterConfigData"></ws-app-nav-bar>
-<div *ngIf="showHubs" [ngClass]="mobileTopHeaderVisibilityStatus ? 'height-on-top':'height-on-top-without-mobile-header'">
+<ws-app-nav-bar *ngIf="isNavBarRequired"
+    [ngClass]="mobileTopHeaderVisibilityStatus ? 'top-nav-bar':'top-nav-bar-without-mobile-header'" [mode]="mode"
+    [headerFooterConfigData]="headerFooterConfigData"></ws-app-nav-bar>
+
+<div *ngIf="showHubs"
+    [ngClass]="mobileTopHeaderVisibilityStatus ? 'height-on-top':'height-on-top-without-mobile-header'">
     <ws-widget-grid-layout [widgetData]="widgetData" [fromHeader]="true"></ws-widget-grid-layout>
+    <div class="scorm-banner" (click)="openSupportForm()" style="cursor: pointer;">
+        <div class="scroll-text">
+            <span class="imp-clr">
+                <img class="horn-cls" src="assets/icons/horn-icon.png" alt="horn" />
+            </span>
+            <span class="banner-text">
+                Click here for any issues on APAR training plan, Comprehensive Assessment or iGOT-SPARROW Integration
+            </span>
+        </div>
+    </div>
 </div>

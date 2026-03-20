@@ -75,7 +75,7 @@
           </div>
         </div>
         <div>
-          <div class="flex flex-col stats-label ml-4" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory" 
+          <div class="flex flex-col stats-label ml-4" *ngIf="questionTYP.FINAL_ASSESSMENT === primaryCategory || questionTYP.PRACTICE_RESOURCE === primaryCategory"
           [ngClass]="selectedAssessmentCompatibilityLevel >= 7 ? 'ml-5':''">
             <div class="flex items-center justify-center" *ngIf="timeLimit"><img src="assets/icons/final-assessment/timer.svg"></div>
             <div>{{( timeLimit | pipeDurationTransform: 'hms')}}</div>
@@ -114,9 +114,9 @@
         </button>
         <mat-hint class="mat-title" *ngIf="canAttempt?.attemptsMade >= canAttempt?.attemptsAllowed && !forPreview && questionTYP.FINAL_ASSESSMENT === primaryCategory">{{'playerbrief.maxAllowedRetake' | translate}}</mat-hint>
       </div>
-    
+
     </div>
-   
+
   </div>
   <div class="summary flex flex-col" *ngIf="selectedAssessmentCompatibilityLevel < 7">
     <div>
@@ -164,14 +164,18 @@
         <div [innerHTML]="instructionAssessment[currentPage]"></div>
       </ng-container>
     </div>
-    <ng-container>
+    <div class="consent-checkbox" *ngIf="courseCategory.toLowerCase() === 'comprehensive assessment program'; else otherCategory">
+      <p>{{'playerbrief.instructionNew' | translate}} {{ noOfQuestions }} {{ noOfQuestions <= 1 ? 'question' : 'questions' }} {{'playerbrief.instructionNew1' | translate}} {{ quizData?.minimumPassPercentage ? quizData?.minimumPassPercentage + '% ' : '0%'}} {{'playerbrief.instructionNew2' | translate}} {{ ( timeLimit | pipeDurationTransform: 'hms') }}.</p>
+      <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOneComprehensive' | translate}}</mat-checkbox>
+    </div>
+    <ng-template #otherCategory>
       <div class="consent-checkbox">
         <mat-checkbox [disableRipple]="true" (change)="startTestEnable($event)">{{'playerbrief.instructionOne' | translate}}<b>{{'playerbrief.instructionTwo' | translate}}</b>{{'playerbrief.instructionThree' | translate}}</mat-checkbox>
       </div>
-    </ng-container>
+    </ng-template>
   </div>
 
-  
+
 </div>
 <div class="start-assessment-cta block md:hidden" *ngIf="selectedAssessmentCompatibilityLevel < 7">
   <button *ngIf="canAttempt?.attemptsMade < canAttempt?.attemptsAllowed || questionTYP.PRACTICE_RESOURCE == primaryCategory" [class.spinner]="loading" [disabled]="loading" (click)="overviewed('start')" class="bg-blue-800 text-sm font-semibold text-white py-3 px-5 rounded-full border-none cursor-pointer tracking-wide">
