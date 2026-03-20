@@ -113,6 +113,11 @@
           color: rgba(0, 0, 0, 0.6); // Figma: AccessibilityShades/KB-Greys-Black-60%
           font-weight: 500;
 
+          &.right {
+            color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+            font-weight: 600;
+          }
+
           @media (max-width: 768px) {
             text-align: center;
             font-size: 10px;
@@ -202,6 +207,18 @@
           line-height: 1.4;
         }
       }
+    }
+
+    .no-response {
+      display: inline-block;
+      font-size: 13px;
+      font-style: italic;
+      color: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 4px;
+      padding: 5px 16px;
+      margin-top: 8px;
     }
 
     .q-response-checkbox {
