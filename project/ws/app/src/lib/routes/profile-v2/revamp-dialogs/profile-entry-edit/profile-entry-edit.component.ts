@@ -43,6 +43,36 @@ export function startDateValidator(endDateControlName: string): ValidatorFn {
   }
 }
 
+export function issuedDateValidator(endDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(endDateControlName)?.value
+    const issuedDate = control?.value
+
+    if (!issuedDate) {
+      return null // Skip validation if issuedDate is not set
+    }
+
+    if (endDate && new Date(issuedDate) < new Date(endDate)) {
+      return { issuedDateBeforeEndDate: true }
+    }
+
+    return null // Valid
+  }
+}
+
+export function urlOrDocumentValidator(): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const url = formGroup.get('url')?.value
+    const uploadedDocumentUrl = formGroup.get('uploadedDocumentUrl')?.value
+
+    if (!url && !uploadedDocumentUrl) {
+      return { urlOrDocumentRequired: true }
+    }
+
+    return null // Valid
+  }
+}
+
 @Component({
   selector: 'ws-app-profile-entry-edit',
   templateUrl: './profile-entry-edit.component.html',
@@ -109,6 +139,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   disableUpload = false
   disableUrl = false
+  minIssuedDate: Date | null = null
 
   // competencies
   allCompetencies: any[] = []
@@ -1049,7 +1080,7 @@ export class ProfileEntryEditComponent implements OnInit {
       deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
-      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required]],
+      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
       learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
@@ -1057,7 +1088,7 @@ export class ProfileEntryEditComponent implements OnInit {
       url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
       description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
       competencies_v6: ['', [Validators.required]]
-    })
+    }, { validators: urlOrDocumentValidator() })
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
       urlControl.patchValue('')
@@ -1076,6 +1107,30 @@ export class ProfileEntryEditComponent implements OnInit {
       const competencies = this.entryDetails.contextData.competencies_v6
       this.entryForm.get('competencies_v6')?.patchValue(competencies)
     }
+
+    // Set initial minIssuedDate if endDate exists
+    const endDateValue = _.get(this.entryDetails?.contextData, 'endDate', '')
+    if (endDateValue) {
+      this.minIssuedDate = new Date(endDateValue)
+    }
+
+    // Watch for endDate changes to update minIssuedDate
+    const endDateControl = this.entryForm.get('endDate')
+    if (endDateControl) {
+      endDateControl.valueChanges.subscribe((value: any) => {
+        if (value) {
+          this.minIssuedDate = new Date(value)
+          // Revalidate issuedDate when endDate changes
+          const issuedDateControl = this.entryForm.get('issuedDate')
+          if (issuedDateControl) {
+            issuedDateControl.updateValueAndValidity()
+          }
+        } else {
+          this.minIssuedDate = null
+        }
+      })
+    }
+
     this.valueChanges()
     this.addCompetencyMeta()
   }
@@ -1325,10 +1380,11 @@ export class ProfileEntryEditComponent implements OnInit {
 
   valueChanges(): void {
     const urlControl = this.entryForm.get('url')
+    const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
+
     if (urlControl) {
       urlControl.valueChanges.subscribe((value: string) => {
         if (value && value.trim() !== '') {
-          const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
           if (documentUrlControl) {
             documentUrlControl.patchValue('')
             documentUrlControl.updateValueAndValidity()
@@ -1344,6 +1400,15 @@ export class ProfileEntryEditComponent implements OnInit {
           this.disableUpload = false
           this.disableUrl = false
         }
+        // Trigger form-level validation
+        this.entryForm.updateValueAndValidity()
+      })
+    }
+
+    if (documentUrlControl) {
+      documentUrlControl.valueChanges.subscribe(() => {
+        // Trigger form-level validation when document URL changes
+        this.entryForm.updateValueAndValidity()
       })
     }
   }
@@ -1393,8 +1458,9 @@ export class ProfileEntryEditComponent implements OnInit {
       return
     }
     const mimeType = files[0].type
-    if (!mimeType.startsWith('image/')) {
-      this.openSnackbar('Only images are supported')
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!allowedTypes.includes(mimeType.toLowerCase())) {
+      this.openSnackbar('Only PNG, JPG, and JPEG images are supported')
       return
     }
     const reader = new FileReader()
@@ -1488,6 +1554,25 @@ export class ProfileEntryEditComponent implements OnInit {
 
   handleCancel(): void {
     this.dialogRef.close()
+  }
+
+  preventNonNumericInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  preventNonNumericPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text')
+    if (pastedText && !/^\d+$/.test(pastedText)) {
+      event.preventDefault()
+    }
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

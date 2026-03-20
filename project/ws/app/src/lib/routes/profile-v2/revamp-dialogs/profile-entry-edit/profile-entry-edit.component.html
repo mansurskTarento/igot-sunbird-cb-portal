@@ -374,10 +374,12 @@
             <div class="lable required">{{'NetworkV2Profile.issueDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate"
-                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate">
+                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate" [min]="minIssuedDate">
               <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #issueDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('issuedDate', 'required')">{{'NetworkV2Profile.pleaseSelectIssueDate' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('issuedDate', 'issuedDateBeforeEndDate')">{{'NetworkV2Profile.issueDateMustBeAfterEndDate' |
+                translate}}</mat-error>
             </mat-form-field>
           </div>
 
@@ -414,7 +416,8 @@
             <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
             </div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10">
+              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10"
+                (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
               <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
               <mat-error
                 *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'min')">{{'NetworkV2Profile.learningHoursMustBeGreaterThanZero'
@@ -428,7 +431,9 @@
         </div>
 
         <div class="w-full mb-5">
-          <div class="lable mb-1">{{'NetworkV2Profile.upload' | translate}}</div>
+          <div class="lable mb-1 required">{{'NetworkV2Profile.upload' | translate}}
+            <mat-icon class="info-icon" matTooltip="Only PNG, JPG, and JPEG images are supported (maximum size: 500 KB).">info_outline</mat-icon>
+          </div>
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
               <div class="flex gap-2 items-center w-full">
@@ -452,9 +457,11 @@
           </ng-template>
         </div>
 
+        <div class="flex items-center justify-center py-3 font-bold">{{'common.or' | translate}}</div>
+
         <!-- URL -->
         <div class="flex flex-col profile-control w-full" [ngClass]="{'disable': disableUrl }">
-          <div class="lable">{{'NetworkV2Profile.url' | translate}}
+          <div class="lable required">{{'NetworkV2Profile.url' | translate}}
             <mat-icon class="info-icon" matTooltip="You may provide the link for the achievement.">info_outline</mat-icon>
           </div>
           <mat-form-field appearance="outline" class="full-width">
