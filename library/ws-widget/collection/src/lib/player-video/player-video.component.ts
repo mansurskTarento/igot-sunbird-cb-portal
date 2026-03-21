@@ -73,6 +73,9 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   playTranscriptionVideoSubscription: Subscription | null = null
   changeTranscriptionLanguageEventSubscription: Subscription | null = null
   videoUrl = 'https://portal.uat.karmayogibharat.net/stream-store/content/do_114194996168163328192/artifact/manifest.m3u8'
+  currentPlayerTrackLabel: any = ''
+  currentPlayerTrackLangugage: any = ''
+  currentPlayerSubtitleOff: any = ''
   constructor(
     private eventSvc: EventService,
     private contentSvc: WidgetContentService,
@@ -307,6 +310,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     if (this.playTranscriptionVideoSubscription) {
       this.playTranscriptionVideoSubscription.unsubscribe()
     }
+
+
 
   }
   private initializeVPlayer() {
@@ -650,28 +655,86 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
 
       if (Array.isArray(this.transcriptionLangArr)) {
-        const defaultTrackTemp: any = this.transcriptionLangArr.find((t: any) => t.label === this.transcriptionSubscriptionData?.activeLang)
+        this.currentPlayerTrackLabel = localStorage.getItem('currentPlayerTrackLabel') || ''
+        this.currentPlayerTrackLangugage = localStorage.getItem('currentPlayerTrackLangugage') || ''
+        this.currentPlayerSubtitleOff = localStorage.getItem('currentPlayerSubtitleOff') || ''
+        if (this.currentPlayerSubtitleOff === 'true') {
+          this.currentPlayerTrackLabel = ''
+          this.currentPlayerTrackLangugage = ''
+          localStorage.removeItem('currentPlayerTrackLabel')
+          localStorage.removeItem('currentPlayerTrackLangugage')
+        }
+        let activeLang = this.currentPlayerTrackLangugage !== '' ? this.currentPlayerTrackLangugage?.toLowerCase() : this.transcriptionSubscriptionData?.activeLang
+        const defaultTrackTemp: any = this.transcriptionLangArr.find((t: any) => t.label === activeLang)
 
         let defaultTrack: any = this.transcriptionLangArr.filter((item: any) => {
           return item?.label === defaultTrackTemp?.label
         })
-        this.transcriptionLangArr.forEach((track: any) => {
-          // console.log(track?.label , defaultTrack?.label)
-          // console.log('track--', track)
-          initObj.player.addRemoteTextTrack({
-            kind: 'subtitles',
-            src: (track?.label === defaultTrack?.label) ? defaultTrack?.uri : "",
-            srclang: this.titleCase(track.label),
-            label: this.titleCase(track.language),
-            default: track.label
-          }, false)
+
+        // console.log('this.transcriptionLangArr--', this.transcriptionLangArr)
+        // console.log('defaultTrack--', defaultTrack)
+
+        const selectedLang = this.currentPlayerTrackLangugage?.toLowerCase()
+
+        const sortedTracks = [...this.transcriptionLangArr].sort((a: any, b: any) => {
+          if (a.label.toLowerCase() === selectedLang) return -1
+          if (b.label.toLowerCase() === selectedLang) return 1
+          return 0
         })
+        setTimeout(() => {
+          sortedTracks.forEach((track: any) => {
+            // console.log(track?.label , defaultTrack?.label)
+            // console.log('track--', track)
+            const isDefault =
+              track.label.toLowerCase() === this.currentPlayerTrackLangugage?.toLowerCase()
+            initObj.player.addRemoteTextTrack({
+              kind: 'subtitles',
+              src: (track?.label === defaultTrack?.label) ? defaultTrack?.uri : "",
+              srclang: this.titleCase(track.label),
+              label: this.titleCase(track.language),
+              default: isDefault
+            }, false)
+          })
+        }, 0)
+
+        if (this.currentPlayerTrackLangugage !== '') {
+          this.updateSubtitleButtonIcon(true)
+        } else {
+          setTimeout(() => {
+            this.updateSubtitleButtonIcon(false)
+          }, 100)
+
+        }
         initObj.player.on('texttrackchange', () => {
 
           for (let i = 0; i < tracks.length; i++) {
             const track = tracks[i]
+            // console.log('track.mode', track.mode)
+
             if (track.mode === 'showing') {
-              const currentLang = track.language
+              localStorage.removeItem('currentPlayerSubtitleOff')
+              let currentLang = track.language
+              if (this.currentPlayerTrackLangugage) {
+                if (currentLang !== this.currentPlayerTrackLangugage) {
+                  this.currentPlayerTrackLabel = track.label
+                  this.currentPlayerTrackLangugage = track.language
+                  currentLang = track.language
+                  localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
+                  localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
+                } else {
+                  currentLang = this.currentPlayerTrackLangugage
+                }
+              } else {
+                this.currentPlayerTrackLabel = track.label
+                this.currentPlayerTrackLangugage = track.language
+                currentLang = track.language
+                localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
+                localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
+
+              }
+              // const currentLang = track.language
+
+
               if (currentLang !== this.previousSubtitleLanguage) {
                 //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
 
@@ -716,10 +779,18 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                 //console.log('Called next');
               }
 
-              this.updateSubtitleButtonIcon(true)
+              if (localStorage.getItem('currentPlayerTrackLangugage') !== '') {
+                localStorage.removeItem('currentPlayerSubtitleOff')
+                this.updateSubtitleButtonIcon(true)
+
+              } else {
+                this.updateSubtitleButtonIcon(false)
+              }
               break // Only one track should be 'showing'
             } else {
               this.previousSubtitleLanguage = ''
+              localStorage.setItem('currentPlayerSubtitleOff', 'true')
+
               this.updateSubtitleButtonIcon(false)
             }
           }
@@ -834,6 +905,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     //   return item?.label === defaultTrackTemp?.default_lang
     // });
 
+
     const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
     const existingTracks = videoEl.querySelectorAll('track')
     existingTracks.forEach((el: any) => el.remove())
@@ -850,7 +922,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
     // setTimeout(() => {
 
-    console.log('👉 Number of textTracks:', tracks.length)
 
     for (let i = 0; i < tracks.length; i++) {
       const t = tracks[i]
@@ -867,7 +938,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         }
       }
 
-      console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length)
     }
     // }, 1000);
 
@@ -897,7 +967,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
             }
           })
 
-          console.log('✅ Cuechange listener attached')
           return // Done
         } else {
           // track.mode = 'hidden'
@@ -912,6 +981,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   }
 
   updateSubtitleButtonIcon(subtitlesOn: boolean) {
+
     let subtitleImage = document.getElementById('custom-cc-icon-img') as HTMLImageElement
 
     if (subtitleImage) {
