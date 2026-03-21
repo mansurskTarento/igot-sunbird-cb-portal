@@ -695,7 +695,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
               default: isDefault
             }, false)
           })
-        }, 0)
+        }, 10)
 
         if (this.currentPlayerTrackLangugage !== '') {
           this.updateSubtitleButtonIcon(true)
