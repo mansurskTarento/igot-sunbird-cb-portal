@@ -234,7 +234,7 @@ export function videoJsInitializer(
       if (!loaded) {
         eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         heartBeatSubscription = interval(2 * 60000).subscribe(_ => {
-          if(passThroughData) {
+          if (passThroughData) {
             passThroughData['lastAccessTime'] = currTime
             passThroughData['timeSpent'] = timespentTimer
           }
