@@ -93,8 +93,8 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
         // For checkbox, we need a custom validator to ensure at least one option is selected
         const checkboxValidators = question.required
           ? [Validators.required, (control: any) => {
-              return control.value && control.value.length > 0 ? null : { required: true }
-            }]
+            return control.value && control.value.length > 0 ? null : { required: true }
+          }]
           : []
         responsesArray.push(this.fb.control([], checkboxValidators))
       } else {
