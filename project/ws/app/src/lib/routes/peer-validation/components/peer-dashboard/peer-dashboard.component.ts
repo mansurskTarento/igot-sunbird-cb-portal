@@ -162,7 +162,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
 
     // Directly open SurveyDialogComponent, bypassing the popup
     const dialogRef = this.dialog.open(SurveyDialogComponent, {
-      width: '980px',
+      width: '1100px',
       maxWidth: '95vw',
       disableClose: true,
       data: mockData
