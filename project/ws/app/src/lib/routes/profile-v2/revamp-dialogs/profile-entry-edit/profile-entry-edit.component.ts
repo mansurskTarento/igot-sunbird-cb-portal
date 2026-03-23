@@ -111,6 +111,7 @@ export class ProfileEntryEditComponent implements OnInit {
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  endDate: Date = new Date()
   //#endregion (service history variables)
 
   //#region (educational qualifications variables)
@@ -159,6 +160,8 @@ export class ProfileEntryEditComponent implements OnInit {
   allThemeData: any
   allSubThemeData: any
   viewMode: string = ''
+  expand: boolean = false
+  selectedAreaValue: string | null = null
 
   //#endregion (global variables)
   constructor(
@@ -1075,8 +1078,8 @@ export class ProfileEntryEditComponent implements OnInit {
   private createAchievementsForm(): void {
 
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
       deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
@@ -1086,7 +1089,7 @@ export class ProfileEntryEditComponent implements OnInit {
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
       url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
+      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
       competencies_v6: ['', [Validators.required]]
     }, { validators: urlOrDocumentValidator() })
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
@@ -1110,11 +1113,15 @@ export class ProfileEntryEditComponent implements OnInit {
 
     // Set initial minIssuedDate if endDate exists
     const endDateValue = _.get(this.entryDetails?.contextData, 'endDate', '')
+    const issueDateValue = _.get(this.entryDetails?.contextData, 'issuedDate', '')
     if (endDateValue) {
-      this.minIssuedDate = new Date(endDateValue)
+      this.minIssuedDate = issueDateValue ? new Date(issueDateValue) : new Date(endDateValue)
+    }
+    if (issueDateValue) {
+      this.endDate = new Date(issueDateValue)
     }
 
-    // Watch for endDate changes to update minIssuedDate
+    // Watch for endDate changes to update minIssuedDate and revalidate startDate
     const endDateControl = this.entryForm.get('endDate')
     if (endDateControl) {
       endDateControl.valueChanges.subscribe((value: any) => {
@@ -1128,6 +1135,30 @@ export class ProfileEntryEditComponent implements OnInit {
         } else {
           this.minIssuedDate = null
         }
+        // Revalidate startDate when endDate changes to clear stale errors
+        const startDateControl = this.entryForm.get('startDate')
+        if (startDateControl) {
+          startDateControl.updateValueAndValidity({ emitEvent: false })
+        }
+      })
+    }
+
+    // Watch for startDate changes to revalidate endDate
+    const startDateControl = this.entryForm.get('startDate')
+    if (startDateControl) {
+      startDateControl.valueChanges.subscribe(() => {
+        const endDate = this.entryForm.get('endDate')
+        if (endDate) {
+          endDate.updateValueAndValidity({ emitEvent: false })
+        }
+      })
+    }
+
+    // Watch for issuedDate changes to set max date for startDate and endDate pickers
+    const issuedDateControl = this.entryForm.get('issuedDate')
+    if (issuedDateControl) {
+      issuedDateControl.valueChanges.subscribe((value: any) => {
+        this.endDate = value ? new Date(value) : new Date()
       })
     }
 
@@ -1186,6 +1217,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   compAreaSelected(option: any) {
     this.resetCompSubfields()
+    this.selectedAreaValue = option.name
     this.allCompetencies.forEach((val: any) => {
       if (option.identifier === val.identifier) {
         this.seletedCompetencyArea = val
@@ -1193,6 +1225,7 @@ export class ProfileEntryEditComponent implements OnInit {
         this.filteredallCompetencyTheme = this.allCompetencyTheme
       }
     })
+    this.expand = true
   }
 
   compThemeSelected(option: any) {
@@ -1213,6 +1246,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   resetCompfields() {
     this.enableCompetencyAdd = false
+    this.selectedAreaValue = null
     this.seletedCompetencyArea = null
     this.seletedCompetencyTheme = null
     this.seletedCompetencySubTheme = null
@@ -1281,6 +1315,8 @@ export class ProfileEntryEditComponent implements OnInit {
       control.markAsDirty()
       control.markAsTouched()
     }
+    this.resetCompfields()
+    this.expand = false
   }
 
   get uniqueAreas(): string[] {
@@ -1573,6 +1609,13 @@ export class ProfileEntryEditComponent implements OnInit {
     if (pastedText && !/^\d+$/.test(pastedText)) {
       event.preventDefault()
     }
+  }
+
+  getNameOfTheFile(fileName: string): string {
+    if (fileName && fileName.length > 50) {
+      return `${fileName.substring(0, 50)}...`
+    }
+    return fileName
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
