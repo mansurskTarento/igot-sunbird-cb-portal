@@ -45,6 +45,9 @@ export class ViewAllComponent {
   totalEventsCount = 0
   orgId: any
   eventLinked: string[] = []
+  uniqueSources: string[] = []
+  selectedSources: string[] = []
+  showMoreSources = false
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -301,6 +304,12 @@ export class ViewAllComponent {
       } else {
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
       }
+      if (this.selectedFilters?.resourceType?.includes('Karmayogi Talks') || this.selectedFilters?.resourceType?.includes('Karmayogi Saptah')) {
+        this.extractUniqueSources()
+      } else {
+        this.uniqueSources = []
+        this.selectedSources = []
+      }
       this.isLoading = false
     }, error => {
       console.log("error", error)
@@ -380,6 +389,34 @@ export class ViewAllComponent {
     this.selectedValue = null
     this.resetData()
     this.fetchData()
+  }
+
+  extractUniqueSources() {
+    const sources = this.contentDataList
+      .map((item: any) => item?.widgetData?.content?.sourceName)
+      .filter((source: string) => !!source)
+    this.uniqueSources = [...new Set(sources)] as string[]
+  }
+
+  get displayedContentDataList(): any[] {
+    if (!this.selectedSources.length) {
+      return this.contentDataList
+    }
+    return this.contentDataList.filter((item: any) =>
+      this.selectedSources.includes(item?.widgetData?.content?.sourceName)
+    )
+  }
+
+  toggleSourceFilter(source: string, checked: boolean) {
+    if (checked) {
+      this.selectedSources = [...this.selectedSources, source]
+    } else {
+      this.selectedSources = this.selectedSources.filter((s: string) => s !== source)
+    }
+  }
+
+  isSourceSelected(source: string): boolean {
+    return this.selectedSources.includes(source)
   }
 
   openBottomSheet(): void {
@@ -466,6 +503,15 @@ export class ViewAllComponent {
     this.pageLimit = 9
     this.totalCount = 0
     this.total = 0
+    if (!this.selectedFilters?.resourceType?.includes('Karmayogi Talks') && !this.selectedFilters?.resourceType?.includes('Karmayogi Saptah')) {
+      this.selectedSources = []
+      this.uniqueSources = []
+    }
+  }
+
+  resetSourceFilter() {
+    this.selectedSources = []
+    this.uniqueSources = []
   }
 
   canCheck(key: any, keyData: any) {
@@ -540,6 +586,9 @@ export class ViewAllComponent {
         delete this.selectedFilters.key
       }
     } else {
+      if (['resourceType'].includes(key)) {
+        this.showMoreSources = false
+      }
       if (['resourceType', 'eventDate'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
