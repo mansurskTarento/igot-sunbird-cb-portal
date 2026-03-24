@@ -51,6 +51,13 @@
                   </div>
                 </ng-container>
               </ng-container>
+              <!-- Source name filter chips -->
+              <ng-container *ngIf="selectedSources.length">
+                <div class="filter-chip flex items-center cursor-pointer gap-2" *ngFor="let source of selectedSources">
+                  <div>{{source}}</div>
+                  <mat-icon class="close-btn" (click)="removeFilter('sourceName', source)">close</mat-icon>
+                </div>
+              </ng-container>
               <ng-container *ngIf="showAll()">
                 <div class="clear cursor-pointer" (click)="clearAll()">{{'events.clearAll' | translate}}</div>
               </ng-container>
@@ -84,10 +91,59 @@
               <div class="filter-heading">{{'events.filterBy' | translate}}</div>
               <div class="clear cursor-pointer" (click)="clearAll()">{{'events.clearAll' | translate}}</div>
             </div>
+            <!-- API-driven Event Type Filter -->
+            <ng-container *ngIf="resourceTypeFacets.length">
+              <div class="individual-block">
+                <div class="list mb-4">
+                  <p class="filter-heading mb-4">{{'events.eventType' | translate}}</p>
+                  <ng-container *ngFor="let eType of (!showMoreResourceTypes ? resourceTypeFacets.slice(0,2) : resourceTypeFacets)">
+                    <div class="check-list">
+                      <mat-checkbox [checked]="canCheck('resourceType', eType)" (change)="changeSelection($event?.checked, 'resourceType', eType)"
+                        class="mat-gyaan-filter">{{eType.name | titlecase}} ({{eType.count}})</mat-checkbox>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!showMoreResourceTypes && resourceTypeFacets.length > 2">
+                    <div class="pt-3">
+                      <span class="view-more" (click)="showMoreResourceTypes = true">{{'events.viewAll' | translate}}</span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="showMoreResourceTypes">
+                    <div class="pt-3">
+                      <span class="view-more" (click)="showMoreResourceTypes = false">{{'events.viewLess' | translate}}</span>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
+            <!-- Organisation Filter (from API facets) -->
+            <ng-container *ngIf="sourceNameFacets.length">
+              <div class="individual-block">
+                <div class="list mb-4">
+                  <div class="line mb-4"></div>
+                  <p class="filter-heading mb-4">{{'NetworkV2Profile.organisation' | translate}}</p>
+                  <ng-container *ngFor="let source of (!showMoreSources ? sourceNameFacets.slice(0,2) : sourceNameFacets)">
+                    <div class="check-list">
+                      <mat-checkbox [checked]="isSourceSelected(source.name)" (change)="toggleSourceFilter(source.name, $event?.checked)"
+                        class="mat-gyaan-filter">{{source.name | titlecase}} ({{source.count}})</mat-checkbox>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="!showMoreSources && sourceNameFacets.length > 2">
+                    <div class="pt-3">
+                      <span class="view-more" (click)="showMoreSources = true">{{'events.viewAll' | translate}}</span>
+                    </div>
+                  </ng-container>
+                  <ng-container *ngIf="showMoreSources">
+                    <div class="pt-3">
+                      <span class="view-more" (click)="showMoreSources = false">{{'events.viewLess' | translate}}</span>
+                    </div>
+                  </ng-container>
+                </div>
+              </div>
+            </ng-container>
             <ng-container *ngFor="let facet of facetsData  | keyvalue:returnZero">
               <div class="individual-block">
                 <div class="list {{facet?.value?.name === 'Date Range' ? '' : 'mb-4'}}">
-                  <ng-container *ngIf="facet?.value?.name === 'Event Type'">
+                  <!-- <ng-container *ngIf="facet?.value?.name === 'Event Type' && !resourceTypeFacets.length">
                     <div *ngIf="facet?.value?.values?.length">
                       <p class="filter-heading mb-4"> {{translateLabels(facet?.value?.key, 'events')}}</p>
                       <ng-container *ngFor="let eType of (!facet.viewMore ? facet?.value?.values.slice(0,2) : facet?.value?.values); index as i">
@@ -109,7 +165,7 @@
                         </div>
                       </ng-container>
                     </div>
-                  </ng-container>
+                  </ng-container> -->
                   <ng-container *ngIf="facet?.value?.name === 'Date Range'">
                     <div *ngIf="facet?.value?.values?.length">
                       <p class="filter-heading mb-4">{{translateLabels(facet?.value?.key, 'events')}}</p>
@@ -164,31 +220,6 @@
                             translateLabels(eType.key, 'events') }}</mat-checkbox>
                         </div>
                       </ng-container>
-                    </div>
-                  </ng-container>
-                </div>
-              </div>
-            </ng-container>
-            <!-- Source Filter -->
-            <ng-container *ngIf="uniqueSources.length">
-              <div class="individual-block">
-                <div class="list mb-4">
-                  <div class="line mb-4"></div>
-                  <p class="filter-heading mb-4">{{'NetworkV2Profile.organisation' | translate}}</p>
-                  <ng-container *ngFor="let source of (!showMoreSources ? uniqueSources.slice(0,2) : uniqueSources)">
-                    <div class="check-list">
-                      <mat-checkbox [checked]="isSourceSelected(source)" (change)="toggleSourceFilter(source, $event?.checked)"
-                        class="mat-gyaan-filter">{{source}}</mat-checkbox>
-                    </div>
-                  </ng-container>
-                  <ng-container *ngIf="!showMoreSources && uniqueSources.length > 2">
-                    <div class="pt-3">
-                      <span class="view-more" (click)="showMoreSources = true">{{'events.viewAll' | translate}}</span>
-                    </div>
-                  </ng-container>
-                  <ng-container *ngIf="showMoreSources">
-                    <div class="pt-3">
-                      <span class="view-more" (click)="showMoreSources = false">{{'events.viewLess' | translate}}</span>
                     </div>
                   </ng-container>
                 </div>

@@ -45,9 +45,19 @@ export class ViewAllComponent {
   totalEventsCount = 0
   orgId: any
   eventLinked: string[] = []
-  uniqueSources: string[] = []
+  sourceNameFacets: any[] = []
+  resourceTypeFacets: any[] = []
   selectedSources: string[] = []
   showMoreSources = false
+  showMoreResourceTypes = false
+  resourceTypeOrder: string[] = [
+    'Sadhana Saptah',
+    'Samuhik Charcha - NLW 2026',
+    'Karmayogi Talks',
+    'Karmayogi Saptah',
+    'Rajya Karmayogi Saptah',
+    'Webinar',
+  ]
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -145,6 +155,7 @@ export class ViewAllComponent {
           contentType: 'Event',
           category: 'Event',
         },
+        facets: ['sourceName', 'resourceType'],
         sort_by: this.sortOptions,
         limit: this.pageLimit || 9,
         offset: (this.pageLimit * this.currentPage) || 0
@@ -253,6 +264,7 @@ export class ViewAllComponent {
           filters: {
             ...requestBody.request.filters,
             resourceType: this.selectedFilters.resourceType ? this.selectedFilters.resourceType : [],
+            ...(this.selectedSources.length ? { sourceName: this.selectedSources } : {}),
             ...(startDate ? { "startDate": { ">=": [startDate] } } : {}),
             ...(endDate ? { "endDate": { "<=": [endDate] } } : {}),
             ...(startDateTimeInEpoch ? {
@@ -304,11 +316,25 @@ export class ViewAllComponent {
       } else {
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
       }
-      if (this.selectedFilters?.resourceType?.includes('Karmayogi Talks') || this.selectedFilters?.resourceType?.includes('Karmayogi Saptah')) {
-        this.extractUniqueSources()
-      } else {
-        this.uniqueSources = []
-        this.selectedSources = []
+      const facets = _.get(resp, 'result.facets', [])
+      const sourceNameFacet = facets.find((f: any) => f.name === 'sourceName')
+      const resourceTypeFacet = facets.find((f: any) => f.name === 'resourceType')
+      if (this.currentPage <= 1) {
+        if (!this.selectedSources.length) {
+          this.sourceNameFacets = _.get(sourceNameFacet, 'values', [])
+        }
+        if (!this.selectedFilters?.resourceType?.length || !this.resourceTypeFacets.length) {
+          const rawFacets = (_.get(resourceTypeFacet, 'values', []) as any[])
+            .filter((f: any) => f.name?.toLowerCase() !== 'samuhik charcha')
+          this.resourceTypeFacets = this.sortFacetsByOrder(rawFacets, this.resourceTypeOrder)
+        }
+        // Normalize selectedFilters.resourceType to match exact API facet names
+        if (this.selectedFilters?.resourceType?.length && this.resourceTypeFacets.length) {
+          this.selectedFilters['resourceType'] = this.selectedFilters['resourceType'].map((selected: string) => {
+            const match = this.resourceTypeFacets.find((f: any) => f.name.toLowerCase() === selected.toLowerCase())
+            return match ? match.name : selected
+          })
+        }
       }
       this.isLoading = false
     }, error => {
@@ -373,6 +399,9 @@ export class ViewAllComponent {
     if (this.selectedFilters.dateRange) {
       return true
     }
+    if (this.selectedSources.length) {
+      return true
+    }
     return false
   }
 
@@ -387,24 +416,34 @@ export class ViewAllComponent {
     this.startDate = ''
     this.endDate = ''
     this.selectedValue = null
+    this.selectedSources = []
+    this.showMoreSources = false
+    this.showMoreResourceTypes = false
+    // Reset titles to show 'All'
+    this.titles = [
+      { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
+      { title: 'All', url: 'none', icon: '' },
+    ]
+    // Remove query parameters from the URL
+    this.router.navigate([], {
+      relativeTo: this.activateRoute,
+      queryParams: {},
+    })
     this.resetData()
     this.fetchData()
   }
 
-  extractUniqueSources() {
-    const sources = this.contentDataList
-      .map((item: any) => item?.widgetData?.content?.sourceName)
-      .filter((source: string) => !!source)
-    this.uniqueSources = [...new Set(sources)] as string[]
+  sortFacetsByOrder(facets: any[], order: string[]): any[] {
+    const orderLower = order.map((n: string) => n.toLowerCase())
+    const ordered = order
+      .map((name: string) => facets.find((f: any) => f.name.toLowerCase() === name.toLowerCase()))
+      .filter((f: any) => !!f)
+    const rest = facets.filter((f: any) => !orderLower.includes(f.name.toLowerCase()))
+    return [...ordered, ...rest]
   }
 
   get displayedContentDataList(): any[] {
-    if (!this.selectedSources.length) {
-      return this.contentDataList
-    }
-    return this.contentDataList.filter((item: any) =>
-      this.selectedSources.includes(item?.widgetData?.content?.sourceName)
-    )
+    return this.contentDataList
   }
 
   toggleSourceFilter(source: string, checked: boolean) {
@@ -413,6 +452,8 @@ export class ViewAllComponent {
     } else {
       this.selectedSources = this.selectedSources.filter((s: string) => s !== source)
     }
+    this.resetData()
+    this.fetchData()
   }
 
   isSourceSelected(source: string): boolean {
@@ -488,6 +529,8 @@ export class ViewAllComponent {
           eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter)
         }
       }
+    } else if (key === 'sourceName') {
+      this.selectedSources = this.selectedSources.filter((s: string) => s !== filter)
     }
     this.resetData()
     this.fetchData()
@@ -503,20 +546,13 @@ export class ViewAllComponent {
     this.pageLimit = 9
     this.totalCount = 0
     this.total = 0
-    if (!this.selectedFilters?.resourceType?.includes('Karmayogi Talks') && !this.selectedFilters?.resourceType?.includes('Karmayogi Saptah')) {
-      this.selectedSources = []
-      this.uniqueSources = []
-    }
-  }
-
-  resetSourceFilter() {
-    this.selectedSources = []
-    this.uniqueSources = []
   }
 
   canCheck(key: any, keyData: any) {
     if (this.selectedFilters[key]) {
-      return this.selectedFilters[key].includes(keyData.name)
+      return this.selectedFilters[key].some((item: string) =>
+        item.toLowerCase() === keyData.name.toLowerCase()
+      )
     }
   }
 

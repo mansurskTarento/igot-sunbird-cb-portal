@@ -52,12 +52,10 @@
   /* stylelint-enable */
   border-radius: 12px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.category-image {
-  width: 24px;
-  height: 25px;
-}
 
 .mEngagementCard {
   border: 1px solid #00000029;
@@ -78,7 +76,57 @@
 
 .mBrowse {
   width: 100%;
-  overflow-y: auto;
+}
+
+.browse-scroll {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  flex: 1 1 0;
+
+  // Hide scrollbar for Chrome, Safari, Edge
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Hide scrollbar for Firefox
+  scrollbar-width: none;
+
+  // Hide scrollbar for IE
+  -ms-overflow-style: none;
+}
+
+.browse-scroll-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #d5d0d0;
+  background-color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    color: #333;
+  }
 }
 
 .myEngagements-sm {
