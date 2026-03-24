@@ -21,6 +21,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() noOfQuestions = 0
   @Input() canAttempt!: NSPractice.IRetakeAssessment
   @Input() coursePrimaryCategory: any
+  @Input() courseCategory: any
   @Input() instructionAssessment: any
   @Input() selectedAssessmentCompatibilityLevel: any
   @Output() userSelection = new EventEmitter<NSPractice.TUserSelectionType>()
@@ -41,6 +42,8 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   consentGiven = false
   maxAttempPopup = false
   currentPage = 0
+  contentData: any
+
   constructor(
     public dialog: MatDialog,
     private route: ActivatedRoute,
@@ -52,6 +55,8 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit() {
     this.dataSubscription = this.route.data.subscribe(data => {
+      this.contentData = data?.content?.data
+
       if (data && data.pageData) {
         if (data && data.content && data.content.data && data.content.data.identifier) {
           const identifier = data.content.data.identifier

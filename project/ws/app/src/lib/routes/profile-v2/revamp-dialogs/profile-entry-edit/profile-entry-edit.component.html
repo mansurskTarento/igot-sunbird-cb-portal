@@ -311,17 +311,19 @@
     <form [formGroup]="entryForm" class="profile-editor-form">
       <div class="flex flex-col">
         <div class="editor-description">
-          {{'NetworkV2Profile.awards/Publications/OtherCertifications' | translate}}
+          <div>{{'NetworkV2Profile.noteForAwards' | translate}}</div>
         </div>
         <!-- Title field -->
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">{{'NetworkV2Profile.title' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput formControlName="title" maxlength="250" placeholder="e.g. Excel beginner">
+            <input matInput formControlName="title" maxlength="70" placeholder="e.g. Excel beginner">
             <mat-error *ngIf="hasError('title', 'required')">{{'NetworkV2Profile.pleaseEnterTitle' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('title', 'minlength')">{{'NetworkV2Profile.titleTooShort' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('title', 'maxlength')">{{'NetworkV2Profile.titleTooLong' | translate}}</mat-error>
             <mat-error *ngIf="hasError('title', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
-              {{ entryForm.get('title')?.value.length }}/250
+              {{ entryForm.get('title')?.value.length }}/70
             </mat-hint>
           </mat-form-field>
         </div>
@@ -329,11 +331,13 @@
         <div class="flex flex-col profile-control w-full">
           <div class="lable required">{{'NetworkV2Profile.issuingOrganisation' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
-            <input matInput maxlength="250" formControlName="issuedOrganisation" placeholder="e.g. Microsoft">
+            <input matInput maxlength="70" formControlName="issuedOrganisation" placeholder="e.g. Microsoft">
             <mat-error *ngIf="hasError('issuedOrganisation', 'required')">{{'NetworkV2Profile.issuedOrganisationIsRequired' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('issuedOrganisation', 'minlength')">{{'NetworkV2Profile.issuedOrganisationTooShort' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('issuedOrganisation', 'maxlength')">{{'NetworkV2Profile.issuedOrganisationTooLong' | translate}}</mat-error>
             <mat-error *ngIf="hasError('issuedOrganisation', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
-              {{ entryForm.get('issuedOrganisation')?.value.length }}/250
+              {{ entryForm.get('issuedOrganisation')?.value.length }}/70
             </mat-hint>
           </mat-form-field>
         </div>
@@ -344,7 +348,7 @@
             <div class="lable">{{'NetworkV2Profile.startDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="startedDatePicker" formControlName="startDate"
-                placeholder="{{'NetworkV2Profile.startDate' | translate}}" [max]="todayDate">
+                placeholder="{{'NetworkV2Profile.startDate' | translate}}" [max]="endDate ? endDate : todayDate">
               <mat-datepicker-toggle matSuffix [for]="startedDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startedDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('startDate', 'required')">{{'NetworkV2Profile.pleaseSelectStartDate' | translate}}</mat-error>
@@ -357,7 +361,7 @@
             <div class="lable">{{'NetworkV2Profile.endDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}"
-                [max]="todayDate">
+                [max]="endDate ? endDate : todayDate">
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('endDate', 'required')">{{'NetworkV2Profile.pleaseSelectEndDate' | translate}}</mat-error>
@@ -374,10 +378,12 @@
             <div class="lable required">{{'NetworkV2Profile.issueDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate"
-                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate">
+                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate" [min]="minIssuedDate">
               <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #issueDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('issuedDate', 'required')">{{'NetworkV2Profile.pleaseSelectIssueDate' | translate}}</mat-error>
+              <mat-error *ngIf="hasError('issuedDate', 'issuedDateBeforeEndDate')">{{'NetworkV2Profile.issueDateMustBeAfterEndDate' |
+                translate}}</mat-error>
             </mat-form-field>
           </div>
 
@@ -414,7 +420,8 @@
             <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
             </div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10 hours">
+              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10"
+                (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
               <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
               <mat-error
                 *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'min')">{{'NetworkV2Profile.learningHoursMustBeGreaterThanZero'
@@ -428,12 +435,15 @@
         </div>
 
         <div class="w-full mb-5">
-          <div class="lable mb-1">{{'NetworkV2Profile.upload' | translate}}</div>
+          <div class="lable mb-1 required">{{'NetworkV2Profile.upload' | translate}}
+            <mat-icon class="info-icon" matTooltip="Only PNG, JPG, and JPEG images are supported (maximum size: 500 KB).">info_outline</mat-icon>
+          </div>
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
               <div class="flex gap-2 items-center w-full">
                 <img src="/assets/icons/image.svg" alt="app icon">
-                <span class="iconName">{{entryForm?.controls?.fileName?.value}}</span>
+                <span class="iconName"
+                  [title]="entryForm?.controls?.fileName?.value">{{getNameOfTheFile(entryForm?.controls?.fileName?.value)}}</span>
               </div>
               <mat-icon class="remove-file" (click)="removeFile()">close</mat-icon>
             </div>
@@ -452,9 +462,11 @@
           </ng-template>
         </div>
 
+        <div class="flex items-center justify-center py-3 font-bold">{{'common.or' | translate}}</div>
+
         <!-- URL -->
         <div class="flex flex-col profile-control w-full" [ngClass]="{'disable': disableUrl }">
-          <div class="lable">{{'NetworkV2Profile.url' | translate}}
+          <div class="lable required">{{'NetworkV2Profile.url' | translate}}
             <mat-icon class="info-icon" matTooltip="You may provide the link for the achievement.">info_outline</mat-icon>
           </div>
           <mat-form-field appearance="outline" class="full-width">
@@ -465,10 +477,11 @@
 
         <!-- Description -->
         <div class="flex flex-col w-full">
-          <div class="lable">{{'NetworkV2Profile.description' | translate}}</div>
+          <div class="lable">{{'NetworkV2Profile.learningObjective' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning' | translate}}"></textarea>
+            <mat-error *ngIf="hasError('description', 'minlength')">{{'NetworkV2Profile.descriptionTooShort' | translate}}</mat-error>
             <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}</mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
               {{ entryForm.get('description')?.value.length }}/500
@@ -479,65 +492,66 @@
         <!-- Add competencies -->
 
         <div class="flex flex-col gap-1 round-control">
-          <div class="lable required">Competencies</div>
+          <div class="lable required">{{'common.competencies' | translate}}</div>
           <div class="flex-1">
             <div class="margin-bottom-m mt-2">
-              <p class="mat-subheading-2">Competency Area</p>
-              <mat-radio-group name="competencyArea" class="flex flex-row tgl-group margin-top-s flex-wrap">
+              <p class="mat-subheading-2">{{'widgetCbpFilters.competencyArea' | translate}}</p>
+              <mat-radio-group name="competencyArea" [value]="selectedAreaValue" class="flex flex-row tgl-group margin-top-s flex-wrap">
                 <mat-radio-button *ngFor="let option of filteredallCompetencies" [value]="option.name" (change)="compAreaSelected(option)"
                   class="flex flex-row itm-center margin-right-s">
                   <span class="mat-body-2">{{ option.name }}</span>
                 </mat-radio-button>
               </mat-radio-group>
             </div>
+            <ng-container *ngIf="expand">
+              <div class="margin-bottom-m" *ngIf="allCompetencyTheme && allCompetencyTheme.length > 0">
+                <p class="mat-subheading-2">{{'widgetCbpFilters.competencyTheme' | translate}}</p>
+                <div class="flex flex-col profile-control w-full">
+                  <mat-form-field appearance="outline" class="full-width search-input-new">
+                    <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="queryThemeControl" maxlength="50"
+                      (keyup)="updateQuery(queryThemeControl.value, 'theme')" />
+                    <button mat-icon-button matSuffix type="button" (click)="resetSearch('theme')">
+                      <mat-icon class="refresh">refresh</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+                <div class="mt-4">
+                  <span class="display-inline-block complabels mat-caption cursor-pointer"
+                    [ngClass]="{active: (seletedCompetencyTheme && option.name === seletedCompetencyTheme.name)}" (click)="compThemeSelected(option)"
+                    (keyup)="compThemeSelected(option)" *ngFor="let option of filteredallCompetencyTheme | orderBy: 'name'">
+                    {{ option.name }}
+                  </span>
+                </div>
+              </div>
 
-            <div class="margin-bottom-m" *ngIf="allCompetencyTheme && allCompetencyTheme.length > 0">
-              <p class="mat-subheading-2">Competency Theme</p>
-              <div class="flex flex-col profile-control w-full">
-                <mat-form-field appearance="outline" class="full-width search-input-new">
-                  <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="queryThemeControl" maxlength="50"
-                    (keyup)="updateQuery(queryThemeControl.value, 'theme')" />
-                  <button mat-icon-button matSuffix type="button" (click)="resetSearch('theme')">
-                    <mat-icon class="refresh">refresh</mat-icon>
-                  </button>
-                </mat-form-field>
+              <div class="margin-bottom-m" *ngIf="allCompetencySubtheme && allCompetencySubtheme.length > 0">
+                <p class="mat-subheading-2">{{'widgetCbpFilters.competencySubTheme' | translate}}</p>
+                <div class="flex flex-col profile-control w-full">
+                  <mat-form-field appearance="outline" class="full-width search-input-new">
+                    <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="querySubThemeControl" maxlength="50"
+                      (keyup)="updateQuery(querySubThemeControl.value, 'subtheme')" />
+                    <button mat-icon-button matSuffix type="button" (click)="resetSearch('subtheme')">
+                      <mat-icon class="refresh">refresh</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </div>
+                <div class="mt-4">
+                  <span class="display-inline-block complabels mat-caption cursor-pointer"
+                    [ngClass]="{active: (seletedCompetencySubTheme && option.name === seletedCompetencySubTheme.name)}"
+                    (click)="compSubThemeSelected(option)" (keyup)="compSubThemeSelected(option)"
+                    *ngFor="let option of filteredallCompetencySubtheme | orderBy: 'name'">
+                    {{ option.name }}
+                  </span>
+                </div>
               </div>
-              <div class="mt-4">
-                <span class="display-inline-block complabels mat-caption cursor-pointer"
-                  [ngClass]="{active: (seletedCompetencyTheme && option.name === seletedCompetencyTheme.name)}" (click)="compThemeSelected(option)"
-                  (keyup)="compThemeSelected(option)" *ngFor="let option of filteredallCompetencyTheme | orderBy: 'name'">
-                  {{ option.name }}
-                </span>
-              </div>
-            </div>
 
-            <div class="margin-bottom-m" *ngIf="allCompetencySubtheme && allCompetencySubtheme.length > 0">
-              <p class="mat-subheading-2">Competency Sub theme</p>
-              <div class="flex flex-col profile-control w-full">
-                <mat-form-field appearance="outline" class="full-width search-input-new">
-                  <input matInput [placeholder]="'Search'" class="search-ctrl" [formControl]="querySubThemeControl" maxlength="50"
-                    (keyup)="updateQuery(querySubThemeControl.value, 'subtheme')" />
-                  <button mat-icon-button matSuffix type="button" (click)="resetSearch('subtheme')">
-                    <mat-icon class="refresh">refresh</mat-icon>
-                  </button>
-                </mat-form-field>
+              <div class="margin-bottom-l">
+                <button mat-raised-button type="button" class="ws-mat-default-text compbutton"
+                  [ngClass]="!enableCompetencyAdd ? '' : 'ws-mat-accent-border-active'" [disabled]="!enableCompetencyAdd" (click)="addCompetency()">
+                  <span class="mat-subheading-2 padding-xs">{{'addtopicdialog.add' | translate}}</span>
+                </button>
               </div>
-              <div class="mt-4">
-                <span class="display-inline-block complabels mat-caption cursor-pointer"
-                  [ngClass]="{active: (seletedCompetencySubTheme && option.name === seletedCompetencySubTheme.name)}"
-                  (click)="compSubThemeSelected(option)" (keyup)="compSubThemeSelected(option)"
-                  *ngFor="let option of filteredallCompetencySubtheme | orderBy: 'name'">
-                  {{ option.name }}
-                </span>
-              </div>
-            </div>
-
-            <div class="margin-bottom-l">
-              <button mat-raised-button type="button" class="ws-mat-default-text compbutton"
-                [ngClass]="!enableCompetencyAdd ? '' : 'ws-mat-accent-border-active'" [disabled]="!enableCompetencyAdd" (click)="addCompetency()">
-                <span class="mat-subheading-2 padding-xs">Add</span>
-              </button>
-            </div>
+            </ng-container>
 
             <div class="flex new-mobile"
               *ngIf="entryForm?.controls?.competencies_v6?.value && entryForm?.controls?.competencies_v6?.value.length > 0">
@@ -546,10 +560,10 @@
                 <div *ngIf="isTableExpanded">
                   <table aria-label="Competencies" class="compt-table width-1-1 text-left">
                     <tr>
-                      <th class="padding-xs mat-body-1 bold-text font-bold">Area</th>
-                      <th class="padding-xs mat-body-1 bold-text font-bold">Theme</th>
+                      <th class="padding-xs mat-body-1 bold-text font-bold">{{'apptocsinglepage.area' | translate}}</th>
+                      <th class="padding-xs mat-body-1 bold-text font-bold">{{'apptocsinglepage.theme' | translate}}</th>
                       <th class="padding-xs mat-body-1 flex justify-between bold-text font-bold">
-                        Sub theme
+                        {{'apptocsinglepage.subTheme' | translate}}
                         <img *ngIf="entryForm?.controls?.competencies_v6?.value.length > 10" class="arrow-down cursor-pointer"
                           src="assets/icons/collections/arrow-down.svg" alt="icon" [ngClass]="{'rotate-icon': !listView}"
                           (click)="listView = !listView" (keyup)="listView = !listView" />

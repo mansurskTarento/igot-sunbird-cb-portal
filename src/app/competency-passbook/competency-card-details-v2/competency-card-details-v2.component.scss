@@ -244,3 +244,24 @@ $title-line-count: 2;
     width: 24px !important;
     height: 24px !important;
 }
+
+.evidence-img {
+    max-width: 56px;
+    max-height: 56px;
+}
+
+.link-text {
+    color: #1B4CA1;
+    font: 700 14px Lato;
+    cursor: pointer;
+    pointer-events: all;
+}
+
+.view-link {
+    background-color: #E6E6E6;
+    width: 166px;
+    height: 33px;
+    border-radius: 17px;
+    pointer-events: all;
+    cursor: pointer;
+}

@@ -127,7 +127,7 @@
           </div>
 
           <div class="divider-horizontal"></div>
-          <div class="text-center " 
+          <!-- <div class="text-center "
           [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}" (click)="showWeeklyClapsSection()">
             <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
               <div class="flex items-center">
@@ -139,6 +139,21 @@
                 <img class="cursor-pointer" width="24" height="24" [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_icon.svg' : 'assets/icons/home/clap_disable_icon.svg'"/>
                 <span  *ngIf="insightsData?.weeklyClaps?.total_claps > 1 else elseWeeklyClaps">{{insightsData?.weeklyClaps?.total_claps}} {{ 'weeklyclaps.weeks' | translate }}</span>
                 <ng-template #elseWeeklyClaps>{{insightsData?.weeklyClaps?.total_claps || 0}} {{ 'weeklyclaps.weeks' | translate }}</ng-template>
+            </div> -->
+
+            <div class="text-center " [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}"
+              (click)="this.router.navigate(['/badges'])">
+              <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
+                <div class="flex items-center">
+                  <span>My Badges</span>
+                  <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.badgetooltip' | translate" width="20px"
+                    height="20px"
+                    src="assets/icons/home/help_icon.svg">
+                </div>
+              </div>
+              <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
+                <img class="cursor-pointer" width="24" height="24" src="assets/icons/badges/Medal.svg" />
+                <span>{{countdata?.badgeCount}}</span>
             </div>
           </div>
         </div>

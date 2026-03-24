@@ -578,6 +578,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
         identifier: id,
         primaryCategory: this.collectionType,
         courseCategory: this.currentDataFromEnrollList.content.courseCategory,
+        baseContentReadData: this.baseContentReadData,
         collectionId: this.identifier // In case of multilingual course, redirection should happen to base collectionID
       },
     })

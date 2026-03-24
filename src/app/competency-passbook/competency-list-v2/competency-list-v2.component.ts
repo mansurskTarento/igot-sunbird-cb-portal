@@ -7,8 +7,7 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 // Project files and components
-import { ConfigurationsService, MultilingualTranslationsService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
-
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
@@ -52,6 +51,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
 
   leftStatus: { id: string, count: number, consumedCourse: number }[] = []
   filteredCompetencyArray: any[] = []
+  shuffledThemes: { areaName: string, theme: any }[] = []
   myCompetencies: {
     id: string
     name: string
@@ -60,6 +60,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
       iGOTCourses: number
       extCourses: number
       selfAchievement: number
+      externalTraining: number
       total: number
     }
     themes: {
@@ -74,6 +75,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         iGOTCourses: number
         extCourses: number
         selfAchievement: number
+        externalTraining: number
         total: number
       }
     }[]
@@ -161,8 +163,6 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   certificateMappedObject: any = {}
   compentencyKey!: NsContent.ICompentencyKeys
   constructor(
-    private widgetEnrollService: WidgetEnrollService,
-    private configService: ConfigurationsService,
     private router: Router,
     private matSnackBar: MatSnackBar,
     private langtranslations: MultilingualTranslationsService,
@@ -248,7 +248,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
           id: areaId,
           name: this.allCompetencies.find((c: any) => c.refId === areaId)?.name || '',
           subThemes: [],
-          counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, total: 0 },
+          counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, externalTraining: 0, total: 0 },
           themes: [],
         }
         this.myCompetencies.push(areaEntry)
@@ -264,7 +264,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
             subThemes: [],
             competencyDetails: [],
             viewMore: false,
-            counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, total: 0 },
+            counts: { iGOTCourses: 0, extCourses: 0, selfAchievement: 0, externalTraining: 0, total: 0 },
           }
           areaEntry.themes.push(themeEntry)
         }
@@ -294,11 +294,14 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
             ? item.competencyDetails.extCourses.length : 0
           const selfCount = Array.isArray(item.competencyDetails.selfAchievement)
             ? item.competencyDetails.selfAchievement.length : 0
+          const externalTrainingCount = Array.isArray(item.competencyDetails.externalTraining)
+            ? item.competencyDetails.externalTraining.length : 0
 
           themeEntry.counts.iGOTCourses += iGOTCount
           themeEntry.counts.extCourses += extCount
           themeEntry.counts.selfAchievement += selfCount
-          themeEntry.counts.total += iGOTCount + extCount + selfCount
+          themeEntry.counts.externalTraining += externalTrainingCount
+          themeEntry.counts.total += iGOTCount + extCount + selfCount + externalTrainingCount
 
           areaEntry.counts.iGOTCourses += iGOTCount
           areaEntry.counts.extCourses += extCount
@@ -309,6 +312,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     })
     this.filteredCompetencyArray = this.myCompetencies
     this.findCounts()
+    this.updateShuffledThemes()
+
   }
 
   findCounts(): void {
@@ -369,152 +374,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     return enrollData
   }
 
-  getUserEnrollmentList(): void {
 
-    let enrollmentMapData: any = {}
-    const userId: any = this.configService && this.configService.userProfile && this.configService.userProfile.userId
-    const req = { "request": { "retiredCoursesEnabled": true, "status": "Completed" } }
-    this.widgetEnrollService.fetchInternalEnrollmentData(userId, req)
-      .pipe(takeUntil(this.destroySubject$))
-      .subscribe(
-        (response: any) => {
-          let competenciesV5: any[] = []
-          enrollmentMapData = this.mapEnrollmentData(response?.result)
-          response?.result?.courses.forEach((eachCourse: any) => {
-            // To eliminate In progress or Yet to start courses...
-            if (enrollmentMapData[eachCourse.contentId].status !== 2) { return }
-            if (eachCourse.content && eachCourse.content[this.compentencyKey.vKey]) {
-              competenciesV5 = [...competenciesV5, ...eachCourse.content[this.compentencyKey.vKey]]
-            }
-
-            const courseDetails = {
-              courseName: eachCourse.courseName.trim(),
-              viewMore: false,
-              batchId: eachCourse.batchId,
-              contentId: eachCourse.contentId,
-            }
-            if (eachCourse.issuedCertificates.length) {
-              // tslint: disable-next-line
-              eachCourse.issuedCertificates = eachCourse.issuedCertificates.map((icObj: any) => {
-                const nicObj = { ...icObj, ...courseDetails }
-                return nicObj
-              })
-            } else {
-              eachCourse.issuedCertificates.push(courseDetails)
-            }
-            if ((eachCourse.content[this.compentencyKey.vKey] && eachCourse.content[this.compentencyKey.vKey].length)) {
-              const subThemeMapping: any = {}
-              eachCourse.content[this.compentencyKey.vKey].forEach((v5Obj: any) => {
-                if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]]) {
-
-                  // Certificate consumed logic...
-                  eachCourse.issuedCertificates.forEach((certObj: any) => {
-                    // tslint:disable-next-line: max-line-length
-                    if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
-                      .findIndex((_obj: any) => _obj.courseName === certObj.courseName) === -1) {
-                      this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
-                        .push(certObj)
-                    }
-                  })
-
-                  // Content consumed logic...
-                  if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
-                    .indexOf(eachCourse.courseName.trim()) === -1) {
-                    this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
-                      .push(eachCourse.courseName.trim())
-
-                    // Completed on logic...
-                    this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].completedOn
-                      .push(eachCourse.completedOn)
-                  }
-
-                } else {
-                  this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]] = {
-                    certificate: eachCourse.issuedCertificates,
-                    contentConsumed: [eachCourse.courseName],
-                    subThemes: [],
-                    completedOn: [eachCourse.completedOn],
-                  }
-                }
-                // Sub theme mapping logic...
-                if (subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]) {
-                  if (subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]
-                    .indexOf(v5Obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
-                    subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]
-                      .push(v5Obj[this.compentencyKey.vCompetencySubTheme])
-                  }
-                } else {
-                  subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]] = []
-                  subThemeMapping[v5Obj[this.compentencyKey.vCompetencyTheme]]
-                    .push(v5Obj[this.compentencyKey.vCompetencySubTheme])
-                }
-              })
-              for (const key in subThemeMapping) {
-                if (subThemeMapping.hasOwnProperty(key)) {
-                  this.certificateMappedObject[key].subThemes.push(subThemeMapping[key])
-                }
-              }
-            }
-          })
-
-          competenciesV5.forEach((v5Obj: any) => {
-            v5Obj.subTheme = []
-            v5Obj.contentConsumed = []
-            v5Obj.issuedCertificates = []
-            // tslint:disable-next-line: max-line-length
-            const competencyArea = (v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral')
-              ? 'behavioural' : v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase()
-            if (this.competency[competencyArea]
-              .findIndex((obj: any) =>
-                obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]
-              ) === -1) {
-              this.competency[competencyArea].push(v5Obj)
-            }
-
-            this.competency[competencyArea].forEach((_obj: any) => {
-              if (_obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]) {
-                if (_obj.subTheme.indexOf(v5Obj[this.compentencyKey.vCompetencySubTheme]) === -1) {
-                  _obj.subTheme.push(v5Obj[this.compentencyKey.vCompetencySubTheme])
-                  // tslint: disable-next-line: whitespace
-                }
-                // tslint: disable-next-line: whitespace
-              }
-            })
-          })
-          // tslint: disable-next-line
-          this.competency.all = [...this.competency.behavioural, ...this.competency.functional, ...this.competency.domain]
-          this.getOtherData()
-          this.competency.all = this.competency.all.sort((a: any, b: any) => b.latest - a.latest)
-
-          this.competencyArray = (this.isMobile) ? this.competency.all.slice(0, 3) : this.competency.all
-          this.competency.skeletonLoading = false
-        },
-        (error: HttpErrorResponse) => {
-          if (!error.ok) {
-            this.matSnackBar.open('Unable to pull Enrollment list details!')
-            this.competency.skeletonLoading = false
-          }
-        }
-      )
-  }
-
-  getOtherData(): void {
-
-    this.competency.all.forEach((allObj: any) => {
-      allObj.issuedCertificates = this.certificateMappedObject[allObj[this.compentencyKey.vCompetencyTheme]].certificate
-      allObj.contentConsumed = this.certificateMappedObject[allObj[this.compentencyKey.vCompetencyTheme]].contentConsumed
-      allObj.courseSubThemes = this.certificateMappedObject[allObj[this.compentencyKey.vCompetencyTheme]].subThemes
-      // tslint:disable-next-line: max-line-length
-      allObj['latest'] = (this.certificateMappedObject[allObj[this.compentencyKey.vCompetencyTheme]].completedOn.length) ? Math.max(...this.certificateMappedObject[allObj[this.compentencyKey.vCompetencyTheme]].completedOn) : null
-
-      this.leftCardDetails.forEach((_lObj: any) => {
-        if (_lObj.type === allObj[this.compentencyKey.vCompetencyArea]) {
-          _lObj.competencySubTheme += allObj.subTheme.length
-          _lObj.contentConsumed += allObj.contentConsumed.length
-        }
-      })
-    })
-  }
 
   handleLeftFilter(months: string): void {
     // Do not delete, need to work on this...
@@ -540,6 +400,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
           || (tab === 'behavioral' && areaName === 'behavioural')
       })
     }
+    this.updateShuffledThemes()
   }
 
   handleTabChange(event: MatTabChangeEvent): void {
@@ -560,6 +421,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     } else {
       this.filteredCompetencyArray = this.myCompetencies.slice(0, 3)
     }
+    this.updateShuffledThemes()
   }
 
   handleClick(param: string): void {
@@ -588,6 +450,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         }))
         .filter((area: any) => area.themes.length > 0)
     }
+    this.updateShuffledThemes()
   }
 
   // Filters related functionalities...
@@ -678,6 +541,22 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     }
 
     this.filteredCompetencyArray = filtered
+    this.updateShuffledThemes()
+  }
+
+  updateShuffledThemes(): void {
+    const flat: { areaName: string, theme: any }[] = []
+    this.filteredCompetencyArray.forEach((area: any) => {
+      (area.themes || []).forEach((theme: any) => {
+        flat.push({ areaName: area.name, theme })
+      })
+    })
+    // Fisher-Yates shuffle
+    for (let i = flat.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [flat[i], flat[j]] = [flat[j], flat[i]]
+    }
+    this.shuffledThemes = flat
   }
 
   ngOnDestroy(): void {
