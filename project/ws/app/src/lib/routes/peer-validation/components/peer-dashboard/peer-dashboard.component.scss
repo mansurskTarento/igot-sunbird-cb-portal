@@ -187,8 +187,10 @@
 
       .col-action {
         flex: 1;
-        text-align: right;
-        padding-right: 16px; // Add right padding to last col only
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 0;
       }
 
       .col-requested-by {
@@ -341,12 +343,14 @@
 
       .col-action {
         flex: 1;
-        text-align: right;
-        padding-right: 16px; // Align with header
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 0;
 
         @media (max-width: 768px) {
           flex: none;
-          text-align: left;
+          justify-content: flex-start;
           padding-right: 0;
           margin-top: 8px;
         }

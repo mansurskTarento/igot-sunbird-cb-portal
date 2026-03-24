@@ -16,18 +16,22 @@
           (click)="$event.stopPropagation(); toggleUser(user, $event)" color="primary">
         </mat-checkbox>
       </div>
-      <div class="col-name">
-        <div class="user-avatar">
-          <img *ngIf="user.profileDetails?.profileImageUrl" [src]="user.profileDetails?.profileImageUrl"
-            alt="User Photo" class="user-photo">
-          <span *ngIf="!user.profileDetails?.profileImageUrl">{{ getUserInitials(user) }}</span>
+      <div class="col-name" data-label="Full Name">
+        <div class="name-row">
+          <div class="user-avatar">
+            <img *ngIf="user.profileDetails?.profileImageUrl" [src]="user.profileDetails?.profileImageUrl"
+              alt="User Photo" class="user-photo">
+            <span *ngIf="!user.profileDetails?.profileImageUrl">{{ getUserInitials(user) }}</span>
+          </div>
+          <span>{{ getUserFullName(user) }}</span>
+          <span class="you-badge" *ngIf="isCurrentUser(user)">You</span>
         </div>
-        <span>{{ getUserFullName(user) }}</span>
-        <span class="you-badge" *ngIf="isCurrentUser(user)">You</span>
       </div>
-      <div class="col-email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email || '--' }}</div>
-      <div class="col-org">{{ user.rootOrgName || '--' }}</div>
-      <div class="col-designation">{{ getUserDesignation(user) }}</div>
+      <div class="col-email" data-label="Email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email ||
+        '--' }}</div>
+      <div class="col-org" data-label="Organisation">{{ user.rootOrgName || '--' }}</div>
+      <div class="col-designation" data-label="Designation" [matTooltip]="getUserDesignation(user)">{{
+        getUserDesignation(user) }}</div>
     </div>
 
     <div class="no-data" *ngIf="filteredUsers.length === 0">

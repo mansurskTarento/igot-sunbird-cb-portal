@@ -19,7 +19,7 @@ export class SurveyPopupComponent {
 
   onYes() {
     this.dialog.open(SurveyDialogComponent, {
-      width: '980px',
+      width: '1100px',
       maxWidth: '95vw',
       disableClose: true,
       data: this.data,
