@@ -1,15 +1,15 @@
-import { HttpErrorResponse } from '@angular/common/http';
-import { Component } from '@angular/core';
-import { map } from 'rxjs/operators';
+import { HttpErrorResponse } from '@angular/common/http'
+import { Component, ElementRef, ViewChild } from '@angular/core'
+import { map } from 'rxjs/operators'
 import * as _ from 'lodash'
-import { EventsEngagementComponent } from '../events-engagement/events-engagement.component';
-import { EventsCalendarComponent } from '../events-calendar/events-calendar.component';
-import { EventService } from '../../services/events.service';
+import { EventsEngagementComponent } from '../events-engagement/events-engagement.component'
+import { EventsCalendarComponent } from '../events-calendar/events-calendar.component'
+import { EventService } from '../../services/events.service'
 import { WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from 'library/ws-widget/resolver/src/public-api'
-import { FormControl } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
-import { MatBottomSheet } from '@angular/material/bottom-sheet';
+import { FormControl } from '@angular/forms'
+import { ActivatedRoute, Router } from '@angular/router'
+import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
@@ -25,6 +25,7 @@ export class EventsV2Component {
   }
 
   searchControl = new FormControl()
+  @ViewChild('browseScrollContainer') browseScrollContainer!: ElementRef
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -42,7 +43,7 @@ export class EventsV2Component {
           } else if (section.key === 'banner') {
             this.banner = section
           }
-        });
+        })
       }
     })
   }
@@ -101,6 +102,14 @@ export class EventsV2Component {
       panelClass: 'events-bottomsheet',
       data: _.get(this.eventsHome, 'data.leftSection.data.eventsCalendar', {})
     })
+  }
+
+  scrollBrowse(direction: 'left' | 'right') {
+    const container = this.browseScrollContainer?.nativeElement
+    if (container) {
+      const scrollAmount = 300
+      container.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
+    }
   }
 
   navigate(browseData: any) {
