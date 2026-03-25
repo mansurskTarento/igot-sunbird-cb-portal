@@ -2,13 +2,15 @@ import { Component, HostListener } from '@angular/core'
 import * as _ from 'lodash'
 import { BadgeService } from '../../services/badge.service'
 import { Router } from '@angular/router'
+import jsPDF from 'jspdf'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
   selector: 'app-badge-details',
   templateUrl: './badge-details.component.html',
   styleUrls: ['./badge-details.component.scss'],
 })
 export class BadgeDetailsComponent {
-  constructor(private userProfileService: BadgeService, private router: Router) {
+  constructor(private userProfileService: BadgeService, private router: Router, private badgeService: BadgeService, private configSvc: ConfigurationsService) {
   }
   activeTab: 'earned' | 'inprogress' = 'earned'
   @HostListener('document:click')
@@ -36,7 +38,6 @@ export class BadgeDetailsComponent {
 
     this.userProfileService.fetchBadgeDetails(payload).subscribe(
       (res: any) => {
-        console.log('badgeDetails', res?.result)
         this.badgeDetails = res?.result || {}
         this.data.stats[0].value = this.badgeDetails?.summary?.totalBadgesEarned
         this.data.stats[1].value = this.badgeDetails?.summary?.courseCompleted
@@ -93,7 +94,6 @@ export class BadgeDetailsComponent {
   showModal = false
 
   openModal(badge: any) {
-    console.log('badge', badge)
     this.selectedBadge = badge
     this.showModal = true
   }
@@ -153,5 +153,99 @@ export class BadgeDetailsComponent {
     earnedBadges: [],
 
     inProgress: []
+  }
+  downloadBadgePng(badgeData: any) {
+    const payload = {
+      request: {
+        userId: this.configSvc?.userProfile?.userId,
+        courseId: badgeData.courseId,
+        badgeId: badgeData.badgeId,
+      },
+    }
+    this.badgeService.generateBadge(payload).subscribe((res: any) => {
+      const dataUrl = res?.result?.printUri
+
+      const img = new Image()
+      img.src = dataUrl
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width
+        canvas.height = img.height
+
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+
+          const png = canvas.toDataURL('image/png')
+
+          const a = document.createElement('a')
+          a.href = png
+          a.download = 'badge.png'
+          a.click()
+        }
+      }
+    })
+  }
+
+  downloadBadgeSvg(badgeData: any) {
+    const payload = {
+      request: {
+        userId: this.configSvc?.userProfile?.userId,
+        courseId: badgeData.courseId,
+        badgeId: badgeData.badgeId,
+      },
+    }
+    this.badgeService.generateBadge(payload).subscribe({
+      next: (res: any) => {
+        const dataUrl = res?.result?.printUri
+
+        const a = document.createElement('a')
+        a.href = dataUrl
+        a.download = 'badge.svg'
+
+        document.body.appendChild(a)
+        a.click()
+        a.remove()
+      },
+      error: (err) => {
+        console.error('Download failed', err)
+      },
+    })
+  }
+  downloadBadgePdf(badgeData: any) {
+    const payload = {
+      request: {
+        userId: this.configSvc?.userProfile?.userId,
+        courseId: badgeData.courseId,
+        badgeId: badgeData.badgeId,
+      },
+    }
+    this.badgeService.generateBadge(payload).subscribe((res: any) => {
+      const dataUrl = res?.result?.printUri
+
+      const img = new Image()
+      img.src = dataUrl
+
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.width || 1920
+        canvas.height = img.height || 1080
+
+        const ctx = canvas.getContext('2d')
+        if (ctx) {
+          ctx.drawImage(img, 0, 0)
+
+          const imgData = canvas.toDataURL('image/png')
+
+          const pdf = new jsPDF('landscape', 'px', 'a4')
+          const w = pdf.internal.pageSize.getWidth()
+          const h = pdf.internal.pageSize.getHeight()
+
+          pdf.addImage(imgData, 'PNG', 0, 0, w, h)
+          pdf.save('badge.pdf')
+        }
+      }
+    })
   }
 }
