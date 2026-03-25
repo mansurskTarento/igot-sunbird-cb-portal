@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http'
-import { Component, ElementRef, ViewChild } from '@angular/core'
+import { Component } from '@angular/core'
 import { map } from 'rxjs/operators'
 import * as _ from 'lodash'
 import { EventsEngagementComponent } from '../events-engagement/events-engagement.component'
@@ -25,7 +25,6 @@ export class EventsV2Component {
   }
 
   searchControl = new FormControl()
-  @ViewChild('browseScrollContainer') browseScrollContainer!: ElementRef
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -102,14 +101,6 @@ export class EventsV2Component {
       panelClass: 'events-bottomsheet',
       data: _.get(this.eventsHome, 'data.leftSection.data.eventsCalendar', {})
     })
-  }
-
-  scrollBrowse(direction: 'left' | 'right') {
-    const container = this.browseScrollContainer?.nativeElement
-    if (container) {
-      const scrollAmount = 300
-      container.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' })
-    }
   }
 
   navigate(browseData: any) {
