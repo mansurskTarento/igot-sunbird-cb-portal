@@ -23,7 +23,9 @@ export class BadgeDetailsComponent {
   ngOnInit(): void {
     this.getBadgeDetails('Completed')
   }
-
+  isTruncated(element: HTMLElement): boolean {
+    return element.scrollWidth > element.clientWidth
+  }
   getBadgeDetails(status: string = 'Completed'): void {
 
     const payload = {
@@ -50,6 +52,8 @@ export class BadgeDetailsComponent {
               glow: 'glow-orange',
               title: detail.badgeTitle,
               level: detail.badgeSubTitle,
+              courseId: badge?.courseId,
+              badgeId: detail?.badgeId
             }))
           )
 
