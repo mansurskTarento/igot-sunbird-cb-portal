@@ -16,12 +16,13 @@ resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
 ): Observable<IResolveResponse<any>> {
+    const requestType : any = _route && _route.data && _route.data.pageKey ? _route.data.pageKey : 'karmayogi-saptah'
     const orgId = '123456789'
     const subTypeValue: any = 'microsite'
 
     const requestData: any = {
       'request': {
-      'type': 'National Learning Week',
+      'type':requestType,
         'subType': subTypeValue,
         'action': 'page-configuration',
         'component': 'portal',
