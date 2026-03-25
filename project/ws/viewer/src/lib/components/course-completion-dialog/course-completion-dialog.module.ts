@@ -9,6 +9,7 @@ import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-c
 import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
+import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
 
 @NgModule({
     declarations: [CourseCompletionDialogComponent],
@@ -21,6 +22,7 @@ import { MatIconModule } from '@angular/material/icon'
         ContentRatingV2DialogModule,
         TranslateModule.forChild(),
         MatIconModule,
+        PipePublicURLModule
     ],
     exports: [CourseCompletionDialogComponent]
 })

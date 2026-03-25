@@ -9,16 +9,18 @@ import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { CompetencyPassbookService } from '../competency-passbook.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, EventService, WsEvents, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { CertificateViewPopupComponent } from '../../../../project/ws/app/src/lib/routes/profile-v2/components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
 
 @Component({
   selector: 'ws-competency-card-details-v2',
   templateUrl: './competency-card-details-v2.component.html',
   styleUrls: ['./competency-card-details-v2.component.scss'],
+  providers: [PipeCertificateImageURL]
 })
 
 export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
@@ -44,6 +46,7 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
     private events: EventService,
     private dialog: MatDialog,
     private matSnackBar: MatSnackBar,
+    private pipeImgUrl: PipeCertificateImageURL,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -409,11 +412,35 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
   }
 
   handleView(eachCert: any): void {
-    const url = eachCert.certificateId
+    const url = this.getUrl(eachCert.certificateId)
     window.open(url, '_blank')
+  }
+
+  getUrl(url: string): string {
+    if (url.includes('storage.googleapis')) {
+      const folderNameToSplit = '/userAchievements/'
+      const urlSplice = url.split(folderNameToSplit)[1]
+      const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
+      return uploadedFile
+    }
+    return url
   }
 
   ngOnDestroy(): void {
     this.destroySubject$.unsubscribe()
+  }
+
+  openDocument(url: string): void {
+    if (url) {
+      this.dialog.open(CertificateViewPopupComponent, {
+        width: '600px',
+        panelClass: 'cover-photo-edit-popup',
+        data: {
+          certificateUrl: url
+        },
+        disableClose: true,
+        autoFocus: false,
+      })
+    }
   }
 }

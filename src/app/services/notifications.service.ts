@@ -223,7 +223,14 @@ export class NotificationsService {
   }
 
   handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
-    if (notification.category === 'LEARN') {
+    console.log('notification', notification)
+    if (notification.sub_category === 'AWARD_BADGES') {
+      this.router.navigateByUrl('/badges')
+    }
+    else if (notification.sub_category === 'AWARD_BADGES_REMINDER') {
+      this.router.navigateByUrl(`/app/toc/${notification?.message?.data?.[0]?.id}`)
+    }
+    else if (notification.category === 'LEARN') {
       this.handleTocRedirection(notification, snackBar)
     } else if (notification.category === 'EVENT') {
       this.handleEventRedirection(notification, environment)

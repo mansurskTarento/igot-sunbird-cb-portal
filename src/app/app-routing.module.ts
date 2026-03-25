@@ -314,12 +314,11 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/learn/karmayogi-saptah',
+    path: 'app/learn/nlw',
     loadChildren: () =>
       import('./routes/route-national-learning-week.module').then(u => u.RouteNationalLearningWeekModule),
     canActivate: [GeneralGuard],
     data: {
-      // pageId: 'app/learn/karmayogi-saptah',
       module: 'National Learning Week',
     },
     resolve: {

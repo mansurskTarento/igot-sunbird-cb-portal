@@ -83,6 +83,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   languageList: any = []
   progressUpdateSubscription: Subscription | null = null
   hashmapUpdatedSubscription: Subscription | null = null
+  routeChangeSubscription: Subscription | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -132,6 +133,29 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     } else {
       this.isPreAssessment = false
     }
+
+    // this.toggleAccessibilityAndChatbot()
+  }
+
+  toggleAccessibilityAndChatbot(hid: boolean) {
+    const hide = hid
+    const classNames = ['userway_p2', 'chatbot-icon-container', 'chatbot-icon-ai']
+
+    setTimeout(() => {
+      classNames.forEach(className => {
+        const elements = document.getElementsByClassName(className)
+
+        for (let i = 0; i < elements.length; i++) {
+          const el = elements[i] as HTMLElement
+
+          if (hide) {
+            el.style.setProperty('display', 'none', 'important')
+          } else {
+            el.style.removeProperty('display')
+          }
+        }
+      })
+    }, 100)
   }
 
   checkMultilingual() {
@@ -230,6 +254,19 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     console.log('✅ Milestone locks recomputed from hashmap')
   }
   async ngOnInit() {
+
+    // this.routeChangeSubscription = this.router.events
+    //   .pipe(filter(event => event instanceof NavigationEnd))
+    //   .subscribe(() => {
+
+    //     // update flags based on current URL
+    //     const url = this.router.url
+
+    //     this.isAssessmentScreen = url.includes('viewer/practice')
+    //     this.isPreAssessment = this.activatedRoute.snapshot.queryParams?.['preAssessment']
+
+    //     this.toggleAccessibilityAndChatbot()
+    //   })
 
     this.getTocConfig()
     // for left side player scroll on right side resource click
@@ -451,13 +488,19 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         if (sideNavBarDrawerState) {
           sideNavBarDrawerState.style.display = 'block'
         }
+        this.toggleAccessibilityAndChatbot(false)
       } else {
         this.sideNavBarOpened = false
         this.viewerHeaderSideBarToggleFlag = data
         if (sideNavBarDrawerState) {
           sideNavBarDrawerState.style.display = 'none'
+
         }
+        this.toggleAccessibilityAndChatbot(true)
+
+
       }
+
 
     })
     if (this.collectionId) {
@@ -721,6 +764,22 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     if (this.progressUpdateSubscription) {
       this.progressUpdateSubscription.unsubscribe()
     }
+    const classNames = ['userway_p2', 'chatbot-icon-container', 'chatbot-icon-ai']
+
+    classNames.forEach(className => {
+      const elements = document.getElementsByClassName(className)
+
+      for (let i = 0; i < elements.length; i++) {
+        const el = elements[i] as HTMLElement
+
+        el.style.removeProperty('display')   // restore original display
+        el.style.pointerEvents = 'auto'      // allow clicks
+      }
+    })
+
+    localStorage.removeItem('currentPlayerTrackLabel')
+    localStorage.removeItem('currentPlayerTrackLangugage')
+    localStorage.removeItem('currentPlayerSubtitleOff')
   }
 
   downloadCertificate(courseData: any): void {

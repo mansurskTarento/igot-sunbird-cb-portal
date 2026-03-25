@@ -10,17 +10,17 @@
   <ng-container *ngFor="let achievement of achievementsList">
     <div class="achievement-card flex flex-col gap-1">
       <div class="flex justify-between items-start certificate-name">
-        <div class="achievement-title">{{achievement?.contextData?.title}}</div>
+        <div class="achievement-title">{{achievement?.title}}</div>
         <ng-container *ngIf="isCurrentUser">
           <mat-icon class="delete-icon mr-2" (click)="deleteAchievement(achievement)" (keyup)="deleteAchievement(achievement)">delete</mat-icon>
           <mat-icon class="edit-icon mr-2" (click)="openEditDialog(achievement)" (keyup)="openEditDialog(achievement)">edit</mat-icon>
         </ng-container>
       </div>
-      <div class="achievement-details"> {{achievement?.contextData?.issuedOrganisation}}</div>
-      <div class="achievement-details"> {{achievement?.contextData?.issuedDate | date:'dd MMM, yyyy'}}</div>
-      <ng-container *ngIf="achievement?.contextData?.description">
+      <div class="achievement-details"> {{achievement?.issuedOrganisation}}</div>
+      <div class="achievement-details"> {{achievement?.issuedDate | date:'dd MMM, yyyy'}}</div>
+      <ng-container *ngIf="achievement?.description">
         <div [ngClass]="{'extend-description': achievement.showMore}" class="description">
-          <ws-app-description [description]="achievement?.contextData?.description" [minHeight]="30"
+          <ws-app-description [description]="achievement?.description" [minHeight]="30"
             (showViewMoreBtn)="achievement['showViewMoreBtn'] = $event"></ws-app-description>
         </div>
         <ng-container *ngIf="achievement.showViewMoreBtn">
@@ -32,14 +32,14 @@
       <ng-container *ngIf="achievement?.uploadedDocumentUrl && achievement?.fileName">
         <div class="document-card flex justify-between items-center">
           <div class="flex items-center gap-4 w-full">
-            <img [src]="achievement?.contextData?.uploadedDocumentUrl" class="certificate" alt="certificate">
-            <div class="document-name">{{achievement?.contextData?.fileName}}</div>
+            <img [src]="getUrl(achievement?.uploadedDocumentUrl)" class="certificate" alt="certificate">
+            <div class="document-name">{{achievement?.fileName}}</div>
           </div>
-          <mat-icon class="view-icon" (click)="openDocument(achievement?.contextData?.uploadedDocumentUrl)">visibility</mat-icon>
+          <mat-icon class="view-icon" (click)="openDocument(achievement?.uploadedDocumentUrl)">visibility</mat-icon>
         </div>
       </ng-container>
-      <ng-container *ngIf="achievement?.contextData?.url">
-        <div class="url-card flex gap-2 items-center justify-center" (click)="openUrl(achievement?.contextData?.url)">
+      <ng-container *ngIf="achievement?.url">
+        <div class="url-card flex gap-2 items-center justify-center" (click)="openUrl(achievement?.url)">
           <div class="linke">{{'NetworkV2Profile.viewCertificate' | translate}}</div>
           <mat-icon class="link-icon">link</mat-icon>
         </div>

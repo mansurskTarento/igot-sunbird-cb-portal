@@ -43,6 +43,36 @@ export function startDateValidator(endDateControlName: string): ValidatorFn {
   }
 }
 
+export function issuedDateValidator(endDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(endDateControlName)?.value
+    const issuedDate = control?.value
+
+    if (!issuedDate) {
+      return null // Skip validation if issuedDate is not set
+    }
+
+    if (endDate && new Date(issuedDate) < new Date(endDate)) {
+      return { issuedDateBeforeEndDate: true }
+    }
+
+    return null // Valid
+  }
+}
+
+export function urlOrDocumentValidator(): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const url = formGroup.get('url')?.value
+    const uploadedDocumentUrl = formGroup.get('uploadedDocumentUrl')?.value
+
+    if (!url && !uploadedDocumentUrl) {
+      return { urlOrDocumentRequired: true }
+    }
+
+    return null // Valid
+  }
+}
+
 @Component({
   selector: 'ws-app-profile-entry-edit',
   templateUrl: './profile-entry-edit.component.html',
@@ -81,6 +111,7 @@ export class ProfileEntryEditComponent implements OnInit {
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  endDate: Date = new Date()
   //#endregion (service history variables)
 
   //#region (educational qualifications variables)
@@ -109,6 +140,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   disableUpload = false
   disableUrl = false
+  minIssuedDate: Date | null = null
 
   // competencies
   allCompetencies: any[] = []
@@ -128,6 +160,8 @@ export class ProfileEntryEditComponent implements OnInit {
   allThemeData: any
   allSubThemeData: any
   viewMode: string = ''
+  expand: boolean = false
+  selectedAreaValue: string | null = null
 
   //#endregion (global variables)
   constructor(
@@ -1041,24 +1075,113 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (educational qualifications)
 
   //#region (achievements)
-  private createAchievementsForm(): void {
+  // private createAchievementsForm(): void {
 
+  //   this.entryForm = this.fb.group({
+  //     title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+  //     issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+  //     deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+  //     startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+  //     endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+  //     issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
+  //     learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+  //     trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+  //     uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
+  //     fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
+  //     url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+  //     description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
+  //     competencies_v6: ['', [Validators.required]]
+  //   }, { validators: urlOrDocumentValidator() })
+  //   if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
+  //     const urlControl = this.entryForm.controls.url
+  //     urlControl.patchValue('')
+  //     urlControl.disable()
+  //     urlControl.updateValueAndValidity()
+  //     this.disableUpload = false
+  //     this.disableUrl = true
+  //     const documentUrlControl = this.entryForm.controls.uploadedDocumentUrl
+  //     documentUrlControl.patchValue(_.get(this.entryDetails?.contextData, 'uploadedDocumentUrl', ''))
+  //     documentUrlControl.updateValueAndValidity()
+  //   } else if (_.get(this.entryDetails?.contextData, 'url', '')) {
+  //     this.disableUpload = true
+  //     this.disableUrl = false
+  //   }
+  //   if (this.entryDetails && this.entryDetails.contextData && this.entryDetails.contextData.competencies_v6) {
+  //     const competencies = this.entryDetails.contextData.competencies_v6
+  //     this.entryForm.get('competencies_v6')?.patchValue(competencies)
+  //   }
+
+  //   // Set initial minIssuedDate if endDate exists
+  //   const endDateValue = _.get(this.entryDetails?.contextData, 'endDate', '')
+  //   const issueDateValue = _.get(this.entryDetails?.contextData, 'issuedDate', '')
+  //   if (endDateValue) {
+  //     this.minIssuedDate = issueDateValue ? new Date(issueDateValue) : new Date(endDateValue)
+  //   }
+  //   if (issueDateValue) {
+  //     this.endDate = new Date(issueDateValue)
+  //   }
+
+  //   // Watch for endDate changes to update minIssuedDate and revalidate startDate
+  //   const endDateControl = this.entryForm.get('endDate')
+  //   if (endDateControl) {
+  //     endDateControl.valueChanges.subscribe((value: any) => {
+  //       if (value) {
+  //         this.minIssuedDate = new Date(value)
+  //         // Revalidate issuedDate when endDate changes
+  //         const issuedDateControl = this.entryForm.get('issuedDate')
+  //         if (issuedDateControl) {
+  //           issuedDateControl.updateValueAndValidity()
+  //         }
+  //       } else {
+  //         this.minIssuedDate = null
+  //       }
+  //       // Revalidate startDate when endDate changes to clear stale errors
+  //       const startDateControl = this.entryForm.get('startDate')
+  //       if (startDateControl) {
+  //         startDateControl.updateValueAndValidity({ emitEvent: false })
+  //       }
+  //     })
+  //   }
+
+  //   // Watch for startDate changes to revalidate endDate
+  //   const startDateControl = this.entryForm.get('startDate')
+  //   if (startDateControl) {
+  //     startDateControl.valueChanges.subscribe(() => {
+  //       const endDate = this.entryForm.get('endDate')
+  //       if (endDate) {
+  //         endDate.updateValueAndValidity({ emitEvent: false })
+  //       }
+  //     })
+  //   }
+
+  //   // Watch for issuedDate changes to set max date for startDate and endDate pickers
+  //   const issuedDateControl = this.entryForm.get('issuedDate')
+  //   if (issuedDateControl) {
+  //     issuedDateControl.valueChanges.subscribe((value: any) => {
+  //       this.endDate = value ? new Date(value) : new Date()
+  //     })
+  //   }
+
+  //   this.valueChanges()
+  //   this.addCompetencyMeta()
+  // }
+
+  private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
-      deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
-      startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
-      endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
-      issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required]],
-      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
-      trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
-      uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
-      fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
-      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
-      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
-      competencies_v6: ['', [Validators.required]]
+      title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+      issuedOrganisation: [_.get(this.entryDetails, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      //deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+      //startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+      //endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+      issuedDate: [_.get(this.entryDetails, 'issuedDate', ''), [Validators.required]],
+      //learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      //trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+      uploadedDocumentUrl: [_.get(this.entryDetails, 'documentUrl', '')],
+      fileName: [_.get(this.entryDetails, 'fileName', '')],
+      url: [_.get(this.entryDetails, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(500)]],
     })
-    if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
+    if (_.get(this.entryDetails, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
       urlControl.patchValue('')
       urlControl.disable()
@@ -1072,12 +1195,7 @@ export class ProfileEntryEditComponent implements OnInit {
       this.disableUpload = true
       this.disableUrl = false
     }
-    if (this.entryDetails && this.entryDetails.contextData && this.entryDetails.contextData.competencies_v6) {
-      const competencies = this.entryDetails.contextData.competencies_v6
-      this.entryForm.get('competencies_v6')?.patchValue(competencies)
-    }
     this.valueChanges()
-    this.addCompetencyMeta()
   }
 
   get competenciesValue(): any[] {
@@ -1131,6 +1249,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   compAreaSelected(option: any) {
     this.resetCompSubfields()
+    this.selectedAreaValue = option.name
     this.allCompetencies.forEach((val: any) => {
       if (option.identifier === val.identifier) {
         this.seletedCompetencyArea = val
@@ -1138,6 +1257,7 @@ export class ProfileEntryEditComponent implements OnInit {
         this.filteredallCompetencyTheme = this.allCompetencyTheme
       }
     })
+    this.expand = true
   }
 
   compThemeSelected(option: any) {
@@ -1158,6 +1278,7 @@ export class ProfileEntryEditComponent implements OnInit {
 
   resetCompfields() {
     this.enableCompetencyAdd = false
+    this.selectedAreaValue = null
     this.seletedCompetencyArea = null
     this.seletedCompetencyTheme = null
     this.seletedCompetencySubTheme = null
@@ -1226,6 +1347,8 @@ export class ProfileEntryEditComponent implements OnInit {
       control.markAsDirty()
       control.markAsTouched()
     }
+    this.resetCompfields()
+    this.expand = false
   }
 
   get uniqueAreas(): string[] {
@@ -1325,10 +1448,11 @@ export class ProfileEntryEditComponent implements OnInit {
 
   valueChanges(): void {
     const urlControl = this.entryForm.get('url')
+    const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
+
     if (urlControl) {
       urlControl.valueChanges.subscribe((value: string) => {
         if (value && value.trim() !== '') {
-          const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
           if (documentUrlControl) {
             documentUrlControl.patchValue('')
             documentUrlControl.updateValueAndValidity()
@@ -1344,6 +1468,15 @@ export class ProfileEntryEditComponent implements OnInit {
           this.disableUpload = false
           this.disableUrl = false
         }
+        // Trigger form-level validation
+        this.entryForm.updateValueAndValidity()
+      })
+    }
+
+    if (documentUrlControl) {
+      documentUrlControl.valueChanges.subscribe(() => {
+        // Trigger form-level validation when document URL changes
+        this.entryForm.updateValueAndValidity()
       })
     }
   }
@@ -1393,8 +1526,9 @@ export class ProfileEntryEditComponent implements OnInit {
       return
     }
     const mimeType = files[0].type
-    if (!mimeType.startsWith('image/')) {
-      this.openSnackbar('Only images are supported')
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!allowedTypes.includes(mimeType.toLowerCase())) {
+      this.openSnackbar('Only PNG, JPG, and JPEG images are supported')
       return
     }
     const reader = new FileReader()
@@ -1488,6 +1622,32 @@ export class ProfileEntryEditComponent implements OnInit {
 
   handleCancel(): void {
     this.dialogRef.close()
+  }
+
+  preventNonNumericInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  preventNonNumericPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text')
+    if (pastedText && !/^\d+$/.test(pastedText)) {
+      event.preventDefault()
+    }
+  }
+
+  getNameOfTheFile(fileName: string): string {
+    if (fileName && fileName.length > 50) {
+      return `${fileName.substring(0, 50)}...`
+    }
+    return fileName
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

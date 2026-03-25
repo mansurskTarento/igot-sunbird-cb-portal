@@ -132,6 +132,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   showOverlay = false
   showToolTip = false
   coursePrimaryCategory: any
+  courseCategory: any
   currentSetNumber = 0
   noOfQuestionsPerSet = 20
   totalQuestionsCount = 0
@@ -432,6 +433,9 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     this.coursePrimaryCategory = this.widgetContentService.currentMetaData.primaryCategory
+    if (this.widgetContentService?.currentMetaData?.courseCategory) {
+      this.courseCategory = this.widgetContentService?.currentMetaData?.courseCategory
+    }
     if (this.widgetContentService.currentMetaData.children && this.widgetContentService.currentMetaData.children.length) {
       let activeResourceFound = false
       this.widgetContentService.currentMetaData.children.forEach((item: any) => {
@@ -751,6 +755,33 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     return this.totalQuestionsCount > this.noOfQuestionsPerSet * (this.currentSetNumber + 1)
   }
 
+  get hasPreviousSet(): boolean {
+    return this.currentSetNumber > 0
+  }
+
+  goToNextSet(): void {
+    if (this.hasNextSet) {
+      this.currentSetNumber++
+      this.currentQuestionIndex = 0
+      const questions = this.secQuestions
+      this.currentQuestion = questions && questions[0] ? questions[0] : null
+      if (questions[0] && questions[0]['questionId'] &&
+        !(this.questionVisitedData.indexOf(questions[0]['questionId']) > -1)) {
+        this.questionVisitedData.push(questions[0]['questionId'])
+      }
+    }
+  }
+
+  goToPreviousSet(): void {
+    if (this.hasPreviousSet) {
+      this.currentSetNumber--
+      const questions = this.secQuestions
+      const lastIdx = questions.length - 1
+      this.currentQuestionIndex = lastIdx
+      this.currentQuestion = questions && questions[lastIdx] ? questions[lastIdx] : null
+    }
+  }
+
   nextSection(section: NSPractice.IPaperSection) {
     // this.quizSvc.currentSection.next(section)
     this.startSection(section)
@@ -773,6 +804,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (section && section.expectedDuration) {
+      // Fixed Assessment timing Issue fixed It was taking as per section (CAP:- CAG department)
       this.quizJson.timeLimit = section.expectedDuration
       this.timeLeft = section.expectedDuration
       this.sectionalTimer = true
@@ -1010,6 +1042,16 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
   getNextQuestion(idx: any) {
+    // Handle set boundary transitions
+    if (idx >= this.totalQCount && this.hasNextSet) {
+      this.goToNextSet()
+      return
+    }
+    if (idx < 0 && this.hasPreviousSet) {
+      this.goToPreviousSet()
+      return
+    }
+
     const currentQuestionId = this.currentQuestion ? this.currentQuestion.questionId : ''
     if (currentQuestionId && this.secQuestions && this.currentQuestion.section === this.secQuestions[0]['section']) {
       this.calculateTimeSpentOnQuestion(currentQuestionId)
