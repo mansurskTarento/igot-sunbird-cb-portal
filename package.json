@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy/localhost.proxy.json -o",
+    "start": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --proxy-config proxy/localhost.proxy.json -o",
     "build-dev": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=dev --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
     "build-np": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=np --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
     "build-preprod": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=preprod --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false --build-optimizer=false",
@@ -21,7 +21,7 @@
     "lint:fix": "ng lint @ws/app --fix",
     "e2e": "ng e2e",
     "i18n": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng xi18n --output-path locale",
-    "tailwind": "npx tailwindcss build ./src/tailwind-build.scss -o ./src/styles.scss",
+    "tailwind": "./node_modules/.bin/tailwind build ./src/tailwind-build.scss  -o ./src/styles.scss",
     "prestart": "npm run tailwind",
     "bundle-report": "webpack-bundle-analyzer dist/stats.json",
     "tt": "node --max_old_space_size=8000 ./node_modules/@angular/cli/bin/ng serve --configuration=nb",

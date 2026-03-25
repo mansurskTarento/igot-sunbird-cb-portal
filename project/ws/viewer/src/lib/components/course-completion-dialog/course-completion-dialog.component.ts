@@ -38,7 +38,6 @@ export class CourseCompletionDialogComponent implements OnInit {
 
     if (badgeDetails && badgeDetails.length) {
       const badge = badgeDetails[0]
-      console.log('badgeEarningDateTime', badge.badgeEarningDateTime)
 
       const now = Date.now()
 
