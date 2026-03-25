@@ -50,6 +50,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   ticks = 0
   private timer!: any
+  private progressSent = false
   // Subscription object
   private sub!: Subscription
   tocConfigSubscription: Subscription | null = null
@@ -128,6 +129,20 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   tickerFunc(tick: any) {
     this.ticks = tick
+    // If not previewing and progress not yet sent,
+    // check completion status on every tick and send real-time progress if completed
+    try {
+      if (!this.forPreview && this.htmlContent && !this.progressSent) {
+        const completion = this.calculateCompletionStatus(this.htmlContent)
+        if (completion && completion.status === 2) {
+          console.log('Content completed, sending real-time progress based on threshold - forcefully')
+          this.progressSent = true
+          this.fireRealTimeProgress(this.htmlContent)
+        }
+      }
+    } catch (e) {
+      this.loggerSvc.error('Error while checking/raising real-time progress', e)
+    }
   }
 
   ngOnDestroy() {
@@ -290,6 +305,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         this.ticks = 0
+        this.progressSent = false
         this.timer = timer(1000, 1000)
         // subscribing to a observable returns a subscription object
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
