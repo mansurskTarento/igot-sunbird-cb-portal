@@ -46,14 +46,13 @@ export class AchievementsComponent implements OnInit {
       this.cdr.detectChanges()
     }
   }
-  // Moved this to Sprint 35
-  //#region (functions)
+
   getAchievementsList(userId?: any): void {
     if (this.userId || userId) {
-      this.profileV2RevampSvc.listAchievements().subscribe({
+      this.profileV2RevampSvc.fetchProfileEntries(this.userId || userId, 'achievement').subscribe({
         next: (res: any) => {
           if (res) {
-            this.achievementsList = _.get(res, 'result.search_results.data', [])
+            this.achievementsList = _.get(res, 'result.response.achievements', [])
             this.cdr.detectChanges()
           }
         },
@@ -65,6 +64,26 @@ export class AchievementsComponent implements OnInit {
       })
     }
   }
+
+  // Moved this to Sprint 36
+  //#region (functions)
+  // getAchievementsList(userId?: any): void {
+  //   if (this.userId || userId) {
+  //     this.profileV2RevampSvc.listAchievements().subscribe({
+  //       next: (res: any) => {
+  //         if (res) {
+  //           this.achievementsList = _.get(res, 'result.search_results.data', [])
+  //           this.cdr.detectChanges()
+  //         }
+  //       },
+  //       error: (err: any) => {
+  //         if (err) {
+  //           this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000)
+  //         }
+  //       }
+  //     })
+  //   }
+  // }
 
   openEditDialog(entry: any = {}): void {
     if (this.isPopup) {

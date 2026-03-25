@@ -2,16 +2,15 @@
   border: 1px solid #E0E0E0;
   border-radius: 8px;
   background: white;
-  max-height: 45vh; // Vertical constraint
-  overflow: auto; // Handle both X and Y scroll
+  max-height: 45vh;
+  overflow-y: auto;
 
   .table-header {
     position: sticky;
     top: 0;
     z-index: 10;
-    min-width: 900px; // Min width — triggers horizontal scroll on small dialogs
     display: grid;
-    grid-template-columns: 50px 1.5fr 1.5fr 1.5fr 1fr; // Same columns
+    grid-template-columns: 50px 1.5fr 1.5fr 1.5fr 1.5fr;
     gap: 0;
     padding: 0;
     background: white;
@@ -25,7 +24,7 @@
       border-right: 1px solid #E0E0E0;
       display: flex;
       align-items: center;
-      background: white; // Prevent transparency overlap
+      background: white;
 
       &:last-child {
         border-right: none;
@@ -36,8 +35,7 @@
   // Rows sit directly inside .user-table now
   .table-row {
     display: grid;
-    grid-template-columns: 50px 1.5fr 1.5fr 1.5fr 1fr; // Match header
-    min-width: 900px; // Match header width
+    grid-template-columns: 50px 1.5fr 1.5fr 1.5fr 1.5fr;
     gap: 0;
     padding: 0;
     border-bottom: 1px solid #E0E0E0;
@@ -92,6 +90,15 @@
       color: rgba(0, 0, 0, 0.87);
       font-weight: 500;
 
+      .name-row {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: nowrap;
+        width: 100%;
+      }
+
       .you-badge {
         font-size: 11px;
         font-weight: 600;
@@ -107,7 +114,7 @@
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background: #333;
+        background: #212121;
         color: white;
         display: flex;
         align-items: center;
@@ -115,7 +122,7 @@
         font-size: 12px;
         font-weight: 500;
         flex-shrink: 0;
-        overflow: hidden; // Ensure image stays inside circle
+        overflow: hidden;
 
         .user-photo {
           width: 100%;
@@ -126,9 +133,9 @@
       }
 
       span {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4;
       }
     }
 
@@ -138,9 +145,118 @@
     .col-designation {
       font-size: 13px;
       color: #666;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+      white-space: normal;
+      word-break: break-word;
+      line-height: 1.4;
+    }
+  }
+
+  // ── Mobile card layout ──────────────────────────────────────────
+  @media (max-width: 600px) {
+    max-height: 60vh;
+
+    .table-header {
+      display: none;
+    }
+
+    .table-row {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding: 12px 48px 12px 14px;
+      gap: 0;
+      border-bottom: 1px solid #E0E0E0;
+      align-items: stretch;
+
+      // Remove desktop cell padding/borders
+      >div {
+        border-right: none;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+
+        &:last-child {
+          border-bottom: none;
+        }
+      }
+
+      // Checkbox pinned top-right of card
+      .col-select {
+        position: absolute;
+        top: 12px;
+        right: 10px;
+        padding: 0;
+        border-bottom: none !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      // Simple columns: label stacked above value
+      .col-email,
+      .col-org,
+      .col-designation {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+
+        &::before {
+          content: attr(data-label);
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: rgba(0, 0, 0, 0.45);
+          letter-spacing: 0.5px;
+        }
+      }
+
+      // Name column: label on top, avatar + name on same row below
+      .col-name {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        &::before {
+          content: attr(data-label);
+          font-size: 10px;
+          font-weight: 700;
+          text-transform: uppercase;
+          color: rgba(0, 0, 0, 0.45);
+          letter-spacing: 0.5px;
+        }
+
+        .name-row {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          gap: 8px;
+
+          .user-avatar {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            color: #ffffff;
+
+            span {
+              color: #ffffff;
+            }
+          }
+
+          span {
+            font-size: 14px;
+            color: #000000;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+
+    .col-name {
+
+      >.user-avatar~span,
+      >span~.user-avatar {
+        display: inline-flex;
+        align-items: center;
+      }
     }
   }
 
@@ -153,6 +269,5 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
-    min-width: 900px; // Ensure message centers properly if scrolled
   }
 }

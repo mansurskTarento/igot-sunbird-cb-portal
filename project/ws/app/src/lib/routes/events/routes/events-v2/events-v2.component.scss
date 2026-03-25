@@ -52,7 +52,10 @@
   /* stylelint-enable */
   border-radius: 12px;
   cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+
 
 .mEngagementCard {
   border: 1px solid #00000029;
@@ -63,8 +66,8 @@
 
   /* stylelint-disable */
   font: 400 12px Lato;
-  /* stylelint-enable */ 
-  cursor: pointer; 
+  /* stylelint-enable */
+  cursor: pointer;
 
   .engagement-icon {
     width: 21px;
@@ -73,7 +76,57 @@
 
 .mBrowse {
   width: 100%;
-  overflow-y: auto;
+}
+
+.browse-scroll {
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  min-width: 0;
+  flex: 1 1 0;
+
+  // Hide scrollbar for Chrome, Safari, Edge
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  // Hide scrollbar for Firefox
+  scrollbar-width: none;
+
+  // Hide scrollbar for IE
+  -ms-overflow-style: none;
+}
+
+.browse-scroll-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+}
+
+.scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #d5d0d0;
+  background-color: #fff;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    color: #333;
+  }
 }
 
 .myEngagements-sm {
@@ -81,10 +134,10 @@
 }
 
 @media only screen and (max-width: 768px) {
-    .container-balanced {
-        margin-top: 0;
-        flex-direction: column;
-    }
+  .container-balanced {
+    margin-top: 0;
+    flex-direction: column;
+  }
 }
 
 @media only screen and (min-width: 769px) {
@@ -97,7 +150,7 @@
 
 ::ng-deep .events-bottomsheet {
   height: 100vh;
-  
+
   .mat-bottom-sheet-container {
     background-color: #eff3f9 !important;
     max-height: 100vh !important;

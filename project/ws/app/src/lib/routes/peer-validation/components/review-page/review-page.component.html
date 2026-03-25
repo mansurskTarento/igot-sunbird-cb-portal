@@ -8,7 +8,7 @@
   <div class="user-header">
     <div class="user-info">
       <div class="name">{{ requestedName }} <span class="badge">Learner</span></div>
-      <div class="course">Course : {{ courseName }}</div>
+      <div class="course">Content : {{ courseName }}</div>
     </div>
   </div>
 
@@ -22,15 +22,20 @@
       </div>
 
       <!-- Rating Display -->
-      <div class="q-response-rating" *ngIf="response.answerType === 'numericRating'">
-        <div class="label-side left">NOT AT ALL</div>
-        <div class="rating-pills">
-          <div class="pill" *ngFor="let val of getRange(5)" [class.selected]="+response.answer === val">
-            {{ val }}
+      <ng-container *ngIf="response.answerType === 'numericRating'">
+        <div class="q-response-rating" *ngIf="response.answer; else ratingNoResponse">
+          <div class="label-side left">NOT AT ALL</div>
+          <div class="rating-pills">
+            <div class="pill" *ngFor="let val of getRange(5)" [class.selected]="+response.answer === val">
+              {{ val }}
+            </div>
           </div>
+          <div class="label-side right">VERY CONFIDENT</div>
         </div>
-        <div class="label-side right">VERY CONFIDENT</div>
-      </div>
+        <ng-template #ratingNoResponse>
+          <div class="no-response">No response provided.</div>
+        </ng-template>
+      </ng-container>
 
       <!-- Text Display -->
       <div class="q-response-text" *ngIf="response.answerType === 'textarea' || response.answerType === 'textArea'">
@@ -49,12 +54,15 @@
 
       <!-- Checkbox Display -->
       <div class="q-response-checkbox" *ngIf="response.answerType === 'checkbox'">
-        <ng-container *ngIf="getCheckboxItems(response.answer).length">
+        <ng-container *ngIf="getCheckboxItems(response.answer).length; else checkboxNoResponse">
           <div class="checkbox-answer" *ngFor="let item of getCheckboxItems(response.answer)">
             <mat-icon class="checkbox-icon">check_box</mat-icon>
             <span>{{ item }}</span>
           </div>
         </ng-container>
+        <ng-template #checkboxNoResponse>
+          <div class="no-response">No response provided.</div>
+        </ng-template>
       </div>
     </div>
 
