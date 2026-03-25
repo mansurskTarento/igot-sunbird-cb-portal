@@ -69,7 +69,16 @@
         </div>
 
         <div class="badge-label text-center text-xs mt-2 font-semibold leading-tight">
-          <span class="blue text-blue-700">{{ badge.title }}</span>
+      <div class="badge-title-wrapper">
+        <span #titleEl class="blue text-blue-700 badge-title">
+          {{ badge.title }}
+        </span>
+      
+        <mat-icon *ngIf="isTruncated(titleEl)" class="info-icon" [matTooltip]="badge.title" matTooltipPosition="above">
+          info_outline
+        </mat-icon>
+      </div>
+
           <span class="gray text-gray-500"> {{ badge.level }}</span>
           <p class="earnedcourseName mb-0 italic"> ({{ badge.courseName }})</p>
         </div>
