@@ -73,7 +73,7 @@
         <span #titleEl class="blue text-blue-700 badge-title">
           {{ badge.title }}
         </span>
-      
+
         <mat-icon *ngIf="isTruncated(titleEl)" class="info-icon" [matTooltip]="badge.title" matTooltipPosition="above">
           info_outline
         </mat-icon>
@@ -92,9 +92,28 @@
         <button class="bg-white" mat-menu-item (click)="openModal(badge)">
           View
         </button>
-        <button class="bg-white" mat-menu-item>
+        <button class="bg-white" mat-menu-item [matMenuTriggerFor]="downloadMenu">
           Download
         </button>
+      </mat-menu>
+      <mat-menu #downloadMenu="matMenu" panelClass="custom-menu-badge-modal">
+      
+        <!-- PDF -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePdf(badge)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <!-- PNG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePng(badge)">
+          <mat-icon>photo</mat-icon>
+          <span>PNG</span>
+        </button>
+        <!-- SVG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgeSvg(badge)">
+          <mat-icon>photo_size_select_actual</mat-icon>
+          <span>SVG</span>
+        </button>
+
       </mat-menu>
       </div>
       </div>
