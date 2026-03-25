@@ -530,7 +530,7 @@ export class InsightSideBarComponent implements OnInit {
       }
     )
 
-    this.router.navigateByUrl('app/learn/karmayogi-saptah')
+    this.router.navigateByUrl(this.nwlConfiguration?.url  || 'app/learn/nlw/karmayogi-saptah')
   }
 
   navigateToStatelLearning() {
