@@ -100,6 +100,7 @@ export class ViewAllComponent {
     this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
     this.facetsData = _.get(this.pageConfigData, 'version2.filterFacetsData', {})
     this.orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
+    this.resourceTypeOrder = this.pageConfigData?.orderItems ? this.pageConfigData.orderItems : this.resourceTypeOrder
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged()
