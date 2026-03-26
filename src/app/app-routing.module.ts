@@ -1226,6 +1226,10 @@ const routes: Routes = [
     },
   },
   {
+    path: 'helpcenter',
+    loadChildren: () => import('./help-center/help-center.module').then(m => m.HelpCenterModule),
+  },
+  {
     path: '**',
     component: ErrorResolverComponent,
     data: {
