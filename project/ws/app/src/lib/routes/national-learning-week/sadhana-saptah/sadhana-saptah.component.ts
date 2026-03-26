@@ -1,17 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-sadhana-saptah',
   templateUrl: './sadhana-saptah.component.html',
   styleUrls: ['./sadhana-saptah.component.scss']
 })
-export class SadhanaSaptahComponent implements OnInit{
+export class SadhanaSaptahComponent implements OnInit {
 
   sectionList: any = []
-  nlwConfig: any 
+  nlwConfig: any
   individualSection: any = {}
+  indivisualSection: any = {}
+  phoneNumber = '+91 11 2430 3726';
+  supportHours = '8:00 AM – 8:00 PM IST';
 
   constructor(private route: ActivatedRoute, public configService: ConfigurationsService) { }
 
