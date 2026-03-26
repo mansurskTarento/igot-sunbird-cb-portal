@@ -69,7 +69,7 @@ export class BadgeDetailsComponent {
             progress: badge.completionPercentage + '%',
             continue: badge.completionPercentage < 100 && badge.completionPercentage > 0,
             courseId: badge?.courseId,
-            endDate: badge?.badgeDetails_v1?.[0]?.createdOn
+            endDate: badge?.badgeDetails_v1?.[0]?.badgeEarningDateTime
           }))
 
         }
