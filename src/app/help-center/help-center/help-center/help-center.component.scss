@@ -1,408 +1,707 @@
+:host ::ng-deep .backdrop-blur-md {
+  display: none
+}
+
+.full-height-frame {
+  width: 100%;
+  height: 100vh;
+  border: none;
+  overflow: hidden;
+}
+
 // =============================================
-// Support Section — "Still facing an issue?"
+// iGOT Help Center — Component Styles
 // =============================================
 
+// ---- Design Tokens ----
 $orange: #f4722b;
 $orange-light: #ff8c4b;
 $orange-subtle: #fff3ec;
 $navy-dark: #0d1b6e;
-$gray-bg: #f5f0ea;
+$navy-mid: #1a2fa0;
+$navy-light: #2d45b8;
+$gray-bg: #f5f5f5;
 $gray-border: #e4e4e4;
 $gray-text: #6b7280;
 $dark-text: #1a1a2e;
 $white: #ffffff;
 
-.support-section {
-  position: relative;
-  // background: #f5f0ea;
-  padding: 64px 24px 48px;
-  overflow: hidden;
+// ---- Global Reset ----
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-  // Dot grid background pattern
-  &__dots {
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(circle, #c8b8a2 1px, transparent 1px);
-    background-size: 28px 28px;
-    opacity: 0.45;
-    pointer-events: none;
-  }
-
-  &__inner {
-    position: relative;
-    z-index: 1;
-    max-width: 820px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0;
-  }
-
-  // ---- "Need Help?" badge ----
-  &__badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: $orange-subtle;
-    color: $orange;
-    font-size: 0.82rem;
-    font-weight: 700;
-    padding: 6px 16px;
-    border-radius: 50px;
-    margin-bottom: 20px;
-    border: 1px solid rgba($orange, 0.18);
-  }
-
-  &__badge-icon {
-    font-size: 16px;
-  }
-
-  // ---- Headline ----
-  &__heading {
-    font-size: 2rem;
-    font-weight: 800;
-    color: $dark-text;
-    text-align: center;
-    margin-bottom: 10px;
-    line-height: 1.25;
-
-    &--accent {
-      color: $orange;
-    }
-  }
-
-  &__sub {
-    font-size: 0.95rem;
-    color: $gray-text;
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  // ---- Feature pills row ----
-  &__features {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin-top: 24px;
-  }
-
-  &__divider {
-    color: #ccc;
-    font-size: 1rem;
-    line-height: 1;
-  }
+.help-center {
+  font-family: 'Google Sans', 'Noto Sans', sans-serif;
+  min-height: 100vh;
+  background-color: $gray-bg;
+  color: $dark-text;
 }
 
 // =============================================
-// CALL CARD
+// HERO
 // =============================================
-.call-card {
-  width: 100%;
-  background: linear-gradient(120deg, #f4722b 0%, #e85a10 35%, #c84a10 65%, #1a2fa0 100%);
-  border-radius: 16px;
-  padding: 28px 28px 28px 28px;
+.hero {
+  position: relative;
+  background: url('/assets/career/bluestrip.png');
+  min-height: 220px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  margin-bottom: 14px;
-  box-shadow: 0 4px 24px rgba($orange, 0.25);
-  position: relative;
+  justify-content: center;
   overflow: hidden;
 
-  // Soft glow overlay
-  &::before {
-    content: '';
+  &__blobs {
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 30% 50%, rgba(255, 160, 80, 0.18) 0%, transparent 70%);
     pointer-events: none;
   }
 
-  &__left {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__phone-icon-wrap {
-    width: 60px;
-    height: 60px;
+  &__blob {
+    position: absolute;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.18);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border: 2px solid rgba(255, 255, 255, 0.28);
+    opacity: 0.18;
+    filter: blur(60px);
+
+    &--1 {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #5b78e8, #2946d4);
+      top: -200px;
+      left: -100px;
+    }
+
+    &--2 {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, #7c93f0, #3a5ae8);
+      top: -150px;
+      right: 50px;
+    }
+
+    &--3 {
+      width: 350px;
+      height: 350px;
+      background: radial-gradient(circle, #4a6de0, #1e3ac8);
+      bottom: -150px;
+      left: 30%;
+      opacity: 0.12;
+    }
   }
 
-  &__phone-icon {
-    font-size: 28px;
-    color: $white;
-  }
-
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+  &__content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    max-width: 680px;
+    width: 100%;
   }
 
   &__title {
-    font-size: 1.15rem;
+    font-size: 2.25rem;
     font-weight: 700;
     color: $white;
-    line-height: 1.3;
-    margin: 0;
-    padding: 0;
-  }
-
-  &__desc {
-    font-size: 0.88rem;
-    color: rgba(255, 255, 255, 0.85);
-    line-height: 1.5;
-    margin: 0;
-    padding: 0;
-  }
-
-  &__hours {
-    font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.75);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin: 0;
-  }
-
-  &__clock {
-    font-size: 15px;
-    vertical-align: middle;
-  }
-
-  // CTA Button
-  &__cta {
-    background: $white;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 20px 16px 24px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    min-width: 240px;
-    flex-shrink: 0;
-    transition: box-shadow 0.2s, transform 0.15s;
-    position: relative;
-    z-index: 1;
-
-    &:hover {
-      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
-      transform: translateY(-1px);
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
-
-  &__cta-inner {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1;
-  }
-
-  &__cta-label {
-    font-size: 0.68rem;
-    font-weight: 700;
-    letter-spacing: 1.2px;
-    color: $gray-text;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-
-  &__cta-number {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 1.08rem;
-    font-weight: 800;
-    color: $navy-dark;
+    line-height: 1.2;
+    margin-bottom: 10px;
     letter-spacing: -0.3px;
-    white-space: nowrap;
   }
 
-  &__cta-phone {
-    font-size: 18px;
-    color: $navy-dark;
+  &__subtitle {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.78);
+    margin-bottom: 28px;
   }
 
-  &__cta-arrow {
-    font-size: 20px;
+  &__search {
+    position: relative;
+    width: 100%;
+    max-width: 580px;
+    margin: 0 auto;
+  }
+
+  &__search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
     color: $gray-text;
-    flex-shrink: 0;
+    font-size: 20px;
+  }
+
+  &__search-input {
+    width: 100%;
+    padding: 14px 20px 14px 50px;
+    border: none;
+    border-radius: 50px;
+    font-size: 0.95rem;
+    color: $dark-text;
+    background: $white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    outline: none;
+    transition: box-shadow 0.2s;
+
+    &::placeholder {
+      color: #9ca3af;
+    }
+
+    &:focus {
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.22);
+    }
   }
 }
 
 // =============================================
-// TICKET CARD
+// NAVIGATION
 // =============================================
-.ticket-card {
-  width: 100%;
+.nav {
   background: $white;
-  border: 1px solid $gray-border;
-  border-radius: 14px;
-  padding: 20px 24px;
+  border-bottom: 1px solid $gray-border;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  transition: box-shadow 0.2s;
+  padding: 0 24px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
 
-  &:hover {
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
-  }
-
-  &__left {
+  &__role-tabs {
     display: flex;
-    align-items: center;
-    gap: 16px;
-    flex: 1;
-    min-width: 0;
-  }
-
-  &__icon-wrap {
-    width: 46px;
-    height: 46px;
-    border-radius: 10px;
-    background: #f0f2ff;
-    display: flex;
-    align-items: center;
+    gap: 0;
+    border-bottom: 1px solid $gray-border;
+    width: 100%;
+    max-width: 900px;
     justify-content: center;
-    flex-shrink: 0;
   }
 
-  &__icon {
-    font-size: 22px;
-    color: $navy-dark;
-  }
-
-  &__info {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-  }
-
-  &__title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: $dark-text;
-    line-height: 1.3;
-  }
-
-  &__desc {
-    font-size: 0.83rem;
-    color: $gray-text;
-    line-height: 1.4;
-  }
-
-  &__cta {
+  &__role-tab {
     display: flex;
     align-items: center;
     gap: 7px;
-    padding: 11px 20px;
-    border: 1.5px solid #d1d5db;
-    border-radius: 8px;
-    background: $white;
-    color: $dark-text;
-    font-size: 0.88rem;
-    font-weight: 700;
+    padding: 14px 24px;
+    background: none;
+    border: none;
     cursor: pointer;
+    font-size: 0.9rem;
+    color: $gray-text;
     font-family: inherit;
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+
+    &:hover {
+      color: $orange;
+    }
+
+    &--active {
+      color: $orange;
+      border-bottom-color: $orange;
+    }
+  }
+
+  &__role-icon {
+    font-size: 18px;
+  }
+
+  &__content-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 10px 0;
+    width: 100%;
+    max-width: 900px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  &__content-tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 50px;
+    background: none;
+    border: 1px solid $gray-border;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: $gray-text;
+    font-family: inherit;
+    font-weight: 500;
     transition: all 0.2s;
 
     &:hover {
-      background: $navy-dark;
-      color: $white;
-      border-color: $navy-dark;
+      background: $orange-subtle;
+      color: $orange;
+      border-color: $orange;
+    }
 
-      .ticket-card__cta-icon,
-      .ticket-card__cta-arrow {
+    &--active {
+      background: $orange;
+      color: $white;
+      border-color: $orange;
+
+      &:hover {
+        background: $orange-light;
         color: $white;
       }
     }
   }
 
-  &__cta-icon {
+  &__content-icon {
     font-size: 16px;
-    color: $navy-dark;
-    transition: color 0.2s;
-  }
-
-  &__cta-arrow {
-    font-size: 16px;
-    color: $gray-text;
-    transition: color 0.2s;
   }
 }
 
 // =============================================
-// FEATURE PILLS
+// MAIN CONTENT
 // =============================================
-.support-feature {
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 24px 60px;
   display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 0.82rem;
-  color: $gray-text;
-  font-weight: 500;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// =============================================
+// SECTION (collapsible card)
+// =============================================
+.section {
+  background: $white;
+  border-radius: 12px;
+  border: 1px solid $gray-border;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.15s;
+
+    &:hover {
+      background: #fafafa;
+    }
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
 
   &__icon {
-    font-size: 16px;
+    font-size: 22px;
+
+    &--orange {
+      color: $orange;
+    }
+  }
+
+  &__title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: $dark-text;
+    padding-top: 15px;
+  }
+
+  &__badge {
+    font-size: 0.82rem;
     color: $orange;
+    font-weight: 600;
+    background: $orange-subtle;
+    padding: 3px 10px;
+    border-radius: 50px;
+  }
+
+  &__chevron {
+    font-size: 20px;
+    color: $gray-text;
+    transition: transform 0.2s;
+
+    &--open {
+      color: $orange;
+    }
+  }
+
+  &__body {
+    border-top: 1px solid $gray-border;
+    animation: fadeIn 0.2s ease;
+  }
+
+  &__layout {
+    display: flex;
+    gap: 0;
+    min-height: 300px;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 // =============================================
-// RESPONSIVE
+// SIDEBAR
 // =============================================
-@media (max-width: 768px) {
-  .support-section {
-    padding: 48px 16px 40px;
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  border-right: 1px solid $gray-border;
+  padding: 20px 16px;
+  background: #fafafa;
 
-    &__heading {
-      font-size: 1.5rem;
+  &__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: $gray-text;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    padding: 0 4px;
+  }
+
+  &__list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #444;
+    transition: background 0.15s, color 0.15s;
+
+    &:hover {
+      background: $orange-subtle;
+      color: $orange;
+    }
+
+    &--active {
+      background: $orange;
+      color: $white;
+
+      .sidebar__icon,
+      .sidebar__count {
+        color: $white;
+      }
+
+      &:hover {
+        background: $orange-light;
+        color: $white;
+      }
     }
   }
 
-  .call-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 24px 20px;
+  &__icon {
+    font-size: 18px;
+    color: $gray-text;
+    flex-shrink: 0;
+  }
 
-    &__cta {
-      min-width: 0;
-      width: 100%;
-      justify-content: space-between;
+  &__label-text {
+    flex: 1;
+    line-height: 1.3;
+  }
+
+  &__count {
+    font-size: 0.75rem;
+    color: $gray-text;
+    font-weight: 600;
+    min-width: 20px;
+    text-align: right;
+  }
+}
+
+// =============================================
+// VIDEO GRID
+// =============================================
+.video-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  align-content: start;
+}
+
+.video-card {
+  background: $white;
+  border: 1px solid $gray-border;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &__thumb {
+    position: relative;
+    padding-bottom: 56.25%;
+    background: linear-gradient(135deg, #1a2fa0, #2d45b8);
+    overflow: hidden;
+  }
+
+  &__thumb-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  &__play-icon {
+    font-size: 52px;
+    color: rgba(255, 255, 255, 0.9);
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+  }
+
+  &__yt-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
+    background: #ff0000;
+    color: $white;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 2px;
+  }
+
+  &__body {
+    padding: 12px 14px 14px;
+  }
+
+  &__title {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: $dark-text;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  &__date {
+    font-size: 0.78rem;
+    color: $gray-text;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// =============================================
+// GUIDES GRID
+// =============================================
+.guides-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  align-content: start;
+}
+
+.guide-card {
+  background: $white;
+  border: 1px solid $gray-border;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px);
+  }
+
+  &__preview {
+    position: relative;
+    background: #f9f9f9;
+    border-bottom: 1px solid $gray-border;
+    padding: 12px 14px 14px;
+    min-height: 130px;
+  }
+
+  &__preview-header {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: $gray-text;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__preview-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__line {
+    height: 7px;
+    background: #ddd;
+    border-radius: 3px;
+    width: 100%;
+
+    &--title {
+      height: 9px;
+      background: #bbb;
+      font-size: 0;
+      width: 90%;
+    }
+
+    &--short {
+      width: 45%;
+    }
+
+    &--medium {
+      width: 70%;
     }
   }
 
-  .ticket-card {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 18px 20px;
+  &__pdf-badge {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: #e5e7eb;
+    color: #555;
+    font-size: 0.72rem;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
 
-    &__cta {
-      width: 100%;
-      justify-content: center;
-    }
+  &__body {
+    padding: 14px;
+  }
+
+  &__title {
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: $dark-text;
+    line-height: 1.4;
+    margin-bottom: 3px;
+  }
+
+  &__hindi {
+    font-size: 0.82rem;
+    color: $gray-text;
+    margin-bottom: 6px;
+  }
+
+  &__desc {
+    font-size: 0.82rem;
+    color: $gray-text;
+    line-height: 1.5;
+  }
+}
+
+// =============================================
+// FAQ LIST
+// =============================================
+.faq-list {
+  flex: 1;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.faq-item {
+  border: 1px solid $gray-border;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  }
+
+  &--open {
+    border-color: darken($gray-border, 8%);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 18px 4px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  &__chevron {
+    font-size: 20px;
+    color: $orange;
+    flex-shrink: 0;
+  }
+
+  &__question {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: $dark-text;
+    line-height: 1.4;
+  }
+
+  &__tag-row {
+    padding: 4px 18px 12px 48px;
+  }
+
+  &__tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    color: $orange;
+    font-weight: 600;
+    background: $orange-subtle;
+    padding: 2px 10px;
+    border-radius: 50px;
+  }
+
+  &__answer {
+    padding: 0 18px 16px 48px;
+    font-size: 0.88rem;
+    color: #444;
+    line-height: 1.7;
+    border-top: 1px solid $gray-border;
+    padding-top: 14px;
+    animation: fadeIn 0.18s ease;
   }
 }
 
@@ -1059,7 +1358,7 @@ $white: #ffffff;
 
 .support-section {
   position: relative;
-  background: #fff;
+  background: #f5f0ea;
   padding: 64px 24px 48px;
   overflow: hidden;
 
@@ -1409,4 +1708,43 @@ $white: #ffffff;
     font-size: 16px;
     color: $orange;
   }
+}
+
+.empty-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  color: #aaa;
+}
+
+.hero__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.hero__search-input {
+  width: 100%;
+  padding: 10px 40px 10px 40px; // space for icons
+}
+
+.hero__search-icon {
+  position: absolute;
+  left: 10px;
+  color: #9ca3af;
+}
+
+.hero__clear-icon {
+  position: absolute;
+  right: 10px;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 20px;
+  transition: color 0.2s;
+}
+
+.hero__clear-icon:hover {
+  color: #111827;
 }
