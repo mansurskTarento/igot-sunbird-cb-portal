@@ -11,7 +11,7 @@ export class SadhanaSaptahComponent implements OnInit{
 
   sectionList: any = []
   nlwConfig: any 
-  indivisualSection: any = {}
+  individualSection: any = {}
 
   constructor(private route: ActivatedRoute, public configService: ConfigurationsService) { }
 
@@ -23,9 +23,8 @@ export class SadhanaSaptahComponent implements OnInit{
       && this.route.snapshot.data.formData.data.result.form.data
       && this.route.snapshot.data.formData.data.result.form.data.sectionList
     ) {
-      debugger
       this.sectionList = this.route.snapshot.data.formData.data.result.form.data.sectionList
-      this.indivisualSection = this.route.snapshot.data.formData.data.result.form.data.indivisualSection || {}
+      this.individualSection = this.route.snapshot.data.formData.data.result.form.data.individualSection || {}
       this.nlwConfig = this.route.snapshot.data.formData.data.result.form.data.nlwConfig || {}
     }
   }
