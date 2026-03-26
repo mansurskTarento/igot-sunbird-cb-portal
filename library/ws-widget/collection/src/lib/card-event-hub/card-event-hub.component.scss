@@ -80,8 +80,11 @@
         min-width: 0;
     }
 
-    ::ng-deep .mat-card-subtitle {
-        margin-bottom: 0px !important;
+    ::ng-deep .text-content-wrapper {
+        .mat-card-subtitle {
+            margin-bottom: 0px !important;
+        }
+
     }
 
     .event-type {
