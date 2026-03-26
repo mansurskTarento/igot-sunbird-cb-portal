@@ -129,4 +129,10 @@ export class EventService {
   getUserEnrollCount(requestBody: any): Observable<any> {
     return this.http.post<any>(`${API_END_POINTS.GET_USER_ENROLL_COUNT}`, requestBody)
   }
+
+
+  getRateToFire(resourceType: string, pageConfigData: any) {
+    const fireUpdateConfig = pageConfigData?.fireUpdateConfig || {}
+    return fireUpdateConfig[resourceType] || pageConfigData?.fireUpdate || 180
+  }
 }
