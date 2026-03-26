@@ -5,20 +5,18 @@
         <div class="flex flex-row">
           <div class="flex-1">
             <ng-container *ngIf="skeletonLoader">
-              <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'200px'"
-                [height]="'24px'"></ws-widget-skeleton-loader>
+              <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'200px'" [height]="'24px'"></ws-widget-skeleton-loader>
             </ng-container>
             <ng-container *ngIf="!skeletonLoader">
               <div class="text-sm font-semibold cursor-pointer truncate-3">{{ eventData?.name }}</div>
-              <div class="text-xs font-light" *ngIf="enrolledEvent?.completedOn">{{ 'apptocsinglepage.completedCourse' |
+              <div class="text-xs font-light" *ngIf="enrolledEvent?.completedOn">{{ 'apptocsinglepage.completedEvent' |
                 translate }} {{ enrolledEvent?.completedOn ?
                 (enrolledEvent?.completedOn | date: 'd MMM, y') : 'NA' }}</div>
             </ng-container>
           </div>
           <div class="flex justify-center download-section">
             <ng-container *ngIf="skeletonLoader">
-              <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'24px'"
-                [height]="'24px'"></ws-widget-skeleton-loader>
+              <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'24px'" [height]="'24px'"></ws-widget-skeleton-loader>
             </ng-container>
             <ng-container>
               <mat-icon class="icon cursor-pointer " *ngIf="!downloadCertificateBool"
@@ -29,20 +27,18 @@
         </div>
         <div class="flex-1">
           <ng-container *ngIf="skeletonLoader">
-            <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'280px'"
-              [height]="'148px'"></ws-widget-skeleton-loader>
+            <ws-widget-skeleton-loader [bindingClass]="'flex rounded'" [width]="'280px'" [height]="'148px'"></ws-widget-skeleton-loader>
           </ng-container>
           <ng-container *ngIf="!skeletonLoader">
             <div class="certificate_box" *ngIf="!enrolledEvent?.certificateObj?.certId">
               <img *ngIf="!fromMarketPlace" src="/assets/icons/toc/no-certificate.svg" alt="No certificate image" />
-              <img *ngIf="fromMarketPlace" src="/assets/icons/toc/no-certificate-market-place.svg"
-                alt="No certificate image" />
+              <img *ngIf="fromMarketPlace" src="/assets/icons/toc/no-certificate-market-place.svg" alt="No certificate image" />
               <div class="flex items-center certificate_overlay">
                 <div class="flex flex-col text-center gap-1 p-4 text-white mt-4">
                   <div>{{'apptochome.certificationTakesTime' | translate }}</div>
                   <!-- <div>{{'apptochome.issuePersistsMailus' | translate }} mission.karmayogi@gov.in -->
-                  <div>{{'apptochome.issuePersistsMailus' | translate }} <a href="mailto:mission.karmayogi@gov.in"
-                      class="emailDefault"> mission.karmayogi@gov.in</a>
+                  <div>{{'apptochome.issuePersistsMailus' | translate }} <a href="mailto:mission.karmayogi@gov.in" class="emailDefault">
+                      mission.karmayogi@gov.in</a>
                   </div>
                 </div>
               </div>
@@ -50,10 +46,9 @@
             <ng-container *ngIf="enrolledEvent?.certificateObj?.certId">
               <div class="img-container">
                 <img class="celebration-animation" src="assets/images/animation/leaderboard_animation.gif" />
-                <img *ngIf="!fromMarketPlace" class="ceritificate-image" [src]="'/assets/icons/toc/no-certificate.svg'"
+                <img *ngIf="!fromMarketPlace" class="ceritificate-image" [src]="'/assets/icons/toc/no-certificate.svg'" alt="certificate image" />
+                <img *ngIf="fromMarketPlace" class="ceritificate-image" [src]="'/assets/icons/toc/no-certificate-market-place.svg'"
                   alt="certificate image" />
-                <img *ngIf="fromMarketPlace" class="ceritificate-image"
-                  [src]="'/assets/icons/toc/no-certificate-market-place.svg'" alt="certificate image" />
 
                 <div [ngClass]="{'view-certificate': downloadCertificateBool, 'view-cert': !downloadCertificateBool}">
                   <button type="button" (click)="handleOpenCertificateDialog()">
@@ -115,8 +110,8 @@
                 translate }}</button>
             </div> -->
               <div class="ml-2" *ngIf="enrollFlowItems?.includes(eventData?.resourceType) && currentEvent">
-                <button mat-raised-button type="button"
-                  class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' | translate }}
+                <button mat-raised-button type="button" class="ws-mat-red-background"><mat-icon>play_circle_filled</mat-icon> {{ 'event.live' |
+                  translate }}
                 </button>
               </div>
             </div>
@@ -128,8 +123,7 @@
           </div>
           <div class="flex flex-col gap-2">
 
-            <div class="text-sm sm:text-base source-text font-semibold break-words ng-star-inserted"
-              title="{{eventData?.owner}}">By
+            <div class="text-sm sm:text-base source-text font-semibold break-words ng-star-inserted" title="{{eventData?.owner}}">By
               {{eventData?.owner}}</div>
           </div>
           <div class="text-xs leading-4 source-text ng-star-inserted">({{'apptocsinglepage.lastUpdatedOn' | translate}}
@@ -235,8 +229,7 @@
                 </div>
               </div>
 
-              <div class="mobile-certificate-container"
-                *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
+              <div class="mobile-certificate-container" *ngIf="!skeletonLoader  && (enrolledEvent?.status > 1 && pastEvent)">
                 <div class="earned-certificate-container">
                   <div class="flex flex-row">
                     <div class="ribbon"></div>
@@ -289,19 +282,15 @@
             </div>
             <ng-container *ngIf="eventData?.[compentencyKey.vKey] && skeletonLoader">
               <div class="flex flex-col gap-3">
-                <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'"
-                  [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                <ws-widget-skeleton-loader [width]="'120px'" [height]="'16px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
                 <div class="flex flex-row gap-3">
                   <ng-container *ngFor="let i of [1, 2]">
-                    <ws-widget-skeleton-loader [width]="'120px'" [height]="'32px'"
-                      [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                    <ws-widget-skeleton-loader [width]="'120px'" [height]="'32px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
                   </ng-container>
                 </div>
                 <div class="flex flex-row gap-4">
-                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
-                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
-                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'"
-                    [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
+                  <ws-widget-skeleton-loader [width]="'250px'" [height]="'80px'" [bindingClass]="'rounded'"></ws-widget-skeleton-loader>
                 </div>
               </div>
             </ng-container>
@@ -336,8 +325,7 @@
             <div class="flex flex-wrap margn-bottom-l" *ngIf="eventData?.creatorDetails">
               <ng-container>
                 <div class="flex mobile-width" *ngFor="let user of eventData?.creatorDetails">
-                  <app-presenter-card [userData]="user"
-                    class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
+                  <app-presenter-card [userData]="user" class="flex presenter_main_box margin-right-l no-right-marging"></app-presenter-card>
                 </div>
               </ng-container>
             </div>
@@ -483,16 +471,15 @@
 
     <!-- right menu -->
     <div class="info-section right margin-top-xl margin-left-xl margin-bottom-xl">
-      <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow"
-        [enrolledEvent]="enrolledEvent" [courseProgress]="linkedCourseProgress" *ngIf="eventData"
-        (enrollEvent)="enrollEvent($event)" [userAbleToEnroll]="userAbleToEnroll"></app-right-menu-card>
+      <app-right-menu-card [eventData]="eventData" [enrollFlowItems]="enrollFlowItems" [isenrollFlow]="isenrollFlow" [enrolledEvent]="enrolledEvent"
+        [courseProgress]="linkedCourseProgress" *ngIf="eventData" (enrollEvent)="enrollEvent($event)"
+        [userAbleToEnroll]="userAbleToEnroll"></app-right-menu-card>
     </div>
   </div>
 </ng-container>
 
 <ng-template #noDataFound>
-  <div
-    class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
+  <div class="error-not-found flex flex-wrapped margin-left-m margin-top-xl margin-right-m flex-col justify-center align-items-center text-center">
     <div class="error-logo">
       <div class="error-message ws-mat-primary-text font-weight-bold">
         The page you requested cannot be found
