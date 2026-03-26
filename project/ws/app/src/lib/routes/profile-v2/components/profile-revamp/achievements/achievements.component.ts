@@ -5,11 +5,13 @@ import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.serv
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
+import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-achievements',
   templateUrl: './achievements.component.html',
-  styleUrls: ['./achievements.component.scss']
+  styleUrls: ['./achievements.component.scss'],
+  providers: [PipeCertificateImageURL]
 })
 export class AchievementsComponent implements OnInit {
   //#region (global variables)
@@ -27,7 +29,8 @@ export class AchievementsComponent implements OnInit {
     private profileV2RevampSvc: ProfileV2RevampService,
     private snackBar: MatLegacySnackBar,
     private dialog: MatLegacyDialog,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private pipeImgUrl: PipeCertificateImageURL
   ) {
     if (this.data && this.data.userId) {
       this.userId = data.userId
@@ -43,25 +46,6 @@ export class AchievementsComponent implements OnInit {
       this.cdr.detectChanges()
     }
   }
-  // Moved this to Sprint 35
-  //#region (functions)
-  // getAchievementsList(userId?: any): void {
-  //   if (this.userId || userId) {
-  //     this.profileV2RevampSvc.listAchievements().subscribe({
-  //       next: (res: any) => {
-  //         if (res) {
-  //           this.achievementsList = _.get(res, 'result.search_results.data', [])
-  //           this.cdr.detectChanges()
-  //         }
-  //       },
-  //       error: (err: any) => {
-  //         if (err) {
-  //           this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000)
-  //         }
-  //       }
-  //     })
-  //   }
-  // }
 
   getAchievementsList(userId?: any): void {
     if (this.userId || userId) {
@@ -80,6 +64,26 @@ export class AchievementsComponent implements OnInit {
       })
     }
   }
+
+  // Moved this to Sprint 36
+  //#region (functions)
+  // getAchievementsList(userId?: any): void {
+  //   if (this.userId || userId) {
+  //     this.profileV2RevampSvc.listAchievements().subscribe({
+  //       next: (res: any) => {
+  //         if (res) {
+  //           this.achievementsList = _.get(res, 'result.search_results.data', [])
+  //           this.cdr.detectChanges()
+  //         }
+  //       },
+  //       error: (err: any) => {
+  //         if (err) {
+  //           this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000)
+  //         }
+  //       }
+  //     })
+  //   }
+  // }
 
   openEditDialog(entry: any = {}): void {
     if (this.isPopup) {
@@ -133,5 +137,15 @@ export class AchievementsComponent implements OnInit {
     } else {
       this.openProfileEntryDeleteDialog.emit(achievement)
     }
+  }
+
+  getUrl(url: string): string {
+    if (url.includes('storage.googleapis')) {
+      const folderNameToSplit = '/userAchievements/'
+      const urlSplice = url.split(folderNameToSplit)[1]
+      const uploadedFile = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
+      return uploadedFile
+    }
+    return url
   }
 }

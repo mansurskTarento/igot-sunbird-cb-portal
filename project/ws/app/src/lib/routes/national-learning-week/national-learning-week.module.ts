@@ -21,7 +21,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { MdoChannelDataService } from '../mdo-channels/service/mdo-channel-data.service'
 import { AllContentService } from '../mdo-channels/service/all-content.service'
 import { NationalLearningWeekRoutingModule } from './national-learning-week-routing.module'
-import { NationalLearningWeekMicrositeComponent } from './national-learning-week-microsite/national-learning-week-microsite.component'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
 import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
@@ -46,9 +45,11 @@ import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy
 import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { KarmayogiSaptahComponent } from './karmayogi-saptah/karmayogi-saptah.component';
+import { SadhanaSaptahComponent } from './sadhana-saptah/sadhana-saptah.component'
 
 @NgModule({
-  declarations: [NationalLearningWeekMicrositeComponent],
+  declarations: [KarmayogiSaptahComponent, SadhanaSaptahComponent],
   imports: [
     CommonModule,
     FormsModule,

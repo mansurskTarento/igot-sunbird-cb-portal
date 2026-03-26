@@ -52,6 +52,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
 import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
 import { HttpLoaderFactory } from 'src/app/shared/shared.module'
 import { HttpClient } from '@angular/common/http'
+import { BadgesModule } from '../../../../../../../src/app/badges/badges.module'
 
 @NgModule({
   declarations: [
@@ -110,6 +111,7 @@ import { HttpClient } from '@angular/common/http'
     CardsModule,
     PaginationModule,
     FiltersModule,
+    BadgesModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

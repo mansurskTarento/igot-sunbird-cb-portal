@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
+import { AbstractControl, FormBuilder, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
 import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog'
 import { HttpErrorResponse } from '@angular/common/http'
 import * as _ from 'lodash'
@@ -37,6 +37,36 @@ export function startDateValidator(endDateControlName: string): ValidatorFn {
 
     if (endDate && new Date(startDate) > new Date(endDate)) {
       return { startDateGreaterThanEndDate: true }
+    }
+
+    return null // Valid
+  }
+}
+
+export function issuedDateValidator(endDateControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(endDateControlName)?.value
+    const issuedDate = control?.value
+
+    if (!issuedDate) {
+      return null // Skip validation if issuedDate is not set
+    }
+
+    if (endDate && new Date(issuedDate) < new Date(endDate)) {
+      return { issuedDateBeforeEndDate: true }
+    }
+
+    return null // Valid
+  }
+}
+
+export function urlOrDocumentValidator(): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    const url = formGroup.get('url')?.value
+    const uploadedDocumentUrl = formGroup.get('uploadedDocumentUrl')?.value
+
+    if (!url && !uploadedDocumentUrl) {
+      return { urlOrDocumentRequired: true }
     }
 
     return null // Valid
@@ -81,6 +111,7 @@ export class ProfileEntryEditComponent implements OnInit {
   todayDate: Date = new Date();
   startDate: Date = new Date();
   isCurrentlyWorking = false;
+  endDate: Date = new Date()
   //#endregion (service history variables)
 
   //#region (educational qualifications variables)
@@ -107,8 +138,31 @@ export class ProfileEntryEditComponent implements OnInit {
   yeasersList: string[] = [];
   //#endregion (educational qualifications variables)
 
-  disableUpload = false;
-  disableUrl = false;
+  disableUpload = false
+  disableUrl = false
+  minIssuedDate: Date | null = null
+
+  // competencies
+  allCompetencies: any[] = []
+  filteredallCompetencies: any[] = []
+  allCompetencyTheme: any[] = []
+  filteredallCompetencyTheme: any[] = []
+  allCompetencySubtheme: any[] = []
+  filteredallCompetencySubtheme: any[] = []
+  enableCompetencyAdd = false
+  seletedCompetencyArea: any
+  seletedCompetencyTheme: any
+  seletedCompetencySubTheme: any
+  queryThemeControl = new UntypedFormControl('')
+  querySubThemeControl = new UntypedFormControl('')
+  isTableExpanded = true
+  listView = true
+  allThemeData: any
+  allSubThemeData: any
+  viewMode: string = ''
+  expand: boolean = false
+  selectedAreaValue: string | null = null
+
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
@@ -1021,6 +1075,97 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (educational qualifications)
 
   //#region (achievements)
+  // private createAchievementsForm(): void {
+
+  //   this.entryForm = this.fb.group({
+  //     title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
+  //     issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+  //     deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
+  //     startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
+  //     endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
+  //     issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
+  //     learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+  //     trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
+  //     uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
+  //     fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
+  //     url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+  //     description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
+  //     competencies_v6: ['', [Validators.required]]
+  //   }, { validators: urlOrDocumentValidator() })
+  //   if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
+  //     const urlControl = this.entryForm.controls.url
+  //     urlControl.patchValue('')
+  //     urlControl.disable()
+  //     urlControl.updateValueAndValidity()
+  //     this.disableUpload = false
+  //     this.disableUrl = true
+  //     const documentUrlControl = this.entryForm.controls.uploadedDocumentUrl
+  //     documentUrlControl.patchValue(_.get(this.entryDetails?.contextData, 'uploadedDocumentUrl', ''))
+  //     documentUrlControl.updateValueAndValidity()
+  //   } else if (_.get(this.entryDetails?.contextData, 'url', '')) {
+  //     this.disableUpload = true
+  //     this.disableUrl = false
+  //   }
+  //   if (this.entryDetails && this.entryDetails.contextData && this.entryDetails.contextData.competencies_v6) {
+  //     const competencies = this.entryDetails.contextData.competencies_v6
+  //     this.entryForm.get('competencies_v6')?.patchValue(competencies)
+  //   }
+
+  //   // Set initial minIssuedDate if endDate exists
+  //   const endDateValue = _.get(this.entryDetails?.contextData, 'endDate', '')
+  //   const issueDateValue = _.get(this.entryDetails?.contextData, 'issuedDate', '')
+  //   if (endDateValue) {
+  //     this.minIssuedDate = issueDateValue ? new Date(issueDateValue) : new Date(endDateValue)
+  //   }
+  //   if (issueDateValue) {
+  //     this.endDate = new Date(issueDateValue)
+  //   }
+
+  //   // Watch for endDate changes to update minIssuedDate and revalidate startDate
+  //   const endDateControl = this.entryForm.get('endDate')
+  //   if (endDateControl) {
+  //     endDateControl.valueChanges.subscribe((value: any) => {
+  //       if (value) {
+  //         this.minIssuedDate = new Date(value)
+  //         // Revalidate issuedDate when endDate changes
+  //         const issuedDateControl = this.entryForm.get('issuedDate')
+  //         if (issuedDateControl) {
+  //           issuedDateControl.updateValueAndValidity()
+  //         }
+  //       } else {
+  //         this.minIssuedDate = null
+  //       }
+  //       // Revalidate startDate when endDate changes to clear stale errors
+  //       const startDateControl = this.entryForm.get('startDate')
+  //       if (startDateControl) {
+  //         startDateControl.updateValueAndValidity({ emitEvent: false })
+  //       }
+  //     })
+  //   }
+
+  //   // Watch for startDate changes to revalidate endDate
+  //   const startDateControl = this.entryForm.get('startDate')
+  //   if (startDateControl) {
+  //     startDateControl.valueChanges.subscribe(() => {
+  //       const endDate = this.entryForm.get('endDate')
+  //       if (endDate) {
+  //         endDate.updateValueAndValidity({ emitEvent: false })
+  //       }
+  //     })
+  //   }
+
+  //   // Watch for issuedDate changes to set max date for startDate and endDate pickers
+  //   const issuedDateControl = this.entryForm.get('issuedDate')
+  //   if (issuedDateControl) {
+  //     issuedDateControl.valueChanges.subscribe((value: any) => {
+  //       this.endDate = value ? new Date(value) : new Date()
+  //     })
+  //   }
+
+  //   this.valueChanges()
+  //   this.addCompetencyMeta()
+  // }
+
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
       title: [_.get(this.entryDetails, 'title', ''), [Validators.required, Validators.maxLength(250), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
@@ -1053,12 +1198,261 @@ export class ProfileEntryEditComponent implements OnInit {
     this.valueChanges()
   }
 
+  get competenciesValue(): any[] {
+    const control = this.entryForm?.get('competencies_v6') as UntypedFormControl | null
+    return (control && control.value) || []
+  }
+
+  addCompetencyMeta(): void {
+    if (!this.entryForm.get('competencies_v6')) {
+      this.entryForm.addControl('competencies_v6', new UntypedFormControl([]))
+    }
+
+    this.loadCompetencyMaster()
+
+    this.queryThemeControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        this.filteredallCompetencyTheme = this.filterValues(value || '', this.allCompetencyTheme)
+      })
+
+    this.querySubThemeControl.valueChanges
+      .pipe(debounceTime(200), distinctUntilChanged())
+      .subscribe(value => {
+        this.filteredallCompetencySubtheme = this.filterValues(value || '', this.allCompetencySubtheme)
+      })
+  }
+
+  filterValues(searchValue: string, array: any[]) {
+    if (!searchValue) {
+      return array
+    }
+    const lower = searchValue.toLowerCase()
+    return array.filter((value: any) =>
+      (value.name || '').toLowerCase().includes(lower),
+    )
+  }
+
+  loadCompetencyMaster() {
+    this.ProfileV2RevampService.fetchCompetencyV6().subscribe(response => {
+      if (response && response.params && response.params.status && response.params.status.toLowerCase() === 'successful') {
+        this.allCompetencies = response.result.framework.categories.filter((v: any) => v.code === 'competencyarea')[0].terms
+        this.allThemeData = response.result.framework.categories.filter((v: any) => v.code === 'theme')[0].terms
+        this.allSubThemeData = response.result.framework.categories.filter((v: any) => v.code === 'subtheme')[0].terms
+        this.filteredallCompetencies = this.allCompetencies
+      } else {
+        this.allCompetencies = []
+        this.filteredallCompetencies = []
+      }
+    })
+  }
+
+  compAreaSelected(option: any) {
+    this.resetCompSubfields()
+    this.selectedAreaValue = option.name
+    this.allCompetencies.forEach((val: any) => {
+      if (option.identifier === val.identifier) {
+        this.seletedCompetencyArea = val
+        this.allCompetencyTheme = val.associations
+        this.filteredallCompetencyTheme = this.allCompetencyTheme
+      }
+    })
+    this.expand = true
+  }
+
+  compThemeSelected(option: any) {
+    this.enableCompetencyAdd = false
+    this.allCompetencyTheme.forEach((val: any) => {
+      if (option.identifier === val.identifier) {
+        this.seletedCompetencyTheme = val
+        this.allCompetencySubtheme = this.allThemeData.filter((v: any) => v.identifier === val.identifier)[0].associations
+        this.filteredallCompetencySubtheme = this.allCompetencySubtheme
+      }
+    })
+  }
+
+  compSubThemeSelected(option: any) {
+    this.seletedCompetencySubTheme = option
+    this.enableCompetencyAdd = true
+  }
+
+  resetCompfields() {
+    this.enableCompetencyAdd = false
+    this.selectedAreaValue = null
+    this.seletedCompetencyArea = null
+    this.seletedCompetencyTheme = null
+    this.seletedCompetencySubTheme = null
+    this.allCompetencyTheme = []
+    this.allCompetencySubtheme = []
+    this.filteredallCompetencyTheme = []
+    this.filteredallCompetencySubtheme = []
+    this.queryThemeControl.setValue('')
+    this.querySubThemeControl.setValue('')
+  }
+
+  resetCompSubfields() {
+    this.enableCompetencyAdd = false
+    this.seletedCompetencyTheme = null
+    this.seletedCompetencySubTheme = null
+    this.allCompetencySubtheme = []
+    this.filteredallCompetencySubtheme = []
+    this.queryThemeControl.setValue('')
+    this.querySubThemeControl.setValue('')
+  }
+
+  canPush(arr: any[], obj: any) {
+    return !arr.some(item =>
+      item.competencyAreaIdentifier === obj.competencyAreaIdentifier &&
+      item.competencyThemeIdentifier === obj.competencyThemeIdentifier &&
+      item.competencySubThemeIdentifier === obj.competencySubThemeIdentifier,
+    )
+  }
+
+  addCompetency() {
+    if (!this.seletedCompetencyArea || !this.seletedCompetencyTheme || !this.seletedCompetencySubTheme) {
+      return
+    }
+
+    const area = this.seletedCompetencyArea
+    const theme = this.seletedCompetencyTheme
+    const subTheme = this.seletedCompetencySubTheme
+    const obj = {
+      // Area
+      competencyAreaIdentifier: area.identifier || area.id || area.name,
+      competencyAreaRefId: area.refId || area.identifier || '',
+      competencyAreaName: area.name,
+      competencyAreaDescription: area.description || '',
+
+      // Theme
+      competencyThemeIdentifier: theme.identifier || theme.id || theme.name,
+      competencyThemeRefId: theme.refId || theme.identifier || '',
+      competencyThemeName: theme.name,
+      competencyThemeType: theme.category || 'theme',
+      competencyThemeDescription: theme.description || '',
+      competencyThemeAdditionalProperties: theme.additionalProperties || {},
+
+      // Sub-theme
+      competencySubThemeIdentifier: subTheme.identifier || subTheme.id || subTheme.name,
+      competencySubThemeRefId: subTheme.refId || subTheme.identifier || '',
+      competencySubThemeName: subTheme.name,
+      competencySubThemeDescription: subTheme.description || '',
+      competencySubThemeAdditionalProperties: subTheme.additionalProperties || {},
+    }
+
+    const control = this.entryForm.get('competencies_v6') as UntypedFormControl
+    const value = control.value || []
+    if (this.canPush(value, obj)) {
+      value.push(obj)
+      control.setValue(value)
+      control.markAsDirty()
+      control.markAsTouched()
+    }
+    this.resetCompfields()
+    this.expand = false
+  }
+
+  get uniqueAreas(): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    return Array.from(new Set(
+      this.competenciesValue.map((comp: any) => comp.competencyAreaName),
+    ))
+  }
+
+  getUniqueThemesForArea(areaName: string): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    const themesForArea = this.competenciesValue
+      .filter((comp: any) => comp.competencyAreaName === areaName)
+      .map((comp: any) => comp.competencyThemeName)
+
+    return Array.from(new Set(themesForArea))
+  }
+
+  getSubthemesForAreaAndTheme(areaName: string, themeName: string): string[] {
+    if (!this.competenciesValue || !this.competenciesValue.length) {
+      return []
+    }
+
+    return this.competenciesValue
+      .filter((comp: any) =>
+        comp.competencyAreaName === areaName &&
+        comp.competencyThemeName === themeName,
+      )
+      .map((comp: any) => comp.competencySubThemeName)
+  }
+
+  getTotalRowsForArea(areaName: string): number {
+    let totalRows = 0
+    for (const theme of this.getUniqueThemesForArea(areaName)) {
+      totalRows += this.getSubthemesForAreaAndTheme(areaName, theme).length
+    }
+    return totalRows
+  }
+
+  removeCompetencyV2(area: string, theme: string, subtheme: string): void {
+    const control = this.entryForm.get('competencies_v6') as UntypedFormControl | null
+    if (!control || !control.value) {
+      return
+    }
+
+    const competenciesValue = control.value
+    const index = competenciesValue.findIndex((comp: any) =>
+      comp.competencyAreaName === area &&
+      comp.competencyThemeName === theme &&
+      comp.competencySubThemeName === subtheme,
+    )
+
+    if (index !== -1) {
+      const updatedCompetencies = [
+        ...competenciesValue.slice(0, index),
+        ...competenciesValue.slice(index + 1),
+      ]
+      control.setValue(updatedCompetencies)
+      control.markAsDirty()
+      control.markAsTouched()
+    }
+  }
+
+  updateQuery(key: string, field: 'theme' | 'subtheme') {
+    if (field === 'theme') {
+      this.filteredallCompetencyTheme = this.filterValues(key, this.allCompetencyTheme)
+    } else {
+      this.filteredallCompetencySubtheme = this.filterValues(key, this.allCompetencySubtheme)
+    }
+  }
+
+  resetSearch(field: 'theme' | 'subtheme') {
+    if (field === 'theme') {
+      this.queryThemeControl.setValue('')
+      this.filteredallCompetencyTheme = this.allCompetencyTheme
+      if (!this.seletedCompetencySubTheme) {
+        this.filteredallCompetencySubtheme = []
+        this.querySubThemeControl.setValue('')
+      } else {
+        this.querySubThemeControl.setValue('')
+      }
+    } else {
+      this.querySubThemeControl.setValue('')
+      this.filteredallCompetencySubtheme = this.allCompetencySubtheme
+    }
+  }
+
+  toggleTable() {
+    this.isTableExpanded = !this.isTableExpanded
+  }
+
   valueChanges(): void {
     const urlControl = this.entryForm.get('url')
+    const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
+
     if (urlControl) {
       urlControl.valueChanges.subscribe((value: string) => {
         if (value && value.trim() !== '') {
-          const documentUrlControl = this.entryForm.get('uploadedDocumentUrl')
           if (documentUrlControl) {
             documentUrlControl.patchValue('')
             documentUrlControl.updateValueAndValidity()
@@ -1074,6 +1468,15 @@ export class ProfileEntryEditComponent implements OnInit {
           this.disableUpload = false
           this.disableUrl = false
         }
+        // Trigger form-level validation
+        this.entryForm.updateValueAndValidity()
+      })
+    }
+
+    if (documentUrlControl) {
+      documentUrlControl.valueChanges.subscribe(() => {
+        // Trigger form-level validation when document URL changes
+        this.entryForm.updateValueAndValidity()
       })
     }
   }
@@ -1123,8 +1526,9 @@ export class ProfileEntryEditComponent implements OnInit {
       return
     }
     const mimeType = files[0].type
-    if (!mimeType.startsWith('image/')) {
-      this.openSnackbar('Only images are supported')
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    if (!allowedTypes.includes(mimeType.toLowerCase())) {
+      this.openSnackbar('Only PNG, JPG, and JPEG images are supported')
       return
     }
     const reader = new FileReader()
@@ -1218,6 +1622,32 @@ export class ProfileEntryEditComponent implements OnInit {
 
   handleCancel(): void {
     this.dialogRef.close()
+  }
+
+  preventNonNumericInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
+    if (!/^\d$/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  preventNonNumericPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text')
+    if (pastedText && !/^\d+$/.test(pastedText)) {
+      event.preventDefault()
+    }
+  }
+
+  getNameOfTheFile(fileName: string): string {
+    if (fileName && fileName.length > 50) {
+      return `${fileName.substring(0, 50)}...`
+    }
+    return fileName
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

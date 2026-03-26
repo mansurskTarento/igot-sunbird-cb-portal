@@ -1,0 +1,34 @@
+.success-dialog {
+  padding: 40px 24px;
+  text-align: center;
+
+  .success-icon-container {
+    margin-bottom: 24px;
+
+    .success-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      color: #3F51B5;
+    }
+  }
+
+  .title {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 12px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .message {
+    font-size: 14px;
+    color: rgba(0, 0, 0, 0.6);
+    margin: 0 0 32px;
+    line-height: 1.5;
+  }
+
+  .done-btn {
+    min-width: 120px;
+    border-radius: 4px;
+  }
+}

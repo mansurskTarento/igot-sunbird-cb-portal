@@ -259,8 +259,7 @@
           <div class="flex flex-col gap-4">
             <ng-container *ngIf="isCurrentUser && isMobile">
               <div>
-                <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"
-                  [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
+                <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile" [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
               </div>
             </ng-container>
 
@@ -363,9 +362,10 @@
                   <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
                   <ng-container *ngIf="isCurrentUser">
                     <div class="flex items-center gap-2">
-                      <!-- Moved this to Sprint 35 -->
-                      <!-- <span class="link-to-passbook" (click)="handleRedirectToCompetencyPassbook()"
-                        (keyup)="handleRedirectToCompetencyPassbook()"> aa {{'NetworkV2Profile.viewLearningPassbook' | translate}}</span> -->
+                      <!-- commented for Sprint 35 -->
+                      <!-- <span class="link-to-passbook pr-1" (click)="handleRedirectToCompetencyPassbook()"
+                        (keyup)="handleRedirectToCompetencyPassbook()">
+                        {{'NetworkV2Profile.viewLearnerPassbook' | translate}}</span> | -->
                       <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')"
                         (keyup)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                     </div>

@@ -14,14 +14,14 @@
           </div>
         </ng-container>
       </div>
-      
+
       <div class="flex justify-between items-center mt-1 md:mt-3">
         <div class="flex gap-1 items-center">
           <img [src]="stat?.iconUrl" class="statIcon" alt="statIcon">
           <div class="statPoints">{{stat?.totalPoints}}</div>
         </div>
 
-        <ng-container *ngIf="stat?.totalPoints > 0 && !isNotMyUserAndIgotOrg">
+      <ng-container *ngIf="((stat?.totalPoints > 1) || stat?.state === 'My Badges') && !isNotMyUserAndIgotOrg">
           <div class="viewAll hidden md:block">
             <a (click)="viewAll(stat)" >{{'NetworkV2Profile.viewAll' | translate}}</a>
           </div>

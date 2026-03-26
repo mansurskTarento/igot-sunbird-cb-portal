@@ -49,6 +49,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isIgotOrg = false
   isNotMyUser = false
   isNotMyUserAndIgotOrg = false
+  myBadgesCount: any = 0
   userStats: UserStats[] = [
     {
       state: 'NetworkV2Profile.myKarmaPoints',
@@ -66,12 +67,20 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       identifier: 'certificateCount'
     },
     {
+      state: 'My Badges',
+      totalPoints: '0',
+      iconUrl: './assets/icons/badges/Medal.svg',
+      vewAllUrl: '/badges',
+      identifier: 'myBadges'
+    },
+    {
       state: 'NetworkV2Profile.myPosts',
       totalPoints: '0',
       iconUrl: './assets/icons/edit.svg',
       vewAllUrl: '/app/discussion-forum-v2',
       identifier: 'postCount'
-    }
+    },
+
   ];
   profileRoutes: profileRoutes[] = [
     {
@@ -251,7 +260,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
-    //Moved to Sprint 35
     //this.getAchievements()
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')
@@ -536,6 +544,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   setUserStats() {
     if (this.userStats && this.userStats.length > 0 && this.profileData) {
       this.userStats.forEach((userStat: UserStats) => {
+        this.myBadgesCount = _.get(this.profileData, 'badgeCount', 0)
         switch (userStat.identifier) {
           case 'karmaPoints':
             userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
@@ -545,6 +554,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             break
           case 'postCount':
             userStat.totalPoints = _.get(this.profileData, 'postCount', 0)
+            break
+          case 'myBadges':
+            userStat.totalPoints = this.myBadgesCount
             break
         }
       })
@@ -1512,7 +1524,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         }
         if (formBody) {
           if (isNew) {
-            // Moved this to Sprint 35
+            // Moved this to Sprint 36
             // header === 'Achievements' ? this.addAchievementEntry(formBody) : this.addProfileEntry(formBody)
             this.addProfileEntry(formBody)
           } else {
@@ -1596,9 +1608,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
     return formBody
   }
-  //  Moved this to Sprint 35
+
   // generateAchievementsFormBody(achievements: any, oldDetails: any): any {
-  //   // new code
   //   if (achievements?.uploadedDocumentUrl) {
   //     delete achievements['url']
   //   }
@@ -2000,8 +2011,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.deleteProfileEntryCall(requestData)
-        // Moved to sprint 35
-        //header === 'Achievements' ? this.deleteAchievement(requestData) : this.deleteProfileEntryCall(requestData)
+        // Moved to sprint 36
+        // header === 'Achievements' ? this.deleteAchievement(requestData) : this.deleteProfileEntryCall(requestData)
       }
     })
 
@@ -2025,7 +2036,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     return requestData
 
   }
-  // Moved to sprint 35
+
+  // Moved to sprint 36
   // formDeleteRequest(header: string, entryDetails: any) {
   //   let requestData: any = {}
   //   switch (header) {
@@ -2067,7 +2079,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         if (res && res.result && res.result.response) {
           this.openSnackbar('Achievement deleted successfully', 2000)
           this.fetchProfileEntries()
-          // Moved to sprint 35
+          // Moved to sprint 36
           //this.fetchProfileEntries()
         } else {
           this.openSnackbar('Something went wrong while deleting achievement, please try again later', 2000)

@@ -1,0 +1,167 @@
+<ws-widget-btn-page-back [widgetData]="{
+    url: 'home',
+    titles:[
+      { title: 'Profile', url:'/app/person-profile', icon:'account_box', disableTranslate:true },
+      { title: 'My Badges', url:'none', icon:'', disableTranslate:true }
+    ]
+  }">
+</ws-widget-btn-page-back>
+<div class="main max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 justify-self-center w-[100%]">
+  <!-- Welcome -->
+  <div class="welcome-section mb-6">
+    <h2 class="font-semibold text-lg sm:text-xl md:text-2xl font-montserrat">
+      Welcome Back, Learner!
+    </h2>
+
+    <p class="text-sm text-gray-500 mt-1">
+      Continue your learning journey and earn badges
+    </p>
+  </div>
+  <!-- Stats Row -->
+  <!-- <div class="stats-row grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div class="stat-card bg-white rounded-xl shadow-sm p-4 flex flex-col gap-2 w-86 h-30"
+                *ngFor="let stat of data.stats">
+                <div class="stat-label text-sm font-semibold text-gray-600">{{ stat.label }}</div>
+
+      <div class="stat-icon w-12 h-12 rounded-lg flex items-center justify-center self-end" [ngClass]="stat.iconClass">
+        <img class="w-6 h-6" [src]="stat.icon" alt="icon" />
+      </div>
+
+      <div class="stat-value text-2xl font-semibold">{{ stat.value }}</div>
+    </div>
+  </div> -->
+  <sb-uic-app-badge-stats [stats]="data.stats"></sb-uic-app-badge-stats>
+  <!-- Inner Tabs: Earned Badges / In Progress -->
+  <div class="inner-tab-row flex border-b border-gray-200 mb-6">
+    <div class="tab px-4 py-2 text-sm cursor-pointer whitespace-nowrap" [class.active]="activeTab === 'earned'"
+      (click)="showTab('earned')">
+      Earned Badges ({{badgeDetails?.summary?.totalBadgesEarned}})
+    </div>
+
+    <div class="tab px-4 py-2 text-sm cursor-pointer whitespace-nowrap" [class.active]="activeTab === 'inprogress'"
+      (click)="showTab('inprogress')">
+      In Progress ({{ badgeDetails?.summary?.inProgressCount }})
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'earned'" class="badge-activity-panel bg-white rounded-xl p-4 sm:p-6">
+
+    <div class="panel-header flex items-center mb-5">
+      <span class="panel-icon">
+        <img class="w-6 h-6 mr-2" src="assets/icons/badges/level 2.svg" alt="badge">
+      </span>
+
+      <span class="panel-title font-semibold text-sm sm:text-base flex-1">Badge Activity</span>
+
+      <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
+    </div>
+
+    <div class="earned-badges-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+
+      <div
+        class="badge-card relative border rounded-lg bg-white flex flex-col items-center p-2 cursor-pointer hover:shadow-md transition"
+        *ngFor="let badge of data.earnedBadges"
+        >
+        <!-- (click)="openModal()" -->
+
+        <div class="badge-img-wrap w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center" [ngClass]="badge.glow">
+          <img class="w-full h-full object-cover" [src]="badge.image | pipePublicURL" alt="badge">
+        </div>
+
+        <div class="badge-label text-center text-xs mt-2 font-semibold leading-tight">
+      <div class="badge-title-wrapper">
+        <span #titleEl class="blue text-blue-700 badge-title cursor-text" [title]="badge.title" matTooltipPosition="above">
+          {{ badge.title }}
+        </span>
+
+
+      </div>
+
+          <span class="gray text-gray-500 badge-level cursor-text" [title]="badge.level" matTooltipPosition="above"> {{
+            badge.level
+            }}</span>
+          <p [title]="badge.courseName" matTooltipPosition="below" class="earnedcourseName mb-0 italic cursor-text"> ({{
+            badge.courseName
+            }})</p>
+        </div>
+
+    <div class="badge-menu absolute top-1 right-2 text-gray-400 text-lg">
+      <button mat-icon-button [matMenuTriggerFor]="coverPhotoMenu">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+
+      <mat-menu #coverPhotoMenu="matMenu" panelClass="custom-menu bg-white ">
+        <button class="bg-white" mat-menu-item (click)="openModal(badge)">
+          View
+        </button>
+        <button class="bg-white" mat-menu-item [matMenuTriggerFor]="downloadMenu">
+          Download
+        </button>
+      </mat-menu>
+      <mat-menu #downloadMenu="matMenu" panelClass="custom-menu-badge-modal">
+
+        <!-- PDF -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePdf(badge)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <!-- PNG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePng(badge)">
+          <mat-icon>photo</mat-icon>
+          <span>PNG</span>
+        </button>
+        <!-- SVG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgeSvg(badge)">
+          <mat-icon>photo_size_select_actual</mat-icon>
+          <span>SVG</span>
+        </button>
+
+      </mat-menu>
+      </div>
+      </div>
+
+    </div>
+  </div>
+  <!-- IN PROGRESS Panel -->
+  <div *ngIf="activeTab === 'inprogress'" class="badge-in-progress-panel bg-white rounded-xl p-4 sm:p-6">
+
+    <div class="panel-header flex items-center mb-5">
+      <span class="panel-icon ">
+        <!-- <img src="../../../dashboard-assets/icons/level 2.svg" alt="level"> -->
+      </span>
+
+      <span class="panel-title font-semibold text-sm sm:text-base flex-1">Badge In Progress</span>
+
+      <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
+    </div>
+
+    <div class="badge-progress-list divide-y">
+
+      <div class="badge-progress-item flex items-center py-3 gap-3" *ngFor="let badge of data.inProgress">
+
+        <img class="badge-icon w-8 h-8" [src]="badge.icon | pipePublicURL" alt="">
+
+        <p class="badge-name flex-1 text-sm mb-0">
+          <span> {{ badge.badgeTitle }}</span>
+          <span class="course-name flex-6 text-sm"> ({{badge.courseName}})</span>
+          <br>
+          <span class="text-xs text-gray-500">{{badge.endDate | date:'dd-MMM-yyyy'}}</span>
+        </p>
+
+        <button (click)="goToContent(badge)"
+          class="continue-btn hidden sm:flex text-white text-xs px-4 py-1 rounded-full items-center gap-1">
+          Continue Learning
+        </button>
+
+        <span class="pct text-sm font-semibold w-10 text-right">{{ badge.progress }}</span>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
+<!-- <div class="badge-card" (click)="openModal()"></div> -->
+
+<sb-uic-app-badge-modal *ngIf="showModal" [badgeData]="selectedBadge" (close)="closeModal()">
+</sb-uic-app-badge-modal>

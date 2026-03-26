@@ -32,14 +32,14 @@
       <ng-container *ngIf="achievement?.uploadedDocumentUrl && achievement?.fileName">
         <div class="document-card flex justify-between items-center">
           <div class="flex items-center gap-4 w-full">
-            <img [src]="achievement?.uploadedDocumentUrl" class="certificate" alt="certificate">
+            <img [src]="getUrl(achievement?.uploadedDocumentUrl)" class="certificate" alt="certificate">
             <div class="document-name">{{achievement?.fileName}}</div>
           </div>
           <mat-icon class="view-icon" (click)="openDocument(achievement?.uploadedDocumentUrl)">visibility</mat-icon>
         </div>
       </ng-container>
       <ng-container *ngIf="achievement?.url">
-        <div class="url-card flex gap-2 items-center justify-center" (click)="openUrl(achievement.url)">
+        <div class="url-card flex gap-2 items-center justify-center" (click)="openUrl(achievement?.url)">
           <div class="linke">{{'NetworkV2Profile.viewCertificate' | translate}}</div>
           <mat-icon class="link-icon">link</mat-icon>
         </div>

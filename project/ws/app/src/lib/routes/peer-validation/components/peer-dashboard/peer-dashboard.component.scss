@@ -1,0 +1,533 @@
+.dashboard-container {
+  padding: 24px 8%;
+  background-color: #F3F5F9;
+  min-height: 100vh;
+  // padding-top: 24px !important; // Enforce top padding to prevent nav overlap
+
+  @media (max-width: 1280px) {
+    padding: 24px 5%;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 4%;
+  }
+
+  @media (max-width: 768px) {
+    padding: 0 3%;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px 16px;
+  }
+
+  .header {
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #000000; // Figma: #000000 (Heading 2, Montserrat SemiBold)
+      margin: 0 0 4px;
+    }
+
+    .header-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      p {
+        color: rgba(0, 0, 0, 0.87); // Figma: #000000 at 87%
+        font-size: 14px;
+        margin: 0;
+
+        @media (max-width: 768px) {
+          font-size: 13px;
+        }
+      }
+
+      .request-validation-btn {
+        background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+        color: white;
+        border-radius: 18px;
+        padding: 0 20px;
+        font-weight: 500;
+        font-size: 13px;
+        line-height: 36px;
+        height: 36px;
+
+        @media (max-width: 768px) {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .tabs {
+    display: flex;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08); // Figma: Borders/Black/Border-8% Black
+    margin-bottom: 24px;
+    gap: 32px;
+
+    .tab-item {
+      padding: 12px 0;
+      font-size: 14px;
+      color: #666666; // Figma: AccessibilityShades/KB-Greys-Black-60%
+      cursor: pointer;
+      position: relative;
+      font-weight: 500;
+
+      &.active {
+        color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+        font-weight: 600;
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          width: 100%;
+          height: 2px;
+          background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+        }
+      }
+    }
+  }
+
+  // Common Card Style Mixin
+  @mixin card-style {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  }
+
+  // Card 1: Info Panel
+  .filter-card {
+    @include card-style;
+    margin-bottom: 24px;
+
+    .filter-header-content {
+      display: flex;
+      align-items: flex-start;
+
+      .results-info {
+        strong {
+          display: block;
+          font-family: 'Montserrat', sans-serif;
+          font-size: 16px;
+          font-weight: 600;
+          line-height: 1;
+          letter-spacing: 0;
+          color: rgba(0, 0, 0, 0.87);
+          margin-bottom: 12px;
+        }
+
+        p {
+          font-family: 'Lato', sans-serif;
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: 0;
+          color: rgba(0, 0, 0, 0.87);
+          margin: 0 0 12px;
+        }
+
+        .items-count {
+          font-family: 'Lato', sans-serif;
+          font-size: 14px;
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: 0;
+          color: #666666;
+        }
+      }
+    }
+  }
+
+  // Card 2: Table
+  .table-card {
+    @include card-style;
+    padding: 0;
+
+    .table-header {
+      display: flex;
+      padding: 14px 0; // Increased vertical padding
+      background-color: #F0F3F4; // Figma: #F0F3F4 table header row bg
+      color: rgba(0, 0, 0, 0.6); // Figma: #000000 at 60%
+      font-size: 12px;
+      font-weight: 500;
+      border-radius: 4px; // Slight radius
+      margin-bottom: 16px;
+      align-items: center;
+
+      @media (max-width: 768px) {
+        display: none; // Hide header on mobile
+      }
+
+      .col-name {
+        flex: 4;
+        padding-left: 16px; // Add left padding to first col only
+      }
+
+      .col-status {
+        flex: 1;
+        text-align: center;
+      }
+
+      .col-date {
+        flex: 1;
+        text-align: center;
+      }
+
+      .col-action {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 0;
+      }
+
+      .col-requested-by {
+        flex: 2;
+        text-align: left;
+      }
+    }
+
+    .table-row {
+      display: flex;
+      align-items: center;
+      padding: 16px 0;
+      border-bottom: 1px solid #F5F5F5;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px;
+        gap: 12px;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        background: #FAFAFA;
+      }
+
+      &:last-child {
+        border-bottom: none;
+
+        @media (max-width: 768px) {
+          border: 1px solid #E0E0E0;
+        }
+      }
+
+      .col-name {
+        flex: 4;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding-left: 16px; // Align with header
+
+        @media (max-width: 768px) {
+          padding-left: 0;
+          flex: none;
+          width: 100%;
+        }
+
+        .thumbnail {
+          width: 80px;
+          height: 60px;
+          background-color: #F5F5F5;
+          border: 1px solid #E0E0E0;
+          border-radius: 4px;
+
+          @media (max-width: 480px) {
+            width: 60px;
+            height: 45px;
+          }
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        .name-details {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+
+          .name {
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.87); // Figma: #000000 at 87%
+            font-weight: 500;
+            line-height: 1.4;
+
+            @media (max-width: 480px) {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+
+      .col-status {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+
+        @media (max-width: 768px) {
+          flex: none;
+          justify-content: flex-start;
+
+          &::before {
+            content: 'Status: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 8px;
+          }
+        }
+
+        .status-pill {
+          font-size: 11px;
+          font-weight: 600;
+          padding: 4px 12px;
+          border-radius: 12px;
+          text-transform: uppercase;
+
+          &.active,
+          &.completed {
+            color: #007107; // Figma: ACTIVE text color
+            border: 1px solid #49C951; // Figma: ACTIVE border
+            background-color: rgba(73, 201, 81, 0.2); // Figma: #49C951 at 20%
+          }
+
+          &.pending {
+            color: #8B5700;
+            border: 1px solid #F5A623;
+            background-color: rgba(245, 166, 35, 0.2);
+          }
+
+          &.ended,
+          &.expired {
+            color: #D13924; // Figma: States/KB-States-Negative/Light
+            border: 1px solid #D13924;
+            background-color: rgba(209, 57, 36, 0.24); // Figma: #D13924 at 24%
+          }
+        }
+      }
+
+      .col-date {
+        flex: 1;
+        text-align: center;
+        font-size: 13px;
+        color: #333;
+
+        @media (max-width: 768px) {
+          flex: none;
+          text-align: left;
+
+          &::before {
+            content: 'End Date: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 4px;
+          }
+        }
+      }
+
+      .col-action {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding-right: 0;
+
+        @media (max-width: 768px) {
+          flex: none;
+          justify-content: flex-start;
+          padding-right: 0;
+          margin-top: 8px;
+        }
+
+        .start-review-btn {
+          background-color: #1B4CA1; // Figma: Primary/KB-Primary-Light
+          color: white;
+          border-radius: 18px;
+          font-size: 12px;
+          padding: 6px 20px;
+          min-height: 32px;
+          height: auto;
+          line-height: 1;
+          box-shadow: none;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          white-space: nowrap;
+          text-align: center;
+
+          @media (max-width: 768px) {
+            width: 100%;
+            padding: 8px 16px;
+          }
+
+          &:disabled {
+            background-color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
+            color: #666666; // Figma: AccessibilityShades/KB-Greys-Black-60%
+            cursor: not-allowed;
+          }
+        }
+      }
+
+      .col-requested-by {
+        flex: 2;
+        text-align: left;
+        color: #333;
+        font-size: 13px;
+        padding-right: 16px;
+
+        @media (max-width: 768px) {
+          flex: none;
+          padding-right: 0;
+
+          &::before {
+            content: 'Requested By: ';
+            color: #999;
+            font-weight: 500;
+            font-size: 12px;
+            margin-right: 4px;
+          }
+        }
+      }
+    }
+
+    .no-data {
+      padding: 32px;
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+
+    // Paginator Styling
+  }
+
+  .custom-paginator ::ng-deep {
+    // background: transparent;
+    font-size: 13px;
+
+    .mat-paginator-container {
+      padding: 0;
+      justify-content: flex-end;
+      color: #666;
+      min-height: 48px;
+    }
+
+    .mat-paginator-page-size-label {
+      margin: 0 8px 0 0;
+      color: #333;
+      font-weight: 500;
+    }
+
+    // Stronger selector for the form field
+    .mat-form-field,
+    .mat-mdc-form-field {
+      width: 64px !important; // Slightly wider than 50px to fit arrow
+      margin: 0 8px;
+
+      .mat-form-field-wrapper,
+      .mat-mdc-form-field-wrapper {
+        padding-bottom: 0;
+      }
+
+      .mat-form-field-flex,
+      .mat-mdc-text-field-wrapper {
+        border: none !important;
+        border-bottom: 1px solid #999 !important; // Underline
+        border-radius: 0 !important;
+        padding: 0 !important; // Remove padding
+        background-color: transparent !important;
+        height: 24px !important; // Smaller height
+        display: flex;
+        align-items: center;
+      }
+
+      // Hide outlines and ripples
+      .mat-form-field-underline,
+      .mdc-line-ripple,
+      .mdc-notched-outline {
+        display: none !important;
+      }
+
+      .mat-form-field-infix,
+      .mat-mdc-form-field-infix {
+        border-top: 0 !important;
+        padding: 0 !important;
+        width: auto !important;
+        min-height: 24px !important;
+        display: flex;
+        align-items: center;
+      }
+
+      .mat-select-value,
+      .mat-mdc-select-value {
+        color: #333;
+        font-weight: 500;
+        font-size: 13px;
+        padding-right: 4px !important;
+      }
+
+      .mat-select-arrow-wrapper,
+      .mat-mdc-select-arrow-wrapper {
+        transform: translateY(0) !important;
+      }
+
+      .mat-select-arrow,
+      .mat-mdc-select-arrow {
+        color: #333;
+      }
+    }
+
+    .mat-paginator-range-label {
+      margin: 0 16px 0 24px;
+      color: #333;
+      font-weight: 500;
+    }
+  }
+
+  // Specific fix for overlap issue between 576px and 1135px
+  @media (min-width: 576px) and (max-width: 1135px) {
+    padding-top: 80px !important; // Increased to 80px to clear nav bar
+
+    @media (min-width: 577px) and (max-width: 600px) {
+      padding-top: 100px !important; // Increased to 80px to clear nav bar
+    }
+
+  }
+
+}
+
+// CDK overlay panel fix — must be at root level to reach the overlay container
+::ng-deep .mat-select-panel,
+::ng-deep .mat-mdc-select-panel {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+
+  .mat-option,
+  .mat-mdc-option {
+    &:hover:not(.mat-option-disabled):not(.mdc-list-item--disabled) {
+      background-color: #e8edf7 !important;
+    }
+
+    &.mat-selected:not(.mat-option-multiple),
+    &.mdc-list-item--selected {
+      background-color: #d0daf0 !important;
+      color: #1B4CA1 !important;
+      font-weight: 600;
+    }
+  }
+}

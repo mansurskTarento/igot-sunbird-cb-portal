@@ -83,7 +83,6 @@ export class ProfileCardStatsComponent implements OnInit {
       })
       this.fetchAndMergeData()
   }
-
   getTimelyNudge() {
     if (this.configSvc.profileTimelyNudges.enable) {
       const rand = Math.round(Math.random() * 4)
@@ -167,6 +166,7 @@ export class ProfileCardStatsComponent implements OnInit {
         certificate: enrollList.userCourseEnrolmentInfo.certificatesIssued,
         inProgress: enrollList.userCourseEnrolmentInfo.coursesInProgress,
         karmaPoints: enrollList.userCourseEnrolmentInfo.karmaPoints,
+        badgeCount: enrollList.userCourseEnrolmentInfo.badgeCount,
         learningHours: enrollList.userCourseEnrolmentInfo.timeSpentOnCompletedCourses,
       }
     }
@@ -255,7 +255,7 @@ async fetchAndMergeData(): Promise<void> {
       element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
-  
+
   showWeeklyClapsSection() {
     const element = document.getElementById('weekly-wrapper');
     if (element) {
