@@ -11,6 +11,7 @@ export class SadhanaSaptahComponent implements OnInit {
 
   sectionList: any = []
   nlwConfig: any
+  individualSection: any = {}
   indivisualSection: any = {}
   phoneNumber = '+91 11 2430 3726';
   supportHours = '8:00 AM – 8:00 PM IST';
@@ -25,9 +26,8 @@ export class SadhanaSaptahComponent implements OnInit {
       && this.route.snapshot.data.formData.data.result.form.data
       && this.route.snapshot.data.formData.data.result.form.data.sectionList
     ) {
-      debugger
       this.sectionList = this.route.snapshot.data.formData.data.result.form.data.sectionList
-      this.indivisualSection = this.route.snapshot.data.formData.data.result.form.data.indivisualSection || {}
+      this.individualSection = this.route.snapshot.data.formData.data.result.form.data.individualSection || {}
       this.nlwConfig = this.route.snapshot.data.formData.data.result.form.data.nlwConfig || {}
     }
   }

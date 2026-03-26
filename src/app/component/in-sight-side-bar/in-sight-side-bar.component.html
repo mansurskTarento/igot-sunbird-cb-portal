@@ -63,11 +63,18 @@
                 {{currentLang === 'hi'? nwlConfiguration?.titleHi : nwlConfiguration?.title}}
             </div>
             <div class="nlw-title">
-                <img class="nlw-animation" src="assets/images/national-learning/nlw.gif" alt=""/>
+                <img class="nlw-animation" src="{{nwlConfiguration?.icon || 'assets/images/national-learning/nlw.gif'}}" alt=""/>
             </div>
         </div>
         <div class="flex nlw-description">
             {{currentLang === 'hi'? nwlConfiguration?.descriptionHi : nwlConfiguration?.description }}
+        </div>
+        <div class="flex nlw-description flex-wrap">
+            <ng-container *ngIf="nwlConfiguration?.descriptionV2Hi || nwlConfiguration?.descriptionV2">
+                <ng-container *ngFor="let description of (currentLang === 'hi' ? nwlConfiguration?.descriptionV2Hi : nwlConfiguration?.descriptionV2)">
+                    <p>{{description}}</p>
+                </ng-container>
+            </ng-container>
         </div>
         <div class="progress-wrapper mt-5">
             <div class="flex items-center">

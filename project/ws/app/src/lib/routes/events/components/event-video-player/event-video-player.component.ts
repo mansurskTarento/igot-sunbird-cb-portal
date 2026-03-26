@@ -1,11 +1,11 @@
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util';
-import { Subscription } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util'
+import { Subscription } from 'rxjs'
 import videoJs from 'video.js'
 import moment from 'moment'
-import { EventService } from '../../services/events.service';
-import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2';
+import { EventService } from '../../services/events.service'
+import { ConfigurationsService, NsContent } from '@sunbird-cb/utils-v2'
 
 interface IYTOptions extends videoJs.PlayerOptions {
   youtube: {
@@ -73,7 +73,9 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
   ngOnInit() {
     this.eventData = this.route.snapshot.data['content'].data
     this.pageConfigData = this.route.snapshot.data['pageData'] && this.route.snapshot.data['pageData'].data || {}
-    if (this.pageConfigData && this.pageConfigData.fireUpdate) {
+    if (this.pageConfigData && this.pageConfigData.fireUpdateConfig) {
+      this.rateToFire = this.eventService.getRateToFire(this.eventData.resourceType, this.pageConfigData)
+    } else if (this.pageConfigData && this.pageConfigData.fireUpdate) {
       this.rateToFire = this.pageConfigData.fireUpdate
     }
     this.videoId = this.eventData.registrationLink

@@ -336,6 +336,13 @@ export class ViewAllComponent {
             return match ? match.name : selected
           })
         }
+        // Auto-reset show more if facets have 2 or fewer items
+        if (this.sourceNameFacets.length <= 2) {
+          this.showMoreSources = false
+        }
+        if (this.resourceTypeFacets.length <= 2) {
+          this.showMoreResourceTypes = false
+        }
       }
       this.isLoading = false
     }, error => {

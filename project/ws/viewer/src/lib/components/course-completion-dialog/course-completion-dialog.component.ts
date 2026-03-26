@@ -37,7 +37,16 @@ export class CourseCompletionDialogComponent implements OnInit {
     const badgeDetails = this.data?.baseContentReadData?.badgeDetails_v1
 
     if (badgeDetails && badgeDetails.length) {
-      this.badge = badgeDetails[0]
+      const badge = badgeDetails[0]
+
+      const now = Date.now()
+
+      if (!badge.badgeEarningDateTime || badge.badgeEarningDateTime > now) {
+        this.badge = badge
+      } else {
+        this.badge = null
+      }
+
     }
     const app: any = document.getElementById('viewer-conatiner-backdrop')
     if (app) {
