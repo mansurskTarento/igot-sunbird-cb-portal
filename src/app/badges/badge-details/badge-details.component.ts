@@ -68,7 +68,8 @@ export class BadgeDetailsComponent {
             courseName: `${badge.courseName}`,
             progress: badge.completionPercentage + '%',
             continue: badge.completionPercentage < 100 && badge.completionPercentage > 0,
-            courseId: badge?.courseId
+            courseId: badge?.courseId,
+            endDate: badge?.badgeDetails_v1?.[0]?.createdOn
           }))
 
         }
@@ -134,19 +135,19 @@ export class BadgeDetailsComponent {
         label: 'Total Badges Earned',
         icon: 'assets/icons/badges/badge.svg',
         iconClass: 'orange',
-        value: this.badgeDetails?.summary?.totalBadgesEarned,
+        value: this.badgeDetails?.summary?.totalBadgesEarned || 0,
       },
       {
         label: 'Content Completed',
         icon: 'assets/icons/badges/course.svg',
         iconClass: 'blue',
-        value: this.badgeDetails?.summary?.courseCompleted,
+        value: this.badgeDetails?.summary?.courseCompleted || 0,
       },
       {
         label: 'Badge Completion Rate',
         icon: 'assets/icons/badges/line_chart.svg',
         iconClass: 'yellow',
-        value: `${this.badgeDetails?.summary?.completionRate}%`,
+        value: `${this.badgeDetails?.summary?.completionRate || 0}`,
       },
     ],
 

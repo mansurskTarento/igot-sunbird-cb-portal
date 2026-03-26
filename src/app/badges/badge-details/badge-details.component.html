@@ -139,9 +139,12 @@
 
         <img class="badge-icon w-8 h-8" [src]="badge.icon | pipePublicURL" alt="">
 
-        <p class="badge-name flex-1 text-sm mb-0"><span> {{ badge.badgeTitle }}</span> <span class="course-name flex-6 text-sm">
-            ({{badge.courseName}})
-          </span> </p>
+        <p class="badge-name flex-1 text-sm mb-0">
+          <span> {{ badge.badgeTitle }}</span>
+          <span class="course-name flex-6 text-sm"> ({{badge.courseName}})</span>
+          <br>
+          <span class="text-xs text-gray-500">{{badge.endDate | date:'dd-MMM-yyyy'}}</span>
+        </p>
 
         <button (click)="goToContent(badge)"
           class="continue-btn hidden sm:flex text-white text-xs px-4 py-1 rounded-full items-center gap-1">
