@@ -504,6 +504,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     // console.log('this.widgetContentService.currentMetaData', this.widgetContentService)
     // console.log('this.identifier', this.identifier)
+
+    // updated the noOfQuestionsPerSet variable based on compatibility level if it is less than 6
+    if (this.compatibilityLevel <= 6) {
+      this.noOfQuestionsPerSet = this.quizData?.maxQuestions || 0
+    }
   }
 
   /* tslint:disable */
