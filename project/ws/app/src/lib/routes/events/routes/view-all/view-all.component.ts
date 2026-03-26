@@ -58,6 +58,7 @@ export class ViewAllComponent {
     'Rajya Karmayogi Saptah',
     'Webinar',
   ]
+  selectedResourceType: string = 'All'
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -115,7 +116,8 @@ export class ViewAllComponent {
     })
     this.activateRoute.queryParamMap.subscribe(async (data: any) => {
       if (data.params && data.params.resourceType) {
-        this.selectedFilters['resourceType'] = [data.params.resourceType]
+        this.selectedResourceType = data.params.resourceType
+        this.selectedFilters['resourceType'] = [data.params.resourceType.toLowerCase()]
         if (data.params.courseId) {
           this.selectedFilters['courseId'] = [data.params.courseId]
           try {
@@ -135,7 +137,7 @@ export class ViewAllComponent {
         this.searchControl.setValue(null)
       }
     })
-    this.titles.push({ title: _.get(this.selectedFilters, 'resourceType[0]', 'All'), url: `none`, icon: '' },)
+    this.titles.push({ title: this.selectedResourceType, url: `none`, icon: '' },)
     this.fetchData()
   }
 

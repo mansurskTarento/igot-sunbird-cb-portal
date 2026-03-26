@@ -40,7 +40,7 @@ export namespace NSSearch {
     locale?: string[]
     pageNo?: number
     pageSize?: number
-    filters?: ISearchV6Filters[]
+    filters?: any
     isStandAlone?: boolean
     didYouMean?: boolean
     request?: ISearchV6Request
