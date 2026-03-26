@@ -37,7 +37,9 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
     /* tslint:enabel */
     this.eventData = this.route.snapshot.data['content'].data
     this.pageConfigData = this.route.snapshot.data['pageData'] && this.route.snapshot.data['pageData'].data || {}
-    if (this.pageConfigData && this.pageConfigData.fireUpdate) {
+    if (this.pageConfigData && this.pageConfigData.fireUpdateConfig) {
+      this.rateToFire = this.eventService.getRateToFire(this.eventData.resourceType, this.pageConfigData)
+    } else if (this.pageConfigData && this.pageConfigData.fireUpdate) {
       this.rateToFire = this.pageConfigData.fireUpdate
     }
     this.route.params.subscribe(params => {

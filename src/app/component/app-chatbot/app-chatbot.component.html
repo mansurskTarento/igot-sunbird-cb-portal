@@ -209,7 +209,7 @@
             </div>
           </div>
           <!-- //NOSONAR -->
-          <div *ngIf="!enableSupportAI" class="info br-bl padding-top-xs"
+          <div *ngIf="enableInformationTab && !enableSupportAI" class="info br-bl padding-top-xs"
             [ngClass]="{active: currentFilter === 'information'}" (click)="toggleFilter('information')">
             <div class="info-icon">
               <mat-icon>info</mat-icon>
@@ -219,7 +219,7 @@
             </div>
           </div>
           <!-- //NOSONAR -->
-          <div *ngIf="!enableSupportAI" class="info br-br padding-top-xs"
+          <div *ngIf="enableIssuesTab && !enableSupportAI" class="info br-br padding-top-xs"
             [ngClass]="{active: currentFilter === 'issue'}" (click)="toggleFilter('issue')">
             <div class="info-icon">
               <mat-icon>warning</mat-icon>
