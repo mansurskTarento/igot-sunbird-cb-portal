@@ -106,14 +106,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)
       this.currentFilter = 'information'
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
       ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.informationTab && this.configSvc.iGOTAIConfig?.informationTab?.all) {
@@ -126,15 +126,10 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'information'
       }
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
-      ) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
-      }
+
+
+
+
 
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
@@ -169,6 +164,17 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.enableSupportAI = true
         this.currentFilter = 'support-ai'
       }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
 
       if (this.enableSupportAI || this.enableIGOTAIFlag) {
         this.faqChatBotDisable = true
@@ -217,15 +223,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.userDesignation = this.userInfo?.professionalDetails[0]['designation']?.trim()
       }
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
         if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
@@ -249,14 +246,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         }
       }
 
-      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
       ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.informationTab && this.configSvc.iGOTAIConfig?.informationTab?.all) {
@@ -269,15 +266,30 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'information'
       }
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
+      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+
+      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
       ) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
       }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
+
+
+
 
 
       if (this.enableSupportAI || this.enableIGOTAIFlag) {
@@ -386,15 +398,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       //   this.currentFilter = this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig.iGOTAI ? 'sarthi' : 'information'
       // }
       this.currentFilter = 'information'
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      }
+
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
         if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
@@ -418,14 +422,14 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         }
       }
 
-      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
       ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
+        this.enableIssuesTab = true
+        this.currentFilter = 'issue'
       }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.informationTab && this.configSvc.iGOTAIConfig?.informationTab?.all) {
@@ -438,15 +442,29 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.currentFilter = 'information'
       }
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.issuesTab?.forOrg?.includes(this.rootOrgId)
+      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
       ) {
-        this.enableIssuesTab = true
-        this.currentFilter = 'issues'
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
       }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
+
+
+
 
 
       this.expanded = false
@@ -972,23 +990,47 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   }
 
   getFooterClass() {
+    // if (this.enableSupportAI && this.enableIGOTAIFlag) {
+    //   this.footerClassName = 'cb-footer-with-support-ai'
+    // } else if (!this.enableSupportAI && this.enableIGOTAIFlag && !this.enableInformationTab && !this.enableIssuesTab) {
+    //   this.footerClassName = 'cb-footer-with-ai-only'
+    // } else if (!this.enableSupportAI && this.enableIGOTAIFlag && this.enableInformationTab && !this.enableIssuesTab) {
+    //   this.footerClassName = 'cb-footer-with-support-ai'
+    // } else if (!this.enableSupportAI && this.enableIGOTAIFlag && !this.enableInformationTab && this.enableIssuesTab) {
+    //   this.footerClassName = 'cb-footer-with-support-ai'
+    // } else if (!this.enableSupportAI && this.enableIGOTAIFlag && this.enableInformationTab && this.enableIssuesTab) {
+    //   this.footerClassName = 'cb-footer-with-ai'
+    // } else if (!this.enableSupportAI && this.enableIGOTAIFlag) {
+    //   this.footerClassName = 'cb-footer-with-ai'
+    // } else if (this.enableSupportAI && !this.enableIGOTAIFlag) {
+    //   this.footerClassName = 'cb-footer-with-ai-support-only'
+    // } else if (!this.enableSupportAI && !this.enableIGOTAIFlag) {
+    //   this.footerClassName = 'cb-footer'
+    // }
+
+
     if (this.enableSupportAI && this.enableIGOTAIFlag) {
       this.footerClassName = 'cb-footer-with-support-ai'
-    } else if (!this.enableSupportAI && this.enableIGOTAIFlag && !this.enableInformationTab && !this.enableIssuesTab) {
-      this.footerClassName = 'cb-footer-with-ai-only'
-    } else if (!this.enableSupportAI && this.enableIGOTAIFlag && this.enableInformationTab && !this.enableIssuesTab) {
-      this.footerClassName = 'cb-footer-with-support-ai'
-    } else if (!this.enableSupportAI && this.enableIGOTAIFlag && !this.enableInformationTab && this.enableIssuesTab) {
-      this.footerClassName = 'cb-footer-with-support-ai'
-    } else if (!this.enableSupportAI && this.enableIGOTAIFlag && this.enableInformationTab && this.enableIssuesTab) {
-      this.footerClassName = 'cb-footer-with-ai'
-    } else if (!this.enableSupportAI && this.enableIGOTAIFlag) {
-      this.footerClassName = 'cb-footer-with-ai'
-    } else if (this.enableSupportAI && !this.enableIGOTAIFlag) {
+
+    } else if (this.enableSupportAI) {
+      // Only IGOT AI enabled (Support AI OFF)
+      if (!this.enableInformationTab && !this.enableIssuesTab) {
+        this.footerClassName = 'cb-footer-with-ai-only'
+      } else if (this.enableInformationTab && this.enableIssuesTab) {
+        this.footerClassName = 'cb-footer-with-ai'
+      } else {
+        this.footerClassName = 'cb-footer-with-support-ai'
+      }
+
+    } else if (this.enableSupportAI) {
       this.footerClassName = 'cb-footer-with-ai-support-only'
-    } else if (!this.enableSupportAI && !this.enableIGOTAIFlag) {
+
+    } else {
       this.footerClassName = 'cb-footer'
     }
   }
+
+
+
 
 }
