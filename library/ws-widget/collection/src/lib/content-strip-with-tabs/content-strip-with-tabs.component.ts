@@ -569,9 +569,9 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     return new Promise<any>((resolve, reject) => {
       if (request && request.searchV6) {
         if (request.searchV6 && request.searchV6.request && request.searchV6.request.filters && request.searchV6.request.filters.contentType === 'Event') {
-          const today = moment().add(5, 'hours').add(30, 'minutes').format('YYYY-MM-DD')
-          request.searchV6.request.filters.startDate = { ">=": today }
-          request.searchV6.request.filters.endDate = { "<=": today }
+          const today = moment().format('YYYY-MM-DD')
+          request.searchV6.request.filters.startDate = { ">=": [today] }
+          request.searchV6.request.filters.endDate = { "<=": [today] }
         }
         this.contentSvc.searchV6(request.searchV6).subscribe(results => {
           const showViewMore = Boolean(
