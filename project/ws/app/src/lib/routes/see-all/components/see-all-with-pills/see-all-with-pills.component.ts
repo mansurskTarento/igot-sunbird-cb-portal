@@ -877,7 +877,12 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         }
         this.enrollSvc.fetchExternalEnrollmentData(currentPillFromMap.request.payload).subscribe((res: any) => {
           if (res && res?.result && res?.result?.courses && res?.result?.courses?.length) {
-            courses = [...courses, ...res?.result?.courses.filter((course: any) => course && course?.content != null)]
+            courses = [
+              ...courses,
+              ...res?.result?.courses.filter((course: any) =>
+                course && course?.content && Object.keys(course?.content)?.length > 0
+              )
+            ]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         }, (_err: any) => {
