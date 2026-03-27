@@ -821,12 +821,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             const formContextList: any[] = []
             const formRefMap: Record<string, any> = {} // contextId -> course reference map
 
-            // Build formBody and maintain reference map - with null checks for course.content
+
             for (const course of res.result.courses) {
-              // Skip courses with null or undefined content
-              if (!course || !course.content) {
-                continue
-              }
               const content = course.content
               if (content?.completionSurveyLink && content?.identifier) {
                 const sID = content.completionSurveyLink.split('surveys/')
@@ -877,38 +873,24 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         })
       ).subscribe((res: any) => {
         if (res && res.result && res.result.courses && res.result.courses.length) {
-          // Filter out courses with null content to prevent errors downstream
-          const validCourses = res?.result?.courses.filter((c: any) => c && c?.content)
-          courses = [...courses, ...validCourses]
+          courses = [...courses, ...res?.result?.courses]
         }
-        // Use HttpClient directly instead of enrollSvc to bypass the bug in utils package
-        // The utils package's fetchExternalEnrollmentData doesn't check for null content
-        this.fetchExternalEnrollmentDataWithNullCheck(currentPillFromMap.request.payload).subscribe((res: any) => {
+        this.enrollSvc.fetchExternalEnrollmentData(currentPillFromMap.request.payload).subscribe((res: any) => {
           if (res && res?.result && res?.result?.courses && res?.result?.courses?.length) {
-            // Filter out courses with null content to prevent errors downstream
-            const validExtCourses = res?.result?.courses.filter((c: any) => c && c?.content)
-            courses = [...courses, ...validExtCourses]
+            courses = [...courses, ...res?.result?.courses.filter((course: any) => course && course?.content != null)]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         }, (_err: any) => {
-          // Always call formatNewEnrollmentData with whatever courses we have
-          this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
-        })
-      }, (_err: any) => {
-        // On error, still try to fetch external enrollment data
-        this.fetchExternalEnrollmentDataWithNullCheck(currentPillFromMap.request.payload).subscribe(
-          (extRes: any) => {
-            if (extRes && extRes?.result && extRes?.result?.courses && extRes?.result?.courses?.length) {
-              const validExtCourses = extRes?.result?.courses.filter((c: any) => c && c?.content)
-              courses = [...courses, ...validExtCourses]
-            }
-            this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
-          },
-          (_extErr: any) => {
-            // Both failed - format with whatever data we have
+          if (courses && courses?.length) {
+            courses = [...courses]
             this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
           }
-        )
+        })
+      }, (_err: any) => {
+        if (courses && courses?.length) {
+          courses = [...courses]
+          this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
+        }
       })
     }
   }
@@ -937,52 +919,11 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     }
   }
 
-  // Custom method to fetch external enrollment data with null checks
-  // Wraps the utils package's fetchExternalEnrollmentData with error handling
-  // The utils service may throw "Cannot set properties of null" error when content is null
-  fetchExternalEnrollmentDataWithNullCheck(payload: any) {
-    return this.enrollSvc.fetchExternalEnrollmentData(payload).pipe(
-      map((extRes: any) => {
-        if (extRes && extRes?.result && extRes?.result?.courses) {
-          extRes?.result?.courses.forEach((ele: any) => {
-            // Additional null checks for safety
-            if (ele && !ele?.content) {
-              ele.content = {}
-            }
-            if (ele && ele?.content) {
-              ele['completionPercentage'] = ele['completionpercentage']
-              ele['content']['issuedCertificates'] = ele['issued_certificates'] || []
-              ele['lastContentAccessTime'] = ele.content && ele.content.lastUpdatedOn ? new Date(ele?.content?.lastUpdatedOn).getTime() : ''
-              ele['content']['organisation'] = ele.content && ele.content.contentPartner && ele?.content?.contentPartner?.contentPartnerName ? [ele?.content?.contentPartner?.contentPartnerName] : []
-              ele['content']['completionStatus'] = ele['completionpercentage'] < 100 ? 1 : 2
-              ele['content']['creatorLogo'] = ele['content']['contentPartner'] ? ele['content']['contentPartner']['link'] : ''
-            } else if (ele) {
-              // Handle case where content is null
-              ele['completionPercentage'] = ele['completionpercentage']
-              ele['content'] = { issuedCertificates: ele['issued_certificates'] || [] }
-              ele['lastContentAccessTime'] = ''
-            }
-          })
-        }
-        return extRes
-      }),
-      catchError((error) => {
-        console.error('Error fetching external enrollment data:', error)
-        return of({ result: { courses: [] } })
-      })
-    )
-  }
-
   formatNewEnrollmentData(strip: any, tabIndex: number, pillIndex: number, courses: any, _calculateParentStatus: any = true) {
     let content: any = []
     if (courses && courses.length) {
       content = courses.map((c: any) => {
-        // Skip courses with null or undefined content/event
-        if (!c) {
-          return null
-        }
-        const contentData = c?.content || c?.event || {}
-        const contentTemp: any = { ...contentData }
+        const contentTemp: any = c?.content || c?.event || {}
         contentTemp.completionPercentage = c.completionPercentage || c.progress || 0
         contentTemp.completionStatus = c.completionStatus || c.status || 0
         contentTemp.enrolledDate = c.enrolledDate || ''
@@ -993,20 +934,14 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         contentTemp.issuedCertificates = c.issuedCertificates || c.issued_certificates || []
         contentTemp.batchId = c.batchId || ''
         contentTemp.content = c.content || c.event || {}
-        // Safely set primaryCategory only if content exists
-        if (contentTemp?.content) {
-          contentTemp.content.primaryCategory = c?.content?.primaryCategory || c?.event?.resourceType || ''
-        } else {
-          contentTemp.content = {}
-          contentTemp.content.primaryCategory = ''
-        }
+        contentTemp.content.primaryCategory = c?.content && c?.content?.primaryCategory || c?.event && c?.event?.resourceType || ''
         contentTemp.cType = c.event ? 'event' : ''
         contentTemp.completedOn = c.completedOn || ''
         if (c.surveyCompletionStatus !== undefined) {
           contentTemp.surveyCompletionStatus = c.surveyCompletionStatus
         }
         return contentTemp
-      }).filter((item: any) => item !== null) // Filter out null items
+      })
     }
 
     let sortedContent: any = (content || []).sort((a: any, b: any) => {
