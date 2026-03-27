@@ -228,7 +228,7 @@ export class NotificationsService {
       this.router.navigateByUrl('/badges')
     }
     else if (notification.sub_category === 'AWARD_BADGES_REMINDER') {
-      this.router.navigateByUrl(`/app/toc/${notification?.message?.data?.[0]?.id}`)
+      this.router.navigateByUrl(`/app/toc/${notification?.message?.data?.[0]?.courseId}`)
     }
     else if (notification.category === 'LEARN') {
       this.handleTocRedirection(notification, snackBar)
