@@ -202,7 +202,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
             let currentDateTimeStamp = new Date().getTime()
             if (currentDateTimeStamp >= eventDateTimeStamp) {
-              if (timeSpent && timeSpent >= this.rateToFire) {
+              if (timeSpent && timeSpent >= this.rateToFire || timeSpent >= this.eventData.duration) {
                 this.startInterval(timeSpent, lastTimeAccessed)
               }
               this.intervalStarted = true
