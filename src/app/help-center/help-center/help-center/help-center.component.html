@@ -62,7 +62,7 @@
                         <h2 class="section__title">Video Tutorials</h2>
                     </div>
                     <div class="section__header-right">
-                        <span class="section__badge">{{ allVideos.length }} videos</span>
+                        <span class="section__badge">{{ filteredVideos.length }} videos</span>
                         <span class="material-icons section__chevron" [class.section__chevron--open]="videoSectionOpen">
                             {{ videoSectionOpen ? 'expand_less' : 'chevron_right' }}
                         </span>
@@ -130,7 +130,7 @@
                         <h2 class="section__title">How-to Guides</h2>
                     </div>
                     <div class="section__header-right">
-                        <span class="section__badge">{{ allGuides.length }} guides</span>
+                        <span class="section__badge">{{ filteredGuides.length }} guides</span>
                         <span class="material-icons section__chevron"
                             [class.section__chevron--open]="guidesSectionOpen">
                             {{ guidesSectionOpen ? 'expand_less' : 'chevron_right' }}
@@ -198,7 +198,7 @@
                         <h2 class="section__title">Frequently Asked Questions</h2>
                     </div>
                     <div class="section__header-right">
-                        <span class="section__badge">{{ allFaqs.length }} FAQs</span>
+                        <span class="section__badge">{{ filteredFaqs.length }} FAQs</span>
                         <span class="material-icons section__chevron" [class.section__chevron--open]="faqSectionOpen">
                             {{ faqSectionOpen ? 'expand_less' : 'chevron_right' }}
                         </span>
