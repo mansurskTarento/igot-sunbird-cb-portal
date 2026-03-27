@@ -199,18 +199,49 @@ export class HelpCenterComponent implements OnInit {
   }
 
   getVideoCount(catId: string): number {
-    if (catId === 'all') return this.allVideos.length
-    return this.allVideos.filter((v) => v.category === catId).length
+    let list =
+      catId === 'all'
+        ? this.allVideos
+        : this.allVideos.filter(v => v.category === catId)
+
+    if (!this.searchQuery.trim()) return list.length
+
+    const q = this.searchQuery.toLowerCase()
+
+    return list.filter(v => v.title.toLowerCase().includes(q)).length
   }
 
   getGuideCount(catId: string): number {
-    if (catId === 'all') return this.allGuides.length
-    return this.allGuides.filter((g) => g.category === catId).length
+    let list =
+      catId === 'all'
+        ? this.allGuides
+        : this.allGuides.filter(g => g.category === catId)
+
+    if (!this.searchQuery.trim()) return list.length
+
+    const q = this.searchQuery.toLowerCase()
+
+    return list.filter(g =>
+      g.title.toLowerCase().includes(q) ||
+      g.description.toLowerCase().includes(q) ||
+      (g.titleHindi && g.titleHindi.toLowerCase().includes(q))
+    ).length
   }
 
   getFaqCount(catId: string): number {
-    if (catId === 'all') return this.allFaqs.length
-    return this.allFaqs.filter((f) => f.category === catId).length
+    let list =
+      catId === 'all'
+        ? this.allFaqs
+        : this.allFaqs.filter(f => f.category === catId)
+
+    if (!this.searchQuery.trim()) return list.length
+
+    const q = this.searchQuery.toLowerCase()
+
+    return list.filter(f =>
+      f.question.toLowerCase().includes(q) ||
+      f.answer.toLowerCase().includes(q)
+    ).length
   }
 
   get allGuides(): HowToGuide[] {
