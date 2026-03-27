@@ -202,7 +202,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
             let currentDateTimeStamp = new Date().getTime()
             if (currentDateTimeStamp >= eventDateTimeStamp) {
-              if (timeSpent && timeSpent % this.rateToFire === 0) {
+              if (timeSpent && timeSpent >= this.rateToFire) {
                 this.startInterval(timeSpent, lastTimeAccessed)
               }
               this.intervalStarted = true
@@ -271,6 +271,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
       this.widgetData,
       NsContent.EMimeTypes.MP4,
       '200px', // height
+      this.rateToFire, // rateToFire
     )
     this.player = initObj.player
     this.dispose = initObj.dispose
