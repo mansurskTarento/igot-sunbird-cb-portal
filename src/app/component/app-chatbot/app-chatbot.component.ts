@@ -132,6 +132,28 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
 
 
 
+
+
+      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        this.enableSupportAI = true
+        this.currentFilter = 'support-ai'
+      }
+
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
         if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
           this.enableIGOTAIFlag = true
@@ -153,26 +175,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
           this.enableIGOTAIFlag = true
           this.currentFilter = 'sarthi'
         }
-      }
-
-      if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.fromTopNavHelp && this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      }
-
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.forOrg && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.supportAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        this.enableSupportAI = true
-        this.currentFilter = 'support-ai'
       }
 
 
@@ -224,27 +226,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       }
 
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig.iGOTAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-      }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
         this.enableIssuesTab = true
@@ -285,6 +266,28 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       ) {
         this.enableSupportAI = true
         this.currentFilter = 'support-ai'
+      }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig.iGOTAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
       }
 
 
@@ -400,27 +403,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       this.currentFilter = 'information'
 
 
-      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length
-        && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
-      ) {
-        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
-          this.enableIGOTAIFlag = true
-          this.currentFilter = 'sarthi'
-        }
-      }
 
       if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.issuesTab && this.configSvc.iGOTAIConfig?.issuesTab?.all) {
         this.enableIssuesTab = true
@@ -461,6 +443,29 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
         this.enableSupportAI = true
         this.currentFilter = 'support-ai'
       }
+
+      if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.all) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+      } else if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.iGOTAI && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.length
+        && this.configSvc.iGOTAIConfig?.iGOTAI?.forOrg?.includes(this.rootOrgId)
+      ) {
+        if (this.configSvc.iGOTAIConfig?.iGOTAI?.allDesignation) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+        else if (this.configSvc.iGOTAIConfig?.iGOTAI?.forDesignation?.includes(this.userDesignation)) {
+          this.enableIGOTAIFlag = true
+          this.currentFilter = 'sarthi'
+        }
+      }
+
 
 
 
@@ -1009,15 +1014,24 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     // }
 
 
-    if (this.enableSupportAI && this.enableIGOTAIFlag) {
-      this.footerClassName = 'cb-footer-with-support-ai'
+    if (this.enableSupportAI && this.enableIGOTAIFlag && !this.enableInformationTab && !this.enableIssuesTab) {
+      this.footerClassName = 'cb-footer-with-support-ai-two-tab'
 
     } else if (this.enableSupportAI) {
       // Only IGOT AI enabled (Support AI OFF)
       if (!this.enableInformationTab && !this.enableIssuesTab) {
         this.footerClassName = 'cb-footer-with-ai-only'
       } else if (this.enableInformationTab && this.enableIssuesTab) {
-        this.footerClassName = 'cb-footer-with-ai'
+        if (this.enableIGOTAIFlag) {
+          this.footerClassName = 'cb-footer-with-ai'
+        } else {
+          this.footerClassName = 'cb-footer-with-ai-support'
+        }
+
+      } else if (this.enableInformationTab) {
+        this.footerClassName = 'cb-footer-with-support-ai-two-tab'
+      } else if (this.enableIssuesTab) {
+        this.footerClassName = 'cb-footer-with-support-ai-two-tab'
       } else {
         this.footerClassName = 'cb-footer-with-support-ai'
       }
