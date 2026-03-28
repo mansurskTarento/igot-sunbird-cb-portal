@@ -65,7 +65,7 @@ export class HelpCenterComponent implements OnInit {
   contentTabs = [
     { id: 'all' as ContentTab, label: 'All Content', icon: 'grid_view' },
     { id: 'videos' as ContentTab, label: 'Video Tutorials', icon: 'play_circle_filled' },
-    { id: 'guides' as ContentTab, label: 'How-to Guides', icon: 'menu_book' },
+    // { id: 'guides' as ContentTab, label: 'How-to Guides', icon: 'menu_book' },
     { id: 'faqs' as ContentTab, label: 'FAQs', icon: 'help_outline' },
   ];
 
