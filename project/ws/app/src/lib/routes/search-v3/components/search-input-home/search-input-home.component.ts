@@ -952,13 +952,13 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   openSearchTemplateF() {
     this.openSearchTemplate = true;
     if (!this.hasReadRecentBeenCalled) {
-      this.readRecent();
-      this.hasReadRecentBeenCalled = true;
+    //   this.readRecent();
+      this.hasReadRecentBeenCalled = false;
     }
-
-    if(this.openSearchTemplate) {
-       this.readRecent();
-    }
+    
+    // if(this.openSearchTemplate) {
+    //    this.readRecent();
+    // }
     if (!this.selectedSearchCategory) {
       // this.searchFromQuery(this.responseNlpQuery);
     }
