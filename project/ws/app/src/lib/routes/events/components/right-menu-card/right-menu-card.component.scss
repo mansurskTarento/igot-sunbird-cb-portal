@@ -45,7 +45,7 @@
   width: 350px;
   border-radius: 12px;
   padding: 0;
-  z-index: 9999;
+  z-index: 1000;
 
   @include breakpoint-xs {
     position: relative;
@@ -224,7 +224,7 @@ button.ws-mat-primary-background {
     border-radius: 12px;
     padding: 0;
     margin-left: 10%;
-    z-index: 9999;
+    z-index: 1000;
   }
 }
 

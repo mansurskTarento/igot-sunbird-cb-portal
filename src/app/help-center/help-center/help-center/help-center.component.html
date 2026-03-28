@@ -12,11 +12,11 @@
             </div>
             <div class="hero__content">
                 <h1 class="hero__title">Welcome to iGOT Help Center</h1>
-                <p class="hero__subtitle">Search guides, video tutorials, and documentation</p>
+                <p class="hero__subtitle">Search video tutorials, and documentation</p>
                 <div class="hero__search">
                     <span class="hero__search-icon material-icons">search</span>
                     <input type="text" class="hero__search-input"
-                        placeholder="Search articles, videos, guides &amp; document content..." [value]="searchQuery"
+                        placeholder="Search video tutorials and documentation..." [value]="searchQuery"
                         (input)="onSearch($event)" />
                     <span *ngIf="searchQuery" class="hero__clear-icon material-icons" (click)="clearSearch()">
                         close
@@ -123,7 +123,7 @@
             </section>
 
             <!-- -------- HOW-TO GUIDES -------- -->
-            <section class="section" *ngIf="showGuides  && (!searchQuery || hasAnySearchResult)">
+            <!-- <section class="section" *ngIf="showGuides  && (!searchQuery || hasAnySearchResult)">
                 <div class="section__header" (click)="toggleSection('guides')">
                     <div class="section__header-left">
                         <span class="material-icons section__icon section__icon--orange">menu_book</span>
@@ -140,7 +140,6 @@
 
                 <div class="section__body" *ngIf="guidesSectionOpen">
                     <div class="section__layout">
-                        <!-- Category Sidebar -->
                         <aside class="sidebar">
                             <p class="sidebar__label">BROWSE BY TOPIC</p>
                             <ul class="sidebar__list">
@@ -156,8 +155,6 @@
                                 </li>
                             </ul>
                         </aside>
-
-                        <!-- Guides Grid -->
                         <div class="guides-grid" *ngIf="filteredGuides.length > 0; else noGuides">
                             <div class="guide-card" *ngFor="let guide of filteredGuides" (click)="openPDF(guide)">
                                 <div class="guide-card__preview">
@@ -188,68 +185,80 @@
                         </ng-template>
                     </div>
                 </div>
-            </section>
+            </section> -->
 
             <!-- -------- FAQs -------- -->
-            <section class="section" *ngIf="showFaqs  && (!searchQuery || hasAnySearchResult)">
-                <div class="section__header" (click)="toggleSection('faq')">
-                    <div class="section__header-left">
-                        <span class="material-icons section__icon section__icon--orange">help_outline</span>
-                        <h2 class="section__title">Frequently Asked Questions</h2>
-                    </div>
-                    <div class="section__header-right">
-                        <span class="section__badge">{{ filteredFaqs.length }} FAQs</span>
-                        <span class="material-icons section__chevron" [class.section__chevron--open]="faqSectionOpen">
-                            {{ faqSectionOpen ? 'expand_less' : 'chevron_right' }}
-                        </span>
-                    </div>
-                </div>
+            <ng-container *ngIf="(activeRoleTab !== 'content-building');else noFaqForContent">
+                <section class="section" *ngIf="showFaqs  &&  (!searchQuery || hasAnySearchResult)">
 
-                <div class="section__body" *ngIf="faqSectionOpen">
-                    <div class="section__layout">
-                        <!-- Category Sidebar -->
-                        <aside class="sidebar">
-                            <p class="sidebar__label">BROWSE BY TOPIC</p>
-                            <ul class="sidebar__list">
-                                <li *ngFor="let cat of faqCategories" class="sidebar__item"
-                                    [class.sidebar__item--active]="activeFaqCategory === cat.id"
-                                    (click)="activeFaqCategory = cat.id">
-                                    <span class="material-icons sidebar__icon">
-                                        {{ cat.id === 'all' ? 'grid_view' : 'radio_button_unchecked' }}
-                                    </span>
-                                    <span class="sidebar__label-text">{{ cat.label }}</span>
-                                    <span class="sidebar__count" *ngIf="cat.id !== 'all'">{{ getFaqCount(cat.id)
-                                        }}</span>
-                                </li>
-                            </ul>
-                        </aside>
-
-                        <!-- FAQ Accordion -->
-                        <div class="faq-list" *ngIf="filteredFaqs.length > 0; else noFaqs">
-                            <div class="faq-item" *ngFor="let faq of filteredFaqs" [class.faq-item--open]="faq.isOpen">
-                                <div class="faq-item__header" (click)="toggleFaq(faq)">
-                                    <span class="material-icons faq-item__chevron">
-                                        {{ faq.isOpen ? 'expand_less' : 'expand_more' }}
-                                    </span>
-                                    <span class="faq-item__question">{{ faq.question }}</span>
-                                </div>
-                                <div class="faq-item__tag-row">
-                                    <span class="faq-item__tag">{{ faq.tag }}</span>
-                                </div>
-                                <div class="faq-item__answer" *ngIf="faq.isOpen">
-                                    <p [innerHTML]="faq.answer"></p>
-                                </div>
-                            </div>
+                    <div class="section__header" (click)="toggleSection('faq')">
+                        <div class="section__header-left">
+                            <span class="material-icons section__icon section__icon--orange">help_outline</span>
+                            <h2 class="section__title">Frequently Asked Questions</h2>
                         </div>
-                        <ng-template #noFaqs>
-                            <div class="empty-state">
-                                <h2>No FAQs available yet</h2>
-                                <p>We're working on adding FAQs for this section. Please check back soon!</p>
-                            </div>
-                        </ng-template>
+                        <div class="section__header-right">
+                            <span class="section__badge">{{ filteredFaqs.length }} FAQs</span>
+                            <span class="material-icons section__chevron"
+                                [class.section__chevron--open]="faqSectionOpen">
+                                {{ faqSectionOpen ? 'expand_less' : 'chevron_right' }}
+                            </span>
+                        </div>
                     </div>
+
+                    <div class="section__body" *ngIf="faqSectionOpen">
+                        <div class="section__layout">
+                            <!-- Category Sidebar -->
+                            <aside class="sidebar">
+                                <p class="sidebar__label">BROWSE BY TOPIC</p>
+                                <ul class="sidebar__list">
+                                    <li *ngFor="let cat of faqCategories" class="sidebar__item"
+                                        [class.sidebar__item--active]="activeFaqCategory === cat.id"
+                                        (click)="activeFaqCategory = cat.id">
+                                        <span class="material-icons sidebar__icon">
+                                            {{ cat.id === 'all' ? 'grid_view' : 'radio_button_unchecked' }}
+                                        </span>
+                                        <span class="sidebar__label-text">{{ cat.label }}</span>
+                                        <span class="sidebar__count" *ngIf="cat.id !== 'all'">{{ getFaqCount(cat.id)
+                                            }}</span>
+                                    </li>
+                                </ul>
+                            </aside>
+
+                            <!-- FAQ Accordion -->
+                            <div class="faq-list" *ngIf="filteredFaqs.length > 0; else noFaqs">
+                                <div class="faq-item" *ngFor="let faq of filteredFaqs"
+                                    [class.faq-item--open]="faq.isOpen">
+                                    <div class="faq-item__header" (click)="toggleFaq(faq)">
+                                        <span class="material-icons faq-item__chevron">
+                                            {{ faq.isOpen ? 'expand_less' : 'expand_more' }}
+                                        </span>
+                                        <span class="faq-item__question">{{ faq.question }}</span>
+                                    </div>
+                                    <div class="faq-item__tag-row">
+                                        <!-- <span class="faq-item__tag">{{ faq.tag }}</span> -->
+                                    </div>
+                                    <div class="faq-item__answer" *ngIf="faq.isOpen">
+                                        <p [innerHTML]="faq.answer"></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <ng-template #noFaqs>
+                                <div class="empty-state">
+                                    <h2>No FAQs available yet</h2>
+                                    <p>We're working on adding FAQs for this section. Please check back soon!</p>
+                                </div>
+                            </ng-template>
+                        </div>
+                    </div>
+
+                </section>
+            </ng-container>
+            <ng-template #noFaqForContent>
+                <div class="empty-state" *ngIf="activeContentTab === 'faqs'">
+                    <h2>No FAQs available yet</h2>
+                    <p>We're working on adding FAQs for this section. Please check back soon!</p>
                 </div>
-            </section>
+            </ng-template>
 
 
 
