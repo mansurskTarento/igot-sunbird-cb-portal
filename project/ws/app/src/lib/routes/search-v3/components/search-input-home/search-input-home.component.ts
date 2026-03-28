@@ -92,7 +92,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },
-    { label: 'All', value: SearchCategory.All, icon: '' },
+    // AFTER NLW NEED TO ENABLE
+    // { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;
@@ -950,6 +951,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   openSearchTemplateF() {
+    // AFTER NLW NEED TO ENABLE
     this.openSearchTemplate = true;
     if (!this.hasReadRecentBeenCalled) {
     //   this.readRecent();

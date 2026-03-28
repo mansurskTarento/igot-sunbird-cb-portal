@@ -138,12 +138,16 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
 
   initializeTitles() {
     this.titles = [
+      // AFTER NLW NEED TO ENABLE
+      // {
+      //   title: 'All Providers', url: '/app/seeAll',
+      //   queryParams: {
+      //     key: 'ciosContent',
+      //     tabSelected: 'Providers'
+      //   }
+      // },
       {
-        title: 'All Providers', url: '/app/seeAll',
-        queryParams: {
-          key: 'ciosContent',
-          tabSelected: 'Providers'
-        }
+        title: 'All Providers', url: 'none',
       },
       { title: this.contentName, url: 'none', icon: '' }
     ]
