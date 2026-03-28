@@ -35,12 +35,13 @@ export class CourseCompletionDialogComponent implements OnInit {
 
   ngOnInit() {
     const badgeDetails = this.data?.baseContentReadData?.badgeDetails_v1
-
     if (badgeDetails && badgeDetails.length) {
       const badge = badgeDetails[0]
-
       const now = Date.now()
-
+      if (badge?.criteria == "partialRandomCompletion") {
+        this.badge = null
+        return
+      }
       if (!badge.badgeEarningDateTime || badge.badgeEarningDateTime > now) {
         this.badge = badge
       } else {
