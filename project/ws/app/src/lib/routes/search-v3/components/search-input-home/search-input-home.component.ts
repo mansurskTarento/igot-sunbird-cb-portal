@@ -261,46 +261,52 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateRecentSearchQuery(query: any) {
-    if (query) {
-      const reqBody = {
-        nlpSearchQuery: query.nlp_search_query,
-        searchQuery:query.search_query,
-        searchCategory: query.search_category[0]
-      }
-      await this.searchV3Service.recentCreate(reqBody).then(() => {
-        this.processRecentSearchText(query);
-      }).catch(() => {
-        this.processRecentSearchText(query);
-      });
-    } else {
-      this.processRecentSearchText(query);
-    }
+
+    // AFTER NLW NEED TO ENABLE AND REMOVE LOG
+    console.log('query to create recent search', query)
+    // if (query) {
+    //   const reqBody = {
+    //     nlpSearchQuery: query.nlp_search_query,
+    //     searchQuery:query.search_query,
+    //     searchCategory: query.search_category[0]
+    //   }
+    //   await this.searchV3Service.recentCreate(reqBody).then(() => {
+    //     this.processRecentSearchText(query);
+    //   }).catch(() => {
+    //     this.processRecentSearchText(query);
+    //   });
+    // } else {
+    //   this.processRecentSearchText(query);
+    // }
   }
 
-  async createRecent(data: any) {
-    const reqBody = {
-      nlpSearchQuery: data,
-      searchQuery: this.queryControl.value,
-      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
-    }
+  async createRecent(_data: any) {
+
+    // AFTER NLW NEED TO ENABLE 
+    // const reqBody = {
+    //   nlpSearchQuery: data,
+    //   searchQuery: this.queryControl.value,
+    //   searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+    // }
    
-    await this.searchV3Service.recentCreate(
-      reqBody
-    ).catch();
+    // await this.searchV3Service.recentCreate(
+    //   reqBody
+    // ).catch();
 
   }
 
   readRecent() {
-    return this.searchV3Service.recentRead().subscribe((res: any) => {
-      if (res) {
-        // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
-        if( res.result.searchQueries &&  res.result.searchQueries) {
-          this.recentSearches = res?.result?.searchQueries
-        } else {
-          this.recentSearches = ''
-        }
-      }
-    })
+     // AFTER NLW NEED TO ENABLE 
+    // return this.searchV3Service.recentRead().subscribe((res: any) => {
+    //   if (res) {
+    //     // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
+    //     if( res.result.searchQueries &&  res.result.searchQueries) {
+    //       this.recentSearches = res?.result?.searchQueries
+    //     } else {
+    //       this.recentSearches = ''
+    //     }
+    //   }
+    // })
   }
 
   goToSearchItem(query: any) {
