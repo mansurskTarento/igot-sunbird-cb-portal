@@ -40,9 +40,9 @@ export const VIDEO_CATEGORIES: Category[] = [
   { id: 'all', label: 'All Categories', icon: 'grid', count: 8 },
   { id: 'profie_account', label: 'Profie & Account', icon: 'person', count: 3 },
   { id: 'registration_login', label: 'Registration & Login', icon: 'login', count: 2 },
-  { id: 'certificates', label: 'Certificates & DigiLocker', icon: 'workspace_premium', count: 1 },
+  // { id: 'certificates', label: 'Certificates & DigiLocker', icon: 'workspace_premium', count: 1 },
   { id: 'mobile_app', label: 'Mobile App (Android & iOS)', icon: 'smartphone', count: 3 },
-  { id: 'discussion_community', label: 'Dicussion & Community', icon: 'forum', count: 1 },
+  // { id: 'discussion_community', label: 'Dicussion & Community', icon: 'forum', count: 1 },
 ]
 
 export const VIDEO_MDO_CATEGORIES: Category[] = [
