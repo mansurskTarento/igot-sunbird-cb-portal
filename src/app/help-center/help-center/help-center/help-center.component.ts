@@ -59,7 +59,7 @@ export class HelpCenterComponent implements OnInit {
   roleTabs = [
     { id: 'learner' as RoleTab, label: 'Learner', icon: 'school' },
     { id: 'mdo-leader' as RoleTab, label: 'MDO Leader/Admin', icon: 'badge' },
-    { id: 'content-building' as RoleTab, label: 'Content Building Platform', icon: 'computer' },
+    { id: 'content-building' as RoleTab, label: 'Content Partners', icon: 'computer' },
   ];
 
   contentTabs = [

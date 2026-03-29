@@ -685,11 +685,30 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.telemetryRaisedLibrary.emit(event)
   }
 
-  /** Start auto-slide for the NLW card */
+  /**
+   * Config-driven slides.
+   * Each entry: { type: 'banner', image?: string } or { type: 'content' }
+   * Falls back to [banner, content] when slides array is absent (backward compat).
+   */
+  get nlwSlides(): any[] {
+    if (this.nwlConfiguration?.slides?.length) {
+      return this.nwlConfiguration.slides
+    }
+    // Default: banner first, then content card
+    return [
+      { type: 'banner' },
+      { type: 'content' },
+    ]
+  }
+
+  /** Start auto-slide for the NLW card — skipped when only 1 slide */
   startNlwAutoSlide(): void {
+    if (this.nlwSlides.length <= 1) {
+      return
+    }
     const interval = (this.nwlConfiguration?.flipInterval || 5) * 1000
     this.nlwAutoSlideInterval = setInterval(() => {
-      this.nlwSlideIndex = this.nlwSlideIndex === 0 ? 1 : 0
+      this.nlwSlideIndex = (this.nlwSlideIndex + 1) % this.nlwSlides.length
       this.cdr.detectChanges()
     }, interval)
   }
@@ -703,6 +722,18 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       clearInterval(this.nlwAutoSlideInterval)
     }
     this.startNlwAutoSlide()
+  }
+
+  /** Navigate to the previous NLW slide */
+  prevNlwSlide(): void {
+    const prev = (this.nlwSlideIndex - 1 + this.nlwSlides.length) % this.nlwSlides.length
+    this.goToNlwSlide(prev)
+  }
+
+  /** Navigate to the next NLW slide */
+  nextNlwSlide(): void {
+    const next = (this.nlwSlideIndex + 1) % this.nlwSlides.length
+    this.goToNlwSlide(next)
   }
 
   ngOnDestroy(): void {
