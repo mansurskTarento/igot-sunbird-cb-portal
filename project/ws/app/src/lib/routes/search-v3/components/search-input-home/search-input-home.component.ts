@@ -260,10 +260,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateRecentSearchQuery(query: any) {
+  async updateRecentSearchQuery(_query: any) {
 
-    // AFTER NLW NEED TO ENABLE AND REMOVE LOG
-    console.log('query to create recent search', query)
+    // AFTER NLW NEED TO ENABLE
     // if (query) {
     //   const reqBody = {
     //     nlpSearchQuery: query.nlp_search_query,
