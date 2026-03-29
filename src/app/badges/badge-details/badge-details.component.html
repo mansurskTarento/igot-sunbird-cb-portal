@@ -56,6 +56,10 @@
       <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
     </div>
 
+    <div *ngIf="!data.earnedBadges?.length" class="empty-state flex flex-col items-center justify-center py-12 text-gray-500 text-sm">
+      You haven't earned any badges yet. Complete eligible courses to see them here.
+    </div>
+
     <div class="earned-badges-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
 
       <div
@@ -133,6 +137,10 @@
       <span class="panel-title font-semibold text-sm sm:text-base flex-1">Badge In Progress</span>
 
       <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
+    </div>
+
+    <div *ngIf="!data.inProgress?.length" class="empty-state flex flex-col items-center justify-center py-12 text-gray-500 text-sm">
+      You haven't started any courses yet. Once you begin learning, they will appear here.
     </div>
 
     <div class="badge-progress-list divide-y">

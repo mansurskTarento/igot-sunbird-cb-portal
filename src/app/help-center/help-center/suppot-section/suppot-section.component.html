@@ -17,16 +17,15 @@
       Still facing an issue?
       <span class="support-section__heading--accent">We're here to help!</span>
     </h2>
-    <p class="support-section__sub">Start with your state support team — they're closest to you.</p>
+    <!-- <p class="support-section__sub">Start with your state support team — they're closest to you.</p> -->
 
     <!-- ══════════════════════════════════════
                                  STATE SUPPORT CENTER PANEL
                             ══════════════════════════════════════ -->
     <!-- STATE PANEL -->
 
-    <div class="state-panel">
+    <!-- <div class="state-panel">
 
-      <!-- HEADER -->
       <div class="state-panel__header">
         <div class="state-panel__header-left">
           <div class="state-panel__icon-box">
@@ -39,16 +38,12 @@
             </div>
           </div>
         </div>
-
-        <!-- ✅ Angular binding -->
         <div class="state-panel__search-wrap">
           <span class="material-icons state-panel__search-icon">search</span>
           <input type="text" class="state-panel__search" placeholder="Search state or UT…"
             (input)="filterStateGrid($event.target.value)" />
         </div>
       </div>
-
-      <!-- REGION TABS -->
       <div class="state-panel__region-tabs">
         <button class="state-region-tab" [class.active]="activeRegion === 'all'"
           (click)="filterRegion('all')">All</button>
@@ -74,10 +69,10 @@
         <button class="state-region-tab" [class.active]="activeRegion === 'ut'"
           (click)="filterRegion('ut')">UTs</button>
       </div>
-
-      <!-- STATE GRID -->
       <div *ngIf="filteredStates.length > 0; else noStateResult" class="state-grid">
+
         <button class="state-tile" *ngFor="let state of filteredStates" (click)="openStateModal(state)">
+
           <div class="state-tile__name">{{ state }}</div>
 
           <div class="state-tile__count">
@@ -89,8 +84,6 @@
           </div>
         </button>
       </div>
-
-      <!-- NO RESULT -->
       <ng-template #noStateResult>
         <div class="state-panel__no-result">
           <span class="material-icons">search_off</span>
@@ -98,13 +91,13 @@
         </div>
       </ng-template>
 
-    </div>
-    <!-- Step hint -->
-    <div class="support-step-hint">
+    </div> -->
+
+    <!-- <div class="support-step-hint">
       <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
       <span style="color:#6b7280;font-size:.88rem">or Reach out to <strong style="color:#0d1b6e">National Help
           Desk</strong></span>
-    </div>
+    </div> -->
 
     <!-- Call Card -->
     <div class="call-card mt-5">
@@ -115,7 +108,7 @@
         <div class="call-card__info">
           <h3 class="call-card__title">National Help Desk - Call Us Directly</h3>
           <p class="call-card__desc">
-            Speak with our experts instantly — no wait, no tickets, just real-time help.
+            Connect with our experts for quick, real-time support.
           </p>
           <p class="call-card__hours">
             <span class="material-icons call-card__clock">schedule</span>
@@ -156,6 +149,8 @@
         <span class="material-icons ticket-card__cta-arrow">arrow_forward</span>
       </button>
     </div>
+
+
 
     <!-- Feature Pills -->
     <div class="support-section__features">
@@ -242,9 +237,9 @@
     <div class="sc-helpdesk-secondary">
       <span class="material-icons sc-helpdesk-secondary__icon">headset_mic</span>
       <span class="sc-helpdesk-secondary__text">Still need help?</span>
-      <a href="tel:+911124303726" class="sc-helpdesk-secondary__link">
+      <a href="tel:+919990141256" class="sc-helpdesk-secondary__link">
         <span class="material-icons" style="font-size:14px">phone</span>
-        +91 11 2430 3726
+        +91 9990141256
       </a>
     </div>
 
