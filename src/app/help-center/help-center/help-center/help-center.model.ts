@@ -40,9 +40,9 @@ export const VIDEO_CATEGORIES: Category[] = [
   { id: 'all', label: 'All Categories', icon: 'grid', count: 8 },
   { id: 'profie_account', label: 'Profie & Account', icon: 'person', count: 3 },
   { id: 'registration_login', label: 'Registration & Login', icon: 'login', count: 2 },
-  { id: 'certificates', label: 'Certificates & DigiLocker', icon: 'workspace_premium', count: 1 },
+  // { id: 'certificates', label: 'Certificates & DigiLocker', icon: 'workspace_premium', count: 1 },
   { id: 'mobile_app', label: 'Mobile App (Android & iOS)', icon: 'smartphone', count: 3 },
-  { id: 'discussion_community', label: 'Dicussion & Community', icon: 'forum', count: 1 },
+  // { id: 'discussion_community', label: 'Dicussion & Community', icon: 'forum', count: 1 },
 ]
 
 export const VIDEO_MDO_CATEGORIES: Category[] = [
@@ -109,14 +109,14 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     youtubeUrl: 'https://youtu.be/9advDLMfjZ8?si=bAUrPXvI08owkrxB',
     category: 'profie_account',
   },
-  {
-    id: '2',
-    title: 'Walkthrough video of Discuss Hub',
-    date: 'Mar 21, 2025',
-    thumbnail: 'https://img.youtube.com/vi/vV9Y00fWrdM/hqdefault.jpg',
-    youtubeUrl: 'https://youtu.be/vV9Y00fWrdM',
-    category: 'discussion_community',
-  },
+  // {
+  //   id: '2',
+  //   title: 'Walkthrough video of Discuss Hub',
+  //   date: 'Mar 21, 2025',
+  //   thumbnail: 'https://img.youtube.com/vi/vV9Y00fWrdM/hqdefault.jpg',
+  //   youtubeUrl: 'https://youtu.be/vV9Y00fWrdM',
+  //   category: 'discussion_community',
+  // },
   {
     id: '3',
     title: 'How to Register & Login at the iGOT Karmayogi platform',
@@ -141,14 +141,14 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     youtubeUrl: 'https://youtu.be/zHCJ2UlRG5o?si=XoQfvq8sjLOkWDt7',
     category: 'mobile_app',
   },
-  {
-    id: '6',
-    title: 'How to access iGOT certificate on Digilocker',
-    date: 'May 8, 2024',
-    thumbnail: 'https://img.youtube.com/vi/YpO5V9MVqsE/hqdefault.jpg',
-    youtubeUrl: 'https://youtu.be/YpO5V9MVqsE?si=JVFSV4IbI7-cVF5H',
-    category: 'certificates',
-  },
+  // {
+  //   id: '6',
+  //   title: 'How to access iGOT certificate on Digilocker',
+  //   date: 'May 8, 2024',
+  //   thumbnail: 'https://img.youtube.com/vi/YpO5V9MVqsE/hqdefault.jpg',
+  //   youtubeUrl: 'https://youtu.be/YpO5V9MVqsE?si=JVFSV4IbI7-cVF5H',
+  //   category: 'certificates',
+  // },
   {
     id: '7',
     title: 'How to update your profile (Marathi)',

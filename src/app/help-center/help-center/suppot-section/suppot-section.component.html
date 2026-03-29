@@ -129,6 +129,27 @@
       </button>
     </div>
 
+    <!-- Ticket Card -->
+    <div class="ticket-card">
+      <div class="ticket-card__left">
+        <div class="ticket-card__icon-wrap">
+          <span class="material-icons ticket-card__icon">email</span>
+        </div>
+        <div class="ticket-card__info">
+          <h3 class="ticket-card__title">Having trouble reaching us by call</h3>
+          <p class="ticket-card__desc">
+            Raise a support ticket and we'll respond within 24–48 hours.
+          </p>
+        </div>
+      </div>
+
+      <button class="ticket-card__cta" (click)="onRaiseTicket()" aria-label="Raise a support ticket">
+        <span class="material-icons ticket-card__cta-icon">send</span>
+        Raise Ticket
+        <span class="material-icons ticket-card__cta-arrow">arrow_forward</span>
+      </button>
+    </div>
+
 
 
     <!-- Feature Pills -->
