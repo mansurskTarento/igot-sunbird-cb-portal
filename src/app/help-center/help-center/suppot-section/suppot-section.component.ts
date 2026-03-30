@@ -45,7 +45,7 @@ export class SuppotSectionComponent {
   utStates = utStates
   activeRegion = 'all'
 
-  phoneNumber = '+91 11 2430 3726';
+  phoneNumber = '+91 9990141256';
   supportHours = '8:00 AM – 8:00 PM IST';
 
   features = [
@@ -68,7 +68,7 @@ export class SuppotSectionComponent {
     this.applyFilters()
   }
   onCallNow(): void {
-    window.location.href = 'tel:+911124303726'
+    window.location.href = 'tel:+919990141256'
   }
 
   onRaiseTicket(): void {

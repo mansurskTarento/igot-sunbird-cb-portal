@@ -367,7 +367,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
       if (!this.isNotMyUserAndIgotOrg) {
-        this.getRecommendedUsers()
+        //this.getRecommendedUsers()
         this.getRecommendedCommunitesList()
       }
       if (this.configSvc.userProfile && this.configSvc.userProfile.userId) {

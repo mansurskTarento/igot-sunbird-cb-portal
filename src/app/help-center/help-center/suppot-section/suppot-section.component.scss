@@ -101,7 +101,7 @@ $white: #ffffff;
 // =============================================
 .call-card {
   width: 100%;
-  background: linear-gradient(120deg, #f4722b 0%, #e85a10 35%, #c84a10 65%, #1a2fa0 100%);
+  background: linear-gradient(135deg, #F3962F 0%, #F3962F 62%, #1B4CA1 66%, #1B4CA1 100%) !important;
   border-radius: 16px;
   padding: 28px 28px 28px 28px;
   display: flex;
@@ -118,7 +118,7 @@ $white: #ffffff;
     content: '';
     position: absolute;
     inset: 0;
-    background: radial-gradient(ellipse at 30% 50%, rgba(255, 160, 80, 0.18) 0%, transparent 70%);
+    background: radial-gradient(ellipse at 30% 50%, rgba(243, 150, 47, .22) 0%, transparent 65%);
     pointer-events: none;
   }
 
@@ -1146,7 +1146,7 @@ $white: #ffffff;
 // =============================================
 .call-card {
   width: 100%;
-  background: linear-gradient(120deg, #f4722b 0%, #e85a10 35%, #c84a10 65%, #1a2fa0 100%);
+  background: linear-gradient(135deg, #F3962F 0%, #F3962F 62%, #1B4CA1 66%, #1B4CA1 100%) !important;
   border-radius: 16px;
   padding: 28px 28px 28px 28px;
   display: flex;
