@@ -504,46 +504,98 @@ export const FAQ_ITEMS_MAP: Record<RoleTab, FaqItem[]> = {
 
 
 export const stateContacts = {
-  'Andhra Pradesh': { region: 'south', admins: [{ name: 'Ravi Kumar Reddy', designation: 'State Nodal Officer', email: 'rk.reddy@ap.gov.in', mobile: '+91 94401 23456' }, { name: 'Sunitha Rao', designation: 'Deputy Director IT', email: 'sunitha.rao@ap.gov.in', mobile: '+91 94402 34567' }] },
-  'Arunachal Pradesh': { region: 'northeast', admins: [{ name: 'Tage Ado', designation: 'State Nodal Officer', email: 'tage.ado@arunachal.gov.in', mobile: '+91 94403 45678' }] },
-  'Assam': { region: 'northeast', admins: [{ name: 'Bhaskar Jyoti Das', designation: 'State IT Coordinator', email: 'bj.das@assam.gov.in', mobile: '+91 94404 56789' }, { name: 'Priyanka Kalita', designation: 'Admin Officer', email: 'p.kalita@assam.gov.in', mobile: '+91 94405 67890' }] },
-  'Bihar': { region: 'east', admins: [{ name: 'Amit Kumar Singh', designation: 'State Nodal Officer', email: 'ak.singh@bihar.gov.in', mobile: '+91 94406 78901' }, { name: 'Rekha Devi', designation: 'IT Manager', email: 'rekha.devi@bihar.gov.in', mobile: '+91 94407 89012' }] },
-  'Chhattisgarh': { region: 'central', admins: [{ name: 'Deepak Yadav', designation: 'State Coordinator', email: 'deepak.yadav@cg.gov.in', mobile: '+91 94408 90123' }] },
-  'Goa': { region: 'west', admins: [{ name: 'Suresh Naik', designation: 'State Nodal Officer', email: 's.naik@goa.gov.in', mobile: '+91 94412 34567' }] },
-  'Gujarat': { region: 'west', admins: [{ name: 'Nilesh Patel', designation: 'State Nodal Officer', email: 'nilesh.patel@gujarat.gov.in', mobile: '+91 94413 45678' }, { name: 'Hiral Shah', designation: 'IT Coordinator', email: 'hiral.shah@gujarat.gov.in', mobile: '+91 94414 56789' }] },
-  'Haryana': { region: 'north', admins: [{ name: 'Rajesh Hooda', designation: 'State Nodal Officer', email: 'r.hooda@haryana.gov.in', mobile: '+91 94415 67890' }, { name: 'Poonam Yadav', designation: 'Deputy Director', email: 'poonam.yadav@haryana.gov.in', mobile: '+91 94416 78901' }] },
-  'Himachal Pradesh': { region: 'north', admins: [{ name: 'Vikas Thakur', designation: 'State IT Officer', email: 'vikas.thakur@hp.gov.in', mobile: '+91 94417 89012' }] },
-  'Jharkhand': { region: 'east', admins: [{ name: 'Sanjay Mahto', designation: 'State Coordinator', email: 's.mahto@jharkhand.gov.in', mobile: '+91 94418 90123' }, { name: 'Anita Kumari', designation: 'IT Officer', email: 'anita.kumari@jharkhand.gov.in', mobile: '+91 94419 01234' }] },
-  'Karnataka': { region: 'south', admins: [{ name: 'Chandrashekar M', designation: 'State Nodal Officer', email: 'cshekhar@karnataka.gov.in', mobile: '+91 94420 12345' }, { name: 'Nandini R', designation: 'Programme Manager', email: 'nandini.r@karnataka.gov.in', mobile: '+91 94421 23456' }] },
-  'Kerala': { region: 'south', admins: [{ name: 'Sreekumar P', designation: 'State Nodal Officer', email: 'sreekumar.p@kerala.gov.in', mobile: '+91 94422 34567' }, { name: 'Bindhu T', designation: 'IT Coordinator', email: 'bindhu.t@kerala.gov.in', mobile: '+91 94423 45678' }] },
-  'Madhya Pradesh': { region: 'central', admins: [{ name: 'Ramesh Tiwari', designation: 'State Nodal Officer', email: 'r.tiwari@mp.gov.in', mobile: '+91 94424 56789' }, { name: 'Kavita Joshi', designation: 'Admin Officer', email: 'kavita.joshi@mp.gov.in', mobile: '+91 94425 67890' }] },
-  'Maharashtra': { region: 'west', admins: [{ name: 'Sunil Patil', designation: 'State IT Head', email: 's.patil@maharashtra.gov.in', mobile: '+91 94426 78901' }, { name: 'Madhuri Kulkarni', designation: 'Programme Officer', email: 'm.kulkarni@maharashtra.gov.in', mobile: '+91 94427 89012' }, { name: 'Vivek Desai', designation: 'Technical Officer', email: 'v.desai@maharashtra.gov.in', mobile: '+91 94428 90123' }] },
-  'Manipur': { region: 'northeast', admins: [{ name: 'Kh. Rajkumar', designation: 'State Nodal Officer', email: 'kh.rajkumar@manipur.gov.in', mobile: '+91 94429 01234' }] },
-  'Meghalaya': { region: 'northeast', admins: [{ name: 'Banshanbor Lyngdoh', designation: 'State Coordinator', email: 'b.lyngdoh@meghalaya.gov.in', mobile: '+91 94430 12345' }] },
-  'Mizoram': { region: 'northeast', admins: [{ name: 'Lalramliana', designation: 'State IT Officer', email: 'lalramliana@mizoram.gov.in', mobile: '+91 94431 23456' }] },
-  'Nagaland': { region: 'northeast', admins: [{ name: 'Zhoto Mere', designation: 'State Nodal Officer', email: 'z.mere@nagaland.gov.in', mobile: '+91 94432 34567' }] },
-  'Odisha': { region: 'east', admins: [{ name: 'Biswaranjan Sahoo', designation: 'State Nodal Officer', email: 'b.sahoo@odisha.gov.in', mobile: '+91 94433 45678' }, { name: 'Saumya Dash', designation: 'IT Coordinator', email: 's.dash@odisha.gov.in', mobile: '+91 94434 56789' }] },
-  'Punjab': { region: 'north', admins: [{ name: 'Jaspreet Singh', designation: 'State IT Officer', email: 'j.singh@punjab.gov.in', mobile: '+91 94435 67890' }, { name: 'Harpreet Kaur', designation: 'Admin Officer', email: 'h.kaur@punjab.gov.in', mobile: '+91 94436 78901' }] },
-  'Rajasthan': { region: 'north', admins: [{ name: 'Mahesh Sharma', designation: 'State Nodal Officer', email: 'm.sharma@rajasthan.gov.in', mobile: '+91 94437 89012' }, { name: 'Sunita Meena', designation: 'IT Coordinator', email: 's.meena@rajasthan.gov.in', mobile: '+91 94438 90123' }] },
-  'Sikkim': { region: 'northeast', admins: [{ name: 'Pema Wangchuk', designation: 'State Coordinator', email: 'p.wangchuk@sikkim.gov.in', mobile: '+91 94439 01234' }] },
-  'Tamil Nadu': { region: 'south', admins: [{ name: 'Senthil Kumar R', designation: 'State Nodal Officer', email: 'senthil.r@tn.gov.in', mobile: '+91 94440 12345' }, { name: 'Kavitha S', designation: 'Programme Manager', email: 'kavitha.s@tn.gov.in', mobile: '+91 94441 23456' }, { name: 'Muthukumar P', designation: 'Technical Officer', email: 'muthukumar.p@tn.gov.in', mobile: '+91 94442 34567' }] },
-  'Telangana': { region: 'south', admins: [{ name: 'Shiva Reddy', designation: 'State Nodal Officer', email: 'shiva.reddy@telangana.gov.in', mobile: '+91 94443 45678' }, { name: 'Anuradha K', designation: 'IT Coordinator', email: 'anuradha.k@telangana.gov.in', mobile: '+91 94444 56789' }] },
-  'Tripura': { region: 'northeast', admins: [{ name: 'Subrata Deb', designation: 'State IT Officer', email: 's.deb@tripura.gov.in', mobile: '+91 94445 67890' }] },
-  'Uttar Pradesh': { region: 'north', admins: [{ name: 'Alok Pandey', designation: 'State Nodal Officer', email: 'a.pandey@up.gov.in', mobile: '+91 94446 78901' }, { name: 'Neha Srivastava', designation: 'Programme Officer', email: 'n.srivastava@up.gov.in', mobile: '+91 94447 89012' }, { name: 'Rakesh Mishra', designation: 'IT Manager', email: 'r.mishra@up.gov.in', mobile: '+91 94448 90123' }] },
-  'Uttarakhand': { region: 'north', admins: [{ name: 'Dinesh Bhatt', designation: 'State Coordinator', email: 'd.bhatt@uk.gov.in', mobile: '+91 94449 01234' }, { name: 'Mamta Rawat', designation: 'IT Officer', email: 'm.rawat@uk.gov.in', mobile: '+91 94450 12345' }] },
-  'West Bengal': { region: 'east', admins: [{ name: 'Arnab Banerjee', designation: 'State Nodal Officer', email: 'a.banerjee@wb.gov.in', mobile: '+91 94451 23456' }, { name: 'Parna Ghosh', designation: 'IT Coordinator', email: 'p.ghosh@wb.gov.in', mobile: '+91 94452 34567' }] },
+  // 'Andhra Pradesh': { region: 'south', admins: [{ name: 'Ravi Kumar Reddy', designation: 'State Nodal Officer', email: 'rk.reddy@ap.gov.in', mobile: '+91 94401 23456' }, { name: 'Sunitha Rao', designation: 'Deputy Director IT', email: 'sunitha.rao@ap.gov.in', mobile: '+91 94402 34567' }] },
+  // 'Arunachal Pradesh': { region: 'northeast', admins: [{ name: 'Tage Ado', designation: 'State Nodal Officer', email: 'tage.ado@arunachal.gov.in', mobile: '+91 94403 45678' }] },
+  // 'Assam': { region: 'northeast', admins: [{ name: 'Bhaskar Jyoti Das', designation: 'State IT Coordinator', email: 'bj.das@assam.gov.in', mobile: '+91 94404 56789' }, { name: 'Priyanka Kalita', designation: 'Admin Officer', email: 'p.kalita@assam.gov.in', mobile: '+91 94405 67890' }] },
+  // 'Bihar': { region: 'east', admins: [{ name: 'Amit Kumar Singh', designation: 'State Nodal Officer', email: 'ak.singh@bihar.gov.in', mobile: '+91 94406 78901' }, { name: 'Rekha Devi', designation: 'IT Manager', email: 'rekha.devi@bihar.gov.in', mobile: '+91 94407 89012' }] },
+  // 'Chhattisgarh': { region: 'central', admins: [{ name: 'Deepak Yadav', designation: 'State Coordinator', email: 'deepak.yadav@cg.gov.in', mobile: '+91 94408 90123' }] },
+  // 'Goa': { region: 'west', admins: [{ name: 'Suresh Naik', designation: 'State Nodal Officer', email: 's.naik@goa.gov.in', mobile: '+91 94412 34567' }] },
+  // 'Gujarat': { region: 'west', admins: [{ name: 'Nilesh Patel', designation: 'State Nodal Officer', email: 'nilesh.patel@gujarat.gov.in', mobile: '+91 94413 45678' }, { name: 'Hiral Shah', designation: 'IT Coordinator', email: 'hiral.shah@gujarat.gov.in', mobile: '+91 94414 56789' }] },
+  // 'Haryana': { region: 'north', admins: [{ name: 'Rajesh Hooda', designation: 'State Nodal Officer', email: 'r.hooda@haryana.gov.in', mobile: '+91 94415 67890' }, { name: 'Poonam Yadav', designation: 'Deputy Director', email: 'poonam.yadav@haryana.gov.in', mobile: '+91 94416 78901' }] },
+  // 'Himachal Pradesh': { region: 'north', admins: [{ name: 'Vikas Thakur', designation: 'State IT Officer', email: 'vikas.thakur@hp.gov.in', mobile: '+91 94417 89012' }] },
+  'Jharkhand': {
+    region: 'east', admins: [
+      { name: 'Kumar Bhaskar', designation: 'N/A', email: 'N/A', mobile: '+91 99051 00272' },
+      { name: 'Vijay', designation: 'N/A', email: 'N/A', mobile: '+91 80924 82272' }]
+  },
+  // 'Karnataka': { region: 'south', admins: [{ name: 'Chandrashekar M', designation: 'State Nodal Officer', email: 'cshekhar@karnataka.gov.in', mobile: '+91 94420 12345' }, { name: 'Nandini R', designation: 'Programme Manager', email: 'nandini.r@karnataka.gov.in', mobile: '+91 94421 23456' }] },
+  // 'Kerala': { region: 'south', admins: [{ name: 'Sreekumar P', designation: 'State Nodal Officer', email: 'sreekumar.p@kerala.gov.in', mobile: '+91 94422 34567' }, { name: 'Bindhu T', designation: 'IT Coordinator', email: 'bindhu.t@kerala.gov.in', mobile: '+91 94423 45678' }] },
+  // 'Madhya Pradesh': { region: 'central', admins: [{ name: 'Ramesh Tiwari', designation: 'State Nodal Officer', email: 'r.tiwari@mp.gov.in', mobile: '+91 94424 56789' }, { name: 'Kavita Joshi', designation: 'Admin Officer', email: 'kavita.joshi@mp.gov.in', mobile: '+91 94425 67890' }] },
+  // 'Maharashtra': { region: 'west', admins: [{ name: 'Sunil Patil', designation: 'State IT Head', email: 's.patil@maharashtra.gov.in', mobile: '+91 94426 78901' }, { name: 'Madhuri Kulkarni', designation: 'Programme Officer', email: 'm.kulkarni@maharashtra.gov.in', mobile: '+91 94427 89012' }, { name: 'Vivek Desai', designation: 'Technical Officer', email: 'v.desai@maharashtra.gov.in', mobile: '+91 94428 90123' }] },
+  'Manipur': {
+    region: 'northeast', admins: [
+      { name: 'H. Berlin Singh', designation: 'N/A', email: 'N/A', mobile: '+91 89743 55719' },
+      { name: 'Ch. Rona Devi', designation: 'N/A', email: 'N/A', mobile: '+91 82598 30560' },
+      { name: 'Laimayum Girija Devi', designation: 'N/A', email: 'N/A', mobile: '+91 70050 34306' },
+    ]
+  },
+  //'Meghalaya': { region: 'northeast', admins: [{ name: 'Banshanbor Lyngdoh', designation: 'State Coordinator', email: 'b.lyngdoh@meghalaya.gov.in', mobile: '+91 94430 12345' }] },
+  'Mizoram': {
+    region: 'northeast', admins: [
+      { name: 'Lalbiakenga', designation: 'N/A', email: 'mabiakasailo@gmail.com', mobile: '+91 94361 97512' },
+      { name: 'Lalchhanchhuaha', designation: 'N/A', email: 'chhanajahau@gmail.com', mobile: '+91 84158 43052' },
+      { name: 'Remlalliana', designation: 'N/A', email: 'remlalatuallawt@gmail.com', mobile: '+91 85759 27269' },
+      { name: 'Rosangpuia', designation: 'N/A', email: 'rsangpuia@gmail.com', mobile: '+91 94361 53061' },
+
+    ]
+  },
+  //'Nagaland': { region: 'northeast', admins: [{ name: 'Zhoto Mere', designation: 'State Nodal Officer', email: 'z.mere@nagaland.gov.in', mobile: '+91 94432 34567' }] },
+  'Odisha': {
+    region: 'east', admins: [
+      { name: 'Bikash Kumar Rout', designation: 'CA', email: 'N/A', mobile: '+91 81149 94116' },
+      { name: 'Ashish Kumar Behera	', designation: 'ASO', email: 'N/A', mobile: '+91 94380 33844' },
+      { name: 'Abhijit Jena', designation: 'MIS', email: 'N/A', mobile: '+91 94380 83383' },
+      { name: 'Bikash Kumar Panda', designation: 'ASO', email: 'N/A', mobile: '+91 94372 80301' },
+    ]
+  },
+  'Punjab': {
+    region: 'north', admins: [
+      { name: 'Sh. Pankaj Bhatia', designation: 'N/A', email: 'pankaj20089@gmail.com', mobile: '+91 99881 59689' },
+      { name: 'Sh. Raju Kumar', designation: 'N/A', email: 'rajukumars786.rk@gmail.com', mobile: '+91 98780 84267' }]
+  },
+  // 'Rajasthan': { region: 'north', admins: [{ name: 'Mahesh Sharma', designation: 'State Nodal Officer', email: 'm.sharma@rajasthan.gov.in', mobile: '+91 94437 89012' }, { name: 'Sunita Meena', designation: 'IT Coordinator', email: 's.meena@rajasthan.gov.in', mobile: '+91 94438 90123' }] },
+  // 'Sikkim': { region: 'northeast', admins: [{ name: 'Pema Wangchuk', designation: 'State Coordinator', email: 'p.wangchuk@sikkim.gov.in', mobile: '+91 94439 01234' }] },
+  // 'Tamil Nadu': { region: 'south', admins: [{ name: 'Senthil Kumar R', designation: 'State Nodal Officer', email: 'senthil.r@tn.gov.in', mobile: '+91 94440 12345' }, { name: 'Kavitha S', designation: 'Programme Manager', email: 'kavitha.s@tn.gov.in', mobile: '+91 94441 23456' }, { name: 'Muthukumar P', designation: 'Technical Officer', email: 'muthukumar.p@tn.gov.in', mobile: '+91 94442 34567' }] },
+  // 'Telangana': { region: 'south', admins: [{ name: 'Shiva Reddy', designation: 'State Nodal Officer', email: 'shiva.reddy@telangana.gov.in', mobile: '+91 94443 45678' }, { name: 'Anuradha K', designation: 'IT Coordinator', email: 'anuradha.k@telangana.gov.in', mobile: '+91 94444 56789' }] },
+  // 'Tripura': { region: 'northeast', admins: [{ name: 'Subrata Deb', designation: 'State IT Officer', email: 's.deb@tripura.gov.in', mobile: '+91 94445 67890' }] },
+  'Uttar Pradesh': {
+    region: 'north', admins:
+      [{ name: 'Saurabh', designation: 'N/A', email: 'N/A', mobile: '+91 88403 47847' },
+      { name: 'Vaibhav Raman', designation: 'N/A', email: 'N/A', mobile: '+91 95559 89069' },
+      { name: 'Gaurav', designation: 'N/A', email: 'N/A', mobile: '+91 63935 16970' }]
+  },
+  'Uttarakhand': {
+    region: 'north', admins:
+      [{ name: 'Bikash Naik', designation: 'N/A', email: 'N/A', mobile: '+91 96342 44568' },
+      { name: 'Swapnil', designation: 'N/A', email: 'N/A', mobile: '+91 91628 54104' },
+      { name: 'Vedant', designation: 'N/A', email: 'N/A', mobile: '+91 70603 12231' }]
+  },
+  // 'West Bengal': { region: 'east', admins: [{ name: 'Arnab Banerjee', designation: 'State Nodal Officer', email: 'a.banerjee@wb.gov.in', mobile: '+91 94451 23456' }, { name: 'Parna Ghosh', designation: 'IT Coordinator', email: 'p.ghosh@wb.gov.in', mobile: '+91 94452 34567' }] },
   // Union Territories
-  'Andaman & Nicobar': { region: 'ut', admins: [{ name: 'Rajiv Sharma', designation: 'UT Nodal Officer', email: 'r.sharma@andaman.gov.in', mobile: '+91 94453 12345' }] },
-  'Chandigarh': { region: 'ut', admins: [{ name: 'Simranjit Kaur', designation: 'UT IT Officer', email: 's.kaur@chandigarh.gov.in', mobile: '+91 94454 23456' }] },
-  'D&N Haveli & Daman': { region: 'ut', admins: [{ name: 'Praful Patel', designation: 'UT Coordinator', email: 'p.patel@dnh.gov.in', mobile: '+91 94455 34567' }] },
-  'Delhi (NCT)': { region: 'ut', admins: [{ name: 'Anjali Sharma', designation: 'Senior IT Officer', email: 'anjali.sharma@delhi.gov.in', mobile: '+91 94409 01234' }, { name: 'Mohit Gupta', designation: 'Technical Lead', email: 'mohit.gupta@delhi.gov.in', mobile: '+91 94410 12345' }] },
-  'Jammu & Kashmir': { region: 'ut', admins: [{ name: 'Farooq Ahmad', designation: 'UT Nodal Officer', email: 'farooq.a@jk.gov.in', mobile: '+91 94456 45678' }, { name: 'Sunita Devi', designation: 'IT Coordinator', email: 'sunita.d@jk.gov.in', mobile: '+91 94457 56789' }] },
-  'Ladakh': { region: 'ut', admins: [{ name: 'Stanzin Norbu', designation: 'UT IT Officer', email: 's.norbu@ladakh.gov.in', mobile: '+91 94458 67890' }] },
-  'Lakshadweep': { region: 'ut', admins: [{ name: 'P.K. Pasha', designation: 'UT Coordinator', email: 'pk.pasha@lakshadweep.gov.in', mobile: '+91 94459 78901' }] },
-  'Puducherry': { region: 'ut', admins: [{ name: 'Anand Rajan', designation: 'UT Nodal Officer', email: 'a.rajan@puducherry.gov.in', mobile: '+91 94460 89012' }] },
+  // 'Andaman & Nicobar': { region: 'ut', admins: [{ name: 'Rajiv Sharma', designation: 'UT Nodal Officer', email: 'r.sharma@andaman.gov.in', mobile: '+91 94453 12345' }] },
+  'Chandigarh': {
+    region: 'ut', admins: [
+      { name: 'Sh. Neeraj Dadwal', designation: 'Network Admin', email: 'N/A', mobile: '+91 85588 94420' },
+      { name: 'Sh. Ravi Pratap Singh', designation: 'Network Admin', email: 'N/A', mobile: '+91 97799 92677' },
+      { name: 'Sh. Mithun Yadav', designation: 'Senior Network Engineer', email: 'N/A', mobile: '+91 79886 35787' },
+      { name: 'Sh. Samrat Sharma', designation: 'Network Engineer', email: 'N/A', mobile: '+91 80545 50093' },
+    ]
+  },
+  'D&N Haveli & Daman': {
+    region: 'ut', admins: [
+      { name: 'Raj Sarkar', designation: 'N/A', email: 'N/A', mobile: '+91 93360 93360' },
+      { name: 'Prashant Sharma', designation: 'N/A', email: 'N/A', mobile: '+91 99980 25015' },
+    ]
+  },
+  // 'Delhi (NCT)': { region: 'ut', admins: [{ name: 'Anjali Sharma', designation: 'Senior IT Officer', email: 'anjali.sharma@delhi.gov.in', mobile: '+91 94409 01234' }, { name: 'Mohit Gupta', designation: 'Technical Lead', email: 'mohit.gupta@delhi.gov.in', mobile: '+91 94410 12345' }] },
+  // 'Jammu & Kashmir': { region: 'ut', admins: [{ name: 'Farooq Ahmad', designation: 'UT Nodal Officer', email: 'farooq.a@jk.gov.in', mobile: '+91 94456 45678' }, { name: 'Sunita Devi', designation: 'IT Coordinator', email: 'sunita.d@jk.gov.in', mobile: '+91 94457 56789' }] },
+  // 'Ladakh': { region: 'ut', admins: [{ name: 'Stanzin Norbu', designation: 'UT IT Officer', email: 's.norbu@ladakh.gov.in', mobile: '+91 94458 67890' }] },
+  // 'Lakshadweep': { region: 'ut', admins: [{ name: 'P.K. Pasha', designation: 'UT Coordinator', email: 'pk.pasha@lakshadweep.gov.in', mobile: '+91 94459 78901' }] },
+  // 'Puducherry': { region: 'ut', admins: [{ name: 'Anand Rajan', designation: 'UT Nodal Officer', email: 'a.rajan@puducherry.gov.in', mobile: '+91 94460 89012' }] },
 }
 
-export const utStates = new Set(['Andaman & Nicobar', 'Chandigarh', 'D&N Haveli & Daman', 'Delhi (NCT)', 'Jammu & Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'])
+// export const utStates = new Set(['Andaman & Nicobar', 'Chandigarh', 'D&N Haveli & Daman', 'Delhi (NCT)', 'Jammu & Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'])
+export const utStates = new Set(['Chandigarh', 'D&N Haveli & Daman'])
 
 
 export const VIDEO_CATEGORIES_MAP: Record<RoleTab, Category[]> = {
