@@ -240,10 +240,25 @@ export class BadgeDetailsComponent {
           const imgData = canvas.toDataURL('image/png')
 
           const pdf = new jsPDF('landscape', 'px', 'a4')
-          const w = pdf.internal.pageSize.getWidth()
-          const h = pdf.internal.pageSize.getHeight()
+          const pageWidth = pdf?.internal?.pageSize?.getWidth()
+          const pageHeight = pdf?.internal?.pageSize?.getHeight()
 
-          pdf.addImage(imgData, 'PNG', 0, 0, w, h)
+          // original image size
+          const imgWidth = img.width
+          const imgHeight = img.height
+
+          // calculate scale to FIT (not stretch)
+          const scale = Math.min(pageWidth / imgWidth, pageHeight / imgHeight)
+
+          // new size
+          const newWidth = imgWidth * scale
+          const newHeight = imgHeight * scale
+
+          // center it
+          const x = (pageWidth - newWidth) / 2
+          const y = (pageHeight - newHeight) / 2
+
+          pdf.addImage(imgData, 'PNG', x, y, newWidth, newHeight)
           pdf.save('badge.pdf')
         }
       }
