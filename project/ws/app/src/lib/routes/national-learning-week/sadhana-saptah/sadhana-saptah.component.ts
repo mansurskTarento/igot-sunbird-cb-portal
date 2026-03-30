@@ -13,7 +13,7 @@ export class SadhanaSaptahComponent implements OnInit {
   nlwConfig: any
   individualSection: any = {}
   indivisualSection: any = {}
-  phoneNumber = '+91 11 2430 3726';
+  phoneNumber = '+91 9990141256';
   supportHours = '8:00 AM – 8:00 PM IST';
 
   constructor(private route: ActivatedRoute, public configService: ConfigurationsService) { }

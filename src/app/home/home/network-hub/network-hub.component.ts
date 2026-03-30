@@ -42,18 +42,18 @@ export class NetworkHubComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userInfo =  this.configService && this.configService.userProfile
+    this.userInfo = this.configService && this.configService.userProfile
     if (this.networkConfig.recentRequests.active) {
-      this.fetchRecentRequests()
+      //this.fetchRecentRequests()
     }
 
     if (this.networkConfig.networkSuggestions.active) {
-      this.fetchNetworkRecommendations()
+      //this.fetchNetworkRecommendations()
     }
   }
 
   translateHub(hubName: string): string {
-    const translationKey =  hubName
+    const translationKey = hubName
     return this.translate.instant(translationKey)
   }
 
@@ -103,7 +103,7 @@ export class NetworkHubComponent implements OnInit {
         this.network.networkRecommended = res && res.result && res.result.response ? res.result.response : []
         if (this.network.networkRecommended.length) {
           this.network.networkRecommended = this.network.networkRecommended.map((obj: any) => {
-            obj.fullName = this.createInitials(obj?.personalDetails?.firstname || obj?.fullName || '' )
+            obj.fullName = this.createInitials(obj?.personalDetails?.firstname || obj?.fullName || '')
             obj.connecting = false
             return obj
           })
@@ -127,7 +127,7 @@ export class NetworkHubComponent implements OnInit {
           elem.connecting = false
           return elem
         })
-      // tslint:disable-next-line: align
+        // tslint:disable-next-line: align
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.recentRequests.loadSkeleton = false
@@ -135,7 +135,7 @@ export class NetworkHubComponent implements OnInit {
       }
     )
   }
-// tslint:disable-next-line: whitespace
+  // tslint:disable-next-line: whitespace
   handleUpdateRequest(event: any): void {
     this.homePageService.updateConnection(event.payload).subscribe(
       (_res: any) => {
@@ -146,7 +146,7 @@ export class NetworkHubComponent implements OnInit {
         }
         event.reqObject.connecting = false
         this.fetchRecentRequests()
-      // tslint:disable-next-line: align
+        // tslint:disable-next-line: align
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open('Unable to update connection, due to some error!')

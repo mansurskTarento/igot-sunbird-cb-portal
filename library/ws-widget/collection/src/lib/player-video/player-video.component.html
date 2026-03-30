@@ -11,9 +11,9 @@
     default> -->
 </video>
 
-<video autoplay="true" muted="muted" crossorigin="Anonymous" id="realvideoTag"
+<video autoplay="true" muted="muted" crossorigin="Anonymous" id="realvideoTag" oncontextmenu="return false;"
   [poster]="widgetData?.posterImage | pipePublicURL" #realvideoTag class="video-js" *ngIf="!widgetData?.isVideojs"
-  controls fill="true" playsinline controlsList="nodownload noremoteplayback">
+  controls fill="both" playsinline controlsList="nodownload noremoteplayback">
   <source [src]="widgetData.url" type="video/mp4" />
   <source [src]="widgetData.url" type="application/x-mpegURL" />
   <!-- <track kind="captions"
