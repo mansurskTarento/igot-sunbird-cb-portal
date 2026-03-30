@@ -10,7 +10,7 @@ import moment from 'moment'
 const API_END_POINTS = {
   NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/unread/count`,
   RESET_NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/reset/unread/count`,
-  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
+  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/content/v2/read/${contentId}`,
   WORKFLOW_SEARCH: `apis/protected/v8/workflowhandler/profileApprovalSearch`,
   CONNECTION_REQUEST: (pageNo: any, pageSize: any) => `apis/protected/v8/connections/v2/connections/requests/received?pageNo=${pageNo}&pageSize=${pageSize}`,
 }

@@ -5,7 +5,7 @@ import { finalize } from 'rxjs/operators'
 
 const API_ENDPOINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  CONTENT_HIRARCHY: `/apis/proxies/v8/action/content/v3/hierarchy`,
+  CONTENT_HIRARCHY: `/apis/proxies/v8/course/v1/hierarchy`,
 }
 
 @Injectable({
