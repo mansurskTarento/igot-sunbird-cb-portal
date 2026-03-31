@@ -17,14 +17,14 @@
       Still facing an issue?
       <span class="support-section__heading--accent">We're here to help!</span>
     </h2>
-    <!-- <p class="support-section__sub">Start with your state support team — they're closest to you.</p> -->
+    <p class="support-section__sub">Start with your state support team — they're closest to you.</p>
 
     <!-- ══════════════════════════════════════
                                  STATE SUPPORT CENTER PANEL
                             ══════════════════════════════════════ -->
     <!-- STATE PANEL -->
 
-    <!-- <div class="state-panel">
+    <div class="state-panel">
 
       <div class="state-panel__header">
         <div class="state-panel__header-left">
@@ -91,7 +91,7 @@
         </div>
       </ng-template>
 
-    </div> -->
+    </div>
 
     <!-- <div class="support-step-hint">
       <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
@@ -199,14 +199,14 @@
             <div class="sc-card__num">{{i+1}}</div>
             <div class="sc-card__info">
               <div class="sc-card__name">{{admin?.name}}</div>
-              <div class="sc-card__desg">{{admin.designation}}</div>
+              <div class="sc-card__desg" *ngIf="admin.designation !== 'N/A'">{{admin.designation}}</div>
             </div>
           </div>
           <div class="sc-card__actions">
             <a [href]="'tel:' + formatPhone(admin.mobile)" class="sc-card__call">
               <span class="material-icons">phone</span>{{admin.mobile}}
             </a>
-            <a [href]="'mailto:' + admin.email" class="sc-card__mail">
+            <a [href]="'mailto:' + admin.email" class="sc-card__mail" *ngIf="admin?.email !== 'N/A'">
               <span class="material-icons">mail_outline</span>{{admin.email}}
             </a>
           </div>
