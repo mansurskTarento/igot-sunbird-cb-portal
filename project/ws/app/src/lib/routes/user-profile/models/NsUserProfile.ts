@@ -51,6 +51,14 @@ export namespace NsUserProfileDetails {
     SC = 'SC',
     ST = 'ST',
     PWD = 'PWD',
+    ST1 = 'ST-1',
+    ST2 = 'ST-2',
+    RBA = 'RBA',
+    ALC = 'ALC/IB',
+    EWS = 'EWS(Economically Weaker Section)',
+    PhysicallyChallenged = 'Physically Challenged Person',
+    ExServicemen = 'Ex - Servicemen'
+
   }
   export interface IFieldApproval {
     approvalRequired: boolean
