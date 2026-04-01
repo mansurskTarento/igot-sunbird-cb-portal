@@ -1,13 +1,9 @@
-import { Component, HostListener } from '@angular/core'
+import { Component, HostListener, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core'
 import { ZohoFormService } from '../../../header/header/zoho-form.service'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-
-import {
-  stateContacts, utStates
-} from './../help-center/help-center.model'
 
 interface Admin {
   name: string
@@ -26,9 +22,10 @@ interface StateData {
   templateUrl: './suppot-section.component.html',
   styleUrls: ['./suppot-section.component.scss'],
 })
-export class SuppotSectionComponent {
+export class SuppotSectionComponent implements OnInit, OnChanges {
 
-
+  @Input() enabledSections: any = {};
+  @Input() helpCenterData: any = null;
 
   filteredStates: string[] = [];
 
@@ -41,8 +38,8 @@ export class SuppotSectionComponent {
     this.closeStateModal()
   }
 
-  stateContacts: Record<string, StateData> = stateContacts
-  utStates = utStates
+  stateContacts: Record<string, StateData> = {}
+  utStates: Set<string> = new Set()
   activeRegion = 'all'
 
   phoneNumber = '+91 9990141256';
@@ -56,8 +53,12 @@ export class SuppotSectionComponent {
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/support-html/zoho_karmayogi_form.html'
   constructor(private zohoFormService: ZohoFormService, private http: HttpClient,
-    private sanitizer: DomSanitizer, public dialog: MatDialog,) {
+    private sanitizer: DomSanitizer, public dialog: MatDialog) {
 
+  }
+
+  isSectionEnabled(section: string): boolean {
+    return this.enabledSections[section] !== false;
   }
 
   ngOnInit() {
@@ -65,7 +66,33 @@ export class SuppotSectionComponent {
     this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe(res => {
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
     })
-    this.applyFilters()
+
+    this.bindConfig();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['helpCenterData'] && changes['helpCenterData'].currentValue) {
+      this.bindConfig();
+    }
+  }
+
+  private bindConfig() {
+    if (this.helpCenterData) {
+      if (this.helpCenterData.stateContacts) {
+        this.stateContacts = this.helpCenterData.stateContacts;
+      }
+      if (this.helpCenterData.utStates) {
+        this.utStates = new Set(this.helpCenterData.utStates);
+      }
+      if (this.helpCenterData.supportSection) {
+        const support = this.helpCenterData.supportSection;
+        if (support.phoneNumber) this.phoneNumber = support.phoneNumber;
+        if (support.supportHours) this.supportHours = support.supportHours;
+        if (support.features) this.features = support.features;
+      }
+    }
+
+    this.applyFilters();
   }
   onCallNow(): void {
     window.location.href = 'tel:+919990141256'

@@ -99,7 +99,7 @@ export class HeaderComponent implements OnInit {
   }
 
   openSupportForm(): void {
-    this.router.navigateByUrl('helpcenter')
+    this.router.navigateByUrl('igot/help-centre')
     // this.dialog.open(ZohoDialogComponent, {
     //   width: 'auto',
     //   height: '100vh',

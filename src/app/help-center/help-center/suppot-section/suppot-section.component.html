@@ -17,14 +17,15 @@
       Still facing an issue?
       <span class="support-section__heading--accent">We're here to help!</span>
     </h2>
-    <p class="support-section__sub">Start with your state support team — they're closest to you.</p>
+    <p class="support-section__sub" >Start with your state support team — they're closest to you.</p>
 
     <!-- ══════════════════════════════════════
                                  STATE SUPPORT CENTER PANEL
                             ══════════════════════════════════════ -->
     <!-- STATE PANEL -->
+    <ng-container *ngIf="isSectionEnabled('stateSupportCenter')">
 
-    <div class="state-panel">
+    <div class="state-panel" >
 
       <div class="state-panel__header">
         <div class="state-panel__header-left">
@@ -92,15 +93,16 @@
       </ng-template>
 
     </div>
+    </ng-container>
 
-    <!-- <div class="support-step-hint">
+    <div class="support-step-hint" *ngIf="isSectionEnabled('stateSupportCenter') && isSectionEnabled('nationalHelpDesk')">
       <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
       <span style="color:#6b7280;font-size:.88rem">or Reach out to <strong style="color:#0d1b6e">National Help
           Desk</strong></span>
-    </div> -->
+    </div>
 
     <!-- Call Card -->
-    <div class="call-card mt-5">
+    <div class="call-card mt-5" *ngIf="isSectionEnabled('nationalHelpDesk')">
       <div class="call-card__left">
         <div class="call-card__phone-icon-wrap">
           <span class="material-icons call-card__phone-icon">phone_in_talk</span>
