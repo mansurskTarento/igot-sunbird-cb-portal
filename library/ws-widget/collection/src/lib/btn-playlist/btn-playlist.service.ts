@@ -19,7 +19,7 @@ const API_END_POINTS = {
   sharePlaylist: '/apis/protected/v8/user/playlist/share',
   updatePlaylists: (playlistId: string) => `/apis/protected/v8/user/playlist/${playlistId}`,
   getSearchData: `/apis/proxies/v8/sunbirdigot/search`,
-  getPlaylistData: (playlistId: string) => `/apis/proxies/v8/action/content/v3/hierarchy/${playlistId}?mode=edit`,
+  getPlaylistData: (playlistId: string) => `/apis/proxies/v8/course/v1/hierarchy/${playlistId}?mode=edit`,
 }
 
 @Injectable({
@@ -35,7 +35,7 @@ export class BtnPlaylistService {
       // tslint:disable-next-line:max-line-length
       if (this.configSvc.userProfile.lastName && this.configSvc.userProfile.lastName !== null && this.configSvc.userProfile.lastName !== undefined) {
         this.userName = (`${this.configSvc.userProfile.firstName}''${this.configSvc.userProfile.lastName}`)
-      } else  {
+      } else {
         this.userName = (`${this.configSvc.userProfile.firstName}`)
       }
       this.userId = this.configSvc.userProfile.userId

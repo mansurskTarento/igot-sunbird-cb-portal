@@ -17,14 +17,15 @@
       Still facing an issue?
       <span class="support-section__heading--accent">We're here to help!</span>
     </h2>
-    <!-- <p class="support-section__sub">Start with your state support team — they're closest to you.</p> -->
+    <p class="support-section__sub" >Start with your state support team — they're closest to you.</p>
 
     <!-- ══════════════════════════════════════
                                  STATE SUPPORT CENTER PANEL
                             ══════════════════════════════════════ -->
     <!-- STATE PANEL -->
+    <ng-container *ngIf="isSectionEnabled('stateSupportCenter')">
 
-    <!-- <div class="state-panel">
+    <div class="state-panel" >
 
       <div class="state-panel__header">
         <div class="state-panel__header-left">
@@ -91,16 +92,17 @@
         </div>
       </ng-template>
 
-    </div> -->
+    </div>
+    </ng-container>
 
-    <!-- <div class="support-step-hint">
+    <div class="support-step-hint" *ngIf="isSectionEnabled('stateSupportCenter') && isSectionEnabled('nationalHelpDesk')">
       <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
       <span style="color:#6b7280;font-size:.88rem">or Reach out to <strong style="color:#0d1b6e">National Help
           Desk</strong></span>
-    </div> -->
+    </div>
 
     <!-- Call Card -->
-    <div class="call-card mt-5">
+    <div class="call-card mt-5" *ngIf="isSectionEnabled('nationalHelpDesk')">
       <div class="call-card__left">
         <div class="call-card__phone-icon-wrap">
           <span class="material-icons call-card__phone-icon">phone_in_talk</span>
@@ -130,7 +132,7 @@
     </div>
 
     <!-- Ticket Card -->
-    <div class="ticket-card">
+    <div class="ticket-card ticket-card__cta">
       <div class="ticket-card__left">
         <div class="ticket-card__icon-wrap">
           <span class="material-icons ticket-card__icon">email</span>
@@ -199,14 +201,14 @@
             <div class="sc-card__num">{{i+1}}</div>
             <div class="sc-card__info">
               <div class="sc-card__name">{{admin?.name}}</div>
-              <div class="sc-card__desg">{{admin.designation}}</div>
+              <div class="sc-card__desg" *ngIf="admin.designation !== 'N/A'">{{admin.designation}}</div>
             </div>
           </div>
           <div class="sc-card__actions">
             <a [href]="'tel:' + formatPhone(admin.mobile)" class="sc-card__call">
               <span class="material-icons">phone</span>{{admin.mobile}}
             </a>
-            <a [href]="'mailto:' + admin.email" class="sc-card__mail">
+            <a [href]="'mailto:' + admin.email" class="sc-card__mail" *ngIf="admin?.email !== 'N/A'">
               <span class="material-icons">mail_outline</span>{{admin.email}}
             </a>
           </div>

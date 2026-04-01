@@ -95,7 +95,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.isMultiLangEnabled = instanceConfig.isMultilingualEnabled
     }
     this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
-    console.log('this.rightNavConfig--', this.rightNavConfig)
     this.homePageService.closeDialogPop.subscribe((data: any) => {
       if (data) {
         this.dialogRef.close()

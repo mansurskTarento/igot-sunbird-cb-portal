@@ -1230,6 +1230,10 @@ const routes: Routes = [
     loadChildren: () => import('./help-center/help-center.module').then(m => m.HelpCenterModule),
   },
   {
+    path: 'igot/help-centre',
+    loadChildren: () => import('./help-center/help-center.module').then(m => m.HelpCenterModule),
+  },
+  {
     path: '**',
     component: ErrorResolverComponent,
     data: {
