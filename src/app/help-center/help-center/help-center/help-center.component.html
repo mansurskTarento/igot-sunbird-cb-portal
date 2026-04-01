@@ -157,15 +157,20 @@
                         </aside>
                         <div class="guides-grid" *ngIf="filteredGuides.length > 0; else noGuides">
                             <div class="guide-card" *ngFor="let guide of filteredGuides" (click)="openPDF(guide)">
-                                <div class="guide-card__preview">
-                                    <div class="guide-card__preview-header">{{ guide.title }}</div>
-                                    <div class="guide-card__preview-lines">
-                                        <div class="guide-card__line guide-card__line--title">{{ guide.title }}</div>
-                                        <div class="guide-card__line"></div>
-                                        <div class="guide-card__line guide-card__line--short"></div>
-                                        <div class="guide-card__line guide-card__line--medium"></div>
-                                        <div class="guide-card__line"></div>
-                                    </div>
+                                <div class="guide-card__preview" [ngClass]="{'guide-card__preview_p-0': guide.thumbnail}">
+                                    <ng-container *ngIf="guide?.thumbnail; else guidePreviewFallback">
+                                        <img class="guide-card__thumbnail" [src]="guide?.thumbnail" [alt]="guide.title" />
+                                    </ng-container>
+                                    <ng-template #guidePreviewFallback>
+                                        <div class="guide-card__preview-header">{{ guide.title }}</div>
+                                        <div class="guide-card__preview-lines">
+                                            <div class="guide-card__line guide-card__line--title">{{ guide.title }}</div>
+                                            <div class="guide-card__line"></div>
+                                            <div class="guide-card__line guide-card__line--short"></div>
+                                            <div class="guide-card__line guide-card__line--medium"></div>
+                                            <div class="guide-card__line"></div>
+                                        </div>
+                                    </ng-template>
                                     <div class="guide-card__pdf-badge">
                                         <span class="material-icons" style="font-size:12px">picture_as_pdf</span> PDF
                                     </div>
