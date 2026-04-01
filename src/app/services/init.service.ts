@@ -210,7 +210,7 @@ export class InitService {
   }
 
   get isAnonymousTelemetryRequired(): boolean {
-    this.isAnonymousTelemetry = window.location.href.includes('/public/')
+    this.isAnonymousTelemetry = window.location.href.includes('/public/') || window.location.href.includes('/helpcenter')
       || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
     return this.isAnonymousTelemetry
   }
@@ -242,7 +242,7 @@ export class InitService {
     // Invalid User
     try {
       const path = window.location.pathname
-      const isPublic = window.location.href.includes('/public/')
+      const isPublic = window.location.href.includes('/public/')|| window.location.href.includes('/helpcenter')
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
@@ -301,7 +301,7 @@ export class InitService {
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
         window.location.href.includes('/achievements') ||
-        window.location.href.includes('/viewer')
+        window.location.href.includes('/viewer')|| window.location.href.includes('/helpcenter')
       )
     ) {
       this.logFirstLogin()

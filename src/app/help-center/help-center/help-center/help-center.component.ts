@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core'
 
-
-
 import {
   RoleTab,
   ContentTab,
@@ -9,14 +7,8 @@ import {
   HowToGuide,
   FaqItem,
   Category,
-  VIDEO_CATEGORIES_MAP,
-  GUIDE_CATEGORIES_MAP,
-  FAQ_CATEGORIES_MAP,
-  // VIDEO_TUTORIALS,
-  // HOW_TO_GUIDES,
-  // FAQ_ITEMS,
-  HOW_TO_GUIDES_MAP, VIDEO_TUTORIALS_MAP, FAQ_ITEMS_MAP,
 } from './help-center.model'
+import { HelpCenterService } from '../../help-center.service'
 
 
 
@@ -47,31 +39,27 @@ export class HelpCenterComponent implements OnInit {
   activeGuideCategory = 'all';
   activeFaqCategory = 'all';
 
-  // Data
-  // videoCategories: Category[] = VIDEO_CATEGORIES;
-  // guideCategories: Category[] = GUIDE_CATEGORIES;
-  // faqCategories: Category[] = FAQ_CATEGORIES;
+  helpCenterData: any = null;
+  enabledSections: any = {};
 
-  // allVideos: VideoTutorial[] = VIDEO_TUTORIALS;
-  // allGuides: HowToGuide[] = HOW_TO_GUIDES;
-  // allFaqs: FaqItem[] = FAQ_ITEMS;
+  roleTabs: any[] = [];
+  contentTabs: any[] = [];
 
-  roleTabs = [
-    { id: 'learner' as RoleTab, label: 'Learner', icon: 'school' },
-    { id: 'mdo-leader' as RoleTab, label: 'MDO Leader/Admin', icon: 'badge' },
-    { id: 'content-building' as RoleTab, label: 'Content Partners', icon: 'computer' },
-  ];
+  constructor(private helpCenterSvc: HelpCenterService) {}
 
-  contentTabs = [
-    { id: 'all' as ContentTab, label: 'All Content', icon: 'grid_view' },
-    { id: 'videos' as ContentTab, label: 'Video Tutorials', icon: 'play_circle_filled' },
-    // { id: 'guides' as ContentTab, label: 'How-to Guides', icon: 'menu_book' },
-    { id: 'faqs' as ContentTab, label: 'FAQs', icon: 'help_outline' },
-  ];
+  ngOnInit() {    
+    this.helpCenterSvc.fetchHelpCenterConfig().subscribe((config: any) => {
+      this.helpCenterData = config;
+      if (this.helpCenterData) {
+        this.roleTabs = this.helpCenterData.roleTabs || [];
+        this.contentTabs = this.helpCenterData.contentTabs || [];
+        this.enabledSections = this.helpCenterData.enabledSections || {};
+      }
+    });
+  }
 
-
-  ngOnInit() {
-
+  isSectionEnabled(section: string): boolean {
+    return this.enabledSections[section] !== false;
   }
 
   get filteredVideos(): VideoTutorial[] {
@@ -245,15 +233,15 @@ export class HelpCenterComponent implements OnInit {
   }
 
   get allGuides(): HowToGuide[] {
-    return HOW_TO_GUIDES_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.howToGuidesMap && this.helpCenterData.howToGuidesMap[this.activeRoleTab]) || []
   }
 
   get allVideos(): VideoTutorial[] {
-    return VIDEO_TUTORIALS_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.videoTutorialsMap && this.helpCenterData.videoTutorialsMap[this.activeRoleTab]) || []
   }
 
   get allFaqs(): FaqItem[] {
-    return FAQ_ITEMS_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.faqItemsMap && this.helpCenterData.faqItemsMap[this.activeRoleTab]) || []
   }
 
   openVideo(video: VideoTutorial): void {
@@ -283,15 +271,15 @@ export class HelpCenterComponent implements OnInit {
   }
 
   get videoCategories(): Category[] {
-    return VIDEO_CATEGORIES_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.videoCategoriesMap && this.helpCenterData.videoCategoriesMap[this.activeRoleTab]) || []
   }
 
   get guideCategories(): Category[] {
-    return GUIDE_CATEGORIES_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.guideCategoriesMap && this.helpCenterData.guideCategoriesMap[this.activeRoleTab]) || []
   }
 
   get faqCategories(): Category[] {
-    return FAQ_CATEGORIES_MAP[this.activeRoleTab] || []
+    return (this.helpCenterData?.faqCategoriesMap && this.helpCenterData.faqCategoriesMap[this.activeRoleTab]) || []
   }
 
 

@@ -6,6 +6,7 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { HelpCenterComponent } from './help-center/help-center/help-center.component'
 import { SuppotSectionComponent } from './help-center/suppot-section/suppot-section.component'
 import { MatIconModule } from '@angular/material/icon'
+import { HttpClientModule } from '@angular/common/http'
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { MatIconModule } from '@angular/material/icon'
     CommonModule,
     HelpCenterRoutingModule,
     ReactiveFormsModule,
-    MatIconModule
+    MatIconModule,
+    HttpClientModule,
 
   ]
 })
