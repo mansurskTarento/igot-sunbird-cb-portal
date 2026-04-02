@@ -126,8 +126,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
         if (this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed !== undefined) {
           this.isMDOMsgOpen = this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed
           if (!this.isMDOMsgOpen) {
-            this.getApprovedStatus()
-            this.getRejectedStatus()
+            // Temporarily disabled to avoid calling workflow/v2/userWFApplicationFieldsSearch from home entry point
+            // this.getApprovedStatus()
+            // this.getRejectedStatus()
           }
         }
       }
@@ -263,7 +264,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.sectionList.push({ section: 'discuss', isVisible: false })
     this.sectionList.push({ section: 'network', isVisible: false })
 
-    this.getListPendingApproval()
+    // Temporarily disabled to avoid calling workflow/v2/userWFApplicationFieldsSearch from home entry point
+    // this.getListPendingApproval()
     // this.handleUpdateMobileNudge()
     this.handleDefaultFontSetting()
 
