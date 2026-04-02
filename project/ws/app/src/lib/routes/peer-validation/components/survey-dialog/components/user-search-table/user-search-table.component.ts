@@ -1,5 +1,7 @@
-import { Component, Input, Output, EventEmitter, OnInit, Inject, Optional, OnChanges, SimpleChanges } from '@angular/core'
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, Inject, Optional, OnChanges, SimpleChanges } from '@angular/core'
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { Subject } from 'rxjs'
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators'
 import { PeerValidationService } from '../../../../services/peer-validation.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
@@ -8,8 +10,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
   templateUrl: './user-search-table.component.html',
   styleUrls: ['./user-search-table.component.scss'],
 })
-export class UserSearchTableComponent implements OnInit, OnChanges {
-  @Input() users: any[] = []
+export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)
   @Input() maxSelect = 3
   @Input() searchQuery = ''                 // Driven by parent search input
@@ -18,6 +19,9 @@ export class UserSearchTableComponent implements OnInit, OnChanges {
 
   filteredUsers: any[] = []
   currentUserId: string = ''
+
+  private searchSubject = new Subject<string>()
+  private destroy$ = new Subject<void>()
 
   constructor(
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any,
@@ -31,40 +35,35 @@ export class UserSearchTableComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.getAllUsers()
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      takeUntil(this.destroy$)
+    ).subscribe(query => this.fetchUsers(query))
+
+    this.fetchUsers('')
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes['selectedUserIds'] || changes['searchQuery']) {
-      this.filterUsers()
+    if (changes['searchQuery'] && !changes['searchQuery'].firstChange) {
+      this.searchSubject.next(this.searchQuery)
     }
   }
 
-  getAllUsers() {
-    const request$ = this.peerValidationService.getAllUsers(this.contextOrgId || undefined)
+  ngOnDestroy() {
+    this.destroy$.next()
+    this.destroy$.complete()
+  }
 
-    request$.subscribe({
+  fetchUsers(query: string) {
+    this.peerValidationService.getAllUsers(this.contextOrgId || undefined, query).subscribe({
       next: (res: any) => {
-        this.users = res?.result?.response?.content || res?.result?.content || res || []
-        this.filterUsers()
+        this.filteredUsers = res?.result?.response?.content || res?.result?.content || res || []
       },
       error: (err: any) => {
         console.error('Error fetching users:', err)
-        this.users = []
         this.filteredUsers = []
       },
-    })
-  }
-
-  filterUsers() {
-    const query = this.searchQuery.toLowerCase().trim()
-    this.filteredUsers = this.users.filter(user => {
-      const name = this.getUserFullName(user).toLowerCase()
-      const email = (
-        user.profileDetails?.personalDetails?.primaryEmail ||
-        user.email || ''
-      ).toLowerCase()
-      return name.includes(query) || email.includes(query)
     })
   }
 

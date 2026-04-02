@@ -18,6 +18,7 @@ import { MatPaginatorModule } from '@angular/material/paginator'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { PlayerVideoModule, PlayerPdfModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 // Routing
@@ -75,6 +76,7 @@ import { UserSearchTableComponent } from './components/survey-dialog/components/
     MatTabsModule,
     MatProgressSpinnerModule,
     MatSnackBarModule,
+    MatTooltipModule,
     PlayerVideoModule,
     PlayerPdfModule,
     WidgetResolverModule,

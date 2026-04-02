@@ -27,11 +27,11 @@ export class PeerValidationService {
   constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
 
 
-  getAllUsers(rootOrgId?: string) {
+  getAllUsers(rootOrgId?: string, query: string = '') {
     const orgId = rootOrgId || this.configSvc.userProfile?.rootOrgId
     const reqBody = {
       request: {
-        query: '',
+        query,
         filters: {
           rootOrgId: orgId,
         },
@@ -198,6 +198,7 @@ export class PeerValidationService {
             question: r.question || '',
             answer: r.answer,
             answerType: r.answerType || '',
+            isRequired: r.isRequired || false,
           })),
           attachments: item.attachments || [],
         } as NSPeerValidation.IReviewRequest

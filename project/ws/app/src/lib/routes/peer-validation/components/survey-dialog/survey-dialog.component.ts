@@ -168,6 +168,7 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
         question: q.text,
         answer,
         answerType: q.type === 'textArea' ? 'textarea' : q.type,
+        isRequired: q.required,
       }
     })
 
