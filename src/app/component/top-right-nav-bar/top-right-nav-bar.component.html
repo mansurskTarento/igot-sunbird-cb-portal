@@ -45,7 +45,7 @@
                     <img src="/assets/icons/top-nav/translate_icon.svg" alt="Language"
                         class="lang-img margin-right-xs" />
                     <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage"
-                        (ngModelChange)="selectLanguage($event)" class="language-select">
+                        [disabled]="true" (ngModelChange)="selectLanguage($event)" class="language-select">
                         <span *ngFor="let lang of multiLang">
                             <mat-option *ngIf="lang.active" [value]="lang.key"
                                 [ngClass]="{'checkmark':lang.key == selectedLanguage}">{{lang.value}}</mat-option>
@@ -55,11 +55,11 @@
             </li>
 
             <!-- //NOSONAR -->
-            <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.needHelp' | translate }}"
+            <!-- <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.needHelp' | translate }}"
                 (click)="openSupportChatBot()" class="help-icon" id="help-icon"
                 *ngIf="item.type === 'helpButton' && rnc.section === 'help' && rnc.active && item?.forPreview">
                 <img src="/assets/icons/top-nav/help_icon.svg" alt="">
-            </li>
+            </li> -->
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.profile' | translate }}">
                 <ng-container
                     *ngIf="item.type === 'widgetButton' && rnc.section === 'profile' && rnc.active && item?.forPreview"

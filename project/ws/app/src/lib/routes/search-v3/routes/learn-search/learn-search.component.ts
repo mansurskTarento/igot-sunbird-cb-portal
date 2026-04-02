@@ -426,9 +426,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchPeopleLoader = true
 
     this.searchRequestPeoples.query = this.statedata?.param || ''
-    const result = await this.searchV3Service.searchConnections(
-      this.searchRequestPeoples
-    )
+    const result :any={}
+    // AFTER NLW NEED TO ENABLE
+    // const result = await this.searchV3Service.searchConnections(
+    //   this.searchRequestPeoples
+    // )
 
     if (result && result.result && result.result?.response?.content) {
       this.peoplesSearchResults = result.result?.response?.content || []

@@ -94,7 +94,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.multiLang = instanceConfig.websitelanguages
       this.isMultiLangEnabled = instanceConfig.isMultilingualEnabled
     }
-    this.rightNavConfig = this.rightNavConfig.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
+    this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
     this.homePageService.closeDialogPop.subscribe((data: any) => {
       if (data) {
         this.dialogRef.close()
@@ -107,7 +107,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.rightNavConfig = this.rightNavConfig.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
+    this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig?.topRightNavConfig : this.rightNavConfig
   }
   // ngOnChanges() {}
   // openDialog(): void {

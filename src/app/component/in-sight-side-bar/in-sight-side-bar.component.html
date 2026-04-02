@@ -57,35 +57,69 @@
     <div class="hint" [innerHTML]="renderUpdateDesignationCardHint()"></div>
 </div>
 <div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
-    <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
-        <div class="flex">
-            <div class="nlw-title gap-3">
-                {{currentLang === 'hi'? nwlConfiguration?.titleHi : nwlConfiguration?.title}}
-            </div>
-            <div class="nlw-title">
-                <img class="nlw-animation" src="assets/images/national-learning/nlw.gif" alt=""/>
-            </div>
-        </div>
-        <div class="flex nlw-description">
-            {{currentLang === 'hi'? nwlConfiguration?.descriptionHi : nwlConfiguration?.description }}
-        </div>
-        <div class="progress-wrapper mt-5">
-            <div class="flex items-center">
-                <div *ngFor="let n of [].constructor(totalDays); let i = index">
-                    <div class="flex items-center">
-                        <div class="dot {{daysCompleted > i ? 'active' : ''}}" ></div>
-                        <div class="line {{daysCompleted > i ? 'active' : ''}}" [ngStyle]="{'width': nwlConfiguration?.width}"></div>
-                        <div class="dot" *ngIf="(totalDays - 1) === i"></div>
-                    </div>                    
+    <div class="nlw-slider">
+        <!-- Config-driven slides -->
+        <ng-container *ngFor="let slide of nlwSlides; let si = index">
+            <!-- Content slide -->
+            <div class="nlw-slide" *ngIf="nlwSlideIndex === si && slide.type === 'content'">
+                <div class="nlw-container cursor-pointer" (click)="navigateToNationalLearning()">
+                    <div class="flex">
+                        <div class="nlw-title gap-3">
+                            {{currentLang === 'hi'? nwlConfiguration?.titleHi : nwlConfiguration?.title}}
+                        </div>
+                        <div class="nlw-title">
+                            <img class="nlw-animation" src="{{nwlConfiguration?.icon || 'assets/images/national-learning/nlw.gif'}}" alt=""/>
+                        </div>
+                    </div>
+                    <div class="flex nlw-description">
+                        {{currentLang === 'hi'? nwlConfiguration?.descriptionHi : nwlConfiguration?.description }}
+                    </div>
+                    <div class="flex nlw-description flex-wrap">
+                        <ng-container *ngIf="nwlConfiguration?.descriptionV2Hi || nwlConfiguration?.descriptionV2">
+                            <ng-container *ngFor="let description of (currentLang === 'hi' ? nwlConfiguration?.descriptionV2Hi : nwlConfiguration?.descriptionV2)">
+                                <p>{{description}}</p>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+                    <div class="progress-wrapper mt-5">
+                        <div class="flex items-center">
+                            <div *ngFor="let n of [].constructor(totalDays); let i = index">
+                                <div class="flex items-center">
+                                    <div class="dot {{daysCompleted > i ? 'active' : ''}}" ></div>
+                                    <div class="line {{daysCompleted > i ? 'active' : ''}}" [ngStyle]="{'width': nwlConfiguration?.width}"></div>
+                                    <div class="dot" *ngIf="(totalDays - 1) === i"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-align-end nlw-redirect margin-top-l">
+                        <button
+                            class="nlw-view-more-btn mat-button mat-button-base text-white">
+                            {{nwlConfiguration?.buttonText}}
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="flex flex-align-end nlw-redirect margin-top-l">
-            <button
-                class="nlw-view-more-btn mat-button mat-button-base text-white">
-                {{nwlConfiguration?.buttonText}}
+            <!-- Banner slide -->
+            <div class="nlw-slide" *ngIf="nlwSlideIndex === si && slide.type === 'banner'">
+                <div class="nlw-slide-banner cursor-pointer" (click)="navigateToNationalLearning()">
+                    <img [src]="slide.image || nwlConfiguration?.flipImage || 'https://portal.igotkarmayogi.gov.in/content-store/orgStore/0133783095823810560/1774520209280_1x1 Banner_1.svg'" alt="" class="nlw-slide-banner-img" />
+                </div>
+            </div>
+        </ng-container>
+        <!-- Slider controls (only when more than 1 slide) -->
+        <ng-container *ngIf="nlwSlides.length > 1">
+            <button class="nlw-nav nlw-nav-left" (click)="prevNlwSlide()" aria-label="Previous slide">
+                <mat-icon>chevron_left</mat-icon>
             </button>
-        </div>
+            <button class="nlw-nav nlw-nav-right" (click)="nextNlwSlide()" aria-label="Next slide">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+            <div class="nlw-slider-dots">
+                <span *ngFor="let slide of nlwSlides; let di = index"
+                    class="nlw-dot" [class.active]="nlwSlideIndex === di" (click)="goToNlwSlide(di)"></span>
+            </div>
+        </ng-container>
     </div>
 </div>
 

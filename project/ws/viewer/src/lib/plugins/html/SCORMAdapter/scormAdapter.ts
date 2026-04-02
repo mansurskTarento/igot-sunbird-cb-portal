@@ -9,7 +9,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 import dayjs from 'dayjs'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-import { Subject } from 'rxjs'
+import { Subject, of, Observable } from 'rxjs'
 const API_END_POINTS = {
   SCROM_ADD_UPDTE: '/apis/protected/v8/scrom/add',
   SCROM_FETCH: '/apis/protected/v8/scrom/get',
@@ -119,16 +119,19 @@ export class SCORMAdapterService {
 
       //only for complete and pass status, progress call should be done
       if (this.getStatus(data) === 2) {
-        this.addDataV2(data).subscribe((response) => {
-          if (response) {
-            _return = true
-          }
-        }, (error) => {
-          if (error) {
-            this._setError(101)
-            // console.log(error)
-          }
-        })
+        const obs = this.addDataV2(data)
+        if (obs && typeof (obs.subscribe) === 'function') {
+          obs.subscribe((response) => {
+            if (response) {
+              _return = true
+            }
+          }, (error) => {
+            if (error) {
+              this._setError(101)
+              // console.log(error)
+            }
+          })
+        }
       }
 
       return _return
@@ -284,11 +287,12 @@ export class SCORMAdapterService {
       return 1
     }
   }
-  addDataV2(postData: IScromData) {
+  addDataV2(postData: IScromData): Observable<any> {
     let req: any
     const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
-    if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId) {
+    // Avoid sending an empty request body. Require userProfile, courseId, batchId and non-empty postData.
+    if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId && postData && Object.keys(postData).length) {
       const language = this.viewerSvc.getResourceContentLanguage(this.contentId)
       req = {
         request: {
@@ -306,14 +310,25 @@ export class SCORMAdapterService {
           ],
         },
       }
-    } else {
-      req = {}
+      return this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
     }
-    return this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
+    // Do not call the API with an empty payload; log and return an empty observable instead.
+    try {
+      const userId = this.configSvc.userProfile ? this.configSvc.userProfile.userId : ''
+      const contentId = this.contentId || ''
+      const batchId = (requestCourse && requestCourse.batchId) ? requestCourse.batchId : ''
+      const courseId = (requestCourse && requestCourse.courseId) ? requestCourse.courseId : ''
+      console.warn('Skipping addDataV2 due to missing context', { contentId, batchId, courseId, userId })
+    } catch (e) {
+      // swallow
+    }
+    return of(null)
   }
 
   addDataV3(reqDetails: any, contentId?: string) {
     let req: any
+    // make return type explicit
+    let result: Observable<any>
     const requestCourse = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
       this.activatedRoute.snapshot.queryParams.batchId, this.contentId)
     if (this.configSvc.userProfile && requestCourse.courseId && requestCourse.batchId) {
@@ -325,17 +340,27 @@ export class SCORMAdapterService {
               contentId: contentId ? contentId : this.contentId,
               batchId: (requestCourse && requestCourse.batchId) ? requestCourse.batchId : '',
               courseId: (requestCourse && requestCourse.courseId) ? requestCourse.courseId : '',
-              status: (reqDetails.status) || 0,
+              status: (reqDetails && reqDetails.status) || 0,
               lastAccessTime: dayjs(new Date()).format('YYYY-MM-DD HH:mm:ss:SSSZZ'),
-              completionPercentage: reqDetails.completionPercentage,
-              progressdetails: { ...reqDetails.progressDetails },
+              completionPercentage: reqDetails && reqDetails.completionPercentage,
+              progressdetails: { ...(reqDetails && reqDetails.progressDetails) },
             },
           ],
         },
       }
-    } else {
-      req = {}
+      result = this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
+      return result
     }
-    return this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
+    // Log skipped call and return null observable
+    try {
+      const userId = this.configSvc.userProfile ? this.configSvc.userProfile.userId : ''
+      const cid = contentId ? contentId : this.contentId || ''
+      const batchId = (requestCourse && requestCourse.batchId) ? requestCourse.batchId : ''
+      const courseId = (requestCourse && requestCourse.courseId) ? requestCourse.courseId : ''
+      console.warn('Skipping addDataV3 due to missing context', { contentId: cid, batchId, courseId, userId })
+    } catch (e) {
+      // swallow
+    }
+    return of(null)
   }
 }

@@ -1,5 +1,5 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
-import { Component, EventEmitter, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, OnInit, OnDestroy, Output, ChangeDetectorRef } from '@angular/core'
 import { HomePageService } from '../../services/home-page.service'
 import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
@@ -61,7 +61,7 @@ const noData = {
   ],
 })
 
-export class InsightSideBarComponent implements OnInit {
+export class InsightSideBarComponent implements OnInit, OnDestroy {
   profileDataLoading = true
   homePageData: any
   noDataValue: {} | undefined
@@ -90,6 +90,8 @@ export class InsightSideBarComponent implements OnInit {
   isIgotOrg = false
   nwlConfiguration: any
   canShowNlwCard = false
+  nlwSlideIndex = 0
+  private nlwAutoSlideInterval: any = null
   slwConfiguration: any
   canShowSlwCard = false
   totalDays = 0
@@ -116,7 +118,8 @@ export class InsightSideBarComponent implements OnInit {
     private signupService: SignupService,
     private profileV2Svc: ProfileV2Service,
     private userProfileService: UserProfileService,
-    private langtranslations: MultilingualTranslationsService) {
+    private langtranslations: MultilingualTranslationsService,
+    private cdr: ChangeDetectorRef) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
@@ -160,6 +163,7 @@ export class InsightSideBarComponent implements OnInit {
 
       if (this.nwlConfiguration && this.nwlConfiguration.enabled) {
         this.getNlwConfig()
+        this.startNlwAutoSlide()
       }
       if (this.updateDesignationCard && this.updateDesignationCard.enabled) {
         this.getMasterDesignation()
@@ -679,5 +683,62 @@ export class InsightSideBarComponent implements OnInit {
 
   raiseTelemetryInteratEvent(event: any) {
     this.telemetryRaisedLibrary.emit(event)
+  }
+
+  /**
+   * Config-driven slides.
+   * Each entry: { type: 'banner', image?: string } or { type: 'content' }
+   * Falls back to [banner, content] when slides array is absent (backward compat).
+   */
+  get nlwSlides(): any[] {
+    if (this.nwlConfiguration?.slides?.length) {
+      return this.nwlConfiguration.slides
+    }
+    // Default: banner first, then content card
+    return [
+      { type: 'banner' },
+      { type: 'content' },
+    ]
+  }
+
+  /** Start auto-slide for the NLW card — skipped when only 1 slide */
+  startNlwAutoSlide(): void {
+    if (this.nlwSlides.length <= 1) {
+      return
+    }
+    const interval = (this.nwlConfiguration?.flipInterval || 5) * 1000
+    this.nlwAutoSlideInterval = setInterval(() => {
+      this.nlwSlideIndex = (this.nlwSlideIndex + 1) % this.nlwSlides.length
+      this.cdr.detectChanges()
+    }, interval)
+  }
+
+  /** Go to a specific NLW slide */
+  goToNlwSlide(index: number): void {
+    this.nlwSlideIndex = index
+    this.cdr.detectChanges()
+    // Reset the auto-slide timer
+    if (this.nlwAutoSlideInterval) {
+      clearInterval(this.nlwAutoSlideInterval)
+    }
+    this.startNlwAutoSlide()
+  }
+
+  /** Navigate to the previous NLW slide */
+  prevNlwSlide(): void {
+    const prev = (this.nlwSlideIndex - 1 + this.nlwSlides.length) % this.nlwSlides.length
+    this.goToNlwSlide(prev)
+  }
+
+  /** Navigate to the next NLW slide */
+  nextNlwSlide(): void {
+    const next = (this.nlwSlideIndex + 1) % this.nlwSlides.length
+    this.goToNlwSlide(next)
+  }
+
+  ngOnDestroy(): void {
+    if (this.nlwAutoSlideInterval) {
+      clearInterval(this.nlwAutoSlideInterval)
+    }
   }
 }

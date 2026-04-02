@@ -1,8 +1,8 @@
 <div class="fixed-width flex flex-wrap">
   <!-- //NOSONAR -->
   <div class="chatbot-icon-container" [ngStyle]="(configSvc.updatePlatformRatingObservable$ | async)"
-    *ngIf="showIcon && isHubEnable" (mouseover)="expanded = true" (mouseleave)="expanded = false"
-    (click)="iconClick('start')">
+    *ngIf="showIcon && isHubEnable && (this.enableSupportAI || this.enableIGOTAIFlag)" (mouseover)="expanded = true"
+    (mouseleave)="expanded = false" (click)="iconClick('start')">
     <!-- [ngClass]="{'chatbot-icon-expanded': expanded}" -->
     <div class="chatbot-icon-ai flex" *ngIf="enableIGOTAIFlag || enableSupportAI">
       <div cdkDrag #dragItem class="draggable-icon" (cdkDragEnded)="onDragEnded($event)"
@@ -209,7 +209,7 @@
             </div>
           </div>
           <!-- //NOSONAR -->
-          <div *ngIf="!enableSupportAI" class="info br-bl padding-top-xs"
+          <div *ngIf="enableInformationTab" class="info br-bl padding-top-xs"
             [ngClass]="{active: currentFilter === 'information'}" (click)="toggleFilter('information')">
             <div class="info-icon">
               <mat-icon>info</mat-icon>
@@ -219,8 +219,8 @@
             </div>
           </div>
           <!-- //NOSONAR -->
-          <div *ngIf="!enableSupportAI" class="info br-br padding-top-xs"
-            [ngClass]="{active: currentFilter === 'issue'}" (click)="toggleFilter('issue')">
+          <div *ngIf="enableIssuesTab" class="info br-br padding-top-xs" [ngClass]="{active: currentFilter === 'issue'}"
+            (click)="toggleFilter('issue')">
             <div class="info-icon">
               <mat-icon>warning</mat-icon>
             </div>

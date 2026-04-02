@@ -10,7 +10,7 @@ import moment from 'moment'
 const API_END_POINTS = {
   NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/unread/count`,
   RESET_NOTIFICATIONS_COUNT: `apis/proxies/v8/v1/notifications/reset/unread/count`,
-  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/action/content/v3/read/${contentId}`,
+  CONTENT_READ: (contentId: any) => `/apis/proxies/v8/content/v2/read/${contentId}`,
   WORKFLOW_SEARCH: `apis/protected/v8/workflowhandler/profileApprovalSearch`,
   CONNECTION_REQUEST: (pageNo: any, pageSize: any) => `apis/protected/v8/connections/v2/connections/requests/received?pageNo=${pageNo}&pageSize=${pageSize}`,
 }
@@ -228,7 +228,7 @@ export class NotificationsService {
       this.router.navigateByUrl('/badges')
     }
     else if (notification.sub_category === 'AWARD_BADGES_REMINDER') {
-      this.router.navigateByUrl(`/app/toc/${notification?.message?.data?.[0]?.id}`)
+      this.router.navigateByUrl(`/app/toc/${notification?.message?.data?.[0]?.courseId}`)
     }
     else if (notification.category === 'LEARN') {
       this.handleTocRedirection(notification, snackBar)

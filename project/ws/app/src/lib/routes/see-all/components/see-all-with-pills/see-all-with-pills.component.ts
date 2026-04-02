@@ -821,7 +821,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             const formContextList: any[] = []
             const formRefMap: Record<string, any> = {} // contextId -> course reference map
 
-            // Build formBody and maintain reference map
+
             for (const course of res.result.courses) {
               const content = course.content
               if (content?.completionSurveyLink && content?.identifier) {
@@ -873,21 +873,26 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         })
       ).subscribe((res: any) => {
         if (res && res.result && res.result.courses && res.result.courses.length) {
-          courses = [...courses, ...res.result.courses]
+          courses = [...courses, ...res?.result?.courses]
         }
         this.enrollSvc.fetchExternalEnrollmentData(currentPillFromMap.request.payload).subscribe((res: any) => {
-          if (res && res.result && res.result.courses && res.result.courses.length) {
-            courses = [...courses, ...res.result.courses]
+          if (res && res?.result && res?.result?.courses && res?.result?.courses?.length) {
+            courses = [
+              ...courses,
+              ...res?.result?.courses.filter((course: any) =>
+                course && course?.content && Object.keys(course?.content)?.length > 0
+              )
+            ]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         }, (_err: any) => {
-          if (courses && courses.length) {
+          if (courses && courses?.length) {
             courses = [...courses]
             this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
           }
         })
       }, (_err: any) => {
-        if (courses && courses.length) {
+        if (courses && courses?.length) {
           courses = [...courses]
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
         }
@@ -923,7 +928,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     let content: any = []
     if (courses && courses.length) {
       content = courses.map((c: any) => {
-        const contentTemp: any = c.content || c.event || {}
+        const contentTemp: any = c?.content || c?.event || {}
         contentTemp.completionPercentage = c.completionPercentage || c.progress || 0
         contentTemp.completionStatus = c.completionStatus || c.status || 0
         contentTemp.enrolledDate = c.enrolledDate || ''
@@ -934,7 +939,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         contentTemp.issuedCertificates = c.issuedCertificates || c.issued_certificates || []
         contentTemp.batchId = c.batchId || ''
         contentTemp.content = c.content || c.event || {}
-        contentTemp.content.primaryCategory = c.content && c.content.primaryCategory || c.event && c.event.resourceType || ''
+        contentTemp.content.primaryCategory = c?.content && c?.content?.primaryCategory || c?.event && c?.event?.resourceType || ''
         contentTemp.cType = c.event ? 'event' : ''
         contentTemp.completedOn = c.completedOn || ''
         if (c.surveyCompletionStatus !== undefined) {

@@ -76,7 +76,7 @@
                     <ng-container *ngFor="let browseData of eventsHome?.data?.rightSection?.data?.browse?.data">
                         <ng-container *ngIf="browseData.enabled">
                             <div class="flex gap-3 px-3 items-center categories-card" (click)="navigate(browseData)">
-                                <img [src]="browseData.icon">
+                                <img [src]="browseData.icon" class="category-image">
                                 {{translateLabels(browseData.title?.id, 'events')}}
                             </div>
                         </ng-container>

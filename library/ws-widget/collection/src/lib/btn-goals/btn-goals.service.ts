@@ -99,11 +99,11 @@ export class BtnGoalsService {
   }
 
   getUserGoal(id: string) {
-    return this.http.get<NsGoal.IUserGoals>(`/apis/proxies/v8/action/content/v3/hierarchy/${id}?mode=edit`)
+    return this.http.get<NsGoal.IUserGoals>(`/apis/proxies/v8/course/v1/hierarchy/${id}?mode=edit`)
   }
 
   getGoalContent(id: string) {
-    return this.http.get<NsGoal.IGoalsGroup>(`/apis/proxies/v8/action/content/v3/hierarchy/${id}?mode=edit`)
+    return this.http.get<NsGoal.IGoalsGroup>(`/apis/proxies/v8/course/v1/hierarchy/${id}?mode=edit`)
 
   }
 

@@ -194,8 +194,10 @@ export function videoJsInitializer(
   enableTelemetry: boolean,
   widgetData: IWidgetsPlayerMediaData,
   mimeType: NsContent.EMimeTypes,
-  size?: any
+  size?: any,
+  rateToFire?: number
 ): { player: videoJs.Player; dispose: () => void } {
+  const heartBeatInterval = ((rateToFire || 0) / 60) || 2
   const player = videoJs(elem, config)
   const eventDispatcher = enableTelemetry
     ? generateEventDispatcherHelper(passThroughData, dispatcher, widgetSubType)
@@ -233,7 +235,7 @@ export function videoJsInitializer(
     player.on(videojsEventNames.play, () => {
       if (!loaded) {
         eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
-        heartBeatSubscription = interval(2 * 60000).subscribe(_ => {
+        heartBeatSubscription = interval(heartBeatInterval * 60000).subscribe(_ => {
           if (passThroughData) {
             passThroughData['lastAccessTime'] = currTime
             passThroughData['timeSpent'] = timespentTimer
@@ -315,7 +317,7 @@ export function videoInitializer(
     playSubscription = fromEvent(elem, 'play').subscribe(() => {
       if (!loaded) {
         eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
-        heartBeatSubscription = interval(2 * 60000).subscribe(_ => {
+        heartBeatSubscription = interval(1 * 60000).subscribe(_ => {
           eventDispatcher(WsEvents.EnumTelemetrySubType.HeartBeat, widgetData, WsEvents.EnumTelemetryMediaActivity.PLAYED, mimeType)
         })
         loaded = true
