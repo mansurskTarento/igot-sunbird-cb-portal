@@ -101,11 +101,11 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       let startTime = playTime.startTime
       let endTime = playTime.endTime
       // let lastPlayedTime = startTime;
-      if (startTime && endTime) {
-        const player = this.playerInitObj.player
+      if (startTime && endTime && this.playerInitObj) {
+        const player = this.playerInitObj?.player
 
         player.currentTime(startTime) // Jump to star
-        this.playerInitObj.player.currentTime(startTime) // jump to start
+        this.playerInitObj?.player.currentTime(startTime) // jump to start
         // setTimeout(()=>{
         // initObj.player.autoplay()
         if (this.videoTag && this.videoTag.nativeElement) {
@@ -115,27 +115,23 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           this.realvideoTag.nativeElement.muted = false
           this.realvideoTag.nativeElement.play()
         }
-
-        // },1000)
-        // initObj.player.play();
-        this.playerInitObj.player.on('timeupdate', () => {
-          // console.log('this.playerInitObj.player.currentTime()',this.playerInitObj.player.currentTime())
-          // console.log('endTime',endTime)
-          if (endTime && parseInt(this.playerInitObj.player.currentTime()) >= parseInt(endTime)) {
-            this.playerInitObj.player.pause()
+        this.playerInitObj?.player.on('timeupdate', () => {
+          if (endTime && parseInt(this.playerInitObj?.player.currentTime()) >= parseInt(endTime)) {
+            this.playerInitObj?.player.pause()
             setTimeout(() => {
-              endTime = player.duration()
+              endTime = this.playerInitObj?.player.duration()
             }, 0)
 
           }
         })
-        // player.on('play', () => {
-        //   const current = player.currentTime();
-        //   if (current >= endTime && lastPlayedTime < endTime) {
-        //     player.currentTime(lastPlayedTime);
-        //   }
-
-        // });
+      } else {
+        // handler for video tag - safari case
+        this.realvideoTag.nativeElement.currentTime = startTime
+        this.realvideoTag.nativeElement.addEventListener('timeupdate', () => {
+          if (this.realvideoTag.nativeElement.currentTime >= endTime) {
+            this.realvideoTag.nativeElement.pause() // Pause when the end time is reached
+          }
+        }, false)
       }
 
 
@@ -143,22 +139,8 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
   }
 
-  // forward=()=>{
-  //   this.skip(15);
-  // }
-
-  // backward=()=>{
-  //    this.skip(-15);
-  // }
-
-  // skip(time:any) {
-  //   this.video.currentTime=this.video.currentTime+time;
-  // }
 
   async ngAfterViewInit() {
-    console.log('DEBUG: ngAfterViewInit called')
-    console.log('DEBUG: this.widgetData.isVideojs?', this.widgetData?.isVideojs)
-    console.log('DEBUG: this.playerInitObj exists?', !!this.playerInitObj)
     let playerInitialize = false
 
     this.widgetData = {
@@ -178,7 +160,6 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
         this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data: any) => {
           if (data && data?.activeLang) {
-            // console.log('data--', data)
             this.transcriptionLangArr = []
             this.transcriptionSubscriptionData = data
             this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
@@ -212,23 +193,12 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                         for (let j = 0; j < activeCues.length; j++) {
                           const cue: any = activeCues[j]
 
-                          // Log or store cue
-                          // allCues.push({
-                          //   start: cue.startTime,
-                          //   end: cue.endTime,
-                          //   text: cue?.text
-                          // });
-                          // console.log(cue)
                           this.appTocService.setTranscriptionData({
                             start: cue.startTime,
                             end: cue.endTime,
                             text: cue?.text
                           })
 
-                          // Show in browser
-                          // const entry = document.createElement('div');
-                          // entry.textContent = `Cue: [${cue.startTime.toFixed(1)}s - ${cue.endTime.toFixed(1)}s] → ${cue.text}`;
-                          // cueLog.appendChild(entry);
                         }
                         //console.log('cue', allCues)
                       }
@@ -243,10 +213,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
           }
         })
       } else {
-        console.log('DEBUG: Setting up HTML5 player with transcription subscription')
         this.initializeVPlayer()
-
-        // Subscribe to transcription language changes for HTML5 player
         this.changeTranscriptionLanguageEventSubscription = this.appTocService.changeTranscriptionLanguageEvent.subscribe((data: any) => {
           console.log('DEBUG: Transcription language changed for HTML5 player:', data)
           if (data && data?.activeLang) {
@@ -263,49 +230,63 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
     }
 
-    const videoTag: any = document.getElementsByTagName('video')[0]
-    if (videoTag) {
-      videoTag.onended = () => {
-        this.videoEnd = true
-        if (this.widgetData && this.widgetData.hideUpNext) {
-          this.replayVideoFlag = this.widgetData.hideUpNext ? true : false
-        }
-        const videoTagElement: any = document.getElementById('videoTag') || document.getElementById('realvideoTag')
-        const autoPlayVideo: any = document.getElementById('auto-play-video')
-        if (videoTagElement) {
-          if (autoPlayVideo) {
-            autoPlayVideo.style.opacity = '0.8'
-          }
-          videoTagElement.style.filter = 'blur(2px)'
-
-        }
-        let counter = 1
-        this.timerInterval = setInterval(() => {
-          if (counter <= 5) {
-            this.updateProgress(counter)
-          }
-          if (counter > 5) {
-            if (videoTag) {
-              videoTag.style.filter = 'blur(0px)'
-            }
-            if (autoPlayVideo) {
-              autoPlayVideo.style.opacity = '1'
-            }
-            counter = 0
-            this.clearTimeInterval()
-            this.viewerSvc.autoPlayNextVideo.next(true)
-          }
-          counter = counter + 1
-        }, 1000)
-
-      }
-    }
+    // Setup onended handler will be called from setupAutoplayHandler()
+    // This ensures it's attached properly even on subsequent loads
 
 
   }
 
   clearTimeInterval() {
     clearInterval(this.timerInterval)
+  }
+
+  private setupAutoplayHandler() {
+    // Get the actual video element - it could be either videoTag (videojs) or realvideoTag (HTML5)
+    const videoElement: any = this.videoTag?.nativeElement || this.realvideoTag?.nativeElement
+
+    if (!videoElement) {
+      console.warn('DEBUG: Video element not found for autoplay handler setup')
+      return
+    }
+
+    // Remove old handler if it exists to avoid duplicate handlers
+    videoElement.onended = null
+
+    // Set new handler
+    videoElement.onended = () => {
+      console.log('Video ended, showing autoplay overlay if enabled')
+      this.videoEnd = true
+      if (this.widgetData && this.widgetData.hideUpNext) {
+        this.replayVideoFlag = this.widgetData.hideUpNext ? true : false
+      }
+      const videoTagElement: any = document.getElementById('videoTag') || document.getElementById('realvideoTag')
+      const autoPlayVideo: any = document.getElementById('auto-play-video')
+      if (videoTagElement) {
+        if (autoPlayVideo) {
+          autoPlayVideo.style.opacity = '0.8'
+        }
+        videoTagElement.style.filter = 'blur(2px)'
+      }
+      let counter = 1
+      this.timerInterval = setInterval(() => {
+        if (counter <= 5) {
+          this.updateProgress(counter)
+        }
+        if (counter > 5) {
+          if (videoTagElement) {
+            videoTagElement.style.filter = 'blur(0px)'
+          }
+          if (autoPlayVideo) {
+            autoPlayVideo.style.opacity = '1'
+          }
+          counter = 0
+          this.clearTimeInterval()
+          this.viewerSvc.autoPlayNextVideo.next(true)
+        }
+        counter = counter + 1
+      }, 1000)
+    }
+    console.log('DEBUG: Autoplay handler attached to video element')
   }
 
   updateProgress(value: any) {
@@ -334,20 +315,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
 
   }
   private initializeVPlayer() {
-    console.log('DEBUG: initializeVPlayer() called - using NON-videojs player')
-    // alert()
-    // let playerInstance:any = this.player;
-    // if(playerInstance) {
-    //   var skipBehindButton = playerInstance.controlBar.addChild("button");
-    //   var skipBehindButtonDom = skipBehindButton.el();
-    //   skipBehindButtonDom.innerHTML = "30<<";
-    //   skipBehindButton.addClass("buttonClass");
 
-    //   // skipBehindButtonDom.onclick = function(){
-    //   //     skipS3MV(-30);
-    //   // }
-    //   console.log("playerInstance.controlBar",playerInstance.controlBar);
-    // }
 
     const dispatcher: telemetryEventDispatcherFunction = event => {
       if (this.widgetData.identifier) {
@@ -429,6 +397,330 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.widgetData,
       this.widgetData.mimeType,
     ).dispose
+
+    // Setup autoplay handler for HTML5 player
+    this.setupAutoplayHandler()
+  }
+
+  private initializePlayer() {
+    // Only dispose and reinitialize if it's the first time (playerInitObj is null)
+    // If player already exists, just update subtitles by calling loadPlayerForSafariAndOtherBrowser
+    if (this.playerInitObj) {
+      // Player already initialized - just update subtitles/tracks
+      console.log('DEBUG: Player already exists, just updating subtitles')
+      try {
+        this.loadPlayerForSafariAndOtherBrowser(this.playerInitObj, 0, 0)
+      } catch (e) {
+        console.error('Error updating subtitles:', e)
+      }
+      return
+    }
+
+    // First time initialization - create new player
+    console.log('DEBUG: First initialization, creating new player')
+
+    let startTime = 0
+    let endTime = 0
+    if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+      if (this.activatedRoute.snapshot.queryParams.st) {
+        startTime = this.activatedRoute.snapshot.queryParams.st
+        endTime = this.activatedRoute.snapshot.queryParams.et
+      }
+    }
+
+    const dispatcher: telemetryEventDispatcherFunction = event => {
+      if (this.widgetData.identifier) {
+        this.eventSvc.dispatchEvent(event)
+      }
+    }
+    const saveCLearning: saveContinueLearningFunction = data => {
+      if (this.widgetData.identifier) {
+        if (this.activatedRoute.snapshot.queryParams.collectionType &&
+          this.activatedRoute.snapshot.queryParams.collectionType.toLowerCase() === 'playlist') {
+          const continueLearningData = {
+            contextPathId: this.activatedRoute.snapshot.queryParams.collectionId ?
+              this.activatedRoute.snapshot.queryParams.collectionId : this.widgetData.identifier,
+            resourceId: data.resourceId,
+            contextType: 'playlist',
+            dateAccessed: Date.now(),
+            data: JSON.stringify({
+              progress: data.progress,
+              timestamp: Date.now(),
+              contextFullPath: [this.activatedRoute.snapshot.queryParams.collectionId, data.resourceId],
+            }),
+          }
+          this.contentSvc
+            .saveContinueLearning(continueLearningData)
+            .toPromise()
+            .catch()
+        } else {
+          const continueLearningData = {
+            contextPathId: this.activatedRoute.snapshot.queryParams.collectionId
+              ? this.activatedRoute.snapshot.queryParams.collectionId
+              : this.widgetData.identifier,
+            ...data,
+          }
+          this.contentSvc
+            .saveContinueLearning(continueLearningData)
+            .toPromise()
+            .catch()
+        }
+      }
+    }
+    const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
+      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
+        this.activatedRoute.snapshot.queryParams.batchId, identifier)
+      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+      const batchId = (resData && resData.batchId) ? resData.batchId : ''
+      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+      if (isPreAssessment) {
+        if (this.widgetData.identifier && identifier && data) {
+          this.viewerSvc
+            .realTimeProgressUpdateForPreAssessment(identifier, data)
+        }
+      } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
+        this.viewerSvc
+          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
+      }
+    }
+    let enableTelemetry = false
+    if (!this.widgetData.disableTelemetry && typeof (this.widgetData.disableTelemetry) !== 'undefined') {
+      enableTelemetry = true
+    }
+    const initObj = videoJsInitializer(
+      this.videoTag.nativeElement,
+      {
+        ...videoJsOptions,
+        poster: this.widgetData.posterImage ? this.viewerSvc.getPublicUrl(this.widgetData.posterImage || '') : '',
+        autoplay: this.widgetData.autoplay || false,
+      },
+      dispatcher,
+      saveCLearning,
+      fireRProgress,
+      this.widgetData.passThroughData,
+      ROOT_WIDGET_CONFIG.player.video,
+      this.widgetData.resumePoint ? this.widgetData.resumePoint : 0,
+      enableTelemetry,
+      this.widgetData,
+      this.widgetData.mimeType,
+      this.widgetData.size,
+
+    )
+    this.playerInitObj = initObj
+    this.player = initObj.player
+
+    this.dispose = initObj.dispose
+
+    // Ensure video element and player wrapper are visible
+    if (this.videoTag && this.videoTag.nativeElement) {
+      this.videoTag.nativeElement.style.display = 'block'
+      this.videoTag.nativeElement.style.visibility = 'visible'
+      this.videoTag.nativeElement.style.opacity = '1'
+    }
+
+    try {
+      console.log('DEBUG: Attempting to register ready() handler')
+      initObj.player.ready(() => {
+        console.log('Player ready event fired, initializing subtitles and autoplay handler')
+        // Ensure video element is visible
+        if (this.videoTag && this.videoTag.nativeElement) {
+          this.videoTag.nativeElement.style.display = 'block'
+          this.videoTag.nativeElement.style.visibility = 'visible'
+          this.videoTag.nativeElement.style.opacity = '1'
+        }
+        // Setup autoplay handler every time player is ready
+        this.setupAutoplayHandler()
+        try {
+          this.loadPlayerForSafariAndOtherBrowser(initObj, startTime, endTime)
+        } catch (e) {
+          console.error('Error in loadPlayerForSafariAndOtherBrowser:', e)
+        }
+      })
+      console.log('DEBUG: ready() handler registered successfully')
+    } catch (error) {
+      console.error('DEBUG: Error registering ready() handler:', error)
+    }
+
+    console.log('DEBUG: Setting up 500ms timeout fallback')
+    setTimeout(() => {
+      console.log('Timeout fallback: ensuring subtitles are initialized (Safari compatibility)')
+      try {
+        initObj.player.currentTime(startTime)
+        // initObj.player.on('timeupdate', () => {
+        //   if (endTime && initObj.player.currentTime() >= endTime) {
+        //     initObj.player.pause()
+        //     setTimeout(() => {
+        //       endTime = initObj.player.duration()
+        //     }, 0)
+
+        //   }
+        // })
+        // this.loadPlayerForSafariAndOtherBrowser(initObj, startTime, endTime)
+      } catch (error) {
+        console.log('Timeout fallback initialization error:', error)
+      }
+    }, 500)
+
+    // const player = this.player;
+    // console.log('player', this.player)
+    // if(player) {
+    //   if(player.controlBar.options_.children) {
+    //     console.log('player', player);
+    //     let seelBar:any = player.controlBar;
+    //     seelBar.progressControl['children'][0]['SeekBar']['enabled_'] = false;
+    //     console.log('seelBar', seelBar.progressControl)
+    //   }
+    // }
+  }
+  async fetchContent() {
+    const content = await this.contentSvc
+      .fetchContent(this.widgetData.identifier || '', 'minimal')
+      .toPromise()
+    if (content.artifactUrl && content.artifactUrl.indexOf('/content-store/') > -1) {
+      this.widgetData.url = content.artifactUrl
+      this.widgetData.posterImage = content.appIcon
+      this.widgetData.posterImage = this.viewerSvc.getPublicUrl(this.widgetData.posterImage || '')
+      await this.contentSvc.setS3Cookie(this.widgetData.identifier || '').toPromise()
+    }
+
+    this.widgetData.subtitles = content.subTitles
+  }
+
+  closeAutoPlay() {
+    this.videoEnd = false
+    this.replayVideoFlag = true
+    clearInterval(this.timerInterval)
+  }
+
+  replayVideo() {
+    this.replayVideoFlag = false
+    const videoTag: any = document.getElementById('videoTag') || document.getElementById('realvideoTag')
+    if (videoTag) {
+      videoTag.style.filter = 'blur(0px)'
+    }
+    const autoPlayVideo: any = document.getElementById('auto-play-video')
+    if (autoPlayVideo) {
+      autoPlayVideo.style.opacity = '1'
+    }
+    if (this.player) {
+      this.player.play()
+    }
+  }
+
+  titleCase(str: string): string {
+    return str && str
+      .toLowerCase()
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
+  replaceSubtitleTrack(newTrack: any) {
+
+    // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+    // console.log('defaultTrack--', defaultTrackTemp)
+    // let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+    //   return item?.label === defaultTrackTemp?.default_lang
+    // });
+
+
+    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
+    const existingTracks = videoEl.querySelectorAll('track')
+    existingTracks.forEach((el: any) => el.remove())
+
+    const trackEl = document.createElement('track')
+    trackEl.kind = 'subtitles'
+    trackEl.src = newTrack.uri
+    trackEl.srclang = newTrack.label.toLowerCase()
+    trackEl.label = newTrack.language
+    trackEl.default = true
+    videoEl.appendChild(trackEl)
+    let tracks = videoEl.textTracks
+
+
+    // setTimeout(() => {
+
+
+    for (let i = 0; i < tracks.length; i++) {
+      const t = tracks[i]
+      if (t.kind === 'subtitles') {
+        // Toggle and force reflow if needed
+        if (t.mode === 'showing') {
+          t.mode = 'hidden'
+        } else {
+          // Workaround: re-set mode after short delay to force repaint
+          t.mode = 'hidden'
+          setTimeout(() => {
+            t.mode = 'showing'
+          }, 1000) // or 10–50ms if needed
+        }
+      }
+
+    }
+    // }, 1000);
+
+    // Wait for the TextTrack to load
+    const waitForTrack = () => {
+      for (let i = 0; i < tracks.length; i++) {
+        const track = tracks[i]
+        if (
+          (track.kind === 'subtitles' || track.kind === 'metadata') &&
+          track.language.toLowerCase() === newTrack.label.toLowerCase() &&
+          track.cues && track.cues.length > 0
+        ) {
+          track.mode = 'showing'
+
+          // Now attach cuechange
+          track.addEventListener('cuechange', () => {
+            const activeCues = track.activeCues
+            if (activeCues && activeCues.length > 0) {
+              for (let j = 0; j < activeCues.length; j++) {
+                const cue: any = activeCues[j]
+                this.appTocService.setTranscriptionData({
+                  start: cue.startTime,
+                  end: cue.endTime,
+                  text: cue?.text
+                })
+              }
+            }
+          })
+
+          return // Done
+        } else {
+          // track.mode = 'hidden'
+        }
+      }
+
+      // Retry after short delay
+      setTimeout(waitForTrack, 0)
+    }
+
+    waitForTrack()
+  }
+
+  updateSubtitleButtonIcon(subtitlesOn: boolean) {
+
+    let subtitleImage = document.getElementById('custom-cc-icon-img') as HTMLImageElement
+
+    if (subtitleImage) {
+      subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
+    }
+
+    if (!subtitlesOn) {
+      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
+      let tracks = videoEl.textTracks
+      for (let i = 0; i < tracks.length; i++) {
+        const t = tracks[i]
+        if (t.kind === 'subtitles') {
+          // Toggle and force reflow if needed
+          if (t.mode === 'showing') {
+            t.mode = 'hidden'
+          }
+        }
+
+        // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+      }
+    }
   }
 
   private setupHTML5Subtitles() {
@@ -499,530 +791,317 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     this.updateSubtitleButtonIcon(true)
   }
 
-  private initializePlayer() {
-    const dispatcher: telemetryEventDispatcherFunction = event => {
-      if (this.widgetData.identifier) {
-        this.eventSvc.dispatchEvent(event)
-      }
-    }
-    const saveCLearning: saveContinueLearningFunction = data => {
-      if (this.widgetData.identifier) {
-        if (this.activatedRoute.snapshot.queryParams.collectionType &&
-          this.activatedRoute.snapshot.queryParams.collectionType.toLowerCase() === 'playlist') {
-          const continueLearningData = {
-            contextPathId: this.activatedRoute.snapshot.queryParams.collectionId ?
-              this.activatedRoute.snapshot.queryParams.collectionId : this.widgetData.identifier,
-            resourceId: data.resourceId,
-            contextType: 'playlist',
-            dateAccessed: Date.now(),
-            data: JSON.stringify({
-              progress: data.progress,
-              timestamp: Date.now(),
-              contextFullPath: [this.activatedRoute.snapshot.queryParams.collectionId, data.resourceId],
-            }),
-          }
-          this.contentSvc
-            .saveContinueLearning(continueLearningData)
-            .toPromise()
-            .catch()
-        } else {
-          const continueLearningData = {
-            contextPathId: this.activatedRoute.snapshot.queryParams.collectionId
-              ? this.activatedRoute.snapshot.queryParams.collectionId
-              : this.widgetData.identifier,
-            ...data,
-            // resourceId: data.resourceId,
-            // dateAccessed: Date.now(),
-            // data: JSON.stringify({
-            //   progress: data.progress,
-            //   timestamp: Date.now(),
-            // }),
-          }
-          this.contentSvc
-            .saveContinueLearning(continueLearningData)
-            .toPromise()
-            .catch()
-        }
-      }
-    }
-    const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.batchId, identifier)
-      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-      const batchId = (resData && resData.batchId) ? resData.batchId : ''
-      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      if (isPreAssessment) {
-        if (this.widgetData.identifier && identifier && data) {
-          this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(identifier, data)
-        }
-      } else if (this.widgetData.identifier && identifier && data && collectionId && batchId) {
-        this.viewerSvc
-          .realTimeProgressUpdate(identifier, data, collectionId, batchId)
-      }
-    }
-    let enableTelemetry = false
-    if (!this.widgetData.disableTelemetry && typeof (this.widgetData.disableTelemetry) !== 'undefined') {
-      enableTelemetry = true
-    }
+  loadPlayerForSafariAndOtherBrowser(initObj: any, startTime: any, endTime: any) {
+    let tracks = initObj.player.textTracks()
+    setTimeout(() => {
+      const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any
+      if (ccButton) {
+        if (ccButton?.menu && typeof ccButton.menu.children === 'function') {
+          // ✅ Rename menu items like "Captions Off" → "Subtitles Off"
+          ccButton.menu.children().forEach((item: any) => {
+            const label = item.options_?.label
+            // console.log('Found menu item:', label);
 
-    let initObj: any
-    try {
-      console.log('DEBUG: About to call videoJsInitializer with videoTag:', this.videoTag?.nativeElement)
-      initObj = videoJsInitializer(
-        this.videoTag.nativeElement,
-        {
-          ...videoJsOptions,
-          poster: this.widgetData.posterImage ? this.viewerSvc.getPublicUrl(this.widgetData.posterImage || '') : '',
-          autoplay: this.widgetData.autoplay || false,
-        },
-        dispatcher,
-        saveCLearning,
-        fireRProgress,
-        this.widgetData.passThroughData,
-        ROOT_WIDGET_CONFIG.player.video,
-        this.widgetData.resumePoint ? this.widgetData.resumePoint : 0,
-        enableTelemetry,
-        this.widgetData,
-        this.widgetData.mimeType,
-        this.widgetData.size,
+            if (!label) return
 
-      )
-      console.log('DEBUG: videoJsInitializer returned:', initObj)
-      console.log('DEBUG: initObj.player:', initObj?.player)
-    } catch (error) {
-      console.error('DEBUG: ERROR in videoJsInitializer:', error)
-      return
-    }
-    this.playerInitObj = initObj
-    this.player = initObj.player
+            let newLabel = label
 
-    this.dispose = initObj.dispose
-
-    // Function to initialize subtitles and customize controls
-    const initializeSubtitlesAndControls = () => {
-      initObj.player.textTracks()
-      // Wait longer for the UI to be fully ready, especially in Safari
-      setTimeout(() => {
-        try {
-          const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any
-          if (ccButton) {
-            // Ensure menu is closed before customization
-            if (ccButton.menu) {
-              ccButton.closeMenu()
+            if (label.toLowerCase() === 'captions off') {
+              newLabel = 'Subtitles Off'
+            } else if (label.toLowerCase().includes('captions')) {
+              newLabel = label.replace(/captions/gi, 'Subtitles')
             }
 
-            if (ccButton?.menu && typeof ccButton.menu.children === 'function') {
-              // ✅ Rename menu items like "Captions Off" → "Subtitles Off"
-              ccButton.menu.children().forEach((item: any) => {
-                const label = item.options_?.label
-                // console.log('Found menu item:', label);
+            // 🔧 Update both label option & DOM element text
+            item.options_.label = newLabel
 
-                if (!label) return
+            // Find the actual DOM element and update its text
+            const itemEl = item.el()
+            const labelEl = itemEl?.querySelector('.vjs-menu-item-text')
 
-                let newLabel = label
-
-                if (label.toLowerCase() === 'captions off') {
-                  newLabel = 'Subtitles Off'
-                } else if (label.toLowerCase().includes('captions')) {
-                  newLabel = label.replace(/captions/gi, 'Subtitles')
-                }
-
-                // 🔧 Update both label option & DOM element text
-                item.options_.label = newLabel
-
-                // Find the actual DOM element and update its text
-                const itemEl = item.el()
-                const labelEl = itemEl?.querySelector('.vjs-menu-item-text')
-
-                if (labelEl) {
-                  labelEl.textContent = newLabel
-                }
-
-              })
+            if (labelEl) {
+              labelEl.textContent = newLabel
             }
 
-            const el = ccButton.el()
-            if (el) {
-              const span = el.querySelector('.vjs-icon-placeholder')
-              if (span) {
-                // Clear any default icon classes
-                // span.classList.remove('vjs-icon-placeholder', 'vjs-icon-subtitles', 'vjs-icon-captions')
-
-                // Add custom layout
-                span.innerHTML = `
-                  <div class="custom-cc-wrapper">
-                    <img src="/assets/ai-tutor/subtitle-on.svg" id="custom-cc-icon-img" class="custom-cc-icon-img" alt="icon" />
-                    <span class="custom-cc-label">Subtitle</span>
-                  </div>
-                `
-              }
-            }
-          }
-        } catch (error) {
-          console.error('Error customizing subtitle button:', error)
-        }
-
-        try {
-          // Close quality menu if it's open
-          const qualitySelector = initObj.player.controlBar.getChild('QualitySelector') as any
-          if (qualitySelector && qualitySelector.menu) {
-            qualitySelector.closeMenu()
-          }
-
-          const qualityBtn = document.querySelector('.vjs-quality-selector .vjs-menu-button')
-
-          if (qualityBtn && this.widgetData && this.widgetData.streamingUrl) {
-            qualityBtn.innerHTML = ''
-
-            const wrapper = document.createElement('div')
-            wrapper.className = 'quality-wrapper' // flex container
-
-            const icon = document.createElement('span')
-            icon.className = 'vjs-icon-placeholder'
-            icon.innerHTML = '<i class="material-icons quality-icons"  title="Quality">tune</i>'
-
-            wrapper.appendChild(icon)
-            qualityBtn.appendChild(wrapper)
-          }
-        } catch (error) {
-          console.error('Error customizing quality button:', error)
-        }
-
-        // Close playback rate menu if open
-        try {
-          const playbackRateButton = initObj.player.controlBar.getChild('PlaybackRateMenuButton') as any
-          if (playbackRateButton && playbackRateButton.menu) {
-            playbackRateButton.closeMenu()
-          }
-        } catch (error) {
-          console.error('Error closing playback rate menu:', error)
-        }
-      }, 300)
-
-      this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
-      this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
-
-      if (this.widgetData.url) {
-        if (this.widgetData && this.widgetData.streamingUrl) {
-          initObj.player.src(this.widgetData.streamingUrl)
-        } else {
-          initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
-          this.videoUrl = this.widgetData.url
-        }
-
-        let startTime = 0
-        let endTime = 0
-        if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
-          if (this.activatedRoute.snapshot.queryParams.st) {
-            startTime = this.activatedRoute.snapshot.queryParams.st
-            endTime = this.activatedRoute.snapshot.queryParams.et
-          }
-        }
-
-        if (startTime && endTime) {
-          initObj.player.currentTime(startTime)
-          setTimeout(() => {
-            if (this.videoTag && this.videoTag.nativeElement) {
-              this.videoTag.nativeElement.muted = true
-              this.videoTag.nativeElement.play()
-            } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
-              this.realvideoTag.nativeElement.muted = true
-              this.realvideoTag.nativeElement.play()
-            }
-          }, 0)
-
-          initObj.player.on('timeupdate', () => {
-            if (endTime && initObj.player.currentTime() >= endTime) {
-              initObj.player.pause()
-            }
           })
         }
+
+        const el = ccButton.el()
+        if (el) {
+
+          const span = el.querySelector('.vjs-icon-placeholder')
+          if (span) {
+            // Clear any default icon classes
+            span.classList.remove('vjs-icon-placeholder', 'vjs-icon-subtitles', 'vjs-icon-captions')
+
+            // Add custom layout
+            span.innerHTML = `
+                <div class="custom-cc-wrapper">
+                  <img src="/assets/ai-tutor/subtitle-on.svg" id="custom-cc-icon-img" class="custom-cc-icon-img" alt="icon" />
+                  <span class="custom-cc-label">Subtitle</span>
+                </div>
+              `
+          }
+        }
+      }
+      const qualityBtn = document.querySelector('.vjs-quality-selector .vjs-menu-button')
+
+      if (qualityBtn && this.widgetData && this.widgetData.streamingUrl) {
+        qualityBtn.innerHTML = ''
+
+        const wrapper = document.createElement('div')
+        wrapper.className = 'quality-wrapper' // flex container
+
+        const icon = document.createElement('span')
+        icon.className = 'vjs-icon-placeholder'
+        icon.innerHTML = '<i class="material-icons quality-icons"  title="Quality">tune</i>'
+
+        // const text = document.createElement('span');
+        // text.className = 'vjs-menu-value';
+        // text.textContent = 'Quality';
+
+        wrapper.appendChild(icon)
+        // wrapper.appendChild(text);
+        qualityBtn.appendChild(wrapper)
+      }
+    }, 100)
+    this.activeTranscriptionLanguage = this.transcriptionSubscriptionData?.activeLang
+    this.transcriptionLangArr = this.transcriptionSubscriptionData?.langData
+    // console.log('this.transcriptionLangArr----', this.transcriptionLangArr)
+    // if (Array.isArray(this.widgetData.subtitles)) {
+    //   this.widgetData.subtitles.forEach((u, index) => {
+    //     initObj.player.addRemoteTextTrack(
+    //       {
+    //         default: index === 0,
+    //         kind: 'subtitles',
+    //         label: this.titleCase(u.label),
+    //         srclang: u.srclang,
+    //         src: u.url,
+    //       },
+    //       false,
+    //     )
+    //   })
+    // }
+    if (this.widgetData.url) {
+
+      // if(this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.from && this.activatedRoute.snapshot.queryParams.from === 'globalSearch') {
+      //   if(this.activatedRoute.snapshot.queryParams.st) {
+      //     let startTime = this.activatedRoute.snapshot.queryParams.st
+      //     let endTime = this.activatedRoute.snapshot.queryParams.et
+      //     initObj.player.currentTime(startTime); // jump to start
+      //     initObj.player.play();
+      //     initObj.player.on('timeupdate',  ()=> {
+      //       if (endTime && initObj.player.currentTime() >= endTime) {
+      //         initObj.player.pause();
+      //       }
+      //     });
+      //   }
+      // }
+
+      // initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
+      if (this.widgetData && this.widgetData.streamingUrl) {
+        initObj.player.src(this.widgetData.streamingUrl)
+        //this.videoUrl = this.widgetData.streamingUrl
+      } else {
+        initObj.player.src(this.viewerSvc.getCdnUrl(this.widgetData.url))
+        this.videoUrl = this.widgetData.url
       }
 
-      if (Array.isArray(this.transcriptionLangArr)) {
-        this.currentPlayerTrackLabel = localStorage.getItem('currentPlayerTrackLabel') || ''
-        this.currentPlayerTrackLangugage = localStorage.getItem('currentPlayerTrackLangugage') || ''
-        this.currentPlayerSubtitleOff = localStorage.getItem('currentPlayerSubtitleOff') || ''
-        if (this.currentPlayerSubtitleOff === 'true') {
-          this.currentPlayerTrackLabel = ''
-          this.currentPlayerTrackLangugage = ''
-          localStorage.removeItem('currentPlayerTrackLabel')
-          localStorage.removeItem('currentPlayerTrackLangugage')
-        }
 
-        const selectedLang = this.currentPlayerTrackLangugage?.toLowerCase()
-
-        const sortedTracks = [...this.transcriptionLangArr].sort((a: any, b: any) => {
-          if (a.label.toLowerCase() === selectedLang) return -1
-          if (b.label.toLowerCase() === selectedLang) return 1
-          return 0
-        })
-
-        // Add all language tracks via player API
-        sortedTracks.forEach((track: any) => {
-          const isDefault =
-            track.label.toLowerCase() === this.currentPlayerTrackLangugage?.toLowerCase()
-          initObj.player.addRemoteTextTrack({
-            kind: 'subtitles',
-            src: track.uri,
-            srclang: track.label.toLowerCase(),
-            label: this.titleCase(track.language),
-            default: isDefault
-          }, false)
-        })
-
-        // Set initial subtitle visibility after a brief delay for Safari
+      if (startTime && endTime) {
+        initObj.player.currentTime(startTime) // jump to start
         setTimeout(() => {
-          const videoEl = initObj.player.el().getElementsByTagName('video')[0]
-          const videoTracks = videoEl.textTracks
-
-          for (let i = 0; i < videoTracks.length; i++) {
-            const track = videoTracks[i]
-            if (track.kind === 'subtitles' || track.kind === 'metadata') {
-              if (track.language.toLowerCase() === this.activeTranscriptionLanguage.toLowerCase()) {
-                track.mode = 'showing'
-              } else {
-                track.mode = 'disabled'
-              }
-            }
+          // initObj.player.autoplay()
+          if (this.videoTag && this.videoTag.nativeElement) {
+            this.videoTag.nativeElement.muted = true
+            this.videoTag.nativeElement.play()
+          } else if (this.realvideoTag && this.realvideoTag.nativeElement) {
+            this.realvideoTag.nativeElement.muted = true
+            this.realvideoTag.nativeElement.play()
           }
 
-          if (this.currentPlayerTrackLangugage !== '') {
-            this.updateSubtitleButtonIcon(true)
-          } else {
-            this.updateSubtitleButtonIcon(false)
+        }, 0)
+
+        // initObj.player.play();
+        initObj.player.on('timeupdate', () => {
+          if (endTime && initObj.player.currentTime() >= endTime) {
+            initObj.player.pause()
           }
-        }, 200)
+        })
+      }
 
-        initObj.player.on('texttrackchange', () => {
-          const videoEl = initObj.player.el().getElementsByTagName('video')[0]
-          const videoTracks = videoEl.textTracks
+    }
 
-          for (let i = 0; i < videoTracks.length; i++) {
-            const track = videoTracks[i]
+    if (Array.isArray(this.transcriptionLangArr)) {
+      this.currentPlayerTrackLabel = localStorage.getItem('currentPlayerTrackLabel') || ''
+      this.currentPlayerTrackLangugage = localStorage.getItem('currentPlayerTrackLangugage') || ''
+      this.currentPlayerSubtitleOff = localStorage.getItem('currentPlayerSubtitleOff') || ''
+      if (this.currentPlayerSubtitleOff === 'true') {
+        this.currentPlayerTrackLabel = ''
+        this.currentPlayerTrackLangugage = ''
+        localStorage.removeItem('currentPlayerTrackLabel')
+        localStorage.removeItem('currentPlayerTrackLangugage')
+      }
+      let activeLang = this.currentPlayerTrackLangugage !== '' ? this.currentPlayerTrackLangugage?.toLowerCase() : this.transcriptionSubscriptionData?.activeLang
+      const defaultTrackTemp: any = this.transcriptionLangArr.find((t: any) => t.label === activeLang)
 
-            if (track.mode === 'showing') {
-              localStorage.removeItem('currentPlayerSubtitleOff')
-              let currentLang = track.language
-              if (this.currentPlayerTrackLangugage) {
-                if (currentLang !== this.currentPlayerTrackLangugage) {
-                  this.currentPlayerTrackLabel = track.label
-                  this.currentPlayerTrackLangugage = track.language
-                  currentLang = track.language
-                  localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
-                  localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
-                } else {
-                  currentLang = this.currentPlayerTrackLangugage
-                }
-              } else {
+      let defaultTrack: any = this.transcriptionLangArr.filter((item: any) => {
+        return item?.label === defaultTrackTemp?.label
+      })
+
+
+      const selectedLang = this.currentPlayerTrackLangugage?.toLowerCase()
+
+      const sortedTracks = [...this.transcriptionLangArr].sort((a: any, b: any) => {
+        if (a.label.toLowerCase() === selectedLang) return -1
+        if (b.label.toLowerCase() === selectedLang) return 1
+        return 0
+      })
+      sortedTracks.forEach((track: any) => {
+        const isDefault =
+          track.label.toLowerCase() === this.currentPlayerTrackLangugage?.toLowerCase()
+        initObj.player.addRemoteTextTrack({
+          kind: 'subtitles',
+          src: (track?.label === defaultTrack[0]?.label) ? defaultTrack[0]?.uri : "",
+          srclang: this.titleCase(track.label),
+          label: this.titleCase(track.language),
+          default: isDefault
+        }, false)
+      })
+
+      if (this.currentPlayerTrackLangugage !== '') {
+        this.updateSubtitleButtonIcon(true)
+      } else {
+        setTimeout(() => {
+          this.updateSubtitleButtonIcon(false)
+        }, 100)
+
+      }
+      initObj.player.on('texttrackchange', () => {
+
+        for (let i = 0; i < tracks.length; i++) {
+          const track = tracks[i]
+          // console.log('track.mode', track.mode)
+
+          if (track.mode === 'showing') {
+            localStorage.removeItem('currentPlayerSubtitleOff')
+            let currentLang = track.language
+            if (this.currentPlayerTrackLangugage) {
+              if (currentLang !== this.currentPlayerTrackLangugage) {
                 this.currentPlayerTrackLabel = track.label
                 this.currentPlayerTrackLangugage = track.language
                 currentLang = track.language
                 localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
                 localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
-              }
-
-              if (currentLang !== this.previousSubtitleLanguage) {
-                this.previousSubtitleLanguage = currentLang
-                this.activeTranscriptionLanguage = currentLang
-
-                const newTrack: any = this.transcriptionLangArr.find((t: any) => {
-                  return t.label.toLowerCase() === currentLang.toLowerCase()
-                })
-
-                if (newTrack) {
-                  this.replaceSubtitleTrack(newTrack)
-                }
-
-                this.appTocService.setActiveSubtitleLanguage(currentLang)
-              }
-
-              if (localStorage.getItem('currentPlayerTrackLangugage') !== '') {
-                localStorage.removeItem('currentPlayerSubtitleOff')
-                this.updateSubtitleButtonIcon(true)
               } else {
-                this.updateSubtitleButtonIcon(false)
+                currentLang = this.currentPlayerTrackLangugage
               }
-              break
             } else {
-              this.previousSubtitleLanguage = ''
-              localStorage.setItem('currentPlayerSubtitleOff', 'true')
+              this.currentPlayerTrackLabel = track.label
+              this.currentPlayerTrackLangugage = track.language
+              currentLang = track.language
+              localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
+              localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
+
+            }
+            // const currentLang = track.language
+
+
+            if (currentLang !== this.previousSubtitleLanguage) {
+              //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
+
+              this.previousSubtitleLanguage = currentLang // Update for next comparison
+              this.activeTranscriptionLanguage = currentLang
+              //const remoteTracks:any = initObj.player.remoteTextTracks();
+              // for (let j = remoteTracks.length - 1; j >= 0; j--) {
+              //   initObj.player.removeRemoteTextTrack(remoteTracks[j]);
+              // }
+              const newTrack: any = this.transcriptionLangArr.find((t: any) => {
+                // console.log(t)
+                return t.label === currentLang.toLowerCase()
+
+              })
+              if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
+                this.replaceSubtitleTrack(newTrack)
+              } else {
+                this.replaceSubtitleTrack(defaultTrack)
+              }
+              // if(newTrack) {
+              //   this.transcriptionLangArr.forEach((track:any) => {
+              //     // console.log(track?.label , defaultTrack?.label)
+              //     // console.log('track--', track)
+              //     initObj.player.addRemoteTextTrack({
+              //       kind: 'subtitles',
+              //       src: (track?.label === newTrack?.label) ? newTrack?.uri : "",
+              //       srclang: this.titleCase(track.label),
+              //       label: this.titleCase(track.language),
+              //       default: track.default_lang
+              //     }, false);
+              //   });
+
+              // }
+
+
+
+              // Optional: sync with a service or trigger UI update
+              // this.appTocService.setActiveSubtitleLanguage(currentLang);
+              // console.log('About to call next with:', currentLang);
+              this.appTocService.setActiveSubtitleLanguage(currentLang)
+
+              //console.log('Called next');
+            }
+
+            if (localStorage.getItem('currentPlayerTrackLangugage') !== '') {
+              localStorage.removeItem('currentPlayerSubtitleOff')
+              this.updateSubtitleButtonIcon(true)
+
+            } else {
               this.updateSubtitleButtonIcon(false)
             }
-          }
-        })
+            break // Only one track should be 'showing'
+          } else {
+            this.previousSubtitleLanguage = ''
+            localStorage.setItem('currentPlayerSubtitleOff', 'true')
 
-        const videoEl = initObj.player.el().getElementsByTagName('video')[0]
-        const videoTextTracks = videoEl.textTracks
-        for (let i = 0; i < videoTextTracks.length; i++) {
-          const track = videoTextTracks[i]
-
-          if (track.kind === 'subtitles' || track.kind === 'metadata') {
-            if (track.language === this.activeTranscriptionLanguage) {
-              track.mode = 'showing'
-            } else {
-              track.mode = 'disabled'
-            }
-
-            track.addEventListener('cuechange', () => {
-              const activeCues = track.activeCues
-
-              if (activeCues && activeCues.length > 0) {
-                for (let j = 0; j < activeCues.length; j++) {
-                  const cue: any = activeCues[j]
-
-                  this.appTocService.setTranscriptionData({
-                    start: cue.startTime,
-                    end: cue.endTime,
-                    text: cue?.text
-                  })
-                }
-              }
-            })
+            this.updateSubtitleButtonIcon(false)
           }
         }
-      }
-    }
-
-    // DEBUG: Check if player is available
-    console.log('DEBUG: initObj.player exists?', !!initObj.player, initObj.player)
-
-    // Register ready event handler (works in Chrome)
-    try {
-      console.log('DEBUG: Attempting to register ready() handler')
-      initObj.player.ready(() => {
-        console.log('Player ready event fired, initializing subtitles')
-        initializeSubtitlesAndControls()
       })
-      console.log('DEBUG: ready() handler registered successfully')
-    } catch (error) {
-      console.error('DEBUG: Error registering ready() handler:', error)
-    }
+      // console.log('initObj--', initObj.player.textTracks())
 
-    // Fallback for Safari - ready event doesn't always fire, so use timing fallback
-    console.log('DEBUG: Setting up 500ms timeout fallback')
-    setTimeout(() => {
-      console.log('Timeout fallback: ensuring subtitles are initialized (Safari compatibility)')
-      try {
-        initializeSubtitlesAndControls()
-      } catch (error) {
-        console.log('Timeout fallback initialization error:', error)
-      }
-    }, 500)
-
-    // const player = this.player;
-    // console.log('player', this.player)
-    // if(player) {
-    //   if(player.controlBar.options_.children) {
-    //     console.log('player', player);
-    //     let seelBar:any = player.controlBar;
-    //     seelBar.progressControl['children'][0]['SeekBar']['enabled_'] = false;
-    //     console.log('seelBar', seelBar.progressControl)
-    //   }
-    // }
-  }
-  async fetchContent() {
-    const content = await this.contentSvc
-      .fetchContent(this.widgetData.identifier || '', 'minimal')
-      .toPromise()
-    if (content.artifactUrl && content.artifactUrl.indexOf('/content-store/') > -1) {
-      this.widgetData.url = content.artifactUrl
-      this.widgetData.posterImage = content.appIcon
-      this.widgetData.posterImage = this.viewerSvc.getPublicUrl(this.widgetData.posterImage || '')
-      await this.contentSvc.setS3Cookie(this.widgetData.identifier || '').toPromise()
-    }
-
-    this.widgetData.subtitles = content.subTitles
-  }
-
-  closeAutoPlay() {
-    this.videoEnd = false
-    this.replayVideoFlag = true
-    clearInterval(this.timerInterval)
-  }
-
-  replayVideo() {
-    this.replayVideoFlag = false
-    const videoTag: any = document.getElementById('videoTag') || document.getElementById('realvideoTag')
-    if (videoTag) {
-      videoTag.style.filter = 'blur(0px)'
-    }
-    const autoPlayVideo: any = document.getElementById('auto-play-video')
-    if (autoPlayVideo) {
-      autoPlayVideo.style.opacity = '1'
-    }
-    if (this.player) {
-      this.player.play()
-    }
-  }
-
-  titleCase(str: string): string {
-    return str && str
-      .toLowerCase()
-      .split(' ')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ')
-  }
-
-  replaceSubtitleTrack(newTrack: any) {
-    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
-    const videoTracks = videoEl.textTracks
-
-    // Simply toggle track visibility - all tracks are already loaded
-    for (let i = 0; i < videoTracks.length; i++) {
-      const track = videoTracks[i]
-      if (track.kind === 'subtitles' || track.kind === 'metadata') {
-        if (track.language.toLowerCase() === newTrack.label.toLowerCase()) {
-          track.mode = 'showing'
-
-          // Attach cuechange listener if not already attached
-          if (!track.cuechangeListenerAttached) {
-            track.addEventListener('cuechange', () => {
-              const activeCues = track.activeCues
-              if (activeCues && activeCues.length > 0) {
-                for (let j = 0; j < activeCues.length; j++) {
-                  const cue: any = activeCues[j]
-                  this.appTocService.setTranscriptionData({
-                    start: cue.startTime,
-                    end: cue.endTime,
-                    text: cue?.text
-                  })
-                }
-              }
-            })
-            track.cuechangeListenerAttached = true
-          }
-        } else {
-          track.mode = 'hidden'
-        }
-      }
-    }
-  }
-
-  updateSubtitleButtonIcon(subtitlesOn: boolean) {
-
-    let subtitleImage = document.getElementById('custom-cc-icon-img') as HTMLImageElement
-
-    if (subtitleImage) {
-      subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
-    }
-
-    if (!subtitlesOn) {
-      const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
-      let tracks = videoEl.textTracks
+      //let allCues:any = []
       for (let i = 0; i < tracks.length; i++) {
-        const t = tracks[i]
-        if (t.kind === 'subtitles') {
-          // Toggle and force reflow if needed
-          if (t.mode === 'showing') {
-            t.mode = 'hidden'
-          }
-        }
+        const track = tracks[i]
+        // console.log(tracks[i].label, tracks[i]);
 
-        // console.log(`Track [${i}]: kind=${t.kind}, language=${t.language}, cues?`, t.cues, t.cues?.length);
+        if (track.kind === 'subtitles' || track.kind === 'metadata') {
+          //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
+          if (track.language === this.activeTranscriptionLanguage) {
+            track.mode = 'showing'
+          } else {
+            track.mode = 'disabled' // prevent multiple from showing
+          }
+
+          track.addEventListener('cuechange', () => {
+            const activeCues = track.activeCues
+
+            if (activeCues && activeCues.length > 0) {
+              for (let j = 0; j < activeCues.length; j++) {
+                const cue: any = activeCues[j]
+
+
+                this.appTocService.setTranscriptionData({
+                  start: cue.startTime,
+                  end: cue.endTime,
+                  text: cue?.text
+                })
+
+              }
+              //console.log('cue', allCues)
+            }
+          })
+        }
       }
     }
   }
-
 }
