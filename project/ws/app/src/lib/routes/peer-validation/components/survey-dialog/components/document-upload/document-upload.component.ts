@@ -109,7 +109,6 @@ export class DocumentUploadComponent {
       next: (uploadedDoc: NSPeerValidation.IUploadedDocument) => {
         uploadedDoc.url = this.generateUrl(uploadedDoc.url)
         this.documents = [...this.documents, uploadedDoc]
-        console.log(this.documents,'uploadfile')
         this.documentsChanged.emit(this.documents)
         this.isUploading = false
       },
