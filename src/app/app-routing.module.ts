@@ -314,12 +314,11 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/learn/karmayogi-saptah',
+    path: 'app/learn/nlw',
     loadChildren: () =>
       import('./routes/route-national-learning-week.module').then(u => u.RouteNationalLearningWeekModule),
     canActivate: [GeneralGuard],
     data: {
-      // pageId: 'app/learn/karmayogi-saptah',
       module: 'National Learning Week',
     },
     resolve: {
@@ -1225,6 +1224,14 @@ const routes: Routes = [
       pageId: 'badges',
       module: 'Badges',
     },
+  },
+  {
+    path: 'helpcenter',
+    loadChildren: () => import('./help-center/help-center.module').then(m => m.HelpCenterModule),
+  },
+  {
+    path: 'igot/help-centre',
+    loadChildren: () => import('./help-center/help-center.module').then(m => m.HelpCenterModule),
   },
   {
     path: '**',

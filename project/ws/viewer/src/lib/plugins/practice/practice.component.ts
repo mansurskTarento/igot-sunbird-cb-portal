@@ -504,6 +504,11 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     // console.log('this.widgetContentService.currentMetaData', this.widgetContentService)
     // console.log('this.identifier', this.identifier)
+
+    // updated the noOfQuestionsPerSet variable based on compatibility level if it is less than 6
+    if (this.compatibilityLevel <= 6) {
+      this.noOfQuestionsPerSet = this.quizData?.maxQuestions || 0
+    }
   }
 
   /* tslint:disable */
@@ -1211,22 +1216,15 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
 
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
-      if (this.identifier) {
-        const MIME_TYPE = "application/vnd.sunbird.questionset"
-        console.log('🎯 [PRACTICE] Updating pre-assessment progress for:', this.identifier, 'status:', status)
-        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.identifier, status, MIME_TYPE)
+      if (this.identifier) { const MIME_TYPE = "application/vnd.ekstep.content-collection"
+          this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
         // Also update the local hashmap and trigger milestone lock update
         setTimeout(() => {
-          if (this.tocSvc.hashmap && this.tocSvc.hashmap[this.identifier]) {
-            this.tocSvc.hashmap[this.identifier]['completionPercentage'] = 100
-            this.tocSvc.hashmap[this.identifier]['completionStatus'] = 2
-            this.tocSvc.hashmap[this.identifier]['status'] = 2
-            this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-            console.log('🔄 [PRACTICE] Triggering milestone lock update after pre-assessment completion')
-            if (this.tocSvc.triggerMilestoneLockUpdate) {
-              this.tocSvc.triggerMilestoneLockUpdate()
-            }
-          }
+         
+          setTimeout(() => {
+              this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionPercentage'] = 100
+              this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionStatus'] = 2
+          }, 700)
         }, 700)
       }
     }

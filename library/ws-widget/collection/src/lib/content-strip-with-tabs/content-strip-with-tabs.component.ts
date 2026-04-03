@@ -23,7 +23,6 @@ import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/
 import { NsCardContent } from '../card-content-v2/card-content-v2.model'
 import { ITodayEvents } from '@ws/app/src/lib/routes/events/models/event'
 import { TranslateService } from '@ngx-translate/core'
-
 interface IStripUnitContentData {
   key: string
   canHideStrip: boolean
@@ -488,6 +487,7 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
   }
 
   async fetchFromSearchV6(strip: NsContentStripWithTabs.IContentStripUnit, calculateParentStatus = true) {
+
     if (strip.request && strip.request.searchV6 && Object.keys(strip.request.searchV6).length) {
       // if (!(strip.request.searchV6.locale && strip.request.searchV6.locale.length > 0)) {
       //   if (this.configSvc.activeLocale) {
@@ -567,6 +567,24 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
       if (request && request.searchV6) {
+        if (request.searchV6 && request.searchV6.request && request.searchV6.request.filters && request.searchV6.request.filters.contentType === 'Event') {
+          let startDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+            new Date().getUTCMonth(),
+            new Date().getUTCDate(),
+            new Date().getUTCHours(),
+            new Date().getUTCMinutes(),
+            new Date().getUTCSeconds(),
+            new Date().getUTCMilliseconds())
+          let endDateTimeInEpoch = Date.UTC(new Date().getUTCFullYear(),
+            new Date().getUTCMonth(),
+            new Date().getUTCDate(),
+            new Date().getUTCHours(),
+            new Date().getUTCMinutes(),
+            new Date().getUTCSeconds(),
+            new Date().getUTCMilliseconds())
+          request.searchV6.request.filters.startDateTimeInEpoch = { "<=": [startDateTimeInEpoch] }
+          request.searchV6.request.filters.endDateTimeInEpoch = { ">=": [endDateTimeInEpoch] }
+        }
         this.contentSvc.searchV6(request.searchV6).subscribe(results => {
           const showViewMore = Boolean(
             results.result.content && results.result.content.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,

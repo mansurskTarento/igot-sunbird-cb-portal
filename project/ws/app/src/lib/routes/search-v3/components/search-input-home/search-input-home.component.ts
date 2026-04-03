@@ -71,7 +71,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     //   icon: 'school-search',
     // },
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
-    { label: 'People', value: SearchCategory.People, icon: 'people-search' },
+    // AFTER NLW NEED TO ENABLE
+    // { label: 'People', value: SearchCategory.People, icon: 'people-search' },
     {
       label: 'External Contents',
       value: SearchCategory.ExternalContents,
@@ -92,7 +93,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },
-    { label: 'All', value: SearchCategory.All, icon: '' },
+    // AFTER NLW NEED TO ENABLE
+    // { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;
@@ -259,47 +261,52 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateRecentSearchQuery(query: any) {
-    if (query) {
-      const reqBody = {
-        nlpSearchQuery: query.nlp_search_query,
-        searchQuery:query.search_query,
-        searchCategory: query.search_category[0]
-      }
-      await this.searchV3Service.recentCreate(reqBody).then(() => {
-        this.processRecentSearchText(query);
-      }).catch(() => {
-        this.processRecentSearchText(query);
-      });
-    } else {
-      this.processRecentSearchText(query);
-    }
+  async updateRecentSearchQuery(_query: any) {
+
+    // AFTER NLW NEED TO ENABLE
+    // if (query) {
+    //   const reqBody = {
+    //     nlpSearchQuery: query.nlp_search_query,
+    //     searchQuery:query.search_query,
+    //     searchCategory: query.search_category[0]
+    //   }
+    //   await this.searchV3Service.recentCreate(reqBody).then(() => {
+    //     this.processRecentSearchText(query);
+    //   }).catch(() => {
+    //     this.processRecentSearchText(query);
+    //   });
+    // } else {
+    //   this.processRecentSearchText(query);
+    // }
   }
 
-  async createRecent(data: any) {
-    const reqBody = {
-      nlpSearchQuery: data,
-      searchQuery: this.queryControl.value,
-      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
-    }
+  async createRecent(_data: any) {
+
+    // AFTER NLW NEED TO ENABLE 
+    // const reqBody = {
+    //   nlpSearchQuery: data,
+    //   searchQuery: this.queryControl.value,
+    //   searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+    // }
    
-    await this.searchV3Service.recentCreate(
-      reqBody
-    ).catch();
+    // await this.searchV3Service.recentCreate(
+    //   reqBody
+    // ).catch();
 
   }
 
   readRecent() {
-    return this.searchV3Service.recentRead().subscribe((res: any) => {
-      if (res) {
-        // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
-        if( res.result.searchQueries &&  res.result.searchQueries) {
-          this.recentSearches = res?.result?.searchQueries
-        } else {
-          this.recentSearches = ''
-        }
-      }
-    })
+     // AFTER NLW NEED TO ENABLE 
+    // return this.searchV3Service.recentRead().subscribe((res: any) => {
+    //   if (res) {
+    //     // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
+    //     if( res.result.searchQueries &&  res.result.searchQueries) {
+    //       this.recentSearches = res?.result?.searchQueries
+    //     } else {
+    //       this.recentSearches = ''
+    //     }
+    //   }
+    // })
   }
 
   goToSearchItem(query: any) {
@@ -950,15 +957,16 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   openSearchTemplateF() {
+    // AFTER NLW NEED TO ENABLE
     this.openSearchTemplate = true;
     if (!this.hasReadRecentBeenCalled) {
-      this.readRecent();
-      this.hasReadRecentBeenCalled = true;
+    //   this.readRecent();
+      this.hasReadRecentBeenCalled = false;
     }
-
-    if(this.openSearchTemplate) {
-       this.readRecent();
-    }
+    
+    // if(this.openSearchTemplate) {
+    //    this.readRecent();
+    // }
     if (!this.selectedSearchCategory) {
       // this.searchFromQuery(this.responseNlpQuery);
     }

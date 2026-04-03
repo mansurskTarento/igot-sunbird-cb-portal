@@ -388,7 +388,7 @@ body {
 
 .badge-card {
   width: 138px;
-  height: 138px;
+  min-height: 138px;
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.16);
   background: white;
@@ -397,11 +397,13 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-bottom: 8px;
+    gap: 10px;
 }
 
 .badge-card .badge-img-wrap {
-  width: 84px;
-  height: 84px;
+  // width: 84px;
+    // height: 84px;
   margin-top: 8px;
   border-radius: 4px;
   overflow: hidden;
@@ -416,12 +418,10 @@ body {
 .badge-card .badge-img-wrap img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .badge-card .badge-label {
-  position: absolute;
-  bottom: 8px;
   text-align: center;
   padding: 0 6px;
   width: 100%;
@@ -429,10 +429,15 @@ body {
   font-family: Montserrat;
   font-weight: 600;
   line-height: 1.3;
+  margin-top: 4px;
 }
 
 .badge-card .badge-label .blue {
   color: #1B4CA1;
+  display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .badge-card .badge-label .gray {
@@ -475,8 +480,51 @@ body {
   margin-bottom: 0px !important;
   color: gray;
   font-style: italic;
+  margin-top: 6px;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-word;
+  word-wrap: break-word;
 }
 
 .mat-mdc-menu-item {
   background-color: white !important;
+}
+.badge-title {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+
+.badge-title-wrapper {
+  display: flex;
+  // align-items: center;
+  gap: 4px;
+  width: 100%;
+  justify-content: center;
+}
+
+
+.badge-level {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+  word-wrap: break-word;
+}
+.info-icon {
+  font-size: 14px;
+  color: #888;
+  flex-shrink: 0;
+  cursor: pointer;
 }

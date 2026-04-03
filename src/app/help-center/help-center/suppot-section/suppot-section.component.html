@@ -1,0 +1,249 @@
+<!-- Support Section — "Still facing an issue?" -->
+<section class="support-section">
+
+  <!-- Dot-grid background -->
+  <div class="support-section__dots" aria-hidden="true"></div>
+
+  <div class="support-section__inner">
+
+    <!-- Top badge -->
+    <div class="support-section__badge">
+      <span class="material-icons support-section__badge-icon">headset_mic</span>
+      Need Help?
+    </div>
+
+    <!-- Headline -->
+    <h2 class="support-section__heading">
+      Still facing an issue?
+      <span class="support-section__heading--accent">We're here to help!</span>
+    </h2>
+
+    <!-- ══════════════════════════════════════
+                                 STATE SUPPORT CENTER PANEL
+                            ══════════════════════════════════════ -->
+    <!-- STATE PANEL -->
+    <ng-container *ngIf="isSectionEnabled('stateSupportCenter')">
+    <p class="support-section__sub" >Start with your state support team — they're closest to you.</p>
+
+    <div class="state-panel" >
+
+      <div class="state-panel__header">
+        <div class="state-panel__header-left">
+          <div class="state-panel__icon-box">
+            <span class="material-icons">map</span>
+          </div>
+          <div>
+            <div class="state-panel__title">State Support Centre  (For State Government Officials Only)</div>
+            <div class="state-panel__sub">
+              Click your state to view admin/technical contacts & helpline numbers for your state
+            </div>
+          </div>
+        </div>
+        <div class="state-panel__search-wrap">
+          <span class="material-icons state-panel__search-icon">search</span>
+          <input type="text" class="state-panel__search" placeholder="Search state or UT…"
+            (input)="filterStateGrid($event.target.value)" />
+        </div>
+      </div>
+      <div class="state-panel__region-tabs">
+        <button class="state-region-tab" [class.active]="activeRegion === 'all'"
+          (click)="filterRegion('all')">All</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'north'"
+          (click)="filterRegion('north')">North</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'south'"
+          (click)="filterRegion('south')">South</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'east'"
+          (click)="filterRegion('east')">East</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'west'"
+          (click)="filterRegion('west')">West</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'central'"
+          (click)="filterRegion('central')">Central</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'northeast'"
+          (click)="filterRegion('northeast')">North-East</button>
+
+        <button class="state-region-tab" [class.active]="activeRegion === 'ut'"
+          (click)="filterRegion('ut')">UTs</button>
+      </div>
+      <div *ngIf="filteredStates.length > 0; else noStateResult" class="state-grid">
+
+        <button class="state-tile" *ngFor="let state of filteredStates" (click)="openStateModal(state)">
+
+          <div class="state-tile__name">{{ state }}</div>
+
+          <div class="state-tile__count">
+            {{ stateContacts[state].admins.length }}
+          </div>
+
+          <div class="state-tile__ut-tag" *ngIf="utStates.has(state)">
+            UT
+          </div>
+        </button>
+      </div>
+      <ng-template #noStateResult>
+        <div class="state-panel__no-result">
+          <span class="material-icons">search_off</span>
+          No state found for that search
+        </div>
+      </ng-template>
+
+    </div>
+    </ng-container>
+
+    <div class="support-step-hint" *ngIf="isSectionEnabled('stateSupportCenter') && isSectionEnabled('nationalHelpDesk')">
+      <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
+      <span style="color:#6b7280;font-size:.88rem">or Reach out to <strong style="color:#0d1b6e">National Help
+          Desk</strong></span>
+    </div>
+
+    <!-- Call Card -->
+    <div class="call-card mt-5" *ngIf="isSectionEnabled('nationalHelpDesk')">
+      <div class="call-card__left">
+        <div class="call-card__phone-icon-wrap">
+          <span class="material-icons call-card__phone-icon">phone_in_talk</span>
+        </div>
+        <div class="call-card__info">
+          <h3 class="call-card__title">National Help Desk</h3>
+          <p class="call-card__desc">
+            Connect with our experts for quick, real-time support.
+          </p>
+          <p class="call-card__hours">
+            <span class="material-icons call-card__clock">schedule</span>
+            {{ supportHours }}
+          </p>
+        </div>
+      </div>
+
+      <button class="call-card__cta" (click)="onCallNow()" aria-label="Call iGOT support">
+        <div class="call-card__cta-inner">
+          <span class="call-card__cta-label">CALL NOW</span>
+          <div class="call-card__cta-number">
+            <span class="material-icons call-card__cta-phone">phone</span>
+            {{ phoneNumber }}
+          </div>
+        </div>
+        <span class="material-icons call-card__cta-arrow">arrow_forward</span>
+      </button>
+    </div>
+
+    <!-- Ticket Card -->
+    <div class="ticket-card">
+      <div class="ticket-card__left">
+        <div class="ticket-card__icon-wrap">
+          <span class="material-icons ticket-card__icon">email</span>
+        </div>
+        <div class="ticket-card__info">
+          <h3 class="ticket-card__title">Having trouble reaching us by call</h3>
+          <p class="ticket-card__desc">
+            Raise a support ticket and our team will get back to you at the earliest.
+          </p>
+        </div>
+      </div>
+
+      <button class="ticket-card__cta" (click)="onRaiseTicket()" aria-label="Raise a support ticket">
+        <span class="material-icons ticket-card__cta-icon">send</span>
+        Raise Ticket
+        <span class="material-icons ticket-card__cta-arrow">arrow_forward</span>
+      </button>
+    </div>
+
+
+
+    <!-- Feature Pills -->
+    <div class="support-section__features">
+      <ng-container *ngFor="let f of features; let last = last">
+        <div class="support-feature">
+          <span class="material-icons support-feature__icon">{{ f.icon }}</span>
+          <span class="support-feature__label">{{ f.label }}</span>
+        </div>
+        <span class="support-section__divider" *ngIf="!last" aria-hidden="true">|</span>
+      </ng-container>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== STATE CONTACTS MODAL ===================== -->
+<div class="sc-overlay" *ngIf="selectedState" id="scOverlay" (click)="closeStateModal()">
+  <div class=" sc-modal" id="scModal" (click)="$event.stopPropagation()">
+
+    <div class="sc-header">
+      <div class="sc-header-left">
+        <div class="sc-header-icon">
+          <span class="material-icons" style="font-size:22px;color:#0d1b6e">location_on</span>
+        </div>
+        <div>
+          <h3 class="sc-title" id="scModalTitle">{{selectedState}} - Admin Contacts</h3>
+          <p class="sc-subtitle" id="scModalSub">{{selectedStateData?.admins?.length}} admin contacts
+            available</p>
+        </div>
+      </div>
+      <button class="sc-close cursor-pointer" (click)=" $event.preventDefault();closeStateModal();" aria-label="Close">
+        <span class="material-icons">close</span>
+      </button>
+    </div>
+
+    <div class="sc-table-wrap" id="scTableWrap">
+      <div class="sc-state-title-row">
+        <span class="material-icons" style="color:#f4722b;font-size:20px">location_on</span>
+        <span class="sc-state-name-label" id="scStateName">{{selectedState}}</span>
+        <span class="sc-admin-count" id="scAdminCount">{{selectedStateData?.admins?.length}}</span>
+      </div>
+
+      <div class="sc-cards" id="scTableBody">
+        <div class="sc-card" *ngFor="let admin of selectedStateData?.admins; let i = index">
+          <div class="sc-card__top">
+            <div class="sc-card__num">{{i+1}}</div>
+            <div class="sc-card__info">
+              <div class="sc-card__name">{{admin?.name}}</div>
+              <div class="sc-card__desg" *ngIf="admin.designation !== 'N/A'">{{admin.designation}}</div>
+            </div>
+          </div>
+          <div class="sc-card__actions">
+            <a [href]="'tel:' + formatPhone(admin.mobile)" class="sc-card__call">
+              <span class="material-icons">phone</span>{{admin.mobile}}
+            </a>
+            <a [href]="'mailto:' + admin.email" class="sc-card__mail" *ngIf="admin?.email !== 'N/A'">
+              <span class="material-icons">mail_outline</span>{{admin.email}}
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="sc-card">
+                    <div class="sc-card__top">
+                        <div class="sc-card__num">${{i+1}}</div>
+                        <div class="sc-card__info">
+                            <div class="sc-card__name">{{admin.name}}</div>
+                            <div class="sc-card__desg">{{admin.designation}}</div>
+                        </div>
+                    </div>
+                    <div class="sc-card__actions">
+                        <a href="tel:${c.mobile.replace(/\s/g,'')}" class="sc-card__call">
+                            <span class="material-icons">phone</span>{{admin.mobile}}
+                        </a>
+                        <a href="mailto:${c.email}" class="sc-card__mail">
+                            <span class="material-icons">mail_outline</span>{{admin.email}}
+                        </a>
+                    </div>
+                </div> -->
+
+
+    </div>
+    <!-- Secondary helpdesk CTA -->
+    <div class="sc-helpdesk-secondary">
+      <span class="material-icons sc-helpdesk-secondary__icon">headset_mic</span>
+      <span class="sc-helpdesk-secondary__text">Still need help?</span>
+      <a href="tel:+919990141256" class="sc-helpdesk-secondary__link">
+        <span class="material-icons" style="font-size:14px">phone</span>
+        +91 9990141256
+      </a>
+    </div>
+
+  </div>
+</div>

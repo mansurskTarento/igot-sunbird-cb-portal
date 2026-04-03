@@ -128,7 +128,8 @@ export class CommonDataService {
         return this.readCustomattributeDetails(isPlayer)
       } else {
         this.updatePlayerStatus(isPlayer)
-        this.checkAndShowMandatoryNotification()
+        // commneted to NLW 2026
+        //this.checkAndShowMandatoryNotification()
         return false
       }
     } else {
@@ -140,7 +141,8 @@ export class CommonDataService {
           return this.readCustomattributeDetails(isPlayer)
         } else {
           this.updatePlayerStatus(isPlayer)
-          this.checkAndShowMandatoryNotification()
+          // commneted to NLW 2026
+          //this.checkAndShowMandatoryNotification()
           return false
         }
       }, error => {
@@ -158,7 +160,8 @@ export class CommonDataService {
         //this.redirectToCustomProfile()
 
         this.updatePlayerStatus(isPlayer)
-        this.checkAndShowMandatoryNotification()
+        // commneted to NLW 2026
+        //this.checkAndShowMandatoryNotification()
         return false
       }
     }, error => {

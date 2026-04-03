@@ -56,6 +56,10 @@
       <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
     </div>
 
+    <div *ngIf="!data.earnedBadges?.length" class="empty-state flex flex-col items-center justify-center py-12 text-gray-500 text-sm">
+      You haven't earned any badges yet. Complete eligible courses to see them here.
+    </div>
+
     <div class="earned-badges-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
 
       <div
@@ -69,9 +73,20 @@
         </div>
 
         <div class="badge-label text-center text-xs mt-2 font-semibold leading-tight">
-          <span class="blue text-blue-700">{{ badge.title }}</span>
-          <span class="gray text-gray-500"> {{ badge.level }}</span>
-          <p class="earnedcourseName mb-0 italic"> ({{ badge.courseName }})</p>
+      <div class="badge-title-wrapper">
+        <span #titleEl class="blue text-blue-700 badge-title cursor-text" [title]="badge.title" matTooltipPosition="above">
+          {{ badge.title }}
+        </span>
+
+
+      </div>
+
+          <span class="gray text-gray-500 badge-level cursor-text" [title]="badge.level" matTooltipPosition="above"> {{
+            badge.level
+            }}</span>
+          <p [title]="badge.courseName" matTooltipPosition="below" class="earnedcourseName mb-0 italic cursor-text"> ({{
+            badge.courseName
+            }})</p>
         </div>
 
     <div class="badge-menu absolute top-1 right-2 text-gray-400 text-lg">
@@ -83,9 +98,28 @@
         <button class="bg-white" mat-menu-item (click)="openModal(badge)">
           View
         </button>
-        <button class="bg-white" mat-menu-item>
+        <button class="bg-white" mat-menu-item [matMenuTriggerFor]="downloadMenu">
           Download
         </button>
+      </mat-menu>
+      <mat-menu #downloadMenu="matMenu" panelClass="custom-menu-badge-modal">
+
+        <!-- PDF -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePdf(badge)">
+          <mat-icon>picture_as_pdf</mat-icon>
+          <span>PDF</span>
+        </button>
+        <!-- PNG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgePng(badge)">
+          <mat-icon>photo</mat-icon>
+          <span>PNG</span>
+        </button>
+        <!-- SVG -->
+        <button class="bg-white" mat-menu-item (click)="downloadBadgeSvg(badge)">
+          <mat-icon>photo_size_select_actual</mat-icon>
+          <span>SVG</span>
+        </button>
+
       </mat-menu>
       </div>
       </div>
@@ -105,15 +139,22 @@
       <!-- <div class="filter text-xs text-gray-500 cursor-pointer">This Week <span style="margin-left:4px;">▾</span></div> -->
     </div>
 
+    <div *ngIf="!data.inProgress?.length" class="empty-state flex flex-col items-center justify-center py-12 text-gray-500 text-sm">
+      You haven't started any courses yet. Once you begin learning, they will appear here.
+    </div>
+
     <div class="badge-progress-list divide-y">
 
       <div class="badge-progress-item flex items-center py-3 gap-3" *ngFor="let badge of data.inProgress">
 
         <img class="badge-icon w-8 h-8" [src]="badge.icon | pipePublicURL" alt="">
 
-        <p class="badge-name flex-1 text-sm mb-0"><span> {{ badge.badgeTitle }}</span> <span class="course-name flex-6 text-sm">
-            ({{badge.courseName}})
-          </span> </p>
+        <p class="badge-name flex-1 text-sm mb-0">
+          <span> {{ badge.badgeTitle }}</span>
+          <span class="course-name flex-6 text-sm"> ({{badge.courseName}})</span>
+          <br>
+          <span class="text-xs text-gray-500">{{badge.endDate | date:'dd-MMM-yyyy'}}</span>
+        </p>
 
         <button (click)="goToContent(badge)"
           class="continue-btn hidden sm:flex text-white text-xs px-4 py-1 rounded-full items-center gap-1">

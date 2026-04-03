@@ -1,0 +1,1412 @@
+// =============================================
+// Support Section — "Still facing an issue?"
+// =============================================
+
+$orange: #f4722b;
+$orange-light: #ff8c4b;
+$orange-subtle: #fff3ec;
+$navy-dark: #0d1b6e;
+$gray-bg: #f5f0ea;
+$gray-border: #e4e4e4;
+$gray-text: #6b7280;
+$dark-text: #1a1a2e;
+$white: #ffffff;
+
+.support-section {
+  position: relative;
+  background: #f5f0ea;
+  padding: 64px 24px 48px;
+  overflow: hidden;
+
+  // Dot grid background pattern
+  &__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #c8b8a2 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  // ---- "Need Help?" badge ----
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: $orange-subtle;
+    color: $orange;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    border: 1px solid rgba($orange, 0.18);
+  }
+
+  &__badge-icon {
+    font-size: 16px;
+  }
+
+  // ---- Headline ----
+  &__heading {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $dark-text;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.25;
+
+    &--accent {
+      color: $orange;
+    }
+  }
+
+  &__sub {
+    font-size: 0.95rem;
+    color: $gray-text;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  // ---- Feature pills row ----
+  &__features {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  &__divider {
+    color: #ccc;
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+// =============================================
+// CALL CARD
+// =============================================
+.call-card {
+  width: 100%;
+  background: linear-gradient(135deg, #F3962F 0%, #F3962F 62%, #1B4CA1 66%, #1B4CA1 100%) !important;
+  border-radius: 16px;
+  padding: 28px 28px 28px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 24px rgba($orange, 0.25);
+  position: relative;
+  overflow: hidden;
+
+  // Soft glow overlay
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(243, 150, 47, .22) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__phone-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.28);
+  }
+
+  &__phone-icon {
+    font-size: 28px;
+    color: $white;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $white;
+    line-height: 1.3;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__desc {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__hours {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0;
+  }
+
+  &__clock {
+    font-size: 15px;
+    vertical-align: middle;
+  }
+
+  // CTA Button
+  &__cta {
+    background: $white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px 16px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+    flex-shrink: 0;
+    transition: box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  &__cta-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: $gray-text;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  &__cta-number {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: $navy-dark;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+
+  &__cta-phone {
+    font-size: 18px;
+    color: $navy-dark;
+  }
+
+  &__cta-arrow {
+    font-size: 20px;
+    color: $gray-text;
+    flex-shrink: 0;
+  }
+}
+
+// =============================================
+// TICKET CARD
+// =============================================
+.ticket-card {
+  width: 100%;
+  background: $white;
+  border: 1px solid $gray-border;
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: #f0f2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    font-size: 22px;
+    color: $navy-dark;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $dark-text;
+    line-height: 1.3;
+  }
+
+  &__desc {
+    font-size: 0.83rem;
+    color: $gray-text;
+    line-height: 1.4;
+  }
+
+  &__cta {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    background: $white;
+    color: $dark-text;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $navy-dark;
+      color: $white;
+      border-color: $navy-dark;
+
+      .ticket-card__cta-icon,
+      .ticket-card__cta-arrow {
+        color: $white;
+      }
+    }
+  }
+
+  &__cta-icon {
+    font-size: 16px;
+    color: $navy-dark;
+    transition: color 0.2s;
+  }
+
+  &__cta-arrow {
+    font-size: 16px;
+    color: $gray-text;
+    transition: color 0.2s;
+  }
+}
+
+// =============================================
+// FEATURE PILLS
+// =============================================
+.support-feature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: $gray-text;
+  font-weight: 500;
+
+  &__icon {
+    font-size: 16px;
+    color: $orange;
+  }
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: 768px) {
+  .support-section {
+    padding: 48px 16px 40px;
+
+    &__heading {
+      font-size: 1.5rem;
+    }
+  }
+
+  .call-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 24px 20px;
+
+    &__cta {
+      min-width: 0;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  .ticket-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px 20px;
+
+    &__cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+
+/* ── STATE PANEL ── */
+.state-panel {
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 18px;
+  overflow: hidden;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, .06);
+}
+
+.state-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  background: #fafbff;
+  border-bottom: 1px solid #eef0f8;
+  flex-wrap: wrap;
+}
+
+.state-panel__header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px
+}
+
+.state-panel__icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  background: #f0f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0
+}
+
+.state-panel__title {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1a1a2e
+}
+
+.state-panel__sub {
+  font-size: .78rem;
+  color: #6b7280
+}
+
+.state-panel__search-wrap {
+  position: relative;
+  flex-shrink: 0
+}
+
+.state-panel__search-icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 17px;
+  color: #9ca3af
+}
+
+.state-panel__search {
+  padding: 8px 14px 8px 34px;
+  border: 1px solid #e4e4e4;
+  border-radius: 8px;
+  font-size: .82rem;
+  font-family: inherit;
+  outline: none;
+  color: #1a1a2e;
+  width: 220px;
+  transition: border-color .15s
+}
+
+.state-panel__search:focus {
+  border-color: #f4722b;
+  box-shadow: 0 0 0 3px rgba(244, 114, 43, .1)
+}
+
+/* Region tabs */
+.state-panel__region-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 22px;
+  background: #fafbff;
+  border-bottom: 1px solid #eef0f8;
+  overflow-x: auto;
+  flex-wrap: nowrap
+}
+
+.state-region-tab {
+  padding: 5px 14px;
+  border-radius: 50px;
+  border: 1px solid #e4e4e4;
+  background: #fff;
+  font-size: .78rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+  transition: all .15s
+}
+
+.state-region-tab:hover {
+  border-color: #f4722b;
+  color: #f4722b;
+  background: #fff3ec
+}
+
+.state-region-tab.active {
+  background: #0d1b6e;
+  color: #fff;
+  border-color: #0d1b6e
+}
+
+/* State grid */
+.state-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 18px;
+}
+
+.state-tile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 18px;
+  border: 1.5px solid #e0e4f8;
+  background: #f8f9ff;
+  cursor: pointer;
+  font-family: inherit;
+  border-radius: 50px;
+  transition: background .15s, border-color .15s, color .15s, transform .12s, box-shadow .15s;
+  position: relative;
+  white-space: nowrap;
+}
+
+.state-tile:hover {
+  background: #fff3ec;
+  border-color: #f4722b;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(244, 114, 43, .15)
+}
+
+.state-tile:hover .state-tile__name {
+  color: #f4722b
+}
+
+.state-tile:hover .state-tile__avatar {
+  display: none
+}
+
+.state-tile__avatar {
+  display: none
+}
+
+.state-tile__name {
+  font-size: .88rem;
+  font-weight: 600;
+  color: #374151;
+  transition: color .15s
+}
+
+.state-tile__count {
+  font-size: .72rem;
+  color: #9ca3af;
+  font-weight: 500;
+  background: #fff;
+  border: 1px solid #e4e4e4;
+  border-radius: 50px;
+  padding: 1px 8px;
+  transition: all .15s
+}
+
+.state-tile:hover .state-tile__count {
+  background: #f4722b;
+  color: #fff;
+  border-color: #f4722b
+}
+
+.state-tile__ut-tag {
+  font-size: .62rem;
+  background: #e8eaf6;
+  color: #0d1b6e;
+  padding: 2px 7px;
+  border-radius: 50px;
+  font-weight: 700;
+  letter-spacing: .3px
+}
+
+.state-panel__no-result {
+  text-align: center;
+  padding: 36px 0;
+  color: #9ca3af;
+  font-size: .88rem
+}
+
+.sc-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 18, 60, .55);
+  backdrop-filter: blur(4px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  opacity: 1;
+  transition: opacity .25s
+}
+
+.sc-overlay.open {
+  opacity: 1;
+  pointer-events: all
+}
+
+.sc-modal {
+  background: #fff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 760px;
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .22);
+  transform: translateY(20px) scale(.97);
+  transition: transform .25s
+}
+
+.sc-overlay.open .sc-modal {
+  transform: translateY(0) scale(1)
+}
+
+.sc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fafbff;
+  flex-shrink: 0
+}
+
+.sc-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px
+}
+
+.sc-header-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: #f0f2ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0
+}
+
+.sc-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin: 0
+}
+
+.sc-subtitle {
+  font-size: .8rem;
+  color: #6b7280;
+  margin: 0
+}
+
+.sc-close {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #e4e4e4;
+  background: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  transition: all .15s;
+  flex-shrink: 0
+}
+
+.sc-close:hover {
+  background: #fef2f2;
+  border-color: #fca5a5;
+  color: #ef4444
+}
+
+.sc-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px
+}
+
+.sc-state-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px
+}
+
+.sc-state-name-label {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1a1a2e
+}
+
+.sc-admin-count {
+  background: #f0f2ff;
+  color: #0d1b6e;
+  font-size: .75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 50px
+}
+
+.sc-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 12px
+}
+
+.sc-card {
+  background: #fff;
+  border: 1px solid #e8eaf0;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: box-shadow .15s, border-color .15s;
+}
+
+.sc-card:hover {
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .07);
+  border-color: #d0d4e8
+}
+
+.sc-card__top {
+  display: flex;
+  align-items: center;
+  gap: 12px
+}
+
+.sc-card__num {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #f0f2ff;
+  color: #0d1b6e;
+  font-size: .75rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sc-card__info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1
+}
+
+.sc-card__name {
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.3;
+  word-break: break-word
+}
+
+.sc-card__desg {
+  font-size: .78rem;
+  color: #6b7280
+}
+
+.sc-card__actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap
+}
+
+.sc-card__call {
+  flex: 1;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: #f0f2ff;
+  color: #0d1b6e;
+  border-radius: 8px;
+  font-size: .83rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+
+.sc-card__call:hover {
+  background: #0d1b6e;
+  color: #fff
+}
+
+.sc-card__call .material-icons {
+  font-size: 15px;
+  flex-shrink: 0
+}
+
+.sc-card__mail {
+  flex: 1;
+  min-width: 140px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 14px;
+  background: #f4fff8;
+  color: #1a6b3a;
+  border-radius: 8px;
+  font-size: .83rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #c3e6cb;
+  transition: background .15s, color .15s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sc-card__mail:hover {
+  background: #1a6b3a;
+  color: #fff !important;
+  border-color: #1a6b3a
+}
+
+.sc-card__mail .material-icons {
+  font-size: 14px;
+  flex-shrink: 0
+}
+
+// =============================================
+// RESPONSIVE
+// =============================================
+@media (max-width: 768px) {
+  .hero__title {
+    font-size: 1.7rem;
+  }
+
+  .section__layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid $gray-border;
+
+    &__list {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  }
+
+  .video-grid,
+  .guides-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+
+  .nav__role-tabs {
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+
+  .nav__role-tab {
+    padding: 12px 16px;
+    font-size: 0.82rem;
+    white-space: nowrap;
+  }
+
+  .support-heading {
+    font-size: 1.5rem
+  }
+
+  .state-grid {
+    gap: 6px;
+    padding: 12px 14px
+  }
+
+  .state-tile {
+    padding: 7px 14px
+  }
+
+  .state-tile__name {
+    font-size: .82rem
+  }
+
+  .state-panel__search {
+    width: 100%
+  }
+
+  .state-panel__header {
+    flex-direction: column;
+    align-items: flex-start
+  }
+
+  .call-card {
+    flex-direction: column;
+    align-items: stretch
+  }
+
+  .call-cta {
+    min-width: 0;
+    width: 100%;
+    justify-content: space-between
+  }
+
+  .ticket-card {
+    flex-direction: column;
+    align-items: stretch
+  }
+
+  .ticket-cta {
+    width: 100%;
+    justify-content: center
+  }
+
+  .sc-modal {
+    border-radius: 16px 16px 0 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    max-width: 100%;
+    max-height: 92vh
+  }
+
+  .sc-overlay {
+    align-items: flex-end;
+    padding: 0
+  }
+
+  .sc-helpdesk-secondary {
+    flex-wrap: wrap
+  }
+
+  .support-section {
+    padding: 48px 16px 40px;
+
+    &__heading {
+      font-size: 1.5rem;
+    }
+  }
+
+  .call-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 24px 20px;
+
+    &__cta {
+      min-width: 0;
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  .ticket-card {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 18px 20px;
+
+    &__cta {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}
+
+/* Secondary helpdesk CTA */
+.sc-helpdesk-secondary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 12px 16px;
+  background: #f8f9ff;
+  border: 1px solid #e8eaf0;
+  border-radius: 10px;
+}
+
+.sc-helpdesk-secondary__icon {
+  font-size: 16px;
+  color: #9ca3af
+}
+
+.sc-helpdesk-secondary__text {
+  font-size: .82rem;
+  color: #6b7280
+}
+
+.sc-helpdesk-secondary__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: .82rem;
+  font-weight: 700;
+  color: #0d1b6e;
+  text-decoration: none;
+  border-bottom: 1px dashed #9ca3af;
+  padding-bottom: 1px;
+  transition: color .15s, border-color .15s;
+}
+
+.sc-helpdesk-secondary__link:hover {
+  color: #f4722b;
+  border-color: #f4722b
+}
+
+
+// =============================================
+// Support Section — "Still facing an issue?"
+// =============================================
+
+$orange: #f4722b;
+$orange-light: #ff8c4b;
+$orange-subtle: #fff3ec;
+$navy-dark: #0d1b6e;
+$gray-bg: #f5f0ea;
+$gray-border: #e4e4e4;
+$gray-text: #6b7280;
+$dark-text: #1a1a2e;
+$white: #ffffff;
+
+.support-section {
+  position: relative;
+  background: #f5f0ea;
+  padding: 64px 24px 48px;
+  overflow: hidden;
+
+  // Dot grid background pattern
+  &__dots {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #c8b8a2 1px, transparent 1px);
+    background-size: 28px 28px;
+    opacity: 0.45;
+    pointer-events: none;
+  }
+
+  &__inner {
+    position: relative;
+    z-index: 1;
+    max-width: 880px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  // ---- "Need Help?" badge ----
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: $orange-subtle;
+    color: $orange;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 6px 16px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    border: 1px solid rgba($orange, 0.18);
+  }
+
+  &__badge-icon {
+    font-size: 16px;
+  }
+
+  // ---- Headline ----
+  &__heading {
+    font-size: 2rem;
+    font-weight: 800;
+    color: $dark-text;
+    text-align: center;
+    margin-bottom: 10px;
+    line-height: 1.25;
+
+    &--accent {
+      color: $orange;
+    }
+  }
+
+  &__sub {
+    font-size: 0.95rem;
+    color: $gray-text;
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  // ---- Feature pills row ----
+  &__features {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 24px;
+  }
+
+  &__divider {
+    color: #ccc;
+    font-size: 1rem;
+    line-height: 1;
+  }
+}
+
+// =============================================
+// CALL CARD
+// =============================================
+.call-card {
+  width: 100%;
+  background: linear-gradient(135deg, #F3962F 0%, #F3962F 62%, #1B4CA1 66%, #1B4CA1 100%) !important;
+  border-radius: 16px;
+  padding: 28px 28px 28px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 24px rgba($orange, 0.25);
+  position: relative;
+  overflow: hidden;
+
+  // Soft glow overlay
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(255, 160, 80, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__phone-icon-wrap {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.18);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 2px solid rgba(255, 255, 255, 0.28);
+  }
+
+  &__phone-icon {
+    font-size: 28px;
+    color: $white;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: $white;
+    line-height: 1.3;
+  }
+
+  &__desc {
+    font-size: 0.88rem;
+    color: rgba(255, 255, 255, 0.85);
+    line-height: 1.5;
+  }
+
+  &__hours {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.75);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+
+  &__clock {
+    font-size: 15px;
+    vertical-align: middle;
+  }
+
+  // CTA Button
+  &__cta {
+    background: $white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 20px 16px 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 240px;
+    flex-shrink: 0;
+    transition: box-shadow 0.2s, transform 0.15s;
+    position: relative;
+    z-index: 1;
+
+    &:hover {
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.14);
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  &__cta-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+  }
+
+  &__cta-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    color: $gray-text;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  &__cta-number {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: $navy-dark;
+    letter-spacing: -0.3px;
+    white-space: nowrap;
+  }
+
+  &__cta-phone {
+    font-size: 18px;
+    color: $navy-dark;
+  }
+
+  &__cta-arrow {
+    font-size: 20px;
+    color: $gray-text;
+    flex-shrink: 0;
+  }
+}
+
+// =============================================
+// TICKET CARD
+// =============================================
+.ticket-card {
+  width: 100%;
+  background: $white;
+  border: 1px solid $gray-border;
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+  }
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__icon-wrap {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    background: #f0f2ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__icon {
+    font-size: 22px;
+    color: $navy-dark;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: $dark-text;
+    line-height: 1.3;
+  }
+
+  &__desc {
+    font-size: 0.83rem;
+    color: $gray-text;
+    line-height: 1.4;
+  }
+
+  &__cta {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 11px 20px;
+    border: 1.5px solid #d1d5db;
+    border-radius: 8px;
+    background: $white;
+    color: $dark-text;
+    font-size: 0.88rem;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: inherit;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: all 0.2s;
+
+    &:hover {
+      background: $navy-dark;
+      color: $white;
+      border-color: $navy-dark;
+
+      .ticket-card__cta-icon,
+      .ticket-card__cta-arrow {
+        color: $white;
+      }
+    }
+  }
+
+  &__cta-icon {
+    font-size: 16px;
+    color: $navy-dark;
+    transition: color 0.2s;
+  }
+
+  &__cta-arrow {
+    font-size: 16px;
+    color: $gray-text;
+    transition: color 0.2s;
+  }
+}
+
+// =============================================
+// FEATURE PILLS
+// =============================================
+.support-feature {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  color: $gray-text;
+  font-weight: 500;
+
+  &__icon {
+    font-size: 16px;
+    color: $orange;
+  }
+}

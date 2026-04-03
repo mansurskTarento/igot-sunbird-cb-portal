@@ -45,6 +45,20 @@ export class ViewAllComponent {
   totalEventsCount = 0
   orgId: any
   eventLinked: string[] = []
+  sourceNameFacets: any[] = []
+  resourceTypeFacets: any[] = []
+  selectedSources: string[] = []
+  showMoreSources = false
+  showMoreResourceTypes = false
+  resourceTypeOrder: string[] = [
+    'Sadhana Saptah',
+    'Samuhik Charcha - NLW 2026',
+    'Karmayogi Talks',
+    'Karmayogi Saptah',
+    'Rajya Karmayogi Saptah',
+    'Webinar',
+  ]
+  selectedResourceType: string = 'All'
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -87,6 +101,7 @@ export class ViewAllComponent {
     this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
     this.facetsData = _.get(this.pageConfigData, 'version2.filterFacetsData', {})
     this.orgId = _.get(this.configService, 'userProfile.userRootOrg.id', '')
+    this.resourceTypeOrder = this.pageConfigData?.orderItems ? this.pageConfigData.orderItems : this.resourceTypeOrder
     this.searchControl.valueChanges.pipe(
       debounceTime(200),
       distinctUntilChanged()
@@ -101,7 +116,8 @@ export class ViewAllComponent {
     })
     this.activateRoute.queryParamMap.subscribe(async (data: any) => {
       if (data.params && data.params.resourceType) {
-        this.selectedFilters['resourceType'] = [data.params.resourceType]
+        this.selectedResourceType = data.params.resourceType
+        this.selectedFilters['resourceType'] = [data.params.resourceType.toLowerCase()]
         if (data.params.courseId) {
           this.selectedFilters['courseId'] = [data.params.courseId]
           try {
@@ -121,7 +137,7 @@ export class ViewAllComponent {
         this.searchControl.setValue(null)
       }
     })
-    this.titles.push({ title: _.get(this.selectedFilters, 'resourceType[0]', 'All'), url: `none`, icon: '' },)
+    this.titles.push({ title: this.selectedResourceType, url: `none`, icon: '' },)
     this.fetchData()
   }
 
@@ -142,6 +158,7 @@ export class ViewAllComponent {
           contentType: 'Event',
           category: 'Event',
         },
+        facets: ['sourceName', 'resourceType'],
         sort_by: this.sortOptions,
         limit: this.pageLimit || 9,
         offset: (this.pageLimit * this.currentPage) || 0
@@ -250,6 +267,7 @@ export class ViewAllComponent {
           filters: {
             ...requestBody.request.filters,
             resourceType: this.selectedFilters.resourceType ? this.selectedFilters.resourceType : [],
+            ...(this.selectedSources.length ? { sourceName: this.selectedSources } : {}),
             ...(startDate ? { "startDate": { ">=": [startDate] } } : {}),
             ...(endDate ? { "endDate": { "<=": [endDate] } } : {}),
             ...(startDateTimeInEpoch ? {
@@ -300,6 +318,33 @@ export class ViewAllComponent {
         this.currentPage = this.currentPage + 1
       } else {
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
+      }
+      const facets = _.get(resp, 'result.facets', [])
+      const sourceNameFacet = facets.find((f: any) => f.name === 'sourceName')
+      const resourceTypeFacet = facets.find((f: any) => f.name === 'resourceType')
+      if (this.currentPage <= 1) {
+        if (!this.selectedSources.length) {
+          this.sourceNameFacets = _.get(sourceNameFacet, 'values', [])
+        }
+        if (!this.selectedFilters?.resourceType?.length || !this.resourceTypeFacets.length) {
+          const rawFacets = (_.get(resourceTypeFacet, 'values', []) as any[])
+            .filter((f: any) => f.name?.toLowerCase() !== 'samuhik charcha')
+          this.resourceTypeFacets = this.sortFacetsByOrder(rawFacets, this.resourceTypeOrder)
+        }
+        // Normalize selectedFilters.resourceType to match exact API facet names
+        if (this.selectedFilters?.resourceType?.length && this.resourceTypeFacets.length) {
+          this.selectedFilters['resourceType'] = this.selectedFilters['resourceType'].map((selected: string) => {
+            const match = this.resourceTypeFacets.find((f: any) => f.name.toLowerCase() === selected.toLowerCase())
+            return match ? match.name : selected
+          })
+        }
+        // Auto-reset show more if facets have 2 or fewer items
+        if (this.sourceNameFacets.length <= 2) {
+          this.showMoreSources = false
+        }
+        if (this.resourceTypeFacets.length <= 2) {
+          this.showMoreResourceTypes = false
+        }
       }
       this.isLoading = false
     }, error => {
@@ -364,6 +409,9 @@ export class ViewAllComponent {
     if (this.selectedFilters.dateRange) {
       return true
     }
+    if (this.selectedSources.length) {
+      return true
+    }
     return false
   }
 
@@ -378,8 +426,48 @@ export class ViewAllComponent {
     this.startDate = ''
     this.endDate = ''
     this.selectedValue = null
+    this.selectedSources = []
+    this.showMoreSources = false
+    this.showMoreResourceTypes = false
+    // Reset titles to show 'All'
+    this.titles = [
+      { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
+      { title: 'All', url: 'none', icon: '' },
+    ]
+    // Remove query parameters from the URL
+    this.router.navigate([], {
+      relativeTo: this.activateRoute,
+      queryParams: {},
+    })
     this.resetData()
     this.fetchData()
+  }
+
+  sortFacetsByOrder(facets: any[], order: string[]): any[] {
+    const orderLower = order.map((n: string) => n.toLowerCase())
+    const ordered = order
+      .map((name: string) => facets.find((f: any) => f.name.toLowerCase() === name.toLowerCase()))
+      .filter((f: any) => !!f)
+    const rest = facets.filter((f: any) => !orderLower.includes(f.name.toLowerCase()))
+    return [...ordered, ...rest]
+  }
+
+  get displayedContentDataList(): any[] {
+    return this.contentDataList
+  }
+
+  toggleSourceFilter(source: string, checked: boolean) {
+    if (checked) {
+      this.selectedSources = [...this.selectedSources, source]
+    } else {
+      this.selectedSources = this.selectedSources.filter((s: string) => s !== source)
+    }
+    this.resetData()
+    this.fetchData()
+  }
+
+  isSourceSelected(source: string): boolean {
+    return this.selectedSources.includes(source)
   }
 
   openBottomSheet(): void {
@@ -451,6 +539,8 @@ export class ViewAllComponent {
           eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter)
         }
       }
+    } else if (key === 'sourceName') {
+      this.selectedSources = this.selectedSources.filter((s: string) => s !== filter)
     }
     this.resetData()
     this.fetchData()
@@ -470,7 +560,9 @@ export class ViewAllComponent {
 
   canCheck(key: any, keyData: any) {
     if (this.selectedFilters[key]) {
-      return this.selectedFilters[key].includes(keyData.name)
+      return this.selectedFilters[key].some((item: string) =>
+        item.toLowerCase() === keyData.name.toLowerCase()
+      )
     }
   }
 
@@ -540,6 +632,9 @@ export class ViewAllComponent {
         delete this.selectedFilters.key
       }
     } else {
+      if (['resourceType'].includes(key)) {
+        this.showMoreSources = false
+      }
       if (['resourceType', 'eventDate'].includes(key)) {
         let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {

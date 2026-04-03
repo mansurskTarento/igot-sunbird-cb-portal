@@ -42,6 +42,7 @@ export namespace NSPeerValidation {
     question: string
     answer: number | string | string[]
     answerType: string
+    isRequired?: boolean
   }
 
   // Survey Submission — matches POST /apis/proxies/v8/forms/peersurvey/submit
@@ -130,6 +131,7 @@ export namespace NSPeerValidation {
     question: string
     answer: string | number
     answerType: string
+    isRequired?: boolean
   }
 
   // Review Request — maps to result.response.content[0] from submission search API

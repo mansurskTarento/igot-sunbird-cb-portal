@@ -18,7 +18,8 @@
     <!-- Survey Responses (Read Only) -->
     <div class="question-item" *ngFor="let response of requestData?.responses; let i = index">
       <div class="q-header">
-        <span class="q-req">{{ i + 1 }}. {{ response.question }}</span>
+        <span class="q-req">{{ i + 1 }}. {{ response.question }}<span *ngIf="response.isRequired" class="required-star">
+            *</span></span>
       </div>
 
       <!-- Rating Display -->
