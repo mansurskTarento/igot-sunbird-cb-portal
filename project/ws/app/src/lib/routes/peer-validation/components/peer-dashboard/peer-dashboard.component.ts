@@ -125,11 +125,12 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       if (!item) return
       this.router.navigate(['/app/peer-validation/review', item.metadata.formId], {
         queryParams: {
-          courseName: item.metadata.courseName,
+          courseName: item.metadata.courseName || (item.metadata as any).course_name || '',
           requestedName: item.metadata.learnerName,
           formId: item.metadata.formId,
           submittedBy: item.metadata.learnerId || item.metadata.submittedBy || '',
-          courseId: item.metadata.contextId || item.metadata.courseId || '',
+          courseId: item.metadata.contextId || item.metadata.courseId || (item.metadata as any).cource_id || '',
+          contextOrgId: item.metadata.contextOrgId || (item.metadata as any).org_id || '',
           notificationId: item.notification_id || '',
           surveyEndDate: item.survey_end_date || '',
           createdAt: item.created_at || '',
@@ -149,9 +150,9 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
     const userName = `${this.configSvc?.userProfile?.firstName || ''} ${this.configSvc?.userProfile?.lastName || ''}`.trim()
     const mockData: NSPeerValidation.ISurveyPopupData = {
       formId: dashboardItem.metadata.formId,
-      contextId: dashboardItem.metadata.contextId || dashboardItem.metadata.courseId || '',
-      contextOrgId: dashboardItem.metadata.contextOrgId || '',
-      courseName: dashboardItem.metadata.courseName,
+      contextId: dashboardItem.metadata.contextId || dashboardItem.metadata.courseId || (dashboardItem.metadata as any).cource_id || '',
+      contextOrgId: dashboardItem.metadata.contextOrgId || (dashboardItem.metadata as any).org_id || '',
+      courseName: dashboardItem.metadata.courseName || (dashboardItem.metadata as any).course_name || '',
       learnerName: userName,
       completionDate: dashboardItem.metadata.completionDate,
       surveyCreatedById: dashboardItem.metadata.surveyCreatedById || '',
