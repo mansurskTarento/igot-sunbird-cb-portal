@@ -9,8 +9,7 @@
     </div>
 
     <div class="table-row" *ngFor="let user of filteredUsers" [class.selected]="isSelected(user)"
-      [class.disabled]="isDisabled(user)" [class.current-user]="isCurrentUser(user)"
-      [matTooltip]="isCurrentUser(user) ? 'You cannot select yourself' : ''" (click)="toggleUser(user)">
+      [class.disabled]="isDisabled(user)" [class.current-user]="isCurrentUser(user)" (click)="toggleUser(user)">
       <div class="col-select">
         <mat-checkbox [checked]="isSelected(user)" [disabled]="isDisabled(user)"
           (click)="$event.stopPropagation(); toggleUser(user, $event)" color="primary">
@@ -30,7 +29,7 @@
       <div class="col-email" data-label="Email">{{ user.profileDetails?.personalDetails?.primaryEmail || user.email ||
         '--' }}</div>
       <div class="col-org" data-label="Organisation">{{ user.rootOrgName || '--' }}</div>
-      <div class="col-designation" data-label="Designation" [matTooltip]="getUserDesignation(user)">{{
+      <div class="col-designation" data-label="Designation" >{{
         getUserDesignation(user) }}</div>
     </div>
 

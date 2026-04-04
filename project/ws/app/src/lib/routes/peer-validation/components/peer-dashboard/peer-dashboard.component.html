@@ -45,7 +45,7 @@
           <img [src]="item?.metadata?.thumbnail" alt="Thumbnail">
         </div>
         <div class="name-details">
-          <span class="name">{{ item?.metadata?.courseName }}</span>
+          <span class="name">{{ item?.metadata?.courseName || item?.metadata?.course_name }}</span>
         </div>
       </div>
 

@@ -109,7 +109,6 @@ export class DocumentUploadComponent {
       next: (uploadedDoc: NSPeerValidation.IUploadedDocument) => {
         uploadedDoc.url = this.generateUrl(uploadedDoc.url)
         this.documents = [...this.documents, uploadedDoc]
-        console.log(this.documents,'uploadfile')
         this.documentsChanged.emit(this.documents)
         this.isUploading = false
       },
@@ -155,7 +154,7 @@ export class DocumentUploadComponent {
       if (i === 2) {
         newLink.push(newChunk[i])
       } else if (i === 3) {
-        newLink.push(environment.azureBucket)
+        newLink.push('content-store')
       } else {
         newLink.push(chunk[i])
       }
