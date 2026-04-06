@@ -188,7 +188,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.updateNoResultMessage(this.statedata.param)
 
-    // this.checkCourseEnrollmentAndCbpPlan()
+    this.checkCourseEnrollmentAndCbpPlan()
     this.getFetchIgotSpecializationPrograms()
     // this.fetchCbpPlan()
     localStorage.removeItem(SearchConstantLocalStorage.SortType)
@@ -229,7 +229,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       changes.searchQuery.previousValue?.searchCategory
     ) {
       this.searchContentLoader = true
-      if (!this.isExploreContentTab) {
+      if(!this.isExploreContentTab) {
         this.resetAllSearchParams()
       }
       this.statedata = {
@@ -333,8 +333,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (this.searchRequestCourse['request']['filters']['courseCategory']?.length === 0) {
         this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment"] }
       }
-      if (this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
-        this.searchRequestCourse['request']['facets'] = _.uniq(this.searchRequestCourse['request']['facets'])
+      if( this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
+        this.searchRequestCourse['request']['facets'] =  _.uniq(this.searchRequestCourse['request']['facets'])
       }
 
     }
@@ -359,20 +359,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       }
-      // if (formContextList.length) {
-      //   const formBody = {
-      //     userId: _.get(this.configSvc, 'userProfile.userId'),
-      //     formContextList
-      //   }
-      //   const surveyLInksStatus = await this.searchV3Service.getApplicationsById(formBody).toPromise()
-      //   const statusList = _.get(surveyLInksStatus, 'result.response', [])
-      //   for (const status of statusList) {
-      //     const course = formRefMap[status.contextId]
-      //     if (course) {
-      //       course['surveyCompletionStatus'] = status.submitted
-      //     }
-      //   }
-      // }
+      if (formContextList.length) {
+        const formBody = {
+          userId: _.get(this.configSvc, 'userProfile.userId'),
+          formContextList
+        }
+        const surveyLInksStatus = await this.searchV3Service.getApplicationsById(formBody).toPromise()
+        const statusList = _.get(surveyLInksStatus, 'result.response', [])
+        for (const status of statusList) {
+          const course = formRefMap[status.contextId]
+          if (course) {
+            course['surveyCompletionStatus'] = status.submitted
+          }
+        }
+      }
       // result.result.content = enrichedResults;
     }
     if (result.result && result.result.content) {
@@ -426,7 +426,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchPeopleLoader = true
 
     this.searchRequestPeoples.query = this.statedata?.param || ''
-    const result: any = {}
+    const result :any={}
     // AFTER NLW NEED TO ENABLE
     // const result = await this.searchV3Service.searchConnections(
     //   this.searchRequestPeoples
@@ -1030,7 +1030,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.isExploreContentTab = !!params['tab']
-        if (this.isExploreContentTab) {
+        if ( this.isExploreContentTab ) {
           this.searchSortFilter = SortType.RecentlyAdded
           this.searchRequestCourse.request.sort_by.createdOn = 'desc'
         }
