@@ -93,7 +93,7 @@
                         <div
                             [ngClass]="{'right-section-row': content?.difficultyLevel || content?.knowledgeLevel, 'right-section-column': !content?.difficultyLevel || content?.knowledgeLevel}">
                             <div class="flex items-center gap-3 bookmark-section">
-                                <!-- <ng-container
+                                <ng-container
                                     *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                     <div matRipple (click)="downloadCertificate(courseEnrollment)"
                                         class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
@@ -111,14 +111,14 @@
                                         </ng-template>
                                         <span>Download Certificate</span>
                                     </div>
-                                </ng-container> -->
-                                <!-- <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
+                                </ng-container>
+                                <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
                                     <div class="inprogress-course font-stats rounded">In - Progress</div>
-                                </ng-container> -->
-                                <!-- <ng-container
+                                </ng-container>
+                                <ng-container
                                     *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
                                     <div class="inprogress-course font-stats rounded">Completed</div>
-                                </ng-container> -->
+                                </ng-container>
                             </div>
                             <div *ngIf="content?.difficultyLevel || content?.knowledgeLevel"
                                 class="knowledge-level-container">
