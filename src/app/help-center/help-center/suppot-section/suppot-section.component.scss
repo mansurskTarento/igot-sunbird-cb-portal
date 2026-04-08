@@ -247,6 +247,39 @@ $white: #ffffff;
     color: $gray-text;
     flex-shrink: 0;
   }
+
+  &__copy-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba($orange, 0.15);
+    border: 1px solid rgba($orange, 0.3);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+
+    .material-icons {
+      font-size: 16px;
+      color: $orange;
+    }
+
+    &:hover {
+      background: rgba($orange, 0.25);
+      border-color: rgba($orange, 0.5);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
 
 // =============================================
@@ -1288,6 +1321,43 @@ $white: #ffffff;
     color: $gray-text;
     flex-shrink: 0;
   }
+
+  &__cta-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  &__copy-icon {
+    background: rgba($orange, 0.1);
+    border: 1px solid rgba($orange, 0.3);
+    border-radius: 6px;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    .material-icons {
+      font-size: 16px;
+      color: $orange;
+    }
+
+    &:hover {
+      background: rgba($orange, 0.25);
+      border-color: rgba($orange, 0.5);
+      transform: scale(1.05);
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
+  }
 }
 
 // =============================================
@@ -1408,5 +1478,43 @@ $white: #ffffff;
   &__icon {
     font-size: 16px;
     color: $orange;
+  }
+}
+
+
+// =============================================
+// SNACKBAR STYLING
+// =============================================
+::ng-deep {
+  .success-snackbar {
+    .mdc-snackbar__surface {
+      background-color: #10b981 !important;
+    }
+
+    .mat-mdc-snack-bar-label {
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .mdc-button__label {
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+
+  .error-snackbar {
+    .mdc-snackbar__surface {
+      background-color: #ef4444 !important;
+    }
+
+    .mat-mdc-snack-bar-label {
+      color: #ffffff;
+      font-weight: 500;
+    }
+
+    .mdc-button__label {
+      color: #ffffff;
+      font-weight: 600;
+    }
   }
 }

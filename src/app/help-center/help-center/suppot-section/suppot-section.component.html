@@ -23,79 +23,80 @@
                             ══════════════════════════════════════ -->
     <!-- STATE PANEL -->
     <ng-container *ngIf="isSectionEnabled('stateSupportCenter')">
-    <p class="support-section__sub" >Start with your state support team — they're closest to you.</p>
+      <p class="support-section__sub">Start with your state support team — they're closest to you.</p>
 
-    <div class="state-panel" >
+      <div class="state-panel">
 
-      <div class="state-panel__header">
-        <div class="state-panel__header-left">
-          <div class="state-panel__icon-box">
-            <span class="material-icons">map</span>
-          </div>
-          <div>
-            <div class="state-panel__title">State Support Centre  (For State Government Officials Only)</div>
-            <div class="state-panel__sub">
-              Click your state to view admin/technical contacts & helpline numbers for your state
+        <div class="state-panel__header">
+          <div class="state-panel__header-left">
+            <div class="state-panel__icon-box">
+              <span class="material-icons">map</span>
+            </div>
+            <div>
+              <div class="state-panel__title">State Support Centre (For State Government Officials Only)</div>
+              <div class="state-panel__sub">
+                Click your state to view admin/technical contacts & helpline numbers for your state
+              </div>
             </div>
           </div>
-        </div>
-        <div class="state-panel__search-wrap">
-          <span class="material-icons state-panel__search-icon">search</span>
-          <input type="text" class="state-panel__search" placeholder="Search state or UT…"
-            (input)="filterStateGrid($event.target.value)" />
-        </div>
-      </div>
-      <div class="state-panel__region-tabs">
-        <button class="state-region-tab" [class.active]="activeRegion === 'all'"
-          (click)="filterRegion('all')">All</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'north'"
-          (click)="filterRegion('north')">North</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'south'"
-          (click)="filterRegion('south')">South</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'east'"
-          (click)="filterRegion('east')">East</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'west'"
-          (click)="filterRegion('west')">West</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'central'"
-          (click)="filterRegion('central')">Central</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'northeast'"
-          (click)="filterRegion('northeast')">North-East</button>
-
-        <button class="state-region-tab" [class.active]="activeRegion === 'ut'"
-          (click)="filterRegion('ut')">UTs</button>
-      </div>
-      <div *ngIf="filteredStates.length > 0; else noStateResult" class="state-grid">
-
-        <button class="state-tile" *ngFor="let state of filteredStates" (click)="openStateModal(state)">
-
-          <div class="state-tile__name">{{ state }}</div>
-
-          <div class="state-tile__count">
-            {{ stateContacts[state].admins.length }}
+          <div class="state-panel__search-wrap">
+            <span class="material-icons state-panel__search-icon">search</span>
+            <input type="text" class="state-panel__search" placeholder="Search state or UT…"
+              (input)="filterStateGrid($event.target.value)" />
           </div>
-
-          <div class="state-tile__ut-tag" *ngIf="utStates.has(state)">
-            UT
-          </div>
-        </button>
-      </div>
-      <ng-template #noStateResult>
-        <div class="state-panel__no-result">
-          <span class="material-icons">search_off</span>
-          No state found for that search
         </div>
-      </ng-template>
+        <div class="state-panel__region-tabs">
+          <button class="state-region-tab" [class.active]="activeRegion === 'all'"
+            (click)="filterRegion('all')">All</button>
 
-    </div>
+          <button class="state-region-tab" [class.active]="activeRegion === 'north'"
+            (click)="filterRegion('north')">North</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'south'"
+            (click)="filterRegion('south')">South</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'east'"
+            (click)="filterRegion('east')">East</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'west'"
+            (click)="filterRegion('west')">West</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'central'"
+            (click)="filterRegion('central')">Central</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'northeast'"
+            (click)="filterRegion('northeast')">North-East</button>
+
+          <button class="state-region-tab" [class.active]="activeRegion === 'ut'"
+            (click)="filterRegion('ut')">UTs</button>
+        </div>
+        <div *ngIf="filteredStates.length > 0; else noStateResult" class="state-grid">
+
+          <button class="state-tile" *ngFor="let state of filteredStates" (click)="openStateModal(state)">
+
+            <div class="state-tile__name">{{ state }}</div>
+
+            <div class="state-tile__count">
+              {{ stateContacts[state].admins.length }}
+            </div>
+
+            <div class="state-tile__ut-tag" *ngIf="utStates.has(state)">
+              UT
+            </div>
+          </button>
+        </div>
+        <ng-template #noStateResult>
+          <div class="state-panel__no-result">
+            <span class="material-icons">search_off</span>
+            No state found for that search
+          </div>
+        </ng-template>
+
+      </div>
     </ng-container>
 
-    <div class="support-step-hint" *ngIf="isSectionEnabled('stateSupportCenter') && isSectionEnabled('nationalHelpDesk')">
+    <div class="support-step-hint"
+      *ngIf="isSectionEnabled('stateSupportCenter') && isSectionEnabled('nationalHelpDesk')">
       <span class="material-icons" style="font-size:16px;color:#9ca3af">or</span>
       <span style="color:#6b7280;font-size:.88rem">or Reach out to <strong style="color:#0d1b6e">National Help
           Desk</strong></span>
@@ -119,16 +120,29 @@
         </div>
       </div>
 
-      <button class="call-card__cta" (click)="onCallNow()" aria-label="Call iGOT support">
-        <div class="call-card__cta-inner">
-          <span class="call-card__cta-label">CALL NOW</span>
-          <div class="call-card__cta-number">
-            <span class="material-icons call-card__cta-phone">phone</span>
-            {{ phoneNumber }}
-          </div>
-        </div>
-        <span class="material-icons call-card__cta-arrow">arrow_forward</span>
-      </button>
+      <div class="call-card__actions" *ngIf="phoneNumbers.length > 0">
+        <ng-container *ngFor="let phone of phoneNumbers">
+          <button class="call-card__cta mb-4" (click)="phone.clickEnabled !== false && onCall(phone.number)"
+            [attr.aria-label]="phone.label ? 'Call ' + phone.label : 'Call iGOT support'">
+            <div class="call-card__cta-inner">
+              <span class="call-card__cta-label">{{ phone.label ? phone.label : 'CALL NOW' }}</span>
+              <div class="call-card__cta-number">
+                <span class="material-icons call-card__cta-phone">phone</span>
+                {{ phone.number }}
+              </div>
+            </div>
+            <div class="call-card__cta-right">
+              <button *ngIf="phone.copyEnabled === true" class="call-card__copy-icon"
+                (click)="copyToClipboard(phone.number); $event.stopPropagation()"
+                [attr.aria-label]="'Copy ' + phone.number" [title]="'Copy ' + phone.number">
+                <span class="material-icons">content_copy</span>
+              </button>
+              <span class="material-icons call-card__cta-arrow"
+                *ngIf="phone.clickEnabled !== false">arrow_forward</span>
+            </div>
+          </button>
+        </ng-container>
+      </div>
     </div>
 
     <!-- Ticket Card -->
