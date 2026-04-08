@@ -239,11 +239,11 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     const profile = this.configSvc.userProfile
     const learnerName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
     const notifData = notification.message?.data?.[0] || {}
-    if (notifData.status === "SUBMITTED") {
+    if (notification.status === "SUBMITTED") {
       this.snackBar.open('You have already completed the survey.', 'X', { duration: 3000 })
       return
     }
-    if (notifData.status === "IGNORED") {
+    if (notification.status === "IGNORED") {
       this.snackBar.open('You have already submitted the response.', 'X', { duration: 3000 })
       return
     }
