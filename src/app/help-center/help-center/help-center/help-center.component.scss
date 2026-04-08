@@ -553,7 +553,8 @@ $white: #ffffff;
     border-bottom: 1px solid $gray-border;
     padding: 12px 14px 14px;
     min-height: 130px;
-     &_p-0 {
+
+    &_p-0 {
       padding: 0 !important;
     }
   }
@@ -562,11 +563,11 @@ $white: #ffffff;
     width: 100%;
     height: 100%;
     min-height: 130px;
-    object-fit: cover;
+    object-fit: fill;
     display: block;
 
   }
-  
+
 
   &__preview-header {
     font-size: 0.72rem;
