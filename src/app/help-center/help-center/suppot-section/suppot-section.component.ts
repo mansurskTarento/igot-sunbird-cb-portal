@@ -4,7 +4,7 @@ import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/route
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
 import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-
+import { MatSnackBar } from '@angular/material/snack-bar'
 interface Admin {
   name: string
   designation: string
@@ -12,6 +12,12 @@ interface Admin {
   mobile: string
 }
 
+interface PhoneNumber {
+  number: string
+  label?: string
+  clickEnabled?: boolean
+  copyEnabled?: boolean
+}
 interface StateData {
   region: string
   admins: Admin[]
@@ -41,8 +47,7 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
   stateContacts: Record<string, StateData> = {}
   utStates: Set<string> = new Set()
   activeRegion = 'all'
-
-  phoneNumber = '+91 9990141256';
+  phoneNumbers: PhoneNumber[] = [];
   supportHours = '8:00 AM – 8:00 PM IST';
 
   features = [
@@ -53,12 +58,12 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/support-html/zoho_karmayogi_form.html'
   constructor(private zohoFormService: ZohoFormService, private http: HttpClient,
-    private sanitizer: DomSanitizer, public dialog: MatDialog) {
+    private sanitizer: DomSanitizer, public dialog: MatDialog, private snackBar: MatSnackBar) {
 
   }
 
   isSectionEnabled(section: string): boolean {
-    return this.enabledSections[section] !== false;
+    return this.enabledSections[section] !== false
   }
 
   ngOnInit() {
@@ -67,35 +72,53 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
     })
 
-    this.bindConfig();
+    this.bindConfig()
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['helpCenterData'] && changes['helpCenterData'].currentValue) {
-      this.bindConfig();
+      this.bindConfig()
     }
   }
 
   private bindConfig() {
     if (this.helpCenterData) {
       if (this.helpCenterData.stateContacts) {
-        this.stateContacts = this.helpCenterData.stateContacts;
+        this.stateContacts = this.helpCenterData.stateContacts
       }
       if (this.helpCenterData.utStates) {
-        this.utStates = new Set(this.helpCenterData.utStates);
+        this.utStates = new Set(this.helpCenterData.utStates)
       }
       if (this.helpCenterData.supportSection) {
-        const support = this.helpCenterData.supportSection;
-        if (support.phoneNumber) this.phoneNumber = support.phoneNumber;
-        if (support.supportHours) this.supportHours = support.supportHours;
-        if (support.features) this.features = support.features;
+        const support = this.helpCenterData.supportSection
+        if (support.phoneNumbers) this.phoneNumbers = support.phoneNumbers
+        if (support.supportHours) this.supportHours = support.supportHours
+        if (support.features) this.features = support.features
       }
     }
 
-    this.applyFilters();
+    this.applyFilters()
   }
+  onCall(number: string): void {
+    const digits = number.replace(/\s/g, '')
+    window.location.href = `tel:${digits}`
+  }
+
   onCallNow(): void {
     window.location.href = 'tel:+919990141256'
+  }
+
+  copyToClipboard(text: string): void {
+    const show = () => this.snackBar.open('Copied!', '', { duration: 2000, panelClass: 'copy-snackbar' })
+    navigator.clipboard.writeText(text).then(() => show()).catch(() => {
+      const el = document.createElement('textarea')
+      el.value = text
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+      show()
+    })
   }
 
   onRaiseTicket(): void {
