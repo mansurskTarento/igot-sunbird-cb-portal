@@ -103,7 +103,6 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
         CertificateViewPopupComponent,
-        CertificateViewPopupComponent,
         DescriptionComponent,
         CustomFieldsComponent,
         ViewCustomFieldsComponent
