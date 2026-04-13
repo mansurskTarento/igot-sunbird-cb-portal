@@ -7,7 +7,9 @@ import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
 import * as _ from 'lodash'
 import { MandatoryNotificationsService } from './mandatory-notifications.service'
-import { BehaviorSubject, Subscription, timer } from 'rxjs'
+import { BehaviorSubject, Observable, of, Subscription, timer } from 'rxjs'
+import { map } from 'rxjs/operators'
+import { HttpClient } from '@angular/common/http'
 import { MandatoryNotificationModalComponent } from '../component/mandatory-notification-modal/mandatory-notification-modal.component'
 
 @Injectable({
@@ -41,7 +43,8 @@ export class CommonDataService {
     private userProfileService: UserProfileService,
     private dialog: MatDialog,
     private matSnackBar: MatSnackBar,
-    private mandatoryNotificationsService: MandatoryNotificationsService
+    private mandatoryNotificationsService: MandatoryNotificationsService,
+    private http: HttpClient
   ) {
 
     if (this.configSvc && this.configSvc.unMappedUser) {
@@ -286,5 +289,64 @@ export class CommonDataService {
 
   updatePlayerStatus(isPlayer: boolean) {
     this.isPlayer = isPlayer
+  }
+
+
+  /**
+   * Check NLW 2026 certification eligibility from user profile and cache in localStorage.
+   * - If the value exists in profile, cache it.
+   * - If not present, mark as not eligible so we don't call the API again.
+   */
+  checkAndCacheNlw2026Eligibility(userProfile: any): void {
+    const isNlw2026Certified = _.get(userProfile, 'profileDetails.additionalProperties.isNlw2026Certified')
+    if (isNlw2026Certified !== undefined && isNlw2026Certified !== null) {
+      localStorage.setItem('isNlw2026Certified', JSON.stringify(isNlw2026Certified))
+    } else {
+      // Key not present in profile — user is not eligible
+      localStorage.setItem('isNlw2026Certified', 'false')
+    }
+  }
+
+  /**
+   * Get NLW 2026 certification eligibility.
+   * First checks localStorage cache to avoid unnecessary API calls.
+   * If no cached value, reads from the current configSvc user profile.
+   * Returns true only if the user is certified.
+   */
+  getNlw2026CertifiedStatus(): Observable<boolean> {
+    const cached = localStorage.getItem('isNlw2026Certified')
+    if (cached !== null) {
+      return of(cached === 'true')
+    }
+    // Check from configSvc if already loaded
+    const isNlw2026Certified = _.get(
+      this.configSvc, 'unMappedUser.profileDetails.additionalProperties.isNlw2026Certified'
+    )
+    if (isNlw2026Certified !== undefined && isNlw2026Certified !== null) {
+      localStorage.setItem('isNlw2026Certified', JSON.stringify(isNlw2026Certified))
+      return of(!!isNlw2026Certified)
+    }
+    // Not in cache or configSvc — call user read API
+    const userId = _.get(this.configSvc, 'unMappedUser.id')
+    if (!userId) {
+      localStorage.setItem('isNlw2026Certified', 'false')
+      return of(false)
+    }
+    return this.http.get<any>(`/apis/proxies/v8/api/user/v2/read/${userId}`).pipe(
+      map((res: any) => {
+        const userProfile = _.get(res, 'result.response')
+        if (userProfile) {
+          // Update configSvc with fresh data
+          this.configSvc.unMappedUser = userProfile
+        }
+        const certified = _.get(userProfile, 'profileDetails.additionalProperties.isNlw2026Certified')
+        if (certified !== undefined && certified !== null) {
+          localStorage.setItem('isNlw2026Certified', JSON.stringify(certified))
+          return !!certified
+        }
+        localStorage.setItem('isNlw2026Certified', 'false')
+        return false
+      })
+    )
   }
 }

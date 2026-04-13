@@ -505,3 +505,93 @@
   /* stylelint-enable */
   cursor: pointer;
 }
+
+// NLW Certificate Card on Profile
+.cards-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #fff;
+  border-radius: 12px;
+}
+.nlw-cert-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #F5F7FA;
+  border: 1px solid #E0E4EB;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.nlw-cert-header {
+  display: flex;
+  align-items: flex-start;
+}
+
+.nlw-cert-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.nlw-cert-title {
+  /* stylelint-disable */
+  font-family: Montserrat, sans-serif;
+  /* stylelint-enable */
+  font-size: 16px;
+  font-weight: 700;
+  color: #1A1A1A;
+  line-height: 20px;
+}
+
+.nlw-cert-desc {
+  /* stylelint-disable */
+  font-family: Lato, sans-serif;
+  /* stylelint-enable */
+  font-size: 13px;
+  font-weight: 400;
+  color: #555;
+  line-height: 18px;
+  margin-top: 2px;
+}
+
+.nlw-cert-view-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 16px;
+  border: 1.5px solid #1B4CA1;
+  border-radius: 24px;
+  background: #FFFFFF;
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font-family: Lato, sans-serif;
+  /* stylelint-enable */
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+
+  &:hover {
+    background: #1B4CA1;
+    color: #FFFFFF;
+
+    .nlw-cert-btn-icon {
+      color: #FFFFFF;
+    }
+  }
+}
+
+.nlw-cert-btn-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #1B4CA1;
+  transition: color 0.2s;
+}

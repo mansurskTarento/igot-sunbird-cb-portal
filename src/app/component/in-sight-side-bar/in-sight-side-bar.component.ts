@@ -7,12 +7,15 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
 import moment from 'moment'
 import { SignupService } from '../../routes/public/public-signup/signup.service'
 import _ from 'lodash';
 import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
+import { NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
+import { CommonDataService } from 'src/app/services/common-data.service'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -104,6 +107,8 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   desigantionUnderApproval: any
   filterDesigantionList: any = []
   isMatcompleteOpened = false
+  nlwExperience: any = null
+  isNlw2026Certified = false
   @Output() telemetryRaisedLibrary = new EventEmitter()
   
   constructor(
@@ -119,7 +124,9 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     private profileV2Svc: ProfileV2Service,
     private userProfileService: UserProfileService,
     private langtranslations: MultilingualTranslationsService,
-    private cdr: ChangeDetectorRef) {
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog,
+    private commonDataSvc: CommonDataService) {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
@@ -144,6 +151,10 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
+      this.nlwExperience = this.activatedRoute.snapshot.data.pageData.data.nlwExperience
+      this.commonDataSvc.getNlw2026CertifiedStatus().subscribe((status: boolean) => {
+        this.isNlw2026Certified = status
+      })
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
       let slwConfigurationLocal:any = this.activatedRoute.snapshot.data.pageData.data &&
       this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
@@ -734,6 +745,62 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   nextNlwSlide(): void {
     const next = (this.nlwSlideIndex + 1) % this.nlwSlides.length
     this.goToNlwSlide(next)
+  }
+
+  /** Handle NLW Experience banner click */
+  onNlwBannerClick(): void {
+    if (!this.nlwExperience?.banner?.onClick) { return }
+    const onClick = this.nlwExperience.banner.onClick
+    this.raiseTelemetryForNlwExperience('nlw-experience-banner')
+    if (onClick.action === 'OPEN_POPUP') {
+      this.openNlwExperienceDialog(onClick)
+    }
+  }
+
+  /** Handle NLW Experience newsletter CTA click */
+  onNlwNewsletterCtaClick(): void {
+    if (!this.nlwExperience?.newsletter?.cta) { return }
+    const cta = this.nlwExperience.newsletter.cta
+    this.raiseTelemetryForNlwExperience('nlw-experience-newsletter')
+    if (cta.action === 'OPEN_POPUP') {
+      this.openNlwExperienceDialog(cta)
+    }
+  }
+
+  /** Open the NLW Experience dialog based on dynamic config */
+  private openNlwExperienceDialog(config: any): void {
+    const dialogData: NlwCertificateDialogData = {
+      action: config.action,
+      type: config.type,
+      url: config.url,
+      api: config.api,
+    }
+
+    let dialogWidth = '600px'
+    if (config.type === 'PDF') {
+      dialogWidth = '80vw'
+    }
+
+    this.dialog.open(NlwCertificateDialogComponent, {
+      data: dialogData,
+      panelClass: 'nlw-experience-dialog-container',
+      maxWidth: '95vw',
+      width: dialogWidth,
+      autoFocus: false,
+    })
+  }
+
+  private raiseTelemetryForNlwExperience(id: string): void {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id,
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
   }
 
   ngOnDestroy(): void {

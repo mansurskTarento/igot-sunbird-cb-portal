@@ -22,7 +22,7 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
-import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
+import { ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service'
 import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
 //#endregion
@@ -209,6 +209,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   orgId: any
   pageData: any
   assessmentsData: any
+  isNlw2026Certified = false
+  nlwExperience: any = null
   //#endregion
 
   connectionStatus = 'Connect'
@@ -389,6 +391,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.checkIsMentor()
     })
     this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
+    this.nlwExperience = this.pageData?.nlwExperience
+    this.commonSvc.getNlw2026CertifiedStatus().subscribe((status: boolean) => {
+      this.isNlw2026Certified = status
+    })
   }
 
   getConnectionStatus() {
@@ -2138,6 +2144,30 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   handleRedirectToCompetencyPassbook(): void {
     this.router.navigate(['/page/competency-passbook/list'])
+  }
+
+  openNlwCertificateDialog(): void {
+    if (!this.nlwExperience?.banner?.onClick) { return }
+    const onClick = this.nlwExperience.banner.onClick
+    this.events.raiseInteractTelemetry(
+      { type: WsEvents.EnumInteractTypes.CLICK, id: 'nlw-certificate-profile' },
+      {},
+      { module: WsEvents.EnumTelemetrymodules.PROFILE }
+    )
+    const dialogData: NlwCertificateDialogData = {
+      action: onClick.action,
+      type: onClick.type,
+      title: this.nlwExperience.banner.title || 'PM Appreciation Letter',
+      url: onClick.url,
+      api: onClick.api,
+    }
+    this.dialog.open(NlwCertificateDialogComponent, {
+      data: dialogData,
+      panelClass: 'nlw-experience-dialog-container',
+      maxWidth: '95vw',
+      width: '700px',
+      autoFocus: false,
+    })
   }
 
 }

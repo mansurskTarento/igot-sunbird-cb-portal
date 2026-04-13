@@ -35,6 +35,7 @@ import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '../../../library/ws-widget/collection/src/public-api'
 import { GlobalService } from './global.service'
+import { CommonDataService } from './common-data.service'
 declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */
@@ -92,6 +93,7 @@ export class InitService {
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
     private globalService: GlobalService,
+    private commonDataSvc:CommonDataService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     // private router: Router,
@@ -671,6 +673,9 @@ export class InitService {
             }
           }
           localStorage.setItem('login', 'true')
+
+          // NLW 2026 certification eligibility check
+          this.commonDataSvc.checkAndCacheNlw2026Eligibility(userPidProfile)
         } else {
           // this.authSvc.force_logout()
           // await this.http.get('/apis/reset').toPromise()
@@ -1187,4 +1192,5 @@ export class InitService {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ')
   }
+
 }

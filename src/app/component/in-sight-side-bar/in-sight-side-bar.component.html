@@ -56,6 +56,53 @@
     </div>
     <div class="hint" [innerHTML]="renderUpdateDesignationCardHint()"></div>
 </div>
+<ng-container *ngIf="nlwExperience?.banner?.enabled && isNlw2026Certified" >
+    <div class="margin-top-m nlw-experience-section">
+        <!-- Banner -->
+        <div class="nlw-exp-banner" (click)="onNlwBannerClick()">
+            <img class="nlw-exp-banner-img"
+                [src]="nlwExperience.banner.displayImage"
+                alt="Sadhana Saptah Banner" />
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="nlwExperience?.newsletter?.enabled" >
+<!-- NLW Experience: Newsletter -->
+<div class="margin-top-m nlw-experience-section">
+    <!-- Banner image mode -->
+    <ng-container *ngIf="nlwExperience.newsletter.bannerURL; else newsletterTextCard">
+        <div class="nlw-exp-banner" (click)="onNlwNewsletterCtaClick()">
+            <img class="nlw-exp-banner-img"
+                [src]="nlwExperience.newsletter.bannerURL"
+                alt="PM Newsletter Banner" />
+        </div>
+    </ng-container>
+    <!-- Text/description mode -->
+    <ng-template #newsletterTextCard>
+        <div class="nlw-newsletter-card">
+            <div class="nlw-newsletter-content">
+                <div class="nlw-newsletter-title">{{ nlwExperience.newsletter.title }}</div>
+                <div class="nlw-newsletter-description">
+                    <span *ngIf="nlwExperience.newsletter.descriptionParts; else plainDesc">
+                        <ng-container *ngFor="let part of nlwExperience.newsletter.descriptionParts">
+                            <strong *ngIf="part.bold">{{ part.text }}</strong>
+                            <span *ngIf="!part.bold">{{ part.text }}</span>
+                        </ng-container>
+                    </span>
+                    <ng-template #plainDesc>{{ nlwExperience.newsletter.description }}</ng-template>
+                </div>
+            </div>
+            <div class="nlw-newsletter-cta" *ngIf="nlwExperience.newsletter.cta">
+                <button class="nlw-newsletter-cta-btn" (click)="onNlwNewsletterCtaClick()">
+                    {{ nlwExperience.newsletter.cta.text }}
+                </button>
+            </div>
+        </div>
+    </ng-template>
+</div>
+</ng-container>
+
 <div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
     <div class="nlw-slider">
         <!-- Config-driven slides -->
