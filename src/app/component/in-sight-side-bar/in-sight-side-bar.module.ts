@@ -13,6 +13,8 @@ import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/materia
 import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
 import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
 import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
 
 // Sunbird CB Collection modules
 import {
@@ -52,7 +54,7 @@ import { DiscussionsModule } from '@sunbird-cb/collection/src/lib/_common/discus
 import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tips-for-learner/tips-for-learner.module'
 
 // Import consumption modules
-import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
+import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
 
 // Import translate module
 import { TranslateModule } from '@ngx-translate/core'
@@ -78,6 +80,8 @@ import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.mo
     MatInputModule,
     MatAutocompleteModule,
     MatSelectModule,
+    MatDialogModule,
+    MatProgressSpinnerModule,
 
     // Widget modules from @sunbird-cb/collection
     AvatarPhotoModule,
@@ -103,6 +107,7 @@ import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.mo
     // Consumption modules
     ContentStripWithTabsLibModule,
     ContentStripWithTabsPillsModule,
+    DialogComponentsModule,
 
     // Utility modules from @sunbird-cb/utils-v2
     PipeNameTransformModule,

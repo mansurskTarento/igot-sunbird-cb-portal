@@ -593,6 +593,12 @@ h3.shepherd-title {
   margin: 0px auto !important;
 }
 
+.nlw-experience-dialog-container .mat-dialog-container {
+  padding: 0 !important;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
 
 body:has(.requires-no-scroll) {
   overflow: hidden;
