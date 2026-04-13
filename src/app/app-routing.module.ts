@@ -619,7 +619,7 @@ const routes: Routes = [
       module: 'Profile',
     },
     resolve: {
-      pageData: PageResolve,
+      pageData: FormDataResolverService,
     },
   },
   {

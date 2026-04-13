@@ -209,6 +209,29 @@
       <!-- #endregion (profile details ) -->
     </div>
 
+    <ng-container *ngIf="isCurrentUser && isNlw2026Certified ">
+      <div class="cards-list w-full mt-4 mb-4 md:mt-0 md:mb-0">
+        <div class="p-4">
+           <div class=" nlw-cert-card">
+          <div class="flex items-center gap-3 nlw-cert-header">
+            <img class="nlw-cert-logo"
+              [src]="nlwExperience.banner.profileDisplayImage"
+              alt="NLW Logo"
+              onerror="this.style.display='none'" />
+            <div class="flex flex-col flex-1">
+              <div class="nlw-cert-title">{{ nlwExperience.banner.title || 'PM Appreciation Letter' }}</div>
+              <div class="nlw-cert-desc">{{ nlwExperience.banner.description || 'View your letter of appreciation for completing 4+ hours of learning during Sadhana Saptah.' }}</div>
+
+              <button class="nlw-cert-view-btn mt-4" (click)="openNlwCertificateDialog()">
+                <mat-icon class="nlw-cert-btn-icon">description</mat-icon>
+                {{ nlwExperience.banner.ctaText || 'View PM Appreciation Letter' }}
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </div>
+    </ng-container>
     <ng-container *ngIf="isCurrentUser && !isMobile">
       <div>
         <ws-app-user-stats [userStats]="userStats" [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
