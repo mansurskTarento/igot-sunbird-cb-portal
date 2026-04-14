@@ -59,7 +59,7 @@
         </span>
       </div>
 
-      <div class="col-date">{{ item?.survey_end_date | date:'mediumDate' }}</div>
+      <div class="col-date">{{ formatSurveyEndDate(item?.survey_end_date) }}</div>
 
       <div class="col-action">
         <button mat-raised-button class="start-review-btn" (click)="startReview(item.notification_id)"
