@@ -154,7 +154,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       contextOrgId: dashboardItem.metadata.contextOrgId || (dashboardItem.metadata as any).org_id || '',
       courseName: dashboardItem.metadata.courseName || (dashboardItem.metadata as any).course_name || '',
       learnerName: userName,
-      completionDate: dashboardItem.metadata.completionDate,
+      completionDate: this.formatDate(dashboardItem.metadata.completionDate),
       surveyCreatedById: dashboardItem.metadata.surveyCreatedById || '',
       notificationId: dashboardItem.notification_id || '',
       createdAt: dashboardItem.created_at || '',
@@ -193,6 +193,16 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       case 'EXPIRED': return 'ended'
       default: return status?.toLowerCase() || ''
     }
+  }
+
+  formatDate(dateStr: string): string {
+    if (!dateStr) return ''
+    const d = new Date(dateStr)
+    if (isNaN(d.getTime())) return dateStr
+    const dd = String(d.getDate()).padStart(2, '0')
+    const mm = String(d.getMonth() + 1).padStart(2, '0')
+    const yyyy = d.getFullYear()
+    return `${dd}-${mm}-${yyyy}`
   }
 
   formatSurveyEndDate(dateStr: string): string {
