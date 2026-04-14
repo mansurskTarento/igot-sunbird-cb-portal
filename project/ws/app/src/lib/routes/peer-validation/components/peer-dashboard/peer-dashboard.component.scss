@@ -417,53 +417,45 @@
   }
 
   .custom-paginator ::ng-deep {
-    // background: transparent;
     font-size: 13px;
 
-    .mat-paginator-container {
+    .mat-mdc-paginator-outer-container {
+      background: transparent;
+    }
+
+    .mat-mdc-paginator-container {
       padding: 0;
       justify-content: flex-end;
       color: #666;
       min-height: 48px;
     }
 
-    .mat-paginator-page-size-label {
+    .mat-mdc-paginator-page-size-label {
       margin: 0 8px 0 0;
       color: #333;
       font-weight: 500;
     }
 
-    // Stronger selector for the form field
-    .mat-form-field,
-    .mat-mdc-form-field {
-      width: 64px !important; // Slightly wider than 50px to fit arrow
+    .mat-mdc-paginator-page-size-select {
+      width: 64px !important;
       margin: 0 8px;
 
-      .mat-form-field-wrapper,
-      .mat-mdc-form-field-wrapper {
-        padding-bottom: 0;
-      }
-
-      .mat-form-field-flex,
       .mat-mdc-text-field-wrapper {
         border: none !important;
-        border-bottom: 1px solid #999 !important; // Underline
+        border-bottom: 1px solid #999 !important;
         border-radius: 0 !important;
-        padding: 0 !important; // Remove padding
+        padding: 0 !important;
         background-color: transparent !important;
-        height: 24px !important; // Smaller height
+        height: 24px !important;
         display: flex;
         align-items: center;
       }
 
-      // Hide outlines and ripples
-      .mat-form-field-underline,
       .mdc-line-ripple,
       .mdc-notched-outline {
         display: none !important;
       }
 
-      .mat-form-field-infix,
       .mat-mdc-form-field-infix {
         border-top: 0 !important;
         padding: 0 !important;
@@ -473,7 +465,6 @@
         align-items: center;
       }
 
-      .mat-select-value,
       .mat-mdc-select-value {
         color: #333;
         font-weight: 500;
@@ -481,21 +472,37 @@
         padding-right: 4px !important;
       }
 
-      .mat-select-arrow-wrapper,
       .mat-mdc-select-arrow-wrapper {
         transform: translateY(0) !important;
       }
 
-      .mat-select-arrow,
       .mat-mdc-select-arrow {
         color: #333;
       }
     }
 
-    .mat-paginator-range-label {
+    .mat-mdc-paginator-range-label {
       margin: 0 16px 0 24px;
       color: #333;
       font-weight: 500;
+    }
+
+    .mat-mdc-paginator-range-actions {
+      .mat-mdc-icon-button {
+        color: #666;
+
+        &:hover:not([disabled]) {
+          color: #333;
+        }
+
+        &[disabled] {
+          color: #ccc;
+        }
+
+        .mat-mdc-paginator-icon {
+          fill: currentColor;
+        }
+      }
     }
   }
 
