@@ -44,10 +44,20 @@
       background: white;
       font-size: 14px;
       transition: background-color 0.2s, color 0.2s;
+      cursor: pointer;
 
       &:hover {
         background-color: #1B4CA1;
         color: white;
+      }
+
+      &.yes-btn {
+        background-color: #1B4CA1;
+        color: white !important;
+
+        &:hover {
+          background-color: #163d87;
+        }
       }
     }
   }
