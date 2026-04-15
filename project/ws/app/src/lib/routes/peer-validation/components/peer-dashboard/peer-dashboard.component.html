@@ -76,7 +76,8 @@
 
   </div>
   <!-- Real Pagination -->
-  <mat-paginator class="custom-paginator" [length]="totalItems" [pageSize]="pageSize" [pageSizeOptions]="[15, 30, 50]"
-    (page)="onPageChange($event)">
+  <mat-paginator class="custom-paginator" (page)="onPageChange($event)" [length]="totalItems" [pageSize]="pageSize"
+    [pageIndex]="pageIndex" [disabled]="totalItems === 0" [showFirstLastButtons]="true" [pageSizeOptions]="[15, 30, 50]"
+    aria-label="Select page">
   </mat-paginator>
 </div>
