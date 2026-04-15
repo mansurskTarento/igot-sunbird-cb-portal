@@ -1314,6 +1314,8 @@ export class ProfileEntryEditComponent implements OnInit {
       control.setValue(value)
       control.markAsDirty()
       control.markAsTouched()
+    } else {
+      this.openSnackbar('This competency is already added.')
     }
     this.resetCompfields()
     this.expand = false
