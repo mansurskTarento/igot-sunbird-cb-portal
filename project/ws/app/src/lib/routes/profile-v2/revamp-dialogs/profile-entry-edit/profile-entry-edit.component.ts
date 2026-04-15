@@ -1594,6 +1594,25 @@ export class ProfileEntryEditComponent implements OnInit {
     this.dialogRef.close()
   }
 
+  preventAlphabetInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
+    if (/^[a-zA-Z]$/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  preventAlphabetPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text')
+    if (pastedText && /[a-zA-Z]/.test(pastedText)) {
+      event.preventDefault()
+    }
+  }
+
   preventNonNumericInput(event: KeyboardEvent): void {
     const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
 

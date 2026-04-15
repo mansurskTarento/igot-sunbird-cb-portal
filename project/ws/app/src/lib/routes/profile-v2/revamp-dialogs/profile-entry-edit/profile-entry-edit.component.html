@@ -367,7 +367,7 @@
             <div class="lable">{{'NetworkV2Profile.startDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="startedDatePicker" formControlName="startDate"
-                placeholder="{{'NetworkV2Profile.startDate' | translate}}" [max]="endDate ? endDate : todayDate">
+                placeholder="{{'NetworkV2Profile.startDate' | translate}}" [max]="endDate ? endDate : todayDate" readonly>
               <mat-datepicker-toggle matSuffix [for]="startedDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #startedDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('startDate', 'required')">{{'NetworkV2Profile.pleaseSelectStartDate' | translate}}</mat-error>
@@ -380,7 +380,7 @@
             <div class="lable">{{'NetworkV2Profile.endDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="endDatePicker" formControlName="endDate" placeholder="{{'NetworkV2Profile.selectDate' | translate}}"
-                [max]="endDate ? endDate : todayDate">
+                [max]="endDate ? endDate : todayDate" readonly>
               <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #endDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('endDate', 'required')">{{'NetworkV2Profile.pleaseSelectEndDate' | translate}}</mat-error>
@@ -396,7 +396,7 @@
             <div class="lable required">{{'NetworkV2Profile.issueDate' | translate}}</div>
             <mat-form-field appearance="outline" class="full-width">
               <input matInput [matDatepicker]="issueDatePicker" formControlName="issuedDate"
-                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate" [min]="minIssuedDate">
+                placeholder="{{'NetworkV2Profile.selectDate' | translate}}" [max]="todayDate" [min]="minIssuedDate" readonly>
               <mat-datepicker-toggle matSuffix [for]="issueDatePicker"></mat-datepicker-toggle>
               <mat-datepicker #issueDatePicker></mat-datepicker>
               <mat-error *ngIf="hasError('issuedDate', 'required')">{{'NetworkV2Profile.pleaseSelectIssueDate' | translate}}</mat-error>
