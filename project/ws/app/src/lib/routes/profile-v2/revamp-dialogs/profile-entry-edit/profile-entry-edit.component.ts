@@ -1087,12 +1087,15 @@ export class ProfileEntryEditComponent implements OnInit {
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
-      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON), Validators.required]],
       description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
       competencies_v6: ['', [Validators.required]]
     }, { validators: urlOrDocumentValidator() })
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
+      urlControl?.setValidators([
+        Validators.pattern(URL_PATRON)
+      ])
       urlControl.patchValue('')
       urlControl.disable()
       urlControl.updateValueAndValidity()
@@ -1510,6 +1513,7 @@ export class ProfileEntryEditComponent implements OnInit {
     }
     reader.readAsDataURL(files[0])
     this.saveImage(imagePath)
+
   }
 
   saveImage(imagePath: any) {

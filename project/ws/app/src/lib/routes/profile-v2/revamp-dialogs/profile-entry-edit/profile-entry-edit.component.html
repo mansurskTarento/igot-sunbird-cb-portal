@@ -487,7 +487,10 @@
           </div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="url" placeholder="e.g. https://www.example.com">
-            <mat-error *ngIf="hasError('url', 'pattern')">{{'NetworkV2Profile.pleaseGiveValidUrl' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('url', 'required') ">{{'NetworkV2Profile.requiredUrl' |
+              translate}}</mat-error>
+            <mat-error *ngIf="!hasError('url', 'required') && hasError('url', 'pattern')">{{'NetworkV2Profile.pleaseGiveValidUrl' |
+              translate}}</mat-error>
           </mat-form-field>
         </div>
 
