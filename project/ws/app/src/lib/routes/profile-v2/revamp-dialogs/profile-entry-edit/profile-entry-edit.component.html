@@ -318,10 +318,19 @@
           <div class="lable required">{{'NetworkV2Profile.title' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput formControlName="title" maxlength="70" placeholder="e.g. Excel beginner">
-            <mat-error *ngIf="hasError('title', 'required')">{{'NetworkV2Profile.pleaseEnterTitle' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('title', 'minlength')">{{'NetworkV2Profile.titleTooShort' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('title', 'maxlength')">{{'NetworkV2Profile.titleTooLong' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('title', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('title', 'required')">
+              {{'NetworkV2Profile.pleaseEnterTitle' | translate}}
+            </mat-error>
+            <mat-error *ngIf="!hasError('title', 'required') && hasError('title', 'minlength')">
+              {{'NetworkV2Profile.titleTooShort' | translate}}
+            </mat-error>
+            <mat-error *ngIf="!hasError('title', 'required') && !hasError('title', 'minlength') && hasError('title', 'maxlength')">
+              {{'NetworkV2Profile.titleTooLong' | translate}}
+            </mat-error>
+            <mat-error
+              *ngIf="!hasError('title', 'required') && !hasError('title', 'minlength') && !hasError('title', 'maxlength') && hasError('title', 'pattern')">
+              {{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}
+            </mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
               {{ entryForm.get('title')?.value.length }}/70
             </mat-hint>
@@ -332,10 +341,20 @@
           <div class="lable required">{{'NetworkV2Profile.issuingOrganisation' | translate}}</div>
           <mat-form-field appearance="outline" class="full-width">
             <input matInput maxlength="70" formControlName="issuedOrganisation" placeholder="e.g. Microsoft">
-            <mat-error *ngIf="hasError('issuedOrganisation', 'required')">{{'NetworkV2Profile.issuedOrganisationIsRequired' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('issuedOrganisation', 'minlength')">{{'NetworkV2Profile.issuedOrganisationTooShort' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('issuedOrganisation', 'maxlength')">{{'NetworkV2Profile.issuedOrganisationTooLong' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('issuedOrganisation', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$' | translate}}</mat-error>
+            <mat-error *ngIf="hasError('issuedOrganisation', 'required')">
+              {{'NetworkV2Profile.issuedOrganisationIsRequired' | translate}}
+            </mat-error>
+            <mat-error *ngIf="!hasError('issuedOrganisation', 'required') && hasError('issuedOrganisation', 'minlength')">
+              {{'NetworkV2Profile.issuedOrganisationTooShort' | translate}}
+            </mat-error>
+            <mat-error
+              *ngIf="!hasError('issuedOrganisation', 'required') && !hasError('issuedOrganisation', 'minlength') && hasError('issuedOrganisation', 'maxlength')">
+              {{'NetworkV2Profile.issuedOrganisationTooLong' | translate}}
+            </mat-error>
+            <mat-error
+              *ngIf="!hasError('issuedOrganisation', 'required') && !hasError('issuedOrganisation', 'minlength') && !hasError('issuedOrganisation', 'maxlength') && hasError('issuedOrganisation', 'pattern')">
+              {{'NetworkV2Profile.specialCharNotAllowedExcept()$' | translate}}
+            </mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
               {{ entryForm.get('issuedOrganisation')?.value.length }}/70
             </mat-hint>
