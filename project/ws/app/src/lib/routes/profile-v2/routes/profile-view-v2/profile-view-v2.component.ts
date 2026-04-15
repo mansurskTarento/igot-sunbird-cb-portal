@@ -1643,7 +1643,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           setTimeout(() => {
             this.getAchievements()
           }, 500)
-          this.openSnackbar('Updated Successfully')
+          this.openSnackbar('Added Successfully')
         }
       },
       error: (error: HttpErrorResponse) => {
