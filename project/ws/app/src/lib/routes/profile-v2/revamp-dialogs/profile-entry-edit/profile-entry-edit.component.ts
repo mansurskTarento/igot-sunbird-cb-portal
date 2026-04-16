@@ -173,7 +173,7 @@ export class ProfileEntryEditComponent implements OnInit {
     private pipeImgUrl: PipeCertificateImageURL
   ) {
     this.header = _.get(this.data, 'header', '')
-    this.entryDetails = _.get(this.data, 'entryDetails', '')
+    this.entryDetails = _.cloneDeep(_.get(this.data, 'entryDetails', ''))
   }
   ngOnInit(): void {
     this.initForm()
