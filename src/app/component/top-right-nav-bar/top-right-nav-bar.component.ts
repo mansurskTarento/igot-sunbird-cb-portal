@@ -255,7 +255,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
       return
     }
-    this.matDialog.open(SurveyPopupComponent, {
+    const dialogRef = this.matDialog.open(SurveyPopupComponent, {
       width: '500px',
       disableClose: true,
       data: {
@@ -271,6 +271,11 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         contextId: notifData.contextId || notifData.cource_id || '',
         thumbnail: notifData.thumbnail || '',
       },
+    })
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'ignored') {
+        notification.status = 'IGNORED'
+      }
     })
   }
 
@@ -292,7 +297,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
       return
     }
-    this.matDialog.open(VerificationRequestDialogComponent, {
+    const verificationDialogRef = this.matDialog.open(VerificationRequestDialogComponent, {
       width: '440px',
       maxWidth: '90vw',
       disableClose: true,
@@ -309,6 +314,11 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         submittedBy: notifData.learnerId || notifData.submittedBy || '',
         thumbnail: notifData.thumbnail || '',
       },
+    })
+    verificationDialogRef.afterClosed().subscribe(result => {
+      if (result === 'ignored') {
+        notification.status = 'IGNORED'
+      }
     })
   }
 
