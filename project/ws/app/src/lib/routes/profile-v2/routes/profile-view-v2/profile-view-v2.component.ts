@@ -2161,11 +2161,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       url: onClick.url,
       api: onClick.api,
     }
+    let dialogWidth = '700px'
+    if (onClick.type === 'PDF') {
+      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
+    }
     this.dialog.open(NlwCertificateDialogComponent, {
       data: dialogData,
       panelClass: 'nlw-experience-dialog-container',
       maxWidth: '95vw',
-      width: '700px',
+      width: dialogWidth,
       autoFocus: false,
     })
   }
