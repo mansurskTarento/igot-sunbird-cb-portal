@@ -31,7 +31,10 @@ export class SurveyPopupComponent {
       this.peerValidationService
         .markNotificationIgnored(this.data.notificationId, this.data.createdAt)
         .subscribe({
-          next: () => this.dialogRef.close(),
+          next: () => {
+            this.peerValidationService.dashboardRefresh$.next()
+            this.dialogRef.close('ignored')
+          },
           error: () => this.dialogRef.close()
         })
     } else {
