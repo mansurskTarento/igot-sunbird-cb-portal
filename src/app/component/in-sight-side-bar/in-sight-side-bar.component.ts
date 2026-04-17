@@ -778,7 +778,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
 
     let dialogWidth = '600px'
     if (config.type === 'PDF') {
-      dialogWidth = '80vw'
+      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
     }
 
     this.dialog.open(NlwCertificateDialogComponent, {
