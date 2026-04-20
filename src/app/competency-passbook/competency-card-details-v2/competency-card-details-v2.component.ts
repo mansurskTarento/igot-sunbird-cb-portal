@@ -297,6 +297,25 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
       )
   }
 
+  viewCertificate(obj: any): void {
+    this.cpService.fetchCertificate(obj.certificateId)
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(res => {
+        // tslint: disable-next-line
+        obj['printURI'] = res.result.printUri
+        obj['loading'] = false
+        this.dialog.open(CertificateDialogComponent, {
+          width: '1200px',
+          data: { cet: res.result.printUri, certId: obj.certificateId },
+        })
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          obj['loading'] = false
+          obj['error'] = 'Failed to fetch Certificate'
+        }
+      })
+  }
+
   getCertificateSVG(obj: any, type?: string): void {
     // tslint: disable-next-line
     obj['loading'] = true

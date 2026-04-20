@@ -329,7 +329,7 @@
             </mat-error>
             <mat-error
               *ngIf="!hasError('title', 'required') && !hasError('title', 'minlength') && !hasError('title', 'maxlength') && hasError('title', 'pattern')">
-              {{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}
+              {{'NetworkV2Profile.allowedCharacter' | translate}}
             </mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('title')?.value">
               {{ entryForm.get('title')?.value.length }}/70
@@ -350,10 +350,6 @@
             <mat-error
               *ngIf="!hasError('issuedOrganisation', 'required') && !hasError('issuedOrganisation', 'minlength') && hasError('issuedOrganisation', 'maxlength')">
               {{'NetworkV2Profile.issuedOrganisationTooLong' | translate}}
-            </mat-error>
-            <mat-error
-              *ngIf="!hasError('issuedOrganisation', 'required') && !hasError('issuedOrganisation', 'minlength') && !hasError('issuedOrganisation', 'maxlength') && hasError('issuedOrganisation', 'pattern')">
-              {{'NetworkV2Profile.specialCharNotAllowedExcept()$' | translate}}
             </mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
               {{ entryForm.get('issuedOrganisation')?.value.length }}/70
@@ -437,14 +433,14 @@
             <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
             </div>
             <mat-form-field appearance="outline" class="full-width">
-              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="10"
+              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="1 to 100"
                 (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
               <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
               <mat-error
                 *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'min')">{{'NetworkV2Profile.learningHoursMustBeGreaterThanZero'
                 | translate}}</mat-error>
               <mat-error
-                *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'max')">{{'NetworkV2Profile.learningHoursShouldBeLessThan10000'
+                *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'max')">{{'NetworkV2Profile.learningHoursShouldBeLessThan100'
                 | translate}}</mat-error>
             </mat-form-field>
           </div>
@@ -453,7 +449,7 @@
 
         <div class="w-full mb-5">
           <div class="lable mb-1 required">{{'NetworkV2Profile.upload' | translate}}
-            <mat-icon class="info-icon" matTooltip="Only PNG, JPG, and JPEG images are supported (maximum size: 500 KB).">info_outline</mat-icon>
+            <mat-icon class="info-icon" matTooltip="Only PNG, JPG, and JPEG images are supported (maximum size: 2MB).">info_outline</mat-icon>
           </div>
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
@@ -500,9 +496,8 @@
             <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning' | translate}}"></textarea>
             <mat-error *ngIf="hasError('description', 'minlength')">{{'NetworkV2Profile.descriptionTooShort' | translate}}</mat-error>
-            <mat-error *ngIf="hasError('description', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()$-/' | translate}}</mat-error>
-            <mat-hint align="end" *ngIf="entryForm.get('description')?.value">
-              {{ entryForm.get('description')?.value.length }}/500
+            <mat-hint align="end">
+              {{ entryForm.get('description')?.value?.length }}/500
             </mat-hint>
           </mat-form-field>
         </div>

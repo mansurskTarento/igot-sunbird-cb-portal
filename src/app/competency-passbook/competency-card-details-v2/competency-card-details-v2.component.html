@@ -143,7 +143,7 @@
                                                         alt="{{ eachCert?.name }} certificate" />
                                                 </ng-container>
                                                 <div [ngClass]="{'view-certificate': eachCert?.loading, 'view-cert': !eachCert?.loading}">
-                                                    <button type="button" (click)="getCertificateSVG(eachCert)">
+                                                    <button type="button" (click)="viewCertificate(eachCert)">
                                                         <span *ngIf="!eachCert?.loading">{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
                                                         <div *ngIf="eachCert?.loading" class="uploader-status">
                                                             <mat-spinner></mat-spinner>
