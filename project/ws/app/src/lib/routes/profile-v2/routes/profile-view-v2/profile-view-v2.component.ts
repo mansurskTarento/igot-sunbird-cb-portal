@@ -1599,13 +1599,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   generateAchievementsFormBody(achievements: any, oldDetails: any): any {
-    if (achievements?.uploadedDocumentUrl) {
-      delete achievements['url']
-    }
-    if (achievements?.url) {
-      delete achievements['uploadedDocumentUrl']
-      delete achievements['fileName']
-    }
     const requestBody: any = {
       request: {
         contextType: "achievements",

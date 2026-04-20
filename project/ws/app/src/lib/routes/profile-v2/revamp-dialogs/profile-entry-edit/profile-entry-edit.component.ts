@@ -163,6 +163,8 @@ export class ProfileEntryEditComponent implements OnInit {
   expand: boolean = false
   selectedAreaValue: string | null = null
 
+  noSpecialChar = new RegExp(/^[\u0900-\u097F\u0980-\u09FF\u0C00-\u0C7F\u0B80-\u0BFF\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0B00-\u0B7F\u0A00-\u0A7Fa-zA-Z0-9.,_\-\$\/\:\[\]\(\) '!&]+$/)
+
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
@@ -1077,13 +1079,13 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(this.noSpecialChar)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10)]],
       deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
       issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
-      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(100)]],
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
@@ -1506,8 +1508,8 @@ export class ProfileEntryEditComponent implements OnInit {
     }
     const reader = new FileReader()
     imagePath = files[0]
-    if (imagePath && imagePath.size > (500 * 1024)) {
-      this.openSnackbar('Selected image size is more than 500KB.')
+    if (imagePath && imagePath.size > (2000 * 1024)) {
+      this.openSnackbar('Selected image size is more than 2MB.')
       imagePath = ''
       return
     }
@@ -1562,7 +1564,16 @@ export class ProfileEntryEditComponent implements OnInit {
   handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-        const formValue = this.entryForm.value
+        const formValue = this.header === 'Achievements' ? this.entryForm.getRawValue() : this.entryForm.value
+        if (this.header === 'Achievements') {
+          if (formValue.uploadedDocumentUrl) {
+            formValue.url = ''
+          } else if (formValue.url) {
+            formValue.uploadedDocumentUrl = ''
+            formValue.fileName = ''
+          }
+          formValue.learningHours = formValue.learningHours ? Number(formValue.learningHours) : ''
+        }
         if (this.header === 'Service History') {
           if (formValue.orgName === this.selctedOrgDetails['orgName']) {
             formValue['orgLogo'] = this.selctedOrgDetails['orgLogo']
