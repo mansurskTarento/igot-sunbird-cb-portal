@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, Subject } from 'rxjs'
+import { shareReplay } from 'rxjs/operators'
 
 const API_END_POINTS = {
   INSIGHTS: `apis/proxies/v8/read/user/insights`,
@@ -23,7 +24,7 @@ const API_END_POINTS = {
 export class HomePageService {
   closeDialogPop = new Subject()
   constructor(private http: HttpClient) { }
-
+  private leaderboardData$: Observable<any> | null = null
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
     return result
@@ -64,7 +65,12 @@ export class HomePageService {
   getLearnerLeaderboard(): Observable<any> {
     return this.http.get(API_END_POINTS.LEADER_BOARD)
   }
-
+  getLearnerLeaderboardCached(): Observable<any> {
+    if (!this.leaderboardData$) {
+      this.leaderboardData$ = this.getLearnerLeaderboard().pipe(shareReplay(1))
+    }
+    return this.leaderboardData$
+  }
   getNwlConfigiration(url: any): Observable<any> {
     return this.http.get(`${url}/nlw.json`)
   }

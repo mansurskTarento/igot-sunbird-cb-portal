@@ -47,7 +47,7 @@ export class UserLeaderboardComponent implements OnInit {
     this.loader = true
     this.userInfo =  this.configSvc && this.configSvc.userProfile
     this.loading = true
-    this.homePageSvc.getLearnerLeaderboard().subscribe((res: any) => {
+    this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
       if (res && res.result && res.result.result && res.result.result.length) {
         this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
         this.isLeaderboardAvailable.emit(true)
