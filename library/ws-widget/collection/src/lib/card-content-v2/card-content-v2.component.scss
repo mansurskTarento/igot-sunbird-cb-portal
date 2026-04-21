@@ -1941,6 +1941,11 @@ $title-line-count: 2;
   // margin-left: auto;
   flex-shrink: 0;
 }
+.knowledge-level-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
 .level-badge {
   display: inline-flex;
