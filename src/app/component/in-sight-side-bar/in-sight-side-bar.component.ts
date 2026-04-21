@@ -16,6 +16,7 @@ import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 import { NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from 'src/app/services/common-data.service'
+import { Subscription } from 'rxjs'
 
 const DEFAULT_WEEKLY_DURATION = 300
 const DEFAULT_DISCUSS_DURATION = 600
@@ -109,6 +110,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   isMatcompleteOpened = false
   nlwExperience: any = null
   isNlw2026Certified = false
+  private nlw2026Sub: Subscription | null = null
   @Output() telemetryRaisedLibrary = new EventEmitter()
   
   constructor(
@@ -152,7 +154,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       this.nlwExperience = this.activatedRoute.snapshot.data.pageData.data.nlwExperience
-      this.commonDataSvc.getNlw2026CertifiedStatus().subscribe((status: boolean) => {
+      this.nlw2026Sub = this.commonDataSvc.getNlw2026CertifiedStatus().subscribe((status: boolean) => {
         this.isNlw2026Certified = status
       })
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
@@ -753,7 +755,14 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     const onClick = this.nlwExperience.banner.onClick
     this.raiseTelemetryForNlwExperience('nlw-experience-banner')
     if (onClick.action === 'OPEN_POPUP') {
-      this.openNlwExperienceDialog(onClick)
+      if (onClick.api) {
+        this.openNlwExperienceDialog(onClick)
+      } else {
+        const url = this.commonDataSvc.getLanguageBasedContentUrl('appreciationletter')
+        if (url) {
+          this.openNlwExperienceDialog({ ...onClick, type: 'PDF', url })
+        }
+      }
     }
   }
 
@@ -761,15 +770,24 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   onNlwNewsletterCtaClick(): void {
     if (!this.nlwExperience?.newsletter?.cta) { return }
     const cta = this.nlwExperience.newsletter.cta
+    const pdfZoom = this.nlwExperience.newsletter?.pdfZoom || 'FitH'
     this.raiseTelemetryForNlwExperience('nlw-experience-newsletter')
     if (cta.action === 'OPEN_POPUP') {
-      this.openNlwExperienceDialog(cta)
+      if (cta.url) {
+        this.openNlwExperienceDialog({ ...cta, pdfZoom: pdfZoom  })
+      } else {
+        const url = this.commonDataSvc.getLanguageBasedContentUrl('newsletter')
+        if (url) {
+          this.openNlwExperienceDialog({ ...cta, type: 'PDF', url, pdfZoom })
+        }
+      }
     }
   }
 
   /** Open the NLW Experience dialog based on dynamic config */
   private openNlwExperienceDialog(config: any): void {
     const dialogData: NlwCertificateDialogData = {
+      pdfZoom: config.pdfZoom,
       action: config.action,
       type: config.type,
       url: config.url,
@@ -806,6 +824,9 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.nlwAutoSlideInterval) {
       clearInterval(this.nlwAutoSlideInterval)
+    }
+    if (this.nlw2026Sub) {
+      this.nlw2026Sub.unsubscribe()
     }
   }
 }

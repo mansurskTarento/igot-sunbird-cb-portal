@@ -310,6 +310,21 @@ export class CommonDataService {
    * If no cached value, reads from the current configSvc user profile.
    * Returns true only if the user is certified.
    */
+  /**\n   * Resolve a content URL based on the user's ministry/state org language mapping.\n   * Falls back to English if no match found.\n   */
+  getLanguageBasedContentUrl(contentKey: string): string {
+    const ministryOrStateOrgName = _.get(this.configSvc, 'unMappedUser.profileDetails.ministryOrStateOrgName', '')
+    const languageMap = _.get(this.configSvc, 'globalConfig.languageMap', {})
+    const languageBasedContent = _.get(this.configSvc, 'globalConfig.languageBasedContent', {})
+    const language = languageMap[(ministryOrStateOrgName || '').toLowerCase()] || 'english'
+    return _.get(languageBasedContent, `${language}.${contentKey}`, '') || _.get(languageBasedContent, `english.${contentKey}`, '')
+  }
+
+  /**
+   * Get NLW 2026 certification eligibility.
+   * First checks localStorage cache to avoid unnecessary API calls.
+   * If no cached value, reads from the current configSvc user profile.
+   * Returns true only if the user is certified.
+   */
   getNlw2026CertifiedStatus(): Observable<boolean> {
     const cached = localStorage.getItem('isNlw2026Certified')
     if (cached !== null) {
