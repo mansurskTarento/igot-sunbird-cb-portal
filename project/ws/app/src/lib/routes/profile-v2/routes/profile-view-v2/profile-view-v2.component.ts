@@ -392,9 +392,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
     this.nlwExperience = this.pageData?.nlwExperience
-    this.commonSvc.getNlw2026CertifiedStatus().subscribe((status: boolean) => {
-      this.isNlw2026Certified = status
-    })
+    this.commonSvc.getNlw2026CertifiedStatus()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((status: boolean) => {
+        this.isNlw2026Certified = status
+      })
   }
 
   getConnectionStatus() {
@@ -2085,17 +2087,35 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   openNlwCertificateDialog(): void {
     if (!this.nlwExperience?.banner?.onClick) { return }
     const onClick = this.nlwExperience.banner.onClick
+    const pdfZoom = onClick?.pdfZoom || this.nlwExperience?.banner?.pdfZoom || 'FitH'
     this.events.raiseInteractTelemetry(
       { type: WsEvents.EnumInteractTypes.CLICK, id: 'nlw-certificate-profile' },
       {},
       { module: WsEvents.EnumTelemetrymodules.PROFILE }
     )
-    const dialogData: NlwCertificateDialogData = {
-      action: onClick.action,
-      type: onClick.type,
-      title: this.nlwExperience.banner.title || 'PM Appreciation Letter',
-      url: onClick.url,
-      api: onClick.api,
+    let dialogData: NlwCertificateDialogData
+    if (onClick.api) {
+      dialogData = {
+        pdfZoom,
+        action: onClick.action,
+        type: onClick.type,
+        title: this.nlwExperience.banner.title || 'PM Appreciation Letter',
+        url: onClick.url,
+        api: onClick.api,
+      }
+    } else {
+      const url = this.commonSvc.getLanguageBasedContentUrl('appreciationletter')
+      dialogData = {
+        pdfZoom,
+        action: onClick.action,
+        type: 'PDF',
+        title: this.nlwExperience.banner.title || 'PM Appreciation Letter',
+        url: url,
+      }
+    }
+    let dialogWidth = '700px'
+    if (dialogData.type === 'PDF') {
+      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
     }
     let dialogWidth = '700px'
     if (onClick.type === 'PDF') {
