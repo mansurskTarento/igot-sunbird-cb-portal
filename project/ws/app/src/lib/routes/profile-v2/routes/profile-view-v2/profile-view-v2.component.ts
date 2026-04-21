@@ -1964,7 +1964,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     switch (header) {
       case 'Achievements':
         requestData = this.formDeleteRequest(header, entryDetails)
-        dialogTitle = 'Are you sure you want to delete this achievement?'
+        dialogTitle = `Are you sure you want to delete '${entryDetails?.contextData?.title}' achievement?`
         break
     }
 
@@ -2115,10 +2115,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
     let dialogWidth = '700px'
     if (dialogData.type === 'PDF') {
-      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
-    }
-    let dialogWidth = '700px'
-    if (onClick.type === 'PDF') {
       dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
     }
     this.dialog.open(NlwCertificateDialogComponent, {

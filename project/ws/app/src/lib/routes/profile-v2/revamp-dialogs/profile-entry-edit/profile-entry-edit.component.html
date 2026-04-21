@@ -344,11 +344,7 @@
             <mat-error *ngIf="hasError('issuedOrganisation', 'required')">
               {{'NetworkV2Profile.issuedOrganisationIsRequired' | translate}}
             </mat-error>
-            <mat-error *ngIf="!hasError('issuedOrganisation', 'required') && hasError('issuedOrganisation', 'minlength')">
-              {{'NetworkV2Profile.issuedOrganisationTooShort' | translate}}
-            </mat-error>
-            <mat-error
-              *ngIf="!hasError('issuedOrganisation', 'required') && !hasError('issuedOrganisation', 'minlength') && hasError('issuedOrganisation', 'maxlength')">
+            <mat-error *ngIf="!hasError('issuedOrganisation', 'required') && hasError('issuedOrganisation', 'maxlength')">
               {{'NetworkV2Profile.issuedOrganisationTooLong' | translate}}
             </mat-error>
             <mat-hint align="end" *ngIf="entryForm.get('issuedOrganisation')?.value">
@@ -495,7 +491,6 @@
           <mat-form-field appearance="outline" class="full-width">
             <textarea matInput formControlName="description" rows="4" maxlength="500"
               placeholder="{{'NetworkV2Profile.describeAboutTheSkillsThatYouHaveGainedFromThisLearning' | translate}}"></textarea>
-            <mat-error *ngIf="hasError('description', 'minlength')">{{'NetworkV2Profile.descriptionTooShort' | translate}}</mat-error>
             <mat-hint align="end">
               {{ entryForm.get('description')?.value?.length }}/500
             </mat-hint>
