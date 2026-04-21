@@ -71,7 +71,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     //   icon: 'school-search',
     // },
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
-    { label: 'People', value: SearchCategory.People, icon: 'people-search' },
+    // AFTER NLW NEED TO ENABLE
+    // { label: 'People', value: SearchCategory.People, icon: 'people-search' },
     {
       label: 'External Contents',
       value: SearchCategory.ExternalContents,

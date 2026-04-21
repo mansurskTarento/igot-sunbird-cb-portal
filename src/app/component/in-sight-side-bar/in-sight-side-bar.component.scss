@@ -568,13 +568,12 @@ background: #F3962F;
 
 /** NLW Experience: Banner + Newsletter **/
 .nlw-experience-section {
-  width: 385px;
+  width: 100%;
   box-sizing: border-box;
 }
 
 .nlw-exp-banner {
   width: 100%;
-  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;

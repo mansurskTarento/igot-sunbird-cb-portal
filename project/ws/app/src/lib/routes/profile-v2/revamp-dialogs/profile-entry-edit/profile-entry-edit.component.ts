@@ -163,6 +163,8 @@ export class ProfileEntryEditComponent implements OnInit {
   expand: boolean = false
   selectedAreaValue: string | null = null
 
+  noSpecialChar = new RegExp(/^[\u0900-\u097F\u0980-\u09FF\u0C00-\u0C7F\u0B80-\u0BFF\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0B00-\u0B7F\u0A00-\u0A7Fa-zA-Z0-9.,_\-\$\/\:\[\]\(\) '!&]+$/)
+
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
@@ -173,7 +175,7 @@ export class ProfileEntryEditComponent implements OnInit {
     private pipeImgUrl: PipeCertificateImageURL
   ) {
     this.header = _.get(this.data, 'header', '')
-    this.entryDetails = _.get(this.data, 'entryDetails', '')
+    this.entryDetails = _.cloneDeep(_.get(this.data, 'entryDetails', ''))
   }
   ngOnInit(): void {
     this.initForm()
@@ -1077,22 +1079,25 @@ export class ProfileEntryEditComponent implements OnInit {
   //#region (achievements)
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
-      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&\-\/]*$/)]],
-      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(/^[a-zA-Z0-9\s.,'()&]*$/)]],
+      title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(this.noSpecialChar)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10)]],
       deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
       issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
-      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(1000)]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(100)]],
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
-      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON)]],
+      url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON), Validators.required]],
       description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
       competencies_v6: ['', [Validators.required]]
     }, { validators: urlOrDocumentValidator() })
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
+      urlControl?.setValidators([
+        Validators.pattern(URL_PATRON)
+      ])
       urlControl.patchValue('')
       urlControl.disable()
       urlControl.updateValueAndValidity()
@@ -1314,6 +1319,8 @@ export class ProfileEntryEditComponent implements OnInit {
       control.setValue(value)
       control.markAsDirty()
       control.markAsTouched()
+    } else {
+      this.openSnackbar('This competency is already added.')
     }
     this.resetCompfields()
     this.expand = false
@@ -1501,13 +1508,14 @@ export class ProfileEntryEditComponent implements OnInit {
     }
     const reader = new FileReader()
     imagePath = files[0]
-    if (imagePath && imagePath.size > (500 * 1024)) {
-      this.openSnackbar('Selected image size is more than 500KB.')
+    if (imagePath && imagePath.size > (2000 * 1024)) {
+      this.openSnackbar('Selected image size is more than 2MB.')
       imagePath = ''
       return
     }
     reader.readAsDataURL(files[0])
     this.saveImage(imagePath)
+
   }
 
   saveImage(imagePath: any) {
@@ -1556,7 +1564,16 @@ export class ProfileEntryEditComponent implements OnInit {
   handleSubmit(): void {
     if (this.entryForm) {
       if (this.entryForm.valid) {
-        const formValue = this.entryForm.value
+        const formValue = this.header === 'Achievements' ? this.entryForm.getRawValue() : this.entryForm.value
+        if (this.header === 'Achievements') {
+          if (formValue.uploadedDocumentUrl) {
+            formValue.url = ''
+          } else if (formValue.url) {
+            formValue.uploadedDocumentUrl = ''
+            formValue.fileName = ''
+          }
+          formValue.learningHours = formValue.learningHours ? Number(formValue.learningHours) : ''
+        }
         if (this.header === 'Service History') {
           if (formValue.orgName === this.selctedOrgDetails['orgName']) {
             formValue['orgLogo'] = this.selctedOrgDetails['orgLogo']
@@ -1590,6 +1607,25 @@ export class ProfileEntryEditComponent implements OnInit {
 
   handleCancel(): void {
     this.dialogRef.close()
+  }
+
+  preventAlphabetInput(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter', 'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
+
+    if (allowedKeys.includes(event.key)) {
+      return
+    }
+
+    if (/^[a-zA-Z]$/.test(event.key)) {
+      event.preventDefault()
+    }
+  }
+
+  preventAlphabetPaste(event: ClipboardEvent): void {
+    const pastedText = event.clipboardData?.getData('text')
+    if (pastedText && /[a-zA-Z]/.test(pastedText)) {
+      event.preventDefault()
+    }
   }
 
   preventNonNumericInput(event: KeyboardEvent): void {
