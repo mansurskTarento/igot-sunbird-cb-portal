@@ -1080,7 +1080,7 @@ export class ProfileEntryEditComponent implements OnInit {
   private createAchievementsForm(): void {
     this.entryForm = this.fb.group({
       title: [_.get(this.entryDetails?.contextData, 'title', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10), Validators.pattern(this.noSpecialChar)]],
-      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70), Validators.minLength(10)]],
+      issuedOrganisation: [_.get(this.entryDetails?.contextData, 'issuedOrganisation', ''), [Validators.required, Validators.maxLength(70)]],
       deliveryMode: [_.get(this.entryDetails?.contextData, 'deliveryMode', '')],
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
@@ -1090,7 +1090,7 @@ export class ProfileEntryEditComponent implements OnInit {
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
       url: [_.get(this.entryDetails?.contextData, 'url', ''), [Validators.pattern(URL_PATRON), Validators.required]],
-      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.minLength(250), Validators.maxLength(500)]],
+      description: [_.get(this.entryDetails?.contextData, 'description', ''), [Validators.maxLength(500)]],
       competencies_v6: ['', [Validators.required]]
     }, { validators: urlOrDocumentValidator() })
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
