@@ -9,6 +9,7 @@ import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { SurveyPopupComponent } from '../../../peer-validation/components/survey-popup/survey-popup.component'
 import { VerificationRequestDialogComponent } from '../../../peer-validation/components/verification-request-dialog/verification-request-dialog.component'
+import { PeerValidationService } from '../../../peer-validation/services/peer-validation.service'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { ActivatedRoute } from '@angular/router'
 @Component({
@@ -29,7 +30,8 @@ export class MyNotificationsComponent {
     private events: EventService,
     private libNotificationsService: LibNotificationsService,
     private route: ActivatedRoute,
-    private matDialog: MatDialogNew) {
+    private matDialog: MatDialogNew,
+    private peerValidationService: PeerValidationService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -128,6 +130,9 @@ export class MyNotificationsComponent {
       if (result === 'ignored') {
         notification.status = 'IGNORED'
       }
+    })
+    this.peerValidationService.notificationSubmitted$.subscribe(() => {
+      notification.status = 'SUBMITTED'
     })
   }
 

@@ -117,6 +117,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
   onTabChange(tab: 'pending' | 'incoming') {
     this.activeTab = tab
     this.fetchData()
+    this.fetchCounts()
   }
 
   startReview(notificationId: string) {
