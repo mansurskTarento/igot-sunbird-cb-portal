@@ -23,6 +23,8 @@ const API_END_POINTS = {
 export class PeerValidationService {
   /** Emits whenever a survey or review is successfully submitted — dashboard subscribes to trigger a refresh. */
   readonly dashboardRefresh$ = new Subject<void>()
+  /** Emits when a survey is submitted from the notification flow — notifications component subscribes to update status. */
+  readonly notificationSubmitted$ = new Subject<void>()
 
   constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
 

@@ -18,13 +18,18 @@ export class SurveyPopupComponent {
   ) { }
 
   onYes() {
-    this.dialog.open(SurveyDialogComponent, {
+    const surveyDialogRef = this.dialog.open(SurveyDialogComponent, {
       width: '1100px',
       maxWidth: '95vw',
       disableClose: true,
       data: this.data,
     })
     this.dialogRef.close()
+    surveyDialogRef.afterClosed().subscribe((result: string) => {
+      if (result === 'submitted') {
+        this.peerValidationService.notificationSubmitted$.next()
+      }
+    })
   }
   onNoButton() {
     if (this.data.notificationId && this.data.createdAt) {
