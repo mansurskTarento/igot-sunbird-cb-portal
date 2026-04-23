@@ -10,7 +10,6 @@ const MAX_PEERS = 3
 })
 export class PeerSelectionComponent implements OnInit {
   @Input() selectedPeers: any
-  @Input() contextOrgId: string = ''
   @Output() peersChanged = new EventEmitter<any>()
 
   selectedPeersList: any[] = []   // Full user objects for selected peers

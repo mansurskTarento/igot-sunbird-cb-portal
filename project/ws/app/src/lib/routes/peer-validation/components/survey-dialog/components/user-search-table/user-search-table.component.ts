@@ -14,7 +14,6 @@ export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)
   @Input() maxSelect = 3
   @Input() searchQuery = ''                 // Driven by parent search input
-  @Input() contextOrgId: string = ''   // contextOrgId passed directly from notification data
   @Output() userToggled = new EventEmitter<any>()   // Emits user object when toggled
 
   filteredUsers: any[] = []
@@ -56,7 +55,7 @@ export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   fetchUsers(query: string) {
-    this.peerValidationService.getAllUsers(this.contextOrgId || undefined, query).subscribe({
+    this.peerValidationService.getAllUsers(query).subscribe({
       next: (res: any) => {
         this.filteredUsers = res?.result?.response?.content || res?.result?.content || res || []
       },

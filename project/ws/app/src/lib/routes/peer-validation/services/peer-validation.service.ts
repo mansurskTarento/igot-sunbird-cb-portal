@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Observable, forkJoin, Subject } from 'rxjs'
-import { map, switchMap } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { NSPeerValidation } from '../models/peer-validation.model'
 import { HttpClient } from '@angular/common/http'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -29,13 +29,12 @@ export class PeerValidationService {
   constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
 
 
-  getAllUsers(rootOrgId?: string, query: string = '') {
-    const orgId = rootOrgId || this.configSvc.userProfile?.rootOrgId
+  getAllUsers(query: string = '') {
     const reqBody = {
       request: {
         query,
         filters: {
-          rootOrgId: orgId,
+          rootOrgId: this.configSvc.userProfile?.rootOrgId,
         },
       },
     }
@@ -46,16 +45,8 @@ export class PeerValidationService {
     return this.http.get<any>(API_END_POINTS.GET_USER_BY_ID(userId))
   }
 
-  getAllUsersBySurveyCreator(surveyCreatedById: string): Observable<any> {
-    return this.getUserById(surveyCreatedById).pipe(
-      switchMap((res: any) => {
-        const rootOrgId =
-          res?.result?.response?.rootOrgId ||
-          res?.result?.rootOrgId ||
-          this.configSvc.userProfile?.rootOrgId
-        return this.getAllUsers(rootOrgId)
-      })
-    )
+  getAllUsersBySurveyCreator(): Observable<any> {
+    return this.getAllUsers()
   }
 
   getSurveyQuestions(formId?: string): Observable<NSPeerValidation.ISurveyQuestion[]> {
