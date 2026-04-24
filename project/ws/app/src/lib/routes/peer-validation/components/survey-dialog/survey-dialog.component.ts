@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, OnDestroy, ViewChild, Renderer2 } from '@angular/core'
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, inject } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms'
@@ -16,6 +16,9 @@ import { SuccessDialogComponent } from './components/success-dialog/success-dial
 export class SurveyDialogComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper
 
+  data: NSPeerValidation.ISurveyPopupData = inject(MAT_DIALOG_DATA)
+  private document: Document = inject(DOCUMENT)
+
   currentStep = 0
   surveyQuestions: NSPeerValidation.ISurveyQuestion[] = []
   questionForm!: FormGroup
@@ -30,8 +33,6 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
 
   constructor(
     public dialogRef: MatDialogRef<SurveyDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: NSPeerValidation.ISurveyPopupData,
-    @Inject(DOCUMENT) private document: Document,
     private fb: FormBuilder,
     private renderer: Renderer2,
     private peerValidationService: PeerValidationService,
