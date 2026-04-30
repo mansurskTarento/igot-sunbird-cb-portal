@@ -92,8 +92,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },
-    // AFTER NLW NEED TO ENABLE
-    // { label: 'All', value: SearchCategory.All, icon: '' },
+    { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;

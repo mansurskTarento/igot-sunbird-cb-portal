@@ -426,11 +426,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchPeopleLoader = true
 
     this.searchRequestPeoples.query = this.statedata?.param || ''
-    const result :any={}
-    // AFTER NLW NEED TO ENABLE
-    // const result = await this.searchV3Service.searchConnections(
-    //   this.searchRequestPeoples
-    // )
+    const result = await this.searchV3Service.searchConnections(
+      this.searchRequestPeoples
+    )
 
     if (result && result.result && result.result?.response?.content) {
       this.peoplesSearchResults = result.result?.response?.content || []
@@ -439,7 +437,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       this.combinedFacets = []
       this.combinedFacets = [...this.combinedFacets, (result.result?.response.facets || [])]
-      this.getAllConnectionRequests()
+      // this.getAllConnectionRequests()
     } else {
       this.peoplesSearchResults = []
       this.peopleSearchTotalCount = 0
