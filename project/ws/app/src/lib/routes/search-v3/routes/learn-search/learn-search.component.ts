@@ -229,7 +229,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       changes.searchQuery.previousValue?.searchCategory
     ) {
       this.searchContentLoader = true
-      if(!this.isExploreContentTab) {
+      if (!this.isExploreContentTab) {
         this.resetAllSearchParams()
       }
       this.statedata = {
@@ -333,8 +333,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (this.searchRequestCourse['request']['filters']['courseCategory']?.length === 0) {
         this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment"] }
       }
-      if( this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
-        this.searchRequestCourse['request']['facets'] =  _.uniq(this.searchRequestCourse['request']['facets'])
+      if (this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
+        this.searchRequestCourse['request']['facets'] = _.uniq(this.searchRequestCourse['request']['facets'])
       }
 
     }
@@ -393,6 +393,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   async searchEvents() {
     // this.searchRequestEvents.request.sort_by.startDate = 'desc';
     this.searchRequestEvents.request.filters.contentType = 'Event'
+    this.searchRequestEvents.request.filters.category = 'Event'
     this.searchRequestEvents.request.fields = SearchEventFields
     this.searchRequestEvents.request.facets = [
       ...SearchEventfacet,
@@ -1028,7 +1029,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe(params => {
         this.isExploreContentTab = !!params['tab']
-        if ( this.isExploreContentTab ) {
+        if (this.isExploreContentTab) {
           this.searchSortFilter = SortType.RecentlyAdded
           this.searchRequestCourse.request.sort_by.createdOn = 'desc'
         }
