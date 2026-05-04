@@ -21,24 +21,14 @@ export class AppEventPageResolverService implements
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<any>> {
-    // const requestData: any = {
-    //   'request': {
-    //     'type': 'page',
-    //     'subType': 'events',
-    //     'action': 'page-configuration',
-    //     'component': 'portal',
-    //     'rootOrgId': '*',
-    //   },
-    // }
     const formSubType = 'events'
-    return this.configSvc.getFormFieldData(formSubType).pipe(
+    return this.configSvc.getFormData(formSubType).pipe(
       map((rData: any) => {
         const finalData = rData
         return ({ data: finalData, error: null })
       }),
       catchError((_error: any) => {
         const baseUrl = this.configSvc.sitePath
-        debugger
         return this.http.get(`${baseUrl}/feature/event.json`).pipe(
           map(data => ({ data, error: null })),
           catchError(err => of({ data: null, error: err })),
