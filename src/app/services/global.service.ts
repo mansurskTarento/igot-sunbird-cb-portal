@@ -20,10 +20,11 @@ export class GlobalService {
 
     }
 
-    globalConfigReadData(formSubType: string): Observable<any> {
-        return this.configSvc.getFormData(formSubType).pipe(
+    globalConfigReadData(payload: any): Observable<any> {
+        return this.formReadData(payload).pipe(
             map((rData: any) => {
-                return (rData)
+                const finalData = rData && rData.result.form.data
+                return (finalData)
             }),
             catchError((_error: any) => {
                 const baseUrl = this.configSvc.sitePath

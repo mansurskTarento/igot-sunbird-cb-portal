@@ -2,12 +2,10 @@ import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
-
-// const API_END_POINTS = {
-//   FORM_READ: `/apis/v1/form/read`,
-// }
+const API_END_POINTS = {
+  FORM_READ: `/apis/v1/form/read`,
+}
 
 @Injectable({
   providedIn: 'root',
@@ -16,18 +14,23 @@ export class HelpCenterService {
 
   private helpCenterConfig: any = null
 
-  constructor(
-    private http: HttpClient,
-    public configSvc: ConfigurationsService,
-  ) { }
+  constructor(private http: HttpClient) {}
 
   fetchHelpCenterConfig(): Observable<any> {
-    const subType = 'help-center'
+    const body = {
+      request: {
+        type: 'page',
+        subType: 'help-center',
+        action: 'page-configuration',
+        component: 'portal',
+        rootOrgId: '*',
+      },
+    }
 
-    return this.configSvc.getFormData(subType).pipe(
+    return this.http.post<any>(API_END_POINTS.FORM_READ, body).pipe(
       map((response: any) => {
-        if (response) {
-          this.helpCenterConfig = response
+        if (response && response.result && response.result.form) {
+          this.helpCenterConfig = response.result.form.data
           return this.helpCenterConfig
         }
         throw new Error('Invalid form read response')
