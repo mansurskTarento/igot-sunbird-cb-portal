@@ -93,7 +93,7 @@ export class InitService {
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
     private globalService: GlobalService,
-    private commonDataSvc:CommonDataService,
+    private commonDataSvc: CommonDataService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     // private router: Router,
@@ -244,7 +244,7 @@ export class InitService {
     // Invalid User
     try {
       const path = window.location.pathname
-      const isPublic = window.location.href.includes('/public/')|| window.location.href.includes('/helpcenter')
+      const isPublic = window.location.href.includes('/public/') || window.location.href.includes('/helpcenter')
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
@@ -303,7 +303,7 @@ export class InitService {
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
         window.location.href.includes('/achievements') ||
-        window.location.href.includes('/viewer')|| window.location.href.includes('/helpcenter')
+        window.location.href.includes('/viewer') || window.location.href.includes('/helpcenter')
       )
     ) {
       this.logFirstLogin()
@@ -439,15 +439,8 @@ export class InitService {
   }
 
   private async globalConfigData(): Promise<NsInstanceConfig.IConfig> {
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "globalConfig",
-        "action": "page-configuration",
-        "component": "portal", "rootOrgId": "*"
-      }
-    }
-    const publicConfig: any = await this.globalService.globalConfigReadData(payload).toPromise()
+    const formSubType = 'globalConfig'
+    const publicConfig: any = await this.globalService.globalConfigReadData(formSubType).toPromise()
     this.configSvc.globalConfig = publicConfig.globalConfig
     return publicConfig
   }
@@ -456,15 +449,8 @@ export class InitService {
     // const publicConfig: any = await this.http
     //   .get<any>(`${this.baseUrl}/netcore.json`)
     //   .toPromise()
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "netcore",
-        "action": "page-configuration",
-        "component": "portal", "rootOrgId": "*"
-      }
-    }
-    const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
+    const formSubType = 'netcore'
+    const publicConfig: any = await this.netCoreService.netCoreConfigReadData(formSubType).toPromise()
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     return publicConfig
   }
