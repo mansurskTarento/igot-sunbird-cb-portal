@@ -453,7 +453,7 @@
 
         <div class="w-full mb-5">
           <div class="lable mb-1 required">{{'NetworkV2Profile.upload' | translate}}
-            <mat-icon class="info-icon" matTooltip="Only PNG, JPG, and JPEG images are supported (maximum size: 2MB).">info_outline</mat-icon>
+            <mat-icon class="info-icon" matTooltip="PNG, JPG, JPEG and PDF files are supported (maximum size: 2MB).">info_outline</mat-icon>
           </div>
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
@@ -469,7 +469,7 @@
             <div class="upload flex justify-center items-center" [ngClass]="{'disable': disableUpload }" cdkDropList [cdkDropListData]="videoData"
               (cdkDropListDropped)="onFileSelected($event)" (dragover)="preventDefaultCDK($event)" (dragenter)="preventDefaultCDK($event, 'enter')"
               (dragleave)="preventDefaultCDK($event, 'leave')" (drop)="onDrop($event)" onclick="document.getElementById('upload-file').click();">
-              <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg"
+              <input #file type="file" name="upload-file" id="upload-file" class="hidden" accept=".png, .jpg, .jpeg, .pdf"
                 (change)="onFileSelected(file.files);">
               <div class="flex justify-center items-center gap-2">
                 <img src="/assets/icons/upload-upward-arrow.svg" alt="icon">
@@ -517,6 +517,9 @@
                   <span class="mat-body-2">{{ option.name }}</span>
                 </mat-radio-button>
               </mat-radio-group>
+              <div *ngIf="getCompetencyAreaDescription()" class="competency-area-description mat-body-2 mt-3">
+                {{ getCompetencyAreaDescription() }}
+              </div>
             </div>
             <ng-container *ngIf="expand">
               <div class="margin-bottom-m" *ngIf="allCompetencyTheme && allCompetencyTheme.length > 0">
