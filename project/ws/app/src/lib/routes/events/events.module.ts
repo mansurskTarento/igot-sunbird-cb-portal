@@ -53,7 +53,6 @@ import { HttpClient } from '@angular/common/http'
 import { EventsHomeV2Component } from './routes/events-home-v2/events-home-v2.component'
 import { EventsCalendarModule } from './routes/events-calendar/events-calendar.module'
 import { EventsEngagementComponent } from './routes/events-engagement/events-engagement.component'
-import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { ContentStripWithTabsPillsModule, ContentStripWithTabsLibModule } from '@sunbird-cb/consumption'
 import { MatDialogModule } from '@angular/material/dialog'
 
