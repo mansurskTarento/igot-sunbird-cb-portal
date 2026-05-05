@@ -1,29 +1,30 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
-.small-height-toolbar{
+.small-height-toolbar {
   @include breakpoint-xs {
     height: 32px;
     padding: 8px;
   }
 }
 
-.center-align{
+.center-align {
   position: relative;
   left: 50%;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
+
   @include breakpoint-xs {
-    transform: translate(0,0);
+    transform: translate(0, 0);
     left: inherit;
   }
 }
 
 .item-icon {
-      $icon-size: 15px;
-      width: $icon-size;
-      height: $icon-size;
-      font-size: $icon-size;
-    }
+  $icon-size: 15px;
+  width: $icon-size;
+  height: $icon-size;
+  font-size: $icon-size;
+}
 
 .status-danger {
   position: absolute;
@@ -44,19 +45,19 @@
 }
 
 .flex-container {
-   max-width: 1000px;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    overflow: hidden;
-    display: flex;
-    flex-wrap: wrap;
-    position: relative;
+  max-width: 1000px;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  overflow: hidden;
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
 
 
 
 }
 
-.flex-container > div {
+.flex-container>div {
   margin: 10px;
 }
 
@@ -64,7 +65,7 @@
   opacity: 0.7;
 }
 
-.card-container{
+.card-container {
   $card-padding: $size-m;
   padding: 0 0 0 16px;
   $action-btn-size: 2.5 * $size-m;
@@ -93,17 +94,17 @@
 }
 
 .card-img {
-    height: 130px;
-    display: block;
-  }
-
-  .tnc-bottom-navbar {
-      margin: 24px 0;
-    position: absolute;
-    right: 5%;
+  height: 130px;
+  display: block;
 }
 
-.hide{
+.tnc-bottom-navbar {
+  margin: 24px 0;
+  position: absolute;
+  right: 5%;
+}
+
+.hide {
   visibility: hidden;
 }
 

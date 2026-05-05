@@ -1,12 +1,13 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .card-container {
     height: 231px;
     width: 268px;
     border: 1px solid rgba(0, 0, 0, 8%);
 }
+
 .truncate {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -14,7 +15,7 @@
     max-height: 3.6em;
     line-height: 1.8em;
     white-space: nowrap;
- }
+}
 
 .photo-container {
     background: #F8F4F9;
@@ -39,7 +40,7 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
+}
 
 .designation {
     line-height: 21px;
@@ -48,15 +49,16 @@
 .action-container {
     padding: $size-m 0;
 }
+
 .font-bold {
-    font-weight: 600!important;
+    font-weight: 600 !important;
 }
 
 [wsTooltipDirective] {
     position: relative;
-  }
+}
 
-  .tooltip {
+.tooltip {
     position: absolute;
     opacity: 1;
     z-index: 999;
@@ -70,12 +72,14 @@
     // @include breakpoint-xs {
     //     left: 0;
     // }
-  }
-  .profile-badge-span {
+}
+
+.profile-badge-span {
     width: 20px;
     vertical-align: top;
-  }
-  img.profile-badge {
+}
+
+img.profile-badge {
     position: absolute;
     padding-top: 4px;
     padding-left: 5px;

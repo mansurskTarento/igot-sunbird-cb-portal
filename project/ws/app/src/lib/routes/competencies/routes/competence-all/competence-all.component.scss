@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .buton {
@@ -15,10 +15,12 @@
 .competency_main_block {
   width: 100%;
 }
+
 .competency_inner {
   @media (max-width:1024px) {
-    padding:0px 8px;
+    padding: 0px 8px;
   }
+
   @media (max-width:768px) {
     width: 0;
   }
@@ -30,6 +32,7 @@
     overflow-x: scroll;
     margin: 0px !important;
   }
+
   .filter {
     @media (max-width:768px) {
       width: 500px;
@@ -48,16 +51,18 @@
     width: 100%;
     margin: 0px !important;
   }
+
   form.search_form {
-    @include breakpoint-xs  {
+    @include breakpoint-xs {
       width: 100%;
     }
 
     .autocomplete-form {
-      @include breakpoint-s  {
+      @include breakpoint-s {
         width: 90%;
       }
-      @include breakpoint-xs  {
+
+      @include breakpoint-xs {
         width: 100%;
       }
     }
@@ -73,11 +78,12 @@
 // }
 
 .no-competency-card {
-  margin-right: 0!important;
+  margin-right: 0 !important;
 }
 
-.filter-option:hover, .tabs-active {
-  font-weight: normal!important;
+.filter-option:hover,
+.tabs-active {
+  font-weight: normal !important;
 }
 
 .flex-4 {
@@ -236,9 +242,11 @@
     border-right-width: 0;
   }
 }
+
 .matbold {
   font-weight: 600 !important;
 }
+
 .max-height-60 {
   max-height: 60px;
 }
@@ -379,39 +387,43 @@ a:not([href]):not([tabindex]) {
   // padding: 24px !important;
   overflow: hidden;
   width: 100%;
+
   .card_inner_content {
-      overflow: hidden;
+    overflow: hidden;
   }
 
   .card_inner_title_box {
-      width: 210px;
-      padding: 24px;
+    width: 210px;
+    padding: 24px;
 
-      box-sizing: border-box;
+    box-sizing: border-box;
 
-      h4.mat-h4 {
-          margin-bottom: 5px;
+    h4.mat-h4 {
+      margin-bottom: 5px;
+    }
+
+    .text_icon_box {
+      margin-top: 45px;
+
+      .mat-icon1 {
+        vertical-align: middle;
+        margin-right: 10px;
       }
 
-      .text_icon_box {
-          margin-top: 45px;
-          .mat-icon1 {
-              vertical-align: middle;
-              margin-right: 10px;
-          }
-          .icon_text {
-              margin-bottom: 0;
+      .icon_text {
+        margin-bottom: 0;
 
-          }
       }
+    }
 
   }
+
   .card_right_txtbox {
-      float: right;
-      padding: 24px;
-      box-sizing: border-box;
-      width: calc(100% - 225px);
-      border-left:1px solid rgba(0, 0, 0, 0.08);
+    float: right;
+    padding: 24px;
+    box-sizing: border-box;
+    width: calc(100% - 225px);
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
 
   }
 }
@@ -420,8 +432,9 @@ a:not([href]):not([tabindex]) {
 // progress bar component
 .no-competency-card {
   padding: 0;
- background: transparent!important;
+  background: transparent !important;
 }
+
 .main_progress_box {
   padding: 30px 30px;
   // background-color: white;
@@ -443,7 +456,7 @@ a:not([href]):not([tabindex]) {
     width: 100%;
 
     @media (max-width:449px) {
-      flex-direction: column!important;
+      flex-direction: column !important;
     }
 
     .progress_data_box {
@@ -464,7 +477,7 @@ a:not([href]):not([tabindex]) {
 .recommendation_frca_box {
   padding: 12px 15px;
   border-radius: 8px 8px;
-  background:  rgba(246, 153, 83, 0.2);
+  background: rgba(246, 153, 83, 0.2);
 
   .post_image_box {
     img {
@@ -480,14 +493,14 @@ a:not([href]):not([tabindex]) {
 }
 
 a.work_order_link {
-  text-decoration: underline!important;
+  text-decoration: underline !important;
 }
 
 // recommendation_box notification
 .recommendation_box {
   padding: 12px 15px;
   border-radius: 8px 8px;
-  background:rgba(241,226,213, 0.479);
+  background: rgba(241, 226, 213, 0.479);
 
   .info_icon {
     margin-right: 10px;
@@ -498,6 +511,7 @@ a.work_order_link {
     text-decoration: underline;
   }
 }
+
 ::ng-deep .comp-search {
   .mat-form-field-infix {
     padding: 6px 8px 12px !important;
@@ -512,12 +526,13 @@ a.work_order_link {
   padding: 0 12px;
   height: 42px;
   margin: 5px 0 0;
-  color: #fff!important;
+  color: #fff !important;
 
-  @include breakpoint-s  {
+  @include breakpoint-s {
     margin-top: 5px;
   }
-  @include breakpoint-xs  {
+
+  @include breakpoint-xs {
     margin-top: 5px;
     width: 130px;
   }
@@ -532,9 +547,11 @@ ul.tagIconList {
   list-style: none;
   vertical-align: middle;
 }
+
 ul.tagIconList li {
   float: left;
 }
+
 ul.tagIconList li span {
   width: 8px;
   margin-left: 3px;
@@ -542,19 +559,24 @@ ul.tagIconList li span {
   border-radius: 2px 2px;
   display: block;
 }
+
 span.activeTagIcon {
   background-color: #0074B6;
   border: 2px solid #0074B6;
 }
+
 span.activeLevelIcon {
   background-color: #1D8923;
   border: 2px solid #1D8923;
 }
+
 span.deactiveLevelIcon {
   background-color: rgba(0, 0, 0, 0.08);
   border: 2px solid #D13924;
 }
-span.disableTagIcon, span.disableLevelIcon {
+
+span.disableTagIcon,
+span.disableLevelIcon {
   background-color: rgba(0, 0, 0, 0.08);
   border: 2px solid rgba(0, 0, 0, 0.08);
 }
@@ -564,12 +586,13 @@ span.disableTagIcon, span.disableLevelIcon {
 
   .card_inner_title_box {
     width: 35%;
+
     @include breakpoint-xs {
       word-wrap: break-word;
       white-space: initial;
     }
   }
-  
+
   .proficiency_text_box {
     width: 35%;
   }
@@ -603,9 +626,11 @@ span.disableTagIcon, span.disableLevelIcon {
 p.deactivate_text {
   opacity: 0.4;
 }
+
 h4.main_text {
   margin-bottom: 4px;
 }
+
 p.proficiency_text {
   font: 400 12px/16px Lato;
   letter-spacing: 0.25px;
@@ -615,7 +640,7 @@ p.proficiency_text {
 .recommendation_frca_box {
   padding: 12px 15px;
   border-radius: 8px 8px;
-  background:  rgba(246, 153, 83, 0.2);
+  background: rgba(246, 153, 83, 0.2);
 
   .post_image_box {
     img {
@@ -644,7 +669,7 @@ p.proficiency_text {
   margin-left: 4px;
 }
 
-::ng-deep.desired-card{
+::ng-deep.desired-card {
   width: 70% !important;
   margin-right: 5%;
 }

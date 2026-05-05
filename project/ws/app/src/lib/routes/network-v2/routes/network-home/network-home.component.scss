@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .margin-l-0 {
   margin-left: 0;
@@ -140,6 +140,7 @@
 .see_all_btn {
   text-align: right;
 }
+
 .network_right {
   margin-left: 18px;
 }
@@ -152,6 +153,7 @@
 .card-with-bottom-border:last-child {
   border: none;
 }
+
 @media only screen and (max-width:768px) {
   .card-scroll {
     align-items: stretch;

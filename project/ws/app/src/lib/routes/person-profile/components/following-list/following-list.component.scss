@@ -1,4 +1,4 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .boxshadowcard {
   //box-shadow: 0 5px 15px rgba(0, 0, 0, .1) !important;

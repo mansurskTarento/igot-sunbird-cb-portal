@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $medium-badge-size: 130px;
 $small-badge-size: 50px;
@@ -26,7 +26,8 @@ mat-card {
 
 .badge-recent {
   // padding-right: 20px;
-  padding-left:10px;
+  padding-left: 10px;
+
   @include breakpoint-lt-m {
     margin-top: 20px;
   }
@@ -61,8 +62,7 @@ mat-card {
     flex-wrap: wrap;
   }
 
-  @include breakpoint-lt-m {
-  }
+  @include breakpoint-lt-m {}
 }
 
 .intro-mat-card {
@@ -80,6 +80,7 @@ mat-card {
     padding: 10px;
   }
 }
+
 .rotate {
   animation: rotation 1s infinite linear;
 }
@@ -92,6 +93,7 @@ mat-card {
 
 .intro-text {
   display: flex;
+
   @media only screen and (max-width: 530px) {
     flex-wrap: wrap;
   }
@@ -105,8 +107,9 @@ mat-card {
 
 .text-light {
   font-weight: 200;
-   @media only screen and (max-width: 432px) {
-     font-weight: 100;
+
+  @media only screen and (max-width: 432px) {
+    font-weight: 100;
   }
 }
 
@@ -187,6 +190,7 @@ mat-card {
   @include breakpoint-xs {
     margin: 0;
   }
+
   z-index: 1;
 }
 
@@ -201,29 +205,29 @@ mat-card {
   position: relative;
   padding-left: 20px;
 
-  @media only screen and (max-width: 520px) {
-  }
+  @media only screen and (max-width: 520px) {}
 
-   @media only screen and (max-width: 432px) {
-      padding-left: 0px;
+  @media only screen and (max-width: 432px) {
+    padding-left: 0px;
   }
 }
 
 .mat-h2 {
   margin: 0;
 }
+
 .op-80 {
   opacity: 0.8;
 }
 
-.dimension{
-    @media only screen and (max-width: 432px) {
-     height: 247px;
+.dimension {
+  @media only screen and (max-width: 432px) {
+    height: 247px;
   }
 }
 
-.dimensionBadge{
-   @media only screen and (max-width: 432px) {
-       height:278px;
+.dimensionBadge {
+  @media only screen and (max-width: 432px) {
+    height: 278px;
   }
 }

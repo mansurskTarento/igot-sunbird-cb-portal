@@ -1,7 +1,7 @@
 @use '@sunbird-cb/design-system/src/styles/ws-common';
 // @use '@sunbird-cb/design-system/src/styles/ws-vars';
 @use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
 
 // todays event card css
 .event-card-portrait {

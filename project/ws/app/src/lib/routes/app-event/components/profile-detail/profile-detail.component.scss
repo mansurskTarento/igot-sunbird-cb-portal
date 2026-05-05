@@ -1,4 +1,4 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .top-margin {
   background-color: grey;
@@ -6,57 +6,72 @@
   padding-bottom: 4rem;
   padding-right: 6rem;
   padding-left: 6rem;
+
   @media only screen and (min-width: 768px) and (max-width: 1024px) {
     padding-right: 2rem;
     padding-left: 2rem;
   }
-   @media only screen  and (max-width: 767px){
-    padding:0;
+
+  @media only screen and (max-width: 767px) {
+    padding: 0;
   }
 }
-.card-content{
-  padding:2rem!important;
-  @include breakpoint-lt-m{
+
+.card-content {
+  padding: 2rem !important;
+
+  @include breakpoint-lt-m {
     padding: 0 !important;
     width: 95%;
     margin: auto
   }
-  @include breakpoint-xs{
+
+  @include breakpoint-xs {
     width: 95%;
     margin: auto;
   }
 }
-.w-auto{
-  width:auto ;
+
+.w-auto {
+  width: auto;
 }
-.mat-display-1{
+
+.mat-display-1 {
   margin-bottom: 0.5rem !important;
 }
-.header-1{
+
+.header-1 {
+
   // width:50%!important;
-  @include breakpoint-lt-m{
-     width:100%!important;
+  @include breakpoint-lt-m {
+    width: 100% !important;
   }
 }
-.header-2{
+
+.header-2 {
+
   // width:50%!important;
   // margin-left:3%;
-  @include breakpoint-lt-m{
-     width:100%!important;
-      margin-left:0;
+  @include breakpoint-lt-m {
+    width: 100% !important;
+    margin-left: 0;
   }
 }
-.w-50{
+
+.w-50 {
   width: 48%;
-  @include breakpoint-xs{
+
+  @include breakpoint-xs {
     width: 100%;
     margin: auto auto 30px auto;
   }
-  @include breakpoint-s{
+
+  @include breakpoint-s {
     width: 100%;
     margin: auto;
   }
 }
+
 // .sub {
 //   width:50%;
 //   @include breakpoint-lt-m {
@@ -67,6 +82,7 @@
   margin-top: 2rem !important;
   margin-bottom: 2rem !important;
 }
+
 .mat-divider {
   position: relative !important;
   margin-top: 1rem;
@@ -81,25 +97,31 @@
 .profile-image {
   // width: 50%;
   height: 23.5rem;
+
   @include breakpoint-lt-m {
     width: 100%;
   }
-  @include breakpoint-xs{
+
+  @include breakpoint-xs {
     margin: 20px 0;
   }
-  @include breakpoint-s{
+
+  @include breakpoint-s {
     margin: 20px 0;
   }
 }
-.profile{
-  margin-left:3%;
-  width:50%;
+
+.profile {
+  margin-left: 3%;
+  width: 50%;
+
   @include breakpoint-lt-m {
     width: 100%;
-    margin-left:0;
+    margin-left: 0;
     margin-top: 1rem;
   }
 }
+
 .a-tag {
   @media only screen and (max-width: 767px) {
     width: 16rem;
@@ -108,47 +130,57 @@
     text-overflow: ellipsis;
   }
 }
+
 .main {
   @include breakpoint-lt-m {
     flex-wrap: wrap;
   }
+
   @media only screen and (max-width: 767px) {
     padding: 0 !important;
   }
 }
-.profBlock{
-  @include breakpoint-xs{
+
+.profBlock {
+  @include breakpoint-xs {
     flex-direction: column-reverse;
   }
-  @include breakpoint-s{
+
+  @include breakpoint-s {
     flex-direction: column-reverse;
   }
 }
 
 
 // USER CARD DETAILS
-.userCard{
+.userCard {
   text-align: center;
 }
-.userDetail{
+
+.userDetail {
   width: 16%;
   margin: auto auto 30px auto;
-  @include breakpoint-s{
+
+  @include breakpoint-s {
     width: 32% !important;
   }
-  @include  breakpoint-xs{
+
+  @include breakpoint-xs {
     width: 45% !important;
   }
 }
-.userImage{
+
+.userImage {
   // width:50%;
   margin: auto;
 }
-.circular-image{
+
+.circular-image {
   border-radius: 50%;
   width: 100px;
   height: 100px;
 }
-.userdetailHead{
+
+.userdetailHead {
   margin: auto 0;
 }

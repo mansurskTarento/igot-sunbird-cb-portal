@@ -1,7 +1,7 @@
 @use '@sunbird-cb/design-system/src/styles/ws-common';
 // @use '@sunbird-cb/design-system/src/styles/ws-vars';
 @use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
 
 $secondary-color: #EF951E;
 
@@ -1941,6 +1941,7 @@ $title-line-count: 2;
   // margin-left: auto;
   flex-shrink: 0;
 }
+
 .knowledge-level-btn {
   display: flex;
   align-items: center;

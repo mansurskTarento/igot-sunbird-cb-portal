@@ -1,4 +1,5 @@
-@import "ws-vars";
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .treemode-slider {
   text-align: right;
@@ -18,9 +19,11 @@
 .toc-tree-invisible {
   display: none;
 }
+
 .margin-0 {
   margin: 0 !important;
 }
+
 .toc-tree {
   padding-inline-start: 0px;
 
@@ -54,10 +57,12 @@ app-content-icon {
   height: auto !important;
   margin: auto;
 }
+
 .pad-ztb {
   padding: #{$size-s / 4} 0 #{$size-s / 4} 0;
   border-bottom: 0.5px solid;
 }
+
 .flat-list-content {
   display: flex;
   align-items: center;
@@ -93,10 +98,12 @@ app-content-icon {
   margin: $size-s 0;
   padding: 0 $size-s 0 0;
   width: 100%;
+
   ws-display-content-type-icon {
     display: flex;
     align-items: center;
   }
+
   .resource-meta {
     margin-left: $size-s;
     display: flex;
@@ -113,7 +120,7 @@ app-content-icon {
   margin-left: 4px;
 }
 
-.player-content  {
+.player-content {
   ::ng-deep .mat-tab-labels {
     height: 50px;
   }
@@ -171,7 +178,7 @@ app-content-icon {
 }
 
 ::ng-deep .section-dd-container .mat-form-field-type-mat-native-select .mat-form-field-infix::after {
-  top:35% !important;
+  top: 35% !important;
   right: 15% !important;
 }
 

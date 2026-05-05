@@ -1,5 +1,5 @@
-@import 'ws-common';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .nav-container {
   position: relative;

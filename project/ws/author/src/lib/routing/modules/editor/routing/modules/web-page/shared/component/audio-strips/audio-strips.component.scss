@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .view-more {
   display: flex;
@@ -28,14 +28,14 @@
   margin: 0px .75rem;
 }
 
-.delete-button{
+.delete-button {
   position: absolute;
   top: 0px;
   right: 0px;
   z-index: 100;
 }
 
-.large-icon{
+.large-icon {
   font-size: 32px !important;
   height: 32px;
   width: 32px;
@@ -48,6 +48,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
   mat-icon {
     width: 36px;
     height: 36px;

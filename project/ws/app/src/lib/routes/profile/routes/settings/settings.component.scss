@@ -1,28 +1,37 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 .thirty {
   width: 30%;
   float: left;
-  height:100px; /*height of your image*/
-  margin:0; /* If you want no margin */
-  padding:0; /*if your want to padding */
+  height: 100px;
+  /*height of your image*/
+  margin: 0;
+  /* If you want no margin */
+  padding: 0;
+  /*if your want to padding */
 }
 
-.seventy{
+.seventy {
   width: 100%;
   display: block;
   float: right;
 
 }
-.min-heigh{
+
+.min-heigh {
   min-height: 200px;
 }
-.mh24{
+
+.mh24 {
   min-height: 24%;
 }
-.mh55{
+
+.mh55 {
   min-height: 55%;
 }
+
 .user-settings-container {
   @extend %page-center;
   padding: $size-m;
@@ -35,6 +44,7 @@
 
   .width-content-lang {
     width: 240px;
+
     @include breakpoint-xs {
       width: 100%;
     }
@@ -43,6 +53,7 @@
 
 .theme-mode {
   width: 45%;
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -50,6 +61,7 @@
 
 .mode-toggle {
   width: 45%;
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -62,6 +74,7 @@
   margin-bottom: $size-l;
   list-style: none;
   cursor: pointer;
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -96,14 +109,17 @@
   @extend %common-typography;
   font-size: 12px;
 }
+
 .content-v-center {
   display: flex;
   align-items: center;
 }
+
 .typography-font-normal {
   @extend %common-typography;
   font-size: 14px;
 }
+
 .typography-font-large {
   @extend %common-typography;
   font-size: 16px;
@@ -116,6 +132,7 @@
 .domain-drop-down-width {
   width: 200px;
 }
+
 .home-card-1 {
   border-radius: 4px;
   padding: 0;
@@ -132,6 +149,7 @@
     display: flex;
   }
 }
+
 .home-card-2 {
   border-radius: 4px;
   padding: 0;
@@ -148,7 +166,8 @@
 
   }
 }
-.home-card-3{
+
+.home-card-3 {
   border-radius: 4px;
   padding: 0;
   margin-bottom: 20px;
@@ -181,20 +200,21 @@
   }
 }
 
-.radio-select{
+.radio-select {
   border: 2px solid #0174B6;
   padding: 15px 10px 15px 10px;
   border-radius: 5px;
   background: #f2f8fB;
 }
-.radio-select-2{
+
+.radio-select-2 {
   border: 2px solid #0174B6;
   border-radius: 5px;
   background: #F2F8FB;
 }
 
 
-.comming-soon{
+.comming-soon {
   padding: 15px 20px 15px 15px;
   border-radius: 5px;
   background: #FDEBDE;
@@ -204,20 +224,23 @@
   vertical-align: middle;
   padding-right: 10px;
 }
-.wid-50{
+
+.wid-50 {
   width: 50% !important;
 }
-.theme-radio{
+
+.theme-radio {
   display: inline-block;
   width: 74%;
   border: 2px solid #0174B6;
   padding: 15px 10px 10px 10px;
-  border-radius: 5px 5px 0 0 ;
+  border-radius: 5px 5px 0 0;
 }
-.theme-img{
+
+.theme-img {
   width: -webkit-fill-available;
-    /* height: 13%; */
-    max-width: 80%;
+  /* height: 13%; */
+  max-width: 80%;
 }
 
 .mat-radio-button {

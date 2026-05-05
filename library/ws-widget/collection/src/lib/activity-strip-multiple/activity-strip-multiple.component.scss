@@ -1,5 +1,6 @@
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+
+@use '@sunbird-cb/design-system/src/styles/_ws-common.scss';
 
 .container-balanced {
   @extend %page-center;

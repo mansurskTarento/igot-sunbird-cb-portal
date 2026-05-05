@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .mat-card-header-text {
   width: 100%;
@@ -14,9 +14,11 @@
   align-content: center;
   text-align: center;
 }
-.min-height{
+
+.min-height {
   min-height: 25vh;
 }
+
 .text-box {
   display: flex;
   border: 1px solid;

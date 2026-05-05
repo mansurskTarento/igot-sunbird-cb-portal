@@ -1,34 +1,42 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .bg-grey {
-    background: #EDEDED 0% 0% no-repeat padding-box;
-    border-radius: 8px;
-    height: 100%;
-  }
-  .w-full {
-    width: 100%;
-  }
-  .salutation-width {
-    width: 22%;
-    margin-right: 3%;
-    @include breakpoint-xs {
-      width: 100%;
-    }
-    @include breakpoint-s {
-     width: 100%;
-    }
-  }
-.first-name-width {
-  width: 75%;
+  background: #EDEDED 0% 0% no-repeat padding-box;
+  border-radius: 8px;
+  height: 100%;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.salutation-width {
+  width: 22%;
+  margin-right: 3%;
+
   @include breakpoint-xs {
     width: 100%;
   }
+
   @include breakpoint-s {
-   width: 100%;
+    width: 100%;
   }
 }
+
+.first-name-width {
+  width: 75%;
+
+  @include breakpoint-xs {
+    width: 100%;
+  }
+
+  @include breakpoint-s {
+    width: 100%;
+  }
+}
+
 //////////
 .loader-container {
   position: fixed;
@@ -75,6 +83,7 @@
     opacity: 0;
   }
 }
+
 //   .profile-box .mat-form-field.salutation-form-field {
 //   width:80%;
 // }
@@ -82,45 +91,53 @@
   padding: 1rem 3rem;
   margin: 0px 10px !important;
   min-height: 500px;
+
   @include breakpoint-xs {
     box-sizing: border-box;
-    margin-left:0!important;
+    margin-left: 0 !important;
     padding: 1rem 1rem;
   }
+
   // @include breakpoint-m {
   //   box-sizing: border-box;
   //   margin: 0px !important;
   // }
   @include breakpoint-s {
     box-sizing: border-box;
-    margin-left:0!important;
+    margin-left: 0 !important;
     padding: 1rem 1rem;
   }
 
-      // &:first-child {
-      //   margin: 0px 10px 0px 0px !important;
-      // }
+  // &:first-child {
+  //   margin: 0px 10px 0px 0px !important;
+  // }
 }
+
 .name-div {
   @include breakpoint-xs {
     flex-direction: column;
   }
+
   @include breakpoint-s {
     flex-direction: column;
   }
 }
+
 .input-wrapper {
-    // flex: 1;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: column;
-  }
-  .profile-box .mat-form-field {
-    width: 100%;
+  // flex: 1;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
 }
+
+.profile-box .mat-form-field {
+  width: 100%;
+}
+
 .ehrms-form {
-    width: 100%;
+  width: 100%;
 }
+
 .ehrms-profile-link {
   height: 90px;
   width: 90px;
@@ -133,13 +150,15 @@
   position: relative;
 
   @include breakpoint-xs {
-    margin:0px auto;
+    margin: 0px auto;
   }
+
   @include breakpoint-s {
-    margin:0px auto;
+    margin: 0px auto;
   }
-  
+
 }
+
 .ehrms-profile-img {
   // height: 94px;
   // object-fit: cover;
@@ -154,6 +173,7 @@
   @include breakpoint-xs {
     flex-direction: column;
   }
+
   // @include breakpoint-m {
   //   flex-direction: column;
   //   box-sizing: border-box;
@@ -162,55 +182,71 @@
     flex-direction: column;
   }
 }
+
 .box-responsive-rightDiv {
   padding-bottom: 222px;
+
   @include breakpoint-xs {
     padding-bottom: 0px;
   }
+
   @include breakpoint-s {
     padding-bottom: 0px;
   }
+
   // @include breakpoint-m {
   //   padding-bottom: 0px;
   // }
 }
+
 .text-width {
   width: 15%;
 }
+
 .text-width-img {
   height: 90px;
   object-fit: cover;
   object-position: center;
   background-color: #DDDBDD;
 }
+
 .text-width-salutation1 {
   width: 68%;
+
   @include breakpoint-xs {
     width: 20%;
   }
+
   @include breakpoint-s {
     width: 20%;
   }
 }
+
 .text-width-salutation2 {
   width: 20%;
 }
+
 .text-width-add {
   width: 25%;
 }
+
 .box-responsive-rightDiv1 {
   padding-bottom: 150px;
+
   @include breakpoint-xs {
     padding-bottom: 0px;
   }
+
   @include breakpoint-s {
     padding-bottom: 0px;
   }
 }
+
 .bg-grey-skeleton {
   border-radius: 8px;
   height: 100%;
 }
+
 .default-text-field {
   font-size: 14px;
   border: 2px solid lightgrey;
@@ -222,17 +258,19 @@
   padding: 10px 0px 0px 7px;
   margin-bottom: 15px;
   word-break: break-all;
-    white-space: initial;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1;
-    -webkit-box-orient: vertical;
-    min-height: 24px;
+  white-space: initial;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  min-height: 24px;
+
   @include breakpoint-xs {
     height: auto;
     padding: 5px;
   }
+
   // @include breakpoint-m {
   //   // padding: 1px 0px 0px 8px;
   //   height: auto;
@@ -243,11 +281,13 @@
     padding: 5px;
   }
 }
+
 .text-field-disable {
   background-color: #edebeb;
   pointer-events: none;
 
 }
+
 .initials {
   color: #ffffff;
   font-size: 20px;
@@ -255,6 +295,7 @@
   letter-spacing: 0.2625px;
   border-radius: 50%;
 }
+
 .ehrms-profile-link-initials {
   overflow: hidden;
   display: flex;
@@ -262,39 +303,45 @@
   width: 100px;
 
   @include breakpoint-xs {
-    margin:0px auto;
+    margin: 0px auto;
   }
+
   @include breakpoint-s {
-    margin:0px auto;
+    margin: 0px auto;
   }
 }
+
 .ehrms-profile-img-initials {
-    height: 90px;
-    width: 90px;
-    border-radius: 50%;
-    background-color: rgb(0, 0, 0);
-    color: white;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 90px;
+  width: 90px;
+  border-radius: 50%;
+  background-color: rgb(0, 0, 0);
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 .profile-name-initial {
-    font-size: 25px;
-    line-height: 20px;
-    padding-top: 8px;
-    letter-spacing: .2625px;
+  font-size: 25px;
+  line-height: 20px;
+  padding-top: 8px;
+  letter-spacing: .2625px;
 }
+
 ::ng-deep .text-field-disable .mat-form-field-outline {
   min-height: 40px;
   background: rgba(0, 0, 0, 0.04) !important;
   border-radius: 8px;
 }
+
 .api-error-text {
   text-align: center;
   // position: relative;
   // top: 50%;
 }
+
 .err-text {
   font-size: 18px;
 }

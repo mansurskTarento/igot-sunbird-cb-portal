@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .font-family {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell,
@@ -70,9 +70,11 @@ $title-line-height: 1.3em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
 .width-75 {
   width: 75%;
 }
+
 .heightgroup {
   max-height: 250px !important;
   min-height: 250px !important;

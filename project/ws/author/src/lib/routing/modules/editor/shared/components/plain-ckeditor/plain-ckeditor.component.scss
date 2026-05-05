@@ -1,4 +1,4 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 ::ng-deep .cke_button__uploadimage_icon {
   background-position: 0 -672px !important;

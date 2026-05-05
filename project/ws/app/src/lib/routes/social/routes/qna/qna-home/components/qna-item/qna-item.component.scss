@@ -1,5 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $color-accepted-answer: #5fba7d;
 
@@ -41,18 +42,22 @@ $color-accepted-answer: #5fba7d;
 .question-section {
   flex: 1;
   min-width: 1px;
+
   .question-title {
     display: flex;
     justify-content: space-between;
+
     @include breakpoint-xs {
       padding-top: 12px;
     }
   }
+
   .question-text {
     margin-bottom: $size-xs;
     line-height: 1.28;
     font-weight: 400;
   }
+
   .meta-details {
     display: flex;
     align-items: center;

@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .start-card {
   // width: 40%;
@@ -24,6 +24,7 @@
     flex: auto;
   }
 }
+
 .circle-red {
   height: 14px;
   width: 14px;
@@ -31,6 +32,7 @@
   border-radius: 50%;
   display: inline-block;
 }
+
 .circle-orange {
   height: 14px;
   width: 14px;
@@ -38,6 +40,7 @@
   border-radius: 50%;
   display: inline-block;
 }
+
 .circle-brown {
   height: 14px;
   width: 14px;

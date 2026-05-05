@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .rating-value {
   font-size: 54px;
@@ -31,7 +32,7 @@
     background: red;
   }
 }
-  
+
 ::ng-deep.theme-igot.day-mode .rating-bar .mat-progress-bar-fill::after {
   background: $colorOrange;
   border-radius: 12px;

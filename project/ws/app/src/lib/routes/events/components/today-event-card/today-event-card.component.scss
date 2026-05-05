@@ -1,21 +1,24 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .today-event-card {
   flex: 1;
+
   // height: calc(100% - 2rem);
-  &.mat-card{
+  &.mat-card {
     // flex-direction: column;
     display: flex;
     width: 91%;
     min-height: 112px;
   }
-  .mat-card-footer{
+
+  .mat-card-footer {
     justify-self: flex-end;
     align-items: center;
   }
-  .mat-card-header{
+
+  .mat-card-header {
     display: block !important;
   }
 }
@@ -35,17 +38,19 @@
   white-space: nowrap;
   display: block !important;
 }
+
 .bg-black {
-  background-color: rgb(0,0,0) !important;
+  background-color: rgb(0, 0, 0) !important;
 }
 
 .no-box-shadow {
-  box-shadow:none !important;
+  box-shadow: none !important;
 }
 
 .light-font {
   color: #fff;
 }
+
 // .dot:before {
 //   content: '•';
 //   margin: 1rem;
@@ -126,6 +131,7 @@
 
 .mat-subheading-1 {
   font-size: 14px;
+
   .light-font {
     color: #fff;
   }
@@ -141,14 +147,17 @@
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid #fcf8f8;
+
   img {
     height: 116px;
     width: 100%;
   }
 }
+
 .databox {
   width: 55%;
 }
+
 .event-type {
   border: 1px solid #ef951e;
   background: rgba(239, 149, 30, 0.05);
@@ -203,18 +212,19 @@ button.ws-mat-primary-background {
   width: 16px;
   vertical-align: baseline;
 }
+
 ::ng-deep.mat-raised-button {
   font-weight: 500 !important;
 }
 
 @media screen and (max-width: 768px) {
   .today-event-card {
-    &.mat-card{
-      width: auto!important;
+    &.mat-card {
+      width: auto !important;
     }
   }
+
   .imgbox {
     width: 115px
   }
 }
-

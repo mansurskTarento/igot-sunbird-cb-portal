@@ -1,5 +1,5 @@
-// @import 'ws-vars';
-// @import 'ws-mixins';
+// @use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+// @use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;;
 $size-xs: 8px;
 $size-s: 12px;
 $size-m: 16px;
@@ -54,10 +54,12 @@ $card-standard-width: 268px;
   pointer-events: auto;
   cursor: pointer;
 }
-.no-information-found{
+
+.no-information-found {
   text-align: center;
   padding: 10px;
 }
+
 .status-danger {
   @extend %content-status;
   background: #ce3939;
@@ -653,24 +655,26 @@ $title-line-count: 2;
   margin-top: 10px;
   min-height: 20px;
 }
-.titleclass{
+
+.titleclass {
   text-align: center;
 }
+
 .searchText {
   display: flex;
   flex-direction: row-reverse;
   margin: 23px 0 0 auto;
 }
 
-.action-btn{
+.action-btn {
   border: none;
   background: transparent;
 }
 
-mat-header-row{
+mat-header-row {
   min-height: 40px;
 }
 
-.mat-header-cell{
+.mat-header-cell {
   background-color: #F5F5F5;
 }

@@ -1,4 +1,4 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 mat-card-content {
   width: -webkit-fill-available;

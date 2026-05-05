@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .card-container {
   height: 192px;
@@ -19,6 +19,7 @@
   padding: 0 $size-m;
   height: 75px;
 }
+
 .name-container-inner {
   height: 65px;
   box-sizing: border-box;
@@ -65,6 +66,7 @@
   bottom: 0;
   left: 0;
 }
+
 .connect_btn {
   width: 230px;
   border-radius: 20px;

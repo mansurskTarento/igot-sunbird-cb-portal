@@ -1,37 +1,40 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .card-container {
     // height: 231px;
     height: 215px;
-    width:  268px;
+    width: 268px;
     // overflow: hidden;
-    border: 1px solid rgba(0,0,0,8%);
+    border: 1px solid rgba(0, 0, 0, 8%);
     border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,.08);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, .08);
 }
 
-.photo-container{
+.photo-container {
     // background: #F8F4F9;
     background-color: #fff;
     // padding: $size-m 0;
 }
 
-.name-container{
+.name-container {
     padding: $size-m $size-l;
     height: 75px;
 }
+
 .name-container-inner {
     height: 65px;
     box-sizing: border-box;
 }
-.name{
+
+.name {
     font-size: 16px;
     line-height: 24px;
     text-transform: capitalize;
 }
-.designation{
+
+.designation {
     line-height: 21px;
     height: 60px;
     overflow: hidden;
@@ -40,15 +43,17 @@
     word-wrap: break-word;
     overflow: hidden;
 }
-.action-container{
+
+.action-container {
     padding: $size-m 0;
     // position: absolute;
     position: relative;
-    bottom: 0; 
+    bottom: 0;
     left: 0;
 }
+
 .connect_btn {
-    width:230px;
+    width: 230px;
     border-radius: 20px;
 }
 
@@ -58,5 +63,5 @@
 }
 
 .focus-btn {
-    border: 1px solid #1B4CA1!important;
+    border: 1px solid #1B4CA1 !important;
 }

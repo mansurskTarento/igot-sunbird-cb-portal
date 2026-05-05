@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 $border-color: rgba(0, 0, 0, 0.0784313725);
 
 @mixin custom-mat-icon($font-size: 20px, $width: 20px, $height: 20px) {

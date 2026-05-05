@@ -1,5 +1,5 @@
-@use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
 @use '@sunbird-cb/design-system/src/styles/ws-common';
+@use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
 
 .container-balanced {
   @extend %page-center;
@@ -21,11 +21,13 @@
     margin-bottom: 8px;
   }
 }
-.default-icon{
+
+.default-icon {
   font-size: 22px;
   margin-top: 3px;
   margin-left: 6px;
 }
+
 .mob {
   @include breakpoint-767 {
     display: none;

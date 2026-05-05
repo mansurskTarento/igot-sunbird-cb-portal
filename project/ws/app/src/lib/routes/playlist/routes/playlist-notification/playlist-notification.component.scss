@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-mixins';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .notificaton-circle {
   height: $size-l;

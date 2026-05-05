@@ -1,12 +1,15 @@
-@import "ws-mixins";
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+
 .no-shadow {
     box-shadow: none !important;
 }
+
 .certificate-banner-image {
     height: 30rem;
     display: flex;
     width: auto;
     margin: 0px auto;
+
     @include breakpoint-lt-l {
         width: 100%;
         height: auto;
@@ -20,6 +23,7 @@
     overflow-x: hidden;
     // border: 2px solid;
 }
+
 .certificate-img-content {
     overflow: hidden;
 }
@@ -44,6 +48,7 @@ a.download_btn {
     font-size: 16px;
     vertical-align: text-top;
 }
+
 ::ng-deep .close-button {
     float: right;
     top: -16px;
@@ -57,7 +62,7 @@ a.download_btn {
 
 ::ng-deep .close-icon {
     transition: 1s ease-in-out;
-    color:#fff !important
+    color: #fff !important
 }
 
 ::ng-deep .close-icon:hover {
@@ -72,6 +77,7 @@ a.download_btn {
     top: 19px;
     right: 18px;
 }
+
 ::ng-deep .icon-outside .mat-dialog-container {
     overflow: unset;
 }
@@ -83,14 +89,15 @@ a.download_btn {
 // }
 
 ::ng-deep .cdk-overlay-pane {
-    max-height: 96%!important;
-    overflow-y: auto!important;
+    max-height: 96% !important;
+    overflow-y: auto !important;
 }
 
 .certificate-banner-image {
     svg {
         width: 500;
         height: 500;
+
         @include breakpoint-lt-l {
             width: auto;
             height: auto;
@@ -98,7 +105,8 @@ a.download_btn {
         }
     }
 }
-.btn-custom{
+
+.btn-custom {
     box-sizing: border-box;
     position: relative;
     -webkit-user-select: none;
@@ -130,7 +138,7 @@ a.download_btn {
 }
 
 @media screen and (max-width: 1200px) {
-    .btn-custom{
+    .btn-custom {
         box-sizing: border-box;
         position: relative;
         -webkit-user-select: none;
@@ -155,7 +163,7 @@ a.download_btn {
     }
 
     .gap-4 {
-        grid-gap: 0rem; 
+        grid-gap: 0rem;
         gap: 0rem;
     }
 }

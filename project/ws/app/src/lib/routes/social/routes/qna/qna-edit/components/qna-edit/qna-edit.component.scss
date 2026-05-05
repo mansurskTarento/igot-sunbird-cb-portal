@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .editor-wrapper {
   max-width: 700px;
@@ -36,7 +36,7 @@
   margin-top: $size-m;
   padding: 0 24px;
   border: 1px solid;
-      border-radius: 8px;
+  border-radius: 8px;
 }
 
 .error-text {

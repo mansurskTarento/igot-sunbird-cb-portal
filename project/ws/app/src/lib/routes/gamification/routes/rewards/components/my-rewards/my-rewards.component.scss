@@ -1,13 +1,13 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $content-margin-left: 60px;
 
 mat-card {
   margin-bottom: 12px;
   background: #102b4e !important;
-  color:white !important;
+  color: white !important;
 }
 
 .intro {
@@ -18,13 +18,12 @@ mat-card {
     flex-wrap: wrap;
   }
 
-   @media only screen and (max-width: 432px) {
-   display: block;
-   margin: 4%;
+  @media only screen and (max-width: 432px) {
+    display: block;
+    margin: 4%;
   }
 
-  @include breakpoint-lt-m {
-  }
+  @include breakpoint-lt-m {}
 }
 
 .intro-mat-card {
@@ -46,6 +45,7 @@ mat-card {
 
 .intro-text {
   display: flex;
+
   @media only screen and (max-width: 530px) {
     flex-wrap: wrap;
   }
@@ -59,8 +59,9 @@ mat-card {
 
 .text-light {
   font-weight: 200;
-   @media only screen and (max-width: 432px) {
-     font-weight: 100;
+
+  @media only screen and (max-width: 432px) {
+    font-weight: 100;
   }
 }
 
@@ -80,7 +81,7 @@ mat-card {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin:20px;
+  margin: 20px;
 }
 
 .headings {
@@ -102,6 +103,7 @@ mat-card {
 .text-hover {
   margin-top: 0px;
   margin-left: 18px;
+
   @include breakpoint-xs {
     font-size: 0.8em;
   }
@@ -130,6 +132,7 @@ mat-card {
   @include breakpoint-xs {
     margin: 0;
   }
+
   z-index: 1;
 }
 
@@ -144,25 +147,26 @@ mat-card {
   position: relative;
   padding-left: 20px;
 
-  @media only screen and (max-width: 520px) {
-  }
+  @media only screen and (max-width: 520px) {}
 
-   @media only screen and (max-width: 432px) {
-      padding-left: 0px;
+  @media only screen and (max-width: 432px) {
+    padding-left: 0px;
   }
 }
 
 .mat-h2 {
   margin: 0;
 }
+
 .op-80 {
   opacity: 0.8;
 }
 
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .notifications-container {
-   margin: 20px 20px;
+  margin: 20px 20px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 8px;
   padding: 0;
@@ -177,53 +181,53 @@ mat-card {
     .group-name {
       font-weight: 400;
       margin: 0;
-      color:white;
+      color: white;
     }
   }
 }
+
 .event-name {
   font-weight: 500;
   margin: 3%;
   width: 348px;
-   @media only screen and (max-width: 432px) {
 
-  }
+  @media only screen and (max-width: 432px) {}
 }
 
-.progress-style{
-    width: 160px;
-    border-radius: 8px;
-    height: 15px;
-    margin-left: 5%;
-    margin-right: 5%;
+.progress-style {
+  width: 160px;
+  border-radius: 8px;
+  height: 15px;
+  margin-left: 5%;
+  margin-right: 5%;
 }
 
-.box{
+.box {
   align-items: center;
   display: flex;
 }
 
-.align{
+.align {
   align-items: center;
 }
 
-.align-center{
+.align-center {
   text-align: center;
 }
 
-.child-display{
+.child-display {
   display: inline-block;
 }
 
-.margin-small{
-   @media only screen and (max-width: 432px) {
-     padding-bottom: 40px;
+.margin-small {
+  @media only screen and (max-width: 432px) {
+    padding-bottom: 40px;
   }
 }
 
-.align-items{
-   @media only screen and (max-width: 432px) {
-     text-align: center;
+.align-items {
+  @media only screen and (max-width: 432px) {
+    text-align: center;
   }
 }
 
@@ -241,12 +245,12 @@ mat-card {
 }
 
 
-.display-items{
-   @media only screen and (max-width: 432px) {
+.display-items {
+  @media only screen and (max-width: 432px) {
     display: inline-block;
   }
 }
 
-.flex-align{
+.flex-align {
   flex-wrap: wrap;
 }

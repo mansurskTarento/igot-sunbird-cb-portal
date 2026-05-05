@@ -1,27 +1,30 @@
-@import 'ws-common';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
-.align{
+.align {
   display: inline-block !important;
   width: 610px;
-   @media only screen and (max-width: 432px) {
-      width: 480px;
+
+  @media only screen and (max-width: 432px) {
+    width: 480px;
   }
 }
 
-.width{
+.width {
   width: 40%;
 }
-.dimensions{
-  margin-top:20px;
+
+.dimensions {
+  margin-top: 20px;
   margin-left: 50%;
-   @media only screen and (max-width: 432px) {
-      margin-left: 10%;
+
+  @media only screen and (max-width: 432px) {
+    margin-left: 10%;
   }
 }
 
-.border{
-  border:1px solid;
+.border {
+  border: 1px solid;
 }
 
 .flat-error-alert {
@@ -76,6 +79,7 @@
   .mat-form-field-wrapper {
     padding-bottom: 0px !important;
   }
+
   .mat-form-field-infix {
     border-top-width: 2px !important;
   }
@@ -89,6 +93,7 @@
   right: 0;
   min-height: calc(100vh - 164px);
 }
+
 .vertical-align {
   vertical-align: text-bottom;
 }

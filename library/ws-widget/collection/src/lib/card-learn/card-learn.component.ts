@@ -2,10 +2,11 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
-import { NSSearch, NsContent } from '@sunbird-cb/collection'
 import { SearchApiService } from '../_services/search-api.service'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
+import { NSSearch } from '../_services/widget-search.model'
+import { NsContent } from '../_services/widget-content.model'
 
 // import { ActivitiesService } from '@ws/app/src/lib/routes/activities/services/activities.service'
 // import { IActivity, IActivityCard, IChallenges } from '@ws/app/src/lib/routes/activities/interfaces/activities.model'
@@ -119,7 +120,7 @@ export class CardLearnComponent extends WidgetBaseComponent
     // if (this.configSvc && this.configSvc.unMappedUser &&
     //     this.configSvc.unMappedUser.profileDetails &&
     //     this.configSvc.unMappedUser.profileDetails.verifiedKarmayogi) {
-      this.callModeratedFunc()
+    this.callModeratedFunc()
     // }
 
   }
@@ -134,20 +135,20 @@ export class CardLearnComponent extends WidgetBaseComponent
         query: '',
         filters: {
           courseCategory: [NsContent.ECourseCategory.MODERATED_COURSE,
-            NsContent.ECourseCategory.MODERATED_PROGRAM, NsContent.ECourseCategory.MODERATED_ASSESSEMENT],
-            'secureSettings.organisation': orgId,
+          NsContent.ECourseCategory.MODERATED_PROGRAM, NsContent.ECourseCategory.MODERATED_ASSESSEMENT],
+          'secureSettings.organisation': orgId,
           contentType: ['Course'],
-            status: [
-                'Live',
-            ],
+          status: [
+            'Live',
+          ],
         },
         sort_by: {
-            lastUpdatedOn: 'desc',
+          lastUpdatedOn: 'desc',
         },
         facets: [
-            'mimeType',
+          'mimeType',
         ],
-        limit : 20,
+        limit: 20,
       },
     }
 

@@ -1,6 +1,7 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+;
 
 .card-container {
     height: 231px;
@@ -35,9 +36,9 @@
 
 [wsTooltipDirective] {
     position: relative;
-  }
+}
 
-  .tooltip {
+.tooltip {
     position: absolute;
     opacity: 1;
     z-index: 99;
@@ -49,6 +50,6 @@
 
     @media (max-width:380px) {
         left: 0;
-        padding:0;
+        padding: 0;
     }
-  }
+}

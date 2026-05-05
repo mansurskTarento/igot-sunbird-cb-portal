@@ -1,12 +1,12 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .changeWidth {
-   @include breakpoint-lt-m {
-    width:100%;
+  @include breakpoint-lt-m {
+    width: 100%;
   }
 }
 
-.roleList{
+.roleList {
   max-height: 26rem;
 }

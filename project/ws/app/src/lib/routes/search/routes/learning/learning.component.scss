@@ -1,11 +1,12 @@
-@import 'ws-vars';
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .sidenav-container {
   height: 100%;
   min-height: 80vh;
 }
+
 // Contents of SideNav Menu
 .sidenav {
   width: 25%;
@@ -22,6 +23,7 @@
   box-sizing: border-box;
   min-height: calc(100vh - 145px);
 }
+
 .day-mode {
   .mat-drawer-backdrop.mat-drawer-shown {
     background-color: none !important;

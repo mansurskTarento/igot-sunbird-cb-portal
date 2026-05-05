@@ -1,13 +1,14 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .career-card {
   // display: flex;
   flex: 1;
   height: 80%;
+
   // height: calc(100% - 2rem);
-  &.mat-card{
+  &.mat-card {
     // flex-direction: column;
     // display: flex;
     display: inline-table;
@@ -15,7 +16,8 @@
     box-sizing: border-box;
     min-height: 180px;
   }
-  .mat-card-footer{
+
+  .mat-card-footer {
     justify-self: flex-end;
     // align-items: center;
 
@@ -30,6 +32,7 @@
     }
   }
 }
+
 .dot:before {
   content: '•';
   margin: 1rem;
@@ -108,6 +111,7 @@
 .pad-4 {
   padding: 4px;
 }
+
 .career-mat-title {
   word-break: break-all;
   white-space: initial;

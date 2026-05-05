@@ -1,5 +1,6 @@
-@import "ws-vars";
-@import "ws-common";
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $nav-height: 40px;
 
@@ -257,9 +258,9 @@ $nav-height: 40px;
 }
 
 .butto_box {
-  @include breakpoint-lt-xs {
-    flex-direction: column !important;
-  }
+  // @include breakpoint-lt-xs {
+  //   flex-direction: column !important;
+  // }
 
   @include breakpoint-lt-m {
     margin-top: 16px;
@@ -274,13 +275,14 @@ $nav-height: 40px;
   // @include breakpoint-lt-xs {
   //   width: 100%;
   // }
-  width:123px;
+  width: 123px;
   border-radius: 63px;
 }
 
 .quest_btn_prev {
   color: rgb(27, 76, 161) !important
 }
+
 .mat-cell {
   border: 1px solid orange;
   padding: $size-s;
@@ -336,11 +338,11 @@ $nav-height: 40px;
 .border-outline-skeleton {
   // border: 1px solid rgba(0, 0, 0, 0.16);
   width: 100%;
-  padding:32px;
+  padding: 32px;
 }
 
 .question-number {
-  color:rgba(0, 0, 0, 0.6);
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .question-list {
@@ -354,17 +356,17 @@ $nav-height: 40px;
 
 .center-text {
   display: flex;
-    align-items: center;
-    flex-direction: row;
+  align-items: center;
+  flex-direction: row;
 }
 
 .light-blue {
   background-color: #eff3f9 !important;
-    border: 1px solid #1b4ca1;
-    width: 102px;
-    align-items: center;
-    justify-content: center;
-   
+  border: 1px solid #1b4ca1;
+  width: 102px;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .light-blue-small {
@@ -380,14 +382,14 @@ $nav-height: 40px;
   justify-content: center;
   align-items: center;
   font-size: 14px;
-  color:#1b4ca1
+  color: #1b4ca1
 }
 
 .orange-small {
   background-color: rgba(239, 149, 30, 0.08) !important;
-    border: 1px solid rgb(239, 149, 30);
-    align-items: center;
-    justify-content: center;
+  border: 1px solid rgb(239, 149, 30);
+  align-items: center;
+  justify-content: center;
 }
 
 .chip-text {
@@ -412,25 +414,25 @@ $nav-height: 40px;
 
 ::ng-deep .question-flag .mat-standard-chip {
   height: 32px !important;
-  width:48px !important;
+  width: 48px !important;
 }
 
 ::ng-deep .timer .mat-standard-chip {
   min-height: 32px !important;
-  width:102px !important;
+  width: 102px !important;
 }
 
 .seperate-text {
-  width: 100%; 
-   text-align: center; 
-   border-bottom: 1px solid rgb(216,216,216); 
-   line-height: 0.1em;
-   margin: 10px 0 20px; 
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid rgb(216, 216, 216);
+  line-height: 0.1em;
+  margin: 10px 0 20px;
 }
 
-.seperate-text  span { 
-  background:#fff; 
-  padding:0 10px; 
+.seperate-text span {
+  background: #fff;
+  padding: 0 10px;
   font-size: 12px;
   font-weight: 700;
   font-family: 'Lato';
@@ -446,7 +448,7 @@ $nav-height: 40px;
   position: fixed;
   right: 0;
   height: 100%;
-  box-shadow: 0px 5px 5px 0px rgb(0,0,0,0.16);
+  box-shadow: 0px 5px 5px 0px rgb(0, 0, 0, 0.16);
   margin-top: -20px;
 }
 
@@ -464,7 +466,7 @@ $nav-height: 40px;
   margin: 0 !important;
 }
 
-.time-title{
+.time-title {
   font: 700 14px/16px 'Montserrat';
   letter-spacing: 0.25px;
   line-height: 20px;
@@ -497,7 +499,7 @@ $nav-height: 40px;
     bottom: 0%;
     width: 100%;
     background: white;
-    padding:15px 0;
+    padding: 15px 0;
   }
 
   .expand-icon {
@@ -516,7 +518,7 @@ $nav-height: 40px;
     cursor: pointer;
   }
 
-  
+
 
   .exapnd-collapse {
     height: 32px;
@@ -546,12 +548,12 @@ $nav-height: 40px;
     // @include breakpoint-lt-xs {
     //   width: 100%;
     // }
-    width:167px;
+    width: 167px;
     border-radius: 63px;
     margin-bottom: 3%;
   }
 
-  
+
 }
 
 .calculate-overlay {
@@ -563,10 +565,11 @@ $nav-height: 40px;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0, 0, 0, 0.5);
   z-index: 2;
   cursor: pointer;
-  color: #fff;;
+  color: #fff;
+  ;
 }
 
 .overlay {
@@ -593,16 +596,16 @@ $nav-height: 40px;
 }
 
 .question-info {
-  margin-left:5px;
+  margin-left: 5px;
 }
 
-.question-info:hover + .info-hover{
-    display: block;
+.question-info:hover+.info-hover {
+  display: block;
 }
 
 .info-hover {
   display: none;
-  background: rgb(102,102,102);
+  background: rgb(102, 102, 102);
   width: 249px;
   height: 156px;
   border-radius: 10px;
@@ -613,39 +616,42 @@ $nav-height: 40px;
   z-index: 1;
 }
 
-.info-hover:after, .info-hover:before {
-	bottom: 100%;
-  top:-20%;
-	left: 15%;
-	border: solid transparent;
-	content: " ";
-	height: 0;
-	width: 0;
-	position: absolute;
-	pointer-events: none;
+.info-hover:after,
+.info-hover:before {
+  bottom: 100%;
+  top: -20%;
+  left: 15%;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
 }
 
 .info-hover:after {
-	border-bottom-color: rgb(102,102,102);
-	border-width: 15px;
-	margin-left: -15px;
+  border-bottom-color: rgb(102, 102, 102);
+  border-width: 15px;
+  margin-left: -15px;
 }
+
 .info-hover:before {
-	border-bottom-color: rgb(102,102,102);
-	border-width: 16px;
-	margin-left: -16px;
+  border-bottom-color: rgb(102, 102, 102);
+  border-width: 16px;
+  margin-left: -16px;
 }
 
 .margin-right-s {
   margin-right: 20px !important;
 }
+
 .margin-left-s {
   margin-left: 20px !important;
 }
 
 
 
-.info-tooltip-container{
+.info-tooltip-container {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -661,7 +667,7 @@ $nav-height: 40px;
   vertical-align: middle;
 }
 
-.info-tooltip-container-item span{
+.info-tooltip-container-item span {
   margin-left: 16px;
   background: transparent;
   color: #fff;
@@ -718,25 +724,26 @@ $nav-height: 40px;
   padding-left: 8px;
 }
 
-::ng-deep .mat-chip-list-wrapper .mat-standard-chip, .mat-chip-list-wrapper input.mat-input-element {
-  margin:0 !important
+::ng-deep .mat-chip-list-wrapper .mat-standard-chip,
+.mat-chip-list-wrapper input.mat-input-element {
+  margin: 0 !important
 }
 
 @media only screen and (min-width: 280px) and (max-width: 767px) {
- 
+
 
   .outer-border-box {
     border-top: 1px solid #d8d8d8;
   }
-  
+
   .label-source-box {
     padding: 0;
     margin-top: -0.8em;
     text-align: center;
   }
-  
+
   .question-info {
-    margin-left:5px;
+    margin-left: 5px;
     vertical-align: middle;
   }
 
@@ -747,7 +754,7 @@ $nav-height: 40px;
     font-size: 12px;
     font-family: 'Lato';
   }
-  
+
 }
 
 .question-box-auto-height {
@@ -763,7 +770,7 @@ $nav-height: 40px;
 @media only screen and (min-width: 280px) and (max-width: 360px) {
   .info-hover {
     display: block;
-    background: rgb(102,102,102);
+    background: rgb(102, 102, 102);
     width: 249px;
     height: 156px;
     border-radius: 10px;
@@ -773,13 +780,14 @@ $nav-height: 40px;
     margin-top: 10px;
     z-index: 1;
   }
-  .seperate-text span{
-    padding:0 
+
+  .seperate-text span {
+    padding: 0
   }
 
   .info-hover::after {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -787,9 +795,10 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
   .info-hover::before {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -798,10 +807,11 @@ $nav-height: 40px;
     pointer-events: none;
   }
 }
+
 @media only screen and (min-width: 375px) and (max-width: 375px) {
   .info-hover {
     display: block;
-    background: rgb(102,102,102);
+    background: rgb(102, 102, 102);
     width: 249px;
     height: 156px;
     border-radius: 10px;
@@ -811,13 +821,14 @@ $nav-height: 40px;
     margin-top: 10px;
     z-index: 1;
   }
-  .seperate-text span{
-    padding:0 
+
+  .seperate-text span {
+    padding: 0
   }
 
   .info-hover::after {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -825,9 +836,10 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
   .info-hover::before {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -836,10 +848,11 @@ $nav-height: 40px;
     pointer-events: none;
   }
 }
+
 @media only screen and (min-width: 390px) and (max-width: 393px) {
   .info-hover {
     display: block;
-    background: rgb(102,102,102);
+    background: rgb(102, 102, 102);
     width: 249px;
     height: 156px;
     border-radius: 10px;
@@ -849,13 +862,14 @@ $nav-height: 40px;
     margin-top: 10px;
     z-index: 1;
   }
-  .seperate-text span{
-    padding:0 
+
+  .seperate-text span {
+    padding: 0
   }
 
   .info-hover::after {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -863,9 +877,10 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
   .info-hover::before {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -878,7 +893,7 @@ $nav-height: 40px;
 @media only screen and (min-width: 411px) and (max-width: 414px) {
   .info-hover {
     display: block;
-    background: rgb(102,102,102);
+    background: rgb(102, 102, 102);
     width: 249px;
     height: 156px;
     border-radius: 10px;
@@ -888,13 +903,14 @@ $nav-height: 40px;
     margin-top: 10px;
     z-index: 1;
   }
-  .seperate-text span{
-    padding:0 
+
+  .seperate-text span {
+    padding: 0
   }
 
   .info-hover::after {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -902,9 +918,10 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
   .info-hover::before {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -913,10 +930,11 @@ $nav-height: 40px;
     pointer-events: none;
   }
 }
+
 @media only screen and (min-width: 540px) and (max-width: 540px) {
   .info-hover {
     display: block;
-    background: rgb(102,102,102);
+    background: rgb(102, 102, 102);
     width: 249px;
     height: 156px;
     border-radius: 10px;
@@ -926,13 +944,14 @@ $nav-height: 40px;
     margin-top: 10px;
     z-index: 1;
   }
-  .seperate-text span{
-    padding:0 
+
+  .seperate-text span {
+    padding: 0
   }
 
   .info-hover::after {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;
@@ -940,9 +959,10 @@ $nav-height: 40px;
     position: absolute;
     pointer-events: none;
   }
+
   .info-hover::before {
     bottom: 100%;
-    top:-18%;
+    top: -18%;
     left: 84%;
     content: " ";
     height: 0;

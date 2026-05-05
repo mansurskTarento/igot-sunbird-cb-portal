@@ -1,5 +1,6 @@
-@import "ws-vars";
-@import "ws-common";
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .quiz-question {
     overflow-x: auto;
@@ -34,6 +35,7 @@
         font-weight: bolder !important;
     }
 }
+
 .ques-padding-top {
-  padding-top: 2px
+    padding-top: 2px
 }

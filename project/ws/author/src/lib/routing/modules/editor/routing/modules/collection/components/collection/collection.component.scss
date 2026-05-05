@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .mat-sidenav-container {
   min-height: 650px;
@@ -32,9 +32,11 @@
 .hidden {
   display: none;
 }
+
 .transitionD {
   transition: all 0.5s;
 }
+
 .ui {
   border: 1px solid rgb(26, 25, 25);
   border-top-left-radius: 0px;

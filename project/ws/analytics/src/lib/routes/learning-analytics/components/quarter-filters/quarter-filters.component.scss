@@ -1,5 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .quarter-filter-wrapper {
   margin: 5px 0px 0px 16px;

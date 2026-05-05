@@ -1,21 +1,24 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 
-.kr-card  {
+.kr-card {
     height: 380px;
     border-radius: 12px !important;
 }
+
 .imgboxdiv {
     height: 210px;
     overflow: hidden;
 }
+
 .event-card-image {
     width: 100%;
     border-radius: 12px 12px 0 0;
 }
+
 .padding-zero {
     padding: 0px !important;
 }
@@ -53,6 +56,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .fixed-title {
     height: 47px;
 }

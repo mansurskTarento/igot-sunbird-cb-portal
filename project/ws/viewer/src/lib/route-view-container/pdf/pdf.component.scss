@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .video-player-summary-container {
   height: auto;
@@ -14,6 +14,7 @@
   // padding-top: $size-m;
   border-radius: none !important;
   box-shadow: none !important;
+
   @include breakpoint-xs {
     // padding: $size-xs;
     // padding-top: 40vh;
@@ -115,6 +116,7 @@
 .pdf-outer-container {
   height: 573px;
   overflow-y: auto;
+
   .mat-card {
     padding: 0;
   }
@@ -135,6 +137,7 @@
   width: 32%;
   margin: 0 auto;
 }
+
 .play-btn {
   border: none;
   background: #EF951E;
@@ -157,14 +160,15 @@
   font-size: 16px;
   letter-spacing: 0.12px;
   line-height: 24px;
-  color:rgba(255, 255, 255, 0.95)
+  color: rgba(255, 255, 255, 0.95)
 }
 
 @media screen and (min-width: 280px) and (max-width: 768px) {
-  .html-viewer-container  {
+  .html-viewer-container {
     height: auto;
-    padding:0 !important;
+    padding: 0 !important;
   }
+
   .content-instruction {
     display: flex;
     flex-direction: column;
@@ -175,6 +179,7 @@
     width: 100%;
     margin: 0 auto;
   }
+
   .video-player {
     width: 100%;
     height: auto;

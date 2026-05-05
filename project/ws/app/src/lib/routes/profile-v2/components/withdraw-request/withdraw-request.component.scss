@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .info-icon {
     width: 48px;
@@ -12,7 +13,8 @@
     color: $text-primary;
 }
 
-.outline-button, .save-button {
+.outline-button,
+.save-button {
     min-width: 88px;
     border-radius: 8px;
 }

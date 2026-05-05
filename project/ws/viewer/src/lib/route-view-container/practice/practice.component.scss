@@ -1,9 +1,10 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .mat-card-content {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
+
 #widgt-btn-box {
   display: none;
 }
@@ -19,6 +20,7 @@
 .padding-dynamic {
   padding: $size-xs;
   padding-top: $size-m;
+
   @include breakpoint-xs {
     padding: $size-xs;
     // padding-top: 40vh;
@@ -33,9 +35,11 @@
 
 .video-player-title {
   width: 65%;
+
   @include breakpoint-gt-s {
     width: 70%;
   }
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -43,9 +47,11 @@
 
 .video-summary {
   width: 30%;
+
   @include breakpoint-gt-s {
     width: 25%;
   }
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -85,6 +91,7 @@
   width: 100vw;
   z-index: 1000;
   background: black;
+
   @include breakpoint-gt-xs {
     display: none;
   }
@@ -102,19 +109,23 @@
   .info-container {
     padding: $size-s $size-m;
     margin-bottom: $size-m;
+
     .info-item {
       display: flex;
       align-items: center;
       padding: $size-xs 0;
       box-sizing: border-box;
+
       h3 {
         margin: 0;
       }
+
       .item-heading {
         width: 40%;
         min-width: 80px;
         max-width: 140px;
       }
+
       .item-icon {
         $icon-size: 20px;
         width: $icon-size;
@@ -124,6 +135,7 @@
       }
     }
   }
+
   @include breakpoint-xs {
     width: 100%;
   }
@@ -132,6 +144,7 @@
 .author {
   padding: $size-s 0;
   display: flex;
+
   .author-image {
     margin-right: $size-s;
     $size: 4 * $size-s;
@@ -147,6 +160,6 @@
   margin-bottom: $size-m;
 }
 
-.no-border{
+.no-border {
   box-shadow: none !important;
 }

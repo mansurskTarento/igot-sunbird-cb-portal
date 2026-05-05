@@ -6,8 +6,8 @@ import { AppCbpPlansService } from 'src/app/services/app-cbp-plans.service'
 // tslint:disable
 import _ from 'lodash'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { environment } from 'src/environments/environment'
+import { NsContent } from '../../_services/widget-content.model'
 
 @Component({
 	selector: 'ws-widget-cbp-filters',
@@ -79,25 +79,25 @@ export class CbpFiltersComponent implements OnInit {
 			this.filterObj = this.data.filterObj
 		}
 		this.langtranslations.languageSelectedObservable.subscribe(() => {
-      if (localStorage.getItem('websiteLanguage')) {
-        this.translate.setDefaultLang('en')
-        const lang = localStorage.getItem('websiteLanguage')!
-        this.translate.use(lang)
-      }
-    })
+			if (localStorage.getItem('websiteLanguage')) {
+				this.translate.setDefaultLang('en')
+				const lang = localStorage.getItem('websiteLanguage')!
+				this.translate.use(lang)
+			}
+		})
 	}
 
 	ngOnInit() {
 		this.compentencyKey = this.configSvc.compentency[environment.compentencyVersionKey]
 
 		this.filterObjEmpty = {
-		primaryCategory: [],
-		status: [],
-		timeDuration: [],
-		[this.compentencyKey.vCompetencyArea]: [],
-		[this.compentencyKey.vCompetencyTheme]: [],
-		[this.compentencyKey.vCompetencySubTheme]: [],
-		providers: [],
+			primaryCategory: [],
+			status: [],
+			timeDuration: [],
+			[this.compentencyKey.vCompetencyArea]: [],
+			[this.compentencyKey.vCompetencyTheme]: [],
+			[this.compentencyKey.vCompetencySubTheme]: [],
+			providers: [],
 		}
 
 		this.getFilterEntity()
@@ -206,10 +206,10 @@ export class CbpFiltersComponent implements OnInit {
 			this.competencyThemeList.map((csitem: any) => {
 				if (csitem.name === cstype.name) {
 					csitem.children.map((subthemechild: any) => {
-						subthemechild['parentType'] = csitem.parent;
-						subthemechild['parent'] = csitem.name;
+						subthemechild['parentType'] = csitem.parent
+						subthemechild['parent'] = csitem.name
 					})
-					this.competencySubThemeList = this.competencySubThemeList.concat(csitem.children);
+					this.competencySubThemeList = this.competencySubThemeList.concat(csitem.children)
 					this.competencySubThemeOriginalList = this.competencySubThemeList
 					if (pushValue) {
 						this.filterObj[this.compentencyKey.vCompetencyTheme].push(cstype.name)
@@ -240,7 +240,7 @@ export class CbpFiltersComponent implements OnInit {
 
 	manageCompetencySubTheme(event: any, csttype: any) {
 		if (event.checked) {
-			this.filterObj[this.compentencyKey.vCompetencySubTheme].push(csttype.name);
+			this.filterObj[this.compentencyKey.vCompetencySubTheme].push(csttype.name)
 		} else {
 			if (this.filterObj[this.compentencyKey.vCompetencySubTheme].indexOf(csttype.name) > -1) {
 				const index = this.filterObj[this.compentencyKey.vCompetencySubTheme].findIndex((x: any) => x === csttype.name)
@@ -266,8 +266,8 @@ export class CbpFiltersComponent implements OnInit {
 	clearFilterWhileSearch() {
 		if (this.checkboxes) {
 			this.checkboxes.forEach((element: any) => {
-				element['checked'] = false;
-			});
+				element['checked'] = false
+			})
 		}
 	}
 
@@ -276,9 +276,9 @@ export class CbpFiltersComponent implements OnInit {
 			let data = ctype.id ? ctype.id : ctype
 			this.filterObj[filterType].push(data)
 		} else {
-			const index = this.filterObj[filterType].indexOf(ctype.id || ctype);
+			const index = this.filterObj[filterType].indexOf(ctype.id || ctype)
 			if (index > -1) { // only splice array when item is found
-				this.filterObj[filterType].splice(index, 1); // 2nd parameter means remove one item only
+				this.filterObj[filterType].splice(index, 1) // 2nd parameter means remove one item only
 			}
 		}
 		if (ctype.id === 'all' && filterType === 'status') {

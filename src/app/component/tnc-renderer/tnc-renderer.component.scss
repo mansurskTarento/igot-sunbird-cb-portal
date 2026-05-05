@@ -1,18 +1,22 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .tnc-container {
   padding: $size-l;
   margin: auto;
+
   @include breakpoint-xs {
     padding: 0;
   }
+
   @include breakpoint-gt-xs {
     max-width: 90%;
   }
+
   @include breakpoint-gt-s {
     max-width: 80%;
   }
+
   @include breakpoint-gt-m {
     max-width: 1024px;
   }

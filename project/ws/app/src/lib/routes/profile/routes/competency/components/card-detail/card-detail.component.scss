@@ -1,5 +1,5 @@
-@import 'ws-mixins';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-details {
   padding: 0 $size-xl * 2;
@@ -32,9 +32,11 @@
   @extend %border-bottom;
   border-color: red;
 }
+
 .details-card {
   padding: 0px;
 }
+
 .nav-btn {
   margin: 16px 0px 16px 16px;
 }

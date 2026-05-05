@@ -1,12 +1,15 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 .discussion-container {
     display: block;
     margin-top: $size-m;
+
     @include breakpoint-lt-m {
         padding: 0 $size-xs;
     }
+
     @include breakpoint-lt-l {
         padding-right: $size-xs;
-      }
+    }
 }

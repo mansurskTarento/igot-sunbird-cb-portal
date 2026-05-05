@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 %container-padding {
   padding: $size-xl 2 * $size-xl;
@@ -191,11 +191,14 @@
 .check {
   font-size: 15px;
 }
+
 .button-action {
   margin: 4px;
+
   @include breakpoint-s {
     margin: 4px;
   }
+
   @include breakpoint-xs {
     margin: 0px;
   }

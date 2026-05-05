@@ -1,10 +1,11 @@
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
   @extend %page-center;
 }
 
-.text-right{
+.text-right {
   float: right !important;
 }
 

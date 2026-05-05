@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .competency-view-card {
   flex: 1;
@@ -9,18 +9,18 @@
   // min-width: 346px;
   box-shadow: none !important;
   height: fit-content;
-  width:750px;
-  padding: 24px 8px!important;
+  width: 750px;
+  padding: 24px 8px !important;
 
   h3.card_description {
-    font-weight: 400!important;
+    font-weight: 400 !important;
   }
 
   // width: max-content;
   @include breakpoint-xs {
     width: auto;
     min-width: auto;
-    padding: 16px 0px!important;
+    padding: 16px 0px !important;
   }
 }
 
@@ -28,8 +28,9 @@
 .learn-card {
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
+
 .learn-card:last-child {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
 
 .learn-card .card_inner_title_box {
@@ -41,10 +42,12 @@
     width: 45%;
     padding: 16px;
   }
+
   @include breakpoint-s {
     width: 45%;
   }
 }
+
 .learn-card .card_right_txtbox {
   float: right;
   padding: 24px;
@@ -56,31 +59,38 @@
     width: 55%;
     padding: 16px;
   }
+
   @include breakpoint-s {
     width: 55%;
   }
 
 }
-.learn-card:hover, .learn-card:active, .learn-card:focus {
-   border: 1px solid#0074B6
- }
+
+.learn-card:hover,
+.learn-card:active,
+.learn-card:focus {
+  border: 1px solid#0074B6
+}
 
 .selected-card {
   border: 1px solid#0074B6 !important;
-  background-color: rgba(0, 116, 184, 0.05)!important;
+  background-color: rgba(0, 116, 184, 0.05) !important;
 }
 
 .text_icon {
   vertical-align: middle;
 }
+
 p.competency_level_text {
-  margin-bottom:4px!important;
+  margin-bottom: 4px !important;
 }
 
 .close_icon_box {
-  padding: 0 !important;;
+  padding: 0 !important;
+  ;
   margin: 0 !important;
 }
+
 .learn-card-div {
   overflow-y: scroll;
   min-height: 215px;
@@ -90,25 +100,33 @@ p.competency_level_text {
   @include breakpoint-xs {
     max-height: 270px;
   }
+
   @include breakpoint-s {
     max-height: 270px;
   }
 }
+
 .font-bold {
-  font-weight:700!important;
+  font-weight: 700 !important;
 }
 
 //-webkit- (Chrome, Safari, newer versions of Opera):
 //element-selector::-webkit-scrollbar { width: 0 !important }
-.hideScrollbar::-webkit-scrollbar { width: 0 !important }
+.hideScrollbar::-webkit-scrollbar {
+  width: 0 !important
+}
 
 //-moz- (Firefox):
 //element-selector{ overflow: -moz-scrollbars-none; }
-.hideScrollbar{ overflow: -moz-scrollbars-none; }
+.hideScrollbar {
+  overflow: -moz-scrollbars-none;
+}
 
 //-ms- (Internet Explorer +10):
 //element-selector{ -ms-overflow-style: none; }
-.hideScrollbar{ -ms-overflow-style: none; }
+.hideScrollbar {
+  -ms-overflow-style: none;
+}
 
 //  mat-dialog-container{
 //    height: 850px;
@@ -129,7 +147,7 @@ p.competency_level_text {
     margin-right: auto !important;
   }
 }
- 
+
 .others {
   background: #0074B6 0% 0% no-repeat padding-box !important;
   color: #ffffff !important;
@@ -248,10 +266,10 @@ p.competency_level_text {
 
 @media screen and (max-width:768px) {
   .competency-view-card {
-    width:90%;
+    width: 90%;
   }
 }
 
 .mat-card-actions {
-  margin-bottom:0!important
+  margin-bottom: 0 !important
 }

@@ -1,4 +1,4 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .app-logo {
   max-width: 100px;
@@ -10,21 +10,23 @@
   }
 
 
-  }
-.title-app{
-    @include breakpoint-xs {
-    visibility: hidden;
-  }}
+}
 
-  .small-font-size{
-    @include breakpoint-xs {
+.title-app {
+  @include breakpoint-xs {
+    visibility: hidden;
+  }
+}
+
+.small-font-size {
+  @include breakpoint-xs {
     font-size: smaller !important;
   }
-  }
+}
 
-  .padding-remove-small{
-    @include breakpoint-xs {
+.padding-remove-small {
+  @include breakpoint-xs {
 
     padding: 0 !important;
-    }
   }
+}

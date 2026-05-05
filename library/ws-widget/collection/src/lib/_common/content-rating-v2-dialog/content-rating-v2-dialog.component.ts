@@ -1,13 +1,13 @@
 import { Component, OnInit, Inject, Input } from '@angular/core'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { EventService, WsEvents, LoggerService, NsContent } from '@sunbird-cb/utils-v2'
-import { RatingService } from '@sunbird-cb/collection/src/lib/_services/rating.service'
 import { switchMap, takeUntil } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 import { NsAppRating } from '@sunbird-cb/toc'
 import { Router } from '@angular/router'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { RatingService } from '../../_services/rating.service'
 
 @Component({
   selector: 'ws-widget-content-rating-v2-dialog',

@@ -1,23 +1,30 @@
-@import "ws-vars";
-@import "ws-common";
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 .quiz-question {
     overflow-x: auto;
 }
+
 .amit {
     svg {
         width: 3;
         height: 3;
+
         circle {
             r: 3;
         }
+
         circle:hover {
             r: 3;
         }
-        circle:active { 
+
+        circle:active {
             r: 3;
         }
     }
 }
+
 .jtk-connector {
     path {
         stroke: green;

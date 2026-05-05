@@ -1,17 +1,22 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $border-color: #a1a1a156;
 $icon-container-size: 60px;
+
 mat-spinner {
   display: inline-block;
 }
+
 mat-card {
   border-radius: 0;
 }
+
 .views-view-wrapper {
   max-width: 900px;
   margin: auto;
+
   .icon-section {
     width: 10%;
     min-width: $icon-container-size;
@@ -28,10 +33,12 @@ mat-card {
       justify-content: center;
     }
   }
+
   .body-section {
     margin: 0 $size-m;
     padding-top: $size-xs;
   }
+
   .user-details {
     margin: $size-xs 0px 0px 0px;
     display: flex;
@@ -47,6 +54,7 @@ mat-card {
       display: block;
     }
   }
+
   .comment-container {
     margin: $size-s 0px - ($size-xs/2) 0px;
     border-top: 1px solid $border-color;
@@ -56,6 +64,7 @@ mat-card {
       padding: ($size-xs / 2) 0 ($size-xs / 2) $size-m !important;
     }
   }
+
   .answer-title {
     margin-top: $size-l;
     padding: 8px 20px;

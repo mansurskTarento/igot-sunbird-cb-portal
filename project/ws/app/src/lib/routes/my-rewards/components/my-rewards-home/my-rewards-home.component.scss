@@ -1,5 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .center {
   max-height: calc(100vh - 2 * #{$mat-toolbar-gt-xs} - 2 * 52px);
@@ -10,6 +11,7 @@
   max-height: calc(100vh - 88px - 56px - 2 * 46px);
   padding: 0px;
 }
+
 .height {
   height: -webkit-fill-available;
 }

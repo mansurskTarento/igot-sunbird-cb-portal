@@ -1,7 +1,7 @@
 @use '@sunbird-cb/design-system/src/styles/ws-common';
 // @use '@sunbird-cb/design-system/src/styles/ws-vars';
 @use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
 
 .card-minimal-container {
   position: relative;
@@ -43,9 +43,10 @@
     .card-title {
       // margin-bottom: -6px;
       margin-bottom: 0;
-    height: 40px;
-    color:rgba(0, 0, 0, 0.87);
+      height: 40px;
+      color: rgba(0, 0, 0, 0.87);
     }
+
     // .description-text {
     //   color: #f5f5f5;
     // }
@@ -179,6 +180,7 @@
   .duration {
     height: 1.6em;
     display: flex;
+
     .resource-type {
       order: 3;
       margin-left: auto;
@@ -195,9 +197,11 @@
       text-overflow: ellipsis;
     }
   }
-.min-top{
-  margin-top: 50px;
-}
+
+  .min-top {
+    margin-top: 50px;
+  }
+
   $title-line-count: 1;
   $title-line-height: 1.3em;
 
@@ -280,7 +284,7 @@
 
 
   ::ng-deep .mat-progress-bar {
-    height: 8px!important;
+    height: 8px !important;
   }
 
   .main_icon {
@@ -288,6 +292,7 @@
     width: 16px;
     height: 16px;
   }
+
   .icon_text {
     font-size: 12px;
     line-height: 16px;
@@ -299,50 +304,51 @@
     margin: 12px 0;
     position: relative;
     overflow: hidden;
-}
-
-.description-text {
-  position: relative;
-  overflow: hidden;
-  height: 63px;
-}
-
-.course_logo_box {
-  position: absolute;
-  z-index: 9;
-  width: 55px;
-  background: #fff;
-  padding: 11px 12px;
-  // right: 0;
-  left: 0;
-
-  border-radius: 8px 8px;
-  box-sizing: border-box;
-  height: 55px;
-  margin-top: 27px;
-  margin-left: 12px;
-  box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
-
-
-  img {
-    height: 30px;
-    width: 30px;
-    display: inline-block;
-    margin-right: 0px;
   }
-  p {
-    display: inline-block;
-    vertical-align: top;
+
+  .description-text {
+    position: relative;
+    overflow: hidden;
+    height: 63px;
   }
- }
 
-.course_widget {
-   margin-top: 90px;
+  .course_logo_box {
+    position: absolute;
+    z-index: 9;
+    width: 55px;
+    background: #fff;
+    padding: 11px 12px;
+    // right: 0;
+    left: 0;
 
-   .mat-icon {
-     vertical-align: middle;
-   }
- }
+    border-radius: 8px 8px;
+    box-sizing: border-box;
+    height: 55px;
+    margin-top: 27px;
+    margin-left: 12px;
+    box-shadow: 0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 0px rgb(0 0 0 / 12%);
+
+
+    img {
+      height: 30px;
+      width: 30px;
+      display: inline-block;
+      margin-right: 0px;
+    }
+
+    p {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+
+  .course_widget {
+    margin-top: 90px;
+
+    .mat-icon {
+      vertical-align: middle;
+    }
+  }
 
 
   .source-div {
@@ -720,138 +726,152 @@ $title-line-count: 2;
 
 
 .card-wide {
-   border-radius: 10px 10px;
+  border-radius: 10px 10px;
+
   .highlight_point_text {
-    margin-top:15px;
+    margin-top: 15px;
   }
+
   ul.highlighting_list li {
-      display: inline-block;
-      padding-right: 10px;
+    display: inline-block;
+    padding-right: 10px;
   }
-  ul.highlighting_list li .rating-number{
-      letter-spacing: 0;
-      color: #f69953;
+
+  ul.highlighting_list li .rating-number {
+    letter-spacing: 0;
+    color: #f69953;
   }
+
   ul.highlighting_list li.rating .mat-icon {
-      width: 16px;
-      height: 16px;
-      display: inline-table;
-      color: #f69953;
-      font-size: 18px;
-      vertical-align: text-bottom;
+    width: 16px;
+    height: 16px;
+    display: inline-table;
+    color: #f69953;
+    font-size: 18px;
+    vertical-align: text-bottom;
   }
+
   img.text_seperator {
-      vertical-align: middle;
+    vertical-align: middle;
   }
+
   .mat-text-box {
-      padding: 18px;
-      box-sizing: border-box;
-      width: calc(100% - 315px);
+    padding: 18px;
+    box-sizing: border-box;
+    width: calc(100% - 315px);
+
+    @media (max-width:992px) {
+      width: 66%;
+      padding: 8px;
+      position: relative;
+      height: auto;
+    }
+
+    p.mat-caption {
+
+      .mat-icon {
+        vertical-align: middle;
+        height: 18px !important;
+        width: 16px !important;
+        font-size: 16px !important;
+        line-height: 1.2;
+      }
+
+      .title_icon {
+        vertical-align: middle;
+      }
+
+    }
+  }
+
+  .imageholder {
+    width: 310px;
+
+    @media (max-width:992px) {
+      width: 34%;
+      height: auto;
+    }
+  }
+
+  ul.tag_list {
+    list-style: none;
+    margin-bottom: 0;
+    list-style-type: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  ul.tag_list li {
+    display: inline-block;
+  }
+
+  ul.tag_list li span.tag {
+    background-color: rgba(0, 0, 0, 0.04);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    margin: 0px 8px 0px 0px;
+    line-height: 18px;
+  }
+
+  .imageholder {
+    overflow: hidden;
+    position: relative;
+
+    img {
+      width: 100%;
+      display: block;
+      border-radius: 10px 0 0 10px;
+      // object-fit: cover;
+      // object-position: center;
+      height: 100%;
 
       @media (max-width:992px) {
-        width: 66%;
-        padding: 8px;
-        position: relative;
         height: auto;
       }
 
-      p.mat-caption {
+    }
 
-          .mat-icon {
-              vertical-align: middle;
-              height: 18px !important;
-              width: 16px !important;
-              font-size: 16px !important;
-              line-height: 1.2;
-          }
+    .source-div {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: white;
+      z-index: 3;
+      border: 1px solid #DEDFE0;
+      min-width: 98px;
+      min-height: 32px;
+      max-width: 98px;
+      max-height: 32px;
+      display: flex;
+      border-radius: 16px;
+      /* z-index: 49; */
+      display: inline-flex;
 
-          .title_icon {
-            vertical-align: middle;
-        }
-
+      .source-icon {
+        border-radius: 8px;
+        margin-right: auto;
+        margin-left: auto;
+        display: block;
+        margin: auto;
+        max-width: 58px;
+        max-height: -webkit-fill-available;
       }
+    }
   }
 
-      .imageholder {
-          width: 310px;
+  .main_title_box {
+    height: 60px;
+  }
 
-          @media (max-width:992px) {
-            width: 34%;
-            height: auto;
-          }
-      }
-    ul.tag_list {
-        list-style: none;
-        margin-bottom: 0;
-        list-style-type: none;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        white-space: nowrap;
-    }
-    ul.tag_list li {
-        display: inline-block;
-    }
-    ul.tag_list li span.tag {
-        background-color: rgba(0, 0, 0, 0.04);
-        border:1px solid rgba(0, 0, 0, 0.08);
-        margin:0px 8px 0px 0px;
-        line-height: 18px;
-    }
-    .imageholder {
-        overflow: hidden;
-        position: relative;
+  p.actionbtns {
+    margin-bottom: 0;
+  }
 
-        img {
-            width: 100%;
-            display: block;
-            border-radius: 10px 0 0 10px;
-            // object-fit: cover;
-            // object-position: center;
-            height: 100%;
-
-            @media (max-width:992px) {
-              height: auto;
-            }
-
-        }
-        .source-div {
-          position: absolute;
-          top: 12px;
-          right: 12px;
-          background: white;
-          z-index: 3;
-          border: 1px solid #DEDFE0;
-          min-width: 98px;
-          min-height: 32px;
-          max-width: 98px;
-          max-height: 32px;
-          display: flex;
-          border-radius: 16px;
-          /* z-index: 49; */
-          display: inline-flex;
-
-          .source-icon {
-            border-radius: 8px;
-            margin-right: auto;
-            margin-left: auto;
-            display: block;
-            margin: auto;
-            max-width: 58px;
-            max-height: -webkit-fill-available;
-          }
-        }
-    }
-    .main_title_box {
-        height: 60px;
-    }
-    p.actionbtns {
-        margin-bottom: 0;
-    }
-    .contenticon {
-      vertical-align: middle;
-      margin-right: 6px;
-      width: 16px;
-      max-height: 16px;
+  .contenticon {
+    vertical-align: middle;
+    margin-right: 6px;
+    width: 16px;
+    max-height: 16px;
   }
 }
 
@@ -907,6 +927,7 @@ $title-line-count: 2;
 .level-badge svg {
   flex-shrink: 0;
 }
+
 .knowledge-level-btn {
   display: flex;
   align-items: center;

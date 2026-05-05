@@ -1,35 +1,36 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .download-app {
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     width: 1200px;
     height: 488px;
-    margin:0 auto;
+    margin: 0 auto;
     align-items: center;
     justify-content: center;
 }
 
 .download-app-popup {
-    display: flex; 
-    flex-direction: row; 
-    height:344px;
-   padding-left: 48px;
-   padding-top: 24px;
+    display: flex;
+    flex-direction: row;
+    height: 344px;
+    padding-left: 48px;
+    padding-top: 24px;
 }
 
 .app-store-button {
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     margin-top: 50px;
 }
 
 .download-app .left-side {
     margin: 64px 0;
 }
+
 .download-app .right-side {
     margin-left: 170px;
 }
@@ -85,9 +86,10 @@
 }
 
 .sub-heading {
-    color:rgb(239, 149, 30); font-size: 36px;
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
+    color: rgb(239, 149, 30);
+    font-size: 36px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
 }
 
 .description {
@@ -110,7 +112,7 @@
     cursor: pointer;
 }
 
-@media (max-width : 1200px) {  
+@media (max-width : 1200px) {
     .right-side {
         display: flex;
         flex-direction: column;
@@ -120,12 +122,13 @@
     }
 
     .download-app {
-        height:528px!important;
+        height: 528px !important;
         width: 100%;
-        
+
     }
+
     .mobile-download {
-        padding:16px;
+        padding: 16px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -137,14 +140,14 @@
         font-family: 'Montserrat', sans-serif;
         font-weight: 600;
     }
-    
+
     .sub-heading {
-        color:rgb(239, 149, 30); 
+        color: rgb(239, 149, 30);
         font-size: 24px;
-          font-family: 'Montserrat', sans-serif;
-          font-weight: 600;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 600;
     }
-    
+
     .description p {
         font-size: 14px;
         font-weight: 400;
@@ -158,24 +161,23 @@
         justify-content: center;
         margin-top: 26px !important;
     }
-    
+
     .circle {
         background-color: rgb(27, 76, 161);
-        width: 152px!important;
-        height: 152px!important;
+        width: 152px !important;
+        height: 152px !important;
         border-radius: 50%;
         margin-top: 10px;
         margin-left: -76px;
         display: block;
     }
-    
+
     .vertical-image {
         position: relative;
         margin-top: -48%;
     }
 
-    .vertical-image img{
+    .vertical-image img {
         height: 241px;
     }
 }
-

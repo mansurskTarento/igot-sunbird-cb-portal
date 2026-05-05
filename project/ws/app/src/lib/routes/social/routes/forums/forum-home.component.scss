@@ -1,6 +1,6 @@
-@import 'ws-vars';
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 // Contents of SideNav Menu
 .sidenav {
@@ -13,7 +13,7 @@
 
 mat-sidenav-container {
   height: 100%;
- // min-height: 80vh;
+  // min-height: 80vh;
 }
 
 // Contents of Side Nav Content
@@ -36,12 +36,14 @@ mat-sidenav-content {
   max-width: 900px;
   margin: auto;
   padding: 20px 0;
+
   .qna-title {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
 }
+
 .margin-remove {
   margin: 0;
 }
@@ -87,10 +89,12 @@ mat-sidenav-content {
 .hide-filter-btn {
   visibility: hidden;
 }
+
 .mat-button-toggle-appearance-standard .mat-button-toggle-label-content {
-    line-height: 30px;
-    padding: 0 12px;
+  line-height: 30px;
+  padding: 0 12px;
 }
+
 example-radio-group {
   display: flex;
   flex-direction: column;
@@ -101,9 +105,10 @@ example-radio-group {
   margin: 5px;
   margin-right: 30%
 }
-  .tempcolor{
-background-color: #3f51b5;
-  }
+
+.tempcolor {
+  background-color: #3f51b5;
+}
 
 .example-h2 {
   margin: 10px;

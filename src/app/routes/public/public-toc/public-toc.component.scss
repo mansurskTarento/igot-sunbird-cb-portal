@@ -1,5 +1,5 @@
-@import 'ws-mixins';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 %container-padding {
   padding: $size-xl 2 * $size-xl;
@@ -8,12 +8,15 @@
     padding: $size-m $size-l;
   }
 }
+
 .height-on-top {
-    padding-top: 56px;
-  }
-.text-white{
+  padding-top: 56px;
+}
+
+.text-white {
   color: #fff !important;
 }
+
 .fixed-width {
   max-width: $max-width;
   display: block;
@@ -27,6 +30,7 @@
   @include breakpoint-xs {
     padding: 0 8px !important;
   }
+
   @include breakpoint-m {
     padding: 0 8px !important;
   }
@@ -61,7 +65,7 @@ mat-divider {
     border: none;
     background: transparent;
 
-  
+
 
     .mat-tab-link {
       text-align: left;
@@ -130,16 +134,16 @@ img.certificate_banner {
 }
 
 p.certificate_text {
-  font-weight: 700!important;
+  font-weight: 700 !important;
   z-index: 99;
   margin-top: -36px;
   color: #fff;
   position: relative;
 }
 
-.blue-border{
-  border: 2px  solid #0074b6 !important;
-  }
+.blue-border {
+  border: 2px solid #0074b6 !important;
+}
 
 .hidden-xs-inline {
   display: inline;
@@ -173,21 +177,23 @@ p.certificate_text {
     width: 100%;
   }
 }
+
 .font-bold-imp {
   font-weight: 700 !important;
 }
+
 .info-section {
   width: 20%;
   min-width: 250px;
 
-  .custom-button{
+  .custom-button {
     background: #0074B6 0% 0% no-repeat padding-box !important;
     border-radius: 4px;
   }
 
   @include breakpoint-xs {
     width: 100%;
-    margin-left: 0!important;
+    margin-left: 0 !important;
   }
 
   .glance-container {
@@ -204,6 +210,7 @@ p.certificate_text {
           vertical-align: middle;
           font-size: 20px;
         }
+
         img {
           width: 20px;
           height: 20px;
@@ -375,12 +382,12 @@ p.certificate_text {
   top: auto;
 }
 
-.actbutton{
-  border: 1px solid rgba(0,0,0,0.16);
+.actbutton {
+  border: 1px solid rgba(0, 0, 0, 0.16);
   border-radius: 4px;
   padding: 0 15px;
 
-  .mat-icon{
+  .mat-icon {
     margin-right: 6px;
   }
 }

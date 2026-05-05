@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .discuss-card {
   // display: flex;
@@ -10,6 +10,7 @@
   padding: 20px;
 
 }
+
 #wrap {
   /* Your styling. */
   position: absolute;
@@ -21,9 +22,11 @@
   /* Solution part I. */
   display: table;
 }
-.example-box{
+
+.example-box {
   background-color: #E5E7E9;
 }
+
 /* Solution part II. */
 #inside {
   width: 100%;
@@ -31,6 +34,7 @@
   display: table-cell;
   vertical-align: middle;
 }
+
 .dot:before {
   content: '•';
   margin: 1rem;
@@ -109,14 +113,15 @@
   padding: 4px;
 }
 
-.action-button{
-  color:#0074B6;
+.action-button {
+  color: #0074B6;
   font-size: 14px;
   font-family: Lato;
   font-weight: 700;
 
 
 }
-.max-wid{
+
+.max-wid {
   max-width: 815px;
 }

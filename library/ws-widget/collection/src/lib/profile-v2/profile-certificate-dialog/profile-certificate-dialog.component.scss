@@ -1,15 +1,18 @@
-@import "ws-mixins";
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+
 .no-shadow {
     box-shadow: none !important;
     // width: 500px;
     // height: 500px;
 }
+
 .certificate-banner-image {
     height: 400px;
     display: flex;
     width: auto;
     margin: 0px auto;
     padding-right: 1rem;
+
     @include breakpoint-lt-l {
         width: 100%;
         height: auto;
@@ -37,6 +40,7 @@ a.download_btn {
     font-size: 16px;
     vertical-align: text-top;
 }
+
 .close-button {
     float: right;
     top: -16px;
@@ -59,6 +63,7 @@ a.download_btn {
     top: -52px;
     right: -52px;
 }
+
 ::ng-deep .icon-outside .mat-dialog-container {
     overflow: unset;
 }
@@ -71,6 +76,7 @@ a.download_btn {
     svg {
         width: 500;
         height: 500;
+
         @include breakpoint-lt-l {
             width: auto;
             height: auto;
@@ -79,19 +85,19 @@ a.download_btn {
     }
 }
 
-.course-image{
- height: 110px;
- width: 250px;
- padding-bottom: .5rem;
+.course-image {
+    height: 110px;
+    width: 250px;
+    padding-bottom: .5rem;
 }
 
-.subheading{
+.subheading {
     font: 600 16px/24px Montserrat;
-  }
+}
 
-  .mtop{
-      margin-top: auto;
-  }
+.mtop {
+    margin-top: auto;
+}
 
 .link-course {
     font: 600 12px/14px Lato;
@@ -100,10 +106,12 @@ a.download_btn {
     color: #00A9F4;
     vertical-align: middle;
 }
+
 .retired-cour {
     display: inline-block;
     color: #000;
 }
+
 .info-icon {
     vertical-align: middle;
     font-size: 20px;
@@ -120,12 +128,14 @@ a.download_btn {
 
 .info-box {
     @include breakpoint-xs {
-        margin-left: 12px;   
+        margin-left: 12px;
     }
+
     @include breakpoint-s {
-        margin-left: 12px;   
+        margin-left: 12px;
     }
+
     @include breakpoint-m {
-        margin-left: 12px;   
+        margin-left: 12px;
     }
 }
