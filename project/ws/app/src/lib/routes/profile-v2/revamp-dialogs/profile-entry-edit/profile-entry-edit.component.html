@@ -426,21 +426,29 @@
           </div>
 
           <div class="flex flex-col profile-control w-full">
-            <div class="lable">{{'NetworkV2Profile.learningHours' | translate}}
+            <div class="lable">{{'NetworkV2Profile.learningHours' | translate}} (hh:mm)
             </div>
-            <mat-form-field appearance="outline" class="full-width">
-              <input matInput type="number" min="1" step="1" formControlName="learningHours" placeholder="1 to 100"
-                (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
-              <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
-              <mat-error
-                *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'min')">{{'NetworkV2Profile.learningHoursMustBeGreaterThanZero'
-                | translate}}</mat-error>
-              <mat-error
-                *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'max')">{{'NetworkV2Profile.learningHoursShouldBeLessThan100'
-                | translate}}</mat-error>
-            </mat-form-field>
+            <div class="duration-input flex items-center gap-1">
+              <mat-form-field appearance="outline" class="duration-field profile-control">
+                <input matInput type="number" min="0" max="100" step="1" formControlName="learningHours" placeholder="Hours"
+                  (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
+                <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
+                <mat-error
+                  *ngIf="!hasError('learningHours', 'pattern') && hasError('learningHours', 'max')">{{'NetworkV2Profile.learningHoursShouldBeLessThan100'
+                  | translate}}</mat-error>
+              </mat-form-field>
+              <span class="duration-separator">:</span>
+              <mat-form-field appearance="outline" class="duration-field profile-control">
+                <input matInput type="number" min="0" max="59" step="1" formControlName="learningMinutes" placeholder="Minutes"
+                  (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
+                <mat-error *ngIf="hasError('learningMinutes', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningMinutes' |
+                  translate}}</mat-error>
+                <mat-error
+                  *ngIf="!hasError('learningMinutes', 'pattern') && hasError('learningMinutes', 'max')">{{'NetworkV2Profile.learningMinutesShouldBeLessThan60'
+                  | translate}}</mat-error>
+              </mat-form-field>
+            </div>
           </div>
-
         </div>
 
         <div class="w-full mb-5">

@@ -1085,7 +1085,8 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
       issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
-      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(100)]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours'), [Validators.pattern(/^\d+$/), Validators.min(0), Validators.max(100)]],
+      learningMinutes: [_.get(this.entryDetails?.contextData, 'learningMinutes'), [Validators.pattern(/^\d+$/), Validators.min(0), Validators.max(59)]],
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
@@ -1573,6 +1574,7 @@ export class ProfileEntryEditComponent implements OnInit {
             formValue.fileName = ''
           }
           formValue.learningHours = formValue.learningHours ? Number(formValue.learningHours) : ''
+          formValue.learningMinutes = formValue.learningMinutes ? Number(formValue.learningMinutes) : ''
         }
         if (this.header === 'Service History') {
           if (formValue.orgName === this.selctedOrgDetails['orgName']) {
