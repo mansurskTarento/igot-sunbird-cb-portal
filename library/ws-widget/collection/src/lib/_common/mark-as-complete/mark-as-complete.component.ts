@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 // import { AppTocService } from '@sunbird-cb/toc'
 import { NsContent } from '../../_services/widget-content.model'
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component'

@@ -6,7 +6,7 @@ import { NSHandsOnModels } from './hands-on.model'
 import { NSHandsOnConstants } from './hands-on.constants'
 import { LoggerService, EventService } from '@sunbird-cb/utils-v2'
 import { HandsOnService } from './hands-on.service'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { HandsOnDialogComponent } from './components/hands-on-dialog/hands-on-dialog.component'
 
 // import 'brace'
@@ -612,14 +612,14 @@ export class HandsOnComponent implements OnInit, OnChanges, OnDestroy {
   raiseInteractTelemetry(action: string, event: string) {
     if (this.identifier) {
       this.eventSvc.raiseInteractTelemetry(
-      {
-        type: action,
-        subType: event,
-        id: this.identifier,
-      },
-      {
-        id: this.identifier,
-      })
+        {
+          type: action,
+          subType: event,
+          id: this.identifier,
+        },
+        {
+          id: this.identifier,
+        })
     }
     if (event === 'codeinput') {
       this.isInput = false
@@ -631,19 +631,19 @@ export class HandsOnComponent implements OnInit, OnChanges, OnDestroy {
   startInputTimer() {
     this.inputInterval = setInterval(
       () => {
-      if (this.isInput) {
-        this.raiseInteractTelemetry('editor', 'codeinput')
-      }
-    },
+        if (this.isInput) {
+          this.raiseInteractTelemetry('editor', 'codeinput')
+        }
+      },
       2 * 60000)
   }
   startClickTimer() {
     this.clickInterval = setInterval(
       () => {
-      if (this.isClick) {
-        this.raiseInteractTelemetry('editor', 'buttonclick')
-      }
-    },
+        if (this.isClick) {
+          this.raiseInteractTelemetry('editor', 'buttonclick')
+        }
+      },
       2 * 60000)
   }
 

@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core'
 import { AbstractControl, FormBuilder, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
 
@@ -168,10 +168,10 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<ProfileEntryEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: any,
     private ProfileV2RevampService: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private pipeImgUrl: PipeCertificateImageURL
   ) {
     this.header = _.get(this.data, 'header', '')

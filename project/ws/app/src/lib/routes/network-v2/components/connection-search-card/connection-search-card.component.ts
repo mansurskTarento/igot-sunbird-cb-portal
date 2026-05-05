@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core'
 import { NSNetworkDataV2 } from '../../models/network-v2.model'
 import { NetworkV2Service } from '../../services/network-v2.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router, ActivatedRoute } from '@angular/router'
 import { NsUser } from '@sunbird-cb/utils-v2'
 
@@ -38,7 +38,7 @@ export class ConnectionSearchCardComponent implements OnInit {
       if (this.user.firstName) {
         if (this.user.lastName && this.user.lastName !== null && this.user.lastName !== undefined) {
           name = `${this.user.firstName} ${this.user.lastName}`
-        } else  {
+        } else {
           name = `${this.user.firstName}`
         }
       }
@@ -74,7 +74,7 @@ export class ConnectionSearchCardComponent implements OnInit {
         userNameFrom: this.me ? this.me.userId : '',
         userDepartmentFrom: this.me && this.me.departmentName ? this.me.departmentName : 'IGOT',
         userIdTo: this.user.id || this.user.identifier || this.user.wid,
-        userNameTo:  this.user.id || this.user.identifier || this.user.wid,
+        userNameTo: this.user.id || this.user.identifier || this.user.wid,
         userDepartmentTo: this.user.rootOrgName,
       }
       // if (this.user.personalDetails) {

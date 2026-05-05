@@ -11,8 +11,8 @@ import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { CompetencyPassbookService } from '../competency-passbook.service'
 
 @Component({

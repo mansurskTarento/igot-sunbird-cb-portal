@@ -5,9 +5,9 @@ import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
 import { NSCompetencie } from '../../models/competencies.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
-import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component';
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -30,35 +30,35 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
   type: any = 'COMPETENCY'
   competencyId: any = null
   competencyData: any = null
-  myCompetencies: any;
-  currentProfile: any;
+  myCompetencies: any
+  currentProfile: any
   courses: any[] = []
   facets: any
   searchReq = {
     request: {
-        filters: {
-            primaryCategory: [
-                'Course',
-                'Program',
-            ],
-            status: [
-                'Live',
-            ],
-            'competencies_v3.name': [''],
-        },
-        query: '',
-        sort_by: {
-            lastUpdatedOn: '',
-        },
-        fields: [],
-        facets: [
-            'primaryCategory',
-            'mimeType',
-            'source',
-            // 'competencies_v3.name',
-            // 'competencies_v3.competencyType',
-            // 'taxonomyPaths_v3.name',
+      filters: {
+        primaryCategory: [
+          'Course',
+          'Program',
         ],
+        status: [
+          'Live',
+        ],
+        'competencies_v3.name': [''],
+      },
+      query: '',
+      sort_by: {
+        lastUpdatedOn: '',
+      },
+      fields: [],
+      facets: [
+        'primaryCategory',
+        'mimeType',
+        'source',
+        // 'competencies_v3.name',
+        // 'competencies_v3.competencyType',
+        // 'taxonomyPaths_v3.name',
+      ],
     },
   }
   currentCompetency: any
@@ -86,7 +86,7 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
       this.competencyId = _.get(params, 'competencyId')
       this.competencyName = _.get(params, 'competencyName')
       this.routeType = _.get(params, 'routeType')
-      if(this.activatedRoute.snapshot && this.activatedRoute.snapshot.parent && this.activatedRoute.snapshot.parent.parent) {
+      if (this.activatedRoute.snapshot && this.activatedRoute.snapshot.parent && this.activatedRoute.snapshot.parent.parent) {
         this.jsonConfigForCBP = this.activatedRoute.snapshot.parent.parent.data.pageData.data.relatedCBP
         this.searchReq.request.filters['competencies_v3.name'].splice(0, 1, this.competencyName)
         this.jsonConfigForCBP.widgetData.strips[0]['payload'] = this.searchReq
@@ -113,17 +113,17 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
         this.myCompetencies = response.profileDetails.competencies || []
         this.currentProfile = response.profileDetails
         const vc = _.chain(this.myCompetencies)
-        .filter(i => {
-          return i.id === this.competencyId
-        })
-        .first()
-        .value()
-        if(vc && ('id' in vc) && !_.isEmpty(vc.id)) {
+          .filter(i => {
+            return i.id === this.competencyId
+          })
+          .first()
+          .value()
+        if (vc && ('id' in vc) && !_.isEmpty(vc.id)) {
           this.currentCompetency = vc
           if (vc.competencySelfAttestedLevel && vc.competencySelfAttestedLevel !== '') {
-            this.isAdded = true;
+            this.isAdded = true
           } else {
-            this.isAdded = false;
+            this.isAdded = false
           }
         }
       }
@@ -174,10 +174,10 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
 
   removeFromProfile(item: NSCompetencie.ICompetencie) {
     if (item) {
-      const currentCompetencies = _.get(this, 'currentProfile.competencies');
+      const currentCompetencies: any = _.get(this, 'currentProfile.competencies')
       // const updatedProfile = { ...this.currentProfile };
       let updatedProfile = this.currentProfile.competencies
-      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id);
+      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id)
       if (this.currentCompetency && this.currentCompetency.competencyCBPCompletionLevel) {
         const newCompetence = {
           type: this.currentCompetency.type,
@@ -194,7 +194,7 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
         updatedProfile.push(newCompetence)
       }
       if (updatedProfile) {
-        updatedProfile = currentCompetencies;
+        updatedProfile = currentCompetencies
       }
       const reqUpdate = {
         request: {
@@ -207,16 +207,16 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
       this.competencySvc.updateProfile(reqUpdate).subscribe(
         (response) => {
           if (response) {
-            this.isAdded = false;
+            this.isAdded = false
             // success => removed
-            this.snackBar.open('Removed competency sucessfully', 'X');
+            this.snackBar.open('Removed competency sucessfully', 'X')
             this.configSvc.updateGlobalProfile(true)
           }
         },
         /* tslint:disable */() => {
-          this.snackBar.open(this.failureMsg.nativeElement.value, 'X');
+          this.snackBar.open(this.failureMsg.nativeElement.value, 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
 
@@ -263,15 +263,15 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
         if (response) {
           // success
           // this.myCompetencies.push(item)
-          this.isAdded = true;
+          this.isAdded = true
           this.snackBar.open('Compentency added successfully', 'X')
           this.configSvc.updateGlobalProfile(true)
         }
       },
         /* tslint:disable */() => {
-          this.snackBar.open('Failed to add compentency', 'X');
+          this.snackBar.open('Failed to add compentency', 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
 
@@ -283,33 +283,33 @@ export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
       maxWidth: '95vw',
       panelClass: 'remove-pad',
       data: item,
-    });
-    const instance = dialogRef.componentInstance;
-    instance.isUpdate = (this.isAdded) ? true : false;
+    })
+    const instance = dialogRef.componentInstance
+    instance.isUpdate = (this.isAdded) ? true : false
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response && response.action === 'ADD') {
-        this.addCompetency(response);
+        this.addCompetency(response)
         // this.refreshData(this.currentActivePage)
       } else if (response && response.action === 'DELETE') {
-        this.deleteCompetency(response.id);
+        this.deleteCompetency(response.id)
       }
-    });
+    })
   }
 
   remove(item: NSCompetencie.ICompetencie) {
-    this.deleteCompetency(item.id);
+    this.deleteCompetency(item.id)
   }
 
   getCbps() {
-      this.searchReq.request.filters['competencies_v3.name'].splice(0, 1, this.competencyName)
-      this.competencySvc.fetchSearchData(this.searchReq).subscribe((res: any) => {
-        if (res && res.result &&  res.result && res.result.content) {
-          this.courses = res.result.content
-        }
-        if (res && res.result &&  res.result && res.result.facets) {
-          this.facets = res.result.facets
-        }
-      })
+    this.searchReq.request.filters['competencies_v3.name'].splice(0, 1, this.competencyName)
+    this.competencySvc.fetchSearchData(this.searchReq).subscribe((res: any) => {
+      if (res && res.result && res.result && res.result.content) {
+        this.courses = res.result.content
+      }
+      if (res && res.result && res.result && res.result.facets) {
+        this.facets = res.result.facets
+      }
+    })
   }
 
 }

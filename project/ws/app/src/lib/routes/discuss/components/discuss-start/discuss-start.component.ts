@@ -1,11 +1,11 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { DiscussService } from '../../services/discuss.service'
 import { NSDiscussData } from '../../models/discuss.model'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatSnackBar } from '@angular/material/snack-bar'
 export interface IDialogData {
   animal: string
   name: string
@@ -48,7 +48,7 @@ export class DiscussStartComponent implements OnInit {
   private initializeData() {
     this.discussService.fetchAllCategories().then((data: any) => {
       this.allCategories = data.categories
-      if (this.startForm.get('category')) {}
+      if (this.startForm.get('category')) { }
       this.startForm.controls['category'].setValue(this.allCategories[1].cid)
     })
 

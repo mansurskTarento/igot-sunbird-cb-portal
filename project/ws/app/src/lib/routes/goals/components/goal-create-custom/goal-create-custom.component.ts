@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { NsGoal, NsContent, BtnGoalsService, NsAutoComplete } from '@sunbird-cb/collection'
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { TFetchStatus, EventService, ConfigurationsService, WsEvents } from '@sunbird-cb/utils-v2'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router, ActivatedRoute } from '@angular/router'
 
 @Component({
@@ -126,7 +126,7 @@ export class GoalCreateCustomComponent implements OnInit {
   scroll(shareGoalStep: HTMLElement) {
     setTimeout(() => {
       shareGoalStep.scrollIntoView({ behavior: 'smooth' })
-    },         100)
+    }, 100)
   }
 
   createGoal() {
@@ -208,7 +208,7 @@ export class GoalCreateCustomComponent implements OnInit {
               : this.snackbar.open(this.editGoalErrorMessage.nativeElement.value)
           },
         )
-        this.raiseTelemetry(this.editGoal.identifier)
+      this.raiseTelemetry(this.editGoal.identifier)
     }
   }
 
@@ -225,6 +225,6 @@ export class GoalCreateCustomComponent implements OnInit {
       {
         pageIdExt: 'create-goal',
         module: WsEvents.EnumTelemetrymodules.LEARN,
-    })
+      })
   }
 }

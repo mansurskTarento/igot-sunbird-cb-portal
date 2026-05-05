@@ -21,9 +21,9 @@ import { UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 import { Router, ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatSelectChange } from '@angular/material/select'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
   selector: 'ws-app-settings',
@@ -66,7 +66,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     {
       value: 'English',
       key: 'en',
-      checked : true,
+      checked: true,
     },
   ]
 
@@ -221,7 +221,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
 
   // change font
   changeFont(fontClass: string) {
-    localStorage.setItem('setting' , fontClass)
+    localStorage.setItem('setting', fontClass)
     // this.loggerSvc.log('Font', fontClass)
     this.btnSettingsSvc.changeFont(fontClass)
   }

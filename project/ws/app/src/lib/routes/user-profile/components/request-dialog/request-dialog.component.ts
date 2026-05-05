@@ -8,8 +8,8 @@ import { v4 as uuid } from 'uuid'
 import { RequestService } from 'src/app/routes/public/public-request/request.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -44,7 +44,7 @@ export class RequestDialogComponent implements OnInit {
 
   // tslint:disable-next-line:max-line-length
   requestObj: {
-    state: string; action: string; serviceName: string; userId: string;
+    state: string; action: string; serviceName: string; userId: string
     applicationId: string; actorUserId: string; deptName: string; updateFieldValues: any
   } | undefined
   formobj: { toValue: {}; fieldKey: any; description: any; firstName: any; email: any; mobile: any } | undefined
@@ -116,7 +116,7 @@ export class RequestDialogComponent implements OnInit {
           this.disableBtn = false
           this.clearForm()
           this.openSnackbar('Your designation request has been successfully submitted')
-         // this.openDialog(this.requestType, _res)
+          // this.openDialog(this.requestType, _res)
           this.dialogRef.close()
         },
         (err: any) => {

@@ -14,7 +14,7 @@ import {
   EventService,
   WsEvents,
 } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { Router } from '@angular/router'

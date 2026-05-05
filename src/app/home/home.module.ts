@@ -3,13 +3,13 @@ import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
 import { HomeRoutingModule } from './home-routing.module'
 
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 
 import { HeaderModule } from '../header/header.module'
 import {
-  GridLayoutModule, SlidersModule, DiscussStripMultipleModule,
-  NetworkStripMultipleModule, ContentStripWithTabsModule, AvatarPhotoModule,
+    GridLayoutModule, SlidersModule, DiscussStripMultipleModule,
+    NetworkStripMultipleModule, ContentStripWithTabsModule, AvatarPhotoModule,
 } from '@sunbird-cb/collection'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
 import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module'
@@ -39,17 +39,17 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
 import { HttpClient } from '@angular/common/http'
 import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection/src/lib/_common/survey-form-left-section/survey-form/survey-form.module'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatSelectModule } from '@angular/material/select'
+import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatDialogModule } from '@angular/material/dialog'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
- 
+
 
 @NgModule({
     declarations: [

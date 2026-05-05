@@ -1,12 +1,12 @@
-import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2';
-import { RootService } from '../root/root.service';
-import { environment } from '../../../environments/environment';  
-import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, Renderer2, SimpleChanges, ViewChild } from '@angular/core'
+import { Router, NavigationEnd } from '@angular/router'
+import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { RootService } from '../root/root.service'
+import { environment } from '../../../environments/environment'
+import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
-import cloneDeep from 'lodash/cloneDeep';
+import cloneDeep from 'lodash/cloneDeep'
 
 
 @Component({
@@ -20,7 +20,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   @Input() chatId = ''
   @Input() userId = ''
   @Input() fullScreenChatFlag = false
-  @Input() activeLaguage= 'en'
+  @Input() activeLaguage = 'en'
   @Output() scrollToBottomEvent = new EventEmitter()
   showIcon = true
   categories: any[] = []
@@ -41,11 +41,11 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   callText = ''
   emailText = ''
   searchQuery: any
-  initials:any
+  initials: any
   copiedIndex = -1
   public circleColor!: string
   random = Math.random().toString(36).slice(2)
-  iGOTAISearchResultArr:any = []
+  iGOTAISearchResultArr: any = []
   // public initials!: string
   resultFetch = false
   private colors = [
@@ -68,15 +68,15 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
 
   // tslint:disable
   localization: any = {
-    'en' : {
-      'Hi' : 'Namaste',
+    'en': {
+      'Hi': 'Namaste',
       'information': 'Information',
       'issue': 'Issues',
       'categories': 'Show All Categories',
       'showmore': 'Show More'
     },
-    'hi' : {
-      'Hi' : 'नमस्ते',
+    'hi': {
+      'Hi': 'नमस्ते',
       'information': 'जानकारी',
       'issue': 'समस्या',
       'categories': 'सभी कैटगोरी दिखायें',
@@ -85,9 +85,9 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     }
   }
 
-  aiSearchResult:any = {}
-  
-  aiSearchResultArr:any = []
+  aiSearchResult: any = {}
+
+  aiSearchResultArr: any = []
   cloneSearchQuery = ''
   displayedText = '';
   startNewChat = false
@@ -95,7 +95,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   // tslint: enable
   @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
-  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>
   containerHeight = 36;
   constructor(
     private configSvc: ConfigurationsService,
@@ -110,35 +110,35 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
-        this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true;
+        this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
     // this.aiGlobalSearch()
-   // this.startNewSupportAISearch()
+    // this.startNewSupportAISearch()
     this.checkForApiCalls()
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
     this.userIcon = this.userInfo && this.userInfo.profileImageUrl ? this.userInfo.profileImageUrl : ''
-    if(!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
+    if (!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
       this.createInititals(this.userInfo.firstName)
-    } 
-    
+    }
+
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
-    
-    
-    
+
+
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['chatId']) {
-      const prev = changes['chatId'].previousValue;
-      const current = changes['chatId'].currentValue;
+      const prev = changes['chatId'].previousValue
+      const current = changes['chatId'].currentValue
 
       if (prev !== current) {
-        console.log(`'chatId' changed from '${prev}' to '${current}'`);
+        console.log(`'chatId' changed from '${prev}' to '${current}'`)
         this.startNewChat = true
         this.startNewSupportAISearch()
       }
@@ -179,10 +179,10 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   }
   setDataToLocalStorage(data: any) {
     let localObject: any = {}
-    localObject = JSON.parse(localStorage.getItem('faq')|| '{}')
-    localObject[this.selectedLaguage] = {...localObject[this.selectedLaguage], [this.currentFilter] : data}
+    localObject = JSON.parse(localStorage.getItem('faq') || '{}')
+    localObject[this.selectedLaguage] = { ...localObject[this.selectedLaguage], [this.currentFilter]: data }
     localStorage.setItem('faq', JSON.stringify(localObject))
-    this.toggleFilter(this.currentFilter === 'information' ? 'information': this.currentFilter)
+    this.toggleFilter(this.currentFilter === 'information' ? 'information' : this.currentFilter)
   }
 
   initData(_getData: any) {
@@ -211,7 +211,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   selectLaguage(event: any) {
     this.selectedLaguage = event.target.value
     localStorage.setItem('selectedLanguage', event.target.value)
-    this.chatInformation=[]
+    this.chatInformation = []
     this.chatIssues = []
     this.checkForApiCalls()
   }
@@ -299,7 +299,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     const recommendedQues: any[] = []
     const isLogedIn: string = this.userInfo ? 'Logged-In' : 'Not Logged-In'
     this.responseData.recommendationMap.map((question: any) => {
-      question.recommendedQues.map((ques: any)=> {
+      question.recommendedQues.map((ques: any) => {
         if (ques.priority === priority && (question.categoryType === isLogedIn || question.categoryType === 'Both')) {
           recommendedQues.push(ques)
         }
@@ -328,16 +328,16 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       relatedQes: `${catItem.catName}?`,
       tab: this.currentFilter,
     }
-    this.more= false
+    this.more = false
     if (catItem.catId === 'all') {
       incomingMsg.title = '', // 'Here is the list of all the topics'
-      incomingMsg.relatedQes = ''
+        incomingMsg.relatedQes = ''
       incomingMsg.recommendedQues = this.sortCategory()
     } else {
       this.responseData.recommendationMap.forEach((element: any) => {
         if (catItem.catId === element.catId) {
           incomingMsg.type = 'incoming',
-          incomingMsg.recommendedQues = element.recommendedQues
+            incomingMsg.recommendedQues = element.recommendedQues
         }
       })
       this.raiseCategotyTelemetry(catItem.catId)
@@ -361,7 +361,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/chatbot', module: 'Assistant'},
+      pageContext: { pageId: '/chatbot', module: 'Assistant' },
       from: '',
       to: 'Telemetry',
     }
@@ -374,7 +374,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: { type: '' },
-        object: { type: 'zse', id: 'asd'},
+        object: { type: 'zse', id: 'asd' },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         type: 'session',
@@ -412,7 +412,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: { type: 'click', id: idn },
-        object: {id: idn, type: this.currentFilter.charAt(0).toUpperCase() + this.currentFilter.slice(1)},
+        object: { id: idn, type: this.currentFilter.charAt(0).toUpperCase() + this.currentFilter.slice(1) },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view'
@@ -514,7 +514,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
 
 
   ngAfterViewInit(): void {
-    this.resizeTextarea(this.textArea.nativeElement,'');
+    this.resizeTextarea(this.textArea.nativeElement, '')
   }
 
   scrollToBottom(): void {
@@ -522,7 +522,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       if (this.myScrollContainer) {
         this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight
       }
-    } catch(err) { }
+    } catch (err) { }
   }
   clickOutside() {
     this.iconClick('end')
@@ -535,53 +535,53 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
-    if(!this.initiateSupportNewChat) {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event: any) {
+    if (!this.initiateSupportNewChat) {
       return false
     }
     if (!this.searchQuery.trim()) {
-      event.preventDefault(); // Prevents Enter key from adding a new line
+      event.preventDefault() // Prevents Enter key from adding a new line
     }
     this.searchQuery = this.searchQuery.trim()
     // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
-    this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
+    this.aiSearchResultArr.map((item: any, index: any) => {
+      if (item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
-        this.aiSearchResultArr.splice(index,1)
+        this.aiSearchResultArr.splice(index, 1)
       }
-     })
-     this.resultFetch = false 
-  //  console.log(this.searchQuery)
-   this.cloneSearchQuery = ''
+    })
+    this.resultFetch = false
+    //  console.log(this.searchQuery)
+    this.cloneSearchQuery = ''
     // this.searchQuery = 'Basics of National Income Accounting'
-   let sendMsgObj = {
-     type: 'sendMsg',
-     tab: 'support-ai',
-     question: this.searchQuery
-   }
-   this.cloneSearchQuery = cloneDeep(this.searchQuery);
-   this.aiSearchResultArr.push(sendMsgObj)
-   this.aiSearchResultArr.push({type: 'incoming',  tab: 'support-ai', answer: '', newMessage: '', showBot: true})
-   
-   if(this.aiSearchResultArr.length > 2) {
-    setTimeout(()=>{
-      this.scrollToBottomEvent.emit() 
-    },0)
-   }  
+    let sendMsgObj = {
+      type: 'sendMsg',
+      tab: 'support-ai',
+      question: this.searchQuery
+    }
+    this.cloneSearchQuery = cloneDeep(this.searchQuery)
+    this.aiSearchResultArr.push(sendMsgObj)
+    this.aiSearchResultArr.push({ type: 'incoming', tab: 'support-ai', answer: '', newMessage: '', showBot: true })
+
+    if (this.aiSearchResultArr.length > 2) {
+      setTimeout(() => {
+        this.scrollToBottomEvent.emit()
+      }, 0)
+    }
     this.searchQuery = ''
     this.resetTextAreaHeight(textArea)
     this.supportAISearch()
     // setTimeout(()=>{
     //   this.searchQuery = ''
     // },1000)
-   
-  //  this.getAiTutorMessage()
-  // this.sendAITutorMessage()
+
+    //  this.getAiTutorMessage()
+    // this.sendAITutorMessage()
   }
 
   startNewSupportAISearch() {
     this.iGOTAISearchResultArr = []
-    let requestBody:any = {
+    let requestBody: any = {
       "channel_id": "web",
       // "session_id": this.chatId,
       "text": this.cloneSearchQuery,
@@ -589,36 +589,36 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       "language": this.activeLaguage
     }
     console.log('requestBody--', requestBody)
-    if(this.startNewChat) {
-      this.chatbotService.aiStartChathForSupport(requestBody,  this.userId).subscribe((data)=>{
+    if (this.startNewChat) {
+      this.chatbotService.aiStartChathForSupport(requestBody, this.userId).subscribe((data) => {
         console.log('data---', data)
         this.resultFetch = true
-        if(data && data.message) {
+        if (data && data.message) {
           this.initiateSupportNewChat = true
           this.aiSearchResultArr.push(
-            {type: 'incoming',  tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true},
-            {type: 'incoming',  tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false},
-            {type: 'incoming',  tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false}
+            { type: 'incoming', tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true },
+            { type: 'incoming', tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false },
+            { type: 'incoming', tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false }
           )
         } else {
           this.initiateSupportNewChat = false
         }
-        
-        
-      
+
+
+
       })
-      
+
       const event = {
         eventType: WsEvents.WsEventType.Telemetry,
         eventLogLevel: WsEvents.WsEventLogLevel.Info,
         data: {
-          edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
-          object: { },
+          edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
+          object: {},
           state: WsEvents.EnumTelemetrySubType.Interact,
           eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
           mode: 'view',
         },
-        pageContext: {pageId: '/page/home', module: 'Home'},
+        pageContext: { pageId: '/page/home', module: 'Home' },
         from: '',
         to: 'Telemetry',
       }
@@ -627,22 +627,22 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   }
 
 
-  
+
 
   supportAISearch() {
-    console.log('this.initiateSupportNewChat--',this.initiateSupportNewChat)
-    if(this.initiateSupportNewChat) {
-      let requestBody:any = {
+    console.log('this.initiateSupportNewChat--', this.initiateSupportNewChat)
+    if (this.initiateSupportNewChat) {
+      let requestBody: any = {
         "channel_id": "web",
         // "session_id": this.chatId,
         "text": this.cloneSearchQuery,
         "audio": "",
         "language": this.activeLaguage
       }
-        this.chatbotService.aiSendChathForSupport(requestBody,  this.userId).subscribe((data)=>{
-          this.resultFetch = true
-        this.aiSearchResult = data 
-        
+      this.chatbotService.aiSendChathForSupport(requestBody, this.userId).subscribe((data) => {
+        this.resultFetch = true
+        this.aiSearchResult = data
+
         //let arr:any = []
         // this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
         //   let startTime = 0
@@ -657,109 +657,109 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         //     pageNumber= item?.ContentEnd
         //   }
         //   pageNumber = pageNumber !== " " ? pageNumber : 1
-          
-        //   let resultObj = {        
+
+        //   let resultObj = {
         //     message: item.Name,
         //     recommendedQues: '',
-        //     selectedValue: '',       
+        //     selectedValue: '',
         //     title: item.Name,
         //     content: item,
         //     mimeType: item.mimeType,
         //     contentType: item.ContentType,
         //     artifactUrl: item.ArtifactURL,
         //     description: item.Description,
-        //     identifier: item.Identifier,    
+        //     identifier: item.Identifier,
         //     contentStart: startTime,
-        //     contentEnd: endTime, 
+        //     contentEnd: endTime,
         //     pageNumber:   pageNumber,
         //     query: this.aiSearchResult.query,
         //     query_id: this.aiSearchResult.query_id,
         //     feedback: '',
         //     resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
         //   }
-    
+
         //   // arr.push(resultObj)
         //   this.iGOTAISearchResultArr.push(resultObj)
-          
+
         // })
         let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
-        let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false})
-        this.aiSearchResultArr.map((item:any, index:any)=>{
-          if(item && (item.newMessage === '')) {
+        let shortAnswer = this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAISearchResultArr, type: 'incoming', tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false })
+        this.aiSearchResultArr.map((item: any, index: any) => {
+          if (item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
-            this.aiSearchResultArr.splice(index,1)
+            this.aiSearchResultArr.splice(index, 1)
           }
-         })
-        // setTimeout(()=>{
-        //   this.scrollToBottomEvent.emit() 
-        // },0)
-        
         })
-        
-        const event = {
-          eventType: WsEvents.WsEventType.Telemetry,
-          eventLogLevel: WsEvents.WsEventLogLevel.Info,
-          data: {
-            edata: { type: 'click',  "id": "support-ai-global-search", "pageid": "/page/home"   },
-            object: { },
-            state: WsEvents.EnumTelemetrySubType.Interact,
-            eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-            mode: 'view',
-          },
-          pageContext: {pageId: '/page/home', module: 'Home'},
-          from: '',
-          to: 'Telemetry',
-        }
-        this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+        // setTimeout(()=>{
+        //   this.scrollToBottomEvent.emit()
+        // },0)
+
+      })
+
+      const event = {
+        eventType: WsEvents.WsEventType.Telemetry,
+        eventLogLevel: WsEvents.WsEventLogLevel.Info,
+        data: {
+          edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
+          object: {},
+          state: WsEvents.EnumTelemetrySubType.Interact,
+          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+          mode: 'view',
+        },
+        pageContext: { pageId: '/page/home', module: 'Home' },
+        from: '',
+        to: 'Telemetry',
+      }
+      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
     }
-   
-    
-   
-    
+
+
+
+
   }
 
-  sharePositiveContentRating(item:any, index:any, cindex:any) {
-    let requestBody:any = {
+  sharePositiveContentRating(item: any, index: any, cindex: any) {
+    let requestBody: any = {
       "query_id": item?.query_id,
       // "response": item?.description,
       "comments": "accurate",
-      "is_liked":true,
+      "is_liked": true,
       "rating": "5"
 
-   }
-   
-   //this.matSnackBar.open('Unable to fetch content data, due to some error!')
-   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
-    if(data && data.status === 'success') {
-      // this.matSnackBar.openFromComponent(SnackbarComponent, {
-      //   data: {
-      //     message: 'Thank you for your feedback.', type: 'success',
-      //   }, duration: 5000, panelClass: 'course-success-snackbar',
-      // })
-      // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
-      if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-        if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
-          this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
-      }
-      this.matSnackBarNew.open(
-        'Thank you for your feedback.', 'X',
-        { duration: 5000, panelClass: ['success'] }
-      );
-      
-    } else {
-      this.matSnackBarNew.open(
-        'Something is wrong. Please try again later.', 'X',
-        { duration: 5000, panelClass: ['error'] }
-      );
     }
 
-  })
+    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
+    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        // this.matSnackBar.openFromComponent(SnackbarComponent, {
+        //   data: {
+        //     message: 'Thank you for your feedback.', type: 'success',
+        //   }, duration: 5000, panelClass: 'course-success-snackbar',
+        // })
+        // console.log(this.aiSearchResultArr, index, this.aiSearchResultArr[index])
+        if (this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if (this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+            this.aiSearchResultArr[index].result[cindex]['feedback'] = 'up'
+        }
+        this.matSnackBarNew.open(
+          'Thank you for your feedback.', 'X',
+          { duration: 5000, panelClass: ['success'] }
+        )
+
+      } else {
+        this.matSnackBarNew.open(
+          'Something is wrong. Please try again later.', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        )
+      }
+
+    })
   }
 
-  openAIFeedbackPopup(item:any, index:any, cindex:any) {
-    if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index] && this.aiSearchResultArr[index]) {
-      if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex] && this.aiSearchResultArr[index].result[cindex]['feedback'] !== 'down') {
+  openAIFeedbackPopup(item: any, index: any, cindex: any) {
+    if (this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index] && this.aiSearchResultArr[index]) {
+      if (this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex] && this.aiSearchResultArr[index].result[cindex]['feedback'] !== 'down') {
         const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
           disableClose: true,
           width: '502px',
@@ -767,162 +767,162 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
         })
         dialogRef.afterClosed().subscribe((result: any) => {
           if (result) {
-            this.shareAIFeedback(item, result, index, cindex);
-            dialogRef.close();
+            this.shareAIFeedback(item, result, index, cindex)
+            dialogRef.close()
           } else {
-            dialogRef.close();
+            dialogRef.close()
           }
         })
       } else {
         this.matSnackBarNew.open(
           'You have already submitted feedback', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
-      
+
     }
-   
- 
+
+
   }
 
-  shareAIFeedback(item:any, result:any, index:any, cindex:any) {
+  shareAIFeedback(item: any, result: any, index: any, cindex: any) {
 
-    let requestBody:any = {
+    let requestBody: any = {
       "query_id": item?.query_id,
       // "response": item?.description,
       "comments": result,
-      "is_liked":false,
+      "is_liked": false,
       "rating": "0"
 
-   }
-     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data:any)=>{
-      if(data  && data.status === 'success') {
-        if(this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
-          if(this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
+    }
+    this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        if (this.aiSearchResultArr && this.aiSearchResultArr.length && this.aiSearchResultArr[index]) {
+          if (this.aiSearchResultArr[index].result && this.aiSearchResultArr[index].result[cindex])
             this.aiSearchResultArr[index].result[cindex]['feedback'] = 'down'
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
-        );
+        )
       } else {
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
-     })
+    })
   }
 
-  callFromInternet(item:any, index:any) {
+  callFromInternet(item: any, index: any) {
     this.resultFetch = false
-    this.aiSearchResultArr.push({showBot: true, type: 'incoming',  tab: 'support-ai', answer: '', newMessage: ''})
-    if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
+    this.aiSearchResultArr.push({ showBot: true, type: 'incoming', tab: 'support-ai', answer: '', newMessage: '' })
+    if (this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
-    
-    if(item && !item.answer) {
+
+    if (item && !item.answer) {
 
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,
-        "designation":  this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
+        "designation": this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
-      this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata:any)=>{
+      this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, this.chatId, this.userId).subscribe((idata: any) => {
         this.resultFetch = true
-        this.aiSearchResultArr.map((item:any, index:any)=>{
-          if(item && (item.newMessage === '')) {
+        this.aiSearchResultArr.map((item: any, index: any) => {
+          if (item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
-            this.aiSearchResultArr.splice(index,1)
+            this.aiSearchResultArr.splice(index, 1)
           }
-         })
-        let resultObj = {        
+        })
+        let resultObj = {
           message: idata.answer,
           recommendedQues: '',
-          selectedValue: '',       
+          selectedValue: '',
           title: idata.answer,
           content: idata,
           mimeType: idata,
           contentType: idata,
           artifactUrl: idata,
           description: idata.answer,
-          identifier: idata,    
+          identifier: idata,
           contentStart: idata,
-          contentEnd: idata, 
-          pageNumber:   idata,
+          contentEnd: idata,
+          pageNumber: idata,
           query: this.cloneSearchQuery,
           query_id: idata.query_id,
-          resourceLink : '', 
+          resourceLink: '',
           fromInternet: true,
           feedback: ''
         }
 
         this.iGOTAISearchResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
-        let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAISearchResultArr, type: 'incoming',  tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false})
-        this.aiSearchResultArr.map((item:any, index:any)=>{
-          if(item && (item.newMessage === '')) {
+        let shortAnswer = this.splitParagraphByWords(answer)
+        this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAISearchResultArr, type: 'incoming', tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: false })
+        this.aiSearchResultArr.map((item: any, index: any) => {
+          if (item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
-            this.aiSearchResultArr.splice(index,1)
+            this.aiSearchResultArr.splice(index, 1)
           }
-         })
+        })
         // setTimeout(()=>{
-        //   this.scrollToBottomEvent.emit() 
+        //   this.scrollToBottomEvent.emit()
         // },0)
       })
     }
   }
 
-  rejectFromInternet(index:any) {
-    if( this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
+  rejectFromInternet(index: any) {
+    if (this.aiSearchResultArr[index] && this.aiSearchResultArr[index]['showFromInternet']) {
       this.aiSearchResultArr[index]['showFromInternet'] = false
     }
     this.resultFetch = true
-    this.aiSearchResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
+    this.aiSearchResultArr.map((item: any, index: any) => {
+      if (item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
-        this.aiSearchResultArr.splice(index,1)
+        this.aiSearchResultArr.splice(index, 1)
       }
-     })
+    })
   }
 
-  copyPath(item:any, cindex:any) {
+  copyPath(item: any, cindex: any) {
     const selBox = document.createElement('textarea')
     selBox.style.position = 'fixed'
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-    selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    selBox.value = item.mimeType === 'application/pdf' ? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}` : `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
     document.execCommand('copy')
     document.body.removeChild(selBox)
     this.copiedIndex = cindex
-    setTimeout(()=>{
+    setTimeout(() => {
       this.copiedIndex = -1
-    },1000)
-    
+    }, 1000)
+
   }
 
-  redirectToResource(item:any) {   
-    let path = (item.mimeType) === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+  redirectToResource(item: any) {
+    let path = (item.mimeType) === 'application/pdf' ? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${item.pageNumber}` : `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     window.open(path, '_blank')
   }
 
-  redirectToToc(chat:any) {
+  redirectToToc(chat: any) {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
-        object: { id: chat?.identifier, type: chat?.contentType},
+        edata: { type: 'click', "id": "card-content", "pageid": "/page/home" },
+        object: { id: chat?.identifier, type: chat?.contentType },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/page/home', module: 'Home'},
+      pageContext: { pageId: '/page/home', module: 'Home' },
       from: '',
       to: 'Telemetry',
     }
@@ -931,30 +931,30 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     window.open(path, '_blank')
   }
 
-  splitParagraphByWords(paragraph:any, wordsPerChunk = 30) {
-    const words = paragraph.trim().split(/\s+/);
-    const chunks = [];
-  
+  splitParagraphByWords(paragraph: any, wordsPerChunk = 30) {
+    const words = paragraph.trim().split(/\s+/)
+    const chunks = []
+
     for (let i = 0; i < wordsPerChunk; i++) {
       chunks.push(words[i])
     }
-    
-    return chunks.join(' ');
+
+    return chunks.join(' ')
   }
 
-  toggleShow(index:any, showType:any) {
-    if(showType === 'less') {
+  toggleShow(index: any, showType: any) {
+    if (showType === 'less') {
       this.aiSearchResultArr[index]['showLess'] = true
     } else {
       this.aiSearchResultArr[index]['showLess'] = false
     }
-    
+
   }
 
   get userInitials() {
     return this.initials
   }
-  private createInititals(name:any): void {
+  private createInititals(name: any): void {
     const randomIndex = Math.floor(Math.random() * Math.floor(this.colors.length))
     this.circleColor = this.colors[randomIndex]
     if (this.randomcolors) {
@@ -984,56 +984,56 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.initials = initials.toUpperCase()
   }
 
-  raiseTelemetryForResource(item:any) {
+  raiseTelemetryForResource(item: any) {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "card-content", "pageid": "/page/home"   },
-        object: { id: item?.identifier, type: item?.contentType},
+        edata: { type: 'click', "id": "card-content", "pageid": "/page/home" },
+        object: { id: item?.identifier, type: item?.contentType },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/page/home', module: 'Home'},
+      pageContext: { pageId: '/page/home', module: 'Home' },
       from: '',
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+  resizeTextarea(textArea: HTMLTextAreaElement, _fromInput: any): void {
     if (textArea) {
-      textArea.style.height = 'auto'; // Reset height first
+      textArea.style.height = 'auto' // Reset height first
       requestAnimationFrame(() => {
-        textArea.style.height = textArea.scrollHeight + 'px';
-  
-        const computed = getComputedStyle(textArea);
-        const paddingTop = parseFloat(computed.paddingTop) || 0;
-        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const marginExtra = 0;
-        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
-      });
+        textArea.style.height = textArea.scrollHeight + 'px'
+
+        const computed = getComputedStyle(textArea)
+        const paddingTop = parseFloat(computed.paddingTop) || 0
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0
+        const marginExtra = 0
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra
+      })
     }
   }
 
-  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {    
-    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
-      setTimeout(()=>{
-        this.searchQuery = this.searchQuery.trim()        
-        this.textArea.nativeElement.style.height = 'auto';
-        this.textArea.nativeElement.style.height = '30px';
-        const computed = getComputedStyle(this.textArea.nativeElement);
-        const paddingTop = parseFloat(computed.paddingTop) || 0;
-        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const marginExtra = 0;
-        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
-      })     
-    } 
-    
+  resetTextAreaHeight(_textArea: HTMLTextAreaElement) {
+    if (this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
+      setTimeout(() => {
+        this.searchQuery = this.searchQuery.trim()
+        this.textArea.nativeElement.style.height = 'auto'
+        this.textArea.nativeElement.style.height = '30px'
+        const computed = getComputedStyle(this.textArea.nativeElement)
+        const paddingTop = parseFloat(computed.paddingTop) || 0
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0
+        const marginExtra = 0
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra
+      })
+    }
+
   }
 
   ngOnDestroy(): void {
-   
+
   }
 }

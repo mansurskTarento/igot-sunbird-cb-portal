@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator'
+import { PageEvent } from '@angular/material/paginator'
 import { ActivatedRoute } from '@angular/router'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, ValueService, TFetchStatus } from '@sunbird-cb/utils-v2'
@@ -87,7 +87,7 @@ export class LearningHistoryComponent implements OnInit {
     private analyticsSrv: AnalyticsService,
     private configSvc: ConfigurationsService,
     private valueSvc: ValueService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.isLtMedium$.subscribe((isLtMedium: boolean) => {

@@ -6,11 +6,11 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 import moment from 'moment'
 import { SignupService } from '../../routes/public/public-signup/signup.service'
-import _ from 'lodash';
+import _ from 'lodash'
 import { ProfileV2Service } from '@ws/app/src/lib/routes/profile-v2/services/profile-v2.servive'
 import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
@@ -36,7 +36,7 @@ const noData = {
   animations: [
     trigger('collapse', [
       state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({  height: '0', visibility: 'hidden'  })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
       // tslint:disable-next-line
       transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
       // tslint:disable-next-line
@@ -44,7 +44,7 @@ const noData = {
     ]),
     trigger('collapseWeekly', [
       state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({  height: '0', visibility: 'hidden'  })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
       // state('true', style({  position: 'absolute', width: '90%',marginRight: '16px', marginLeft:'16px',top: '-118%', zIndex: '9' })),
       // tslint:disable-next-line: prefer-template
       transition('false => true', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-in')),
@@ -54,7 +54,7 @@ const noData = {
 
     trigger('collapsDiscuss', [
       state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({  height: '0', visibility: 'hidden'  })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
       // tslint:disable-next-line:max-line-length
       // state('true', style({  position: 'absolute', width: '80%', transform: 'scaleY(0.7)',marginRight: '32px', marginLeft:'32px',top: '-300%', zIndex: '6' })),
       // tslint:disable-next-line: prefer-template
@@ -112,7 +112,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   isNlw2026Certified = false
   private nlw2026Sub: Subscription | null = null
   @Output() telemetryRaisedLibrary = new EventEmitter()
-  
+
   constructor(
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
@@ -129,20 +129,20 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
     private commonDataSvc: CommonDataService) {
+    if (localStorage.getItem('websiteLanguage')) {
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
+    }
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
+        this.currentLang = lang
       }
-      this.langtranslations.languageSelectedObservable.subscribe(() => {
-        if (localStorage.getItem('websiteLanguage')) {
-          this.translate.setDefaultLang('en')
-          const lang = localStorage.getItem('websiteLanguage')!
-          this.translate.use(lang)
-          this.currentLang = lang
-        }
-      })
-    }
+    })
+  }
 
   ngOnInit() {
     this.userData = this.configSvc && this.configSvc.userProfile
@@ -158,16 +158,16 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
         this.isNlw2026Certified = status
       })
       this.updateDesignationCard = this.activatedRoute.snapshot.data.pageData.data.updateDesignation
-      let slwConfigurationLocal:any = this.activatedRoute.snapshot.data.pageData.data &&
-      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
+      let slwConfigurationLocal: any = this.activatedRoute.snapshot.data.pageData.data &&
+        this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
 
-      if(slwConfigurationLocal && slwConfigurationLocal.length) {
+      if (slwConfigurationLocal && slwConfigurationLocal.length) {
         let userData = this.configSvc.unMappedUser
-        if(userData && userData.profileDetails 
-          && userData.profileDetails.refRootOrg 
+        if (userData && userData.profileDetails
+          && userData.profileDetails.refRootOrg
           && userData.profileDetails.refRootOrg.orgId) {
-          for(let item of slwConfigurationLocal) {
-            if(item.orgId === userData.profileDetails.refRootOrg.orgId) {
+          for (let item of slwConfigurationLocal) {
+            if (item.orgId === userData.profileDetails.refRootOrg.orgId) {
               this.slwConfiguration = item
             }
           }
@@ -282,7 +282,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
                 })
               } else {
                 if (this.configSvc.userProfile && this.configSvc.userProfile.professionalDetails &&
-                    this.configSvc.userProfile.professionalDetails[0] && this.configSvc.userProfile.professionalDetails[0].designation) {
+                  this.configSvc.userProfile.professionalDetails[0] && this.configSvc.userProfile.professionalDetails[0].designation) {
                   let designation = this.configSvc.userProfile.professionalDetails[0].designation
                   if (designation) {
                     let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
@@ -296,12 +296,12 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
               }
             }
           })
-        },(_error: any) => {
+        }, (_error: any) => {
           // tslint:disable-next-line
           console.error('Error occurred:', _error)
         })
       }
-    },(error: any) => {
+    }, (error: any) => {
       // tslint:disable-next-line
       console.error('Error occurred:', error)
     })
@@ -310,21 +310,21 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   private getTermsByCode(categories: any[], code: string) {
     const selectedCategory = categories.filter(
       (category: any) => category.code === code
-    );
-    return _.get(selectedCategory, '[0].terms', []);
+    )
+    return _.get(selectedCategory, '[0].terms', [])
   }
 
   getInsights() {
     this.profileDataLoading = true
     const request = {
       request: {
-          filters: {
-            primaryCategory: 'programs',
-            organisations: [
-                'across',
-                this.userData.rootOrgId,
-            ],
-          },
+        filters: {
+          primaryCategory: 'programs',
+          organisations: [
+            'across',
+            this.userData.rootOrgId,
+          ],
+        },
       },
     }
 
@@ -356,14 +356,14 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       'dot-default': 'dot-grey',
       'dot-active': 'dot-active',
     }
-    const sliderData: { title: any; icon: string; data: string; colorData: string; }[] = []
+    const sliderData: { title: any; icon: string; data: string; colorData: string }[] = []
     this.insightsData.nudges.forEach((ele: any) => {
       if (ele) {
         const data = {
           title: ele.label,
-          icon: ele.growth === 'positive' ?  'arrow_upward' : 'arrow_downward',
+          icon: ele.growth === 'positive' ? 'arrow_upward' : 'arrow_downward',
           // tslint:disable-next-line: prefer-template
-          data: `${ele.growth === 'positive' && ele.progress > 1 ?  '+' + Math.round(ele.progress) + '%' : ''}`,
+          data: `${ele.growth === 'positive' && ele.progress > 1 ? '+' + Math.round(ele.progress) + '%' : ''}`,
           colorData: ele.growth === 'positive' ? 'color-green' : 'color-red',
         }
         sliderData.push(data)
@@ -547,7 +547,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       }
     )
 
-    this.router.navigateByUrl(this.nwlConfiguration?.url  || 'app/learn/nlw/karmayogi-saptah')
+    this.router.navigateByUrl(this.nwlConfiguration?.url || 'app/learn/nlw/karmayogi-saptah')
   }
 
   navigateToStatelLearning() {
@@ -561,10 +561,10 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
         module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
-      if(this.slwConfiguration && this.slwConfiguration.orgName && this.slwConfiguration.orgId) {
-        this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
-      }
-    
+    if (this.slwConfiguration && this.slwConfiguration.orgName && this.slwConfiguration.orgId) {
+      this.router.navigateByUrl(`app/learn/mdo-channels/${this.slwConfiguration.orgName}/${this.slwConfiguration.orgId}/micro-sites`)
+    }
+
   }
 
   updateDesignation() {
@@ -595,7 +595,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       request: {
         userId: this.configSvc.unMappedUser.id,
         profileDetails: {
-          professionalDetails: [{designation: this.selectDesignation}]
+          professionalDetails: [{ designation: this.selectDesignation }]
         }
       }
     }
@@ -651,11 +651,11 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   }
 
   openAutocomplete(trigger: MatAutocompleteTrigger, inputElement: HTMLInputElement): void {
-    inputElement.focus(); // Ensure the input field is focused
-    trigger.openPanel(); // Open the autocomplete panel
+    inputElement.focus() // Ensure the input field is focused
+    trigger.openPanel() // Open the autocomplete panel
   }
 
-  renderUpdateDesignationCardHeader(){
+  renderUpdateDesignationCardHeader() {
     switch (this.currentLang) {
       case "hi":
         return this.updateDesignationCard.headerHi
@@ -774,7 +774,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.raiseTelemetryForNlwExperience('nlw-experience-newsletter')
     if (cta.action === 'OPEN_POPUP') {
       if (cta.url) {
-        this.openNlwExperienceDialog({ ...cta, pdfZoom: pdfZoom  })
+        this.openNlwExperienceDialog({ ...cta, pdfZoom: pdfZoom })
       } else {
         const url = this.commonDataSvc.getLanguageBasedContentUrl('newsletter')
         if (url) {

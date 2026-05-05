@@ -1,8 +1,8 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output } from '@angular/core'
 import { achievement } from '../../../models/profile-revamp.model'
-import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialog, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
@@ -24,11 +24,11 @@ export class AchievementsComponent implements OnInit {
   isPopup: boolean = false;
   //#endregion
   constructor(
-    private dialogRef: MatLegacyDialogRef<AchievementsComponent>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<AchievementsComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: any,
     private profileV2RevampSvc: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
-    private dialog: MatLegacyDialog,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
     private cdr: ChangeDetectorRef,
     private pipeImgUrl: PipeCertificateImageURL
   ) {

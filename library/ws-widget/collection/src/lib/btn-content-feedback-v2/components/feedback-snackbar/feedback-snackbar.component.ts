@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA } from '@angular/material/legacy-snack-bar'
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar'
 import { IFeedbackSnackbarData } from '../../models/feedback.model'
 
 @Component({
@@ -8,7 +8,7 @@ import { IFeedbackSnackbarData } from '../../models/feedback.model'
   styleUrls: ['./feedback-snackbar.component.scss'],
 })
 export class FeedbackSnackbarComponent implements OnInit {
-  constructor(@Inject(MAT_SNACK_BAR_DATA) public snackbarData: IFeedbackSnackbarData) {}
+  constructor(@Inject(MAT_SNACK_BAR_DATA) public snackbarData: IFeedbackSnackbarData) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

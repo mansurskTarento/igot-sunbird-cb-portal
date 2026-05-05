@@ -2,7 +2,7 @@ import { Component, Input, OnInit, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, LogoutComponent, NsPage, NsAppsConfig, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { IBtnAppsConfig } from '../btn-apps/btn-apps.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Subscription } from 'rxjs'
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 /* tslint:disable*/
@@ -61,7 +61,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
     private translate: TranslateService,
     private events: EventService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc:DomainConfService
+    private domainConfSvc: DomainConfService
   ) {
     super()
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
@@ -85,7 +85,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
             ...group,
             featureWidgets: _.compact(group.featureIds.map(
               (id: string): NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink> | undefined => {
-                const permissions = _.get(appsConfig, `features[${id}].permission`)
+                const permissions: any = _.get(appsConfig, `features[${id}].permission`)
                 if (!permissions || permissions.length === 0 || this.accessService.hasRole(permissions)) {
                   return ({
                     widgetType: ROOT_WIDGET_CONFIG.actionButton._type,
@@ -168,7 +168,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -273,7 +273,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   //   )
   // }
   redirectToKBPortal() {
-    const kbUrl: any =  (environment && environment.missionKarmayogiPath)&& environment?.missionKarmayogiPath
+    const kbUrl: any = (environment && environment.missionKarmayogiPath) && environment?.missionKarmayogiPath
     window.open(kbUrl, '_blank')
-  }      
+  }
 }

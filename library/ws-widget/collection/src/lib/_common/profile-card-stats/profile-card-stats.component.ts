@@ -1,9 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { Router } from '@angular/router'
-import { ConfigurationsService, MultilingualTranslationsService,
-  EventService, WsEvents, PipeDurationTransformPipe } from '@sunbird-cb/utils-v2'
+import {
+  ConfigurationsService, MultilingualTranslationsService,
+  EventService, WsEvents, PipeDurationTransformPipe
+} from '@sunbird-cb/utils-v2'
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { HomePageService } from 'src/app/services/home-page.service'
 
 @Component({
@@ -39,25 +41,25 @@ export class ProfileCardStatsComponent implements OnInit {
   currentUserId: any
   profileNudgeUsername = ''
   constructor(private configSvc: ConfigurationsService,
-              private router: Router,
-              private pipDuration: PipeDurationTransformPipe,
-              private langtranslations: MultilingualTranslationsService,
-              private homePageSvc: HomePageService,
-              private eventService: EventService,
-              private dialog: MatDialog) { }
+    private router: Router,
+    private pipDuration: PipeDurationTransformPipe,
+    private langtranslations: MultilingualTranslationsService,
+    private homePageSvc: HomePageService,
+    private eventService: EventService,
+    private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.userInfo =  this.configSvc && this.configSvc.userProfile
+    this.userInfo = this.configSvc && this.configSvc.userProfile
     this.currentUserId = this.configSvc.unMappedUser.id
     if (this.userInfo) {
-     this.userFullName = this.userInfo.firstName
+      this.userFullName = this.userInfo.firstName
       if (this.userFullName && this.userFullName.length > 18) {
         this.userFullName = `${this.userInfo.firstName.slice(0, 18)}...`
       }
     }
     this.enrollInterval = setInterval(() => {
       this.getCounts()
-    },                                1000)
+    }, 1000)
     // this.getCounts()
     const progress = (247 - ((247 * this.userInfo.profileUpdateCompletion) / 100))
     document.documentElement.style.setProperty('--i', String(progress))
@@ -70,18 +72,18 @@ export class ProfileCardStatsComponent implements OnInit {
     setTimeout(() => {
       // this.getTimelyNudge()
       this.showrepublicBanner = true
-    },         pDelayTime)
+    }, pDelayTime)
     const timeInterval = this.configSvc.profileTimelyNudges.nudgeDelayInSec
     setTimeout(() => {
-        this.showrepublicBanner = false
-      },       ((1000 * timeInterval) + pDelayTime))
+      this.showrepublicBanner = false
+    }, ((1000 * timeInterval) + pDelayTime))
 
     this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
-        if (res && res.result && res.result.result) {
-          this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
-        }
-      })
-      this.fetchAndMergeData()
+      if (res && res.result && res.result.result) {
+        this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
+      }
+    })
+    this.fetchAndMergeData()
   }
   getTimelyNudge() {
     if (this.configSvc.profileTimelyNudges.enable) {
@@ -122,8 +124,8 @@ export class ProfileCardStatsComponent implements OnInit {
           // if (userName.length > 18) {
           //   userName = `${this.userInfo.firstName.slice(0, 18)}...`
           // }
-         // this.republicDayData['greet'] = data['greet'].replace('<userName>', userName)
-         this.userName = this.userInfo.firstName
+          // this.republicDayData['greet'] = data['greet'].replace('<userName>', userName)
+          this.userName = this.userInfo.firstName
           if (this.userName) {
             const userNameFW = this.userName.split(' ')
             if (userNameFW && userNameFW.length && userNameFW[0] && userNameFW[0].length > 2) {
@@ -146,7 +148,7 @@ export class ProfileCardStatsComponent implements OnInit {
         //   this.showrepublicBanner = false
         // },         (1000 * timeInterval))
       })
-      }
+    }
   }
 
   getCounts() {
@@ -179,29 +181,29 @@ export class ProfileCardStatsComponent implements OnInit {
         certificate: resdata.eventsAttended ?? 0,
         inProgress: (resdata.eventsEnrolled ?? 0) - (resdata.eventsAttended ?? 0),
         learningHours: resdata.hoursSpentOnEvents ?? 0,
-      };
+      }
     } catch (error) {
-       /* tslint:disable */
+      /* tslint:disable */
       console.error('Error fetching event data:', error)
       this.eventcountdata = { certificate: 0, inProgress: 0, learningHours: 0 }
     }
   }
 
-mergeCounts(): void {
-  this.mergedCountData = {
-    certificate: (this.countdata?.certificate ?? 0) + (this.eventcountdata?.certificate ?? 0),
-    inProgress: (this.countdata?.inProgress ?? 0) + (this.eventcountdata?.inProgress ?? 0),
-    learningHours: this.pipDuration.transform(
-      (parseFloat(this.countdata?.learningHours) || 0) + (parseFloat(this.eventcountdata?.learningHours) || 0),
-      'hms'
-    ),
+  mergeCounts(): void {
+    this.mergedCountData = {
+      certificate: (this.countdata?.certificate ?? 0) + (this.eventcountdata?.certificate ?? 0),
+      inProgress: (this.countdata?.inProgress ?? 0) + (this.eventcountdata?.inProgress ?? 0),
+      learningHours: this.pipDuration.transform(
+        (parseFloat(this.countdata?.learningHours) || 0) + (parseFloat(this.eventcountdata?.learningHours) || 0),
+        'hms'
+      ),
+    }
   }
-}
-async fetchAndMergeData(): Promise<void> {
-  await this.getEventEnrollData()
-  await this.getCounts()
-  this.mergeCounts()
-}
+  async fetchAndMergeData(): Promise<void> {
+    await this.getEventEnrollData()
+    await this.getCounts()
+    this.mergeCounts()
+  }
 
   gotoUserProfile() {
     // this.router.navigate(['/app/person-profile/me'])
@@ -234,15 +236,15 @@ async fetchAndMergeData(): Promise<void> {
 
   openInfo(myDialog: any) {
     const confirmDialog = this.dialog.open(InfoDialogComponent, {
-        width: '613px',
-        panelClass: 'custom-info-dialog',
-        backdropClass: 'info-dialog-backdrop',
-        data: {  template:  myDialog },
-      })
-      confirmDialog.afterClosed().subscribe((result: any) => {
-        if (result) {
-        }
-      })
+      width: '613px',
+      panelClass: 'custom-info-dialog',
+      backdropClass: 'info-dialog-backdrop',
+      data: { template: myDialog },
+    })
+    confirmDialog.afterClosed().subscribe((result: any) => {
+      if (result) {
+      }
+    })
   }
 
   redirectTo(name: string) {
@@ -250,24 +252,24 @@ async fetchAndMergeData(): Promise<void> {
   }
 
   showMyActivities(): void {
-    const element = document.getElementById('user-leaderboard');
+    const element = document.getElementById('user-leaderboard')
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
   showWeeklyClapsSection() {
-    const element = document.getElementById('weekly-wrapper');
+    const element = document.getElementById('weekly-wrapper')
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
   }
 
   redirectToContent(stats: any) {
     if (stats?.key === 'karmaPoints') {
-      this.router.navigate(['/app/person-profile/karma-points']);
+      this.router.navigate(['/app/person-profile/karma-points'])
     } else {
-      this.router.navigate(['/app/seeAll/new'], { queryParams: { key: 'continueLearning' } });
+      this.router.navigate(['/app/seeAll/new'], { queryParams: { key: 'continueLearning' } })
     }
   }
 }

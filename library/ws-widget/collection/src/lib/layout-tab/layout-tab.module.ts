@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { LayoutTabComponent } from './layout-tab.component'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatTabsModule } from '@angular/material/tabs'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 @NgModule({
     declarations: [LayoutTabComponent],
     imports: [CommonModule, MatTabsModule, WidgetResolverModule]
 })
-export class LayoutTabModule {}
+export class LayoutTabModule { }

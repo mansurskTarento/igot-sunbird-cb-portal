@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter }
 import { Router, ActivatedRoute } from '@angular/router'
 // import { NSNetworkDataV2 } from '../../models/network-v2.model'
 import { NetworkV2Service } from '../../services/network-v2.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsUser } from '@sunbird-cb/utils-v2'
 // import { ConnectionHoverService } from '../connection-name/connection-hover.servive'
 
@@ -118,7 +118,7 @@ export class ConnectionRequestCardComponent implements OnInit {
       if (this.user.firstName) {
         if (this.user.lastName && this.user.lastName !== null && this.user.lastName !== undefined) {
           name = `${this.user.firstName} ${this.user.lastName}`
-        } else  {
+        } else {
           name = `${this.user.firstName}`
         }
       }

@@ -10,7 +10,7 @@ import {
 import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus, EventService, ConfigurationsService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-goal-common-card',
@@ -103,6 +103,6 @@ export class GoalCommonCardComponent implements OnInit {
       {
         pageIdExt: 'create-goal',
         module: WsEvents.EnumTelemetrymodules.LEARN,
-    })
+      })
   }
 }

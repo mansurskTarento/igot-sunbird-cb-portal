@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { connectionUpdates, routesData } from '../../models/network-v3.model';
-import * as _ from 'lodash';
-import { NetworkingService } from '../../services/networking.service';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-import { TranslateService } from '@ngx-translate/core';
-import { MobileAppsService } from 'src/app/services/mobile-apps.service';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { connectionUpdates, routesData } from '../../models/network-v3.model'
+import * as _ from 'lodash'
+import { NetworkingService } from '../../services/networking.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { TranslateService } from '@ngx-translate/core'
+import { MobileAppsService } from 'src/app/services/mobile-apps.service'
+import { Router } from '@angular/router'
 
 
 @Component({
@@ -67,13 +67,13 @@ export class NetworkComponent implements OnInit {
 
   constructor(
     private networkingSvc: NetworkingService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
     private translateService: TranslateService,
     private mobileAppsSvc: MobileAppsService,
     private router: Router,
     private langtranslations: MultilingualTranslationsService,
-  ) { 
+  ) {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.next(false)
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -93,13 +93,13 @@ export class NetworkComponent implements OnInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translateService.use(lang)
     }
-    this.initialization();
+    this.initialization()
   }
-  
+
   initialization() {
-    this.subscribeToUpdates();
-    this.getCommunitesList();
-    this.getProfileDetails();
+    this.subscribeToUpdates()
+    this.getCommunitesList()
+    this.getProfileDetails()
   }
 
   getCommunitesList() {
@@ -107,43 +107,43 @@ export class NetworkComponent implements OnInit {
       field: "countOfPeopleJoined",
       limit: 3
     }
-    this.communitiesLoading = true;
+    this.communitiesLoading = true
     this.networkingSvc.getCommunities(formBody).subscribe({
       next: (responce: any) => {
-        this.communitiesLoading = false;
+        this.communitiesLoading = false
         this.communitySuggestionsList = _.get(responce, 'result.data')
       },
       error: () => {
-        this.communitiesLoading = false;
+        this.communitiesLoading = false
         this.openSnackBar(this.handleTranslateTo('errorFetchingCommunities'))
       }
     })
   }
 
   getProfileDetails() {
-    const userId = _.get(this.configSvc, 'userProfile.userId')
-    if(_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
+    const userId: any = _.get(this.configSvc, 'userProfile.userId')
+    if (_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
       this.userDetails = this.configSvc.userProfileV2
     } else {
-      this.profileDetailsLoading = true;
+      this.profileDetailsLoading = true
       this.networkingSvc.fetchProfile(userId).subscribe({
         next: (responce: any) => {
-          this.profileDetailsLoading = false;
+          this.profileDetailsLoading = false
           this.userDetails = _.get(responce, 'result.response')
         },
         error: () => {
-          this.profileDetailsLoading = false;
+          this.profileDetailsLoading = false
           this.openSnackBar(this.handleTranslateTo('errorFetchingProfileDetails'))
         }
       })
     }
   }
 
-  subscribeToUpdates() { 
+  subscribeToUpdates() {
     this.networkingSvc.connectionsUpdates$.subscribe((update: connectionUpdates | null) => {
-      if(update && this.navigationItems) {
+      if (update && this.navigationItems) {
         this.navigationItems.forEach(item => {
-          if(item.routeId === update.routeId) {
+          if (item.routeId === update.routeId) {
             item['showUpdate'] = update.showUpdate
           }
         })
@@ -152,7 +152,7 @@ export class NetworkComponent implements OnInit {
   }
 
   navigateHome() {
-    this.router.navigate(['/page/home']);
+    this.router.navigate(['/page/home'])
   }
 
   handleTranslateTo(menuName: string): string {
@@ -164,7 +164,7 @@ export class NetworkComponent implements OnInit {
       duration,
     })
   }
-    
+
   //#endregion (initialization)
 
 

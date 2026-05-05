@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, ElementRef } from '@angular/core'
 import { IBadgeRecent } from '../../../badges/badges.model'
 import { BadgesShareDialogComponent } from '../badges-share-dialog/badges-share-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 @Component({
   selector: 'ws-app-badges-card',
   templateUrl: './badges-card.component.html',
@@ -12,7 +12,7 @@ export class BadgesCardComponent implements OnInit {
   @Input()
   badge!: IBadgeRecent
   constructor(private dialog: MatDialog,
- ) {
+  ) {
 
   }
 

@@ -8,8 +8,8 @@ import { AddTopicDialogComponent } from '../../components/add-topic/add-topic.co
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import { TopicService } from '../../services/topics.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-topic',
@@ -44,7 +44,7 @@ export class TopicComponent implements OnInit, OnDestroy {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
-  }
+    }
   }
   ngOnDestroy(): void {
     if (this.desTopicUpdateSubscription) {
@@ -149,7 +149,7 @@ export class TopicComponent implements OnInit, OnDestroy {
         if (res) {
           this.configSvc.updateGlobalProfile(true)
         }
-      },                                                   (_error: any) => {
+      }, (_error: any) => {
         this.snackBar.open('Server error!')
       }
       )
@@ -176,7 +176,7 @@ export class TopicComponent implements OnInit, OnDestroy {
         if (res) {
           this.configSvc.updateGlobalProfile(true)
         }
-      },                                                  (_error: any) => {
+      }, (_error: any) => {
         this.snackBar.open('Server error!')
       }
       )

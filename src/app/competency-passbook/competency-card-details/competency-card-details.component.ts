@@ -9,9 +9,9 @@ import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { CompetencyPassbookService } from '../competency-passbook.service'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService  } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
 import { NsContent } from '@sunbird-cb/collection/src/public-api'
 
@@ -65,8 +65,8 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
           if (obj.identifier) {
             obj['loading'] = false
             // this.getCertificateSVG(obj)
-            this.updatedTime =  this.updatedTime ? (new Date(this.updatedTime) > new Date(obj.lastIssuedOn)) ?
-            this.updatedTime : obj.lastIssuedOn : obj.lastIssuedOn
+            this.updatedTime = this.updatedTime ? (new Date(this.updatedTime) > new Date(obj.lastIssuedOn)) ?
+              this.updatedTime : obj.lastIssuedOn : obj.lastIssuedOn
           }
         })
       }
@@ -87,33 +87,33 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
 
   getCertificateSVG(obj: any, type?: string): void {
     // tslint: disable-next-line
-        obj['loading'] = true
-        if (obj && obj.printURI) {
-          if (type === 'DOWNLOAD') {
-            this.handleDownloadCertificatePDF(obj.printURI)
-          }
-          if (type === 'SHARE') {
-            this.shareCertificate(obj.identifier)
-          }
+    obj['loading'] = true
+    if (obj && obj.printURI) {
+      if (type === 'DOWNLOAD') {
+        this.handleDownloadCertificatePDF(obj.printURI)
+      }
+      if (type === 'SHARE') {
+        this.shareCertificate(obj.identifier)
+      }
+      obj['loading'] = false
+    } else {
+      this.cpService.fetchCertificate(obj.identifier)
+        .pipe(takeUntil(this.destroySubject$))
+        .subscribe(res => {
+          // tslint: disable-next-line
+          obj['printURI'] = res.result.printUri
           obj['loading'] = false
-        } else {
-          this.cpService.fetchCertificate(obj.identifier)
-          .pipe(takeUntil(this.destroySubject$))
-          .subscribe(res => {
-            // tslint: disable-next-line
-            obj['printURI'] = res.result.printUri
-            obj['loading'] = false
-            this.dialog.open(CertificateDialogComponent, {
-              width: '1200px',
-              data: { cet: res.result.printUri, certId: obj.identifier },
-            })
-          },         (error: HttpErrorResponse) => {
-            if (!error.ok) {
-              obj['loading'] = false
-              obj['error'] = 'Failed to fetch Certificate'
-            }
+          this.dialog.open(CertificateDialogComponent, {
+            width: '1200px',
+            data: { cet: res.result.printUri, certId: obj.identifier },
           })
-        }
+        }, (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            obj['loading'] = false
+            obj['error'] = 'Failed to fetch Certificate'
+          }
+        })
+    }
   }
 
   async handleDownloadCertificatePDF(uriData: any): Promise<void> {
@@ -122,7 +122,7 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
     img.width = 1820
     img.height = 1000
     img.onload = () => {
-    // tslint:disable-next-line
+      // tslint:disable-next-line
       const canvas = document.createElement('canvas');
       [canvas.width, canvas.height] = [img.width, img.height]
       const ctx = canvas.getContext('2d')
@@ -161,7 +161,7 @@ export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, On
       {
         type: WsEvents.EnumInteractTypes.CLICK,
         id: `${type}-${WsEvents.EnumInteractSubTypes.CERTIFICATE}`,
-        subType:  action ? action : '',
+        subType: action ? action : '',
       },
       {
         id: certId,   // id of the certificate

@@ -4,8 +4,8 @@ import { NgForm } from '@angular/forms'
 import { IWsEmailTextRequest, IWsEmailResponse } from '../../model/leadership-email.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { LeadershipService } from '../../services/leadership.service'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-send-mail-dialog',
@@ -34,7 +34,7 @@ export class SendMailDialogComponent implements OnInit {
     }
   }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   sendMail(form: NgForm) {
     this.mailSendInProgress = true

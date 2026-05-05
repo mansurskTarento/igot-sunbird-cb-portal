@@ -1,7 +1,7 @@
 //#region (imports)
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { UserStats, achievement, educationalQualifications, profileRoutes } from '../../models/profile-revamp.model'
-import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ServiceHistoryComponent } from '../../components/profile-revamp/service-history/service-history.component'
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component'
@@ -225,10 +225,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion
 
   constructor(
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private activatedRoute: ActivatedRoute,
     private profileV2RevampSvc: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private pipeImgUrl: PipeCertificateImageURL,
     private configSvc: ConfigurationsService,
     private breakpointObserver: BreakpointObserver,

@@ -8,7 +8,7 @@ import { CdkDragEnd } from '@angular/cdk/drag-drop'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 @Component({
   selector: 'ws-app-chatbot',
   templateUrl: './app-chatbot.component.html',

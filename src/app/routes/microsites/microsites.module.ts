@@ -4,9 +4,9 @@ import { MicrosotesComponent } from './microsotes.component'
 import { ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
 import { CardsModule, CommonMethodsService, CompetencyPassbookModule, ContentStripWithTabsLibModule, DataPointsModule, SlidersLibModule } from '@sunbird-cb/consumption'
 import { MicrositeService } from './microsites.service'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatInputModule } from '@angular/material/input'
 @NgModule({
   declarations: [MicrosotesComponent],
   imports: [

@@ -12,20 +12,20 @@ import {
   WIDGET_RESOLVER_SCOPED_CONFIG,
 } from './widget-resolver.constant'
 import { WidgetBaseComponent } from './widget-base.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 @NgModule({
-    declarations: [
-        WidgetBaseComponent,
-        WidgetResolverDirective,
-        RestrictedComponent,
-        InvalidRegistrationComponent,
-        InvalidPermissionComponent,
-        UnresolvedComponent,
-    ],
-    imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule],
-    exports: [WidgetResolverDirective, WidgetBaseComponent]
+  declarations: [
+    WidgetBaseComponent,
+    WidgetResolverDirective,
+    RestrictedComponent,
+    InvalidRegistrationComponent,
+    InvalidPermissionComponent,
+    UnresolvedComponent,
+  ],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatCardModule],
+  exports: [WidgetResolverDirective, WidgetBaseComponent]
 })
 export class WidgetResolverModule {
   static forRoot(config: NsWidgetResolver.IRegistrationConfig[]): ModuleWithProviders<WidgetResolverModule> {

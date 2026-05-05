@@ -9,7 +9,7 @@ import { AccessControlService } from '@ws/author/src/lib/modules/shared/services
 import { IAction } from './../../interface/content-card'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { ISearchContent, ITranslation } from '@ws/author/src/lib/interface/search'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { DeleteDialogComponent } from '@ws/author/src/lib/modules/shared/components/delete-dialog/delete-dialog.component'
 
 interface ILanguageBar {
@@ -49,7 +49,7 @@ export class ContentCardV2Component implements OnInit {
     private dialog: MatDialog,
     private initService: AuthInitService,
     private valueSvc: ValueService,
-  ) {}
+  ) { }
 
   getLocale(locale: string): string {
     const language = this.initService.ordinals.subTitles.find(

@@ -2,7 +2,7 @@ import { Component, ViewChild, ElementRef, OnInit } from '@angular/core'
 import { NsPlaylist, BtnPlaylistService, NsContent } from '@sunbird-cb/collection'
 import { TFetchStatus, NsPage, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { PLAYLIST_TITLE_MIN_LENGTH, PLAYLIST_TITLE_MAX_LENGTH } from '../../constants/playlist.constant'
 @Component({
@@ -39,7 +39,7 @@ export class PlaylistEditComponent implements OnInit {
   ) {
     this.editPlaylistForm = this.fb.group({
       title: [
-        this.playlist.result.content.name ,
+        this.playlist.result.content.name,
         [Validators.required, Validators.minLength(PLAYLIST_TITLE_MIN_LENGTH), Validators.maxLength(PLAYLIST_TITLE_MAX_LENGTH)],
       ],
       visibility: [NsPlaylist.EPlaylistVisibilityTypes.PRIVATE],

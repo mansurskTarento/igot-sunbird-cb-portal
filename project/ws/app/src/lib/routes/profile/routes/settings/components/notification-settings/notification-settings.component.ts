@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { SettingsService } from '../../settings.service'
-//import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+//import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
 /* tslint:disable*/
 import _ from 'lodash'

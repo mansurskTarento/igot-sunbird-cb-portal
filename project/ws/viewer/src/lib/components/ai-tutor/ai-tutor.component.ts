@@ -1,14 +1,14 @@
-import { AfterViewChecked, AfterViewInit, Component,ElementRef,EventEmitter,Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router, NavigationEnd } from '@angular/router';
-import { ConfigurationsService, EventService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2';
-import { RootService } from 'src/app/component/root/root.service';
-import { environment } from 'src/environments/environment';
-import { WebSocketService } from './socket.service';
-import { Subscription } from 'rxjs';
-import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component';
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-// import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import cloneDeep from 'lodash/cloneDeep';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild } from '@angular/core'
+import { ActivatedRoute, Router, NavigationEnd } from '@angular/router'
+import { ConfigurationsService, EventService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
+import { RootService } from 'src/app/component/root/root.service'
+import { environment } from 'src/environments/environment'
+import { WebSocketService } from './socket.service'
+import { Subscription } from 'rxjs'
+import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
+// import { MatSnackBar } from '@angular/material/snack-bar'
+import cloneDeep from 'lodash/cloneDeep'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 
 @Component({
@@ -18,7 +18,7 @@ import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 })
 export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''
-  @Input() content:any
+  @Input() content: any
   @Input() userJourney = []
   showIcon = true
   categories: any[] = []
@@ -39,23 +39,23 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   callText = ''
   emailText = ''
   searchQueryAItutor: any = ''
-  initials:any
+  initials: any
   copiedIndex = -1
   public circleColor!: string
   random = Math.random().toString(36).slice(2)
-  iGOTAITutorResultArr:any = []
+  iGOTAITutorResultArr: any = []
   maximize = true
   // tslint:disable
   localization: any = {
-    'en' : {
-      'Hi' : 'Namaste',
+    'en': {
+      'Hi': 'Namaste',
       'information': 'Information',
       'issue': 'Issues',
       'categories': 'Show All Categories',
       'showmore': 'Show More'
     },
-    'hi' : {
-      'Hi' : 'नमस्ते',
+    'hi': {
+      'Hi': 'नमस्ते',
       'information': 'जानकारी',
       'issue': 'समस्या',
       'categories': 'सभी कैटगोरी दिखायें',
@@ -82,30 +82,30 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     '#7E4C8D',
   ]
 
-  aiTutorResult:any
+  aiTutorResult: any
 
-  private messageSubscription: Subscription | undefined;
+  private messageSubscription: Subscription | undefined
   public messages: string[] = [];
   public inputMessage: string = '';
 
-  aiTutorResultArr:any = []
+  aiTutorResultArr: any = []
   cloneSearchQuery = ''
   jwtToken = ''
   // tslint: disable
- // @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
+  // @ViewChild('scrollMe') private myScrollContainer: ElementRef | undefined
   isHubEnable!: boolean
   learningStyle = [
     { title: 'None', subtitle: 'Learn with Natural query process' },
     { title: 'Socratic Style', subtitle: 'Explore ideas through thoughtful questions.' },
     { title: 'Storytelling', subtitle: 'Learn through relatable narratives and real-life examples.' },
   ]
-  selectedLearningStyle :any
+  selectedLearningStyle: any
   resultFetch = false
   authTokenHost = ''
   NoneSocketHost = ''
   SocraticeStyleHost = ''
   StorytellingHost = ''
-  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>
   @Output() closeAIPopup = new EventEmitter<any>()
   containerHeight = 38;
   isMobile = false
@@ -121,9 +121,9 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     private dialog: MatDialog,
     private matSnackBarNew: MatSnackbarNew,
     private utilitySvc: UtilityService,
-    private router: Router) { 
-      this.selectedLearningStyle = this.learningStyle[0]
-    }
+    private router: Router) {
+    this.selectedLearningStyle = this.learningStyle[0]
+  }
 
   ngOnInit() {
     this.isMobile = this.utilitySvc.isMobile
@@ -139,21 +139,21 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       this.StorytellingHost = 'learning-ai.uat.karmayogibharat.net'
     }
     this.userInfo = this.configSvc && this.configSvc.userProfile
-    this.websocketService.getJWTToken().subscribe((data:any)=>{
-      if(data && data['x-authenticated-user-token']) {
+    this.websocketService.getJWTToken().subscribe((data: any) => {
+      if (data && data['x-authenticated-user-token']) {
         this.jwtToken = data['x-authenticated-user-token']
         //wss://learning-ai.uat.karmayogibharat.net/socratic/v1/
-        this.websocketService.connect(`wss://${this.authTokenHost}/ws?token=${this.jwtToken}`);
+        this.websocketService.connect(`wss://${this.authTokenHost}/ws?token=${this.jwtToken}`)
       }
-      
+
     })
 
     //let jwtToken = 'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJhMTk5WXh3UkxNQWpBb3JVRmJUSkl4YjZDWE1JdUk4WVp4Y0pLaGxMdHQwIn0.eyJqdGkiOiI4ZWQ2MzE1Yi02OGQ1LTRhZDktYWU3MC1hYzRiNjZmNjIzOWIiLCJleHAiOjE3NDQ4NTM3NDMsIm5iZiI6MCwiaWF0IjoxNzQ0ODEwNTQzLCJpc3MiOiJodHRwczovL3BvcnRhbC51YXQua2FybWF5b2dpYmhhcmF0Lm5ldC9hdXRoL3JlYWxtcy9zdW5iaXJkIiwic3ViIjoiZjo5MWVjOTVkMi1hM2Q1LTQxM2UtYjRlNC01M2IwZGNjOTY0ODU6Y2VlYzAyYzYtYzE5MS00OWZlLTg0NTYtNjYyNDVhOWE3ODM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYWRtaW4tY2xpIiwiYXV0aF90aW1lIjowLCJzZXNzaW9uX3N0YXRlIjoiYjUyNTliYmMtZDVjYy00YWJkLThjY2UtZThlZTZiYjA4NGYyIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjQyMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInNjb3BlIjoiIiwib3JnIjoiMDEzMzc4MzA5NTgyMzgxMDU2MCIsIm5hbWUiOiJTcHYgQWRtaW4iLCJ1c2VyX3JvbGVzIjpbIk1FTlRPUiIsIlBVQkxJQyIsIlNQVl9BRE1JTiJdLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJzcHZhZG1pbl9qZzJ5IiwiZ2l2ZW5fbmFtZSI6IlNwdiBBZG1pbiIsImZhbWlseV9uYW1lIjoiIiwiZW1haWwiOiJzcCoqKioqKioqKioqQHlvcG1haWwuY29tIn0.naO_FUNci_ImWHQIylfmMGI2B-85koIyb9Sfy0mOguPpLIKeiGZiLZvccP_I_1QUScBewOrrP3fYxeq8oU98dj7sQGmBFOoU1dSZClZce3U4QEjSiugcbxdiNHcQXlpZTyub5aAJE-ub9Hb1bhS_RQjTMUeDfh5wrlZz6Lqg7kdDh5esXFLibfnUcFqmFFqZBtN5iP2sbRCnCFyS1Vw5TEFKxTiGdRPYT-XUzNE_iZuQPm2z-zyK0FEc1E9odaiwwpW5hkn3TznDwwXe7VdJS2E-HtjujmI-naAqZ__R68SuLyRHuq_PGhj2TZ_rjoaVIhjlgiFqHfOVLUsRat8HpA'
-    
+
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
-        this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true;
+        this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true
       }
     })
     this.userInfo = this.configSvc && this.configSvc.userProfile
@@ -162,7 +162,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     this.enableScroll()
     // tslint:disable-next-line: max-line-length
     this.userIcon = this.userInfo && this.userInfo.profileImageUrl ? this.userInfo.profileImageUrl : ''
-    if(!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
+    if (!this.userInfo.profileImageUrl && this.userInfo && this.userInfo.firstName) {
       this.createInititals(this.userInfo.firstName)
     }
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
@@ -173,23 +173,23 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
-        object: { id: this.content},
+        edata: { type: 'click', "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType": this.selectedLearningStyle.title },
+        object: { id: this.content },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      pageContext: { pageId: `viewer/${this.content}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
-    const timestamp = Date.now();
+    const timestamp = Date.now()
     this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
   }
 
   ngAfterViewInit(): void {
-    this.resizeTextarea(this.textArea?.nativeElement,'');
+    this.resizeTextarea(this.textArea?.nativeElement, '')
   }
 
   greetings() {
@@ -225,10 +225,10 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
   setDataToLocalStorage(data: any) {
     let localObject: any = {}
-    localObject = JSON.parse(localStorage.getItem('faq')|| '{}')
-    localObject[this.selectedLaguage] = {...localObject[this.selectedLaguage], [this.currentFilter] : data}
+    localObject = JSON.parse(localStorage.getItem('faq') || '{}')
+    localObject[this.selectedLaguage] = { ...localObject[this.selectedLaguage], [this.currentFilter]: data }
     localStorage.setItem('faq', JSON.stringify(localObject))
-    this.toggleFilter(this.currentFilter === 'information' ? 'information': this.currentFilter)
+    this.toggleFilter(this.currentFilter === 'information' ? 'information' : this.currentFilter)
   }
 
   initData(_getData: any) {
@@ -257,7 +257,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   selectLaguage(event: any) {
     this.selectedLaguage = event.target.value
     localStorage.setItem('selectedLanguage', event.target.value)
-    this.chatInformation=[]
+    this.chatInformation = []
     this.chatIssues = []
     this.checkForApiCalls()
   }
@@ -345,7 +345,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     const recommendedQues: any[] = []
     const isLogedIn: string = this.userInfo ? 'Logged-In' : 'Not Logged-In'
     this.responseData.recommendationMap.map((question: any) => {
-      question.recommendedQues.map((ques: any)=> {
+      question.recommendedQues.map((ques: any) => {
         if (ques.priority === priority && (question.categoryType === isLogedIn || question.categoryType === 'Both')) {
           recommendedQues.push(ques)
         }
@@ -374,16 +374,16 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       relatedQes: `${catItem.catName}?`,
       tab: this.currentFilter,
     }
-    this.more= false
+    this.more = false
     if (catItem.catId === 'all') {
       incomingMsg.title = '', // 'Here is the list of all the topics'
-      incomingMsg.relatedQes = ''
+        incomingMsg.relatedQes = ''
       incomingMsg.recommendedQues = this.sortCategory()
     } else {
       this.responseData.recommendationMap.forEach((element: any) => {
         if (catItem.catId === element.catId) {
           incomingMsg.type = 'incoming',
-          incomingMsg.recommendedQues = element.recommendedQues
+            incomingMsg.recommendedQues = element.recommendedQues
         }
       })
       this.raiseCategotyTelemetry(catItem.catId)
@@ -407,7 +407,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: '/chatbot', module: 'Assistant'},
+      pageContext: { pageId: '/chatbot', module: 'Assistant' },
       from: '',
       to: 'Telemetry',
     }
@@ -420,7 +420,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: { type: '' },
-        object: { type: 'zse', id: 'asd'},
+        object: { type: 'zse', id: 'asd' },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         type: 'session',
@@ -458,7 +458,7 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: { type: 'click', id: idn },
-        object: {id: idn, type: this.currentFilter.charAt(0).toUpperCase() + this.currentFilter.slice(1)},
+        object: { id: idn, type: this.currentFilter.charAt(0).toUpperCase() + this.currentFilter.slice(1) },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view'
@@ -555,16 +555,16 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   ngAfterViewChecked() {
-  //  this.scrollToBottom()
+    //  this.scrollToBottom()
   }
   scrollToBottom(): void {
     let messageContainer = document.getElementById('container-none')
-    if(messageContainer) {
-      messageContainer.scrollTo({top: messageContainer.scrollHeight, behavior: 'smooth'})
+    if (messageContainer) {
+      messageContainer.scrollTo({ top: messageContainer.scrollHeight, behavior: 'smooth' })
     }
-    
-    
-   
+
+
+
   }
   clickOutside() {
     this.iconClick('end')
@@ -577,84 +577,84 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     this.renderer.removeClass(document.body, 'disable-scroll')
   }
 
-  submitSearchQuery(textArea: HTMLTextAreaElement, event:any) {
+  submitSearchQuery(textArea: HTMLTextAreaElement, event: any) {
     if (!this.searchQueryAItutor.trim()) {
-      event.preventDefault(); // Prevents Enter key from adding a new line
+      event.preventDefault() // Prevents Enter key from adding a new line
     }
-    if(!this.searchQueryAItutor.trim()) {
+    if (!this.searchQueryAItutor.trim()) {
       return false
     }
     this.cloneSearchQuery = ''
-    this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor);
+    this.cloneSearchQuery = cloneDeep(this.searchQueryAItutor)
     this.searchQueryAItutor = this.searchQueryAItutor.trim()
     this.searchQueryAItutor = ''
     this.resetTextAreaHeight(textArea)
-    this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
+    this.aiTutorResultArr.map((item: any, index: any) => {
+      if (item && (item.newMessage === '')) {
         // delete this.aiTutorResultArr[index]
-        this.aiTutorResultArr.splice(index,1)
+        this.aiTutorResultArr.splice(index, 1)
       }
-     })
-     this.resultFetch = false 
-    
-  // this.searchQuery = 'Soil Erosion and Conservation'
-   let sendMsgObj = {
-     type: 'sendMsg',
-     tab: 'sarthi',
-     question: this.cloneSearchQuery
-   }
-   
-   this.aiTutorResultArr.push(sendMsgObj)
-   this.aiTutorResultArr.push({type: 'incoming',  tab: 'sarthi', answer: '',newMessage: ''})
-  //  this.searchQuery = ''
-  //  this.aiGlobalSearch()
-  //  this.getAiTutorMessage()
- 
-  setTimeout(()=>{
-    this.scrollToBottom()
-  },0)
-  
-   this.sendAITutorMessage()
-   
+    })
+    this.resultFetch = false
+
+    // this.searchQuery = 'Soil Erosion and Conservation'
+    let sendMsgObj = {
+      type: 'sendMsg',
+      tab: 'sarthi',
+      question: this.cloneSearchQuery
+    }
+
+    this.aiTutorResultArr.push(sendMsgObj)
+    this.aiTutorResultArr.push({ type: 'incoming', tab: 'sarthi', answer: '', newMessage: '' })
+    //  this.searchQuery = ''
+    //  this.aiGlobalSearch()
+    //  this.getAiTutorMessage()
+
+    setTimeout(() => {
+      this.scrollToBottom()
+    }, 0)
+
+    this.sendAITutorMessage()
+
   }
 
 
   sendAITutorMessage() {
     if (this.cloneSearchQuery) {
       let message = {
-        message: this.cloneSearchQuery, 
+        message: this.cloneSearchQuery,
         query: this.cloneSearchQuery,
         folder_name: this.content //this.content
       }
-      this.websocketService.sendMessage(message);
-      setTimeout(()=>{
+      this.websocketService.sendMessage(message)
+      setTimeout(() => {
         this.getAiTutorMessage()
       }, 1000)
-      
+
     }
   }
-  
+
 
   getAiTutorMessage() {
     this.messageSubscription = this.websocketService
       .getMessages()
       .subscribe((message: string) => {
-      
-       // this.messages.push(message);
-       this.aiTutorResult = message
-       this.resultFetch = true
-       
-      this.aiTutorResultMessage()
-      //  this.searchQueryAItutor = '';
-       
-      });
+
+        // this.messages.push(message);
+        this.aiTutorResult = message
+        this.resultFetch = true
+
+        this.aiTutorResultMessage()
+        //  this.searchQueryAItutor = '';
+
+      })
   }
 
   aiTutorResultMessage() {
     this.iGOTAITutorResultArr = []
-  //   let requestBody:any = {
-  //     "query":this.cloneSearchQuery
-  //  }
+    //   let requestBody:any = {
+    //     "query":this.cloneSearchQuery
+    //  }
     // this.chatbotService.aiGlobalSearch(requestBody).subscribe((data)=>{
     //   console.log('data--', data)
     // })
@@ -663,149 +663,149 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     // console.log('this.aiSearchResultArr', this.aiTutorResultArr)
 
 
-      const queryString = Object.entries(this.route.snapshot.queryParams)
-        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
-        .join('&');
+    const queryString = Object.entries(this.route.snapshot.queryParams)
+      .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+      .join('&')
 
     //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
-   // let arr:any = []
-   console.log('this.aiTutorResult--',this.aiTutorResult)
-   if(this.aiTutorResult && !this.aiTutorResult.answer && !this.aiTutorResult.retrievedChunks) {
-    this.aiTutorResult.retrievedChunks = []
-   }
-    this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item:any)=>{
+    // let arr:any = []
+    console.log('this.aiTutorResult--', this.aiTutorResult)
+    if (this.aiTutorResult && !this.aiTutorResult.answer && !this.aiTutorResult.retrievedChunks) {
+      this.aiTutorResult.retrievedChunks = []
+    }
+    this.aiTutorResult.retrievedChunks && this.aiTutorResult.retrievedChunks.map((item: any) => {
       let startTime = -1
       let endTime = -1
-      let pageNumber:any = 1
-      if(item && item?.ContentStart?.trim()) {
+      let pageNumber: any = 1
+      if (item && item?.ContentStart?.trim()) {
         startTime = item?.ContentStart
         pageNumber = item?.ContentStart
       }
-      if(item && item?.ContentEnd?.trim()) {
+      if (item && item?.ContentEnd?.trim()) {
         endTime = item?.ContentEnd
         pageNumber = item?.ContentEnd
       }
       pageNumber = pageNumber !== " " ? pageNumber : 1
-      let resultObj = {        
+      let resultObj = {
         message: item.Name,
         recommendedQues: '',
-        selectedValue: '',       
+        selectedValue: '',
         title: item.Name,
         content: item,
         mimeType: item.MimeType,
         contentType: item.ContentType,
         artifactUrl: item.ArtifactURL,
         description: item?.Description?.replace(/^\s{4,}/gm, ''),
-        identifier: item.Identifier,   
+        identifier: item.Identifier,
         contentStart: startTime,
         contentEnd: endTime,
-        pageNumber:  pageNumber ? pageNumber : 1,  
-        query: this.aiTutorResult.query,  
+        pageNumber: pageNumber ? pageNumber : 1,
+        query: this.aiTutorResult.query,
         query_id: this.aiTutorResult.query_id,
         feedback: '',
-        resourceLink : item.MimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}`: 
-        (startTime <= 0 && endTime <= 0) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true`:  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+        resourceLink: item.MimeType === 'application/pdf' ? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${pageNumber}` :
+          (startTime <= 0 && endTime <= 0) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true` : `https://portal.igotkarmayogi.gov.in/viewer/video/${item.Identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
       }
 
       // arr.push(resultObj)
       this.iGOTAITutorResultArr.push(resultObj)
-      
+
     })
     let answer = this.aiTutorResult.answer ? this.aiTutorResult.answer.trim().replace(/\n/g, '<br>') : ""
- 
-    let shortAnswer =  this.splitParagraphByWords(answer)
-   // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
-    this.aiTutorResultArr.push({ query: this.aiTutorResult.query, query_id: this.aiTutorResult.query_id,clientId: this.aiTutorResult.clientId, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet: (!(this.aiTutorResult.answer) && !(this.aiTutorResult.retrievedChunks)) ? true : false})
-    this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
+
+    let shortAnswer = this.splitParagraphByWords(answer)
+    // console.log(this.aiTutorResult.retrievedChunks, { wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi',reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet:  (!this.aiTutorResult.retrievedChunks ? true : false)});
+    this.aiTutorResultArr.push({ query: this.aiTutorResult.query, query_id: this.aiTutorResult.query_id, clientId: this.aiTutorResult.clientId, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAITutorResultArr, type: 'incoming', tab: 'sarthi', reterivedChunks: this.iGOTAITutorResultArr.retrievedChunks, showFromInternet: (!(this.aiTutorResult.answer) && !(this.aiTutorResult.retrievedChunks)) ? true : false })
+    this.aiTutorResultArr.map((item: any, index: any) => {
+      if (item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
-        this.aiTutorResultArr.splice(index,1)
+        this.aiTutorResultArr.splice(index, 1)
       }
-     })     
+    })
     console.log('this.aiTutorResultArr---', this.aiTutorResultArr)
-     setTimeout(()=>{
-     // this.scrollToBottom()
-    },0)
+    setTimeout(() => {
+      // this.scrollToBottom()
+    }, 0)
 
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
-        object: { },
+        edata: { type: 'click', "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType": this.selectedLearningStyle.title },
+        object: {},
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId:  `viewer/${this.content}`, module: 'Learn'},
+      pageContext: { pageId: `viewer/${this.content}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  redirectToResource(item:any) {
-    let queryParams = { ...this.route.snapshot.queryParams };
+  redirectToResource(item: any) {
+    let queryParams = { ...this.route.snapshot.queryParams }
     console.log(queryParams)
     // Remove specific parameters
-    delete queryParams.st;
-    delete queryParams.et;
-    delete queryParams.pn;
-    delete queryParams.from;
-    delete queryParams.playerPreview;
+    delete queryParams.st
+    delete queryParams.et
+    delete queryParams.pn
+    delete queryParams.from
+    delete queryParams.playerPreview
     let queryString = ''
     queryString = Object.entries(queryParams)
-        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
-        .join('&');
+      .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+      .join('&')
     let path = ''
-    path = (item.mimeType === 'application/pdf')? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
-    (item?.contentStart <= 0 && item?.contentEnd <=0) ? `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` : `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    path = (item.mimeType === 'application/pdf') ? `/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}` :
+      (item?.contentStart <= 0 && item?.contentEnd <= 0) ? `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` : `/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     // console.log('path', path)
-   // window.open(path, '_blank')
-   if(this.isMobile) {
-    this.maximize = false
-   }
-   
-   this.router.navigateByUrl(path)
+    // window.open(path, '_blank')
+    if (this.isMobile) {
+      this.maximize = false
+    }
+
+    this.router.navigateByUrl(path)
   }
 
-  copyPath(item:any, cindex:any) {
+  copyPath(item: any, cindex: any) {
     const queryString = Object.entries(this.route.snapshot.queryParams)
-        .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
-        .join('&');
+      .map(([key, value]) => `${encodeURI(key)}=${encodeURI(value)}`)
+      .join('&')
 
-    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();    
+    //const queryString = new URLSearchParams(this.route.snapshot.queryParams).toString();
     const selBox = document.createElement('textarea')
     selBox.style.position = 'fixed'
     selBox.style.left = '0'
     selBox.style.top = '0'
     selBox.style.opacity = '0'
-     selBox.value = item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}`: 
-     (item?.contentStart <=0 && item?.contentEnd <=0 ) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` :  `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
+    selBox.value = item.mimeType === 'application/pdf' ? `https://portal.igotkarmayogi.gov.in/viewer/pdf/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&pn=${item?.pageNumber}` :
+      (item?.contentStart <= 0 && item?.contentEnd <= 0) ? `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true` : `https://portal.igotkarmayogi.gov.in/viewer/video/${item.identifier}?${queryString}&from=globalSearch&playerPreview=true&st=${item?.contentStart}&et=${item?.contentEnd}`
     document.body.appendChild(selBox)
     selBox.focus()
     selBox.select()
     document.execCommand('copy')
     document.body.removeChild(selBox)
     this.copiedIndex = cindex
-    setTimeout(()=>{
+    setTimeout(() => {
       this.copiedIndex = -1
-    },1000)
-    
+    }, 1000)
+
   }
 
-  redirectToToc(chat:any) {
+  redirectToToc(chat: any) {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
-        object: { id: chat?.identifier, type: chat?.contentType},
+        edata: { type: 'click', "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType": this.selectedLearningStyle.title },
+        object: { id: chat?.identifier, type: chat?.contentType },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      pageContext: { pageId: `viewer/${this.content}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -814,30 +814,30 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     window.open(path, '_blank')
   }
 
-  splitParagraphByWords(paragraph:any, wordsPerChunk = 30) {
-    const words = paragraph.trim().split(/\s+/);
-    const chunks = [];
-  
+  splitParagraphByWords(paragraph: any, wordsPerChunk = 30) {
+    const words = paragraph.trim().split(/\s+/)
+    const chunks = []
+
     for (let i = 0; i < wordsPerChunk; i++) {
       chunks.push(words[i])
     }
-    
-    return chunks.join(' ');
+
+    return chunks.join(' ')
   }
 
-  toggleShow(index:any, showType:any) {
-    if(showType === 'less') {
+  toggleShow(index: any, showType: any) {
+    if (showType === 'less') {
       this.aiTutorResultArr[index]['showLess'] = true
     } else {
       this.aiTutorResultArr[index]['showLess'] = false
     }
-    
+
   }
 
   get userInitials() {
     return this.initials
   }
-  private createInititals(name:any): void {
+  private createInititals(name: any): void {
     const randomIndex = Math.floor(Math.random() * Math.floor(this.colors.length))
     this.circleColor = this.colors[randomIndex]
     if (this.randomcolors) {
@@ -868,97 +868,97 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
   }
 
   getLearningStyle() {
-    const timestamp = Date.now();
+    const timestamp = Date.now()
     this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
-    if(this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
+    if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Socratic Style') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
-      
-      this.websocketService.connect(`wss://${this.SocraticeStyleHost}/socratic/v1/ws?token=${this.jwtToken}`);
+
+      this.websocketService.connect(`wss://${this.SocraticeStyleHost}/socratic/v1/ws?token=${this.jwtToken}`)
     } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'None') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
-      
-      this.websocketService.connect(`wss://${this.NoneSocketHost}/ws?token=${this.jwtToken}`);
-    }  else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
+
+      this.websocketService.connect(`wss://${this.NoneSocketHost}/ws?token=${this.jwtToken}`)
+    } else if (this.selectedLearningStyle && this.selectedLearningStyle.title === 'Storytelling') {
       this.aiTutorResultArr = []
       this.websocketService.closeConnection()
       this.chatId = `${this.configSvc.unMappedUser.userId}-${timestamp}`
-      
-      this.websocketService.connect(`wss://${this.StorytellingHost}/storytelling/v1/ws?token=${this.jwtToken}`);
+
+      this.websocketService.connect(`wss://${this.StorytellingHost}/storytelling/v1/ws?token=${this.jwtToken}`)
     }
-   // console.log('selectedLearningStyle--', this.selectedLearningStyle)
+    // console.log('selectedLearningStyle--', this.selectedLearningStyle)
   }
 
-  raiseTelemetryForResource(item:any) {
+  raiseTelemetryForResource(item: any) {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title    },
-        object: { id: item?.identifier, type: item?.contentType},
+        edata: { type: 'click', "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType": this.selectedLearningStyle.title },
+        object: { id: item?.identifier, type: item?.contentType },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      pageContext: { pageId: `viewer/${this.content}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-  sharePositiveContentRating(item:any, index:any, cindex:any) {
-    let requestBody:any = {
+  sharePositiveContentRating(item: any, index: any, cindex: any) {
+    let requestBody: any = {
       "query_id": item?.query_id,
-      "response":  this.aiTutorResultArr[index]['answer'],
+      "response": this.aiTutorResultArr[index]['answer'],
       "comments": "",
-      "is_liked":true,
+      "is_liked": true,
       "rating": "5",
-      "identifier":this.content,
+      "identifier": this.content,
       "query": item.query,
       chat_id: this.chatId,
       user_id: this.configSvc.unMappedUser.userId,
 
-   }
-   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
-      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
-      this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = true
-   }
-   //this.matSnackBar.open('Unable to fetch content data, due to some error!')
-   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
-    if(data && data.status === 'success') {
-      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-        if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
-          this.aiTutorResultArr[index].result[cindex]['feedback'] = 'up'
-          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
-          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
-      }
-      this.matSnackBarNew.open(
-        'Thank you for your feedback.', 'X',
-        { duration: 5000, panelClass: ['success'] }
-      );
-    } else {
-      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-        if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
-          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
-          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
-      }
-      this.matSnackBarNew.open(
-        'Something is wrong. Please try again later.', 'X',
-        { duration: 5000, panelClass: ['error'] }
-      );
     }
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+        this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+      this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = true
+    }
+    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
+    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+            this.aiTutorResultArr[index].result[cindex]['feedback'] = 'up'
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
+        }
+        this.matSnackBarNew.open(
+          'Thank you for your feedback.', 'X',
+          { duration: 5000, panelClass: ['success'] }
+        )
+      } else {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForUp'] = false
+        }
+        this.matSnackBarNew.open(
+          'Something is wrong. Please try again later.', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        )
+      }
 
-  })
+    })
   }
 
-  openAIFeedbackPopup(item:any, index:any, cindex:any) {
-    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
-      if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex] && this.aiTutorResultArr[index].result[cindex]['feedback'] !== 'down') {
+  openAIFeedbackPopup(item: any, index: any, cindex: any) {
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex] && this.aiTutorResultArr[index].result[cindex]['feedback'] !== 'down') {
         const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
           disableClose: true,
           width: '502px',
@@ -966,117 +966,117 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         })
         dialogRef.afterClosed().subscribe((result: any) => {
           if (result) {
-            this.shareAIFeedback(item, result, index, cindex);
-            dialogRef.close();
+            this.shareAIFeedback(item, result, index, cindex)
+            dialogRef.close()
           } else {
-            dialogRef.close();
+            dialogRef.close()
           }
         })
       } else {
         this.matSnackBarNew.open(
           'You have already submitted feedback', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
     }
 
   }
 
-  shareAIFeedback(item:any, result:any, index:any, cindex:any) {
+  shareAIFeedback(item: any, result: any, index: any, cindex: any) {
 
-    let requestBody:any = {
+    let requestBody: any = {
       "query_id": item?.query_id,
       "response": this.aiTutorResultArr[index]['answer'],
       "comments": result,
-      "is_liked":false,
+      "is_liked": false,
       "rating": "0",
-      "identifier":this.content,
+      "identifier": this.content,
       "query": item.query,
       chat_id: this.chatId,
       user_id: this.configSvc.unMappedUser.userId,
 
-   }
-   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-    if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex]) {
-      this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
-      this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = true
     }
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex]) {
+        this.aiTutorResultArr[index].result[cindex]['showLoader'] = true
+        this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = true
+      }
 
-  }
-     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
-      if(data  && data.status === 'success') {
-        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-          if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+    }
+    this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
             this.aiTutorResultArr[index].result[cindex]['feedback'] = 'down'
-            this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
-            this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
+          this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
-        );
+        )
       } else {
-        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-          if(this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index].result && this.aiTutorResultArr[index].result[cindex])
             this.aiTutorResultArr[index].result[cindex]['showLoader'] = false
           this.aiTutorResultArr[index].result[cindex]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
-     })
+    })
   }
 
 
-  sharePositiveContentRatingForAnswer(item:any, index:any) {
-    let requestBody:any = {
+  sharePositiveContentRatingForAnswer(item: any, index: any) {
+    let requestBody: any = {
       "query_id": item.query_id,
       "response": item.answer,
       "comments": "",
-      "is_liked":true,
+      "is_liked": true,
       "rating": "5",
-      "identifier":this.content,
+      "identifier": this.content,
       "query": item.query
 
-   }
-   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-    if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
-      this.aiTutorResultArr[index]['showLoader'] = true
-      this.aiTutorResultArr[index]['showLoaderForUp'] = true
-   }
-   //this.matSnackBar.open('Unable to fetch content data, due to some error!')
-   this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
-    if(data && data.status === 'success') {
-      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-        if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
-          this.aiTutorResultArr[index]['feedback'] = 'up'
-          this.aiTutorResultArr[index]['showLoader'] = false
-          this.aiTutorResultArr[index]['showLoaderForUp'] = false
-      }
-      this.matSnackBarNew.open(
-        'Thank you for your feedback.', 'X',
-        { duration: 5000, panelClass: ['success'] }
-      );
-    } else {
-      if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-        if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
-          this.aiTutorResultArr[index]['showLoader'] = false
-          this.aiTutorResultArr[index]['showLoaderForUp'] = false
-      }
-      this.matSnackBarNew.open(
-        'Something is wrong. Please try again later.', 'X',
-        { duration: 5000, panelClass: ['error'] }
-      );
     }
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+        this.aiTutorResultArr[index]['showLoader'] = true
+      this.aiTutorResultArr[index]['showLoaderForUp'] = true
+    }
+    //this.matSnackBar.open('Unable to fetch content data, due to some error!')
+    this.chatbotService.saveAIChatPositiveContentRating(requestBody, this.chatId, this.userInfo?.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+            this.aiTutorResultArr[index]['feedback'] = 'up'
+          this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForUp'] = false
+        }
+        this.matSnackBarNew.open(
+          'Thank you for your feedback.', 'X',
+          { duration: 5000, panelClass: ['success'] }
+        )
+      } else {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+            this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForUp'] = false
+        }
+        this.matSnackBarNew.open(
+          'Something is wrong. Please try again later.', 'X',
+          { duration: 5000, panelClass: ['error'] }
+        )
+      }
 
-  })
+    })
   }
 
-  openAIFeedbackPopupForAnswer(item:any, index:any) {
-    if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
-      if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['feedback'] !== 'down') {
+  openAIFeedbackPopupForAnswer(item: any, index: any) {
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['feedback'] !== 'down') {
         const dialogRef = this.dialog.open(NonReleventFeedbackDialogComponent, {
           disableClose: true,
           width: '502px',
@@ -1084,151 +1084,151 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
         })
         dialogRef.afterClosed().subscribe((result: any) => {
           if (result) {
-            this.shareAIForAnswerFeedback(item, result, index);
-            dialogRef.close();
+            this.shareAIForAnswerFeedback(item, result, index)
+            dialogRef.close()
           } else {
-            dialogRef.close();
+            dialogRef.close()
           }
         })
       } else {
         this.matSnackBarNew.open(
           'You have already submitted feedback', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
     }
 
   }
 
-  shareAIForAnswerFeedback(item:any, result:any, index:any) {
+  shareAIForAnswerFeedback(item: any, result: any, index: any) {
 
-    let requestBody:any = {
+    let requestBody: any = {
       "query_id": item.query_id,
       "response": item?.answer,
       "comments": result,
-      "is_liked":false,
+      "is_liked": false,
       "rating": "0",
-      "identifier":this.content,
+      "identifier": this.content,
       "query": item.query
 
-   }
-   if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-    if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
-      this.aiTutorResultArr[index]['showLoader'] = true
-      this.aiTutorResultArr[index]['showLoaderForDown'] = true
     }
+    if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+      if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index]) {
+        this.aiTutorResultArr[index]['showLoader'] = true
+        this.aiTutorResultArr[index]['showLoaderForDown'] = true
+      }
 
-  }
-     this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data:any)=>{
-      if(data  && data.status === 'success') {
-        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-          if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+    }
+    this.chatbotService.shareAIFeedback(requestBody, this.chatId, this.userInfo?.userId).subscribe((data: any) => {
+      if (data && data.status === 'success') {
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
             this.aiTutorResultArr[index]['feedback'] = 'down'
-            this.aiTutorResultArr[index]['showLoader'] = false
-            this.aiTutorResultArr[index]['showLoaderForDown'] = false
+          this.aiTutorResultArr[index]['showLoader'] = false
+          this.aiTutorResultArr[index]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Thank you for your feedback.', 'X',
           { duration: 5000, panelClass: ['success'] }
-        );
+        )
       } else {
-        if(this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
-          if(this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
+        if (this.aiTutorResultArr && this.aiTutorResultArr.length && this.aiTutorResultArr[index]) {
+          if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index])
             this.aiTutorResultArr[index]['showLoader'] = false
           this.aiTutorResultArr[index]['showLoaderForDown'] = false
         }
         this.matSnackBarNew.open(
           'Something is wrong. Please try again later.', 'X',
           { duration: 5000, panelClass: ['error'] }
-        );
+        )
       }
-     })
+    })
   }
 
-  callFromInternet(item:any, index:any) {
-    this.aiTutorResultArr.push({type: 'incoming',  tab: 'sarthi', answer: ''})
-    if( this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
+  callFromInternet(item: any, index: any) {
+    this.aiTutorResultArr.push({ type: 'incoming', tab: 'sarthi', answer: '' })
+    if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
       this.aiTutorResultArr[index]['showFromInternet'] = false
     }
-    if(item && !item.answer) {
+    if (item && !item.answer) {
 
       let internetGlobalSearchRequest = {
         "query": this.cloneSearchQuery,
-        "designation":  this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
+        "designation": this.userInfo?.professionalDetails && this.userInfo?.professionalDetails.length ? this.userInfo?.professionalDetails[0].designation : '',
         "department": this.userInfo?.departmentName ? this.userInfo?.departmentName : '',
       }
-      this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, '', this.userInfo?.userId).subscribe((idata:any)=>{
+      this.chatbotService.aiGlobalSearchFromInternet(internetGlobalSearchRequest, '', this.userInfo?.userId).subscribe((idata: any) => {
         this.resultFetch = true
-        this.aiTutorResultArr.map((item:any, index:any)=>{
-          if(item && (item.newMessage === '')) {
+        this.aiTutorResultArr.map((item: any, index: any) => {
+          if (item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
-            this.aiTutorResultArr.splice(index,1)
+            this.aiTutorResultArr.splice(index, 1)
           }
-         })
-        let resultObj = {        
+        })
+        let resultObj = {
           message: idata.answer,
           recommendedQues: '',
-          selectedValue: '',       
+          selectedValue: '',
           title: idata.answer,
           content: idata,
           mimeType: idata,
           contentType: idata,
           artifactUrl: idata,
           description: idata.answer,
-          identifier: idata,    
+          identifier: idata,
           contentStart: idata,
-          contentEnd: idata, 
-          pageNumber:   idata,
+          contentEnd: idata,
+          pageNumber: idata,
           query: this.cloneSearchQuery,
           query_id: idata.query_id,
-          resourceLink : '', 
+          resourceLink: '',
           feedback: '',
           fromInternet: true
         }
 
         this.iGOTAITutorResultArr.push(resultObj)
         let answer = idata.answer ? idata.answer.trim().replace(/\n/g, '<br>') : ""
-        let shortAnswer =  this.splitParagraphByWords(answer)
-        this.aiTutorResultArr.push({ feedback:'', wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false ,answer: answer, shortAnswer: shortAnswer ,result: this.iGOTAITutorResultArr, type: 'incoming',  tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false})
-        this.aiTutorResultArr.map((item:any, index:any)=>{
-          if(item && (item.newMessage === '')) {
+        let shortAnswer = this.splitParagraphByWords(answer)
+        this.aiTutorResultArr.push({ feedback: '', wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAITutorResultArr, type: 'incoming', tab: 'sarthi', reterivedChunks: this.aiTutorResult.retrievedChunks, showFromInternet: false })
+        this.aiTutorResultArr.map((item: any, index: any) => {
+          if (item && (item.newMessage === '')) {
             // delete this.aiSearchResultArr[index]
-            this.aiTutorResultArr.splice(index,1)
+            this.aiTutorResultArr.splice(index, 1)
           }
-         })
+        })
       })
     }
   }
 
-  rejectFromInternet(index:any) {
-    if( this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
+  rejectFromInternet(index: any) {
+    if (this.aiTutorResultArr[index] && this.aiTutorResultArr[index]['showFromInternet']) {
       this.aiTutorResultArr[index]['showFromInternet'] = false
     }
     this.resultFetch = true
-    this.aiTutorResultArr.map((item:any, index:any)=>{
-      if(item && (item.newMessage === '')) {
+    this.aiTutorResultArr.map((item: any, index: any) => {
+      if (item && (item.newMessage === '')) {
         // delete this.aiSearchResultArr[index]
-        this.aiTutorResultArr.splice(index,1)
+        this.aiTutorResultArr.splice(index, 1)
       }
-     })
+    })
   }
 
   ngOnDestroy(): void {
     // Clean up the subscription and WebSocket connection
     if (this.messageSubscription) {
-      this.messageSubscription.unsubscribe();
+      this.messageSubscription.unsubscribe()
     }
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click',  "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType" :   this.selectedLearningStyle.title  },
-        object: { id: this.content},
+        edata: { type: 'click', "id": "ai-tutor-card-content", "pageid": `viewer/${this.content}`, "subType": this.selectedLearningStyle.title },
+        object: { id: this.content },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
       },
-      pageContext: {pageId: `viewer/${this.content}`, module: 'Learn'},
+      pageContext: { pageId: `viewer/${this.content}`, module: 'Learn' },
       from: '',
       to: 'Telemetry',
     }
@@ -1236,33 +1236,33 @@ export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked
     // this.websocketService.closeConnection();
   }
 
-  resizeTextarea(textArea: HTMLTextAreaElement,_fromInput:any): void {
+  resizeTextarea(textArea: HTMLTextAreaElement, _fromInput: any): void {
     if (textArea) {
-      textArea.style.height = 'auto'; // Reset height first
+      textArea.style.height = 'auto' // Reset height first
       requestAnimationFrame(() => {
-        textArea.style.height = textArea.scrollHeight + 'px';
-  
-        const computed = getComputedStyle(textArea);
-        const paddingTop = parseFloat(computed.paddingTop) || 0;
-        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const marginExtra = 0;
-        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra;
-      });
+        textArea.style.height = textArea.scrollHeight + 'px'
+
+        const computed = getComputedStyle(textArea)
+        const paddingTop = parseFloat(computed.paddingTop) || 0
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0
+        const marginExtra = 0
+        this.containerHeight = textArea.scrollHeight + paddingTop + paddingBottom + marginExtra
+      })
     }
   }
 
-  resetTextAreaHeight(_textArea:HTMLTextAreaElement) {
-    if(this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
-      setTimeout(()=>{
-        this.searchQueryAItutor = this.searchQueryAItutor.trim()        
-        this.textArea.nativeElement.style.height = 'auto';
-        this.textArea.nativeElement.style.height = '30px';
-        const computed = getComputedStyle(this.textArea.nativeElement);
-        const paddingTop = parseFloat(computed.paddingTop) || 0;
-        const paddingBottom = parseFloat(computed.paddingBottom) || 0;
-        const marginExtra = 0;
-        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra;        
-      })     
+  resetTextAreaHeight(_textArea: HTMLTextAreaElement) {
+    if (this.textArea.nativeElement && this.textArea.nativeElement.style && this.textArea.nativeElement.style.height) {
+      setTimeout(() => {
+        this.searchQueryAItutor = this.searchQueryAItutor.trim()
+        this.textArea.nativeElement.style.height = 'auto'
+        this.textArea.nativeElement.style.height = '30px'
+        const computed = getComputedStyle(this.textArea.nativeElement)
+        const paddingTop = parseFloat(computed.paddingTop) || 0
+        const paddingBottom = parseFloat(computed.paddingBottom) || 0
+        const marginExtra = 0
+        this.containerHeight = 30 + paddingTop + paddingBottom + marginExtra
+      })
     }
 
 

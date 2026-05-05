@@ -4,7 +4,7 @@ import { LoggerService, MultilingualTranslationsService, EventService } from '@s
 import { TranslateService } from '@ngx-translate/core'
 import { RatingService } from '@sunbird-cb/collection/src/public-api'
 import { CourseCompletionDialogComponent } from './course-completion-dialog.component'
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 
 
 describe('CourseCompletionDialogComponent', () => {

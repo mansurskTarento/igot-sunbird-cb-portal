@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
@@ -11,9 +11,9 @@ import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 export class CertificateViewPopupComponent implements OnInit {
   certificateUrl = '';
 
-  constructor(private dialogRef: MatLegacyDialogRef<CertificateViewPopupComponent>,
+  constructor(private dialogRef: MatDialogRef<CertificateViewPopupComponent>,
     private pipeImgUrl: PipeCertificateImageURL,
-    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any) {
+    @Inject(MAT_DIALOG_DATA) public data: any) {
   }
 
   ngOnInit(): void {

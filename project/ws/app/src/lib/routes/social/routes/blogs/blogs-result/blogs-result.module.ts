@@ -5,11 +5,11 @@ import { RouterModule } from '@angular/router'
 
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { DialogSocialDeletePostModule, BtnPageBackModule } from '@sunbird-cb/collection'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatButtonModule } from '@angular/material/button'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 @NgModule({
   declarations: [BlogResultComponent],
@@ -27,4 +27,4 @@ import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@ang
   ],
   exports: [BlogResultComponent],
 })
-export class BlogsResultModule {}
+export class BlogsResultModule { }

@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 // import { ActivatedRoute } from '@angular/router'
 import { AttendanceHelperComponent } from '@sunbird-cb/collection/src/public-api'
 import { NsContent } from '@sunbird-cb/utils-v2'
@@ -15,7 +15,7 @@ export class AttendanceCardComponent implements OnInit {
 
   @Input() session: NsContent.IContent | null = null
   @Input() status = 0
-  @Input() config:any = null
+  @Input() config: any = null
   @Input() showInfo: boolean = true
 
   constructor(
@@ -31,17 +31,17 @@ export class AttendanceCardComponent implements OnInit {
   }
 
   openHelp(content?: any): void {
-      const dialogRef = this.dialog.open(AttendanceHelperComponent, {
-        // height: '400px',
-        // width: '770px',
-        maxWidth: '1250px',
-        data: { content, helperConfig: _.get(this.config, 'attendenceHelp')},
-      })
-      // dialogRef.componentInstance.xyz = this.configSvc
-      dialogRef.afterClosed().subscribe((result: any) => {
-        if (result) {
-          console.log(result)
-        }
-      })
+    const dialogRef = this.dialog.open(AttendanceHelperComponent, {
+      // height: '400px',
+      // width: '770px',
+      maxWidth: '1250px',
+      data: { content, helperConfig: _.get(this.config, 'attendenceHelp') },
+    })
+    // dialogRef.componentInstance.xyz = this.configSvc
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        console.log(result)
+      }
+    })
   }
 }

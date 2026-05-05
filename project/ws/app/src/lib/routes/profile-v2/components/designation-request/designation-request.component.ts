@@ -1,7 +1,7 @@
 import { Component, Inject, OnDestroy } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -58,16 +58,16 @@ export class DesignationRequestComponent implements OnDestroy {
 
     postData.updateFieldValues.push(data)
     this.requestService.createPosition(postData)
-    .pipe(takeUntil(this.destroySubject$))
-    .subscribe((_res: any) => {
-      this.matSnackBar.open(this.handleTranslateTo('designationRequestSent'))
-      this.handleCloseModal()
-    },         (error: HttpErrorResponse) => {
-      if (!error.ok) {
-        this.matSnackBar.open(this.handleTranslateTo('designationRequestFailed'))
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.matSnackBar.open(this.handleTranslateTo('designationRequestSent'))
         this.handleCloseModal()
-      }
-    })
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackBar.open(this.handleTranslateTo('designationRequestFailed'))
+          this.handleCloseModal()
+        }
+      })
   }
 
   handleTranslateTo(menuName: string): string {

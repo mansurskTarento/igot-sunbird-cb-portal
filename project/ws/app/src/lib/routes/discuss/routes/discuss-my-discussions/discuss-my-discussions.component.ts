@@ -19,7 +19,7 @@ export class DiscussMyDiscussionsComponent implements OnInit {
   currentFilter = 'timestamp'
   department!: string | null
   location!: string | null
-  profilePhoto!: string
+  profilePhoto!: string | any
   currentUsername: any
   constructor(private route: ActivatedRoute, private discussService: DiscussService, private configSvc: ConfigurationsService) {
     this.fetchNetworkProfile()
@@ -28,9 +28,9 @@ export class DiscussMyDiscussionsComponent implements OnInit {
   fetchNetworkProfile() {
     this.discussService.fetchNetworkProfile().subscribe(response => {
       this.profilePhoto = _.get(_.first(response), 'photo')
-        if (this.configSvc.userProfile) {
-          localStorage.setItem(this.configSvc.userProfile.userId, this.profilePhoto)
-        }
+      if (this.configSvc.userProfile) {
+        localStorage.setItem(this.configSvc.userProfile.userId, this.profilePhoto)
+      }
     },
       /* tslint:disable */
       () => {

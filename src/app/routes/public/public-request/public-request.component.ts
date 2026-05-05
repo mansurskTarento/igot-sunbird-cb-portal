@@ -13,8 +13,8 @@ import { v4 as uuid } from 'uuid'
 import { Location } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn {
   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -66,24 +66,26 @@ export class PublicRequestComponent implements OnInit {
   timeLeftforOTP = 0
   emailPattern = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`
   // tslint:disable-next-line:max-line-length
-  requestObj: { state: string; action: string; serviceName: string; userId: string;
-    applicationId: string; actorUserId: string; deptName: string; updateFieldValues: any}  | undefined
-  formobj: { toValue: {} ; fieldKey: any; description: any; firstName: any; email: any; mobile: any} | undefined
+  requestObj: {
+    state: string; action: string; serviceName: string; userId: string
+    applicationId: string; actorUserId: string; deptName: string; updateFieldValues: any
+  } | undefined
+  formobj: { toValue: {}; fieldKey: any; description: any; firstName: any; email: any; mobile: any } | undefined
   userform: any
   selectedLanguage = 'en'
   multiLang: any = []
   isMultiLangEnabled: any
 
   constructor(private activatedRoute: ActivatedRoute,
-              private router: Router,
-              private snackBar: MatSnackBar,
-              private signupSvc: SignupService,
-              private dialog: MatDialog,
-              private requestSvc: RequestService,
-              private _location: Location,
-              private configSvc: ConfigurationsService,
-              private langtranslations: MultilingualTranslationsService,
-              private translate: TranslateService) {
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private signupSvc: SignupService,
+    private dialog: MatDialog,
+    private requestSvc: RequestService,
+    private _location: Location,
+    private configSvc: ConfigurationsService,
+    private langtranslations: MultilingualTranslationsService,
+    private translate: TranslateService) {
     const navigation = this.router.getCurrentNavigation()
     if (navigation) {
       const extraData = navigation.extras.state as {
@@ -103,7 +105,7 @@ export class PublicRequestComponent implements OnInit {
       mobile: new UntypedFormControl('', [Validators.required, Validators.pattern(this.phoneNumberPattern)]),
       // tslint:disable-next-line:max-line-length
       position: new UntypedFormControl('', this.requestType === 'Position' ? [Validators.pattern(this.customCharsPattern),
-        Validators.required, forbiddenNamesValidatorPosition(this.masterPositions)] : []),
+      Validators.required, forbiddenNamesValidatorPosition(this.masterPositions)] : []),
       // tslint:disable-next-line:max-line-length
       organisation: new UntypedFormControl('', this.requestType === 'Organisation' ? [Validators.required, Validators.pattern(this.customCharsPatternOrg)] : []),
       domain: new UntypedFormControl('', this.requestType === 'Domain' ? [Validators.required, Validators.pattern(this.domainPattern)] : []),
@@ -140,7 +142,7 @@ export class PublicRequestComponent implements OnInit {
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       this.isMultiLangEnabled = this.configSvc.instanceConfig.isMultilingualEnabled
     }
-   }
+  }
 
   ngOnInit() {
     const instanceConfig = this.configSvc.instanceConfig
@@ -392,7 +394,7 @@ export class PublicRequestComponent implements OnInit {
       userId: uniqueID,
       applicationId: uniqueID,
       actorUserId: uniqueID,
-      deptName : 'iGOT',
+      deptName: 'iGOT',
       updateFieldValues: [],
     }
 
@@ -502,7 +504,7 @@ export class PublicRequestComponent implements OnInit {
     const dialogRef = this.dialog.open(RequestSuccessDialogComponent, {
       // height: '400px',
       width: '500px',
-      data:  { requestType: type, apiResponse: res },
+      data: { requestType: type, apiResponse: res },
       // data: { content, userId: this.userId, userRating: this.userRating },
     })
     dialogRef.afterClosed().subscribe((_result: any) => {
@@ -521,7 +523,8 @@ export class PublicRequestComponent implements OnInit {
       firstname: formData.firstname,
       mobile: formData.mobile, email: formData.email,
       isMobileVerified: this.isMobileVerified,
-      isEmailVerified: this.isEmailVerified })
+      isEmailVerified: this.isEmailVerified
+    })
     this._location.back()
   }
   numericOnly(event: any): boolean {

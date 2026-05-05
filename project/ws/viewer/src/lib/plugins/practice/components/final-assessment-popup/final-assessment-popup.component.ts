@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatTableDataSource } from '@angular/material/table'
 import { ITableData } from '@sunbird-cb/collection/src/public-api'
 import * as _ from 'lodash'
 
@@ -27,7 +27,7 @@ export class FinalAssessmentPopupComponent implements OnInit, OnDestroy {
     if (data && data.tableDetails && data.tableDetails.tableData) {
       this.setTableDataSource(data.tableDetails.tableData)
     }
-    
+
     // Start countdown timer if auto-redirect is enabled
     if (data && data.autoRedirect && data.redirectSeconds) {
       this.countdown = data.redirectSeconds

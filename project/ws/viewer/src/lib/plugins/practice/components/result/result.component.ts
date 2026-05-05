@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, OnChanges, Output, ViewChild } 
 import { NsContent, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { NSPractice } from '../../practice.model'
 import { MatAccordion } from '@angular/material/expansion'
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
+import { MatTableDataSource } from '@angular/material/table'
 import * as _ from 'lodash'
 @Component({
   selector: 'viewer-result',
@@ -17,7 +17,7 @@ export class ResultComponent implements OnInit, OnChanges {
   @Input() quizResponse!: NSPractice.IQuizSubmitResponseV2
   @Input() coursePrimaryCategory: any
   @Input() selectedAssessmentCompatibilityLevel = 2
-  @Input() canAttempt : any
+  @Input() canAttempt: any
   @Output() userSelection = new EventEmitter<string>()
   @Output() fetchResult = new EventEmitter<string>()
   @ViewChild(MatAccordion, { static: true }) accordion: MatAccordion | undefined
@@ -184,37 +184,37 @@ export class ResultComponent implements OnInit, OnChanges {
       this.quizResponseClone = _.clone(this.quizResponse)
       const sectionTableData = []
       let totalQuestions = _.get(this.quizResponse, 'total', 0)
-        /* tslint:disable */
-      if(this.quizResponse.children) {
+      /* tslint:disable */
+      if (this.quizResponse.children) {
         for (let i = 0; i < this.quizResponse.children.length; i++) {
           if (this.quizResponse.children[i] && this.quizResponse.children[i].children) {
             const sectionTotalQuestions = this.quizResponse.children[i].children.length
-            let sectionName:any = this.quizResponse.children[i]['name'];
-            if(_.get(this.quizResponse, 'total', 0) === 0) {
+            let sectionName: any = this.quizResponse.children[i]['name']
+            if (_.get(this.quizResponse, 'total', 0) === 0) {
               totalQuestions = sectionTotalQuestions + totalQuestions
             }
             // if (this.quizResponse.children[i]['correct']) {
-            
-              if(this.quizResponse.children.length === 1) {
-                sectionName = sectionName ? sectionName : 'Default Section'
-              } else {
-                if(i==0) {
-                  sectionName =  sectionName ? sectionName : 'Section A'
-                } else if(i==1) {
-                  sectionName = sectionName ? sectionName : 'Section B'
-                } else if(i==2) {
-                  sectionName = sectionName ? sectionName : 'Section C'
-                } else if(i==3) {
-                  sectionName = sectionName ? sectionName : 'Section D'
-                } else if(i==4) {
-                  sectionName = sectionName ? sectionName : 'Section E'
-                } else if(i==5) {
-                  sectionName = sectionName ? sectionName :  'Section F'
-                }
-              }
 
-              const sectionObj = { subject: `${sectionName}`, yourScore : `${this.quizResponse.children[i]['sectionMarks']} / ${this.quizResponse.children[i]['totalMarks']}`}
-              sectionTableData.push(sectionObj)
+            if (this.quizResponse.children.length === 1) {
+              sectionName = sectionName ? sectionName : 'Default Section'
+            } else {
+              if (i == 0) {
+                sectionName = sectionName ? sectionName : 'Section A'
+              } else if (i == 1) {
+                sectionName = sectionName ? sectionName : 'Section B'
+              } else if (i == 2) {
+                sectionName = sectionName ? sectionName : 'Section C'
+              } else if (i == 3) {
+                sectionName = sectionName ? sectionName : 'Section D'
+              } else if (i == 4) {
+                sectionName = sectionName ? sectionName : 'Section E'
+              } else if (i == 5) {
+                sectionName = sectionName ? sectionName : 'Section F'
+              }
+            }
+
+            const sectionObj = { subject: `${sectionName}`, yourScore: `${this.quizResponse.children[i]['sectionMarks']} / ${this.quizResponse.children[i]['totalMarks']}` }
+            sectionTableData.push(sectionObj)
             // }
           }
         }
@@ -243,8 +243,8 @@ export class ResultComponent implements OnInit, OnChanges {
         // { header: 'Topper Score', key: 'topperScore' },
       ]
 
-      if(this.questionTYP.PRACTICE_RESOURCE === this.quizCategory) {
-        if(this.quizResponse.correct === undefined) {
+      if (this.questionTYP.PRACTICE_RESOURCE === this.quizCategory) {
+        if (this.quizResponse.correct === undefined) {
           this.quizResponse.correct = 0
           this.quizResponse.incorrect = 0
           this.quizResponse.children.forEach((section: any) => {
@@ -274,14 +274,14 @@ export class ResultComponent implements OnInit, OnChanges {
           imgType: 'img',
           imgPath: '/assets/icons/final-assessment/assignment.svg',
           class: 'icon-bg-pink',
-          summary: totalQuestions ? `${(this.quizResponse.correct + this.quizResponse.incorrect)}/${totalQuestions}`: '0',
+          summary: totalQuestions ? `${(this.quizResponse.correct + this.quizResponse.incorrect)}/${totalQuestions}` : '0',
           summaryType: 'quizresult.attempted',
         },
         {
           imgType: 'icon',
           imgPath: 'check_circle_outline',
           class: 'icon-bg-yellow',
-          summary: totalQuestions ? `${this.quizResponse.correct}/${totalQuestions}`: '0',
+          summary: totalQuestions ? `${this.quizResponse.correct}/${totalQuestions}` : '0',
           summaryType: 'quizresult.correct',
         },
         {
@@ -351,33 +351,33 @@ export class ResultComponent implements OnInit, OnChanges {
         { header: 'quizresult.questionTagging', key: 'questionTagg' },
         { header: 'quizresult.timeTaken', key: 'timeSpent' },
       ]
-        /* tslint:disable */
-      if(this.quizResponse && this.quizResponse.children) {
+      /* tslint:disable */
+      if (this.quizResponse && this.quizResponse.children) {
         for (let i = 0; i < this.quizResponse.children.length; i++) {
-          let sectionName:any = this.quizResponse.children[i]['name'];
-              if(this.quizResponse.children.length === 1) {
-                sectionName = sectionName ? sectionName : 'Default Section'
-              } else {
-                if(i==0) {
-                  sectionName = sectionName ? sectionName :'Section A'
-                } else if(i==1) {
-                  sectionName = sectionName ? sectionName :'Section B'
-                } else if(i==2) {
-                  sectionName = sectionName ? sectionName :'Section C'
-                } else if(i==3) {
-                  sectionName = sectionName ? sectionName :'Section D'
-                } else if(i==4) {
-                  sectionName = sectionName ? sectionName :'Section E'
-                } else if(i==5) {
-                  sectionName = sectionName ? sectionName :'Section F'
-                }
-              }
-          const obj: any = {
-                    sectionName: sectionName,
-                    identifier: this.quizResponse.children[i]['identifier'],
+          let sectionName: any = this.quizResponse.children[i]['name']
+          if (this.quizResponse.children.length === 1) {
+            sectionName = sectionName ? sectionName : 'Default Section'
+          } else {
+            if (i == 0) {
+              sectionName = sectionName ? sectionName : 'Section A'
+            } else if (i == 1) {
+              sectionName = sectionName ? sectionName : 'Section B'
+            } else if (i == 2) {
+              sectionName = sectionName ? sectionName : 'Section C'
+            } else if (i == 3) {
+              sectionName = sectionName ? sectionName : 'Section D'
+            } else if (i == 4) {
+              sectionName = sectionName ? sectionName : 'Section E'
+            } else if (i == 5) {
+              sectionName = sectionName ? sectionName : 'Section F'
+            }
           }
-            /* tslint:disable */
-          if(this.quizResponse.children[i] && this.quizResponse.children[i].children && this.quizResponse.children[i].children.length) {
+          const obj: any = {
+            sectionName: sectionName,
+            identifier: this.quizResponse.children[i]['identifier'],
+          }
+          /* tslint:disable */
+          if (this.quizResponse.children[i] && this.quizResponse.children[i].children && this.quizResponse.children[i].children.length) {
             for (let j = 0; j < this.quizResponse.children[i].children.length; j++) {
               const objChildren: any = {
                 question: this.quizResponse.children[i].children[j]['question'],
@@ -387,11 +387,11 @@ export class ResultComponent implements OnInit, OnChanges {
               }
               this.questionStatuTableData.push(objChildren)
             }
-          }        
+          }
           this.sectionsList.push(obj)
         }
       }
-      
+
 
       this.getSectionalData('all', 'all')
       // this.sectionsList = [
@@ -407,34 +407,34 @@ export class ResultComponent implements OnInit, OnChanges {
       // ]
     }
 
-    if(this.quizCategory) {
+    if (this.quizCategory) {
       this.showInsight = this.questionTYP.PRACTICE_RESOURCE === this.quizCategory
     }
   }
 
-  getSectionalData(sectionId: string= 'all', resultType: string= 'all') {
+  getSectionalData(sectionId: string = 'all', resultType: string = 'all') {
     let quizResponse: any = this.quizResponse
     this.selectedSectionId = sectionId ? sectionId : 'all'
     this.selectedStatus = resultType
     this.questionStatuTableData = []
     if (this.selectedSectionId === 'all') {
-        /* tslint:disable */
-      if(this.quizResponse && this.quizResponse.children) {
+      /* tslint:disable */
+      if (this.quizResponse && this.quizResponse.children) {
         for (let i = 0; i < this.quizResponse.children.length; i++) {
-          
+
           /* tslint:disable */
-          if(this.quizResponse.children[i] && this.quizResponse.children[i].children && this.quizResponse.children[i].children.length) {
+          if (this.quizResponse.children[i] && this.quizResponse.children[i].children && this.quizResponse.children[i].children.length) {
             for (let j = 0; j < this.quizResponse.children[i].children.length; j++) {
               let formattedQuestion = this.quizResponse.children[i].children[j]['question']
-              formattedQuestion = formattedQuestion.replace(/&nbsp;/gi," ")
-              if(this.quizResponse.children[i].children[j]['qType'] === 'FTB') {
-                formattedQuestion = formattedQuestion.split('<input style="border-style:none none solid none" />').join('_________')                
+              formattedQuestion = formattedQuestion.replace(/&nbsp;/gi, " ")
+              if (this.quizResponse.children[i].children[j]['qType'] === 'FTB') {
+                formattedQuestion = formattedQuestion.split('<input style="border-style:none none solid none" />').join('_________')
               }
               if (resultType === 'all') {
                 const obj: any = {
                   question: formattedQuestion,
                   /* tslint:disable */
-                  status: this.quizResponse.children[i].children[j]['result'] === 'blank' ? 'Unattempted' :  (this.quizResponse.children[i].children[j]['result'] === 'incorrect' ? 'wrong' : this.quizResponse.children[i].children[j]['result'] ),
+                  status: this.quizResponse.children[i].children[j]['result'] === 'blank' ? 'Unattempted' : (this.quizResponse.children[i].children[j]['result'] === 'incorrect' ? 'wrong' : this.quizResponse.children[i].children[j]['result']),
                   questionTagg: this.quizResponse.children[i].children[j]['questionLevel'],
                   timeSpent: this.millisecondsToHMS(this.quizResponse.children[i].children[j]['timeSpent']),
                 }
@@ -459,7 +459,7 @@ export class ResultComponent implements OnInit, OnChanges {
                   }
                   this.questionStatuTableData.push(obj)
                 }
-              }  else if (resultType === 'notAnswered') {
+              } else if (resultType === 'notAnswered') {
                 if (this.quizResponse.children[i].children[j]['result'] === 'blank') {
                   const obj: any = {
                     question: formattedQuestion,
@@ -470,17 +470,17 @@ export class ResultComponent implements OnInit, OnChanges {
                   this.questionStatuTableData.push(obj)
                 }
               }
-    
+
             }
           }
-        
+
+        }
       }
-      }
-      
+
       this.questionStatuTableDataSource = this.questionStatuTableData
     } else {
-        /* tslint:disable */
-      if(this.quizResponse && this.quizResponse.children) {
+      /* tslint:disable */
+      if (this.quizResponse && this.quizResponse.children) {
         for (let i = 0; i < this.quizResponse.children.length; i++) {
           if (this.quizResponse.children[i]['identifier'] === this.selectedSectionId) {
             quizResponse = this.quizResponse.children[i]
@@ -488,19 +488,19 @@ export class ResultComponent implements OnInit, OnChanges {
           }
         }
       }
-     
-        /* tslint:disable */
-      if(quizResponse && quizResponse.children) {
+
+      /* tslint:disable */
+      if (quizResponse && quizResponse.children) {
         for (let j = 0; j < quizResponse.children.length; j++) {
-          let formattedQuestion = quizResponse.children[j]['question'].replace(/&nbsp;/gi," ")
-          if(quizResponse.children[j]['qType'] === 'FTB') {
-            formattedQuestion = formattedQuestion.split('<input style="border-style:none none solid none" />').join('_________')                
+          let formattedQuestion = quizResponse.children[j]['question'].replace(/&nbsp;/gi, " ")
+          if (quizResponse.children[j]['qType'] === 'FTB') {
+            formattedQuestion = formattedQuestion.split('<input style="border-style:none none solid none" />').join('_________')
           }
-          if (resultType === 'all') {            
+          if (resultType === 'all') {
             const obj: any = {
-              question: formattedQuestion ,
+              question: formattedQuestion,
               /* tslint:disable */
-              status: quizResponse.children[j]['result'] === 'blank' ? 'Unattempted' :  (quizResponse.children[j]['result'] === 'incorrect' ? 'wrong' : quizResponse.children[j]['result'] ),
+              status: quizResponse.children[j]['result'] === 'blank' ? 'Unattempted' : (quizResponse.children[j]['result'] === 'incorrect' ? 'wrong' : quizResponse.children[j]['result']),
               questionTagg: quizResponse.children[j]['questionLevel'],
               timeSpent: this.millisecondsToHMS(quizResponse.children[j]['timeSpent']),
             }
@@ -525,7 +525,7 @@ export class ResultComponent implements OnInit, OnChanges {
               }
               this.questionStatuTableData.push(obj)
             }
-          }  else if (resultType === 'notAnswered') {
+          } else if (resultType === 'notAnswered') {
             if (quizResponse.children[j]['result'] === 'blank') {
               const obj: any = {
                 question: formattedQuestion,
@@ -538,7 +538,7 @@ export class ResultComponent implements OnInit, OnChanges {
           }
         }
       }
-    this.questionStatuTableDataSource = this.questionStatuTableData
+      this.questionStatuTableDataSource = this.questionStatuTableData
     }
 
   }
@@ -590,14 +590,14 @@ export class ResultComponent implements OnInit, OnChanges {
 
   millisecondsToHMS(milleSeconds: any): string {
     const ms = Number(milleSeconds)
-    const seconds: number = Math.floor((ms / 1000) % 60);
-    const minutes: number = Math.floor((ms / (1000 * 60)) % 60);
-    const hours: number = Math.floor((ms / (1000 * 60 * 60)) % 24);
+    const seconds: number = Math.floor((ms / 1000) % 60)
+    const minutes: number = Math.floor((ms / (1000 * 60)) % 60)
+    const hours: number = Math.floor((ms / (1000 * 60 * 60)) % 24)
 
-    const hoursStr: string = (hours < 10) ? `0${hours}` : `${hours}`;
-    const minutesStr: string = (minutes < 10) ? `0${minutes}` : `${minutes}`;
-    const secondsStr: string = (seconds < 10) ? `0${seconds}` : `${seconds}`;
+    const hoursStr: string = (hours < 10) ? `0${hours}` : `${hours}`
+    const minutesStr: string = (minutes < 10) ? `0${minutes}` : `${minutes}`
+    const secondsStr: string = (seconds < 10) ? `0${seconds}` : `${seconds}`
 
-    return `${hoursStr}:${minutesStr}:${secondsStr}`;
+    return `${hoursStr}:${minutesStr}:${secondsStr}`
   }
 }

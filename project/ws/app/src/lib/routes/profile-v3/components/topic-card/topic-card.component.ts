@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NSProfileDataV3 } from '../../models/profile-v3.models'
@@ -10,7 +10,7 @@ import { TranslateService } from '@ngx-translate/core'
   selector: 'ws-app-topic-card',
   templateUrl: './topic-card.component.html',
   styleUrls: ['./topic-card.component.scss'],
-    /* tslint:disable */
+  /* tslint:disable */
   host: { class: 'flex flex-1 top_main flex-col' },
   /* tslint:enable */
 })
@@ -19,13 +19,13 @@ export class TopicCardComponent implements OnInit {
   show = 6
   // selectedTopics: Subscription | null = null
   constructor(private topicService: TopicService, private snackBar: MatSnackBar,
-              private translate: TranslateService) {
+    private translate: TranslateService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
-   }
+  }
 
   ngOnInit() {
 

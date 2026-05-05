@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { PageChangeEmitter } from '../../models/network-v3.model';
-import { NetworkingService } from '../../services/networking.service';
-import * as _ from 'lodash';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { environment } from 'src/environments/environment';
+import { Component, OnInit } from '@angular/core'
+import { PageChangeEmitter } from '../../models/network-v3.model'
+import { NetworkingService } from '../../services/networking.service'
+import * as _ from 'lodash'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-mentors',
@@ -22,24 +22,24 @@ export class MentorsComponent implements OnInit {
   mentorsGetSubscription: any
 
   constructor(
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private networkingSvc: NetworkingService
   ) { }
 
   ngOnInit(): void {
-    this.getMentorsList();
+    this.getMentorsList()
   }
 
   async onPageChange(event: PageChangeEmitter) {
     // this.searchContentLoader = true;
-    this.scrollToTop();
+    this.scrollToTop()
     this.paginationPage = event.currentPage
-    this.paginationSize = event.limit;
-    this.getMentorsList();
+    this.paginationSize = event.limit
+    this.getMentorsList()
   }
 
   scrollToTop(): void {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   getMentorsList() {
@@ -47,26 +47,26 @@ export class MentorsComponent implements OnInit {
       size: this.paginationSize,
       offset: this.paginationPage - 1,
     }
-    if(this.mentorsGetSubscription) {
-      this.mentorsGetSubscription.unsubscribe();
+    if (this.mentorsGetSubscription) {
+      this.mentorsGetSubscription.unsubscribe()
     }
-    this.mentorsListLoading = true;
-    this.mentorsGetSubscription =this.networkingSvc.getRecommendedMentors(formBody).subscribe({
+    this.mentorsListLoading = true
+    this.mentorsGetSubscription = this.networkingSvc.getRecommendedMentors(formBody).subscribe({
       next: (response) => {
-        this.mentorsListLoading = false;
-        this.mentorsList = _.get(response, 'result.response', []) ;
-        this.totalItemsCount = _.get(response, 'result.count', 0);
+        this.mentorsListLoading = false
+        this.mentorsList = _.get(response, 'result.response', [])
+        this.totalItemsCount = _.get(response, 'result.count', 0)
       },
       error: (error) => {
-        this.mentorsListLoading = false;
-        if(error) {
-          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.noMentorsFoundatTheMomentPleaseTryAgain'));
+        this.mentorsListLoading = false
+        if (error) {
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.noMentorsFoundatTheMomentPleaseTryAgain'))
         }
       }
-    });
+    })
   }
 
-  descoverMentors() { 
+  descoverMentors() {
     window.open(`${environment.contentHost}/mentorship/tabs/mentor-directory`, '_blank')
   }
 

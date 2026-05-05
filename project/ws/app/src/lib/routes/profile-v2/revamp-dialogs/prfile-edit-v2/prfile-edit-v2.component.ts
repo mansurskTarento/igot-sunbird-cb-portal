@@ -1,9 +1,9 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA, MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import * as _ from 'lodash'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil } from 'rxjs/operators'
 import { of, Subject } from 'rxjs'
 import { EMAIL_PATTERN, EMP_ID_PATTERN, IMAGE_SIZE_1MB, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model'
@@ -123,12 +123,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<PrfileEditV2Component>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private profileV2RevampService: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private otpService: OtpService,
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private datePipe: DatePipe,
     private pipeImgUrl: PipeCertificateImageURL,
     private userProfileService: UserProfileService,

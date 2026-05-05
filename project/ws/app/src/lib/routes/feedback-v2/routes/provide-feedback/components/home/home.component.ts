@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router'
 import { EFeedbackRole, EFeedbackType, IFeedbackSummary } from '@sunbird-cb/collection'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
@@ -34,7 +34,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     const feedbackSummaryResolve = this.route.snapshot.data['feedbackSummary'] as IResolveResponse<
       IFeedbackSummary
-      >
+    >
     if (feedbackSummaryResolve.data) {
       this.feedbackSummary = feedbackSummaryResolve.data
       this.newItemsCount = feedbackSummaryResolve.data.forActionCount
@@ -77,7 +77,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           return false
         }),
         switchMap(() => this.route.children[0].url),
-    )
+      )
       .subscribe(
         url => {
           try {
@@ -90,7 +90,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         () => {
           this.currentTabIndex = 0
         },
-    )
+      )
   }
 
   ngOnDestroy() {

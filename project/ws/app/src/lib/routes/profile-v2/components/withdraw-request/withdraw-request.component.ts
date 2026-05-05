@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy, Output, EventEmitter } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -37,16 +37,16 @@ export class WithdrawRequestComponent implements OnInit, OnDestroy {
     if (this.data.withDrawType === 'department') {
       this.data.approvalPendingFields.forEach((_obj: any) => {
         this.userProfileService.withDrawRequest(this.configService.unMappedUser.id, _obj.wfId)
-        .pipe(takeUntil(this.destroySubject$))
-        .subscribe((_res: any) => {
-          this.matSnackBar.open(this.handleTranslateTo('withdrawTransferSuccess'))
-          this.handleCloseModal()
-          this.enableMakeTransfer.emit(true)
-        },         (error: HttpErrorResponse) => {
-          if (!error.ok) {
-            this.matSnackBar.open(this.handleTranslateTo('withdrawTransferFailed'))
-          }
-        })
+          .pipe(takeUntil(this.destroySubject$))
+          .subscribe((_res: any) => {
+            this.matSnackBar.open(this.handleTranslateTo('withdrawTransferSuccess'))
+            this.handleCloseModal()
+            this.enableMakeTransfer.emit(true)
+          }, (error: HttpErrorResponse) => {
+            if (!error.ok) {
+              this.matSnackBar.open(this.handleTranslateTo('withdrawTransferFailed'))
+            }
+          })
       })
     } else {
       const withdraw = true

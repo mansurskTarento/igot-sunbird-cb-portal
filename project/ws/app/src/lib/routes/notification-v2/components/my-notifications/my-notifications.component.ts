@@ -4,7 +4,7 @@ import { ConfigurationsService, EventService, MultilingualTranslationsService } 
 import { NotificationsService } from '../../../../../../../../../src/app/services/notifications.service'
 import { environment } from 'src/environments/environment'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
 import { SurveyPopupComponent } from '../../../peer-validation/components/survey-popup/survey-popup.component'

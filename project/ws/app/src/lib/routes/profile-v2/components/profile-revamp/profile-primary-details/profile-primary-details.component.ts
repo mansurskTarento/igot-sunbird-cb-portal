@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
-import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component'
 import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -51,9 +51,9 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
 
   constructor(
     private profileV2RevampSvc: ProfileV2RevampService,
-    private matSnackBar: MatLegacySnackBar,
+    private matSnackBar: MatSnackBar,
     private configService: ConfigurationsService,
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
   ) { }

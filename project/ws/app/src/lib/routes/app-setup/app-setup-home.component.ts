@@ -1,4 +1,4 @@
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
@@ -50,7 +50,7 @@ export class AppSetupHomeComponent implements OnInit, AfterViewInit {
     | SettingsComponent
     | undefined = undefined
 
-  constructor(private configSvc: ConfigurationsService, private matDialog: MatDialog, private route: ActivatedRoute) {}
+  constructor(private configSvc: ConfigurationsService, private matDialog: MatDialog, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // if (this.configSvc.restrictedFeatures) {
@@ -59,8 +59,8 @@ export class AppSetupHomeComponent implements OnInit, AfterViewInit {
 
     this.appLanguage = (this.configSvc.activeLocale && this.configSvc.activeLocale.path) || ''
     this.route.data.subscribe(data => {
-        this.introVideos = data.configData.data.introVideo
-      }
+      this.introVideos = data.configData.data.introVideo
+    }
     )
 
     this.widgetResolverData = {

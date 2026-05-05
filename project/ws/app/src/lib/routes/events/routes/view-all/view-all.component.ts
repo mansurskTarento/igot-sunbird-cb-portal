@@ -4,7 +4,7 @@ import { ConfigurationsService, MultilingualTranslationsService, NsContent } fro
 import { EventService } from '../../services/events.service'
 import * as _ from 'lodash'
 import { DatePipe } from '@angular/common'
-//import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+//import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormControl } from '@angular/forms'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'

@@ -2,7 +2,7 @@ import { Component } from '@angular/core'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
-import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { CustomFieldsComponent } from '../custom-fields/custom-fields.component'
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { ActivatedRoute } from '@angular/router'
@@ -30,7 +30,7 @@ export class ViewCustomFieldsComponent {
   constructor(
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
     //private commondataSvc: CommonDataService

@@ -28,16 +28,16 @@ import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
 import { LoaderService } from '@ws/author/src/public-api'
 /* tslint:disable */
 import * as _ from 'lodash'
-import { OtpService } from '../../services/otp.services';
+import { OtpService } from '../../services/otp.services'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import { RequestDialogComponent } from '../request-dialog/request-dialog.component'
 import { USER_PROFILE_MSG_CONFIG } from './user-profile-constant'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatChipInputEvent } from '@angular/material/chips'
 import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 /* tslint:enable */
 
@@ -197,9 +197,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.isForcedUpdate = !!this.route.snapshot.paramMap.get('isForcedUpdate')
 
     this.updatePrimaryEmail = new UntypedFormControl('',
-                                              [Validators.required,
-        Validators.email,
-        Validators.pattern(this.emailRegix),
+      [Validators.required,
+      Validators.email,
+      Validators.pattern(this.emailRegix),
       ]
     )
     this.emailOtp = new UntypedFormControl('')
@@ -324,7 +324,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       })
       this.onGroupChange()
     },
-                                              (_err: any) => {
+      (_err: any) => {
       })
 
     this.userProfileSvc.getMasterNationality().subscribe(
@@ -772,8 +772,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   getUserAllDetails() {
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
       forkJoin([this.userProfileSvc.getUserdetailsFromRegistry(this.configSvc.unMappedUser.id),
-        this.userProfileSvc.listApprovalPendingFields(), this.userProfileSvc.listRejectedFields()]
-        ).subscribe(
+      this.userProfileSvc.listApprovalPendingFields(), this.userProfileSvc.listRejectedFields()]
+      ).subscribe(
         ([userres, unApprovedres, rejectedres]) => {
           const userdata = userres
 
@@ -811,52 +811,52 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   getUserDetails(data: any) {
-      // if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
-      // if (this.configSvc.userProfile) {
-      // this.userProfileSvc.getUserdetailsFromRegistry(this.configSvc.unMappedUser.id).subscribe(
-      // (data: any) => {
-      // tslint:disable-next-line: max-line-length
-      if (data && data.profileDetails && data.profileDetails.additionalProperties && data.profileDetails.additionalProperties.externalSystem === 'DoPT eHRMS') {
-        this.isEhrmsId = data.profileDetails.additionalProperties.externalSystemId
-      }
+    // if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
+    // if (this.configSvc.userProfile) {
+    // this.userProfileSvc.getUserdetailsFromRegistry(this.configSvc.unMappedUser.id).subscribe(
+    // (data: any) => {
+    // tslint:disable-next-line: max-line-length
+    if (data && data.profileDetails && data.profileDetails.additionalProperties && data.profileDetails.additionalProperties.externalSystem === 'DoPT eHRMS') {
+      this.isEhrmsId = data.profileDetails.additionalProperties.externalSystemId
+    }
 
-      const userData = {
-        ...data.profileDetails || _.get(this.configSvc.unMappedUser, 'profileDetails'),
-        id: data.id, userId: data.userId,
+    const userData = {
+      ...data.profileDetails || _.get(this.configSvc.unMappedUser, 'profileDetails'),
+      id: data.id, userId: data.userId,
+    }
+    if (data.profileDetails && (userData.id || userData.userId)) {
+      this.isMobileVerified = _.get(data, 'profileDetails.personalDetails.phoneVerified') && true
+      const academics = this.populateAcademics(userData)
+      this.setDegreeValuesArray(academics)
+      this.setPostDegreeValuesArray(academics)
+      const organisations = this.populateOrganisationDetails(userData)
+      this.constructFormFromRegistry(userData, academics, organisations)
+      this.populateChips(userData)
+      this.isVerifiedKBReq()
+      this.userProfileData = userData
+      if (this.userProfileData && this.userProfileData.additionalProperties) {
+        this.selectedtags = this.userProfileData.additionalProperties.tag || []
+        this.eHRMSId = this.userProfileData.additionalProperties.externalSystemId
+        this.eHRMSName = this.userProfileData.additionalProperties.externalSystem
       }
-      if (data.profileDetails && (userData.id || userData.userId)) {
-        this.isMobileVerified = _.get(data, 'profileDetails.personalDetails.phoneVerified') && true
-        const academics = this.populateAcademics(userData)
-        this.setDegreeValuesArray(academics)
-        this.setPostDegreeValuesArray(academics)
-        const organisations = this.populateOrganisationDetails(userData)
-        this.constructFormFromRegistry(userData, academics, organisations)
-        this.populateChips(userData)
-        this.isVerifiedKBReq()
-        this.userProfileData = userData
+    } else {
+      if (this.configSvc.userProfile) {
+        this.userProfileData = { ...userData, id: this.configSvc.userProfile.userId, userId: this.configSvc.userProfile.userId }
+        this.createUserForm.patchValue({
+          firstname: this.configSvc.userProfile.firstName,
+          // surname: this.configSvc.userProfile.lastName,
+          primaryEmail: _.get(this.userProfileData, 'personalDetails.primaryEmail') || this.configSvc.userProfile.email,
+          orgName: this.configSvc.userProfile.rootOrgName,
+        })
         if (this.userProfileData && this.userProfileData.additionalProperties) {
           this.selectedtags = this.userProfileData.additionalProperties.tag || []
           this.eHRMSId = this.userProfileData.additionalProperties.externalSystemId
           this.eHRMSName = this.userProfileData.additionalProperties.externalSystem
         }
-      } else {
-        if (this.configSvc.userProfile) {
-          this.userProfileData = { ...userData, id: this.configSvc.userProfile.userId, userId: this.configSvc.userProfile.userId }
-          this.createUserForm.patchValue({
-            firstname: this.configSvc.userProfile.firstName,
-            // surname: this.configSvc.userProfile.lastName,
-            primaryEmail: _.get(this.userProfileData, 'personalDetails.primaryEmail') || this.configSvc.userProfile.email,
-            orgName: this.configSvc.userProfile.rootOrgName,
-          })
-          if (this.userProfileData && this.userProfileData.additionalProperties) {
-            this.selectedtags = this.userProfileData.additionalProperties.tag || []
-            this.eHRMSId = this.userProfileData.additionalProperties.externalSystemId
-            this.eHRMSName = this.userProfileData.additionalProperties.externalSystem
-          }
-        }
       }
-      // this.handleFormData(data[0])
-      // },
+    }
+    // this.handleFormData(data[0])
+    // },
     // }
   }
 
@@ -1842,7 +1842,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     })
   }
 
-  cancleEmailUpdate () {
+  cancleEmailUpdate() {
     this.showUpdateEmail = false
     this.isOtpSent = false
     this.updatePrimaryEmail.enable()
@@ -1854,11 +1854,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     this.emailOtp.markAsPristine()
   }
 
-  onClickshowUpdateEmail () {
+  onClickshowUpdateEmail() {
     this.showUpdateEmail = true
   }
 
-  sendOtpToEmail () {
+  sendOtpToEmail() {
     const emailId = this.updatePrimaryEmail.value
     const primaryEmail = this.createUserForm.controls['primaryEmail'].value
     if (emailId === primaryEmail) {
@@ -1881,7 +1881,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
     }
   }
 
-  startEmailOtpCountDown () {
+  startEmailOtpCountDown() {
     const startTime = Date.now()
     this.emailTimeLeftforOTP = this.OTP_TIMER
     // && this.primaryCategory !== this.ePrimaryCategory.PRACTICE_RESOURCE
@@ -1938,7 +1938,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
                 'contextToken': res.result.contextToken,
                 'profileDetails': {
                   'personalDetails': {
-                      'primaryEmail': email,
+                    'primaryEmail': email,
                   },
                 },
               },

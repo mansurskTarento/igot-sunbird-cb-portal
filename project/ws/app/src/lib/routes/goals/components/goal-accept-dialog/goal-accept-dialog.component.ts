@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
@@ -21,7 +21,7 @@ export class GoalAcceptDialogComponent implements OnInit {
     private goalSvc: BtnGoalsService,
     private dialogRef: MatDialogRef<GoalAcceptDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public goal: NsGoal.IGoal,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.acceptGoalConditionCheck()

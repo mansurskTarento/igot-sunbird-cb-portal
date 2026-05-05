@@ -4,12 +4,12 @@ import { BtnFeatureComponent } from './btn-feature.component'
 import { RouterModule } from '@angular/router'
 import { WidgetUrlResolverDirective } from './widget-url-resolver.directive'
 import { MatBadgeModule } from '@angular/material/badge'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
 import { MatRippleModule } from '@angular/material/core'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
     declarations: [BtnFeatureComponent, WidgetUrlResolverDirective],
@@ -26,4 +26,4 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     ],
     exports: [BtnFeatureComponent]
 })
-export class BtnFeatureModule {}
+export class BtnFeatureModule { }

@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { jsPDF } from 'jspdf'
 import { environment } from 'src/environments/environment'
@@ -8,9 +8,9 @@ import { environment } from 'src/environments/environment'
   selector: 'ws-widget-certificate-dialog',
   templateUrl: './certificate-dialog.component.html',
   styleUrls: ['./certificate-dialog.component.scss'],
-   /* tslint:disable */
-   host: { class: 'certificate-inner-dialog-panel' },
-   /* tslint:enable */
+  /* tslint:disable */
+  host: { class: 'certificate-inner-dialog-panel' },
+  /* tslint:enable */
 })
 export class CertificateDialogComponent implements OnInit {
   url!: string
@@ -100,7 +100,7 @@ export class CertificateDialogComponent implements OnInit {
       {
         type: WsEvents.EnumInteractTypes.CLICK,
         id: `${type}-${WsEvents.EnumInteractSubTypes.CERTIFICATE}`,
-        subType:  action ? action : '',
+        subType: action ? action : '',
       },
       {
         id: this.data.certId,   // id of the certificate

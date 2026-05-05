@@ -4,7 +4,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { PersonProfileService } from '../../services/person-profile.service'
 import { IFollowDetails } from '../../person-profile.model'
 import { Router } from '@angular/router'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-view-followperson',
@@ -42,11 +42,11 @@ export class ViewFollowpersonComponent implements OnInit {
   fetchUserDetails() {
     if (this.wid) {
 
-        if (this.configSvc.userProfile) {
-          if (this.wid === this.configSvc.userProfile.userId) {
-            this.isFollowAvailable = false
-          }
+      if (this.configSvc.userProfile) {
+        if (this.wid === this.configSvc.userProfile.userId) {
+          this.isFollowAvailable = false
         }
+      }
 
       this.personprofileSvc.fetchdetails(this.wid).subscribe(
         (data: any) => {

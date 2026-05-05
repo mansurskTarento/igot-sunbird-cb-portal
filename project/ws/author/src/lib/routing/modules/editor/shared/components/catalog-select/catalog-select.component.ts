@@ -1,7 +1,7 @@
 import { SelectionModel } from '@angular/cdk/collections'
 import { FlatTreeControl } from '@angular/cdk/tree'
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { UploadService } from '../../services/upload.service'
@@ -138,14 +138,14 @@ export class CatalogSelectComponent implements OnInit {
       existingNode && existingNode.name === node.name
         ? existingNode
         : {
-            name: '',
-            level: 0,
-            expandable: false,
-            identifier: '',
-            path: '',
-            nodeId: '',
-            checkable: true,
-          }
+          name: '',
+          level: 0,
+          expandable: false,
+          identifier: '',
+          path: '',
+          nodeId: '',
+          checkable: true,
+        }
     flatNode.name = node.name
     const currentNode = this.flatCatalogData.find(r => {
       return r.name === flatNode.name

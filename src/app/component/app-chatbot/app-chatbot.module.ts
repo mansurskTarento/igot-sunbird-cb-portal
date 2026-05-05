@@ -7,14 +7,14 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 import { CommonModule } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import {IGotSarthiComponent} from './../igot-sarthi/igot-sarthi.component'
-import { MarkdownModule } from 'ngx-markdown';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { IGotSarthiComponent } from './../igot-sarthi/igot-sarthi.component'
+import { MarkdownModule } from 'ngx-markdown'
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
 import { SupportAIComponent } from './../support-ai/support-ai.component'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
   declarations: [
     ClickOutsideDirective,

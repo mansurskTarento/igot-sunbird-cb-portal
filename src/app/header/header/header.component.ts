@@ -5,7 +5,7 @@ import { MobileAppsService } from '../../services/mobile-apps.service'
 import {
   ValueService,
 } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 // import { HttpClient } from '@angular/common/http'
 // import { DomSanitizer } from '@angular/platform-browser'

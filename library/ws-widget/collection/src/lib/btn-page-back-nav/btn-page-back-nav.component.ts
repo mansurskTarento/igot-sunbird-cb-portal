@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { BtnPageBackNavService } from './btn-page-back-nav.service'
@@ -82,17 +82,17 @@ export class BtnPageBackNavComponent extends WidgetBaseComponent
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           if (this.backUrl && this.backUrl.fragment) {
-            this.router.navigate([this.backUrl.routeUrl], { queryParams : this.backUrl.queryParams, fragment: this.backUrl.fragment })
+            this.router.navigate([this.backUrl.routeUrl], { queryParams: this.backUrl.queryParams, fragment: this.backUrl.fragment })
           } else {
-            this.router.navigate([this.backUrl.routeUrl], { queryParams : this.backUrl.queryParams })
+            this.router.navigate([this.backUrl.routeUrl], { queryParams: this.backUrl.queryParams })
           }
         }
       })
     } else {
       if (this.backUrl && this.backUrl.fragment) {
-        this.router.navigate([this.backUrl.routeUrl], { queryParams : this.backUrl.queryParams, fragment: this.backUrl.fragment })
+        this.router.navigate([this.backUrl.routeUrl], { queryParams: this.backUrl.queryParams, fragment: this.backUrl.fragment })
       } else {
-        this.router.navigate([this.backUrl.routeUrl], { queryParams : this.backUrl.queryParams })
+        this.router.navigate([this.backUrl.routeUrl], { queryParams: this.backUrl.queryParams })
       }
     }
 

@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, EventService, UtilityService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -62,7 +62,7 @@ export class CardContentComponent extends WidgetBaseComponent
 
     if (this.widgetData) {
       if (this.widgetData.context && this.widgetData.context.pageSection === 'curatedCollections') {
-        this.widgetData.content.linkUrl = '/app/curatedCollections/'+ this.widgetData.content.identifier
+        this.widgetData.content.linkUrl = '/app/curatedCollections/' + this.widgetData.content.identifier
       }
       this.btnPlaylistConfig = {
         contentId: this.widgetData.content.identifier,
@@ -109,7 +109,7 @@ export class CardContentComponent extends WidgetBaseComponent
   redirectToUrl() {
     let url = window.location.href
     let indexValue = url.split('curatedCollections/')
-    window.location.href = indexValue[0] + 'curatedCollections/'  + this.widgetData.content.identifier
+    window.location.href = indexValue[0] + 'curatedCollections/' + this.widgetData.content.identifier
 
   }
 
