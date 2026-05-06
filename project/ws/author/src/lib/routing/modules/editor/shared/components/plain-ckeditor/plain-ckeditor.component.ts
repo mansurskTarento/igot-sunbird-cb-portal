@@ -12,26 +12,17 @@ import {
   ViewChild,
 } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import {
-  AUTHORING_CONTENT_BASE,
-  CONTENT_BASE_STATIC,
-  CONTENT_BASE_STREAM,
-  CONTENT_BASE_WEBHOST,
-  CONTENT_BASE_WEBHOST_ASSETS,
-} from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import {
-  FILE_MAX_SIZE,
-  IMAGE_MAX_SIZE,
-  IMAGE_SUPPORT_TYPES,
-} from '@ws/author/src/lib/constants/upload'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_STATIC, CONTENT_BASE_STREAM, CONTENT_BASE_WEBHOST, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../constants/apiEndpoints'
+import { UploadService } from '../../services/upload.service'
+import { AccessControlService } from '../../../../../../modules/shared/services/access-control.service'
+import { LoaderService } from '../../../../../../services/loader.service'
+import { FILE_MAX_SIZE, IMAGE_MAX_SIZE, IMAGE_SUPPORT_TYPES } from '../../../../../../constants/upload'
+import { NotificationComponent } from '../../../../../../modules/shared/components/notification/notification.component'
+import { NOTIFICATION_TIME } from '../../../routing/modules/web-page/constant/web-module.constants'
+import { Notify } from '../../../../../../constants/notificationMessage'
 
 declare const CKEDITOR: any
 

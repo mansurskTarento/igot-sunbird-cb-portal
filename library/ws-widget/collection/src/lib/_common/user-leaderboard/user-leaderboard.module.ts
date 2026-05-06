@@ -8,7 +8,7 @@ import { PipeDurationTransformModule, PipeOrdinalModule } from '@sunbird-cb/util
 import { WeeklyClapsModule } from '../weekly-claps/weekly-claps.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { UserProfileService } from '../../_services/user-profile.service'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
 import { MatTooltipModule } from '@angular/material/tooltip'

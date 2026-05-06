@@ -4,7 +4,6 @@ import { AttendanceHelperComponent } from './attendance-helper.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatDialogModule } from '@angular/material/dialog'
@@ -15,6 +14,11 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CbpFiltersHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [AttendanceHelperComponent],
@@ -35,7 +39,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CbpFiltersHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

@@ -8,7 +8,7 @@ import { ConfigurationsService, LoggerService, NsPage, ValueService, EventServic
 import { Subscription } from 'rxjs'
 import { ViewerUtilService, ViewerDataService } from '@sunbird-cb/toc'
 import { CourseCompletionDialogComponent } from '../course-completion-dialog/course-completion-dialog.component'
-import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
+import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@sunbird-cb/toc'
 import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'

@@ -12,7 +12,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
+import { SearchServService } from '../_services/search-serv.service'
 import { NsContentStripVertical } from './content-strip-vertical.model'
 
 interface IStripUnitContentData {

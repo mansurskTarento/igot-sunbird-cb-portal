@@ -19,7 +19,7 @@ import { CuratedCollectionCardComponent } from './components/curated-collection-
 import { CuratedPopularCardComponent } from './components/curated-popular-card/curated-popular-card.component'
 import { CuratedCollectionService } from './services/curated-collection.service'
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'

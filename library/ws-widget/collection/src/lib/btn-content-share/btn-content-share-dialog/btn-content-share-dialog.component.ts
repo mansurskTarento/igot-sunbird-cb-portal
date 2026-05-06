@@ -8,7 +8,6 @@ import { NsShare } from '../../_services/widget-share.model'
 import { ICommon } from '../../_models/common.model'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
-// import { TitleTagService } from '@ws/app/src/lib/routes/app-toc/services/title-tag.service'
 
 export interface IContentShareData {
   content: NsContent.IContent

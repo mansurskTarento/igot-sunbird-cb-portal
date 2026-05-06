@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { NSMandatoryCourseData } from '../../models/mandatory-course.model'
 
@@ -48,7 +48,7 @@ export class MandatoryCourseComponent implements OnInit, OnDestroy, OnChanges {
         return acc
       }
       return acc
-    // tslint:disable-next-line: align
+      // tslint:disable-next-line: align
     }, [])
 
     if (goals && goals.length) {

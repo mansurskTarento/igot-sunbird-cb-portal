@@ -5,10 +5,10 @@ import { RouterModule } from '@angular/router'
 import { NavigationModule, ImageResponsiveModule } from '@sunbird-cb/utils-v2'
 import { HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angular/platform-browser'
 /* tslint:disable */
-import  Hammer from 'hammerjs'
+import Hammer from 'hammerjs'
 /* tslint:enable */
 @Injectable()
-export class MyHammerConfig extends HammerGestureConfig {
+export class MyHammerSliderConfig extends HammerGestureConfig {
   buildHammer(element: HTMLElement) {
     const mc = new Hammer(element, {
       touchAction: 'pan-y',
@@ -19,19 +19,19 @@ export class MyHammerConfig extends HammerGestureConfig {
 
 // tslint:disable-next-line: max-classes-per-file
 @NgModule({
-    declarations: [SlidersComponent],
-    imports: [
-        CommonModule,
-        RouterModule,
-        NavigationModule,
-        ImageResponsiveModule,
-    ],
-    exports: [SlidersComponent],
-    providers: [
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: MyHammerConfig,
-        },
-    ]
+  declarations: [SlidersComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    NavigationModule,
+    ImageResponsiveModule,
+  ],
+  exports: [SlidersComponent],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: MyHammerSliderConfig,
+    },
+  ]
 })
 export class SlidersModule { }

@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule } from '@angular/router'
-import { CbpFiltersModule } from '@sunbird-cb/collection/src/lib/_common/cbp-filters/cbp-filters.module'
+import { CbpFiltersModule } from '@sunbird-cb/collection'
 
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { CompetencyPassbookRoutingModule } from './competency-passbook-routing.module'
 
@@ -27,7 +27,7 @@ import { BaseCompetencyListComponent } from './base-competency-list/base-compete
 import { CompetencyListComponent } from './competency-list/competency-list.component'
 import { BaseCompetencyCardDetailsComponent } from './base-competency-card-details/base-competency-card-details.component'
 import { CompetencyCardDetailsV2Component } from './competency-card-details-v2/competency-card-details-v2.component'
-import { CertificateViewPopupComponent } from '../../../project/ws/app/src/lib/routes/profile-v2/components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
+import { CertificateViewPopupComponent } from '@ws/app'
 
 @NgModule({
   declarations: [

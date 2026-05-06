@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CourseCompletionDialogComponent } from './course-completion-dialog.component'
-import { ContentRatingV2DialogModule } from '@sunbird-cb/collection/src/lib/_common/content-rating-v2-dialog/content-rating-v2-dialog.module'
+import { ContentRatingV2DialogModule } from '@sunbird-cb/collection'
 // import { HttpClient } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatButtonModule } from '@angular/material/button'

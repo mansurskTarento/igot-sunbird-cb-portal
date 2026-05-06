@@ -1,4 +1,5 @@
-import { ISearchContent } from '@ws/author/src/lib/interface/search'
+import { ISearchContent } from "../../../../interface/search"
+
 
 export interface IAction {
   action: string

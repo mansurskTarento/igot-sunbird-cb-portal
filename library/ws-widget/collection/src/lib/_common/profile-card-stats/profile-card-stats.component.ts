@@ -6,7 +6,7 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component'
 import { MatDialog } from '@angular/material/dialog'
-import { HomePageService } from 'src/app/services/home-page.service'
+import { HomePageService } from '../../_services/home-page.service'
 
 @Component({
   selector: 'ws-widget-profile-card-stats',

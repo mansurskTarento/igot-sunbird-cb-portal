@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { IAuthSteps } from '@ws/author/src/lib/interface/auth-stepper'
+import { IAuthSteps } from '../../../../interface/auth-stepper'
 
 @Component({
   selector: 'ws-auth-editor-steps',
@@ -10,7 +10,7 @@ export class AuthEditorStepsComponent implements OnInit {
   @Input() currentStep = 0
   @Input() steps: IAuthSteps[] | null = null
   @Output() change = new EventEmitter<number>()
-  constructor() {}
+  constructor() { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 }

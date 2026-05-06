@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
-import { NsTnc } from '../../../../../../../../../src/app/models/tnc.model'
+import { NsTnc } from '../../../models/tnc.model'
 import { Subscription } from 'rxjs'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import {
@@ -13,8 +13,8 @@ import {
   ConfigurationsService,
   NsPage,
 } from '@sunbird-cb/utils-v2'
-import { TncAppResolverService } from '../../../../../../../../../src/app/services/tnc-app-resolver.service'
-import { TncPublicResolverService } from '../../../../../../../../../src/app/services/tnc-public-resolver.service'
+import { TncAppResolverService } from '../../../services/tnc-app-resolver.service'
+import { TncPublicResolverService } from '../../../services/tnc-public-resolver.service'
 import { Globals } from '../../globals'
 
 @Component({
@@ -49,7 +49,7 @@ export class TncComponent implements OnInit, OnDestroy {
     private tncProtectedSvc: TncAppResolverService,
     private tncPublicSvc: TncPublicResolverService,
     private globals: Globals,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.routeSubscription = this.activatedRoute.data.subscribe((response: Data) => {

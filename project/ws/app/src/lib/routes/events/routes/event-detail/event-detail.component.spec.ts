@@ -101,7 +101,7 @@ jest.mock('@angular/material/dialog', () => ({
   }))
 }))
 
-jest.mock('../../../../../../../../../src/app/services/netcore.service', () => ({
+jest.mock('../../../../../../../../../services/netcore.service', () => ({
   NetCoreService: jest.fn().mockImplementation(() => ({
     trackEventForContentAndEvent: jest.fn()
   }))

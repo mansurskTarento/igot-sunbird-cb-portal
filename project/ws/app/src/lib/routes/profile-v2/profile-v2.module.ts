@@ -10,23 +10,22 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { PipeFilterModule, PipeHtmlTagRemovalModule, PipeOrderByModule, PipeRelativeTimeModule, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { AvatarPhotoModule, BtnPageBackModule } from '@sunbird-cb/collection'
 import { ProfileV2RoutingModule } from './profile-v2.rounting.module'
 import { DiscussModule } from '../discuss/discuss.module'
-import { EditorSharedModule } from '@ws/author/src/lib/routing/modules/editor/shared/shared.module'
+import { EditorSharedModule } from '@ws/author'
 import { ProfileCertificateDialogModule } from './components/profile-certificate-dialog/profile-certificate-dialog.module'
-import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module'
-import { WeeklyClapsModule } from '@sunbird-cb/collection/src/lib/_common/weekly-claps/weekly-claps.module'
-import { UpdatePostsModule } from '@sunbird-cb/collection/src/lib/_common/update-posts/update-posts.module'
-import { DiscussionsModule } from '@sunbird-cb/collection/src/lib/_common/discussions/discussions.module'
-import { RecentRequestsModule } from '@sunbird-cb/collection/src/lib/_common/recent-requests/recent-requests.module'
-import { PendingRequestModule } from '@sunbird-cb/collection/src/lib/_common/pending-request/pending-request.module'
-import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
+import { ProfileCardStatsModule } from '@sunbird-cb/collection'
+import { WeeklyClapsModule } from '@sunbird-cb/collection'
+import { UpdatePostsModule } from '@sunbird-cb/collection'
+import { DiscussionsModule } from '@sunbird-cb/collection'
+import { RecentRequestsModule } from '@sunbird-cb/collection'
+import { PendingRequestModule } from '@sunbird-cb/collection'
+import { UserLeaderboardModule } from '@sunbird-cb/collection'
 
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
 import { RightMenuComponent } from './components/right-menu/right-menu.component'
@@ -38,7 +37,7 @@ import { TransferRequestComponent } from './components/transfer-request/transfer
 import { WithdrawRequestComponent } from './components/withdraw-request/withdraw-request.component'
 import { DesignationRequestComponent } from './components/designation-request/designation-request.component'
 
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { LoaderService } from '@ws/author'
 import { InitResolver } from './resolvers/init-resolve.service'
 import { OtpService } from '../user-profile/services/otp.services'
 import { RejectionReasonPopupComponent } from './components/rejection-reason-popup/rejection-reason-popup.component'
@@ -79,6 +78,12 @@ import { MatRadioModule } from '@angular/material/radio'
 
 import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component'
 import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-custom-fields.component'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function ProfileV2HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 @NgModule({
     declarations: [
         ProfileComponent,
@@ -164,7 +169,7 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: ProfileV2HttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

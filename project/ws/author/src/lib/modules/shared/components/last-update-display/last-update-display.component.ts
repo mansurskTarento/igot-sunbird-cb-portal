@@ -1,5 +1,6 @@
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
+
 import { Component, OnInit, Input } from '@angular/core'
+import { AccessControlService } from '../../services/access-control.service'
 
 @Component({
   selector: 'ws-auth-last-update-display',
@@ -19,7 +20,7 @@ export class LastUpdateDisplayComponent implements OnInit {
     | 'lastUnpublished'
     | 'expires' = 'lastUpdated'
   timeDuration: 'second' | 'minute' | 'hour' | 'day' | 'week' | 'month' | 'year' = 'second'
-  constructor(private accessService: AccessControlService) {}
+  constructor(private accessService: AccessControlService) { }
 
   ngOnInit() {
     if (this.perspective === 'expires') {

@@ -53,26 +53,27 @@ import {
   CardRatingCommentModule,
   AttendanceHelperModule,
   AttendanceCardModule,
+  NonReleventFeedbackDialogModule,
 } from '@sunbird-cb/collection'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { ContentTocModule } from '@sunbird-cb/toc'
 import { TocKpiValuesModule } from '@sunbird-cb/toc'
 import { MicroSurveyModule } from '@sunbird-cb/micro-surveys'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
-import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
-import { CertificateDialogModule } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.module'
-import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
+import { ConnectionNameModule } from '@sunbird-cb/collection'
+import { CertificateDialogModule } from '@sunbird-cb/collection'
+import { ConfirmDialogModule } from '@sunbird-cb/collection'
 import { KarmaPointsModule } from '@sunbird-cb/toc'
-import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tips-for-learner/tips-for-learner.module'
+import { TipsForLearnerModule } from '@sunbird-cb/collection'
 
 // Components
 import { AllDiscussionWidgetComponent } from '../discuss/widget/all-discussion-widget/category-widget/all-discussion-widget.component'
 import { TagWidgetComponent } from '../discuss/widget/tag-widget/tag-widget.component'
 
 // Services
-import { ApiService, AccessControlService } from '../../../../../author/src/public-api'
-import { EditorService } from '../../../../../author/src/lib/routing/modules/editor/services/editor.service'
-import { AppPublicTocResolverService } from 'src/app/routes/public/public-toc/app-public-toc-resolver.service'
+import { ApiService, AccessControlService } from '@ws/author'
+import { EditorService } from '@ws/author'
+import { AppPublicTocResolverService } from '../../routes/services/app-public-toc-resolver.service'
 
 // Resolver
 
@@ -103,8 +104,7 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
-import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dynamic/sliders-dynamic.module'
-import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
+import { SlidersDynamicModule } from '@sunbird-cb/collection'
 import { TocHomeComponent } from './toc-home/toc-home.component'
 import { AppTocLibModule } from '@sunbird-cb/toc'
 @NgModule({

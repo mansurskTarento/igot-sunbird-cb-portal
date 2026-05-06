@@ -1,10 +1,10 @@
 import { Component, Input, ElementRef, EventEmitter, OnInit, Output, QueryList, ViewChildren } from '@angular/core'
 import { UntypedFormControl } from '@angular/forms'
-import { AppCbpPlansService } from 'src/app/services/app-cbp-plans.service'
 // tslint:disable
 import _ from 'lodash'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
+import { AppCbpPlansService } from '../../services/app-cbp-plans.service'
 // tslint:enable
 
 @Component({
@@ -47,23 +47,23 @@ export class FilterComponent implements OnInit {
   searchThemeControl = new UntypedFormControl()
   @ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
   constructor(private appCbpPlansService: AppCbpPlansService,
-              private translate: TranslateService,
-              private langtranslations: MultilingualTranslationsService
-    ) {
-      this.langtranslations.languageSelectedObservable.subscribe(() => {
-        if (localStorage.getItem('websiteLanguage')) {
-          this.translate.setDefaultLang('en')
-          const lang = localStorage.getItem('websiteLanguage')!
-          this.translate.use(lang)
-        }
-      })
-    }
+    private translate: TranslateService,
+    private langtranslations: MultilingualTranslationsService
+  ) {
+    this.langtranslations.languageSelectedObservable.subscribe(() => {
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+      }
+    })
+  }
 
   ngOnInit() {
-      this.setDefaultValues()
-      this.getFilterEntity()
-      this.getProviders()
-      this.bindFilter()
+    this.setDefaultValues()
+    this.getFilterEntity()
+    this.getProviders()
+    this.bindFilter()
   }
   setDefaultValues() {
     this.primaryCategoryList = [
@@ -116,7 +116,7 @@ export class FilterComponent implements OnInit {
       }
       this.competencyTypeList.push(data)
     })
-    this.competencyTypeList =  _.orderBy(this.competencyTypeList, ['id'], ['asc'])
+    this.competencyTypeList = _.orderBy(this.competencyTypeList, ['id'], ['asc'])
     this.bindFilter()
   }
   getProviders() {
@@ -251,29 +251,29 @@ export class FilterComponent implements OnInit {
     }
   }
   getFilterType(event: any, ctype: any, filterType: any) {
-      if (event.checked && !this.filterObj[filterType].includes(ctype.id || ctype)) {
-        const data = ctype.id ? ctype.id : ctype
-        this.filterObj[filterType].push(data)
+    if (event.checked && !this.filterObj[filterType].includes(ctype.id || ctype)) {
+      const data = ctype.id ? ctype.id : ctype
+      this.filterObj[filterType].push(data)
+    } else {
+      const index = this.filterObj[filterType].indexOf(ctype.id || ctype)
+      if (index > -1) { // only splice array when item is found
+        this.filterObj[filterType].splice(index, 1) // 2nd parameter means remove one item only
+      }
+    }
+    if (ctype.id === 'all' && filterType === 'status') {
+      if (event.checked) {
+        this.filterObj[filterType] = []
+        this.filterObj[filterType] = ['all']// NOSONAR
       } else {
-        const index = this.filterObj[filterType].indexOf(ctype.id  || ctype)
-        if (index > -1) { // only splice array when item is found
-          this.filterObj[filterType].splice(index, 1) // 2nd parameter means remove one item only
-        }
+        this.filterObj[filterType] = []
       }
-      if (ctype.id === 'all' && filterType === 'status') {
-        if (event.checked) {
-          this.filterObj[filterType] = []
-          this.filterObj[filterType] = ['all']// NOSONAR
-        } else {
-          this.filterObj[filterType] = []
-        }
-      }
-      this.checkFilterEmpty()
+    }
+    this.checkFilterEmpty()
   }
 
   bindFilter() {
     if (!this.checkFilterEmpty()) {
-      if(this.filterObj['isApar']){
+      if (this.filterObj['isApar']) {
         this.onAparChange(this.filterObj['isApar'])
       }
       if (this.filterObj['primaryCategory'].length) {
@@ -307,7 +307,7 @@ export class FilterComponent implements OnInit {
       this.competencyThemeList.forEach((content: any) => {
         content.checked = this.filterObj['competencyTheme'].includes(content.name)
         if (this.filterObj['competencyTheme'].includes(content.name)) {
-          this.getCompetencySubTheme({ checked: true }, content , false)
+          this.getCompetencySubTheme({ checked: true }, content, false)
         }
       })
     }
@@ -351,13 +351,13 @@ export class FilterComponent implements OnInit {
 
   checkFilterEmpty() {
     if (this.filterObj['isApar'] ||
-    this.filterObj['primaryCategory'].length ||
-    this.filterObj['status'].length ||
-    this.filterObj['timeDuration'].length ||
-    this.filterObj['competencyArea'].length ||
-    this.filterObj['competencyTheme'].length ||
-    this.filterObj['competencySubTheme'].length ||
-    this.filterObj['providers'].length
+      this.filterObj['primaryCategory'].length ||
+      this.filterObj['status'].length ||
+      this.filterObj['timeDuration'].length ||
+      this.filterObj['competencyArea'].length ||
+      this.filterObj['competencyTheme'].length ||
+      this.filterObj['competencySubTheme'].length ||
+      this.filterObj['providers'].length
     ) {
       this.filterEmpty = false
       return false

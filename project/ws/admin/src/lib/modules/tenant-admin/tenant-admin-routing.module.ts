@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-import { GeneralGuard } from 'src/app/guards/general.guard'
+import { GeneralGuard } from '../guards/general.guard'
 import { UserRegistrationComponent } from './routes/user-registration/user-registration.component'
 import { TenantAdminComponent } from './tenant-admin.component'
 import { TenantAdminResolverService } from './service/tenant-admin-resolver.service'

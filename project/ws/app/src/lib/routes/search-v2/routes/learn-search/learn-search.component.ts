@@ -5,7 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 @Component({
@@ -99,7 +99,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translate.use(lang)
     }
-   }
+  }
 
   ngOnInit() {
     this.statedata = { param: this.param, path: 'Search' }
@@ -166,10 +166,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       }
       // if(changes.param.previousValue) {
-        // this.searchFreeTest()
+      // this.searchFreeTest()
       // }
-    // }
-  }
+      // }
+    }
   }
 
   // ngOnChanges(props: SimpleChanges) {
@@ -195,7 +195,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             const ispresent = this.myFilters.filter((x: any) => x.name === val.name)
             if (ispresent.length > 0) {
               val.ischecked = true
-            } else  {
+            } else {
               val.ischecked = false
             }
           })
@@ -207,16 +207,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   getStartupData() {
     if (!this.paramFilters || this.paramFilters === 'undefined') {
       this.paramFilters = []
-     }
-     if (this.paramFilters && this.paramFilters.length > 0) {
-       this.paramFilters.forEach((pf: any) => {
-         const indx = this.myFilters.filter((x: any) => x.name === pf.name)
-         if (indx.length === 0) {
-           this.myFilters.push(pf)
-         }
-       })
+    }
+    if (this.paramFilters && this.paramFilters.length > 0) {
+      this.paramFilters.forEach((pf: any) => {
+        const indx = this.myFilters.filter((x: any) => x.name === pf.name)
+        if (indx.length === 0) {
+          this.myFilters.push(pf)
+        }
+      })
       //  this.applyFilter(this.paramFilters)
-     } else {
+    } else {
       this.searchFreeTest()
     }
   }
@@ -228,18 +228,19 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         'filters': {
           'courseCategory': [],
           'contentType': ['Course', 'Event'],
-          'status': ['Live'] },
-          'sort_by': { 'lastUpdatedOn': 'desc' },
-          'facets': ['mimeType'],
-          'limit': 100,
-          'offset': 0,
+          'status': ['Live']
         },
-      }
+        'sort_by': { 'lastUpdatedOn': 'desc' },
+        'facets': ['mimeType'],
+        'limit': 100,
+        'offset': 0,
+      },
+    }
     if (((this.myFilters && this.myFilters.length === 0) &&
-    (typeof this.paramFilters === 'undefined') || (this.paramFilters && this.paramFilters.length === 0))) {
+      (typeof this.paramFilters === 'undefined') || (this.paramFilters && this.paramFilters.length === 0))) {
 
-        // this.newQueryParam = emptyParam
-        this.fetchSearchDataFun(emptyParam)
+      // this.newQueryParam = emptyParam
+      this.fetchSearchDataFun(emptyParam)
     }
   }
 
@@ -259,8 +260,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           const indx = this.primaryCategoryType.filter((x: any) => x === mf.name && mf.name !== 'moderated courses')
           if (indx.length === 0) {
 
-              this.primaryCategoryType.push(mf.name === 'Program' ? NsContent.ECourseCategory.INVITE_ONLY_PROGRAM : mf.name)
-              queryparam.request.filters.courseCategory = this.primaryCategoryType
+            this.primaryCategoryType.push(mf.name === 'Program' ? NsContent.ECourseCategory.INVITE_ONLY_PROGRAM : mf.name)
+            queryparam.request.filters.courseCategory = this.primaryCategoryType
           }
           queryparam.request.filters.courseCategory = this.primaryCategoryType
         } else if (mf.mainType === 'primaryCategory') {
@@ -382,14 +383,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (data.request.filters.courseCategory.includes(NsContent.ECourseCategory.MODERATED_COURSE) ||
       data.request.filters.courseCategory.includes(NsContent.ECourseCategory.MODERATED_ASSESSEMENT) ||
       data.request.filters.courseCategory.includes(NsContent.ECourseCategory.MODERATED_PROGRAM)) {
-        let orgId = ''
-        if (!this.veifiedKarmayogi) {
-          data.request.filters = { ...data.request.filters, 'secureSettings.isVerifiedKarmayogi': 'No' }
-        }
-        if (this.configSvc && this.configSvc.userProfile && this.configSvc.userProfile.rootOrgId) {
-          orgId = this.configSvc.userProfile.rootOrgId
-        }
-        data.request.filters = { ...data.request.filters, 'secureSettings.organisation': orgId }
+      let orgId = ''
+      if (!this.veifiedKarmayogi) {
+        data.request.filters = { ...data.request.filters, 'secureSettings.isVerifiedKarmayogi': 'No' }
+      }
+      if (this.configSvc && this.configSvc.userProfile && this.configSvc.userProfile.rootOrgId) {
+        orgId = this.configSvc.userProfile.rootOrgId
+      }
+      data.request.filters = { ...data.request.filters, 'secureSettings.organisation': orgId }
     }
     this.searchResults = []
     this.searchSrvc.fetchSearchDataByCategory(data).subscribe(async (response: any) => {
@@ -398,20 +399,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           if (res.courseCategory === NsContent.ECourseCategory.MODERATED_COURSE ||
             res.courseCategory === NsContent.ECourseCategory.MODERATED_ASSESSEMENT ||
             res.courseCategory === NsContent.ECourseCategory.MODERATED_PROGRAM
-            ) {
-              if (this.veifiedKarmayogi) {
-                this.searchResults.push(res)
-                modifiedDataCount = modifiedDataCount + 1
-              } else {
-                if (res.secureSettings && res.secureSettings.isVerifiedKarmayogi === 'No') {
-                  this.searchResults.push(res)
-                  modifiedDataCount = modifiedDataCount + 1
-                }
-              }
-            } else {
+          ) {
+            if (this.veifiedKarmayogi) {
               this.searchResults.push(res)
               modifiedDataCount = modifiedDataCount + 1
+            } else {
+              if (res.secureSettings && res.secureSettings.isVerifiedKarmayogi === 'No') {
+                this.searchResults.push(res)
+                modifiedDataCount = modifiedDataCount + 1
+              }
             }
+          } else {
+            this.searchResults.push(res)
+            modifiedDataCount = modifiedDataCount + 1
+          }
         })
 
         this.searchResults = response.result.content
@@ -421,7 +422,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchResults = this.searchResults.concat(response.result.Event)
       }
       this.extSearchRequestObject.searchString = data.request.query
-      const resExtSearch = await this.searchSrvc.fetchSearchDataforCios(this.extSearchRequestObject).toPromise().catch(_error => {})
+      const resExtSearch = await this.searchSrvc.fetchSearchDataforCios(this.extSearchRequestObject).toPromise().catch(_error => { })
       const checkQuey: any = this.activated.queryParams
       if ((this.myFilters && this.myFilters.length === 0) && (checkQuey && checkQuey._value && checkQuey._value.q)) {
         if (resExtSearch && resExtSearch.data && resExtSearch.data.length > 0) {
@@ -468,7 +469,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         {
           // pageIdExt: `${content.primaryCategory}-card`,
           module: content.primaryCategory,
-      })
+        })
     }
   }
 

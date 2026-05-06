@@ -20,20 +20,19 @@ import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 /*CkEditorModule, CKEditorService,*/
 import { AvatarPhotoModule, BtnPageBackModule } from '@sunbird-cb/collection'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { LoaderService } from '@ws/author'
 import { InitResolver } from './resolvers/init-resolve.service'
 import { CompetenceAllComponent } from './routes/competence-all/competence-all.component'
 import { CompetenceSysComponent } from './routes/competence-sys/competence-sys.component'
 import { CompetencyDetailedViewComponent } from './routes/competency-detailed-view/competency-detailed-view.component'
 import { CompetencyAllWrapperComponent } from './routes/competency-all-wrapper/competency-all-wrapper.component'
-import { EditorSharedModule } from '@ws/author/src/lib/routing/modules/editor/shared/shared.module'
+import { EditorSharedModule } from '@ws/author'
 import { CompetenciesAssessmentComponent } from './components/competencies-assessment/competencies-assessment.component'
 import { PracticePlModule } from '@ws/viewer/src/lib/plugins/practice/practice.module'
 import { CompetencyTestComponent } from './routes/competence-test/competence-test.component'
 import { ViewerTopBarModule } from '@ws/viewer/src/lib/components/viewer-top-bar/viewer-top-bar.module'
 import { CompetenceAssessmentService } from './services/comp-assessment.service'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
@@ -45,6 +44,11 @@ import { MatListModule } from '@angular/material/list'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CompetencieHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [
@@ -99,7 +103,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CompetencieHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

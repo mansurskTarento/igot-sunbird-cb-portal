@@ -5,7 +5,7 @@ import _ from 'lodash'
 import { Observable } from 'rxjs'
 
 import { v4 as uuid } from 'uuid'
-import { RequestService } from 'src/app/routes/public/public-request/request.service'
+import { RequestService } from '../../../../routes/services/request.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'

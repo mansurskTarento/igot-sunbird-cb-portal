@@ -2,18 +2,15 @@ import { Component, EventEmitter, Input, OnChanges, Output } from '@angular/core
 import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { IWidgetElementHtml } from '@sunbird-cb/collection'
-import {
-  AUTHORING_CONTENT_BASE,
-  CONTENT_BASE_WEBHOST_ASSETS,
-} from '@ws/author/src/lib/constants/apiEndpoints'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
 import { Notify } from '../../../../../../../../../constants/notificationMessage'
 import { FILE_MAX_SIZE } from '../../../../../../../../../constants/upload'
 import { NotificationComponent } from '../../../../../../../../../modules/shared/components/notification/notification.component'
 import { TEMPLATE_TYPES } from './image-v2.constant'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
   selector: 'ws-auth-image-v2',

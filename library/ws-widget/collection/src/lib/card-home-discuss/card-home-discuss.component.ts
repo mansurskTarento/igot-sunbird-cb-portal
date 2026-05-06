@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, HostBinding } from '@angular/core'
 import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
-// import { DiscussService } from '@ws/app/src/lib/routes/discuss/services/discuss.service'
 
 /* tslint:disable */
 import _ from 'lodash'

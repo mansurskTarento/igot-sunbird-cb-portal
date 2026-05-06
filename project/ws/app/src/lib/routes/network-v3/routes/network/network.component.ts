@@ -5,7 +5,7 @@ import { NetworkingService } from '../../services/networking.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
-import { MobileAppsService } from 'src/app/services/mobile-apps.service'
+import { MobileAppsService } from '../../../../routes/services/mobile-apps.service'
 import { Router } from '@angular/router'
 
 

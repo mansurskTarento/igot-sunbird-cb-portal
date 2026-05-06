@@ -2,7 +2,7 @@
 import { AppTocService } from '@sunbird-cb/toc'
 import { LoggerService, MultilingualTranslationsService, EventService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
-import { RatingService } from '@sunbird-cb/collection/src/public-api'
+import { RatingService } from '@sunbird-cb/collection'
 import { CourseCompletionDialogComponent } from './course-completion-dialog.component'
 import { MatDialogRef } from '@angular/material/dialog'
 

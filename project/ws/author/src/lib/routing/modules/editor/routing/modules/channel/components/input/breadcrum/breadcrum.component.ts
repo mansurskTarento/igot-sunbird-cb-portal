@@ -1,4 +1,4 @@
-import { IWidgetCardBreadcrumb } from '@sunbird-cb/collection/src/lib/card-breadcrumb/card-breadcrumb.model'
+import { IWidgetCardBreadcrumb } from '@sunbird-cb/collection'
 import { distinctUntilChanged, debounceTime } from 'rxjs/operators'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormArray, Validators } from '@angular/forms'

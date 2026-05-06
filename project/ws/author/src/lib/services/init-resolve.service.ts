@@ -2,7 +2,6 @@ import { ZipJSResolverService } from './zip-js-resolve.service'
 import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { ICreateEntity } from '@ws/author/src/lib/interface/create-entity'
 import { forkJoin, Observable, of } from 'rxjs'
 import { catchError, tap } from 'rxjs/operators'
 import { ICollectionEditorConfig } from '../interface/collection-editor'
@@ -13,9 +12,10 @@ import { AVAILABLE_LOCALES } from './../constants/constant'
 import { AccessControlService } from './../modules/shared/services/access-control.service'
 import { CKEditorResolverService } from './ckeditor-resolve.service'
 import { AuthInitService } from './init.service'
+import { ICreateEntity } from '../interface/create-entity'
 
 @Injectable()
-export class InitResolver  {
+export class InitResolver {
   constructor(
     private apiService: ApiService,
     private router: Router,

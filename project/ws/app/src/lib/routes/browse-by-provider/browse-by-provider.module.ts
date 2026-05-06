@@ -28,14 +28,13 @@ import { ProviderLeftMenuComponent } from './components/left-menu/left-menu.comp
 import { BrowseProviderService } from './services/browse-provider.service'
 import { PopularProviderCardComponent } from './components/popular-provider-card/popular-provider-card.component'
 import { ProviderCardComponent } from './components/provider-card/provider-card.component'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { ProviderPageComponent } from './routes/provider-page/provider-page.component'
 import { CalenderModule, CardsModule, CommonStripModule, CompetencyPassbookModule, ContentStripWithTabsLibModule, DataPointsModule, SlidersLibModule, UserContentRatingLibModule, ProvidersModule } from '@sunbird-cb/consumption'
 import { ProviderFormResolverService } from './services/provider-form-resolver.service'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../routes/services/form-ext.service'
 import { ProviderCalendarComponent } from './routes/provider-calendar/provider-calendar.component'
 import { ProviderContentAllComponent } from './routes/provider-content-all/provider-content-all.component'
 import { ProviderPageV2Component } from './routes/provider-page-v2/provider-page-v2.component'
@@ -52,6 +51,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function BrowseByProviderHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [
@@ -117,7 +121,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: BrowseByProviderHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

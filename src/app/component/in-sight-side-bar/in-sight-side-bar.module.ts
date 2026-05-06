@@ -44,14 +44,14 @@ import {
 } from '@sunbird-cb/utils-v2'
 
 // Import specific modules from collection (using full paths)
-import { WeeklyClapsModule } from '@sunbird-cb/collection/src/lib/_common/weekly-claps/weekly-claps.module'
-import { UpdatePostsModule } from '@sunbird-cb/collection/src/lib/_common/update-posts/update-posts.module'
-import { RecentRequestsModule } from '@sunbird-cb/collection/src/lib/_common/recent-requests/recent-requests.module'
-import { PendingRequestModule } from '@sunbird-cb/collection/src/lib/_common/pending-request/pending-request.module'
-import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module'
-import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
-import { DiscussionsModule } from '@sunbird-cb/collection/src/lib/_common/discussions/discussions.module'
-import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tips-for-learner/tips-for-learner.module'
+import { WeeklyClapsModule } from '@sunbird-cb/collection'
+import { UpdatePostsModule } from '@sunbird-cb/collection'
+import { RecentRequestsModule } from '@sunbird-cb/collection'
+import { PendingRequestModule } from '@sunbird-cb/collection'
+import { ProfileCardStatsModule } from '@sunbird-cb/collection'
+import { UserLeaderboardModule } from '@sunbird-cb/collection'
+import { DiscussionsModule } from '@sunbird-cb/collection'
+import { TipsForLearnerModule } from '@sunbird-cb/collection'
 
 // Import consumption modules
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, DialogComponentsModule } from '@sunbird-cb/consumption'

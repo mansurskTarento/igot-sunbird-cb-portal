@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, AfterViewInit, EventEmitter, Input, Output } from '@angular/core'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
-import { NSContent } from '@ws/author/src/lib/interface/content'
+
 import { NsContent } from '@sunbird-cb/collection'
+import { NSContent } from '../../../../../../interface/content'
+import { AccessControlService } from '../../../../../../modules/shared/services/access-control.service'
+import { EditorContentService } from '../../../services/editor-content.service'
 
 @Component({
   selector: 'ws-auth-options',

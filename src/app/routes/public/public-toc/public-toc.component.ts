@@ -12,18 +12,18 @@ import { ConfigurationsService, LoggerService, NsPage, TFetchStatus, UtilityServ
 import { Subscription, Observable } from 'rxjs'
 import { share } from 'rxjs/operators'
 import { SafeHtml, DomSanitizer, SafeStyle } from '@angular/platform-browser'
-import { AccessControlService } from '@ws/author/src/public-api'
+import { AccessControlService } from '@ws/author'
 // import { FormControl, Validators } from '@angular/forms'
 import { MatDialog } from '@angular/material/dialog'
-import { MobileAppsService } from 'src/app/services/mobile-apps.service'
 import dayjs from 'dayjs'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection/src/lib/_common/content-rating-v2-dialog/content-rating-v2-dialog.component'
+import { ContentRatingV2DialogComponent } from '@sunbird-cb/collection'
 import moment from 'moment'
 import { NsAppToc } from '@sunbird-cb/toc'
 import { AppTocService } from '@sunbird-cb/toc'
 import { ActionService, WidgetContentService } from '@sunbird-cb/toc'
+import { MobileAppsService } from '../../../services/mobile-apps.service'
 
 export enum ErrorType {
     internalServer = 'internalServer',

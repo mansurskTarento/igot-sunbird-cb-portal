@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { BehaviorSubject, Observable, of } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { IConditionsV2 } from './../../../../interface/conditions-v2'
@@ -8,6 +6,8 @@ import { IFormMeta } from './../../../../interface/form'
 import { AuthInitService } from './../../../../services/init.service'
 import { EditorService } from './editor.service'
 import { isArray } from 'lodash'
+import { NSContent } from '../../../../interface/content'
+import { AccessControlService } from '../../../../modules/shared/services/access-control.service'
 @Injectable()
 export class EditorContentService {
   originalContent: { [key: string]: NSContent.IContentMeta } = {}
@@ -70,7 +70,7 @@ export class EditorContentService {
 
   setOriginalMeta(meta: NSContent.IContentMeta) {
     if (meta && meta.identifier) {
-    this.originalContent[meta.identifier] = JSON.parse(JSON.stringify(meta))
+      this.originalContent[meta.identifier] = JSON.parse(JSON.stringify(meta))
     }
   }
 

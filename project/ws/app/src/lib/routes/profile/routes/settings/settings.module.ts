@@ -10,7 +10,6 @@ import { PrivacySettingsComponent } from './components/privacy-settings/privacy-
 import { AccountPasswordSettingsComponent } from './components/account-password-settings/account-password-settings.component'
 // import { ProfileSettingsComponent } from '../../../person-profile/module/profile-settings/profile-settings.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-// import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MatButtonModule } from '@angular/material/button'
@@ -34,7 +33,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { ProfileVisibilitySettingsComponent } from './components/profile-visibility-settings/profile-visibility-settings.component'
 import { LeftMenuItemComponent } from './components/left-menu-item/left-menu-item.component'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {

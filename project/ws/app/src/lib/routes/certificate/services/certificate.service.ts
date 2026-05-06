@@ -3,7 +3,7 @@ import { Observable } from 'rxjs'
 import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ServerResponse } from 'http'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
+import { ApiService } from '@ws/author'
 // /lib/modules/shared/services/api.service.ts'
 
 const urls = {

@@ -8,10 +8,6 @@ import * as _ from 'lodash'
 import { NSSearch } from '../_services/widget-search.model'
 import { NsContent } from '../_services/widget-content.model'
 
-// import { ActivitiesService } from '@ws/app/src/lib/routes/activities/services/activities.service'
-// import { IActivity, IActivityCard, IChallenges } from '@ws/app/src/lib/routes/activities/interfaces/activities.model'
-// import { MatSnackBar } from '@angular/material/snack-bar'
-
 @Component({
   selector: 'ws-widget-card-learn',
   templateUrl: './card-learn.component.html',

@@ -6,7 +6,6 @@ import { MatDialog } from '@angular/material/dialog'
 import { CustomFieldsComponent } from '../custom-fields/custom-fields.component'
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { ActivatedRoute } from '@angular/router'
-//import { CommonDataService } from '../../../../../../../../../src/app/services/common-data.service'
 
 @Component({
   selector: 'ws-app-view-custom-fields',

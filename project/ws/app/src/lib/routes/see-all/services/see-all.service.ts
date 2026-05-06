@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject, throwError } from 'rxjs'
-import { NSSearch } from '@sunbird-cb/collection/src/lib/_services/widget-search.model'
+import { NSSearch } from '@sunbird-cb/collection'
 import { catchError, map } from 'rxjs/operators'
 
 // tslint:disable
 import _ from 'lodash'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../services/form-ext.service'
 // tslint:enable
 
 const API_END_POINTS = {

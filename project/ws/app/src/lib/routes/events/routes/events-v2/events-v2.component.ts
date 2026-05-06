@@ -6,7 +6,7 @@ import { EventsEngagementComponent } from '../events-engagement/events-engagemen
 import { EventsCalendarComponent } from '../events-calendar/events-calendar.component'
 import { EventService } from '../../services/events.service'
 import { WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
-import { NsWidgetResolver } from 'library/ws-widget/resolver/src/public-api'
+import { NsWidgetResolver } from '@sunbird-cb/resolver-v2'
 import { FormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'

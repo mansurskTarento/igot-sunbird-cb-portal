@@ -1,8 +1,9 @@
-import { AuthNavBarToggleService } from '@ws/author/src/lib/services/auth-nav-bar-toggle.service'
+
 import { NsPage, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Component, OnInit } from '@angular/core'
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser'
 import { Router, NavigationEnd } from '@angular/router'
+import { AuthNavBarToggleService } from '../../services/auth-nav-bar-toggle.service'
 
 @Component({
   selector: 'ws-auth-root-navigation',

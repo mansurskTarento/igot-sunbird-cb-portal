@@ -7,10 +7,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import { KarmaProgramsService } from './service/karma-programs.service'
 import { ImageResponsiveModule, PipeFilterV2Module, PipeOrderByModule } from '@sunbird-cb/utils-v2'
-import { BtnPageBackModule } from '@sunbird-cb/collection/src/public-api'
+import { BtnPageBackModule } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { KarmaProgramDataService } from './service/karma-program-data.service'
 import { KarmaProgramsComponent } from './karma-programs/karma-programs.component'
 import { KarmaProgramsMicrositeV2Component } from './karma-programs-microsite-v2/karma-programs-microsite-v2.component'
@@ -22,6 +21,12 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function KarmaProgramsHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
+
 
 @NgModule({
   declarations: [
@@ -50,7 +55,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: KarmaProgramsHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

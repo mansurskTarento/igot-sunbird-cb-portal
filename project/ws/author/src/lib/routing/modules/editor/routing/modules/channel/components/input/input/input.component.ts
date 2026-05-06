@@ -1,14 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { FILE_MAX_SIZE } from './../../../../../../../../../constants/upload'
 import { IWidgetAuthor } from './../../../interface/widget'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { NotificationComponent } from '../../../../../../../../../modules/shared/components/notification/notification.component'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
   selector: 'ws-auth-input',

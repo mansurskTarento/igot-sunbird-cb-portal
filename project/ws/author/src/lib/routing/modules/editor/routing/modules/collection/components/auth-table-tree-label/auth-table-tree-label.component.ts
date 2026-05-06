@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
+import { EditorContentService } from '../../../../../services/editor-content.service'
 // import { CollectionResolverService } from './../../services/resolver.service'
 
 @Component({

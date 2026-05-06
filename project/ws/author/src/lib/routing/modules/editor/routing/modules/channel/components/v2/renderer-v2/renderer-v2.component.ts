@@ -1,14 +1,15 @@
 import { Component, Input, OnInit, OnChanges } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { responsiveSuffix, sizeSuffix } from '@sunbird-cb/collection'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
 import { WIDGET_LIBRARY } from '../../../constants/widet'
 import { IWidgetAuthor, tDimensions, tSize } from './../../../interface/widget'
 import { ChannelResolverService } from './../../../services/resolver.service'
 import { ChannelStoreService } from './../../../services/store.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
+import { NotificationComponent } from '@sunbird-cb/notification'
 
 interface IAuthorGrid {
   id: string

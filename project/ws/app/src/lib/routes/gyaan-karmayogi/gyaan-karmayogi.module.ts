@@ -6,7 +6,7 @@ import { GyaanKarmayogiHomeComponent } from './components/gyaan-karmayogi-home/g
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { BtnPageBackModule, ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
+import { BtnPageBackModule, ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection'
 import { PdfModule } from '@ws/viewer/src/lib/routes/pdf/pdf.module'
 import { GyaanPlayerComponent } from './components/gyaan-player/gyaan-player.component'
 import { GyaanKarmayogiComponent } from './gyaan-karmayogi.component'
@@ -14,13 +14,13 @@ import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
 import { PdfScormDataService } from '@ws/viewer/src/lib/pdf-scorm-data-service'
 import { GyaanKarmayogiViewAllComponent } from './components/gyaan-karmayogi-view-all/gyaan-karmayogi-view-all.component'
 import { DefaultThumbnailModule, PipePublicURLModule } from '@sunbird-cb/utils-v2'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
 import { GyaanKarmayogiService } from './services/gyaan-karmayogi.service'
 import { PdfComponent } from './components/players/pdf/pdf.component'
 import { GyaanVideoComponent } from './components/players/gyaan-video/gyaan-video.component'
 import { VideoModule } from '@ws/viewer/src/lib/routes/video/video.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { ShareTocModule, ViewerDataService } from '@sunbird-cb/toc'
 import { GyaanFilterComponent } from './components/gyaan-filter/gyaan-filter.component'
 import { GyaanAudioComponent } from './components/players/gyaan-audio/gyaan-audio.component'
@@ -42,10 +42,10 @@ import { MatTabsModule } from '@angular/material/tabs'
 
 import { NgxSliderModule } from '@angular-slider/ngx-slider'
 import { HorizontalScrollerV2Module } from '@sunbird-cb/consumption'
-import { WidgetResolverModule } from '@sunbird-cb/resolver/src/public-api'
+import { WidgetResolverModule } from '@sunbird-cb/resolver'
 
 // tslint:disable-next-line:function-name
-export function HttpLoaderFactory(http: HttpClient) {
+export function GyanHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
 }
 
@@ -86,7 +86,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule.forChild({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: GyanHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

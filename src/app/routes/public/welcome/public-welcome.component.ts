@@ -11,8 +11,8 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
 import { ActivatedRoute, Router } from '@angular/router'
-import { InitService } from 'src/app/services/init.service'
 import { environment } from 'src/environments/environment'
+import { InitService } from '../../../services/init.service'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {

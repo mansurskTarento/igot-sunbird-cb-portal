@@ -23,7 +23,7 @@ import { SkeletonLoaderModule } from '../_common/skeleton-loader/skeleton-loader
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
+
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatChipsModule } from '@angular/material/chips'
@@ -33,6 +33,11 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { TOCMultiLingualDialogModule, CardsModule } from '@sunbird-cb/consumption'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+export function CardContentV2tHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 @NgModule({
     declarations: [CardContentV2Component],
     imports: [
@@ -75,7 +80,7 @@ import { TOCMultiLingualDialogModule, CardsModule } from '@sunbird-cb/consumptio
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CardContentV2tHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

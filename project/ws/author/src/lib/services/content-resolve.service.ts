@@ -4,11 +4,11 @@ import { Observable, of } from 'rxjs'
 import { ApiService } from '../modules/shared/services/api.service'
 import { NSContent } from '../interface/content'
 import { CONTENT_READ } from '../constants/apiEndpoints'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { catchError } from 'rxjs/operators'
+import { AccessControlService } from '../modules/shared/services/access-control.service'
 
 @Injectable()
-export class ContentTOCResolver  {
+export class ContentTOCResolver {
 
   constructor(
     private apiService: ApiService,

@@ -6,12 +6,14 @@ import { TranslateService } from '@ngx-translate/core'
 import { IBtnAppsConfig, CustomTourService, WidgetUserService } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, NsInstanceConfig, NsPage, WsEvents } from '@sunbird-cb/utils-v2'
-import { NotificationsService } from 'src/app/services/notifications.service'
 
-import { UrlService } from 'src/app/shared/url.service'
+
+
 import * as _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { Subscription } from 'rxjs'
+import { UrlService } from '../../shared/url.service'
+import { NotificationsService } from '../../services/notifications.service'
 
 @Component({
   selector: 'ws-app-nav-bar',

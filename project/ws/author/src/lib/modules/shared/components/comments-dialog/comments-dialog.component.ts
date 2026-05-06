@@ -1,8 +1,9 @@
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
+
 import { Component, OnInit, Inject } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, Validators, AbstractControl } from '@angular/forms'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { NSContent } from '@ws/author/src/lib/interface/content'
+import { AuthInitService } from '../../../../services/init.service'
+import { NSContent } from '../../../../interface/content'
 
 @Component({
   selector: 'ws-auth-root-comments-dialog',

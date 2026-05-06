@@ -21,9 +21,8 @@ import {
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
-// import { WidgetUserService } from '@sunbird-cb/collection/src/lib/_services/widget-user.service'
 
-import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/collection'
 import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { environment } from 'src/environments/environment'
 

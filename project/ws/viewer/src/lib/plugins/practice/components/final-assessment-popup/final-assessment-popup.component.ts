@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit, OnDestroy } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatTableDataSource } from '@angular/material/table'
-import { ITableData } from '@sunbird-cb/collection/src/public-api'
+import { ITableData } from '@sunbird-cb/collection'
 import * as _ from 'lodash'
 
 @Component({

@@ -7,7 +7,7 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { RequestService } from 'src/app/routes/public/public-request/request.service'
+import { RequestService } from '../../../../routes/services/request.service'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 
 @Component({

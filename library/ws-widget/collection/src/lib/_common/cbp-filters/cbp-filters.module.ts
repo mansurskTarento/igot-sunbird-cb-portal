@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 
 import { CbpFiltersComponent } from './cbp-filters.component'
-import { FilterSearchPipeModule } from 'src/app/pipes/filter-search/filter-search.module'
+import { FilterSearchPipeModule } from '../../_pipes/filter-search/filter-search.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatBottomSheetModule } from '@angular/material/bottom-sheet'
 import { MatCardModule } from '@angular/material/card'

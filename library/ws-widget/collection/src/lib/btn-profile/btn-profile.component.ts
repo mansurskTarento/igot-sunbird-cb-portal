@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs'
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 /* tslint:disable*/
 import _ from 'lodash'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
+import { AccessControlService } from '../_services/access-control.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { LibNotificationsService } from '@sunbird-cb/notification'

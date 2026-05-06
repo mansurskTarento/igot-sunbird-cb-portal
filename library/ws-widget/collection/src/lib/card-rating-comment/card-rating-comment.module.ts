@@ -5,11 +5,15 @@ import { PipeCountTransformModule, PipeRelativeTimeModule } from '@sunbird-cb/ut
 import { AvatarPhotoModule } from '../_common/avatar-photo/avatar-photo.module'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CardRatingHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [CardRatingCommentComponent],
@@ -25,7 +29,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: CardRatingHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

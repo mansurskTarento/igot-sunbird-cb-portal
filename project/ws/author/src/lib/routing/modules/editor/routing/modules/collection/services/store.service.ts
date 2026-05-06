@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core'
 import { LoggerService } from '@sunbird-cb/utils-v2'
-import { DEPTH_RUE } from '@ws/author/src/lib/constants/depth-rule'
-import { IAllowedType } from '@ws/author/src/lib/interface/collection-child-config'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { ICreateEntity } from '@ws/author/src/lib/interface/create-entity'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
-import { EditorService } from '@ws/author/src/lib/routing/modules/editor/services/editor.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
 import { BehaviorSubject, ReplaySubject } from 'rxjs'
 import { IContentNode, IContentTreeNode } from './../interface/icontent-tree'
 import { CollectionResolverService } from './resolver.service'
+import { EditorContentService } from '../../../../services/editor-content.service'
+import { EditorService } from '../../../../services/editor.service'
+import { AuthInitService } from '../../../../../../../services/init.service'
+import { DEPTH_RUE } from '../../../../../../../constants/depth-rule'
+import { NSContent } from '../../../../../../../interface/content'
+import { ICreateEntity } from '../../../../../../../interface/create-entity'
+import { IAllowedType } from '../../../../../../../interface/collection-child-config'
 
 interface IProcessedError {
   id: string | number

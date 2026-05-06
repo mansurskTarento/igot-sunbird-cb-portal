@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { NgModule } from '@angular/core'
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule, NO_ERRORS_SCHEMA } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import {
@@ -63,7 +63,7 @@ import { PluralPipe } from './pipes/plural.pipe'
 import { PaginationComponent } from './components/pagination/pagination.component'
 import { SearchSortInputComponent } from './components/search-sort-input/search-sort-input.component'
 import { CardsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
-import { SkeletonLoaderModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { SkeletonLoaderContentComponent } from './components/skeleton-loader-content/skeleton-loader-content.component'
 import { SkeletonLoaderPeoplesComponent } from './components/skeleton-loader-peoples/skeleton-loader-peoples.component'
 import { MatRadioModule } from '@angular/material/radio'
@@ -141,5 +141,6 @@ import { ShowAllComponent } from './routes/show-all/show-all.component'
   ],
   exports: [SearchInputHomeComponent, NumberShortenerPipe, PluralPipe],
   providers: [],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA]
 })
 export class SearchV3Module { }

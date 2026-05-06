@@ -8,9 +8,6 @@ import {
   EFeedbackType,
   EFeedbackRole,
 } from '@sunbird-cb/collection'
-
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
 import {
   debounceTime,
   distinctUntilChanged,
@@ -24,6 +21,8 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
 import { MatChipInputEvent } from '@angular/material/chips'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { NotificationComponent } from '../notification/notification.component'
+import { Notify } from '../../../../constants/notificationMessage'
 
 const NOTIFICATION_TIME = 5
 

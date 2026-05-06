@@ -22,7 +22,7 @@ import { LearningTimeResolver } from './routes/learning/resolvers/learning-time.
 import { SettingsComponent } from './routes/settings/settings.component'
 // import { BadgeComponent } from '../gamification/routes/badges/components/badge/badge.component'
 import { BadgesComponent } from './routes/badges/badges.component'
-import { GeneralGuard } from '../../../../../../../src/app/guards/general.guard'
+import { GeneralGuard } from '../../routes/guards/general.guard'
 import { ProfileResolverService } from './resolvers/profile-resolver.service'
 import { NotificationSettingsComponent } from './routes/settings/components/notification-settings/notification-settings.component'
 import { ProfileVisibilitySettingsComponent } from './routes/settings/components/profile-visibility-settings/profile-visibility-settings.component'

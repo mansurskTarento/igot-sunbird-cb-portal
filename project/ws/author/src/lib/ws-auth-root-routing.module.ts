@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
-// import { GeneralGuard } from '../../../../../src/app/guards/general.guard'
 import { AuthRootComponent } from './components/root/root.component'
 // import { DashboardComponent } from './routing/modules/home/components/dashboard/dashboard.component'
 // import { ViewerComponent } from './routing/components/viewer/viewer.component'

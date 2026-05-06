@@ -8,7 +8,7 @@ import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { SvgToPdfComponent } from './svg-to-pdf.component'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
+
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
 import { MatDialogModule } from '@angular/material/dialog'
@@ -19,6 +19,12 @@ import { MatMenuModule } from '@angular/material/menu'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CertificateHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 @NgModule({
     declarations: [CertificateDialogComponent, SvgToPdfComponent],
     imports: [
@@ -40,7 +46,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CertificateHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

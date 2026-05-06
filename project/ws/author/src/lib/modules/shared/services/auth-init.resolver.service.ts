@@ -1,14 +1,15 @@
-import { INIT } from '@ws/author/src/lib/constants/apiEndpoints'
+
 import { Injectable } from '@angular/core'
 
 import { Observable } from 'rxjs'
 import { ApiService } from './api.service'
 import { AccessControlService } from './access-control.service'
+import { INIT } from '../../../constants/apiEndpoints'
 
 @Injectable({
   providedIn: 'root',
 })
-export class AuthInitResolver  {
+export class AuthInitResolver {
 
   constructor(
     private svc: ApiService,

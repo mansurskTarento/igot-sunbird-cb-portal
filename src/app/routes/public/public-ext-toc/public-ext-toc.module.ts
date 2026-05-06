@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common'
 import { PublicExtTocComponent } from './public-ext-toc.component'
 import { RouterModule } from '@angular/router'
 import { AppTocService } from '@sunbird-cb/toc'
-import { AppTocModule } from '@ws/app/src/public-api'
-import { BtnPageBackNavModule } from '@sunbird-cb/collection/src/public-api'
+import { AppTocModule } from '@ws/app'
+import { BtnPageBackNavModule } from '@sunbird-cb/collection'
 
 @NgModule({
     declarations: [PublicExtTocComponent],

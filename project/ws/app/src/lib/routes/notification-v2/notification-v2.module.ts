@@ -19,11 +19,11 @@ import { AllNotificationsModule, LibNotificationsService } from '@sunbird-cb/not
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { NotificationsService } from '../../../../../../../src/app/services/notifications.service'
+import { NotificationsService } from '../../routes/services/notifications.service'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
+import { ConfirmDialogModule } from '@sunbird-cb/collection'
 
-export function HttpLoaderFactory(http: HttpClient) {
+export function NotificationHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
 }
 @NgModule({
@@ -43,7 +43,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: NotificationHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

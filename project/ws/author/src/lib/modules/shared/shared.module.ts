@@ -45,7 +45,6 @@ import { FeedbackFormComponent } from './components/feedback-form/feedback-form.
 import { StatusContentDisplayComponent } from './components/status-content-display/status-content-display.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
@@ -60,6 +59,12 @@ import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatSlideToggleModule } from '@angular/material/slide-toggle'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function ShareHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 
 @NgModule({
     declarations: [
@@ -123,7 +128,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: ShareHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

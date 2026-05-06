@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs'
 import { StepService } from '../../services/step.service'
 import { CompLocalService } from '../../services/comp.service'
 import { ProfileV3Service } from '../../services/profile_v3.service'
-import { InitService } from 'src/app/services/init.service'
+import { InitService } from '../../../../routes/services/appInit.service'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
   selector: 'ws-app-profile-home',

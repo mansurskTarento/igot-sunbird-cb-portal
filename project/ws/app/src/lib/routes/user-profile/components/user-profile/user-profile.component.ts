@@ -5,7 +5,7 @@ import { Subscription, Observable, interval, forkJoin } from 'rxjs'
 import { startWith, map, debounceTime, distinctUntilChanged, pairwise } from 'rxjs/operators'
 import { AppDateAdapter, APP_DATE_FORMATS, changeformat } from '../../services/format-datepicker'
 import { ImageCropComponent, ConfigurationsService, WsEvents, EventService, PipeCertificateImageURL, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
+import { IMAGE_MAX_SIZE, PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author'
 import { UserProfileService } from '../../services/user-profile.service'
 import { Router, ActivatedRoute } from '@angular/router'
 
@@ -21,11 +21,10 @@ import {
   INameField,
   ICountry,
 } from '../../models/user-profile.model'
-import { NsUserProfileDetails } from '@ws/app/src/lib/routes/user-profile/models/NsUserProfile'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { LoaderService } from '@ws/author/src/public-api'
+import { NotificationComponent } from '@ws/author'
+import { Notify } from '@ws/author'
+import { NOTIFICATION_TIME } from '@ws/author'
+import { LoaderService } from '@ws/author'
 /* tslint:disable */
 import * as _ from 'lodash'
 import { OtpService } from '../../services/otp.services'
@@ -38,6 +37,7 @@ import { DateAdapter, MAT_DATE_FORMATS } from '@angular/material/core'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTabChangeEvent } from '@angular/material/tabs'
+import { NsUserProfileDetails } from '../../models/NsUserProfile'
 
 /* tslint:enable */
 

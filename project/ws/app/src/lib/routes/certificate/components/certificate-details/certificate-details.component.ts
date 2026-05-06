@@ -4,8 +4,8 @@ import * as _ from 'lodash'
 import moment from 'moment'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
- import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { ApiService } from '@ws/author/src/public-api'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ApiService } from '@ws/author'
 import { CertificateService } from '../../services/certificate.service'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 // import { IImpressionEventInput,  } from '@project-sunbird/telemetry-sdk'
@@ -82,16 +82,16 @@ export class CertificateDetailsComponent implements OnInit {
     //   this.loader = false
     //   this.viewCertificate = true
     // },         1000)
-    
+
     // Check if URL includes 'achievements' to determine which API to call
     const currentUrl = this.router.url
     const isAchievement = currentUrl.includes('achievements') || currentUrl.includes('achievement')
-    
+
     // Call the appropriate API based on the URL
-    const apiCall = isAchievement 
+    const apiCall = isAchievement
       ? this.certificateService.validateMileStoneCertificate(request)
       : this.certificateService.validateCertificate(request)
-    
+
     apiCall.subscribe(
       (data: any) => {
         // this.getCourseVideoUrl(_.get(data, 'result.response.related.courseId'))

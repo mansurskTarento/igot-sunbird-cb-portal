@@ -7,7 +7,7 @@ import { QuestionComponent } from './components/question/question.component'
 import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submit-quiz-dialog.component'
 
 import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/utils-v2'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import {
     BtnFullscreenModule
 } from '@sunbird-cb/collection'

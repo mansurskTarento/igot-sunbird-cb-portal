@@ -12,7 +12,7 @@ import { IGotSarthiComponent } from './../igot-sarthi/igot-sarthi.component'
 import { MarkdownModule } from 'ngx-markdown'
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
+import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection'
 import { SupportAIComponent } from './../support-ai/support-ai.component'
 import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({

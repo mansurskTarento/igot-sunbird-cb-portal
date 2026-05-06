@@ -15,7 +15,7 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 import { EventsV2Component } from './routes/events-v2/events-v2.component'
-import { AppEventPageResolverService } from 'src/app/services/app-event-page-resolver.service'
+import { AppEventPageResolverService } from '../../routes/services/app-event-page-resolver.service'
 import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 
 const routes: Routes = [

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { GamificationService } from '../../../../services/gamification.service'
-import { MatSelectChange } from '@angular/material'
+import { MatSelectChange } from '@angular/material/select'
 @Component({
   selector: 'ws-app-configurations',
   templateUrl: './configurations.component.html',

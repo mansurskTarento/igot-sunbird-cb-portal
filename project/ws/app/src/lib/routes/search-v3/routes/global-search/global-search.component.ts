@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { NsContent } from '@sunbird-cb/collection/src/public-api';
-import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-import { environment } from 'src/environments/environment';
+import { Component, OnInit } from '@angular/core'
+import { ActivatedRoute, Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
+import { NsContent } from '@sunbird-cb/collection'
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { environment } from 'src/environments/environment'
 
 @Component({
   selector: 'ws-app-global-search',
@@ -13,11 +13,11 @@ import { environment } from 'src/environments/environment';
 export class GlobalSearchComponent implements OnInit {
   searchParam = { query: '', nlp: '', searchCategory: '' };
   userValue = '';
-  searchparamFilters: any;
-  filtersPanel!: string | null;
+  searchparamFilters: any
+  filtersPanel!: string | null
   selectedTab = 1;
   tabs = ['All', 'Learn', 'Network', 'Discuss', 'Careers'];
-  compentencyKey!: NsContent.ICompentencyKeys;
+  compentencyKey!: NsContent.ICompentencyKeys
   searchCategory: string = '';
   constructor(
     private activated: ActivatedRoute,
@@ -36,31 +36,31 @@ export class GlobalSearchComponent implements OnInit {
       }
     })
     if (localStorage.getItem('websiteLanguage')) {
-      this.translate.setDefaultLang('en');
-      const lang = localStorage.getItem('websiteLanguage')!;
-      this.translate.use(lang);
+      this.translate.setDefaultLang('en')
+      const lang = localStorage.getItem('websiteLanguage')!
+      this.translate.use(lang)
     }
   }
 
   ngOnInit() {
     this.compentencyKey =
-      this.configService.compentency[environment.compentencyVersionKey];
+      this.configService.compentency[environment.compentencyVersionKey]
     this.activated.queryParamMap.subscribe((queryParams) => {
-      this.userValue = '';
+      this.userValue = ''
       if (queryParams.has('tab')) {
-        const tabn = queryParams.get('tab');
+        const tabn = queryParams.get('tab')
         this.tabs.forEach((t: any, index: number) => {
           if (t === tabn) {
-            this.selectedTab = index;
+            this.selectedTab = index
           }
-        });
+        })
       }
       if (queryParams.has('q')) {
         this.searchParam = {
           query: queryParams.get('q') || '',
           nlp: queryParams.get('search') || '',
           searchCategory: queryParams.get('category') || ''
-        };
+        }
       }
       if (queryParams.has('t')) {
         this.searchParam = {
@@ -68,33 +68,33 @@ export class GlobalSearchComponent implements OnInit {
           nlp: queryParams.get('search') || '',
           searchCategory: queryParams.get('category') || ''
 
-        };
-        this.userValue = 'moderatedCourses';
+        }
+        this.userValue = 'moderatedCourses'
       }
       if (queryParams.has('f')) {
-        const sfilters = JSON.parse(queryParams.get('f') || '{}');
+        const sfilters = JSON.parse(queryParams.get('f') || '{}')
         const paramfilter = [
           {
             mainType: 'course',
             subType: sfilters?.primaryCategory
             ,
           }
-        ];
-        this.searchparamFilters = paramfilter;
+        ]
+        this.searchparamFilters = paramfilter
       }
 
       if (queryParams.has('filtersPanel')) {
-        this.filtersPanel = queryParams.get('filtersPanel');
+        this.filtersPanel = queryParams.get('filtersPanel')
       }
 
-      
-    });
+
+    })
   }
 
   translateTo(menuName: string): string {
     // tslint:disable-next-line: prefer-template
-    const translationKey = 'globalsearch.' + menuName.replace(/\s/g, '');
-    return this.translate.instant(translationKey);
+    const translationKey = 'globalsearch.' + menuName.replace(/\s/g, '')
+    return this.translate.instant(translationKey)
   }
 
   filterSelectcategory(queryParams: any) {
@@ -102,6 +102,6 @@ export class GlobalSearchComponent implements OnInit {
       relativeTo: this.activated.parent,
       queryParams,
       queryParamsHandling: 'merge',
-    });
+    })
   }
 }

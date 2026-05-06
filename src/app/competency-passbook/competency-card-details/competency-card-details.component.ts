@@ -12,8 +12,8 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { MatDialog } from '@angular/material/dialog'
-import { CertificateDialogComponent } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { CertificateDialogComponent } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
   selector: 'ws-competency-card-details',

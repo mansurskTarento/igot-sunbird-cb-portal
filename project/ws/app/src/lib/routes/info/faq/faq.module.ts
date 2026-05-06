@@ -6,7 +6,6 @@ import { HorizontalScrollerModule, PipeSafeSanitizerModule } from '@sunbird-cb/u
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { FaqComponent } from './components/faq.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -18,6 +17,11 @@ import { MatInputModule } from '@angular/material/input'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { MatToolbarModule } from '@angular/material/toolbar'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function FaqHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [FaqComponent],
@@ -42,7 +46,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: FaqHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

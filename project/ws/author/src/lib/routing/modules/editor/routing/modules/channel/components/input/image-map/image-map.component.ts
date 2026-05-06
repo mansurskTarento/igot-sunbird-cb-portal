@@ -1,15 +1,16 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, OnInit, Output, QueryList, ViewChild, ViewChildren } from '@angular/core'
 import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { IWidgetImageMap, IWidgetMapMeta } from '@sunbird-cb/collection/src/lib/image-map-responsive/image-map-responsive.model'
-import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { IWidgetImageMap, IWidgetMapMeta } from '@sunbird-cb/collection'
+
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { FILE_MAX_SIZE } from './../../../../../../../../../constants/upload'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
   selector: 'ws-auth-image-map',

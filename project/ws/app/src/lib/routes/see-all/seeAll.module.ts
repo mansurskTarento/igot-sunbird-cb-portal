@@ -24,7 +24,7 @@ import {
 import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 import { SeeAllRoutingModule } from './seeAll-routing.module'
 import { SeeAllHomeComponent } from './components/see-all-home/see-all-home.component'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SeeAllWithPillsComponent } from './components/see-all-with-pills/see-all-with-pills.component'
 import { CardsModule, FiltersModule, PaginationModule } from '@sunbird-cb/consumption'
@@ -50,9 +50,14 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
-import { HttpLoaderFactory } from 'src/app/shared/shared.module'
+
 import { HttpClient } from '@angular/common/http'
-import { BadgesModule } from '../../../../../../../src/app/badges/badges.module'
+import { BadgesModule } from '../badges/badges.module'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function SeeAllModulesHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [
@@ -115,7 +120,7 @@ import { BadgesModule } from '../../../../../../../src/app/badges/badges.module'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: SeeAllModulesHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

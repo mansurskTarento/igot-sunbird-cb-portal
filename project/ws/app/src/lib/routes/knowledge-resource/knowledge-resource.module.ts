@@ -16,7 +16,6 @@ import { KnowledgeDetailComponent } from './routes/knowledge-detail/knowledge-de
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-// import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MatCardModule } from '@angular/material/card'

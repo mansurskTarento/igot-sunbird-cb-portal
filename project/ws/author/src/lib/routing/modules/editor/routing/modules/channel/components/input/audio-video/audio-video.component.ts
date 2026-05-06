@@ -1,17 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { IWidgetsPlayerMediaData, NsContent } from '@sunbird-cb/collection'
-import {
-  AUTHORING_CONTENT_BASE,
-  CONTENT_BASE_WEBHOST_ASSETS,
-} from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { IMAGE_MAX_SIZE, VIDEO_MAX_SIZE } from '@ws/author/src/lib/constants/upload'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { AuthInitService } from '../../../../../../../../../services/init.service'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { NotificationComponent } from '@sunbird-cb/notification/lib/notification.component'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { IMAGE_MAX_SIZE, VIDEO_MAX_SIZE } from '../../../../../../../../../constants/upload'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 interface ISubtitle {
   srclang: string

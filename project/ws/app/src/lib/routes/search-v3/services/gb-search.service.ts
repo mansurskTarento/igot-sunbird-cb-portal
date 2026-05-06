@@ -15,7 +15,7 @@ import {
   SearchV4Request,
   SortType,
 } from '../models/search-v3.model'
-import { SEARCH_SORT_DROPDOWN } from '@ws/author/src/lib/constants/constant'
+import { SEARCH_SORT_DROPDOWN } from '@ws/author'
 
 const API_END_POINTS = {
   SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,

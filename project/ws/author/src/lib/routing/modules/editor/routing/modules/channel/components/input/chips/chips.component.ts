@@ -13,11 +13,11 @@ import {
 } from '@angular/core'
 import { MatChipInputEvent } from '@angular/material/chips'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { ISortEvent } from '../../../../../../../../../directives/draggable/sortable-list.directive'
+import { ISortEvent } from '../../../../../../../../../modules/shared/directives/draggable/sortable-list.directive'
+import { NotificationComponent } from '@sunbird-cb/notification/lib/notification.component'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
 
 @Component({
   selector: 'ws-auth-chips',

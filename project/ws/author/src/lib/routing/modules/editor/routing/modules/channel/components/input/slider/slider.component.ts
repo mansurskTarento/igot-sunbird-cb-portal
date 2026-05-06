@@ -1,15 +1,15 @@
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, Validators, UntypedFormArray, AbstractControl } from '@angular/forms'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { FILE_MAX_SIZE } from '@ws/author/src/lib/constants/upload'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { CONTENT_BASE_WEBHOST_ASSETS, AUTHORING_CONTENT_BASE } from '@ws/author/src/lib/constants/apiEndpoints'
 import { ICarousel } from '@sunbird-cb/collection'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { NotificationComponent } from '../../../../../../../../../modules/shared/components/notification/notification.component'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { FILE_MAX_SIZE } from '../../../../../../../../../constants/upload'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
   selector: 'ws-auth-slider',

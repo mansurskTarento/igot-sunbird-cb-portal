@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core'
-import { NsTnc } from '../../../../../../../../../src/app/models/tnc.model'
+import { NsTnc } from '../../../models/tnc.model'
 import { MatSelectChange } from '@angular/material/select'
 
 @Component({

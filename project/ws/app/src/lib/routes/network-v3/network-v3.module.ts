@@ -15,18 +15,21 @@ import { UpdatesCardComponent } from './components/updates-card/updates-card.com
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTabsModule } from '@angular/material/tabs'
-import { AvatarPhotoModule } from '@sunbird-cb/collection/src/lib/_common/avatar-photo/avatar-photo.module'
+import { AvatarPhotoModule } from '@sunbird-cb/collection'
 import { ConnectionPeopleCardComponent } from './components/connection-people-card/connection-people-card.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component'
 import { CommunitySuggestionsModule, HorizontalScrollerV2Module, ConnectionNameModule, DialogComponentsModule, AvatarPhotoLibModule } from '@sunbird-cb/consumption'
-import { PaginationModule } from '@sunbird-cb/collection/src/lib/_common/pagination/pagination.module'
+import { PaginationModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { MatDialogModule } from '@angular/material/dialog'
-import { HttpLoaderFactory } from 'src/app/app.module'
-import { HttpClient } from '@angular/common/http'
 
+import { HttpClient } from '@angular/common/http'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+export function NetworkV3HttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [
@@ -63,7 +66,7 @@ import { HttpClient } from '@angular/common/http'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: NetworkV3HttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

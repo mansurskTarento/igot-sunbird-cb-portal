@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { BrowseCompetencyService } from '../../services/browse-competency.service'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 
@@ -30,31 +30,31 @@ export class CompetencyCardComponent implements OnInit {
     this.searchReq = {
       request: {
         filters: {
-            primaryCategory: [
-                'Course',
-                'Program',
-            ],
-            status: [
-                'Live',
-            ],
-            [`${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`]: [''],
+          primaryCategory: [
+            'Course',
+            'Program',
+          ],
+          status: [
+            'Live',
+          ],
+          [`${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`]: [''],
         },
         query: '',
         sort_by: {
-            lastUpdatedOn: '',
+          lastUpdatedOn: '',
         },
         fields: [],
         limit: 3,
         offset: 0,
         facets: [
-            'primaryCategory',
-            'mimeType',
-            'source',
-            `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`,
-            // `${this.compentencyKey.vKey}.competencyType`,
-            // 'taxonomyPaths_v2.name',
+          'primaryCategory',
+          'mimeType',
+          'source',
+          `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`,
+          // `${this.compentencyKey.vKey}.competencyType`,
+          // 'taxonomyPaths_v2.name',
         ],
-    },
+      },
     }
   }
 
@@ -62,11 +62,11 @@ export class CompetencyCardComponent implements OnInit {
     if (viewChildren) {
       this.displayLoader = true
       this.searchReq.request.filters[`${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`]
-      .splice(0, 1, this.competency.name)
+        .splice(0, 1, this.competency.name)
       this.browseCompServ.fetchSearchData(this.searchReq).subscribe(
         (res: any) => {
           this.displayLoader = false
-          if (res && res.result &&  res.result && res.result.content) {
+          if (res && res.result && res.result && res.result.content) {
             this.competency.contentData = res.result.content
           }
         },

@@ -1,4 +1,5 @@
-import { NSContent } from '@ws/author/src/lib/interface/content'
+import { NSContent } from "./content"
+
 
 export interface IConditionsV2 {
   fit?: { [key in keyof NSContent.IContentMeta]: any[] }[]

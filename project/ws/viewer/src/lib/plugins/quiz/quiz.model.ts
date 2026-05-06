@@ -1,4 +1,4 @@
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 
 export namespace NSQuiz {
   export interface IQuiz {

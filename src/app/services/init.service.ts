@@ -27,13 +27,13 @@ import _ from 'lodash'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 // import { Subscription } from 'rxjs'
-import { NSProfileDataV3 } from '@ws/app/src/lib/routes/profile-v3/models/profile-v3.models'
-import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
+import { NSProfileDataV3 } from '@ws/app'
+import { NPSGridService } from '@sunbird-cb/collection'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
-import { BtnSettingsService } from '../../../library/ws-widget/collection/src/public-api'
+import { BtnSettingsService } from '@sunbird-cb/collection'
 import { GlobalService } from './global.service'
 import { CommonDataService } from './common-data.service'
 declare const smartech: any
@@ -93,7 +93,7 @@ export class InitService {
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
     private globalService: GlobalService,
-    private commonDataSvc:CommonDataService,
+    private commonDataSvc: CommonDataService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     // private router: Router,
@@ -244,7 +244,7 @@ export class InitService {
     // Invalid User
     try {
       const path = window.location.pathname
-      const isPublic = window.location.href.includes('/public/')|| window.location.href.includes('/helpcenter')
+      const isPublic = window.location.href.includes('/public/') || window.location.href.includes('/helpcenter')
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
@@ -303,7 +303,7 @@ export class InitService {
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
         window.location.href.includes('/achievements') ||
-        window.location.href.includes('/viewer')|| window.location.href.includes('/helpcenter')
+        window.location.href.includes('/viewer') || window.location.href.includes('/helpcenter')
       )
     ) {
       this.logFirstLogin()

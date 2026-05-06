@@ -5,7 +5,7 @@ import videoJs from 'video.js'
 import 'videojs-youtube'
 /* tslint:enable */
 // videoJsInitializer
-import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, youtubeInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util'
+import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, youtubeInitializer } from '@sunbird-cb/collection'
 import { NsContent, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { EventService } from './../../services/events.service'
 import moment from 'moment'

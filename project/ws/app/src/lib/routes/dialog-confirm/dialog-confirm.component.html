@@ -1,0 +1,22 @@
+<h1 mat-dialog-title>{{ data.title }}</h1>
+<div mat-dialog-content>
+  {{ data.body }}
+</div>
+<div mat-dialog-actions class="flex-row-reverse">
+  <ng-container *ngIf="data?.button?.length > 0">
+    <div class="flex gap-3 my-4 flex-center">
+      <ng-container *ngFor="let item of data?.button">
+        <button mat-button (click)="confirmed(item.text)" type="button" class="btn-common flex-center"
+          [ngClass]="{'btn-primary': item.type === 'primary', 'btn-secondary': item.type === 'secondary'}">
+          {{'dialogconfirm.'+ item.text | translate }}</button>
+      </ng-container>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="!data?.button?.length">
+    <button mat-flat-button color="primary" (click)="confirmed('yes')">
+      {{"dialogconfirm.yes" | translate }}
+    </button>
+    <button mat-button class="margin-right-xs" mat-dialog-close cdkFocusInitial>{{"dialogconfirm.no" | translate
+      }}</button>
+  </ng-container>
+</div>

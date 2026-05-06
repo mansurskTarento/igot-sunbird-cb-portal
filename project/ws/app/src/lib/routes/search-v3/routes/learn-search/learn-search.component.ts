@@ -39,7 +39,7 @@ import { forkJoin, Subject } from 'rxjs'
 import {
   NsContent,
   WidgetUserService,
-} from '@sunbird-cb/collection/src/public-api'
+} from '@sunbird-cb/collection'
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'

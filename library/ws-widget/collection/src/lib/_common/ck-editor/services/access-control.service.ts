@@ -7,7 +7,9 @@ import { Inject, Injectable } from '@angular/core'
 import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { NSContent } from '../interface/content'
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
 export class AccessControlService {
   downloadRegex = new RegExp(`(https://.*?/content-store/.*?)(\\\)?\\\\?['"])`, 'gm')
   constructor(

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core'
 import { ConfigurationsService, DomainConfService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
-import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
+import { DiscussUtilsService } from '@ws/app'
 /* tslint:disable */
 import _ from 'lodash'
 /* tslint:enable */
@@ -20,13 +20,13 @@ export class FooterSectionComponent implements OnInit, OnChanges {
     private discussUtilitySvc: DiscussUtilsService,
     private router: Router,
     private langtranslations: MultilingualTranslationsService,
-    private domainConfSvc:DomainConfService
-  ) { 
-      this.isKbPortal = this.domainConfSvc.isKbPortal()
+    private domainConfSvc: DomainConfService
+  ) {
+    this.isKbPortal = this.domainConfSvc.isKbPortal()
   }
   footerSectionConfig = [
     {
-      id: 1 ,
+      id: 1,
       order: 1,
       sectionHeading: 'Hubs',
       active: true,
@@ -78,12 +78,12 @@ export class FooterSectionComponent implements OnInit, OnChanges {
     if (this.environment && this.environment.portals) {
       this.environment.portals = this.environment.portals.filter(
         (obj: any) => ((obj.name !== 'Frac Dictionary') &&
-         (obj.isPublic || this.isAllowed(obj.id))))
-          if (!this.environment.portals.length) {
-            if (this.footerSectionConfig) {
-              this.footerSectionConfig = this.footerSectionConfig.filter((obj: any) => obj.sectionHeading !== 'Related Links')
-            }
-          }
+          (obj.isPublic || this.isAllowed(obj.id))))
+      if (!this.environment.portals.length) {
+        if (this.footerSectionConfig) {
+          this.footerSectionConfig = this.footerSectionConfig.filter((obj: any) => obj.sectionHeading !== 'Related Links')
+        }
+      }
     }
   }
 

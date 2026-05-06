@@ -6,8 +6,12 @@ import { SkeletonLoaderModule } from './../skeleton-loader/skeleton-loader.modul
 
 import { UpdatePostsComponent } from './update-posts.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function UpdatePostsHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [UpdatePostsComponent],
@@ -19,7 +23,7 @@ import { HttpClient } from '@angular/common/http'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: UpdatePostsHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

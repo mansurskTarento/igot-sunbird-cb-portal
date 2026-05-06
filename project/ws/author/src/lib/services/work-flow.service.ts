@@ -1,9 +1,10 @@
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { ConditionCheckService } from '@ws/author/src/lib/modules/shared/services/condition-check.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { NSContent } from '@ws/author/src/lib/interface/content'
+
 import { Injectable } from '@angular/core'
 import { ISearchContent } from '../interface/search'
+import { AuthInitService } from './init.service'
+import { ConditionCheckService } from '../modules/shared/services/condition-check.service'
+import { AccessControlService } from '../modules/shared/services/access-control.service'
+import { NSContent } from '../interface/content'
 
 @Injectable()
 export class WorkFlowService {
@@ -11,7 +12,7 @@ export class WorkFlowService {
     private initService: AuthInitService,
     private conditionService: ConditionCheckService,
     private accessControlSvc: AccessControlService,
-  ) {}
+  ) { }
 
   getWorkFlow(content: NSContent.IContentMeta | ISearchContent): string[] {
     // tslint:disable-next-line: no-non-null-assertion

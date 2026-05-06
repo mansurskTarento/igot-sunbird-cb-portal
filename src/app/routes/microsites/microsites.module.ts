@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MicrosotesComponent } from './microsotes.component'
-import { ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
+import { ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection'
 import { CardsModule, CommonMethodsService, CompetencyPassbookModule, ContentStripWithTabsLibModule, DataPointsModule, SlidersLibModule } from '@sunbird-cb/consumption'
 import { MicrositeService } from './microsites.service'
 import { MatFormFieldModule } from '@angular/material/form-field'

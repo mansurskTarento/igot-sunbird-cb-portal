@@ -1,12 +1,12 @@
 import { Subscription } from 'rxjs'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Component, OnInit, ViewEncapsulation, ChangeDetectorRef, HostListener, OnDestroy } from '@angular/core'
 import { SafeUrl, DomSanitizer } from '@angular/platform-browser'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
+import { LoaderService } from '../../services/loader.service'
+import { NotificationComponent } from '../../modules/shared/components/notification/notification.component'
+import { NOTIFICATION_TIME } from '../../constants/constant'
+import { Notify } from '../../constants/notificationMessage'
 
 @Component({
   selector: 'ws-auth-root-root',

@@ -8,8 +8,8 @@ import { MatCardModule } from '@angular/material/card'
 import { CareerHubRoutingModule } from './career-hub-routing.module'
 import { CareersHomeComponent } from './routes/careers-home/careers-home.component'
 import { CareersComponent } from './routes/careers/careers.component'
-import { LoaderService } from '@ws/author/src/public-api'
-import { InitResolver } from '@ws/author/src/lib/services/init-resolve.service'
+import { LoaderService } from '@ws/author'
+import { InitResolver } from '@ws/author'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { BtnPageBackModule, AvatarPhotoModule } from '@sunbird-cb/collection'
 import {
@@ -25,7 +25,6 @@ import { RelatedPostsComponent } from './components/related-posts/related-posts.
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { CareersPaginationComponent } from './components/careers-pagination/careers-pagination.component'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
 import { MatButtonModule } from '@angular/material/button'
 import { MatChipsModule } from '@angular/material/chips'
@@ -37,6 +36,11 @@ import { MatListModule } from '@angular/material/list'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CareerHubHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [
@@ -77,7 +81,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: CareerHubHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

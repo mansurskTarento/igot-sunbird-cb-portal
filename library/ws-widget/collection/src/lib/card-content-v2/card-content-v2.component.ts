@@ -8,7 +8,7 @@ import { NsContent } from '../_services/widget-content.model'
 import { NsCardContent } from './card-content-v2.model'
 /* tslint:disable*/
 import _ from 'lodash'
-import { CertificateService } from '@ws/app/src/lib/routes/certificate/services/certificate.service'
+import { CertificateService } from '../_services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
@@ -16,7 +16,6 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
-// import { Router } from '@angular/router'
 
 @Component({
   selector: 'ws-widget-card-content-v2',
