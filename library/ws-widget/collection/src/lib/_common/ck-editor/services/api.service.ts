@@ -3,7 +3,10 @@ import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
 import { AUTHORING_BASE } from '../constants/apiEndpoints'
 
-@Injectable()
+@Injectable({
+  providedIn: 'root'
+})
+
 export class ApiService {
 
   constructor(private http: HttpClient) { }
