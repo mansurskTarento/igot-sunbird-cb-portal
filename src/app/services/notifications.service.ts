@@ -215,6 +215,10 @@ export class NotificationsService {
           }
         }
       )
+    } else if (notification.sub_category === 'EXTERNAL_TRAINING') {
+      this.router.navigateByUrl('/page/competency-passbook/list', { skipLocationChange: true }).then(() => {
+        this.router.navigate([`/page/competency-passbook/list`])
+      })
     } else {
       this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
         this.router.navigate([`/app/toc/${notification.message.data.id}`])

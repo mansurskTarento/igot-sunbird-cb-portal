@@ -163,6 +163,20 @@ export class ProfileEntryEditComponent implements OnInit {
   expand: boolean = false
   selectedAreaValue: string | null = null
 
+  competencyAreaDescriptions: Record<string, string> = {
+    behavioural: 'Behavioural competencies reflect interpersonal and self-management skills. For example, Effective communication involves the ability to convey ideas clearly and listen actively. Effective collaborators can build trust, delegate tasks, and work seamlessly towards shared goals.',
+    functional: 'Functional competencies are specific technical skills and knowledge required to perform a particular job role efficiently, such as data analysis, software coding, financial modelling, or specialized machine operation. E.g. Data Analytics, Project Management.',
+    domain: 'Domain competency refers to specialized knowledge, skills, and expertise within a specific industry or functional area, such as financial modelling in banking, patient management in healthcare, or digital marketing in tech.',
+  }
+
+  getCompetencyAreaDescription(): string {
+    if (!this.selectedAreaValue) {
+      return ''
+    }
+    const key = this.selectedAreaValue.toLowerCase()
+    return this.competencyAreaDescriptions[key] || ''
+  }
+
   noSpecialChar = new RegExp(/^[\u0900-\u097F\u0980-\u09FF\u0C00-\u0C7F\u0B80-\u0BFF\u0C80-\u0CFF\u0D00-\u0D7F\u0A80-\u0AFF\u0B00-\u0B7F\u0A00-\u0A7Fa-zA-Z0-9.,_\-\$\/\:\[\]\(\) '!&]+$/)
 
   //#endregion (global variables)
@@ -1085,7 +1099,8 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails?.contextData, 'startDate', ''), [startDateValidator('endDate')]],
       endDate: [_.get(this.entryDetails?.contextData, 'endDate', ''), [endDateValidator('startDate')]],
       issuedDate: [_.get(this.entryDetails?.contextData, 'issuedDate', ''), [Validators.required, issuedDateValidator('endDate')]],
-      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours', ''), [Validators.pattern(/^\d+$/), Validators.min(1), Validators.max(100)]],
+      learningHours: [_.get(this.entryDetails?.contextData, 'learningHours'), [Validators.pattern(/^\d+$/), Validators.min(0), Validators.max(100)]],
+      learningMinutes: [_.get(this.entryDetails?.contextData, 'learningMinutes'), [Validators.pattern(/^\d+$/), Validators.min(0), Validators.max(59)]],
       trainingType: [_.get(this.entryDetails?.contextData, 'trainingType', ''), [Validators.required]],
       uploadedDocumentUrl: [_.get(this.entryDetails?.contextData, 'documentUrl', '')],
       fileName: [_.get(this.entryDetails?.contextData, 'fileName', '')],
@@ -1501,9 +1516,9 @@ export class ProfileEntryEditComponent implements OnInit {
       return
     }
     const mimeType = files[0].type
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg']
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf']
     if (!allowedTypes.includes(mimeType.toLowerCase())) {
-      this.openSnackbar('Only PNG, JPG, and JPEG images are supported')
+      this.openSnackbar('Only PNG, JPG, JPEG and PDF files are supported')
       return
     }
     const reader = new FileReader()
@@ -1573,6 +1588,7 @@ export class ProfileEntryEditComponent implements OnInit {
             formValue.fileName = ''
           }
           formValue.learningHours = formValue.learningHours ? Number(formValue.learningHours) : ''
+          formValue.learningMinutes = formValue.learningMinutes ? Number(formValue.learningMinutes) : ''
         }
         if (this.header === 'Service History') {
           if (formValue.orgName === this.selctedOrgDetails['orgName']) {

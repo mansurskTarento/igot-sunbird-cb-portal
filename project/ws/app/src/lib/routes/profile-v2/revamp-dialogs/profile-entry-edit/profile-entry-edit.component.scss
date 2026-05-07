@@ -147,6 +147,8 @@
     }
   }
 
+
+
   .mat-form-field-appearance-outline .mat-form-field-flex {
     height: 35px;
   }
@@ -287,6 +289,31 @@
 .compbutton {
   border-radius: 25px;
 }
+
+.competency-area-description {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 8px 12px;
+  background-color: #f5f7ff;
+  border-radius: 0 4px 4px 0;
+}
+
+.duration-input {
+  align-items: flex-start;
+
+  .duration-field {
+    width: 140px;
+  }
+
+  .duration-separator {
+    font-size: 20px;
+    font-weight: bold;
+    color: #212529;
+    margin-top: 6px;
+  }
+}
+
 
 .complabels {
   display: inline-flex;
