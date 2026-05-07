@@ -10,7 +10,7 @@
       "prefix": "ws",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "i18n": {
             "sourceLocale": "en-US",
             "locales": {
@@ -18,10 +18,13 @@
             }
           },
           "options": {
-            "outputPath": "dist/www/fusion",
+            "outputPath": {
+              "base": "dist/www/fusion"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "preserveSymlinks": true,
             "assets": [
@@ -73,15 +76,14 @@
               "src/js/smartechclient.js"
             ],
             "aot": false,
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "@ckeditor/ckeditor5-editor-classic"
-            ]
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "nb": {
@@ -105,8 +107,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -118,8 +118,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "np": {
               "fileReplacements": [
@@ -134,8 +133,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -147,8 +144,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "dev": {
               "fileReplacements": [
@@ -163,8 +159,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -176,8 +170,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "preprod": {
               "fileReplacements": [
@@ -192,8 +185,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -205,8 +196,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "benchmark": {
               "fileReplacements": [
@@ -221,8 +211,6 @@
               "namedChunks": false,
               "aot": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -234,8 +222,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             }
           },
           "defaultConfiguration": ""
@@ -244,24 +231,24 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "port": 3000,
-            "browserTarget": "fusion:build"
+            "buildTarget": "fusion:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "fusion:build:production"
+              "buildTarget": "fusion:build:production"
             },
             "nb": {
-              "browserTarget": "fusion:build:nb"
+              "buildTarget": "fusion:build:nb"
             },
             "de": {
-              "browserTarget": "fusion:build:de"
+              "buildTarget": "fusion:build:de"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fusion:build"
+            "buildTarget": "fusion:build"
           }
         },
         "test": {
@@ -471,7 +458,29 @@
   },
   "schematics": {
     "@schematics/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
   "cli": {

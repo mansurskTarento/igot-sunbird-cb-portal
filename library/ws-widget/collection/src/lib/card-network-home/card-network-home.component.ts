@@ -6,9 +6,10 @@ import { DiscussUtilsService } from '../_services/discuss-utils.service'
 import { ConnectionHoverService } from '../_common/connection-hover-card/connection-hover.servive'
 
 @Component({
-  selector: 'ws-widget-card-home-network',
-  templateUrl: './card-network-home.component.html',
-  styleUrls: ['./card-network-home.component.scss'],
+    selector: 'ws-widget-card-home-network',
+    templateUrl: './card-network-home.component.html',
+    styleUrls: ['./card-network-home.component.scss'],
+    standalone: false
 })
 export class CardNetworkHomeComponent extends WidgetBaseComponent
 

@@ -8,9 +8,10 @@ import { Subscription } from 'rxjs'
 import { debounceTime } from 'rxjs/operators'
 import { IFeedbackRequest } from '../../models/feedback.model'
 @Component({
-  selector: 'ws-app-feedback',
-  templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.scss'],
+    selector: 'ws-app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
+    standalone: false
 })
 export class FeedbackComponent implements OnInit, OnDestroy {
   @Input() widgetType!: string

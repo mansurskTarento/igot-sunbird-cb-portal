@@ -11,9 +11,10 @@ import {
 } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-service-request',
-  templateUrl: './service-request.component.html',
-  styleUrls: ['./service-request.component.scss'],
+    selector: 'ws-app-service-request',
+    templateUrl: './service-request.component.html',
+    styleUrls: ['./service-request.component.scss'],
+    standalone: false
 })
 export class ServiceRequestComponent implements OnDestroy {
   sendStatus: TSendStatus

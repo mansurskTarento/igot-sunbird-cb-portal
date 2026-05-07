@@ -3,7 +3,10 @@ import { NgControl } from '@angular/forms'
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 // tslint:disable-next-line: directive-selector
-@Directive({ selector: '[tab-directive]' })
+@Directive({
+    selector: '[tab-directive]',
+    standalone: false
+})
 export class TabDirective implements AfterViewInit, OnDestroy {
   observable: any
   constructor(@Optional() private autoTrigger: MatAutocompleteTrigger,

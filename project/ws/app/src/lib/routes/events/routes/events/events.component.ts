@@ -13,9 +13,10 @@ import { GbSearchService } from '../../../search-v2/services/gb-search.service'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-app-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss'],
+    selector: 'ws-app-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent implements OnInit {
   data!: NSDiscussData.IDiscussionData

@@ -6,7 +6,7 @@ describe('SocialTimelineResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: SocialTimelineResolverService = TestBed.get(SocialTimelineResolverService)
+    const service: SocialTimelineResolverService = TestBed.inject(SocialTimelineResolverService)
     expect(service).toBeTruthy()
   })
 })

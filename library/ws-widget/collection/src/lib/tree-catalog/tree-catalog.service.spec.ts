@@ -6,7 +6,7 @@ describe('TreeCatalogService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: TreeCatalogService = TestBed.get(TreeCatalogService)
+    const service: TreeCatalogService = TestBed.inject(TreeCatalogService)
     expect(service).toBeTruthy()
   })
 })

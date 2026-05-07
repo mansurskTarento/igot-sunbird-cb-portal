@@ -12,12 +12,12 @@ import { DialogConfirmComponent } from '../../../../routes/dialog-confirm/dialog
 // import { ConfigurationsService } from '@ws-widget/utils'
 // import { NSProfileDataV2 } from '../../models/profile-v2.model'
 @Component({
-  selector: 'app-right-menu-card',
-  templateUrl: './right-menu-card.component.html',
-  styleUrls: ['./right-menu-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'app-right-menu-card',
+    templateUrl: './right-menu-card.component.html',
+    styleUrls: ['./right-menu-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() eventData: any

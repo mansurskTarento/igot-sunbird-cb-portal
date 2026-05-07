@@ -8,9 +8,10 @@ import { NetworkV2Service } from '../../../network-v2/services/network-v2.servic
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'ws-app-connection-people-card',
-  templateUrl: './connection-people-card.component.html',
-  styleUrls: ['./connection-people-card.component.scss']
+    selector: 'ws-app-connection-people-card',
+    templateUrl: './connection-people-card.component.html',
+    styleUrls: ['./connection-people-card.component.scss'],
+    standalone: false
 })
 export class ConnectionPeopleCardComponent implements OnInit {
   @Input() user!: NSNetworkDataV2.INetworkUser

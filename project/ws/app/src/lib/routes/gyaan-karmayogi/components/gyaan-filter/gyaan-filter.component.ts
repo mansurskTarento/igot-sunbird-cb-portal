@@ -6,9 +6,10 @@ import { ActivatedRoute } from '@angular/router'
 import { Options } from '@angular-slider/ngx-slider'
 
 @Component({
-  selector: 'ws-app-gyaan-filter',
-  templateUrl: './gyaan-filter.component.html',
-  styleUrls: ['./gyaan-filter.component.scss'],
+    selector: 'ws-app-gyaan-filter',
+    templateUrl: './gyaan-filter.component.html',
+    styleUrls: ['./gyaan-filter.component.scss'],
+    standalone: false
 })
 export class GyaanFilterComponent implements OnInit {
   minValue = 2000

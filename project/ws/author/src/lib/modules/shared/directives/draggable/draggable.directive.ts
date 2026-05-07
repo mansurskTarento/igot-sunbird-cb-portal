@@ -8,7 +8,8 @@ import {
 } from '@angular/core'
 
 @Directive({
-  selector: '[wsAuthDraggable]',
+    selector: '[wsAuthDraggable]',
+    standalone: false
 })
 export class DraggableDirective {
   @Output() dragStart = new EventEmitter<PointerEvent>()

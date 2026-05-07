@@ -6,9 +6,10 @@ import { NetworkingService } from '../../services/networking.service'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-connections',
-  templateUrl: './connections.component.html',
-  styleUrls: ['./connections.component.scss']
+    selector: 'ws-app-connections',
+    templateUrl: './connections.component.html',
+    styleUrls: ['./connections.component.scss'],
+    standalone: false
 })
 export class ConnectionsComponent implements OnInit {
 

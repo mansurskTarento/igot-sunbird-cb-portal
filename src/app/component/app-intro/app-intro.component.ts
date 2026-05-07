@@ -11,6 +11,7 @@ import { RootService } from '../root/root.service'
     selector: 'ws-app-intro',
     templateUrl: './app-intro.component.html',
     styleUrls: ['./app-intro.component.scss'],
+    standalone: false
 })
 
 export class AppIntroComponent implements OnInit, AfterViewInit {

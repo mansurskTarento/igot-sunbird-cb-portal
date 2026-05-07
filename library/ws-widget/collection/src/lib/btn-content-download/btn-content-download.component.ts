@@ -18,9 +18,10 @@ export interface IWidgetBtnDownload {
 }
 
 @Component({
-  selector: 'ws-widget-btn-content-download',
-  templateUrl: './btn-content-download.component.html',
-  styleUrls: ['./btn-content-download.component.scss'],
+    selector: 'ws-widget-btn-content-download',
+    templateUrl: './btn-content-download.component.html',
+    styleUrls: ['./btn-content-download.component.scss'],
+    standalone: false
 })
 export class BtnContentDownloadComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IWidgetBtnDownload> {

@@ -10,9 +10,10 @@ import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/reje
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-profile-primary-details',
-  templateUrl: './profile-primary-details.component.html',
-  styleUrls: ['./profile-primary-details.component.scss']
+    selector: 'ws-app-profile-primary-details',
+    templateUrl: './profile-primary-details.component.html',
+    styleUrls: ['./profile-primary-details.component.scss'],
+    standalone: false
 })
 export class ProfilePrimaryDetailsComponent implements OnInit {
   @Input() primaryDetails: any

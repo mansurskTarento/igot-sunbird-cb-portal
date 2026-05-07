@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { EventService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-dbms-concept-dropdown',
-  templateUrl: './dbms-concept-dropdown.component.html',
-  styleUrls: ['./dbms-concept-dropdown.component.scss'],
+    selector: 'viewer-dbms-concept-dropdown',
+    templateUrl: './dbms-concept-dropdown.component.html',
+    styleUrls: ['./dbms-concept-dropdown.component.scss'],
+    standalone: false
 })
 export class DbmsConceptDropdownComponent implements OnDestroy, OnChanges {
 

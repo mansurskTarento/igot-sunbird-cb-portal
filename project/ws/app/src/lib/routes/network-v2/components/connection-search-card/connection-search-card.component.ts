@@ -6,9 +6,10 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { NsUser } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-connection-search-card',
-  templateUrl: './connection-search-card.component.html',
-  styleUrls: ['./connection-search-card.component.scss'],
+    selector: 'ws-app-connection-search-card',
+    templateUrl: './connection-search-card.component.html',
+    styleUrls: ['./connection-search-card.component.scss'],
+    standalone: false
 })
 export class ConnectionSearchCardComponent implements OnInit {
   @Input() user!: NSNetworkDataV2.IAutocompleteUser

@@ -8,9 +8,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-mdo-channels-microsite',
-  templateUrl: './mdo-channels-microsite.component.html',
-  styleUrls: ['./mdo-channels-microsite.component.scss']
+    selector: 'ws-app-mdo-channels-microsite',
+    templateUrl: './mdo-channels-microsite.component.html',
+    styleUrls: ['./mdo-channels-microsite.component.scss'],
+    standalone: false
 })
 export class MdoChannelsMicrositeComponent implements OnInit {
   channnelName = ''

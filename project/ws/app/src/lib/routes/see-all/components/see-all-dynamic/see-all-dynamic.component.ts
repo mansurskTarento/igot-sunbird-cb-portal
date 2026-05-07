@@ -35,9 +35,10 @@ const configMap: any = {
   }
 }
 @Component({
-  selector: 'ws-app-see-all-dynamic',
-  templateUrl: './see-all-dynamic.component.html',
-  styleUrls: ['./see-all-dynamic.component.scss']
+    selector: 'ws-app-see-all-dynamic',
+    templateUrl: './see-all-dynamic.component.html',
+    styleUrls: ['./see-all-dynamic.component.scss'],
+    standalone: false
 })
 export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewChecked {
   colors = [

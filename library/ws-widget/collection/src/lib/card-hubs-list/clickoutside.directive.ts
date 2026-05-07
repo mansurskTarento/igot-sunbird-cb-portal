@@ -3,7 +3,8 @@ import { fromEvent } from 'rxjs'
 import { take } from 'rxjs/operators'
 
 @Directive({
-  selector: '[wsWidgetClickOutside]',
+    selector: '[wsWidgetClickOutside]',
+    standalone: false
 })
 export class ClickOutsideDirective implements OnInit {
   @Output() wsWidgetClickOutside = new EventEmitter()

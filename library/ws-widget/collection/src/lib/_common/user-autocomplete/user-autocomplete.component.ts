@@ -10,9 +10,10 @@ import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-user-autocomplete',
-  templateUrl: './user-autocomplete.component.html',
-  styleUrls: ['./user-autocomplete.component.scss'],
+    selector: 'ws-widget-user-autocomplete',
+    templateUrl: './user-autocomplete.component.html',
+    styleUrls: ['./user-autocomplete.component.scss'],
+    standalone: false
 })
 export class UserAutocompleteComponent implements OnInit {
 

@@ -26,9 +26,10 @@ import { TranslateService } from '@ngx-translate/core'
 
 
 @Component({
-  selector: 'ws-app-prfile-edit-v2',
-  templateUrl: './prfile-edit-v2.component.html',
-  styleUrls: ['./prfile-edit-v2.component.scss']
+    selector: 'ws-app-prfile-edit-v2',
+    templateUrl: './prfile-edit-v2.component.html',
+    styleUrls: ['./prfile-edit-v2.component.scss'],
+    standalone: false
 })
 
 export class PrfileEditV2Component implements OnInit, OnDestroy {

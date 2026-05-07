@@ -5,9 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-challenge-strip',
-  templateUrl: './challenge-strip.component.html',
-  styleUrls: ['./challenge-strip.component.scss'],
+    selector: 'ws-app-challenge-strip',
+    templateUrl: './challenge-strip.component.html',
+    styleUrls: ['./challenge-strip.component.scss'],
+    standalone: false
 })
 export class ChallengeStripComponent implements OnInit {
   @Input() widgetData!: IChallenges

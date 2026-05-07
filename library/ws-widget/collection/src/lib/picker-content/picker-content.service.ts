@@ -19,7 +19,7 @@ export class PickerContentService {
     return this.http.post<IRemoveSubsetResponse>('/apis/protected/v8/content/removeSubset', { contentIds })
   }
 
-  getSearchConfigs(): Promise<ISearchConfig> {
+  getSearchConfigs(): Promise<ISearchConfig | any> {
     return this.http.get<ISearchConfig>(`${this.baseUrl}/feature/search.json`).toPromise()
   }
 }

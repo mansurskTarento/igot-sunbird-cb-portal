@@ -3,9 +3,10 @@ import { Router } from '@angular/router'
 import { NsAutoComplete } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-people',
-  templateUrl: './people.component.html',
-  styleUrls: ['./people.component.scss'],
+    selector: 'ws-app-people',
+    templateUrl: './people.component.html',
+    styleUrls: ['./people.component.scss'],
+    standalone: false
 })
 export class PeopleComponent implements OnInit {
 

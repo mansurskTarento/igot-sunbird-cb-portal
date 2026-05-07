@@ -5,7 +5,7 @@ describe('HomePageService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: HomePageService = TestBed.get(HomePageService)
+    const service: HomePageService = TestBed.inject(HomePageService)
     expect(service).toBeTruthy()
   })
 })

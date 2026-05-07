@@ -15,9 +15,10 @@ const VALID_CONTENT_TYPES: NsContent.EContentTypes[] = [
 ]
 
 @Component({
-  selector: 'ws-widget-btn-goals',
-  templateUrl: './btn-goals.component.html',
-  styleUrls: ['./btn-goals.component.scss'],
+    selector: 'ws-widget-btn-goals',
+    templateUrl: './btn-goals.component.html',
+    styleUrls: ['./btn-goals.component.scss'],
+    standalone: false
 })
 export class BtnGoalsComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<NsGoal.IBtnGoal> {

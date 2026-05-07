@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { UntypedFormGroup } from '@angular/forms'
 
 @Component({
-  selector: 'ws-app-roles-activities',
-  templateUrl: './roles-activities.component.html',
-  styleUrls: ['./roles-activities.component.scss'],
+    selector: 'ws-app-roles-activities',
+    templateUrl: './roles-activities.component.html',
+    styleUrls: ['./roles-activities.component.scss'],
+    standalone: false
 })
 export class RolesActivitiesComponent implements OnInit {
   data = ''

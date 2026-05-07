@@ -4,9 +4,10 @@ import { NSNetworkDataV2 } from '../../models/network-v2.model'
 // import { ConnectionHoverService } from '../connection-name/connection-hover.servive'
 
 @Component({
-  selector: 'ws-app-my-connection-card',
-  templateUrl: './my-connection-card.component.html',
-  styleUrls: ['./my-connection-card.component.scss'],
+    selector: 'ws-app-my-connection-card',
+    templateUrl: './my-connection-card.component.html',
+    styleUrls: ['./my-connection-card.component.scss'],
+    standalone: false
 })
 export class MyConnectionCardComponent implements OnInit {
   @Input() user!: NSNetworkDataV2.INetworkUser

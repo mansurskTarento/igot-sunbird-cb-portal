@@ -14,9 +14,10 @@ import { WidgetContentLibService } from '@sunbird-cb/consumption'
 // import { WidgetContentService as WidgetContentServiceUtils } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-viewer-secondary-top-bar',
-  templateUrl: './viewer-secondary-top-bar.component.html',
-  styleUrls: ['./viewer-secondary-top-bar.component.scss'],
+    selector: 'viewer-viewer-secondary-top-bar',
+    templateUrl: './viewer-secondary-top-bar.component.html',
+    styleUrls: ['./viewer-secondary-top-bar.component.scss'],
+    standalone: false
 })
 export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterViewInit {
 

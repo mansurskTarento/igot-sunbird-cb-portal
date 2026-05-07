@@ -3,9 +3,10 @@ import { NSLearningHistory } from '../../models/learning.models'
 import { LearningHistoryService } from '../../services/learning-history.service'
 
 @Component({
-  selector: 'ws-app-learning-history-progress',
-  templateUrl: './learning-history-progress.component.html',
-  styleUrls: ['./learning-history-progress.component.scss'],
+    selector: 'ws-app-learning-history-progress',
+    templateUrl: './learning-history-progress.component.html',
+    styleUrls: ['./learning-history-progress.component.scss'],
+    standalone: false
 })
 export class LearningHistoryProgressComponent {
   @Input() item: any

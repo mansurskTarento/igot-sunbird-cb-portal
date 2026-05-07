@@ -2,9 +2,10 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'ws-app-updates-card',
-  templateUrl: './updates-card.component.html',
-  styleUrls: ['./updates-card.component.scss']
+    selector: 'ws-app-updates-card',
+    templateUrl: './updates-card.component.html',
+    styleUrls: ['./updates-card.component.scss'],
+    standalone: false
 })
 export class UpdatesCardComponent implements OnInit, OnChanges {
 

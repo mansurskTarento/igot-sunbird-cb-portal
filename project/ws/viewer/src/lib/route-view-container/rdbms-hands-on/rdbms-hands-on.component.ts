@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'viewer-rdbms-hands-on-container',
-  templateUrl: './rdbms-hands-on.component.html',
-  styleUrls: ['./rdbms-hands-on.component.scss'],
+    selector: 'viewer-rdbms-hands-on-container',
+    templateUrl: './rdbms-hands-on.component.html',
+    styleUrls: ['./rdbms-hands-on.component.scss'],
+    standalone: false
 })
 export class RdbmsHandsOnComponent {
   @Input() isFetchingDataComplete = false

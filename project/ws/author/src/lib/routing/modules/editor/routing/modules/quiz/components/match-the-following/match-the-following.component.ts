@@ -34,9 +34,10 @@ import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/c
 import { Notify } from '../../../../../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-match-the-following',
-  templateUrl: './match-the-following.component.html',
-  styleUrls: ['./match-the-following.component.scss'],
+    selector: 'ws-auth-match-the-following',
+    templateUrl: './match-the-following.component.html',
+    styleUrls: ['./match-the-following.component.scss'],
+    standalone: false
 })
 export class MatchTheFollowingComponent implements OnInit, OnChanges, OnDestroy {
   @Output() value = new EventEmitter<MatchQuiz>()

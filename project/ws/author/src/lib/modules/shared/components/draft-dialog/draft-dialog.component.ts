@@ -18,9 +18,10 @@ import { NOTIFICATION_TIME } from '../../../../constants/constant'
 import { Notify } from '../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-draft-dialog',
-  templateUrl: './draft-dialog.component.html',
-  styleUrls: ['./draft-dialog.component.scss'],
+    selector: 'ws-auth-draft-dialog',
+    templateUrl: './draft-dialog.component.html',
+    styleUrls: ['./draft-dialog.component.scss'],
+    standalone: false
 })
 export class DraftDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup

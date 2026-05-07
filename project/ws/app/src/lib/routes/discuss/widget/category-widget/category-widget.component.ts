@@ -8,9 +8,10 @@ import lodash from 'lodash'
 // import * as CONSTANTS from '@project-sunbird/discussions-ui-v8'
 
 @Component({
-  selector: 'igot-category-widget',
-  templateUrl: './category-widget.component.html',
-  styleUrls: ['./category-widget.component.css'],
+    selector: 'igot-category-widget',
+    templateUrl: './category-widget.component.html',
+    styleUrls: ['./category-widget.component.css'],
+    standalone: false
 })
 export class CategoryWidgetComponent extends BaseWrapperComponent {
 

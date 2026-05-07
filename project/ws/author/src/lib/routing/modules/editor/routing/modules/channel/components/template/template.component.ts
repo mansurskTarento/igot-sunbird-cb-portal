@@ -8,9 +8,10 @@ import { LoaderService } from '../../../../../../../../services/loader.service'
 import { AccessControlService } from '../../../../../../../../modules/shared/services/access-control.service'
 
 @Component({
-  selector: 'ws-auth-template',
-  templateUrl: './template.component.html',
-  styleUrls: ['./template.component.scss'],
+    selector: 'ws-auth-template',
+    templateUrl: './template.component.html',
+    styleUrls: ['./template.component.scss'],
+    standalone: false
 })
 
 export class TemplateComponent implements OnInit {

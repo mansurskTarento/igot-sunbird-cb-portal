@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-dnd-quiz',
-  templateUrl: './dnd-quiz.component.html',
-  styleUrls: ['./dnd-quiz.component.scss'],
+    selector: 'viewer-dnd-quiz',
+    templateUrl: './dnd-quiz.component.html',
+    styleUrls: ['./dnd-quiz.component.scss'],
+    standalone: false
 })
 export class DndQuizComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

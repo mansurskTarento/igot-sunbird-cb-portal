@@ -7,9 +7,10 @@ import { ForumHandlerService } from '../../service/EmitterService/forum-handler.
 import { ForumService } from '../../service/forum.service'
 
 @Component({
-  selector: 'ws-app-myforum-post',
-  templateUrl: './myforum-post.component.html',
-  styleUrls: ['./myforum-post.component.scss'],
+    selector: 'ws-app-myforum-post',
+    templateUrl: './myforum-post.component.html',
+    styleUrls: ['./myforum-post.component.scss'],
+    standalone: false
 })
 export class MyforumPostComponent implements OnInit {
 

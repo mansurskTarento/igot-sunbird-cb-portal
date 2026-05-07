@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-sadhana-saptah',
-  templateUrl: './sadhana-saptah.component.html',
-  styleUrls: ['./sadhana-saptah.component.scss']
+    selector: 'ws-app-sadhana-saptah',
+    templateUrl: './sadhana-saptah.component.html',
+    styleUrls: ['./sadhana-saptah.component.scss'],
+    standalone: false
 })
 export class SadhanaSaptahComponent implements OnInit {
 

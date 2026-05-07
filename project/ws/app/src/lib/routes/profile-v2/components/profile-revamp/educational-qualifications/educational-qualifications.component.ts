@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-educational-qualifications',
-  templateUrl: './educational-qualifications.component.html',
-  styleUrls: ['./educational-qualifications.component.scss']
+    selector: 'ws-app-educational-qualifications',
+    templateUrl: './educational-qualifications.component.html',
+    styleUrls: ['./educational-qualifications.component.scss'],
+    standalone: false
 })
 export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)

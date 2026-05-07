@@ -3,9 +3,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-recent-requests',
-  templateUrl: './recent-requests.component.html',
-  styleUrls: ['./recent-requests.component.scss'],
+    selector: 'ws-widget-recent-requests',
+    templateUrl: './recent-requests.component.html',
+    styleUrls: ['./recent-requests.component.scss'],
+    standalone: false
 })
 export class RecentRequestsComponent implements OnInit {
 

@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-btn-flag',
-  templateUrl: './btn-flag.component.html',
-  styleUrls: ['./btn-flag.component.scss'],
+    selector: 'ws-app-btn-flag',
+    templateUrl: './btn-flag.component.html',
+    styleUrls: ['./btn-flag.component.scss'],
+    standalone: false
 })
 export class BtnFlagComponent implements OnInit {
   @Input() postId = ''

@@ -6,7 +6,7 @@ describe('IntranetSelectorService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: IntranetSelectorService = TestBed.get(IntranetSelectorService)
+    const service: IntranetSelectorService = TestBed.inject(IntranetSelectorService)
     expect(service).toBeTruthy()
   })
 })

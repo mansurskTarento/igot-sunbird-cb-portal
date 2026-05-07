@@ -10,9 +10,10 @@ import { ActivatedRoute } from '@angular/router'
 import { GraphGeneralService, IGraphWidget, ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-analytics-content',
-  templateUrl: './content.component.html',
-  styleUrls: ['./content.component.scss'],
+    selector: 'ws-analytics-content',
+    templateUrl: './content.component.html',
+    styleUrls: ['./content.component.scss'],
+    standalone: false
 })
 export class ContentComponent implements OnInit, OnDestroy {
   searchQuery = ''

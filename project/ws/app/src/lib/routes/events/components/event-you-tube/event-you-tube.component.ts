@@ -11,9 +11,10 @@ import { EventService } from './../../services/events.service'
 import moment from 'moment'
 
 @Component({
-  selector: 'app-event-you-tube',
-  templateUrl: './event-you-tube.component.html',
-  styleUrls: ['./event-you-tube.component.scss'],
+    selector: 'app-event-you-tube',
+    templateUrl: './event-you-tube.component.html',
+    styleUrls: ['./event-you-tube.component.scss'],
+    standalone: false
 })
 export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
   currentEvent = false

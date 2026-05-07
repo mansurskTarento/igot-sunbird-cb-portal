@@ -13,9 +13,10 @@ import { UserViewPopUpService } from './ui-user-table-pop-up.services'
 interface IUser { fullname: string; email: string, userId: string }
 
 @Component({
-  selector: 'ws-widget-ui-user-table-pop-up',
-  templateUrl: './ui-user-table-pop-up.component.html',
-  styleUrls: ['./ui-user-table-pop-up.component.scss'],
+    selector: 'ws-widget-ui-user-table-pop-up',
+    templateUrl: './ui-user-table-pop-up.component.html',
+    styleUrls: ['./ui-user-table-pop-up.component.scss'],
+    standalone: false
 })
 export class UIUserTablePopUpComponent implements OnInit, AfterViewInit, OnChanges {
   tableData!: ITableData | undefined

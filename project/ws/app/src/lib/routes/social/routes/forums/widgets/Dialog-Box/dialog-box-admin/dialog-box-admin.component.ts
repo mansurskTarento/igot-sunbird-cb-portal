@@ -6,9 +6,10 @@ export interface IDialogData {
   reasonOfRevival: string
 }
 @Component({
-  selector: 'ws-app-dialog-box-admin',
-  templateUrl: './dialog-box-admin.component.html',
-  styleUrls: ['./dialog-box-admin.component.scss'],
+    selector: 'ws-app-dialog-box-admin',
+    templateUrl: './dialog-box-admin.component.html',
+    styleUrls: ['./dialog-box-admin.component.scss'],
+    standalone: false
 })
 export class DialogBoxAdminComponent implements OnInit {
   reasonOfRevival: String = ''

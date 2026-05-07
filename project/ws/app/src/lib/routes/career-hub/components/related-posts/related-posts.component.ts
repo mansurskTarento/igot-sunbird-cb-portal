@@ -3,9 +3,10 @@ import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-related-posts',
-  templateUrl: './related-posts.component.html',
-  styleUrls: ['./related-posts.component.scss'],
+    selector: 'ws-app-related-posts',
+    templateUrl: './related-posts.component.html',
+    styleUrls: ['./related-posts.component.scss'],
+    standalone: false
 })
 export class RelatedPostsComponent implements OnInit {
   @Input()

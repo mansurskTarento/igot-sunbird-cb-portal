@@ -10,9 +10,10 @@ import cloneDeep from 'lodash/cloneDeep'
 
 
 @Component({
-  selector: 'ws-app-support-ai',
-  templateUrl: './support-ai.component.html',
-  styleUrls: ['./support-ai.component.scss']
+    selector: 'ws-app-support-ai',
+    templateUrl: './support-ai.component.html',
+    styleUrls: ['./support-ai.component.scss'],
+    standalone: false
 })
 export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''

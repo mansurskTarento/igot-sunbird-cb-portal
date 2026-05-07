@@ -17,9 +17,10 @@ import { NotificationComponent } from '../notification/notification.component'
 import { Notify } from '../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-delete-dialog',
-  templateUrl: './delete-dialog.component.html',
-  styleUrls: ['./delete-dialog.component.scss'],
+    selector: 'ws-auth-delete-dialog',
+    templateUrl: './delete-dialog.component.html',
+    styleUrls: ['./delete-dialog.component.scss'],
+    standalone: false
 })
 export class DeleteDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup

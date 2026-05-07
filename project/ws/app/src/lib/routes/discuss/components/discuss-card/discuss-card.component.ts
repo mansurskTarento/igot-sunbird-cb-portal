@@ -3,12 +3,12 @@ import { NSDiscussData } from '../../models/discuss.model'
 import { Router } from '@angular/router'
 import { DiscussUtilsService } from '../../services/discuss-utils.service'
 @Component({
-  selector: 'app-dicuss-card',
-  templateUrl: './discuss-card.component.html',
-  styleUrls: ['./discuss-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-dicuss-card',
+    templateUrl: './discuss-card.component.html',
+    styleUrls: ['./discuss-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 
 export class DiscussCardComponent implements OnInit {

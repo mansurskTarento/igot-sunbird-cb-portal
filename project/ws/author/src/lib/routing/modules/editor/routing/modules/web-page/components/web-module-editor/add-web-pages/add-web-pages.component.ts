@@ -32,9 +32,10 @@ import { NotificationComponent } from '@sunbird-cb/notification'
 import { ErrorParserComponent } from '../../../../../../../../../modules/shared/components/error-parser/error-parser.component'
 import { CommentsDialogComponent } from '../../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 @Component({
-  selector: 'ws-auth-add-web-pages',
-  templateUrl: './add-web-pages.component.html',
-  styleUrls: ['./add-web-pages.component.scss'],
+    selector: 'ws-auth-add-web-pages',
+    templateUrl: './add-web-pages.component.html',
+    styleUrls: ['./add-web-pages.component.scss'],
+    standalone: false
 })
 export class AddWebPagesComponent implements OnInit, OnDestroy {
   @Output() data = new EventEmitter<string>()

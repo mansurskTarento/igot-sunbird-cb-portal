@@ -15,9 +15,10 @@ import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-video',
-  templateUrl: './video.component.html',
-  styleUrls: ['./video.component.scss'],
+    selector: 'viewer-video',
+    templateUrl: './video.component.html',
+    styleUrls: ['./video.component.scss'],
+    standalone: false
 })
 export class VideoComponent implements OnInit, OnDestroy {
   @Input() hideUpNext = false

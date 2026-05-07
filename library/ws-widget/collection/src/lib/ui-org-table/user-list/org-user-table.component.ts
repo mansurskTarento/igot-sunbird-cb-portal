@@ -8,9 +8,10 @@ import * as _ from 'lodash'
 import { ITableData, IColums } from '../interface/interfaces'
 
 @Component({
-  selector: 'ws-widget-org-user-table',
-  templateUrl: './org-user-table.component.html',
-  styleUrls: ['./org-user-table.component.scss'],
+    selector: 'ws-widget-org-user-table',
+    templateUrl: './org-user-table.component.html',
+    styleUrls: ['./org-user-table.component.scss'],
+    standalone: false
 })
 export class OrgUserTableComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() tableData!: ITableData | undefined

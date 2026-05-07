@@ -4,9 +4,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'viewer-audio-container',
-  templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss'],
+    selector: 'viewer-audio-container',
+    templateUrl: './audio.component.html',
+    styleUrls: ['./audio.component.scss'],
+    standalone: false
 })
 export class AudioComponent implements OnInit {
   @Input() isScreenSizeSmall = false

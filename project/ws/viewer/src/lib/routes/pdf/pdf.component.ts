@@ -11,9 +11,10 @@ import { PdfScormDataService } from '../../pdf-scorm-data-service'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-pdf',
-  templateUrl: './pdf.component.html',
-  styleUrls: ['./pdf.component.scss'],
+    selector: 'viewer-pdf',
+    templateUrl: './pdf.component.html',
+    styleUrls: ['./pdf.component.scss'],
+    standalone: false
 })
 export class PdfComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null

@@ -10,9 +10,10 @@ import { BtnModeratorService } from './btn-moderator.service'
 // }
 
 @Component({
-  selector: 'ws-app-btn-moderator',
-  templateUrl: './btn-moderator.component.html',
-  styleUrls: ['./btn-moderator.component.scss'],
+    selector: 'ws-app-btn-moderator',
+    templateUrl: './btn-moderator.component.html',
+    styleUrls: ['./btn-moderator.component.scss'],
+    standalone: false
 })
 export class BtnModeratorComponent implements OnInit {
   @Input()

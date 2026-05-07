@@ -13,9 +13,10 @@ import { PeerValidationService } from '../../../peer-validation/services/peer-va
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { ActivatedRoute } from '@angular/router'
 @Component({
-  selector: 'ws-app-my-notifications',
-  templateUrl: './my-notifications.component.html',
-  styleUrls: ['./my-notifications.component.scss']
+    selector: 'ws-app-my-notifications',
+    templateUrl: './my-notifications.component.html',
+    styleUrls: ['./my-notifications.component.scss'],
+    standalone: false
 })
 export class MyNotificationsComponent {
   selectedLanguage = 'en'

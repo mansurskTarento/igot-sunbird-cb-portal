@@ -4,6 +4,7 @@ import {
   PLATFORM_ID,
   TemplateRef,
   ViewChild,
+  DOCUMENT
 } from '@angular/core'
 import {
   UntypedFormControl,
@@ -26,7 +27,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
 // import { ReCaptchaV3Service } from 'ng-recaptcha';
-import { DOCUMENT, isPlatformBrowser } from '@angular/common'
+import { isPlatformBrowser } from '@angular/common'
 import { TranslateService } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
@@ -41,9 +42,10 @@ import { MobileAppsService } from '../../../services/mobile-apps.service'
 import { AppOtpReaderComponent } from '../../../component/app-otp-reader/app-otp-reader.component'
 
 @Component({
-  selector: 'ws-public-crp',
-  templateUrl: './public-crp.component.html',
-  styleUrls: ['./public-crp.component.scss'],
+    selector: 'ws-public-crp',
+    templateUrl: './public-crp.component.html',
+    styleUrls: ['./public-crp.component.scss'],
+    standalone: false
 })
 export class PublicCrpComponent {
   registrationForm!: UntypedFormGroup

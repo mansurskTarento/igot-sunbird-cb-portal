@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-organization-course-detail',
-  templateUrl: './organization-course-detail.component.html',
-  styleUrls: ['./organization-course-detail.component.scss'],
+    selector: 'ws-app-organization-course-detail',
+    templateUrl: './organization-course-detail.component.html',
+    styleUrls: ['./organization-course-detail.component.scss'],
+    standalone: false
 })
 export class OrganizationCourseDetailComponent implements OnInit {
   coursesDetail: any

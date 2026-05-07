@@ -15,9 +15,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-all-competencies',
-  templateUrl: './all-competencies.component.html',
-  styleUrls: ['./all-competencies.component.scss'],
+    selector: 'ws-app-all-competencies',
+    templateUrl: './all-competencies.component.html',
+    styleUrls: ['./all-competencies.component.scss'],
+    standalone: false
 })
 export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   private unsubscribe = new Subject<void>()

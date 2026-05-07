@@ -4,9 +4,10 @@ import { Router } from '@angular/router'
 import { PeerValidationService } from '../../services/peer-validation.service'
 
 @Component({
-  selector: 'ws-app-verification-request-dialog',
-  templateUrl: './verification-request-dialog.component.html',
-  styleUrls: ['./verification-request-dialog.component.scss'],
+    selector: 'ws-app-verification-request-dialog',
+    templateUrl: './verification-request-dialog.component.html',
+    styleUrls: ['./verification-request-dialog.component.scss'],
+    standalone: false
 })
 export class VerificationRequestDialogComponent {
   constructor(

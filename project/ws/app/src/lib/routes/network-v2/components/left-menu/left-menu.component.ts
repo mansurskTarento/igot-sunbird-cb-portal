@@ -6,9 +6,10 @@ import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-app-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent implements OnInit, OnDestroy {
 

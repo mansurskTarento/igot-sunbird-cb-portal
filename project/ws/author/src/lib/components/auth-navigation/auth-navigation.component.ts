@@ -6,9 +6,10 @@ import { Router, NavigationEnd } from '@angular/router'
 import { AuthNavBarToggleService } from '../../services/auth-nav-bar-toggle.service'
 
 @Component({
-  selector: 'ws-auth-root-navigation',
-  templateUrl: './auth-navigation.component.html',
-  styleUrls: ['./auth-navigation.component.scss'],
+    selector: 'ws-auth-root-navigation',
+    templateUrl: './auth-navigation.component.html',
+    styleUrls: ['./auth-navigation.component.scss'],
+    standalone: false
 })
 export class AuthNavigationComponent implements OnInit {
 

@@ -31,9 +31,10 @@ import { environment } from '../../../../../../../../../src/environments/environ
 import { ActivatedRoute } from '@angular/router'
 import { MatRadioChange } from '@angular/material/radio'
 @Component({
-  selector: 'ws-app-search-filters',
-  templateUrl: './search-filters.component.html',
-  styleUrls: ['./search-filters.component.scss'],
+    selector: 'ws-app-search-filters',
+    templateUrl: './search-filters.component.html',
+    styleUrls: ['./search-filters.component.scss'],
+    standalone: false
 })
 export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Input() newfacets!: any

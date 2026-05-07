@@ -2,13 +2,12 @@ import { Component, OnInit, Input } from '@angular/core'
 import { NSDiscussData } from '../../models/discuss.model'
 // import { Router } from '@angular/router'
 @Component({
-  selector: 'app-dicuss-category-card',
-  templateUrl: './category-card.component.html',
-  styleUrls: ['./category-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-s margin-top-l' },
-  /* tslint:enable */
-
+    selector: 'app-dicuss-category-card',
+    templateUrl: './category-card.component.html',
+    styleUrls: ['./category-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-s margin-top-l' },
+    standalone: false
 })
 
 export class CategoryCardComponent implements OnInit {

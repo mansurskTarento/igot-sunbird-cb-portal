@@ -3,9 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2';
 
 @Component({
-  selector: 'ws-app-community-details-home',
-  templateUrl: './community-details-home.component.html',
-  styleUrls: ['./community-details-home.component.scss']
+    selector: 'ws-app-community-details-home',
+    templateUrl: './community-details-home.component.html',
+    styleUrls: ['./community-details-home.component.scss'],
+    standalone: false
 })
 export class CommunityDetailsHomeComponent {
   communityId: string = ''

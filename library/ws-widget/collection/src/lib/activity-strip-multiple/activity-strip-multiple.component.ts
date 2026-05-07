@@ -37,9 +37,10 @@ interface IStripUnitContentData {
   } | null
 }
 @Component({
-  selector: 'ws-widget-activity-strip-multiple',
-  templateUrl: './activity-strip-multiple.component.html',
-  styleUrls: ['./activity-strip-multiple.component.scss'],
+    selector: 'ws-widget-activity-strip-multiple',
+    templateUrl: './activity-strip-multiple.component.html',
+    styleUrls: ['./activity-strip-multiple.component.scss'],
+    standalone: false
 })
 export class ActivityStripMultipleComponent extends WidgetBaseComponent
   implements

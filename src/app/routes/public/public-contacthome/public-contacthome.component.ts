@@ -5,9 +5,10 @@ import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-public-contacthome',
-  templateUrl: './public-contacthome.component.html',
-  styleUrls: ['./public-contacthome.component.scss'],
+    selector: 'ws-public-contacthome',
+    templateUrl: './public-contacthome.component.html',
+    styleUrls: ['./public-contacthome.component.scss'],
+    standalone: false
 })
 export class PublicContacthomeComponent implements OnInit {
   contactUsMail = ''

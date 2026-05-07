@@ -7,9 +7,10 @@ import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-public-contact',
-  templateUrl: './public-contact.component.html',
-  styleUrls: ['./public-contact.component.scss'],
+    selector: 'ws-public-contact',
+    templateUrl: './public-contact.component.html',
+    styleUrls: ['./public-contact.component.scss'],
+    standalone: false
 })
 export class PublicContactComponent implements OnInit, AfterViewInit, OnDestroy {
   contactUsMail = ''

@@ -23,9 +23,10 @@ import { NSApiRequest } from '../../../../../interface/apiRequest'
 import { AuthExpiryDateConfirmComponent } from '../../../../../modules/shared/components/auth-expiry-date-confirm/auth-expiry-date-confirm.component'
 
 @Component({
-  selector: 'ws-auth-my-content',
-  templateUrl: './my-content.component.html',
-  styleUrls: ['./my-content.component.scss'],
+    selector: 'ws-auth-my-content',
+    templateUrl: './my-content.component.html',
+    styleUrls: ['./my-content.component.scss'],
+    standalone: false
 })
 export class MyContentComponent implements OnInit, OnDestroy {
   public sideNavBarOpened = false

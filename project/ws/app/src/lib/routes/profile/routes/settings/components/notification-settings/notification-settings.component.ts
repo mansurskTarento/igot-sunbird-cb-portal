@@ -8,9 +8,10 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-notification-settings',
-  templateUrl: './notification-settings.component.html',
-  styleUrls: ['./notification-settings.component.scss'],
+    selector: 'ws-app-notification-settings',
+    templateUrl: './notification-settings.component.html',
+    styleUrls: ['./notification-settings.component.scss'],
+    standalone: false
 })
 export class NotificationSettingsComponent implements OnInit {
   selectedLanguage = 'en'

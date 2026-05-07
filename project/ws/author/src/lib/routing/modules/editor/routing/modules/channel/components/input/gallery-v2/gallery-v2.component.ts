@@ -12,9 +12,10 @@ import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-gallery-v2',
-  templateUrl: './gallery-v2.component.html',
-  styleUrls: ['./gallery-v2.component.scss'],
+    selector: 'ws-auth-gallery-v2',
+    templateUrl: './gallery-v2.component.html',
+    styleUrls: ['./gallery-v2.component.scss'],
+    standalone: false
 })
 export class GalleryV2Component implements OnInit {
   @Output() data = new EventEmitter<{

@@ -1,9 +1,10 @@
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core'
 
 @Component({
-  selector: 'ws-widget-editor-quill',
-  templateUrl: './editor-quill.component.html',
-  styleUrls: ['./editor-quill.component.scss'],
+    selector: 'ws-widget-editor-quill',
+    templateUrl: './editor-quill.component.html',
+    styleUrls: ['./editor-quill.component.scss'],
+    standalone: false
 })
 export class EditorQuillComponent implements OnInit {
   @Output() textData = new EventEmitter<{

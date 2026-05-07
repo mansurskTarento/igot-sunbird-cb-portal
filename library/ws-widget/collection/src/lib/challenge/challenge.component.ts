@@ -4,9 +4,10 @@ import { Router, NavigationExtras } from '@angular/router'
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner'
 
 @Component({
-  selector: 'ws-widget-challenge',
-  templateUrl: './challenge.component.html',
-  styleUrls: ['./challenge.component.scss'],
+    selector: 'ws-widget-challenge',
+    templateUrl: './challenge.component.html',
+    styleUrls: ['./challenge.component.scss'],
+    standalone: false
 })
 export class ChallengeComponent implements OnInit {
   @Input() widgetData!: any // IChallenges

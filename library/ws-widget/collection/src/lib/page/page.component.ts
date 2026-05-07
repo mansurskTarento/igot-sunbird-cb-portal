@@ -13,9 +13,10 @@ import { filter } from 'rxjs/operators'
 import { CustomTourService } from '../_common/tour-guide/tour-guide.service'
 
 @Component({
-  selector: 'ws-widget-page',
-  templateUrl: './page.component.html',
-  styleUrls: ['./page.component.scss'],
+    selector: 'ws-widget-page',
+    templateUrl: './page.component.html',
+    styleUrls: ['./page.component.scss'],
+    standalone: false
 })
 export class PageComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, NsWidgetResolver.IWidgetData<NsPage.IPage | null> {

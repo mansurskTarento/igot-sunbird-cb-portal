@@ -8,9 +8,10 @@ import { EditorContentService } from '../../../../../services/editor-content.ser
 import { DEPTH_RUE } from '../../../../../../../../constants/depth-rule'
 
 @Component({
-  selector: 'ws-auth-editor-options',
-  templateUrl: './auth-editor-options.component.html',
-  styleUrls: ['./auth-editor-options.component.scss'],
+    selector: 'ws-auth-editor-options',
+    templateUrl: './auth-editor-options.component.html',
+    styleUrls: ['./auth-editor-options.component.scss'],
+    standalone: false
 })
 export class AuthEditorOptionsComponent implements OnInit {
   @Input() node!: IContentTreeNode

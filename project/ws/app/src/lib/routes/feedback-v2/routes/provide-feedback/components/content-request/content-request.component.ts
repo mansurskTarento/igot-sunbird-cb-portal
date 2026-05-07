@@ -11,9 +11,10 @@ import {
 } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-content-request',
-  templateUrl: './content-request.component.html',
-  styleUrls: ['./content-request.component.scss'],
+    selector: 'ws-app-content-request',
+    templateUrl: './content-request.component.html',
+    styleUrls: ['./content-request.component.scss'],
+    standalone: false
 })
 export class ContentRequestComponent implements OnDestroy {
   sendStatus: TSendStatus

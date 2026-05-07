@@ -10,9 +10,10 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Globals } from '../../globals'
 
 @Component({
-  selector: 'ws-app-setup-done',
-  templateUrl: './setup-done.component.html',
-  styleUrls: ['./setup-done.component.scss'],
+    selector: 'ws-app-setup-done',
+    templateUrl: './setup-done.component.html',
+    styleUrls: ['./setup-done.component.scss'],
+    standalone: false
 })
 export class SetupDoneComponent implements OnInit {
   appIcon: SafeUrl | null = null

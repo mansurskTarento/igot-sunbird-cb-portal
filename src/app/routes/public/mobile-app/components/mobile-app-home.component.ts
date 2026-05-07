@@ -23,9 +23,10 @@ interface IMobileAppLink {
 }
 
 @Component({
-  selector: 'ws-app-mobile-app-home',
-  templateUrl: './mobile-app-home.component.html',
-  styleUrls: ['./mobile-app-home.component.scss'],
+    selector: 'ws-app-mobile-app-home',
+    templateUrl: './mobile-app-home.component.html',
+    styleUrls: ['./mobile-app-home.component.scss'],
+    standalone: false
 })
 export class MobileAppHomeComponent implements OnInit, OnDestroy {
   selectedTabIndex = this.matPlatform.IOS ? 1 : 0

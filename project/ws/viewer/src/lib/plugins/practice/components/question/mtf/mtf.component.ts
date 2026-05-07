@@ -21,7 +21,8 @@ import { NsContent } from '@sunbird-cb/utils-v2'
     templateUrl: './mtf.component.html',
     styleUrls: ['./mtf.component.scss'],
     // tslint:disable-next-line
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class MatchTheFollowingQuesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
     @Input() question: NSPractice.IQuestion = {

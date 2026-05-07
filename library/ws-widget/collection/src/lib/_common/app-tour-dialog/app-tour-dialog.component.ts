@@ -5,9 +5,10 @@ import { CustomTourService } from '../tour-guide/tour-guide.service'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-app-tour-dialog',
-  templateUrl: './app-tour-dialog.component.html',
-  styleUrls: ['./app-tour-dialog.component.scss'],
+    selector: 'ws-widget-app-tour-dialog',
+    templateUrl: './app-tour-dialog.component.html',
+    styleUrls: ['./app-tour-dialog.component.scss'],
+    standalone: false
 })
 export class AppTourDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   pageData: NsPage.IPage | null = null

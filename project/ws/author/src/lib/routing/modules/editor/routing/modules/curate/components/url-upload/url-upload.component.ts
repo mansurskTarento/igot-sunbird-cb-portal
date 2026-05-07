@@ -14,9 +14,10 @@ import { Notify } from '../../../../../../../../constants/notificationMessage'
 import { NOTIFICATION_TIME } from '../../../../../../../../constants/constant'
 
 @Component({
-  selector: 'ws-auth-url-upload',
-  templateUrl: './url-upload.component.html',
-  styleUrls: ['./url-upload.component.scss'],
+    selector: 'ws-auth-url-upload',
+    templateUrl: './url-upload.component.html',
+    styleUrls: ['./url-upload.component.scss'],
+    standalone: false
 })
 export class UrlUploadComponent implements OnInit {
   urlUploadForm!: UntypedFormGroup

@@ -5,9 +5,10 @@ import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'viewer-dbms-concept-create',
-  templateUrl: './dbms-concept-create.component.html',
-  styleUrls: ['./dbms-concept-create.component.scss'],
+    selector: 'viewer-dbms-concept-create',
+    templateUrl: './dbms-concept-create.component.html',
+    styleUrls: ['./dbms-concept-create.component.scss'],
+    standalone: false
 })
 export class DbmsConceptCreateComponent implements OnInit {
   @Input() resourceContent: any

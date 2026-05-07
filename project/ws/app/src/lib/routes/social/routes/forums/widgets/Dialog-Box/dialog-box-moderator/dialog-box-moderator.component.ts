@@ -6,9 +6,10 @@ import { BtnModeratorService } from '../../buttons/btn-moderator/btn-moderator.s
 // import { DialogData } from '../../buttons/btn-moderator/btn-moderator.component'
 
 @Component({
-  selector: 'ws-app-dialog-box-moderator',
-  templateUrl: './dialog-box-moderator.component.html',
-  styleUrls: ['./dialog-box-moderator.component.scss'],
+    selector: 'ws-app-dialog-box-moderator',
+    templateUrl: './dialog-box-moderator.component.html',
+    styleUrls: ['./dialog-box-moderator.component.scss'],
+    standalone: false
 })
 export class DialogBoxModeratorComponent implements OnInit {
   confirmButtonStatus = true

@@ -9,10 +9,11 @@ import { MatDialog } from '@angular/material/dialog'
 import { HomePageService } from '../../_services/home-page.service'
 
 @Component({
-  selector: 'ws-widget-profile-card-stats',
-  templateUrl: './profile-card-stats.component.html',
-  styleUrls: ['./profile-card-stats.component.scss'],
-  providers: [PipeDurationTransformPipe],
+    selector: 'ws-widget-profile-card-stats',
+    templateUrl: './profile-card-stats.component.html',
+    styleUrls: ['./profile-card-stats.component.scss'],
+    providers: [PipeDurationTransformPipe],
+    standalone: false
 })
 export class ProfileCardStatsComponent implements OnInit {
   @Input() isLoading = false

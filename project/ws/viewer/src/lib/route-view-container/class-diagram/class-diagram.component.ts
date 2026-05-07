@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'viewer-class-diagram-container',
-  templateUrl: './class-diagram.component.html',
-  styleUrls: ['./class-diagram.component.scss'],
+    selector: 'viewer-class-diagram-container',
+    templateUrl: './class-diagram.component.html',
+    styleUrls: ['./class-diagram.component.scss'],
+    standalone: false
 })
 export class ClassDiagramComponent {
   @Input() isLtMedium = false

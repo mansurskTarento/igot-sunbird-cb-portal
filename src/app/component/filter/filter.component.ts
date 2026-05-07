@@ -8,9 +8,10 @@ import { AppCbpPlansService } from '../../services/app-cbp-plans.service'
 // tslint:enable
 
 @Component({
-  selector: 'ws-app-filter',
-  templateUrl: './filter.component.html',
-  styleUrls: ['./filter.component.scss'],
+    selector: 'ws-app-filter',
+    templateUrl: './filter.component.html',
+    styleUrls: ['./filter.component.scss'],
+    standalone: false
 })
 export class FilterComponent implements OnInit {
   @Output() toggleFilter = new EventEmitter()

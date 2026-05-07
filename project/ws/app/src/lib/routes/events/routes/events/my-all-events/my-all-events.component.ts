@@ -8,9 +8,10 @@ import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 //import { DatePipe } from '@angular/common';
 
 @Component({
-  selector: 'ws-app-my-all-events',
-  templateUrl: './my-all-events.component.html',
-  styleUrls: ['./my-all-events.component.scss']
+    selector: 'ws-app-my-all-events',
+    templateUrl: './my-all-events.component.html',
+    styleUrls: ['./my-all-events.component.scss'],
+    standalone: false
 })
 export class MyAllEventsComponent {
   titles: any = []

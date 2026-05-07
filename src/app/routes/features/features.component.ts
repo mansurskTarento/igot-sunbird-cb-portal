@@ -18,9 +18,10 @@ interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
   featureWidgets: NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink>[]
 }
 @Component({
-  selector: 'ws-app-root-features',
-  templateUrl: './features.component.html',
-  styleUrls: ['./features.component.scss'],
+    selector: 'ws-app-root-features',
+    templateUrl: './features.component.html',
+    styleUrls: ['./features.component.scss'],
+    standalone: false
 })
 export class FeaturesComponent implements OnInit, OnDestroy {
   queryControl = new UntypedFormControl(this.activateRoute.snapshot.queryParamMap.get('q'))

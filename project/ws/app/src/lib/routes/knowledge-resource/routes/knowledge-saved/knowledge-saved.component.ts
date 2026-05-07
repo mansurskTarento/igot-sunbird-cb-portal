@@ -9,11 +9,12 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 // tslint:enable
 
 @Component({
-  selector: 'ws-app-knowledge-saved',
-  templateUrl: './knowledge-saved.component.html',
-  styleUrls: ['./knowledge-saved.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
+    selector: 'ws-app-knowledge-saved',
+    templateUrl: './knowledge-saved.component.html',
+    styleUrls: ['./knowledge-saved.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
+    standalone: false
 })
 export class KnowledgeSavedComponent implements OnInit {
   allResources!: NSKnowledgeResource.IResourceData[]

@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-mentors',
-  templateUrl: './mentors.component.html',
-  styleUrls: ['./mentors.component.scss']
+    selector: 'ws-app-mentors',
+    templateUrl: './mentors.component.html',
+    styleUrls: ['./mentors.component.scss'],
+    standalone: false
 })
 export class MentorsComponent implements OnInit {
   paginationSize = 12;

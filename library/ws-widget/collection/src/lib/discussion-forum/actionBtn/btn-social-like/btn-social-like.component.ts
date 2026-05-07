@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-btn-social-like',
-  templateUrl: './btn-social-like.component.html',
-  styleUrls: ['./btn-social-like.component.scss'],
+    selector: 'ws-widget-btn-social-like',
+    templateUrl: './btn-social-like.component.html',
+    styleUrls: ['./btn-social-like.component.scss'],
+    standalone: false
 })
 export class BtnSocialLikeComponent implements OnInit {
   @Input() postId = ''

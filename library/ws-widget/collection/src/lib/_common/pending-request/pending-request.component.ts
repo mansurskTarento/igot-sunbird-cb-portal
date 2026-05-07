@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-widget-pending-request',
-  templateUrl: './pending-request.component.html',
-  styleUrls: ['./pending-request.component.scss'],
+    selector: 'ws-widget-pending-request',
+    templateUrl: './pending-request.component.html',
+    styleUrls: ['./pending-request.component.scss'],
+    standalone: false
 })
 
 export class PendingRequestComponent implements OnInit {

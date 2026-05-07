@@ -30,39 +30,39 @@ const noData = {
 }
 
 @Component({
-  selector: 'ws-in-sight-side-bar',
-  templateUrl: './in-sight-side-bar.component.html',
-  styleUrls: ['./in-sight-side-bar.component.scss'],
-  animations: [
-    trigger('collapse', [
-      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({ height: '0', visibility: 'hidden' })),
-      // tslint:disable-next-line
-      transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
-      // tslint:disable-next-line
-      transition('true => false', animate(DEFAULT_DURATION + 'ms ease-out')),
-    ]),
-    trigger('collapseWeekly', [
-      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({ height: '0', visibility: 'hidden' })),
-      // state('true', style({  position: 'absolute', width: '90%',marginRight: '16px', marginLeft:'16px',top: '-118%', zIndex: '9' })),
-      // tslint:disable-next-line: prefer-template
-      transition('false => true', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-in')),
-      // tslint:disable-next-line: prefer-template
-      transition('true => false', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-out')),
-    ]),
-
-    trigger('collapsDiscuss', [
-      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-      state('true', style({ height: '0', visibility: 'hidden' })),
-      // tslint:disable-next-line:max-line-length
-      // state('true', style({  position: 'absolute', width: '80%', transform: 'scaleY(0.7)',marginRight: '32px', marginLeft:'32px',top: '-300%', zIndex: '6' })),
-      // tslint:disable-next-line: prefer-template
-      transition('false => true', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-in')),
-      // tslint:disable-next-line: prefer-template
-      transition('true => false', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-out')),
-    ]),
-  ],
+    selector: 'ws-in-sight-side-bar',
+    templateUrl: './in-sight-side-bar.component.html',
+    styleUrls: ['./in-sight-side-bar.component.scss'],
+    animations: [
+        trigger('collapse', [
+            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+            state('true', style({ height: '0', visibility: 'hidden' })),
+            // tslint:disable-next-line
+            transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
+            // tslint:disable-next-line
+            transition('true => false', animate(DEFAULT_DURATION + 'ms ease-out')),
+        ]),
+        trigger('collapseWeekly', [
+            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+            state('true', style({ height: '0', visibility: 'hidden' })),
+            // state('true', style({  position: 'absolute', width: '90%',marginRight: '16px', marginLeft:'16px',top: '-118%', zIndex: '9' })),
+            // tslint:disable-next-line: prefer-template
+            transition('false => true', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-in')),
+            // tslint:disable-next-line: prefer-template
+            transition('true => false', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-out')),
+        ]),
+        trigger('collapsDiscuss', [
+            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+            state('true', style({ height: '0', visibility: 'hidden' })),
+            // tslint:disable-next-line:max-line-length
+            // state('true', style({  position: 'absolute', width: '80%', transform: 'scaleY(0.7)',marginRight: '32px', marginLeft:'32px',top: '-300%', zIndex: '6' })),
+            // tslint:disable-next-line: prefer-template
+            transition('false => true', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-in')),
+            // tslint:disable-next-line: prefer-template
+            transition('true => false', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-out')),
+        ]),
+    ],
+    standalone: false
 })
 
 export class InsightSideBarComponent implements OnInit, OnDestroy {

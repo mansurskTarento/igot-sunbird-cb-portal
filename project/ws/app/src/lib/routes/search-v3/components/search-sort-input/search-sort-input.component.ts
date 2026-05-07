@@ -15,9 +15,10 @@ import {
 import { SearchCategory, SearchConstantLocalStorage, SortType } from '../../models/search-v3.model';
 
 @Component({
-  selector: 'ws-app-search-sort-input',
-  templateUrl: './search-sort-input.component.html',
-  styleUrls: ['./search-sort-input.component.scss'],
+    selector: 'ws-app-search-sort-input',
+    templateUrl: './search-sort-input.component.html',
+    styleUrls: ['./search-sort-input.component.scss'],
+    standalone: false
 })
 export class SearchSortInputComponent implements AfterViewInit, OnChanges {
   @Output() searchSorter = new EventEmitter();

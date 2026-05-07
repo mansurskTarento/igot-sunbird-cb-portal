@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-hands-on',
-  templateUrl: './hands-on.component.html',
-  styleUrls: ['./hands-on.component.scss'],
+    selector: 'viewer-hands-on',
+    templateUrl: './hands-on.component.html',
+    styleUrls: ['./hands-on.component.scss'],
+    standalone: false
 })
 export class HandsOnComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

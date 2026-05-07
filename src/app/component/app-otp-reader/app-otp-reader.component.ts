@@ -7,9 +7,10 @@ import {
 } from '@angular/core';
 
 @Component({
-  selector: 'ws-app-otp-reader',
-  templateUrl: './app-otp-reader.component.html',
-  styleUrls: ['./app-otp-reader.component.scss'],
+    selector: 'ws-app-otp-reader',
+    templateUrl: './app-otp-reader.component.html',
+    styleUrls: ['./app-otp-reader.component.scss'],
+    standalone: false
 })
 export class AppOtpReaderComponent {
   @Output() getOTP: EventEmitter<string> = new EventEmitter<string>();

@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-class-diagram',
-  templateUrl: './class-diagram.component.html',
-  styleUrls: ['./class-diagram.component.scss'],
+    selector: 'viewer-class-diagram',
+    templateUrl: './class-diagram.component.html',
+    styleUrls: ['./class-diagram.component.scss'],
+    standalone: false
 })
 export class ClassDiagramComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

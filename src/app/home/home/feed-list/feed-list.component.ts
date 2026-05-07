@@ -6,9 +6,10 @@ import { UtilityService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
 /* tslint:enable */
 @Component({
-  selector: 'ws-feed-list',
-  templateUrl: './feed-list.component.html',
-  styleUrls: ['./feed-list.component.scss'],
+    selector: 'ws-feed-list',
+    templateUrl: './feed-list.component.html',
+    styleUrls: ['./feed-list.component.scss'],
+    standalone: false
 })
 export class FeedListComponent implements OnInit {
   contentStripData = {}

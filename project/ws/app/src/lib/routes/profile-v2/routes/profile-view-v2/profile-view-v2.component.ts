@@ -28,10 +28,11 @@ import { NetCoreService } from '../../../../routes/services/netcore.service'
 //#endregion
 
 @Component({
-  selector: 'ws-app-profile-view-v2',
-  templateUrl: './profile-view-v2.component.html',
-  styleUrls: ['./profile-view-v2.component.scss'],
-  providers: [PipeCertificateImageURL]
+    selector: 'ws-app-profile-view-v2',
+    templateUrl: './profile-view-v2.component.html',
+    styleUrls: ['./profile-view-v2.component.scss'],
+    providers: [PipeCertificateImageURL],
+    standalone: false
 })
 export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy {
 

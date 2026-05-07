@@ -7,9 +7,10 @@ export interface IBtnFeedbackData {
   id: string; name: string
 }
 @Component({
-  selector: 'ws-widget-btn-content-feedback-dialog',
-  templateUrl: './btn-content-feedback-dialog.component.html',
-  styleUrls: ['./btn-content-feedback-dialog.component.scss'],
+    selector: 'ws-widget-btn-content-feedback-dialog',
+    templateUrl: './btn-content-feedback-dialog.component.html',
+    styleUrls: ['./btn-content-feedback-dialog.component.scss'],
+    standalone: false
 })
 export class BtnContentFeedbackDialogComponent implements OnInit {
 

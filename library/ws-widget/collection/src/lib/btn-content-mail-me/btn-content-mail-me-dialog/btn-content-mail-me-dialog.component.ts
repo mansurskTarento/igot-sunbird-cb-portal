@@ -13,9 +13,10 @@ export interface IWidgetMailMeDialogComponentResponse {
 }
 
 @Component({
-  selector: 'ws-widget-btn-content-mail-me-dialog',
-  templateUrl: './btn-content-mail-me-dialog.component.html',
-  styleUrls: ['./btn-content-mail-me-dialog.component.scss'],
+    selector: 'ws-widget-btn-content-mail-me-dialog',
+    templateUrl: './btn-content-mail-me-dialog.component.html',
+    styleUrls: ['./btn-content-mail-me-dialog.component.scss'],
+    standalone: false
 })
 export class BtnContentMailMeDialogComponent implements OnInit {
 

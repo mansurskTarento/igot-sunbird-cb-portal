@@ -6,9 +6,10 @@ import { TranslateService } from '@ngx-translate/core'
 
 import { RatingService } from '@sunbird-cb/collection'
 @Component({
-  selector: 'viewer-course-completion-dialog',
-  templateUrl: './course-completion-dialog.component.html',
-  styleUrls: ['./course-completion-dialog.component.scss'],
+    selector: 'viewer-course-completion-dialog',
+    templateUrl: './course-completion-dialog.component.html',
+    styleUrls: ['./course-completion-dialog.component.scss'],
+    standalone: false
 })
 export class CourseCompletionDialogComponent implements OnInit {
   courseName = ''

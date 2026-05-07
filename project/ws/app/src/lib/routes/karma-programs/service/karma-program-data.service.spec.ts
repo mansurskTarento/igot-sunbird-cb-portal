@@ -6,7 +6,7 @@ describe('KarmaProgramDataService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: KarmaProgramDataService = TestBed.get(KarmaProgramDataService)
+    const service: KarmaProgramDataService = TestBed.inject(KarmaProgramDataService)
     expect(service).toBeTruthy()
   })
 })

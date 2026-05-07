@@ -16,9 +16,10 @@ import { TFetchStatus, TSendStatus } from '@sunbird-cb/utils-v2'
 import { MyFeedbackService } from '../../services/my-feedback.service'
 
 @Component({
-  selector: 'ws-app-feedback-thread',
-  templateUrl: './feedback-thread.component.html',
-  styleUrls: ['./feedback-thread.component.scss'],
+    selector: 'ws-app-feedback-thread',
+    templateUrl: './feedback-thread.component.html',
+    styleUrls: ['./feedback-thread.component.scss'],
+    standalone: false
 })
 export class FeedbackThreadComponent implements OnInit, OnChanges {
   @Input() feedbackId!: string

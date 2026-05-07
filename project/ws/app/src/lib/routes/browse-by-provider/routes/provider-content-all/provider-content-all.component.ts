@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { NsContentStripWithTabs } from '@sunbird-cb/consumption/lib/_common/content-strip-with-tabs-lib/content-strip-with-tabs-lib.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/consumption'
 
 import { BrowseProviderService } from '../../services/browse-provider.service'
 import { UtilityService } from '@sunbird-cb/utils-v2'
@@ -12,6 +12,7 @@ import { FormExtService } from '../../../../routes/services/form-ext.service'
   selector: 'ws-app-provider-content-all',
   templateUrl: './provider-content-all.component.html',
   styleUrls: ['./provider-content-all.component.scss'],
+  standalone: false
 })
 export class ProviderContentAllComponent implements OnInit, OnDestroy {
 

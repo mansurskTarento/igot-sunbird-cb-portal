@@ -12,9 +12,10 @@ import { FILE_MAX_SIZE } from '../../../../../../../../../constants/upload'
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-slider',
-  templateUrl: './slider.component.html',
-  styleUrls: ['./slider.component.scss'],
+    selector: 'ws-auth-slider',
+    templateUrl: './slider.component.html',
+    styleUrls: ['./slider.component.scss'],
+    standalone: false
 })
 export class SliderComponent implements OnInit {
 

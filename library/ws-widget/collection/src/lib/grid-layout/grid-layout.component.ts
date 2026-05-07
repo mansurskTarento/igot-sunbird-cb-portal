@@ -21,9 +21,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 // }
 
 @Component({
-  selector: 'ws-widget-grid-layout',
-  templateUrl: './grid-layout.component.html',
-  styleUrls: ['./grid-layout.component.scss'],
+    selector: 'ws-widget-grid-layout',
+    templateUrl: './grid-layout.component.html',
+    styleUrls: ['./grid-layout.component.scss'],
+    standalone: false
 })
 
 export class GridLayoutComponent extends WidgetBaseComponent

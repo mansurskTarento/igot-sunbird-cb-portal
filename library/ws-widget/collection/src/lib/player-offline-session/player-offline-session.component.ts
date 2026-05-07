@@ -12,9 +12,10 @@ import { IWidgetsPlayerOfflineSessionData } from './player-offline-session.model
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-widget-player-offline-session',
-  templateUrl: './player-offline-session.component.html',
-  styleUrls: ['./player-offline-session.component.scss'],
+    selector: 'ws-widget-player-offline-session',
+    templateUrl: './player-offline-session.component.html',
+    styleUrls: ['./player-offline-session.component.scss'],
+    standalone: false
 })
 export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges, NsWidgetResolver.IWidgetData<any> {

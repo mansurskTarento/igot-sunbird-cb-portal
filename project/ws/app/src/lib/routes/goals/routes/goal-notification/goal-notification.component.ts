@@ -7,9 +7,10 @@ import { GoalAcceptDialogComponent } from '../../components/goal-accept-dialog/g
 import { GoalRejectDialogComponent } from '../../components/goal-reject-dialog/goal-reject-dialog.component'
 
 @Component({
-  selector: 'ws-app-goal-notification',
-  templateUrl: './goal-notification.component.html',
-  styleUrls: ['./goal-notification.component.scss'],
+    selector: 'ws-app-goal-notification',
+    templateUrl: './goal-notification.component.html',
+    styleUrls: ['./goal-notification.component.scss'],
+    standalone: false
 })
 export class GoalNotificationComponent implements OnInit {
   goals: NsGoal.IGoal[] | null = this.route.snapshot.data.pendingGoals.data

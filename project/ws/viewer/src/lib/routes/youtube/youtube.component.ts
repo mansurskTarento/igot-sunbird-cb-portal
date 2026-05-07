@@ -13,9 +13,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-youtube',
-  templateUrl: './youtube.component.html',
-  styleUrls: ['./youtube.component.scss'],
+    selector: 'viewer-youtube',
+    templateUrl: './youtube.component.html',
+    styleUrls: ['./youtube.component.scss'],
+    standalone: false
 })
 export class YoutubeComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

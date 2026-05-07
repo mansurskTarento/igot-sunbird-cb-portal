@@ -5,9 +5,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-competency-card',
-  templateUrl: './competency-card.component.html',
-  styleUrls: ['./competency-card.component.scss'],
+    selector: 'ws-app-competency-card',
+    templateUrl: './competency-card.component.html',
+    styleUrls: ['./competency-card.component.scss'],
+    standalone: false
 })
 export class CompetencyCardComponent implements OnInit {
   @Input() competency!: any

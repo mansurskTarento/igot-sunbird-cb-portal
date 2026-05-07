@@ -9,9 +9,10 @@ interface IUserShareId {
 }
 
 @Component({
-  selector: 'ws-widget-email-input',
-  templateUrl: './email-input.component.html',
-  styleUrls: ['./email-input.component.scss'],
+    selector: 'ws-widget-email-input',
+    templateUrl: './email-input.component.html',
+    styleUrls: ['./email-input.component.scss'],
+    standalone: false
 })
 export class EmailInputComponent implements OnInit {
 

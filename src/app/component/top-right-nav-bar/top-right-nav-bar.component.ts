@@ -40,9 +40,10 @@ import { NotificationsService } from '../../services/notifications.service'
 // ]
 
 @Component({
-  selector: 'ws-top-right-nav-bar',
-  templateUrl: './top-right-nav-bar.component.html',
-  styleUrls: ['./top-right-nav-bar.component.scss'],
+    selector: 'ws-top-right-nav-bar',
+    templateUrl: './top-right-nav-bar.component.html',
+    styleUrls: ['./top-right-nav-bar.component.scss'],
+    standalone: false
 })
 export class TopRightNavBarComponent implements OnInit, OnChanges {
   @Input() item: any

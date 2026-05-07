@@ -6,7 +6,7 @@ describe('CkEditorService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: CkEditorService = TestBed.get(CkEditorService)
+    const service: CkEditorService = TestBed.inject(CkEditorService)
     expect(service).toBeTruthy()
   })
 })

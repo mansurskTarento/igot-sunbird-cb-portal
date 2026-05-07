@@ -19,9 +19,10 @@ dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
 @Component({
-  selector: 'ws-cbp-plan',
-  templateUrl: './cbp-plan.component.html',
-  styleUrls: ['./cbp-plan.component.scss'],
+    selector: 'ws-cbp-plan',
+    templateUrl: './cbp-plan.component.html',
+    styleUrls: ['./cbp-plan.component.scss'],
+    standalone: false
 })
 export class CbpPlanComponent implements OnInit {
   cbpConfig: any

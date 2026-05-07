@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-client-slider',
-  templateUrl: './client-slider.component.html',
-  styleUrls: ['./client-slider.component.scss'],
+    selector: 'ws-client-slider',
+    templateUrl: './client-slider.component.html',
+    styleUrls: ['./client-slider.component.scss'],
+    standalone: false
 })
 export class ClientSliderComponent implements OnInit {
   @Input() clientList: any

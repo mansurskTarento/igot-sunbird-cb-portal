@@ -14,15 +14,13 @@ export interface IDialogData {
   name: string
 }
 @Component({
-  selector: 'app-competence-view',
-  templateUrl: './competencies-view.component.html',
-  styleUrls: ['./competencies-view.component.scss'],
-  /* tslint:disable */
-  /* host: { class: 'flex flex-1 margin-right-xs margin-top-xs margin-bottom-s' },*/
-  host: { class: 'flex flex-1' },
-
-  /* tslint:enable */
-
+    selector: 'app-competence-view',
+    templateUrl: './competencies-view.component.html',
+    styleUrls: ['./competencies-view.component.scss'],
+    /* tslint:disable */
+    /* host: { class: 'flex flex-1 margin-right-xs margin-top-xs margin-bottom-s' },*/
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 export class CompetenceViewComponent implements OnInit {

@@ -9,9 +9,10 @@ import { Notify } from '../../../../../../../../../constants/notificationMessage
 import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
 
 @Component({
-  selector: 'ws-auth-input-v2',
-  templateUrl: './input-v2.component.html',
-  styleUrls: ['./input-v2.component.scss'],
+    selector: 'ws-auth-input-v2',
+    templateUrl: './input-v2.component.html',
+    styleUrls: ['./input-v2.component.scss'],
+    standalone: false
 })
 export class InputV2Component implements OnInit {
   isSubmitPressed = false

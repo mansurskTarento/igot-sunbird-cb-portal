@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Competency } from '../../../models/profile-revamp.model';
 
 @Component({
-  selector: 'ws-app-competencies',
-  templateUrl: './competencies.component.html',
-  styleUrls: ['./competencies.component.scss']
+    selector: 'ws-app-competencies',
+    templateUrl: './competencies.component.html',
+    styleUrls: ['./competencies.component.scss'],
+    standalone: false
 })
 export class CompetenciesComponent implements OnInit {
   //#region (global variable)

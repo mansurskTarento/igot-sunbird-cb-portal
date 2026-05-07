@@ -2,9 +2,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'app-discuss-leaderboard',
-  templateUrl: './discuss-leaderboard.component.html',
-  styleUrls: ['./discuss-leaderboard.component.scss'],
+    selector: 'app-discuss-leaderboard',
+    templateUrl: './discuss-leaderboard.component.html',
+    styleUrls: ['./discuss-leaderboard.component.scss'],
+    standalone: false
 })
 export class DiscussLeaderboardComponent implements OnInit {
 

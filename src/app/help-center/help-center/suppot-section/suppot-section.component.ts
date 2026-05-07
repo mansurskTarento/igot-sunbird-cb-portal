@@ -24,9 +24,10 @@ interface StateData {
 }
 
 @Component({
-  selector: 'app-suppot-section',
-  templateUrl: './suppot-section.component.html',
-  styleUrls: ['./suppot-section.component.scss'],
+    selector: 'app-suppot-section',
+    templateUrl: './suppot-section.component.html',
+    styleUrls: ['./suppot-section.component.scss'],
+    standalone: false
 })
 export class SuppotSectionComponent implements OnInit, OnChanges {
 

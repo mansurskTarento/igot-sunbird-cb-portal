@@ -6,9 +6,10 @@ import * as _ from 'lodash';
 import { SettingsService } from '../../settings.service'
 
 @Component({
-  selector: 'ws-app-left-menu-item',
-  templateUrl: './left-menu-item.component.html',
-  styleUrls: ['./left-menu-item.component.scss']
+    selector: 'ws-app-left-menu-item',
+    templateUrl: './left-menu-item.component.html',
+    styleUrls: ['./left-menu-item.component.scss'],
+    standalone: false
 })
 export class LeftMenuItemComponent implements OnChanges {
   //#region (global variables)

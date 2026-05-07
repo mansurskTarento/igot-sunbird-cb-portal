@@ -1,6 +1,6 @@
 // Core imports
-import { Component, OnDestroy, OnInit, Inject } from '@angular/core'
-import { DOCUMENT } from '@angular/common'
+import { Component, OnDestroy, OnInit, Inject, DOCUMENT } from '@angular/core'
+
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
 // RxJS imports
@@ -16,9 +16,10 @@ import { MatTabChangeEvent } from '@angular/material/tabs'
 import { CompetencyPassbookService } from '../competency-passbook.service'
 
 @Component({
-  selector: 'ws-competency-list-v2',
-  templateUrl: './competency-list-v2.component.html',
-  styleUrls: ['./competency-list-v2.component.scss'],
+    selector: 'ws-competency-list-v2',
+    templateUrl: './competency-list-v2.component.html',
+    styleUrls: ['./competency-list-v2.component.scss'],
+    standalone: false
 })
 
 export class CompetencyListV2Component implements OnInit, OnDestroy {

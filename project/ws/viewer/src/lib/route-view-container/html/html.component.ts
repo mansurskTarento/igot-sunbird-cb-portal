@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router'
 import { SafeHtml, DomSanitizer } from '@angular/platform-browser'
 import { PipeLimitToPipe, ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'viewer-html-container',
-  templateUrl: './html.component.html',
-  styleUrls: ['./html.component.scss'],
+    selector: 'viewer-html-container',
+    templateUrl: './html.component.html',
+    styleUrls: ['./html.component.scss'],
+    standalone: false
 })
 export class HtmlComponent implements OnInit, OnChanges {
 

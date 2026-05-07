@@ -10,9 +10,10 @@ interface IWidgetBtnContentFeedback {
 }
 
 @Component({
-  selector: 'ws-widget-btn-content-feedback',
-  templateUrl: './btn-content-feedback.component.html',
-  styleUrls: ['./btn-content-feedback.component.scss'],
+    selector: 'ws-widget-btn-content-feedback',
+    templateUrl: './btn-content-feedback.component.html',
+    styleUrls: ['./btn-content-feedback.component.scss'],
+    standalone: false
 })
 export class BtnContentFeedbackComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IWidgetBtnContentFeedback> {

@@ -4,9 +4,10 @@ import { NsGoal } from '@sunbird-cb/collection'
 import { PersonProfileService } from '../../services/person-profile.service'
 
 @Component({
-  selector: 'ws-app-user-goals',
-  templateUrl: './user-goals.component.html',
-  styleUrls: ['./user-goals.component.scss'],
+    selector: 'ws-app-user-goals',
+    templateUrl: './user-goals.component.html',
+    styleUrls: ['./user-goals.component.scss'],
+    standalone: false
 })
 export class UserGoalsComponent implements OnInit, OnChanges {
   @Input() wid = ''

@@ -12,9 +12,10 @@ import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-competency-detailed-view',
-  templateUrl: './competency-detailed-view.component.html',
-  styleUrls: ['./competency-detailed-view.component.scss']
+    selector: 'ws-app-competency-detailed-view',
+    templateUrl: './competency-detailed-view.component.html',
+    styleUrls: ['./competency-detailed-view.component.scss'],
+    standalone: false
 })
 export class CompetencyDetailedViewComponent implements OnInit, OnDestroy {
   @ViewChild('successMsg', { static: true }) successMsg!: ElementRef

@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-provider-page-v2',
-  templateUrl: './provider-page-v2.component.html',
-  styleUrls: ['./provider-page-v2.component.scss'],
+    selector: 'ws-app-provider-page-v2',
+    templateUrl: './provider-page-v2.component.html',
+    styleUrls: ['./provider-page-v2.component.scss'],
+    standalone: false
 })
 export class ProviderPageV2Component implements OnInit {
 

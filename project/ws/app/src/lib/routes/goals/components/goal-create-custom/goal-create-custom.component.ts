@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router, ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-goal-create-custom',
-  templateUrl: './goal-create-custom.component.html',
-  styleUrls: ['./goal-create-custom.component.scss'],
+    selector: 'ws-app-goal-create-custom',
+    templateUrl: './goal-create-custom.component.html',
+    styleUrls: ['./goal-create-custom.component.scss'],
+    standalone: false
 })
 export class GoalCreateCustomComponent implements OnInit {
   @ViewChild('selectContent', { static: true })

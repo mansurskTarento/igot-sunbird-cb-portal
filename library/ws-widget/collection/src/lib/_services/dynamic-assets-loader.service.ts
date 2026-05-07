@@ -43,7 +43,7 @@ export class DynamicAssetsLoaderService {
     }
   }
 
-  private async loadEventPromise(url: string): Promise<boolean> {
+  private async loadEventPromise(url: string): Promise<any> {
     const elem = this.urlElemMapping.get(url)
     if (!elem) {
       return true

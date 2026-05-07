@@ -8,9 +8,10 @@ import { ForumHandlerService } from '../../service/EmitterService/forum-handler.
 import { ForumService } from '../../service/forum.service'
 
 @Component({
-  selector: 'ws-app-forum-view',
-  templateUrl: './forum-view.component.html',
-  styleUrls: ['./forum-view.component.scss'],
+    selector: 'ws-app-forum-view',
+    templateUrl: './forum-view.component.html',
+    styleUrls: ['./forum-view.component.scss'],
+    standalone: false
 })
 export class ForumViewComponent implements OnInit {
   isXSmall$: Observable<boolean>

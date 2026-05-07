@@ -35,9 +35,10 @@ function isStripActive(strip: any): boolean {
 const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-  selector: 'ws-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+    selector: 'ws-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 

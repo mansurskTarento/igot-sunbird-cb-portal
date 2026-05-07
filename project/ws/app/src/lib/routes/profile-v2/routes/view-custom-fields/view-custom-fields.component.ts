@@ -8,9 +8,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-view-custom-fields',
-  templateUrl: './view-custom-fields.component.html',
-  styleUrls: ['./view-custom-fields.component.scss']
+    selector: 'ws-app-view-custom-fields',
+    templateUrl: './view-custom-fields.component.html',
+    styleUrls: ['./view-custom-fields.component.scss'],
+    standalone: false
 })
 export class ViewCustomFieldsComponent {
 

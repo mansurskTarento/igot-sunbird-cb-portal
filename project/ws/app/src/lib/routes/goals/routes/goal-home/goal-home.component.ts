@@ -4,9 +4,10 @@ import { Router } from '@angular/router'
 import { BtnGoalsService } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-goal-home',
-  templateUrl: './goal-home.component.html',
-  styleUrls: ['./goal-home.component.scss'],
+    selector: 'ws-app-goal-home',
+    templateUrl: './goal-home.component.html',
+    styleUrls: ['./goal-home.component.scss'],
+    standalone: false
 })
 export class GoalHomeComponent implements OnInit {
   navBackground: Partial<NsPage.INavBackground>

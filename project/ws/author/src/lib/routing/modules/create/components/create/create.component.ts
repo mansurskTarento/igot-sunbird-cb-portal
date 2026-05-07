@@ -15,9 +15,10 @@ import { NOTIFICATION_TIME } from '../../../../../constants/constant'
 import { ErrorParserComponent } from '../../../../../modules/shared/components/error-parser/error-parser.component'
 
 @Component({
-  selector: 'ws-auth-generic',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss'],
+    selector: 'ws-auth-generic',
+    templateUrl: './create.component.html',
+    styleUrls: ['./create.component.scss'],
+    standalone: false
 })
 export class CreateComponent implements OnInit, OnDestroy {
   entity: ICreateEntity[] = []

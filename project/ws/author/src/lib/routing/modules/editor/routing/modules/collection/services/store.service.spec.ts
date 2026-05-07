@@ -6,7 +6,7 @@ describe('CollectionStoreService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: CollectionStoreService = TestBed.get(CollectionStoreService)
+    const service: CollectionStoreService = TestBed.inject(CollectionStoreService)
     expect(service).toBeTruthy()
   })
 })

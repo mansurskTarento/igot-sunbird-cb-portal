@@ -11,9 +11,10 @@ export interface IDialogData {
   name: string
 }
 @Component({
-  selector: 'app-discuss-start',
-  templateUrl: './discuss-start.component.html',
-  styleUrls: ['./discuss-start.component.scss'],
+    selector: 'app-discuss-start',
+    templateUrl: './discuss-start.component.html',
+    styleUrls: ['./discuss-start.component.scss'],
+    standalone: false
 })
 export class DiscussStartComponent implements OnInit {
   startForm!: UntypedFormGroup

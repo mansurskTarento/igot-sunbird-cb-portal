@@ -5,9 +5,10 @@ import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-provider-page',
-  templateUrl: './provider-page.component.html',
-  styleUrls: ['./provider-page.component.scss'],
+    selector: 'ws-app-provider-page',
+    templateUrl: './provider-page.component.html',
+    styleUrls: ['./provider-page.component.scss'],
+    standalone: false
 })
 export class ProviderPageComponent implements OnInit  {
 

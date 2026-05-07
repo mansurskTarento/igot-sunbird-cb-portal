@@ -4,9 +4,10 @@ import { TFetchStatus, ValueService, ConfigurationsService, NsPage } from '@sunb
 import { NsDiscussionForum, WsDiscussionForumService } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-recent-blog',
-  templateUrl: './recent-blog.component.html',
-  styleUrls: ['./recent-blog.component.scss'],
+    selector: 'ws-app-recent-blog',
+    templateUrl: './recent-blog.component.html',
+    styleUrls: ['./recent-blog.component.scss'],
+    standalone: false
 })
 export class RecentBlogComponent implements OnInit {
   timelineData: NsDiscussionForum.ITimeline = {

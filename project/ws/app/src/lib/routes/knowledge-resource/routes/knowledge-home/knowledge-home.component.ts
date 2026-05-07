@@ -6,9 +6,10 @@ import { ActivatedRoute, Router, Event, NavigationEnd, NavigationError } from '@
 import { NSKnowledgeResource } from '../../models/knowledge-resource.models'
 
 @Component({
-  selector: 'ws-app-knowledge-home',
-  templateUrl: './knowledge-home.component.html',
-  styleUrls: ['./knowledge-home.component.scss'],
+    selector: 'ws-app-knowledge-home',
+    templateUrl: './knowledge-home.component.html',
+    styleUrls: ['./knowledge-home.component.scss'],
+    standalone: false
 })
 export class KnowledgeHomeComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

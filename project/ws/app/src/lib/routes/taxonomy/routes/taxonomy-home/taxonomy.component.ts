@@ -7,9 +7,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { TaxonomyService } from '../../services/taxonomy.service'
 const APP_TAXONOMY = `/app/taxonomy/`
 @Component({
-  selector: 'app-taxonomy',
-  templateUrl: './taxonomy.component.html',
-  styleUrls: ['./taxonomy.component.scss'],
+    selector: 'app-taxonomy',
+    templateUrl: './taxonomy.component.html',
+    styleUrls: ['./taxonomy.component.scss'],
+    standalone: false
 })
 export class TaxonomyHomeComponent implements OnInit, OnDestroy {
   sideNavBarOpened = true

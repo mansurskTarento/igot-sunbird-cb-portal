@@ -9,9 +9,10 @@ import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs/o
 import { InterestService } from '../../services/interest.service'
 
 @Component({
-  selector: 'ws-app-interest',
-  templateUrl: './interest.component.html',
-  styleUrls: ['./interest.component.scss'],
+    selector: 'ws-app-interest',
+    templateUrl: './interest.component.html',
+    styleUrls: ['./interest.component.scss'],
+    standalone: false
 })
 export class InterestComponent implements OnInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>

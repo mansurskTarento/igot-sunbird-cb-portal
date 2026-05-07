@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormGroup, UntypedFormBuilder, Validators } from '@angular/forms'
 import { PLAYLIST_TITLE_MIN_LENGTH, PLAYLIST_TITLE_MAX_LENGTH } from '../../constants/playlist.constant'
 @Component({
-  selector: 'ws-app-playlist-edit',
-  templateUrl: './playlist-edit.component.html',
-  styleUrls: ['./playlist-edit.component.scss'],
+    selector: 'ws-app-playlist-edit',
+    templateUrl: './playlist-edit.component.html',
+    styleUrls: ['./playlist-edit.component.scss'],
+    standalone: false
 })
 export class PlaylistEditComponent implements OnInit {
 

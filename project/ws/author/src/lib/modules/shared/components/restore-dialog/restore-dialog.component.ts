@@ -17,9 +17,10 @@ import { NOTIFICATION_TIME } from '../../../../constants/constant'
 import { Notify } from '../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-restore-dialog',
-  templateUrl: './restore-dialog.component.html',
-  styleUrls: ['./restore-dialog.component.scss'],
+    selector: 'ws-auth-restore-dialog',
+    templateUrl: './restore-dialog.component.html',
+    styleUrls: ['./restore-dialog.component.scss'],
+    standalone: false
 })
 export class RestoreDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup

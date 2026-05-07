@@ -8,9 +8,10 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-send-mail-dialog',
-  templateUrl: './send-mail-dialog.component.html',
-  styleUrls: ['./send-mail-dialog.component.scss'],
+    selector: 'ws-send-mail-dialog',
+    templateUrl: './send-mail-dialog.component.html',
+    styleUrls: ['./send-mail-dialog.component.scss'],
+    standalone: false
 })
 export class SendMailDialogComponent implements OnInit {
   mailBodyText = ''

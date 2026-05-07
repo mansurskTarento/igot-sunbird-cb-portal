@@ -39,10 +39,11 @@ import { DeleteDialogComponent } from '../../../../../../../../modules/shared/co
  */
 
 @Component({
-  selector: 'ws-auth-collection',
-  templateUrl: './collection.component.html',
-  styleUrls: ['./collection.component.scss'],
-  providers: [CollectionStoreService, CollectionResolverService],
+    selector: 'ws-auth-collection',
+    templateUrl: './collection.component.html',
+    styleUrls: ['./collection.component.scss'],
+    providers: [CollectionStoreService, CollectionResolverService],
+    standalone: false
 })
 export class CollectionComponent implements OnInit, OnDestroy {
   contents: NSContent.IContentMeta[] = []

@@ -10,9 +10,10 @@ import { NOTIFICATION_TIME } from '../../../../../constants/constant'
 import { Notify } from '../../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-root-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+    selector: 'ws-auth-root-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    standalone: false
 })
 export class DashboardComponent implements OnInit {
   public options = [

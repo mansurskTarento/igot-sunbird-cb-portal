@@ -3,9 +3,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-update-posts',
-  templateUrl: './update-posts.component.html',
-  styleUrls: ['./update-posts.component.scss'],
+    selector: 'ws-widget-update-posts',
+    templateUrl: './update-posts.component.html',
+    styleUrls: ['./update-posts.component.scss'],
+    standalone: false
 })
 
 export class UpdatePostsComponent implements OnInit {

@@ -8,9 +8,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 import { IWidgetErrorAccessForbidden } from '../error-access-forbidden/error-access-forbidden.model'
 @Component({
-  selector: 'ws-widget-error-content-unavailable',
-  templateUrl: './error-content-unavailable.component.html',
-  styleUrls: ['./error-content-unavailable.component.scss'],
+    selector: 'ws-widget-error-content-unavailable',
+    templateUrl: './error-content-unavailable.component.html',
+    styleUrls: ['./error-content-unavailable.component.scss'],
+    standalone: false
 })
 export class ErrorContentUnavailableComponent implements OnInit, OnDestroy {
   @Input() errorData: null | IWidgetErrorAccessForbidden = null

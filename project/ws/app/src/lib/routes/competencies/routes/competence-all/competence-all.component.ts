@@ -12,12 +12,12 @@ import { ConfigurationsService, WsEvents, EventService, MultilingualTranslations
 import { ThemePalette } from '@angular/material/core'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'app-competence-all',
-  templateUrl: './competence-all.component.html',
-  styleUrls: ['./competence-all.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
-  /* tslint:enable */
+    selector: 'app-competence-all',
+    templateUrl: './competence-all.component.html',
+    styleUrls: ['./competence-all.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
+    standalone: false
 })
 export class CompetenceAllComponent implements OnInit {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

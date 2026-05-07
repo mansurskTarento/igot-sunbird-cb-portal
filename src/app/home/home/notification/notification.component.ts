@@ -3,9 +3,10 @@ import { Router } from '@angular/router'
 import { MAT_SNACK_BAR_DATA, MatSnackBarRef as MatSnackBarRef } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-notification',
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss'],
+    selector: 'ws-notification',
+    templateUrl: './notification.component.html',
+    styleUrls: ['./notification.component.scss'],
+    standalone: false
 })
 export class NotificationComponent implements OnInit {
 

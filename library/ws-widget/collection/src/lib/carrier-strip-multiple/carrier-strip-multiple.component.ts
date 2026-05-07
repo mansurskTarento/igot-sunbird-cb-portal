@@ -36,9 +36,10 @@ interface IStripUnitContentData {
   description?: string | null
 }
 @Component({
-  selector: 'ws-widget-carrier-strip-multiple',
-  templateUrl: './carrier-strip-multiple.component.html',
-  styleUrls: ['./carrier-strip-multiple.component.scss'],
+    selector: 'ws-widget-carrier-strip-multiple',
+    templateUrl: './carrier-strip-multiple.component.html',
+    styleUrls: ['./carrier-strip-multiple.component.scss'],
+    standalone: false
 })
 export class CarrierStripMultipleComponent extends WidgetBaseComponent
   implements

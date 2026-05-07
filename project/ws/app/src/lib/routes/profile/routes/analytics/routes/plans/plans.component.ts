@@ -3,9 +3,10 @@ import { AnalyticsService } from '../../services/analytics.service'
 import { NSAnalyticsData } from '../../models/analytics.model'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'ws-app-plans',
-  templateUrl: './plans.component.html',
-  styleUrls: ['./plans.component.scss'],
+    selector: 'ws-app-plans',
+    templateUrl: './plans.component.html',
+    styleUrls: ['./plans.component.scss'],
+    standalone: false
 })
 export class PlansComponent implements OnInit {
   startDate = '2018-04-01'

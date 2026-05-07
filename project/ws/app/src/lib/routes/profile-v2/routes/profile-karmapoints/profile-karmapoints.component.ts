@@ -6,12 +6,12 @@ import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird
 import moment from 'moment'
 
 @Component({
-  selector: 'app-profile-karmapoints',
-  templateUrl: './profile-karmapoints.component.html',
-  styleUrls: ['./profile-karmapoints.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-profile-karmapoints',
+    templateUrl: './profile-karmapoints.component.html',
+    styleUrls: ['./profile-karmapoints.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class ProfileKarmapointsComponent implements OnInit {
   currentUser: any

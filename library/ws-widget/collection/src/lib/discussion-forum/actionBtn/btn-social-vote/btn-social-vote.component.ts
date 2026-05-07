@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-btn-social-vote',
-  templateUrl: './btn-social-vote.component.html',
-  styleUrls: ['./btn-social-vote.component.scss'],
+    selector: 'ws-widget-btn-social-vote',
+    templateUrl: './btn-social-vote.component.html',
+    styleUrls: ['./btn-social-vote.component.scss'],
+    standalone: false
 })
 export class BtnSocialVoteComponent implements OnInit {
   @Input() voteType: 'downVote' | 'upVote' | 'none' = 'none'

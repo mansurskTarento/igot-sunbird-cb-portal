@@ -3,9 +3,10 @@ import { Router } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-provider-card',
-  templateUrl: './provider-card.component.html',
-  styleUrls: ['./provider-card.component.scss'],
+    selector: 'ws-app-provider-card',
+    templateUrl: './provider-card.component.html',
+    styleUrls: ['./provider-card.component.scss'],
+    standalone: false
 })
 export class ProviderCardComponent implements OnInit {
   @Input() provider!: any

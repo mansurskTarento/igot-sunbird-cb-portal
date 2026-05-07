@@ -8,11 +8,12 @@ import { CertificateDetailsComponent } from './certificate-details.component'
 import { FormsModule } from '@angular/forms'
 import { SharedModule, ResourceService, ConfigService, BrowserCacheTtlService } from '@sunbird/shared'
 import { SuiModule } from 'ng2-semantic-ui'
-import { HttpClientTestingModule } from '@angular/common/http/testing'
+import { provideHttpClientTesting } from '@angular/common/http/testing'
 import { TelemetryModule } from '@sunbird/telemetry'
 import { PlayerHelperModule } from '@sunbird/player-helper'
 import { throwError as observableThrowError, of as observableOf } from 'rxjs'
 import { validateCertMockResponse } from './certificate-details.component.spec.data'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('CertificateDetailsComponent', () => {
   let component: CertificateDetailsComponent
@@ -40,13 +41,12 @@ describe('CertificateDetailsComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, FormsModule, SharedModule.forRoot(), SuiModule, TelemetryModule.forRoot(), PlayerHelperModule],
-      declarations: [CertificateDetailsComponent],
-      providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService, DeviceDetectorService,
+    declarations: [CertificateDetailsComponent],
+    imports: [FormsModule, SharedModule.forRoot(), SuiModule, TelemetryModule.forRoot(), PlayerHelperModule],
+    providers: [ResourceService, ConfigService, CacheService, BrowserCacheTtlService, DeviceDetectorService,
         { provide: Router, useClass: RouterStub },
-        { provide: ActivatedRoute, useValue: fakeActivatedRoute },
-      ],
-    })
+        { provide: ActivatedRoute, useValue: fakeActivatedRoute }, provideHttpClient(withInterceptorsFromDi()), provideHttpClientTesting(),]
+})
       .compileComponents()
   }))
 
@@ -58,7 +58,7 @@ describe('CertificateDetailsComponent', () => {
 
   it('should verify the certificate', () => {
     component.loader = true
-    const certificateService = TestBed.get(CertificateService)
+    const certificateService = TestBed.inject(CertificateService)
     spyOn(certificateService, 'validateCertificate').and.returnValue(observableOf(validateCertMockResponse.successResponse))
     const certData = validateCertMockResponse.successResponse
     component.certificateVerify()
@@ -70,7 +70,7 @@ describe('CertificateDetailsComponent', () => {
 
   it('should not verify the certificate', () => {
     component.loader = true
-    const certificateService = TestBed.get(CertificateService)
+    const certificateService = TestBed.inject(CertificateService)
     spyOn(certificateService, 'validateCertificate').and.callFake(() => observableThrowError(validateCertMockResponse.errorRespone))
     const certData = validateCertMockResponse.errorRespone
     component.certificateVerify()
@@ -80,7 +80,7 @@ describe('CertificateDetailsComponent', () => {
   })
 
   it('should get content id', () => {
-    const playerService = TestBed.get(PublicPlayerService)
+    const playerService = TestBed.inject(PublicPlayerService)
     spyOn(playerService, 'getCollectionHierarchy').and.returnValue(observableOf(validateCertMockResponse.getCourseIdResponse))
     component.watchVideoLink = validateCertMockResponse.getCourseIdResponse.result.content.certVideoUrl
     component.getCourseVideoUrl('do_1126972203209768961327')
@@ -89,7 +89,7 @@ describe('CertificateDetailsComponent', () => {
 
   it('should play the content', () => {
     component.showVideoThumbnail = false
-    const playerService = TestBed.get(PublicPlayerService)
+    const playerService = TestBed.inject(PublicPlayerService)
     spyOn(playerService, 'getContent').and.returnValue(observableOf(validateCertMockResponse.getContentResponse))
     component.playContent('do_112831862871203840114')
   })

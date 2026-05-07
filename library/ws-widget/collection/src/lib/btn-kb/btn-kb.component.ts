@@ -5,9 +5,10 @@ import { NsContent } from '../_services/widget-content.model'
 import { BtnKbDialogComponent } from './btn-kb-dialog/btn-kb-dialog.component'
 
 @Component({
-  selector: 'ws-widget-btn-kb',
-  templateUrl: './btn-kb.component.html',
-  styleUrls: ['./btn-kb.component.scss'],
+    selector: 'ws-widget-btn-kb',
+    templateUrl: './btn-kb.component.html',
+    styleUrls: ['./btn-kb.component.scss'],
+    standalone: false
 })
 export class BtnKbComponent implements OnInit {
   @Input() status!: string

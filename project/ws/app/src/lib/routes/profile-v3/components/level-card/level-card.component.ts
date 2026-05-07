@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-level-card',
-  templateUrl: './level-card.component.html',
-  styleUrls: ['./level-card.component.scss'],
+    selector: 'ws-app-level-card',
+    templateUrl: './level-card.component.html',
+    styleUrls: ['./level-card.component.scss'],
+    standalone: false
 })
 export class LevelCardComponent implements OnInit {
   selectedLevelId: any

@@ -11,9 +11,10 @@ import { Router } from '@angular/router'
 // import { DomSanitizer } from '@angular/platform-browser'
 // import { ZohoFormService } from './zoho-form.service'
 @Component({
-  selector: 'ws-header',
-  templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss'],
+    selector: 'ws-header',
+    templateUrl: './header.component.html',
+    styleUrls: ['./header.component.scss'],
+    standalone: false
 })
 export class HeaderComponent implements OnInit {
   isXSmall$ = this.valueSvc.isXSmall$

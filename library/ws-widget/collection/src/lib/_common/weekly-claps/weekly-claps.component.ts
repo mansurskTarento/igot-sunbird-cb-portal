@@ -4,9 +4,10 @@ import { InfoDialogComponent } from '../info-dialog/info-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'ws-widget-weekly-claps',
-  templateUrl: './weekly-claps.component.html',
-  styleUrls: ['./weekly-claps.component.scss'],
+    selector: 'ws-widget-weekly-claps',
+    templateUrl: './weekly-claps.component.html',
+    styleUrls: ['./weekly-claps.component.scss'],
+    standalone: false
 })
 export class WeeklyClapsComponent implements OnInit {
   @Input() isLoading: any = ''

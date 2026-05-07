@@ -8,9 +8,10 @@ import { TaxonomyService } from '../../services/taxonomy.service'
 
 const APP_TAXONOMY = `/app/taxonomy/`
 @Component({
-  selector: 'app-explorer',
-  templateUrl: './explorer.component.html',
-  styleUrls: ['./explorer.component.scss'],
+    selector: 'app-explorer',
+    templateUrl: './explorer.component.html',
+    styleUrls: ['./explorer.component.scss'],
+    standalone: false
 })
 export class TaxonomyExplorerComponent implements OnInit, OnDestroy {
   sideNavBarOpened = true

@@ -10,9 +10,10 @@ import { HttpErrorResponse } from '@angular/common/http'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-withdraw-request',
-  templateUrl: './withdraw-request.component.html',
-  styleUrls: ['./withdraw-request.component.scss'],
+    selector: 'ws-withdraw-request',
+    templateUrl: './withdraw-request.component.html',
+    styleUrls: ['./withdraw-request.component.scss'],
+    standalone: false
 })
 export class WithdrawRequestComponent implements OnInit, OnDestroy {
 

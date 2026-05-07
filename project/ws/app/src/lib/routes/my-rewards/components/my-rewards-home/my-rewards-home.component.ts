@@ -3,9 +3,10 @@ import { Router } from '@angular/router'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-my-rewards-home',
-  templateUrl: './my-rewards-home.component.html',
-  styleUrls: ['./my-rewards-home.component.scss'],
+    selector: 'ws-app-my-rewards-home',
+    templateUrl: './my-rewards-home.component.html',
+    styleUrls: ['./my-rewards-home.component.scss'],
+    standalone: false
 })
 export class MyRewardsHomeComponent implements OnInit {
 

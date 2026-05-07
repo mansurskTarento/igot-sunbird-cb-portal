@@ -12,9 +12,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-topic',
-  templateUrl: './topic.component.html',
-  styleUrls: ['./topic.component.scss'],
+    selector: 'ws-app-topic',
+    templateUrl: './topic.component.html',
+    styleUrls: ['./topic.component.scss'],
+    standalone: false
 })
 export class TopicComponent implements OnInit, OnDestroy {
 

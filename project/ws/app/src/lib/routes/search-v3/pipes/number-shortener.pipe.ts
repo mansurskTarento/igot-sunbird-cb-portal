@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: 'numberShortener'
+    name: 'numberShortener',
+    standalone: false
 })
 export class NumberShortenerPipe implements PipeTransform {
   private readonly SUFFIXES = ['', 'K', 'M', 'B', 'T'];

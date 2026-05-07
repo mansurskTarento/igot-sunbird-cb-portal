@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-request-success-dialog',
-  templateUrl: './request-success-dialog.component.html',
-  styleUrls: ['./request-success-dialog.component.scss'],
+    selector: 'ws-request-success-dialog',
+    templateUrl: './request-success-dialog.component.html',
+    styleUrls: ['./request-success-dialog.component.scss'],
+    standalone: false
 })
 export class RequestSuccessDialogComponent implements OnInit {
   reqType: any

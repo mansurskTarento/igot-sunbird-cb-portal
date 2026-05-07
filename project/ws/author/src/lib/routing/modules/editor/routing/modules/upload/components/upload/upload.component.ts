@@ -25,12 +25,13 @@ import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/c
 import { DeleteDialogComponent } from '../../../../../../../../modules/shared/components/delete-dialog/delete-dialog.component'
 
 @Component({
-  selector: 'ws-auth-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-upload',
+    templateUrl: './upload.component.html',
+    styleUrls: ['./upload.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class UploadComponent implements OnInit, OnDestroy {
   contents: NSContent.IContentMeta[] = []

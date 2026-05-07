@@ -3,9 +3,10 @@ import { UserStats } from '../../../models/profile-revamp.model';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'ws-app-user-stats',
-  templateUrl: './user-stats.component.html',
-  styleUrls: ['./user-stats.component.scss']
+    selector: 'ws-app-user-stats',
+    templateUrl: './user-stats.component.html',
+    styleUrls: ['./user-stats.component.scss'],
+    standalone: false
 })
 export class UserStatsComponent implements OnInit {
 

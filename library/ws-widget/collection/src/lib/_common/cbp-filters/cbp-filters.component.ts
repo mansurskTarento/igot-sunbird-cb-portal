@@ -10,14 +10,15 @@ import { environment } from 'src/environments/environment'
 import { NsContent } from '../../_services/widget-content.model'
 
 @Component({
-	selector: 'ws-widget-cbp-filters',
-	templateUrl: './cbp-filters.component.html',
-	styleUrls: ['./cbp-filters.component.scss'],
-	providers: [
-		{ provide: MatBottomSheetRef, useValue: {} },
-		{ provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
-		{ provide: MAT_BOTTOM_SHEET_DATA, useValue: {} }
-	],
+    selector: 'ws-widget-cbp-filters',
+    templateUrl: './cbp-filters.component.html',
+    styleUrls: ['./cbp-filters.component.scss'],
+    providers: [
+        { provide: MatBottomSheetRef, useValue: {} },
+        { provide: MAT_BOTTOM_SHEET_DEFAULT_OPTIONS, useValue: { hasBackdrop: false } },
+        { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} }
+    ],
+    standalone: false
 })
 
 export class CbpFiltersComponent implements OnInit {

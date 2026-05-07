@@ -2,9 +2,10 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { AccessControlService } from '../../../../../modules/shared/services/access-control.service'
 
 @Component({
-  selector: 'ws-auth-root-content-card',
-  templateUrl: './content-card.component.html',
-  styleUrls: ['./content-card.component.scss'],
+    selector: 'ws-auth-root-content-card',
+    templateUrl: './content-card.component.html',
+    styleUrls: ['./content-card.component.scss'],
+    standalone: false
 })
 export class ContentCardComponent implements OnInit {
   @Input() data: any

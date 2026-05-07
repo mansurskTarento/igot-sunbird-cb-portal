@@ -14,9 +14,10 @@ interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
 }
 
 @Component({
-  selector: 'ws-home-other-portal',
-  templateUrl: './home-other-portal.component.html',
-  styleUrls: ['./home-other-portal.component.scss']
+    selector: 'ws-home-other-portal',
+    templateUrl: './home-other-portal.component.html',
+    styleUrls: ['./home-other-portal.component.scss'],
+    standalone: false
 })
 export class HomeOtherPortalComponent implements OnInit {
 

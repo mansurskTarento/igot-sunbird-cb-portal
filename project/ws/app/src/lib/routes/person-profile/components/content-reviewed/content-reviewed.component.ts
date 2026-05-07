@@ -6,9 +6,10 @@ import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
 // import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-content-reviewed',
-  templateUrl: './content-reviewed.component.html',
-  styleUrls: ['./content-reviewed.component.scss'],
+    selector: 'ws-app-content-reviewed',
+    templateUrl: './content-reviewed.component.html',
+    styleUrls: ['./content-reviewed.component.scss'],
+    standalone: false
 })
 export class ContentReviewedComponent implements OnInit, OnDestroy {
   @Input() wid = ''

@@ -10,9 +10,10 @@ export interface IDialogData {
   name: string
 }
 @Component({
-  selector: 'ws-auth-competency-add-popup',
-  templateUrl: './competency-add-popup.html',
-  styleUrls: ['./competency-add-popup.scss'],
+    selector: 'ws-auth-competency-add-popup',
+    templateUrl: './competency-add-popup.html',
+    styleUrls: ['./competency-add-popup.scss'],
+    standalone: false
 })
 export class CompetencyAddPopUpComponent implements OnInit {
   startForm!: UntypedFormGroup

@@ -212,7 +212,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppChatbotModule,
     DiscussionUiModule.forRoot(ConfigService),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    HeaderModule,
+    // HeaderModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

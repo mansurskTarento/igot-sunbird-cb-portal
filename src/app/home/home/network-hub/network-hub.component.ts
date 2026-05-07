@@ -6,9 +6,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../../services/home-page.service'
 
 @Component({
-  selector: 'ws-network-hub',
-  templateUrl: './network-hub.component.html',
-  styleUrls: ['./network-hub.component.scss'],
+    selector: 'ws-network-hub',
+    templateUrl: './network-hub.component.html',
+    styleUrls: ['./network-hub.component.scss'],
+    standalone: false
 })
 
 export class NetworkHubComponent implements OnInit {

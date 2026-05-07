@@ -7,11 +7,12 @@ import { ISearchAutoComplete, ISearchQuery, ISuggestedFilters } from '../../mode
 import { SearchServService } from '../../services/search-serv.service'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
-  // tslint:disable-next-line
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ws-app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    // tslint:disable-next-line
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class HomeComponent implements OnInit {
 

@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-mdo-channels-microsite-v2',
-  templateUrl: './mdo-channels-microsite-v2.component.html',
-  styleUrls: ['./mdo-channels-microsite-v2.component.scss'],
+    selector: 'ws-app-mdo-channels-microsite-v2',
+    templateUrl: './mdo-channels-microsite-v2.component.html',
+    styleUrls: ['./mdo-channels-microsite-v2.component.scss'],
+    standalone: false
 })
 export class MdoChannelsMicrositeV2Component implements OnInit {
   titles = [

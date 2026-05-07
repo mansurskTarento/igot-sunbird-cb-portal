@@ -4,9 +4,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-quick-tour',
-  templateUrl: './quick-tour.component.html',
-  styleUrls: ['./quick-tour.component.scss'],
+    selector: 'ws-app-quick-tour',
+    templateUrl: './quick-tour.component.html',
+    styleUrls: ['./quick-tour.component.scss'],
+    standalone: false
 })
 export class QuickTourComponent implements OnInit {
   appLanguage = 'en'

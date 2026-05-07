@@ -6,7 +6,7 @@ describe('MyConnectionResolveService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: MyConnectionResolveService = TestBed.get(MyConnectionResolveService)
+    const service: MyConnectionResolveService = TestBed.inject(MyConnectionResolveService)
     expect(service).toBeTruthy()
   })
 })

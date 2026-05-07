@@ -3,9 +3,10 @@ import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-add-topic',
-  templateUrl: './add-topic.component.html',
-  styleUrls: ['./add-topic.component.scss'],
+    selector: 'ws-app-add-topic',
+    templateUrl: './add-topic.component.html',
+    styleUrls: ['./add-topic.component.scss'],
+    standalone: false
 })
 export class AddTopicDialogComponent implements OnInit {
 

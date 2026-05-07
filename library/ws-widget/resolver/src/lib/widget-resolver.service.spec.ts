@@ -6,7 +6,7 @@ describe('WidgetResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: WidgetResolverService = TestBed.get(WidgetResolverService)
+    const service: WidgetResolverService = TestBed.inject(WidgetResolverService)
     expect(service).toBeTruthy()
   })
 })

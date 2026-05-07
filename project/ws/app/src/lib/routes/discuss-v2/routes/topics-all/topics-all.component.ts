@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'ws-app-topics-all',
-  templateUrl: './topics-all.component.html',
-  styleUrls: ['./topics-all.component.scss']
+    selector: 'ws-app-topics-all',
+    templateUrl: './topics-all.component.html',
+    styleUrls: ['./topics-all.component.scss'],
+    standalone: false
 })
 export class TopicsAllComponent {
 

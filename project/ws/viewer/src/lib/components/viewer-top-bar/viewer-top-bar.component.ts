@@ -19,9 +19,10 @@ import _ from 'lodash'
 // import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
 @Component({
-  selector: 'viewer-viewer-top-bar',
-  templateUrl: './viewer-top-bar.component.html',
-  styleUrls: ['./viewer-top-bar.component.scss'],
+    selector: 'viewer-viewer-top-bar',
+    templateUrl: './viewer-top-bar.component.html',
+    styleUrls: ['./viewer-top-bar.component.scss'],
+    standalone: false
 })
 export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() frameReference: any

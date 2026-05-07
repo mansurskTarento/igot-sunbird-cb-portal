@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-profile-settings',
-  templateUrl: './profile-settings.component.html',
-  styleUrls: ['./profile-settings.component.scss'],
+    selector: 'ws-app-profile-settings',
+    templateUrl: './profile-settings.component.html',
+    styleUrls: ['./profile-settings.component.scss'],
+    standalone: false
 })
 export class ProfileSettingsComponent implements OnInit {
   hiddenFeatures: string[] = []

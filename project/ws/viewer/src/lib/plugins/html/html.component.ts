@@ -16,9 +16,10 @@ import { AppTocService, ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-plugin-html',
-  templateUrl: './html.component.html',
-  styleUrls: ['./html.component.scss'],
+    selector: 'viewer-plugin-html',
+    templateUrl: './html.component.html',
+    styleUrls: ['./html.component.scss'],
+    standalone: false
 })
 export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('mobileOpenInNewTab', { read: ElementRef }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>

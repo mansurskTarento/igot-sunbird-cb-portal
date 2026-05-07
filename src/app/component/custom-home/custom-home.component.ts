@@ -21,9 +21,10 @@ function isStripActive(strip: any): boolean {
 const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-  selector: 'ws-custom-home',
-  templateUrl: './custom-home.component.html',
-  styleUrls: ['./custom-home.component.scss']
+    selector: 'ws-custom-home',
+    templateUrl: './custom-home.component.html',
+    styleUrls: ['./custom-home.component.scss'],
+    standalone: false
 })
 export class CustomHomeComponent implements OnInit, AfterViewInit {
   widgetData = {}

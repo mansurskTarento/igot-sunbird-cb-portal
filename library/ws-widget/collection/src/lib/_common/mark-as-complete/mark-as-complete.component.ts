@@ -7,9 +7,10 @@ import { IReqMarkAsComplete } from './mark-as-complete.model'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-widget-mark-as-complete',
-  templateUrl: './mark-as-complete.component.html',
-  styleUrls: ['./mark-as-complete.component.scss'],
+    selector: 'ws-widget-mark-as-complete',
+    templateUrl: './mark-as-complete.component.html',
+    styleUrls: ['./mark-as-complete.component.scss'],
+    standalone: false
 })
 export class MarkAsCompleteComponent implements OnInit, OnChanges {
   @Input()

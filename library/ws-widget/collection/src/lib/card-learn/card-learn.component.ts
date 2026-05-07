@@ -9,9 +9,10 @@ import { NSSearch } from '../_services/widget-search.model'
 import { NsContent } from '../_services/widget-content.model'
 
 @Component({
-  selector: 'ws-widget-card-learn',
-  templateUrl: './card-learn.component.html',
-  styleUrls: ['./card-learn.component.scss'],
+    selector: 'ws-widget-card-learn',
+    templateUrl: './card-learn.component.html',
+    styleUrls: ['./card-learn.component.scss'],
+    standalone: false
 })
 export class CardLearnComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any> {

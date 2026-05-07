@@ -11,9 +11,10 @@ import { MatButtonToggleChange } from '@angular/material/button-toggle'
 import { MatSelectChange } from '@angular/material/select'
 
 @Component({
-  selector: 'ws-app-leaderboard',
-  templateUrl: './leaderboard-home.component.html',
-  styleUrls: ['./leaderboard-home.component.scss'],
+    selector: 'ws-app-leaderboard',
+    templateUrl: './leaderboard-home.component.html',
+    styleUrls: ['./leaderboard-home.component.scss'],
+    standalone: false
 })
 export class LeaderboardHomeComponent implements OnInit {
   public sideNavBarOpened = false

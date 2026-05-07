@@ -6,7 +6,7 @@ describe('ContentReadResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ContentReadResolverService = TestBed.get(ContentReadResolverService)
+    const service: ContentReadResolverService = TestBed.inject(ContentReadResolverService)
     expect(service).toBeTruthy()
   })
 })

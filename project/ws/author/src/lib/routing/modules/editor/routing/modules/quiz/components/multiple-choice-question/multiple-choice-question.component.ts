@@ -24,9 +24,10 @@ import { Notify } from '../../../../../../../../constants/notificationMessage'
 import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-multiple-choice-question',
-  templateUrl: './multiple-choice-question.component.html',
-  styleUrls: ['./multiple-choice-question.component.scss'],
+    selector: 'ws-auth-multiple-choice-question',
+    templateUrl: './multiple-choice-question.component.html',
+    styleUrls: ['./multiple-choice-question.component.scss'],
+    standalone: false
 })
 export class MultipleChoiceQuestionComponent implements OnInit, OnChanges, OnDestroy {
   @Output() value = new EventEmitter<any>()

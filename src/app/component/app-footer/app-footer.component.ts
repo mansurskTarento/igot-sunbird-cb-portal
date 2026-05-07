@@ -4,7 +4,6 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core'
 import { NavigationEnd, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService, DomainConfService, NsInstanceConfig, ValueService } from '@sunbird-cb/utils-v2'
-import 'rxjs/add/operator/toPromise'
 
 // tslint:disable-next-line
 import _ from 'lodash'
@@ -14,7 +13,8 @@ import { environment } from 'src/environments/environment'
   templateUrl: './app-footer.component.html',
   styleUrls: ['./app-footer.component.scss'],
   // tslint:disable-next-line
-  encapsulation: ViewEncapsulation.None
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class AppFooterComponent implements OnInit {
   @Input() headerFooterConfigData: any
@@ -68,13 +68,13 @@ export class AppFooterComponent implements OnInit {
       this.hubsList = (instanceConfig.hubs || []).filter(i => i.active)
     } else {
       const newInstance = await this.readAgain()
-      this.hubsList = (newInstance.hubs || []).filter(i => i.active)
+      this.hubsList = (newInstance.hubs || []).filter((i: any) => i.active)
     }
     this.logoSrc = this.domainConfSvc.getDomainAppLogo()
     this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
   }
   async readAgain() {
-    const publicConfig: NsInstanceConfig.IConfig = await this.http
+    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/site.config.json`)
       .toPromise()
     return publicConfig

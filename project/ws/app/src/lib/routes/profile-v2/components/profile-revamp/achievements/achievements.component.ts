@@ -8,10 +8,11 @@ import { CertificateViewPopupComponent } from '../certificate-view-popup/certifi
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-achievements',
-  templateUrl: './achievements.component.html',
-  styleUrls: ['./achievements.component.scss'],
-  providers: [PipeCertificateImageURL]
+    selector: 'ws-app-achievements',
+    templateUrl: './achievements.component.html',
+    styleUrls: ['./achievements.component.scss'],
+    providers: [PipeCertificateImageURL],
+    standalone: false
 })
 export class AchievementsComponent implements OnInit {
   //#region (global variables)

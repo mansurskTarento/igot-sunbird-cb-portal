@@ -6,7 +6,7 @@ describe('MdoChannelDataService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: MdoChannelDataService = TestBed.get(MdoChannelDataService)
+    const service: MdoChannelDataService = TestBed.inject(MdoChannelDataService)
     expect(service).toBeTruthy()
   })
 })

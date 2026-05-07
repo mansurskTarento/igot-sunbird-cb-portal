@@ -43,9 +43,10 @@ const videoJsOptions: IYTOptions = {
 }
 
 @Component({
-  selector: 'ws-app-event-video-player',
-  templateUrl: './event-video-player.component.html',
-  styleUrls: ['./event-video-player.component.scss']
+    selector: 'ws-app-event-video-player',
+    templateUrl: './event-video-player.component.html',
+    styleUrls: ['./event-video-player.component.scss'],
+    standalone: false
 })
 export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 

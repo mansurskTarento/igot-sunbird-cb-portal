@@ -9,9 +9,10 @@ interface IData {
 }
 
 @Component({
-  selector: 'ws-widget-btn-goals-error',
-  templateUrl: './btn-goals-error.component.html',
-  styleUrls: ['./btn-goals-error.component.scss'],
+    selector: 'ws-widget-btn-goals-error',
+    templateUrl: './btn-goals-error.component.html',
+    styleUrls: ['./btn-goals-error.component.scss'],
+    standalone: false
 })
 export class BtnGoalsErrorComponent {
 

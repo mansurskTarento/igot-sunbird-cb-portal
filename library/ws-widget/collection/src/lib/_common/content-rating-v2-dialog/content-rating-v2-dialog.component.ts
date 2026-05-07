@@ -10,9 +10,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { RatingService } from '../../_services/rating.service'
 
 @Component({
-  selector: 'ws-widget-content-rating-v2-dialog',
-  templateUrl: './content-rating-v2-dialog.component.html',
-  styleUrls: ['./content-rating-v2-dialog.component.scss'],
+    selector: 'ws-widget-content-rating-v2-dialog',
+    templateUrl: './content-rating-v2-dialog.component.html',
+    styleUrls: ['./content-rating-v2-dialog.component.scss'],
+    standalone: false
 })
 
 export class ContentRatingV2DialogComponent implements OnInit {

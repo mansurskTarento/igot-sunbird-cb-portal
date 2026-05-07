@@ -7,9 +7,10 @@ import _ from 'lodash'
 import { Subscription } from 'rxjs';
 
 @Component({
-  selector: 'ws-app-provider-details',
-  templateUrl: './provider-details.component.html',
-  styleUrls: ['./provider-details.component.scss'],
+    selector: 'ws-app-provider-details',
+    templateUrl: './provider-details.component.html',
+    styleUrls: ['./provider-details.component.scss'],
+    standalone: false
 })
 export class ProviderDetailsComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

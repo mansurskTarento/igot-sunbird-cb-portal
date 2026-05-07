@@ -6,9 +6,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-btn-mail-user-dialog',
-  templateUrl: './btn-mail-user-dialog.component.html',
-  styleUrls: ['./btn-mail-user-dialog.component.scss'],
+    selector: 'ws-widget-btn-mail-user-dialog',
+    templateUrl: './btn-mail-user-dialog.component.html',
+    styleUrls: ['./btn-mail-user-dialog.component.scss'],
+    standalone: false
 })
 export class BtnMailUserDialogComponent implements OnInit {
 

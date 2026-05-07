@@ -4,9 +4,10 @@ import { PersonProfileService } from '../../services/person-profile.service'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-follow-list',
-  templateUrl: './follow-list.component.html',
-  styleUrls: ['./follow-list.component.scss'],
+    selector: 'ws-app-follow-list',
+    templateUrl: './follow-list.component.html',
+    styleUrls: ['./follow-list.component.scss'],
+    standalone: false
 })
 export class FollowListComponent implements OnInit, OnChanges {
   @Input() wid = ''

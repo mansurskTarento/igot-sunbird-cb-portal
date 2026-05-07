@@ -5,9 +5,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-blog-reply',
-  templateUrl: './blog-reply.component.html',
-  styleUrls: ['./blog-reply.component.scss'],
+    selector: 'ws-app-blog-reply',
+    templateUrl: './blog-reply.component.html',
+    styleUrls: ['./blog-reply.component.scss'],
+    standalone: false
 })
 export class BlogReplyComponent implements OnInit {
   @Input() reply: NsDiscussionForum.ITimelineResult | null = null

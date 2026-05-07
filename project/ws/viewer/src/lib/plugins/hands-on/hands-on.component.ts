@@ -60,9 +60,10 @@ import { HandsOnDialogComponent } from './components/hands-on-dialog/hands-on-di
 // import 'brace/theme/eclipse'
 
 @Component({
-  selector: 'viewer-plugin-hands-on',
-  templateUrl: './hands-on.component.html',
-  styleUrls: ['./hands-on.component.scss'],
+    selector: 'viewer-plugin-hands-on',
+    templateUrl: './hands-on.component.html',
+    styleUrls: ['./hands-on.component.scss'],
+    standalone: false
 })
 export class HandsOnComponent implements OnInit, OnChanges, OnDestroy {
 

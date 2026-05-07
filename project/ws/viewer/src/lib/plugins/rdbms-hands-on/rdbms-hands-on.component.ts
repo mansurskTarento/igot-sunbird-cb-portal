@@ -1,9 +1,10 @@
 import { Component, Input, OnChanges } from '@angular/core'
 
 @Component({
-  selector: 'viewer-plugin-rdbms-hands-on',
-  templateUrl: './rdbms-hands-on.component.html',
-  styleUrls: ['./rdbms-hands-on.component.scss'],
+    selector: 'viewer-plugin-rdbms-hands-on',
+    templateUrl: './rdbms-hands-on.component.html',
+    styleUrls: ['./rdbms-hands-on.component.scss'],
+    standalone: false
 })
 export class RdbmsHandsOnComponent implements OnChanges {
   @Input()

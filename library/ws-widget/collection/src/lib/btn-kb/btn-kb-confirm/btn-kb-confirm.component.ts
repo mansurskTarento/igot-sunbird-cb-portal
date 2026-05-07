@@ -2,9 +2,10 @@ import { Component, OnInit, Inject } from '@angular/core'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-widget-btn-kb-confirm',
-  templateUrl: './btn-kb-confirm.component.html',
-  styleUrls: ['./btn-kb-confirm.component.scss'],
+    selector: 'ws-widget-btn-kb-confirm',
+    templateUrl: './btn-kb-confirm.component.html',
+    styleUrls: ['./btn-kb-confirm.component.scss'],
+    standalone: false
 })
 export class BtnKbConfirmComponent implements OnInit {
 

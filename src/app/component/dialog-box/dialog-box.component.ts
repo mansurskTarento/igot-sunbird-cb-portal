@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'ws-dialog-box',
-  templateUrl: './dialog-box.component.html',
-  styleUrls: ['./dialog-box.component.scss'],
+    selector: 'ws-dialog-box',
+    templateUrl: './dialog-box.component.html',
+    styleUrls: ['./dialog-box.component.scss'],
+    standalone: false
 })
 export class DialogBoxComponent implements OnInit {
 

@@ -8,9 +8,10 @@ import { ForumHandlerService } from '../../service/EmitterService/forum-handler.
 import { ForumService } from '../../service/forum.service'
 
 @Component({
-  selector: 'ws-app-recent-forum-post',
-  templateUrl: './recent-forum-post.component.html',
-  styleUrls: ['./recent-forum-post.component.scss'],
+    selector: 'ws-app-recent-forum-post',
+    templateUrl: './recent-forum-post.component.html',
+    styleUrls: ['./recent-forum-post.component.scss'],
+    standalone: false
 })
 export class RecentForumPostComponent implements OnInit, OnDestroy {
 

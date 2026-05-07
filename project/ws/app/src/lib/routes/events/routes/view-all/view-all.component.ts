@@ -14,10 +14,11 @@ import { TranslateService } from '@ngx-translate/core'
 import { Subject, Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-app-view-all',
-  templateUrl: './view-all.component.html',
-  styleUrls: ['./view-all.component.scss'],
-  providers: [DatePipe]
+    selector: 'ws-app-view-all',
+    templateUrl: './view-all.component.html',
+    styleUrls: ['./view-all.component.scss'],
+    providers: [DatePipe],
+    standalone: false
 })
 export class ViewAllComponent {
 

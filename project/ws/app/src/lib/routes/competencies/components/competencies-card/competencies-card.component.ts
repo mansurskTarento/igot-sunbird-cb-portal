@@ -5,13 +5,12 @@ import { CompetenceViewComponent } from '../competencies-view/competencies-view.
 
 // import { Router } from '@angular/router'
 @Component({
-  selector: 'app-competence-card',
-  templateUrl: './competencies-card.component.html',
-  styleUrls: ['./competencies-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-row margin-right-xs margin-top-xs margin-bottom-s competency_main' },
-  /* tslint:enable */
-
+    selector: 'app-competence-card',
+    templateUrl: './competencies-card.component.html',
+    styleUrls: ['./competencies-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-row margin-right-xs margin-top-xs margin-bottom-s competency_main' },
+    standalone: false
 })
 
 export class CompetenceCardComponent implements OnInit {

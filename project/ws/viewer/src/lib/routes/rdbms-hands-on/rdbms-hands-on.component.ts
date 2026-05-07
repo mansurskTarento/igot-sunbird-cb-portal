@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-rdbms-hands-on',
-  templateUrl: './rdbms-hands-on.component.html',
-  styleUrls: ['./rdbms-hands-on.component.scss'],
+    selector: 'viewer-rdbms-hands-on',
+    templateUrl: './rdbms-hands-on.component.html',
+    styleUrls: ['./rdbms-hands-on.component.scss'],
+    standalone: false
 })
 export class RdbmsHandsOnComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null

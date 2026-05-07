@@ -7,11 +7,12 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
 /* tslint:enable */
 @Component({
-  selector: 'app-discuss-my-discussions',
-  templateUrl: './discuss-my-discussions.component.html',
-  styleUrls: ['./discuss-my-discussions.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'flex flex-1 margin-top-l' },
+    selector: 'app-discuss-my-discussions',
+    templateUrl: './discuss-my-discussions.component.html',
+    styleUrls: ['./discuss-my-discussions.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class DiscussMyDiscussionsComponent implements OnInit {
   data!: NSDiscussData.IProfile // this is for user

@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 /* tslint:disable*/
 
 @Component({
-  selector: 'ws-app-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-app-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent implements OnInit {
 

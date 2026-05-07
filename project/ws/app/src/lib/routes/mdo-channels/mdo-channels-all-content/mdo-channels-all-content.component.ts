@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { NsContentStripWithTabs } from '@sunbird-cb/consumption/lib/_common/content-strip-with-tabs-lib/content-strip-with-tabs-lib.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/consumption'
 
 import { AllContentService } from './../service/all-content.service'
 import { EventService, UtilityService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -13,6 +13,7 @@ import { FormExtService } from '../../../routes/services/form-ext.service'
   selector: 'ws-app-mdo-channels-all-content',
   templateUrl: './mdo-channels-all-content.component.html',
   styleUrls: ['./mdo-channels-all-content.component.scss'],
+  standalone: false
 })
 export class MdoChannelsAllContentComponent implements OnInit {
 

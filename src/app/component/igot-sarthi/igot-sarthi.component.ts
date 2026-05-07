@@ -10,9 +10,10 @@ import cloneDeep from 'lodash/cloneDeep'
 // import { timeout, catchError } from 'rxjs/operators';
 // import { throwError } from 'rxjs';
 @Component({
-  selector: 'ws-app-igot-sarthi',
-  templateUrl: './igot-sarthi.component.html',
-  styleUrls: ['./igot-sarthi.component.scss']
+    selector: 'ws-app-igot-sarthi',
+    templateUrl: './igot-sarthi.component.html',
+    styleUrls: ['./igot-sarthi.component.scss'],
+    standalone: false
 })
 export class IGotSarthiComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''

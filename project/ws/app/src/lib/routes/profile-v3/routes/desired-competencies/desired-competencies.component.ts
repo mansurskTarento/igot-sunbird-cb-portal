@@ -12,12 +12,12 @@ import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-desired-competencies',
-  templateUrl: './desired-competencies.component.html',
-  styleUrls: ['./desired-competencies.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 comptency_main_div' },
-  /* tslint:enable */
+    selector: 'ws-app-desired-competencies',
+    templateUrl: './desired-competencies.component.html',
+    styleUrls: ['./desired-competencies.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 comptency_main_div' },
+    standalone: false
 })
 export class DesiredCompetenciesComponent implements OnInit, OnDestroy {
   searchJson!: NSProfileDataV3.ISearch[]

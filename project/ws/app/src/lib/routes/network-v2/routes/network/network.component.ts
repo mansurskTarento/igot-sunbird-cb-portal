@@ -9,9 +9,10 @@ import _ from 'lodash'
 /* tslint:enable */
 
 @Component({
-  selector: 'ws-app-network',
-  templateUrl: './network.component.html',
-  styleUrls: ['./network.component.scss'],
+    selector: 'ws-app-network',
+    templateUrl: './network.component.html',
+    styleUrls: ['./network.component.scss'],
+    standalone: false
 })
 export class NetworkComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

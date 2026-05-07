@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-gyaan-youtube',
-  templateUrl: './gyaan-youtube.component.html',
-  styleUrls: ['./gyaan-youtube.component.scss'],
+    selector: 'ws-app-gyaan-youtube',
+    templateUrl: './gyaan-youtube.component.html',
+    styleUrls: ['./gyaan-youtube.component.scss'],
+    standalone: false
 })
 export class GyaanYoutubeComponent implements OnInit {
 

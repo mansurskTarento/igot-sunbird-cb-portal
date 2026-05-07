@@ -5,12 +5,12 @@ import { jsPDF } from 'jspdf'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-widget-certificate-dialog',
-  templateUrl: './certificate-dialog.component.html',
-  styleUrls: ['./certificate-dialog.component.scss'],
-  /* tslint:disable */
-  host: { class: 'certificate-inner-dialog-panel' },
-  /* tslint:enable */
+    selector: 'ws-widget-certificate-dialog',
+    templateUrl: './certificate-dialog.component.html',
+    styleUrls: ['./certificate-dialog.component.scss'],
+    /* tslint:disable */
+    host: { class: 'certificate-inner-dialog-panel' },
+    standalone: false
 })
 export class CertificateDialogComponent implements OnInit {
   url!: string

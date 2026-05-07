@@ -32,9 +32,10 @@ import { CONTENT_BASE_STATIC, CONTENT_BASE_STREAM, CONTENT_BASE_WEBHOST } from '
 // import { ProfanityService } from '../../services/profanity.service'
 
 @Component({
-  selector: 'ws-auth-file-upload',
-  templateUrl: './file-upload.component.html',
-  styleUrls: ['./file-upload.component.scss'],
+    selector: 'ws-auth-file-upload',
+    templateUrl: './file-upload.component.html',
+    styleUrls: ['./file-upload.component.scss'],
+    standalone: false
 })
 export class FileUploadComponent implements OnInit {
   @ViewChild('guideline') guideline!: TemplateRef<HTMLElement>

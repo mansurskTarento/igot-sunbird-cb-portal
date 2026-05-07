@@ -16,9 +16,10 @@ import { CertificateDialogComponent } from '@sunbird-cb/collection'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-competency-card-details',
-  templateUrl: './competency-card-details.component.html',
-  styleUrls: ['./competency-card-details.component.scss'],
+    selector: 'ws-competency-card-details',
+    templateUrl: './competency-card-details.component.html',
+    styleUrls: ['./competency-card-details.component.scss'],
+    standalone: false
 })
 
 export class CompetencyCardDetailsComponent implements OnInit, AfterViewInit, OnDestroy {

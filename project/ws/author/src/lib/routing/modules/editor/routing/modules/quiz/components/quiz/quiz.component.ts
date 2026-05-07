@@ -31,12 +31,13 @@ import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/c
 import { CommentsDialogComponent } from '../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 
 @Component({
-  selector: 'ws-auth-quiz',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.scss'],
-  providers: [QuizResolverService, {
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-quiz',
+    templateUrl: './quiz.component.html',
+    styleUrls: ['./quiz.component.scss'],
+    providers: [QuizResolverService, {
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class QuizComponent implements OnInit, OnDestroy {
 

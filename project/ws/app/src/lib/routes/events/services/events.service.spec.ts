@@ -1,9 +1,10 @@
 import { TestBed } from '@angular/core/testing'
-import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing'
 import { EventService } from './events.service'
 import { FormExtService } from '../../../routes/services/form-ext.service'
 import { environment } from '../../../../../../../../src/environments/environment'
 import { of } from 'rxjs'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 
 describe('EventService', () => {
   let service: EventService
@@ -23,12 +24,14 @@ describe('EventService', () => {
     }
 
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [
+    imports: [],
+    providers: [
         EventService,
-        { provide: FormExtService, useValue: formExtServiceMock }
-      ]
-    })
+        { provide: FormExtService, useValue: formExtServiceMock },
+        provideHttpClient(withInterceptorsFromDi()),
+        provideHttpClientTesting()
+    ]
+})
 
     service = TestBed.inject(EventService)
     httpMock = TestBed.inject(HttpTestingController)

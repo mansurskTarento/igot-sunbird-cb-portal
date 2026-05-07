@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core'
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, DOCUMENT } from '@angular/core'
 import { Subscription, Observable, interval, Subject } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
@@ -7,7 +7,7 @@ import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize,
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
-import { DOCUMENT, isPlatformBrowser } from '@angular/common'
+import { isPlatformBrowser } from '@angular/common'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -89,9 +89,10 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 // }
 
 @Component({
-  selector: 'ws-public-signup',
-  templateUrl: './public-signup.component.html',
-  styleUrls: ['./public-signup.component.scss'],
+    selector: 'ws-public-signup',
+    templateUrl: './public-signup.component.html',
+    styleUrls: ['./public-signup.component.scss'],
+    standalone: false
 })
 
 export class PublicSignupComponent implements OnInit, OnDestroy {

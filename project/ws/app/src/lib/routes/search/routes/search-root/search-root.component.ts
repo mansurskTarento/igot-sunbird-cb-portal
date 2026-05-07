@@ -4,9 +4,10 @@ import { IFeatureSearchConfig } from '../../models/search.model'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-search-root',
-  templateUrl: './search-root.component.html',
-  styleUrls: ['./search-root.component.scss'],
+    selector: 'ws-app-search-root',
+    templateUrl: './search-root.component.html',
+    styleUrls: ['./search-root.component.scss'],
+    standalone: false
 })
 export class SearchRootComponent implements OnInit {
   searchTabs: IFeatureSearchConfig = {

@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { HomePageService } from '../../services/home-page.service'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-download-app',
-  templateUrl: './download-app.component.html',
-  styleUrls: ['./download-app.component.scss'],
+    selector: 'ws-download-app',
+    templateUrl: './download-app.component.html',
+    styleUrls: ['./download-app.component.scss'],
+    standalone: false
 })
 export class DownloadAppComponent implements OnInit {
   @Input() popupClass = ''

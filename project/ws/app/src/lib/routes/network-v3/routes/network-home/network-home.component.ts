@@ -7,9 +7,10 @@ import { NetworkingService } from '../../services/networking.service'
 import { connectionUpdates } from '../../models/network-v3.model'
 
 @Component({
-  selector: 'ws-app-network-home',
-  templateUrl: './network-home.component.html',
-  styleUrls: ['./network-home.component.scss']
+    selector: 'ws-app-network-home',
+    templateUrl: './network-home.component.html',
+    styleUrls: ['./network-home.component.scss'],
+    standalone: false
 })
 export class NetworkHomeComponent implements OnInit {
   //#region (global variables)

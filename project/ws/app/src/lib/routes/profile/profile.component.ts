@@ -8,9 +8,10 @@ import { map } from 'rxjs/operators'
 import _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-profile',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
+    selector: 'ws-app-profile',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss'],
+    standalone: false
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   tabName = ''

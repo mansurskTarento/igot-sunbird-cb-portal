@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { WidgetBaseComponent } from '../widget-base.component'
 @Component({
-  selector: 'ws-resolver-invalid-registration',
-  templateUrl: './invalid-registration.component.html',
-  styleUrls: ['./invalid-registration.component.scss'],
+    selector: 'ws-resolver-invalid-registration',
+    templateUrl: './invalid-registration.component.html',
+    styleUrls: ['./invalid-registration.component.scss'],
+    standalone: false
 })
 export class InvalidRegistrationComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any> {

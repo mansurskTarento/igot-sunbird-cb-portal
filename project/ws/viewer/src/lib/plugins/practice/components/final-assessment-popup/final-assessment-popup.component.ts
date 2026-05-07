@@ -5,9 +5,10 @@ import { ITableData } from '@sunbird-cb/collection'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'viewer-final-assessment-popup',
-  templateUrl: './final-assessment-popup.component.html',
-  styleUrls: ['./final-assessment-popup.component.scss'],
+    selector: 'viewer-final-assessment-popup',
+    templateUrl: './final-assessment-popup.component.html',
+    styleUrls: ['./final-assessment-popup.component.scss'],
+    standalone: false
 })
 export class FinalAssessmentPopupComponent implements OnInit, OnDestroy {
 

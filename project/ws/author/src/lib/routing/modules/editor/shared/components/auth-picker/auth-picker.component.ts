@@ -13,11 +13,12 @@ interface IAuthPickerData {
   selectedIds: string[]
 }
 @Component({
-  selector: 'ws-auth-picker',
-  templateUrl: './auth-picker.component.html',
-  styleUrls: ['./auth-picker.component.scss'],
-  // tslint:disable-next-line: use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ws-auth-picker',
+    templateUrl: './auth-picker.component.html',
+    styleUrls: ['./auth-picker.component.scss'],
+    // tslint:disable-next-line: use-component-view-encapsulation
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AuthPickerComponent implements OnInit, OnDestroy {
   query = ''

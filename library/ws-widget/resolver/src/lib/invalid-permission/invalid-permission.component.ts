@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { WidgetBaseComponent } from '../widget-base.component'
 @Component({
-  selector: 'ws-resolver-invalid-permission',
-  templateUrl: './invalid-permission.component.html',
-  styleUrls: ['./invalid-permission.component.scss'],
+    selector: 'ws-resolver-invalid-permission',
+    templateUrl: './invalid-permission.component.html',
+    styleUrls: ['./invalid-permission.component.scss'],
+    standalone: false
 })
 export class InvalidPermissionComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any> {

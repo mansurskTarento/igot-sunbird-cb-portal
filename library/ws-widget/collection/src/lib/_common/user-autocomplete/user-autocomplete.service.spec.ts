@@ -6,7 +6,7 @@ describe('UserAutocompleteService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: UserAutocompleteService = TestBed.get(UserAutocompleteService)
+    const service: UserAutocompleteService = TestBed.inject(UserAutocompleteService)
     expect(service).toBeTruthy()
   })
 })

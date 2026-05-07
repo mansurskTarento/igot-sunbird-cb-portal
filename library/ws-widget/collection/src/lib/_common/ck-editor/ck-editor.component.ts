@@ -15,9 +15,10 @@ import { LoaderService } from './services/loader.service'
 declare const CKEDITOR: any
 
 @Component({
-  selector: 'ws-widget-ck-editor',
-  templateUrl: './ck-editor.component.html',
-  styleUrls: ['./ck-editor.component.scss'],
+    selector: 'ws-widget-ck-editor',
+    templateUrl: './ck-editor.component.html',
+    styleUrls: ['./ck-editor.component.scss'],
+    standalone: false
 })
 export class CkEditorComponent implements AfterViewInit, OnInit, OnDestroy {
 

@@ -4,12 +4,12 @@ import { Router } from '@angular/router'
 /* tslint:disable */
 import _ from 'lodash'
 @Component({
-  selector: 'app-dicuss-post-card',
-  templateUrl: './post-card.component.html',
-  styleUrls: ['./post-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-dicuss-post-card',
+    templateUrl: './post-card.component.html',
+    styleUrls: ['./post-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 
 export class PostCardComponent implements OnInit {

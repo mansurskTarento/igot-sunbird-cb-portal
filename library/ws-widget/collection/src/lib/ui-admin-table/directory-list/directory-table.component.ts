@@ -12,9 +12,10 @@ import { ITableData, IColums } from '../interface/interfaces'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-directory-table',
-  templateUrl: './directory-table.component.html',
-  styleUrls: ['./directory-table.component.scss'],
+    selector: 'ws-widget-directory-table',
+    templateUrl: './directory-table.component.html',
+    styleUrls: ['./directory-table.component.scss'],
+    standalone: false
 })
 export class UIDirectoryTableComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() tableData!: ITableData | undefined

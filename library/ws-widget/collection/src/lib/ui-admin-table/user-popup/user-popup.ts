@@ -8,9 +8,10 @@ export interface IDialogData {
   data: any
 }
 @Component({
-  selector: 'ws-widget-user-admin-popup',
-  templateUrl: './user-popup.html',
-  styleUrls: ['./user-popup.scss'],
+    selector: 'ws-widget-user-admin-popup',
+    templateUrl: './user-popup.html',
+    styleUrls: ['./user-popup.scss'],
+    standalone: false
 })
 export class UserPopupComponent implements OnInit {
 

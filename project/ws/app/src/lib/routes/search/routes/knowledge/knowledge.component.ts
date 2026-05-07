@@ -8,9 +8,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NsError, ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-knowledge',
-  templateUrl: './knowledge.component.html',
-  styleUrls: ['./knowledge.component.scss'],
+    selector: 'ws-app-knowledge',
+    templateUrl: './knowledge.component.html',
+    styleUrls: ['./knowledge.component.scss'],
+    standalone: false
 })
 export class KnowledgeComponent implements OnInit, OnDestroy {
   defaultSideNavBarOpenedSubscription: Subscription | null = null

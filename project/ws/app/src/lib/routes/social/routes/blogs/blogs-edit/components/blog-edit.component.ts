@@ -11,9 +11,10 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-blog-edit',
-  templateUrl: './blog-edit.component.html',
-  styleUrls: ['./blog-edit.component.scss'],
+    selector: 'ws-app-blog-edit',
+    templateUrl: './blog-edit.component.html',
+    styleUrls: ['./blog-edit.component.scss'],
+    standalone: false
 })
 export class BlogEditComponent implements OnInit {
   isCreatingPost = false

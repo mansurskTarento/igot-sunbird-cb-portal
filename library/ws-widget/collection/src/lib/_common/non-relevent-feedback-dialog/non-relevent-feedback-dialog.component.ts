@@ -3,9 +3,10 @@ import { MatDialogRef } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-widget-non-relevent-feedback-dialog',
-  templateUrl: './non-relevent-feedback-dialog.component.html',
-  styleUrls: ['./non-relevent-feedback-dialog.component.scss'],
+    selector: 'ws-widget-non-relevent-feedback-dialog',
+    templateUrl: './non-relevent-feedback-dialog.component.html',
+    styleUrls: ['./non-relevent-feedback-dialog.component.scss'],
+    standalone: false
 })
 export class NonReleventFeedbackDialogComponent {
   constructor(

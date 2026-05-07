@@ -13,9 +13,10 @@ import {
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-feedback',
-  templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.scss'],
+    selector: 'ws-app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
+    standalone: false
 })
 export class FeedbackComponent {
   positiveFeedbackSendStatus: TSendStatus

@@ -6,7 +6,7 @@ describe('AuthNavBarToggleService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: AuthNavBarToggleService = TestBed.get(AuthNavBarToggleService)
+    const service: AuthNavBarToggleService = TestBed.inject(AuthNavBarToggleService)
     expect(service).toBeTruthy()
   })
 })

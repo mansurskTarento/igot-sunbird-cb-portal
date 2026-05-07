@@ -4,9 +4,10 @@ import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-card-welcome',
-  templateUrl: './card-welcome.component.html',
-  styleUrls: ['./card-welcome.component.scss'],
+    selector: 'ws-widget-card-welcome',
+    templateUrl: './card-welcome.component.html',
+    styleUrls: ['./card-welcome.component.scss'],
+    standalone: false
 })
 export class CardWelcomeComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any> {

@@ -19,7 +19,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
     styleUrls: ['./roles-and-activities.component.scss'],
     /* tslint:disable */
     host: { class: 'w-100 role-card flex flex-1' },
-    /* tslint:enable */
+    standalone: false
 })
 export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
     createRole!: UntypedFormGroup

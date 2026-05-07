@@ -47,6 +47,7 @@ const flattenItems = (items: any[], key: string | number) => {
     styleUrls: ['./public-toc.component.scss'],
     // tslint:disable-next-line: use-component-view-encapsulation
     encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PublicTocComponent implements OnInit, OnDestroy, AfterViewChecked, AfterViewInit {
     banners: NsAppToc.ITocBanner | null = null

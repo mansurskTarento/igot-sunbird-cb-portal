@@ -7,9 +7,10 @@ import { NsUser } from '@sunbird-cb/utils-v2'
 // import { ConnectionHoverService } from '../connection-name/connection-hover.servive'
 
 @Component({
-  selector: 'ws-app-connection-request-card',
-  templateUrl: './connection-request-card.component.html',
-  styleUrls: ['./connection-request-card.component.scss'],
+    selector: 'ws-app-connection-request-card',
+    templateUrl: './connection-request-card.component.html',
+    styleUrls: ['./connection-request-card.component.scss'],
+    standalone: false
 })
 export class ConnectionRequestCardComponent implements OnInit {
   @Input() user!: any // NSNetworkDataV2.INetworkUser

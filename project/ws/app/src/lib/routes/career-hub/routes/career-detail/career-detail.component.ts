@@ -9,9 +9,10 @@ import _ from 'lodash'
 /* tslint:enable */
 
 @Component({
-  selector: 'ws-app-career-detail',
-  templateUrl: './career-detail.component.html',
-  styleUrls: ['./career-detail.component.scss'],
+    selector: 'ws-app-career-detail',
+    templateUrl: './career-detail.component.html',
+    styleUrls: ['./career-detail.component.scss'],
+    standalone: false
 })
 export class CareerDetailComponent implements OnInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>

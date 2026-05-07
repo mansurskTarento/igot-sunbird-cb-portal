@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-account-password-settings',
-  templateUrl: './account-password-settings.component.html',
-  styleUrls: ['./account-password-settings.component.scss'],
+    selector: 'ws-app-account-password-settings',
+    templateUrl: './account-password-settings.component.html',
+    styleUrls: ['./account-password-settings.component.scss'],
+    standalone: false
 })
 export class AccountPasswordSettingsComponent implements OnInit {
 

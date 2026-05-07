@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-contact-home',
-  templateUrl: './contact-home.component.html',
-  styleUrls: ['./contact-home.component.scss'],
+    selector: 'ws-app-contact-home',
+    templateUrl: './contact-home.component.html',
+    styleUrls: ['./contact-home.component.scss'],
+    standalone: false
 })
 export class ContactHomeComponent implements OnInit {
   contactUsMail = ''

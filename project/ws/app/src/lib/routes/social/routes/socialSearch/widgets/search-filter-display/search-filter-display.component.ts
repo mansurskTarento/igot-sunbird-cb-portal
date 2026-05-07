@@ -6,9 +6,10 @@ import { SocialForum } from '../../../forums/models/SocialForumposts.model'
 import { FilterService } from '../../../forums/service/sub-services/filter.service'
 
 @Component({
-  selector: 'ws-app-search-filter-display',
-  templateUrl: './search-filter-display.component.html',
-  styleUrls: ['./search-filter-display.component.scss'],
+    selector: 'ws-app-search-filter-display',
+    templateUrl: './search-filter-display.component.html',
+    styleUrls: ['./search-filter-display.component.scss'],
+    standalone: false
 })
 export class SearchFilterDisplayComponent implements OnInit {
   @Input() filtersResponse: SocialForum.IFilterUnitResponse[] = []

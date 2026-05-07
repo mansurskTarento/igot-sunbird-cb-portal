@@ -3,9 +3,10 @@ import { LoginRootDirective } from './login-root.directive'
 import { LoginRootService } from './login-root.service'
 
 @Component({
-  selector: 'ws-login-root',
-  templateUrl: './login-root.component.html',
-  styleUrls: ['./login-root.component.scss'],
+    selector: 'ws-login-root',
+    templateUrl: './login-root.component.html',
+    styleUrls: ['./login-root.component.scss'],
+    standalone: false
 })
 export class LoginRootComponent implements OnInit {
 

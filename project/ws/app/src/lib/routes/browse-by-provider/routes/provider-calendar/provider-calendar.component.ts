@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-provider-calendar',
-  templateUrl: './provider-calendar.component.html',
-  styleUrls: ['./provider-calendar.component.scss'],
+    selector: 'ws-app-provider-calendar',
+    templateUrl: './provider-calendar.component.html',
+    styleUrls: ['./provider-calendar.component.scss'],
+    standalone: false
 })
 export class ProviderCalendarComponent implements OnInit {
 

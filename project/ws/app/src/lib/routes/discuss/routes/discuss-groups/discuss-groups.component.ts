@@ -3,9 +3,10 @@ import { Component, OnInit } from '@angular/core'
 import { NSDiscussData } from '../../models/discuss.model'
 
 @Component({
-  selector: 'app-discuss-groups',
-  templateUrl: './discuss-groups.component.html',
-  styleUrls: ['./discuss-groups.component.scss'],
+    selector: 'app-discuss-groups',
+    templateUrl: './discuss-groups.component.html',
+    styleUrls: ['./discuss-groups.component.scss'],
+    standalone: false
 })
 export class DiscussGroupsComponent implements OnInit {
   categories!: NSDiscussData.ICategorie[]

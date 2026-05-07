@@ -36,11 +36,12 @@ import { MobileAppsService } from './../../../services/mobile-apps.service'
 
 
 @Component({
-  selector: 'ws-app-search-v3-input-home',
-  templateUrl: './search-input-home.component.html',
-  styleUrls: ['./search-input-home.component.scss'],
-  // tslint:disable-next-line
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ws-app-search-v3-input-home',
+    templateUrl: './search-input-home.component.html',
+    styleUrls: ['./search-input-home.component.scss'],
+    // tslint:disable-next-line
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class SearchInputHomeComponent implements OnInit, OnChanges {
   @Input() placeHolder = '';

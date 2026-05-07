@@ -6,7 +6,7 @@ describe('ViewForumService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ViewForumService = TestBed.get(ViewForumService)
+    const service: ViewForumService = TestBed.inject(ViewForumService)
     expect(service).toBeTruthy()
   })
 })

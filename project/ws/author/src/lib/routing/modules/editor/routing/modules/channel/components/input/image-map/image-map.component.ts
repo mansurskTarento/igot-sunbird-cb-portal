@@ -13,9 +13,10 @@ import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-image-map',
-  templateUrl: './image-map.component.html',
-  styleUrls: ['./image-map.component.scss'],
+    selector: 'ws-auth-image-map',
+    templateUrl: './image-map.component.html',
+    styleUrls: ['./image-map.component.scss'],
+    standalone: false
 })
 export class ImageMapComponent implements OnInit, AfterViewInit {
   @ViewChild('canvas') canvas!: ElementRef

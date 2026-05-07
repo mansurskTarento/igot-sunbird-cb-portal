@@ -6,10 +6,11 @@ import * as _ from 'lodash'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-service-history',
-  templateUrl: './service-history.component.html',
-  styleUrls: ['./service-history.component.scss'],
-  providers: [DatePipe]
+    selector: 'ws-app-service-history',
+    templateUrl: './service-history.component.html',
+    styleUrls: ['./service-history.component.scss'],
+    providers: [DatePipe],
+    standalone: false
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)

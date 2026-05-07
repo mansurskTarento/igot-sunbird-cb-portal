@@ -9,12 +9,12 @@ import { AppTocService } from '@sunbird-cb/toc'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-widget-profile-cretifications-v2',
-  templateUrl: './profile-cretifications-v2.component.html',
-  styleUrls: ['./profile-cretifications-v2.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'ws-widget-profile-cretifications-v2',
+    templateUrl: './profile-cretifications-v2.component.html',
+    styleUrls: ['./profile-cretifications-v2.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 // developing for old skill+certifications

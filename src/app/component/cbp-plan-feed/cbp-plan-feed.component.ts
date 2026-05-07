@@ -6,9 +6,10 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-cbp-plan-feed',
-  templateUrl: './cbp-plan-feed.component.html',
-  styleUrls: ['./cbp-plan-feed.component.scss'],
+    selector: 'ws-cbp-plan-feed',
+    templateUrl: './cbp-plan-feed.component.html',
+    styleUrls: ['./cbp-plan-feed.component.scss'],
+    standalone: false
 })
 export class CbpPlanFeedComponent implements OnInit {
 

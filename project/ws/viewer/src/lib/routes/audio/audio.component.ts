@@ -14,9 +14,10 @@ import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-audio',
-  templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss'],
+    selector: 'viewer-audio',
+    templateUrl: './audio.component.html',
+    styleUrls: ['./audio.component.scss'],
+    standalone: false
 })
 export class AudioComponent implements OnInit, OnDestroy {
   @Input() hideUpNext = false

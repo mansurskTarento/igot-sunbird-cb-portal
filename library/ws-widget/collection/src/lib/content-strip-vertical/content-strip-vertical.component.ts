@@ -36,9 +36,10 @@ interface IStripUnitContentData {
   } | null
 }
 @Component({
-  selector: 'ws-widget-content-strip-vertical',
-  templateUrl: './content-strip-vertical.component.html',
-  styleUrls: ['./content-strip-vertical.component.scss'],
+    selector: 'ws-widget-content-strip-vertical',
+    templateUrl: './content-strip-vertical.component.html',
+    styleUrls: ['./content-strip-vertical.component.scss'],
+    standalone: false
 })
 export class ContentStripVerticalComponent extends WidgetBaseComponent
   implements

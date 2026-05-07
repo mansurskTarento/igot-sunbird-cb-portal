@@ -3,9 +3,10 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core'
 import { ChannelStoreService } from './../../../services/store.service'
 
 @Component({
-  selector: 'ws-auth-tab',
-  templateUrl: './tab.component.html',
-  styleUrls: ['./tab.component.scss'],
+    selector: 'ws-auth-tab',
+    templateUrl: './tab.component.html',
+    styleUrls: ['./tab.component.scss'],
+    standalone: false
 })
 export class TabComponent implements OnInit, OnChanges {
 

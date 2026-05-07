@@ -24,9 +24,10 @@ import { of } from 'rxjs'
 /* tslint:enable */
 
 @Component({
-  selector: 'ws-app-event-detail',
-  templateUrl: './event-detail.component.html',
-  styleUrls: ['./event-detail.component.scss'],
+    selector: 'ws-app-event-detail',
+    templateUrl: './event-detail.component.html',
+    styleUrls: ['./event-detail.component.scss'],
+    standalone: false
 })
 export class EventDetailComponent implements OnInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>

@@ -16,10 +16,11 @@ import { NSContent } from '../../../../../interface/content'
 import { NotificationComponent } from '@sunbird-cb/notification/lib/notification.component'
 
 @Component({
-  selector: 'ws-auth-root-editor',
-  templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.scss'],
-  providers: [EditorContentService, EditorContentV2Service],
+    selector: 'ws-auth-root-editor',
+    templateUrl: './editor.component.html',
+    styleUrls: ['./editor.component.scss'],
+    providers: [EditorContentService, EditorContentV2Service],
+    standalone: false
 })
 export class EditorComponent implements OnInit, OnDestroy {
   routerSubscription!: Subscription

@@ -6,9 +6,10 @@ import { PeerValidationService } from '../../../../services/peer-validation.serv
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-user-search-table',
-  templateUrl: './user-search-table.component.html',
-  styleUrls: ['./user-search-table.component.scss'],
+    selector: 'ws-app-user-search-table',
+    templateUrl: './user-search-table.component.html',
+    styleUrls: ['./user-search-table.component.scss'],
+    standalone: false
 })
 export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)

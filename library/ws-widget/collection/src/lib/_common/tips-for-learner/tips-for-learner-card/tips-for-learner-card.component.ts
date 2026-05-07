@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-tips-for-learner-card',
-  templateUrl: './tips-for-learner-card.component.html',
-  styleUrls: ['./tips-for-learner-card.component.scss'],
+    selector: 'ws-widget-tips-for-learner-card',
+    templateUrl: './tips-for-learner-card.component.html',
+    styleUrls: ['./tips-for-learner-card.component.scss'],
+    standalone: false
 })
 export class TipsForLearnerCardComponent implements OnInit {
   randomlearnAdvisoryObj: any

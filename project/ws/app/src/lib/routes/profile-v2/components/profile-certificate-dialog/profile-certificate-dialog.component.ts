@@ -2,9 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-profile-certificate-dialog',
-  templateUrl: './profile-certificate-dialog.component.html',
-  styleUrls: ['./profile-certificate-dialog.component.scss'],
+    selector: 'ws-app-profile-certificate-dialog',
+    templateUrl: './profile-certificate-dialog.component.html',
+    styleUrls: ['./profile-certificate-dialog.component.scss'],
+    standalone: false
 })
 export class ProfileCertificateDialogComponent implements OnInit {
 

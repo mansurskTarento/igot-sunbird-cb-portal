@@ -4,9 +4,10 @@ import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-activity-card',
-  templateUrl: './activity-card.component.html',
-  styleUrls: ['./activity-card.component.scss'],
+    selector: 'ws-widget-activity-card',
+    templateUrl: './activity-card.component.html',
+    styleUrls: ['./activity-card.component.scss'],
+    standalone: false
 })
 export class ActivityCardComponent implements OnInit {
   @Input() widgetData!: any // IActivityCard

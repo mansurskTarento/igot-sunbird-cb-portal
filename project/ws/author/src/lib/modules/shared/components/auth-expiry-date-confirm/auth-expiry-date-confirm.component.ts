@@ -17,9 +17,10 @@ import { NotificationComponent } from '@sunbird-cb/notification'
 import { Notify } from '../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-expiry-date-confirm',
-  templateUrl: './auth-expiry-date-confirm.component.html',
-  styleUrls: ['./auth-expiry-date-confirm.component.scss'],
+    selector: 'ws-auth-expiry-date-confirm',
+    templateUrl: './auth-expiry-date-confirm.component.html',
+    styleUrls: ['./auth-expiry-date-confirm.component.scss'],
+    standalone: false
 })
 export class AuthExpiryDateConfirmComponent implements OnInit {
   userActionForm!: UntypedFormGroup

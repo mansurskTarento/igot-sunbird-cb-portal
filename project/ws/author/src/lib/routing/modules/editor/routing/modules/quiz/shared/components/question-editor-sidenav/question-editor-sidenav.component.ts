@@ -14,9 +14,10 @@ import { NotificationComponent } from '@sunbird-cb/notification'
 import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-question-editor-sidebar',
-  templateUrl: './question-editor-sidenav.component.html',
-  styleUrls: ['./question-editor-sidenav.component.scss'],
+    selector: 'ws-auth-question-editor-sidebar',
+    templateUrl: './question-editor-sidenav.component.html',
+    styleUrls: ['./question-editor-sidenav.component.scss'],
+    standalone: false
 })
 export class QuestionEditorSidenavComponent implements OnInit, OnDestroy {
 

@@ -9,9 +9,10 @@ import { map } from 'rxjs/operators'
 // import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-forum-home',
-  templateUrl: './forum-home.component.html',
-  styleUrls: ['./forum-home.component.scss'],
+    selector: 'ws-app-forum-home',
+    templateUrl: './forum-home.component.html',
+    styleUrls: ['./forum-home.component.scss'],
+    standalone: false
 })
 export class ForumHomeComponent implements OnInit, OnDestroy {
 

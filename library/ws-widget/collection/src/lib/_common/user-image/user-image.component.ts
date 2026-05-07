@@ -4,9 +4,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // import { NsMiniProfile } from '../../mini-profile/mini-profile.model'
 
 @Component({
-  selector: 'ws-widget-user-image',
-  templateUrl: './user-image.component.html',
-  styleUrls: ['./user-image.component.scss'],
+    selector: 'ws-widget-user-image',
+    templateUrl: './user-image.component.html',
+    styleUrls: ['./user-image.component.scss'],
+    standalone: false
 })
 export class UserImageComponent implements OnInit, OnChanges {
   @Input() email = ''

@@ -6,9 +6,10 @@ import { IAudioObj } from '../../../interface/page-interface'
 import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-audio-strips',
-  templateUrl: './audio-strips.component.html',
-  styleUrls: ['./audio-strips.component.scss'],
+    selector: 'ws-auth-audio-strips',
+    templateUrl: './audio-strips.component.html',
+    styleUrls: ['./audio-strips.component.scss'],
+    standalone: false
 })
 export class AudioStripsComponent implements OnInit, OnDestroy {
 

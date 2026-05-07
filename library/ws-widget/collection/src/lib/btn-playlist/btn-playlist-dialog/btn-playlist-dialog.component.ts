@@ -4,9 +4,10 @@ import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { NsPlaylist } from '../btn-playlist.model'
 
 @Component({
-  selector: 'ws-widget-btn-playlist-dialog',
-  templateUrl: './btn-playlist-dialog.component.html',
-  styleUrls: ['./btn-playlist-dialog.component.scss'],
+    selector: 'ws-widget-btn-playlist-dialog',
+    templateUrl: './btn-playlist-dialog.component.html',
+    styleUrls: ['./btn-playlist-dialog.component.scss'],
+    standalone: false
 })
 export class BtnPlaylistDialogComponent {
 

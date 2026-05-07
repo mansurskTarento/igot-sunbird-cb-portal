@@ -19,13 +19,14 @@ export const MY_FORMATS = {
   },
 }
 @Component({
-  selector: 'ws-app-mobile-filters',
-  templateUrl: './mobile-filters.component.html',
-  styleUrls: ['./mobile-filters.component.scss'],
-  providers: [DatePipe,
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'ws-app-mobile-filters',
+    templateUrl: './mobile-filters.component.html',
+    styleUrls: ['./mobile-filters.component.scss'],
+    providers: [DatePipe,
+        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 export class MobileFiltersComponent {
 

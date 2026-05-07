@@ -10,9 +10,10 @@ import { AnalyticsResolver } from '../../resolvers/learning-analytics-filters.re
 import { LearningAnalyticsService } from '../../services/learning-analytics.service'
 
 @Component({
-  selector: 'ws-analytics-client-analytics',
-  templateUrl: './client-analytics.component.html',
-  styleUrls: ['./client-analytics.component.scss'],
+    selector: 'ws-analytics-client-analytics',
+    templateUrl: './client-analytics.component.html',
+    styleUrls: ['./client-analytics.component.scss'],
+    standalone: false
 })
 export class ClientAnalyticsComponent implements OnInit, OnDestroy {
   errorMessageCode: 'API_FAILURE' | 'NO_DATA' | 'INVALID_DATA' | 'NONE' = 'NONE'

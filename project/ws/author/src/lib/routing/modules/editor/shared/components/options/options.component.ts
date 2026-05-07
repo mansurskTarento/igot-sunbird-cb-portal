@@ -6,9 +6,10 @@ import { AccessControlService } from '../../../../../../modules/shared/services/
 import { EditorContentService } from '../../../services/editor-content.service'
 
 @Component({
-  selector: 'ws-auth-options',
-  templateUrl: './options.component.html',
-  styleUrls: ['./options.component.scss'],
+    selector: 'ws-auth-options',
+    templateUrl: './options.component.html',
+    styleUrls: ['./options.component.scss'],
+    standalone: false
 })
 export class OptionsComponent implements OnInit, OnDestroy, AfterViewInit {
   contents: NSContent.IContentMeta[] = []

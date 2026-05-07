@@ -6,7 +6,7 @@ describe('NationalLearningWeekFormService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: NationalLearningWeekFormService = TestBed.get(NationalLearningWeekFormService)
+    const service: NationalLearningWeekFormService = TestBed.inject(NationalLearningWeekFormService)
     expect(service).toBeTruthy()
   })
 })

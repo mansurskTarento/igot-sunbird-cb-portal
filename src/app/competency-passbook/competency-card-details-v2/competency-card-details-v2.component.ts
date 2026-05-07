@@ -17,10 +17,11 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { CertificateViewPopupComponent } from '@ws/app'
 
 @Component({
-  selector: 'ws-competency-card-details-v2',
-  templateUrl: './competency-card-details-v2.component.html',
-  styleUrls: ['./competency-card-details-v2.component.scss'],
-  providers: [PipeCertificateImageURL]
+    selector: 'ws-competency-card-details-v2',
+    templateUrl: './competency-card-details-v2.component.html',
+    styleUrls: ['./competency-card-details-v2.component.scss'],
+    providers: [PipeCertificateImageURL],
+    standalone: false
 })
 
 export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {

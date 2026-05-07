@@ -8,9 +8,10 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-careers',
-  templateUrl: './careers.component.html',
-  styleUrls: ['./careers.component.scss'],
+    selector: 'ws-app-careers',
+    templateUrl: './careers.component.html',
+    styleUrls: ['./careers.component.scss'],
+    standalone: false
 })
 export class CareersComponent implements OnInit {
   data!: NSDiscussData.IDiscussionData

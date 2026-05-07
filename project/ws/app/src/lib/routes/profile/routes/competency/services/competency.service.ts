@@ -63,7 +63,7 @@ export class AssessmentService {
           if (!this.assessmentSubject) {
             this.assessmentSubject = new ReplaySubject(1)
           }
-          const response: NSCompetency.IAchievementsRes = {
+          const response: NSCompetency.IAchievementsRes | any = {
             ...data,
             achievements: data.assessments,
           }
@@ -73,7 +73,12 @@ export class AssessmentService {
           if (!this.assessmentSubject) {
             this.assessmentSubject = new ReplaySubject(1)
           }
-          this.assessmentSubject.next()
+          this.assessmentSubject.next({
+            achievements: [],
+            avgCountOrgWide: 0,
+            total: 0,
+            userCountVsOrgWide: 0
+          })
         },
       )
   }

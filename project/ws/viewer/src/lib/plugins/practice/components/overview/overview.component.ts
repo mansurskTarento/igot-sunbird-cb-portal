@@ -8,9 +8,10 @@ import { FinalAssessmentPopupComponent } from './../final-assessment-popup/final
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
-  selector: 'viewer-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss'],
+    selector: 'viewer-overview',
+    templateUrl: './overview.component.html',
+    styleUrls: ['./overview.component.scss'],
+    standalone: false
 })
 export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() learningObjective = ''

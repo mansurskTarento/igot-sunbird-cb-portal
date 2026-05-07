@@ -10,10 +10,10 @@ import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
 import { MatDialog } from '@angular/material/dialog'
 @Component({
-  selector: 'ws-app-chatbot',
-  templateUrl: './app-chatbot.component.html',
-  styleUrls: ['./app-chatbot.component.scss'],
-  // providers: [ChatbotService]
+    selector: 'ws-app-chatbot',
+    templateUrl: './app-chatbot.component.html',
+    styleUrls: ['./app-chatbot.component.scss'],
+    standalone: false
 })
 export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges {
   @Input() rootOrgId: any

@@ -7,9 +7,10 @@ import { DialogBoxModeratorComponent } from '../../Dialog-Box/dialog-box-moderat
 import { BtnAdminService } from './btn-admin.service'
 
 @Component({
-  selector: 'ws-app-btn-admin',
-  templateUrl: './btn-admin.component.html',
-  styleUrls: ['./btn-admin.component.scss'],
+    selector: 'ws-app-btn-admin',
+    templateUrl: './btn-admin.component.html',
+    styleUrls: ['./btn-admin.component.scss'],
+    standalone: false
 })
 export class BtnAdminComponent implements OnInit {
   constructor(

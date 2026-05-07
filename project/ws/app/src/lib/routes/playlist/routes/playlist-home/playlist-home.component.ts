@@ -7,9 +7,10 @@ import { Subscription } from 'rxjs'
 import { SafeStyle, DomSanitizer } from '@angular/platform-browser'
 
 @Component({
-  selector: 'ws-app-playlist-home',
-  templateUrl: './playlist-home.component.html',
-  styleUrls: ['./playlist-home.component.scss'],
+    selector: 'ws-app-playlist-home',
+    templateUrl: './playlist-home.component.html',
+    styleUrls: ['./playlist-home.component.scss'],
+    standalone: false
 })
 
 export class PlaylistHomeComponent implements OnInit, OnDestroy {

@@ -5,9 +5,10 @@ import { ImageCroppedEvent } from 'ngx-image-cropper'
 import { IMAGE_SIZE_1MB } from '../../../models/profile-revamp.model'
 
 @Component({
-  selector: 'ws-app-cover-photo-edit-popup',
-  templateUrl: './cover-photo-edit-popup.component.html',
-  styleUrls: ['./cover-photo-edit-popup.component.scss']
+    selector: 'ws-app-cover-photo-edit-popup',
+    templateUrl: './cover-photo-edit-popup.component.html',
+    styleUrls: ['./cover-photo-edit-popup.component.scss'],
+    standalone: false
 })
 export class CoverPhotoEditPopupComponent implements OnInit {
   //#region (global variables)

@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-qna-reply',
-  templateUrl: './qna-reply.component.html',
-  styleUrls: ['./qna-reply.component.scss'],
+    selector: 'ws-app-qna-reply',
+    templateUrl: './qna-reply.component.html',
+    styleUrls: ['./qna-reply.component.scss'],
+    standalone: false
 })
 export class QnaReplyComponent implements OnInit {
 

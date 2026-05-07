@@ -5,9 +5,10 @@ import { BtnPlaylistService, NsAutoComplete } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-playlist-share-dialog',
-  templateUrl: './playlist-share-dialog.component.html',
-  styleUrls: ['./playlist-share-dialog.component.scss'],
+    selector: 'ws-app-playlist-share-dialog',
+    templateUrl: './playlist-share-dialog.component.html',
+    styleUrls: ['./playlist-share-dialog.component.scss'],
+    standalone: false
 })
 export class PlaylistShareDialogComponent implements OnInit {
   @ViewChild('shareError', { static: true }) shareErrorMessage!: ElementRef<any>

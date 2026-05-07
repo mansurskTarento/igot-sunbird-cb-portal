@@ -8,12 +8,12 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-network-my-mdo',
-  templateUrl: './network-my-mdo.component.html',
-  styleUrls: ['./network-my-mdo.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 mt-6 ' },
-  /* tslint:enable */
+    selector: 'ws-app-network-my-mdo',
+    templateUrl: './network-my-mdo.component.html',
+    styleUrls: ['./network-my-mdo.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 mt-6 ' },
+    standalone: false
 })
 export class NetworkMyMdoComponent implements OnInit {
 

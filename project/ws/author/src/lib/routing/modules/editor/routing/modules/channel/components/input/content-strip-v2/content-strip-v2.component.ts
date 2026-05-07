@@ -17,9 +17,10 @@ import { MatChipInputEvent } from '@angular/material/chips'
 import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-content-strip-v2',
-  templateUrl: './content-strip-v2.component.html',
-  styleUrls: ['./content-strip-v2.component.scss'],
+    selector: 'ws-auth-content-strip-v2',
+    templateUrl: './content-strip-v2.component.html',
+    styleUrls: ['./content-strip-v2.component.scss'],
+    standalone: false
 })
 export class ContentStripV2Component implements OnInit {
   @Output() data = new EventEmitter<{

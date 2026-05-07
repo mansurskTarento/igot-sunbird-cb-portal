@@ -19,9 +19,10 @@ import { UploadService } from '../../../../../../shared/services/upload.service'
 import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-content-strip-single',
-  templateUrl: './content-strip-single.component.html',
-  styleUrls: ['./content-strip-single.component.scss'],
+    selector: 'ws-auth-content-strip-single',
+    templateUrl: './content-strip-single.component.html',
+    styleUrls: ['./content-strip-single.component.scss'],
+    standalone: false
 })
 export class ContentStripSingleComponent implements OnInit {
   @Output() data = new EventEmitter<{

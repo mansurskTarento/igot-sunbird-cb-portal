@@ -3,15 +3,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
 import quill from 'quill'
 
 @Component({
-  selector: 'ws-auth-root-ws-quill',
-  template: '',
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: QuillComponent,
-      multi: true,
-    },
-  ],
+    selector: 'ws-auth-root-ws-quill',
+    template: '',
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: QuillComponent,
+            multi: true,
+        },
+    ],
+    standalone: false
 })
 export class QuillComponent implements OnInit, OnDestroy, AfterViewInit, ControlValueAccessor {
 

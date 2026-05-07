@@ -12,9 +12,10 @@ import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant
 import { FILE_MAX_SIZE } from '../../../../../../../../../constants/upload'
 
 @Component({
-  selector: 'ws-auth-html',
-  templateUrl: './html.component.html',
-  styleUrls: ['./html.component.scss'],
+    selector: 'ws-auth-html',
+    templateUrl: './html.component.html',
+    styleUrls: ['./html.component.scss'],
+    standalone: false
 })
 export class HtmlComponent implements OnInit {
 

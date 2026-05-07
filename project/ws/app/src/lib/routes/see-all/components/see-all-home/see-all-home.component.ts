@@ -27,9 +27,10 @@ import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consu
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-see-all-home',
-  templateUrl: './see-all-home.component.html',
-  styleUrls: ['./see-all-home.component.scss'],
+    selector: 'ws-app-see-all-home',
+    templateUrl: './see-all-home.component.html',
+    styleUrls: ['./see-all-home.component.scss'],
+    standalone: false
 })
 export class SeeAllHomeComponent implements OnInit, OnDestroy {
 

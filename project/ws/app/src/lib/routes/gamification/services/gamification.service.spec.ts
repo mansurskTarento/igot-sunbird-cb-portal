@@ -6,7 +6,7 @@ describe('GamificationService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: GamificationService = TestBed.get(GamificationService)
+    const service: GamificationService = TestBed.inject(GamificationService)
     expect(service).toBeTruthy()
   })
 })

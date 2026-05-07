@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-dialog-confirm',
-  templateUrl: './dialog-confirm.component.html',
-  styleUrls: ['./dialog-confirm.component.scss'],
+    selector: 'ws-dialog-confirm',
+    templateUrl: './dialog-confirm.component.html',
+    styleUrls: ['./dialog-confirm.component.scss'],
+    standalone: false
 })
 export class DialogConfirmComponent {
 

@@ -11,9 +11,10 @@ import { NsGoal, BtnGoalsService, NsAutoComplete } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-share-dialog',
-  templateUrl: './goal-share-dialog.component.html',
-  styleUrls: ['./goal-share-dialog.component.scss'],
+    selector: 'ws-app-goal-share-dialog',
+    templateUrl: './goal-share-dialog.component.html',
+    styleUrls: ['./goal-share-dialog.component.scss'],
+    standalone: false
 })
 export class GoalShareDialogComponent implements OnInit {
   @ViewChild('errorShare', { static: true }) errorShareMessage!: ElementRef<

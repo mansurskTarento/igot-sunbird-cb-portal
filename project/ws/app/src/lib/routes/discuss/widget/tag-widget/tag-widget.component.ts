@@ -2,9 +2,10 @@ import { Component, Inject } from '@angular/core'
 import { ConfigService, EventsService, NavigationServiceService, DiscussionService, BaseWrapperComponent } from '@sunbird-cb/discussions-ui-v8'
 
 @Component({
-  selector: 'app-tag-widget',
-  templateUrl: './tag-widget.component.html',
-  styleUrls: ['./tag-widget.component.scss'],
+    selector: 'app-tag-widget',
+    templateUrl: './tag-widget.component.html',
+    styleUrls: ['./tag-widget.component.scss'],
+    standalone: false
 })
 
 export class TagWidgetComponent extends BaseWrapperComponent {

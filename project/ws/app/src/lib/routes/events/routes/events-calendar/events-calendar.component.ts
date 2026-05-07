@@ -12,9 +12,10 @@ import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
 
 @Component({
-  selector: 'ws-app-events-calendar',
-  templateUrl: './events-calendar.component.html',
-  styleUrls: ['./events-calendar.component.scss']
+    selector: 'ws-app-events-calendar',
+    templateUrl: './events-calendar.component.html',
+    styleUrls: ['./events-calendar.component.scss'],
+    standalone: false
 })
 export class EventsCalendarComponent implements OnInit {
   @Input() eventCalendarDetails: any

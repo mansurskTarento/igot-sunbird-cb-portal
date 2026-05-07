@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-discussion-reply',
-  templateUrl: './discussion-reply.component.html',
-  styleUrls: ['./discussion-reply.component.scss'],
+    selector: 'ws-widget-discussion-reply',
+    templateUrl: './discussion-reply.component.html',
+    styleUrls: ['./discussion-reply.component.scss'],
+    standalone: false
 })
 export class DiscussionReplyComponent implements OnInit {
 

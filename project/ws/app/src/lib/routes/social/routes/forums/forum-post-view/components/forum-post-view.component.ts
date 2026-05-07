@@ -5,9 +5,10 @@ import { SocialForum } from '../../models/SocialForumposts.model'
 import { ForumService } from '../../service/forum.service'
 
 @Component({
-  selector: 'ws-app-forum-post-view',
-  templateUrl: './forum-post-view.component.html',
-  styleUrls: ['./forum-post-view.component.scss'],
+    selector: 'ws-app-forum-post-view',
+    templateUrl: './forum-post-view.component.html',
+    styleUrls: ['./forum-post-view.component.scss'],
+    standalone: false
 })
 export class ForumPostViewComponent implements OnInit {
   forumViewData: SocialForum.ITimelineResult | null = null

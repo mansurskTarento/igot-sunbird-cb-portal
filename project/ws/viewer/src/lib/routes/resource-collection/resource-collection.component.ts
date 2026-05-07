@@ -8,9 +8,10 @@ import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-resource-collection',
-  templateUrl: './resource-collection.component.html',
-  styleUrls: ['./resource-collection.component.scss'],
+    selector: 'viewer-resource-collection',
+    templateUrl: './resource-collection.component.html',
+    styleUrls: ['./resource-collection.component.scss'],
+    standalone: false
 })
 export class ResourceCollectionComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null

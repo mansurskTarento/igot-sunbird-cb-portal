@@ -2,9 +2,10 @@ import { Component, Inject, OnInit } from '@angular/core'
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-no-access-dialog',
-  templateUrl: './no-access-dialog.component.html',
-  styleUrls: ['./no-access-dialog.component.scss'],
+    selector: 'ws-app-no-access-dialog',
+    templateUrl: './no-access-dialog.component.html',
+    styleUrls: ['./no-access-dialog.component.scss'],
+    standalone: false
 })
 export class NoAccessDialogComponent implements OnInit {
 

@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 
 @Component({
-  selector: 'ws-cbp-side-bar',
-  templateUrl: './cbp-side-bar.component.html',
-  styleUrls: ['./cbp-side-bar.component.scss'],
+    selector: 'ws-cbp-side-bar',
+    templateUrl: './cbp-side-bar.component.html',
+    styleUrls: ['./cbp-side-bar.component.scss'],
+    standalone: false
 })
 export class CbpSideBarComponent implements OnInit {
 

@@ -9,9 +9,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
-  selector: 'ws-app-connections-card',
-  templateUrl: './connections-card.component.html',
-  styleUrls: ['./connections-card.component.scss']
+    selector: 'ws-app-connections-card',
+    templateUrl: './connections-card.component.html',
+    styleUrls: ['./connections-card.component.scss'],
+    standalone: false
 })
 export class ConnectionsCardComponent implements OnInit {
 

@@ -16,9 +16,10 @@ import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-html',
-  templateUrl: './html.component.html',
-  styleUrls: ['./html.component.scss'],
+    selector: 'viewer-html',
+    templateUrl: './html.component.html',
+    styleUrls: ['./html.component.scss'],
+    standalone: false
 })
 export class HtmlComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

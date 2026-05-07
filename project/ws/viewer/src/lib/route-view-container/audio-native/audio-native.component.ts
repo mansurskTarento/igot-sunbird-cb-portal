@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-audio-native-container',
-  templateUrl: './audio-native.component.html',
-  styleUrls: ['./audio-native.component.scss'],
+    selector: 'viewer-audio-native-container',
+    templateUrl: './audio-native.component.html',
+    styleUrls: ['./audio-native.component.scss'],
+    standalone: false
 })
 export class AudioNativeComponent implements OnInit {
   @Input() isScreenSizeSmall = false

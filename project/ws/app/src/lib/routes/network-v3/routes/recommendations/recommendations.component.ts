@@ -2,9 +2,10 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'ws-app-recommendations',
-  templateUrl: './recommendations.component.html',
-  styleUrls: ['./recommendations.component.scss']
+    selector: 'ws-app-recommendations',
+    templateUrl: './recommendations.component.html',
+    styleUrls: ['./recommendations.component.scss'],
+    standalone: false
 })
 export class RecommendationsComponent {
 

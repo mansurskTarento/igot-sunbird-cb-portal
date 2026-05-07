@@ -6,7 +6,7 @@ describe('BtnFollowService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: BtnFollowService = TestBed.get(BtnFollowService)
+    const service: BtnFollowService = TestBed.inject(BtnFollowService)
     expect(service).toBeTruthy()
   })
 })

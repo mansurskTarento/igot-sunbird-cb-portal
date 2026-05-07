@@ -21,11 +21,12 @@ export enum ErrorType {
 }
 
 @Component({
-  selector: 'ws-app-competency-test',
-  templateUrl: './competence-test.component.html',
-  styleUrls: ['./competence-test.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'competency_main_test_wrapper' },
+    selector: 'ws-app-competency-test',
+    templateUrl: './competence-test.component.html',
+    styleUrls: ['./competence-test.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'competency_main_test_wrapper' },
+    standalone: false
 })
 export class CompetencyTestComponent implements OnInit, OnDestroy, AfterViewChecked {
   fullScreenContainer: HTMLElement | null = null

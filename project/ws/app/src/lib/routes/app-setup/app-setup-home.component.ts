@@ -9,15 +9,16 @@ import { SettingsComponent } from '../profile/routes/settings/settings.component
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-app-setup-home',
-  templateUrl: './app-setup-home.component.html',
-  styleUrls: ['./app-setup-home.component.scss'],
-  providers: [
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { displayDefaultIndicatorType: false },
-    },
-  ],
+    selector: 'ws-app-app-setup-home',
+    templateUrl: './app-setup-home.component.html',
+    styleUrls: ['./app-setup-home.component.scss'],
+    providers: [
+        {
+            provide: STEPPER_GLOBAL_OPTIONS,
+            useValue: { displayDefaultIndicatorType: false },
+        },
+    ],
+    standalone: false
 })
 export class AppSetupHomeComponent implements OnInit, AfterViewInit {
   currentIndex = 0

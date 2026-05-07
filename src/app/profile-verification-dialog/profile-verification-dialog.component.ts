@@ -12,10 +12,11 @@ export interface ProfileVerificationData {
 }
 
 @Component({
-  selector: 'ws-profile-verification-dialog',
-  templateUrl: './profile-verification-dialog.component.html',
-  styleUrls: ['./profile-verification-dialog.component.scss'],
-  encapsulation: ViewEncapsulation.None
+    selector: 'ws-profile-verification-dialog',
+    templateUrl: './profile-verification-dialog.component.html',
+    styleUrls: ['./profile-verification-dialog.component.scss'],
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class ProfileVerificationDialogComponent implements OnInit {
   userOrganization: any | undefined

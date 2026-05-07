@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common'
 import { FormsModule } from '@angular/forms'
 import { DownloadAppComponent } from '../component/download-app/download-app.component'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
@@ -15,6 +14,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatListModule } from '@angular/material/list'
 import { MatRadioModule } from '@angular/material/radio'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { HttpClient } from '@angular/common/http'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {

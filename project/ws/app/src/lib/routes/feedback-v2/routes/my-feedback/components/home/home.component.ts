@@ -10,6 +10,7 @@ import { filter, switchMap, takeUntil } from 'rxjs/operators'
   selector: 'ws-app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
+  standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
   currentTabIndex!: number
@@ -62,7 +63,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscriptionSubject$.next()
+    this.subscriptionSubject$.next({})
     this.subscriptionSubject$.complete()
   }
 

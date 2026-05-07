@@ -18,9 +18,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 // import { NoAccessDialogComponent } from '../no-access-dialog/no-access-dialog.component'
 
 @Component({
-  selector: 'ws-app-goal-card[type]',
-  templateUrl: './goal-card.component.html',
-  styleUrls: ['./goal-card.component.scss'],
+    selector: 'ws-app-goal-card[type]',
+    templateUrl: './goal-card.component.html',
+    styleUrls: ['./goal-card.component.scss'],
+    standalone: false
 })
 export class GoalCardComponent implements OnInit {
   @ViewChild('errorDurationUpdate', { static: true })

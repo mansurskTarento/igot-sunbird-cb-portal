@@ -3,9 +3,10 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-dialog-assign',
-  templateUrl: './dialog-assign.component.html',
-  styleUrls: ['./dialog-assign.component.scss'],
+    selector: 'ws-app-dialog-assign',
+    templateUrl: './dialog-assign.component.html',
+    styleUrls: ['./dialog-assign.component.scss'],
+    standalone: false
 })
 export class DialogAssignComponent implements OnInit {
   isMandatory = false

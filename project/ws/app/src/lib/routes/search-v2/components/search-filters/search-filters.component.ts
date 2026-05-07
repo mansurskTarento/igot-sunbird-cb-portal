@@ -9,9 +9,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-search-filters',
-  templateUrl: './search-filters.component.html',
-  styleUrls: ['./search-filters.component.scss'],
+    selector: 'ws-app-search-filters',
+    templateUrl: './search-filters.component.html',
+    styleUrls: ['./search-filters.component.scss'],
+    standalone: false
 })
 export class SearchFiltersComponent implements OnInit, OnDestroy {
   @Input() newfacets!: any

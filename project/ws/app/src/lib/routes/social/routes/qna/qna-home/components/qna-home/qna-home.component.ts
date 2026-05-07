@@ -7,9 +7,10 @@ import { NsError, ROOT_WIDGET_CONFIG, NsDiscussionForum, WsDiscussionForumServic
 import { MatButtonToggleChange } from '@angular/material/button-toggle'
 
 @Component({
-  selector: 'ws-app-qna-home',
-  templateUrl: './qna-home.component.html',
-  styleUrls: ['./qna-home.component.scss'],
+    selector: 'ws-app-qna-home',
+    templateUrl: './qna-home.component.html',
+    styleUrls: ['./qna-home.component.scss'],
+    standalone: false
 })
 export class QnaHomeComponent implements OnInit, OnDestroy {
 

@@ -3,9 +3,10 @@ import { environment } from 'src/environments/environment'
 import { ActivatedRoute } from '@angular/router'
 import { DomSanitizer } from '@angular/platform-browser'
 @Component({
-  selector: 'ws-survey-shiksha',
-  templateUrl: './survey-shiksha.component.html',
-  styleUrls: ['./survey-shiksha.component.scss'],
+    selector: 'ws-survey-shiksha',
+    templateUrl: './survey-shiksha.component.html',
+    styleUrls: ['./survey-shiksha.component.scss'],
+    standalone: false
 })
 export class SurveyShikshaComponent implements OnInit {
   hostUrl = environment.azureHost

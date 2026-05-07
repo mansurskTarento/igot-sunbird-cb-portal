@@ -17,9 +17,10 @@ const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 
 @Component({
-  selector: 'ws-widget-player-survey',
-  templateUrl: './player-survey.component.html',
-  styleUrls: ['./player-survey.component.scss'],
+    selector: 'ws-widget-player-survey',
+    templateUrl: './player-survey.component.html',
+    styleUrls: ['./player-survey.component.scss'],
+    standalone: false
 })
 export class PlayerSurveyComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any>, OnDestroy {

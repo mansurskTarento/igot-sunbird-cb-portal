@@ -3,9 +3,10 @@ import { NsTnc } from '../../models/tnc.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-tnc-renderer',
-  templateUrl: './tnc-renderer.component.html',
-  styleUrls: ['./tnc-renderer.component.scss'],
+    selector: 'ws-tnc-renderer',
+    templateUrl: './tnc-renderer.component.html',
+    styleUrls: ['./tnc-renderer.component.scss'],
+    standalone: false
 })
 export class TncRendererComponent implements OnInit, OnChanges {
 

@@ -19,9 +19,10 @@ interface ILearningHistoryContent {
 }
 
 @Component({
-  selector: 'ws-app-learning-history',
-  templateUrl: './learning-history.component.html',
-  styleUrls: ['./learning-history.component.scss'],
+    selector: 'ws-app-learning-history',
+    templateUrl: './learning-history.component.html',
+    styleUrls: ['./learning-history.component.scss'],
+    standalone: false
 })
 export class LearningHistoryComponent implements OnInit {
   lhCard: NSLearningHistory.ILearningHistoryItem[] = []

@@ -5,9 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { NetworkingService } from '../../services/networking.service'
 
 @Component({
-  selector: 'ws-app-all-recommendations',
-  templateUrl: './all-recommendations.component.html',
-  styleUrls: ['./all-recommendations.component.scss']
+    selector: 'ws-app-all-recommendations',
+    templateUrl: './all-recommendations.component.html',
+    styleUrls: ['./all-recommendations.component.scss'],
+    standalone: false
 })
 export class AllRecommendationsComponent implements OnInit {
 

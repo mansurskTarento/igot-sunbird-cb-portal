@@ -3,9 +3,10 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-public-nav-bar',
-  templateUrl: './app-public-nav-bar.component.html',
-  styleUrls: ['./app-public-nav-bar.component.scss'],
+    selector: 'ws-app-public-nav-bar',
+    templateUrl: './app-public-nav-bar.component.html',
+    styleUrls: ['./app-public-nav-bar.component.scss'],
+    standalone: false
 })
 export class AppPublicNavBarComponent implements OnInit {
   appIcon: SafeUrl | null = null

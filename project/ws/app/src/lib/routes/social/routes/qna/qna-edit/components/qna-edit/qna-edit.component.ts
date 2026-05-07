@@ -12,9 +12,10 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-qna-edit',
-  templateUrl: './qna-edit.component.html',
-  styleUrls: ['./qna-edit.component.scss'],
+    selector: 'ws-app-qna-edit',
+    templateUrl: './qna-edit.component.html',
+    styleUrls: ['./qna-edit.component.scss'],
+    standalone: false
 })
 export class QnaEditComponent implements OnInit, OnDestroy {
 

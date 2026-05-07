@@ -26,12 +26,13 @@ import { Notify } from '../../../../../../../../constants/notificationMessage'
 import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-curate',
-  templateUrl: './curate.component.html',
-  styleUrls: ['./curate.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-curate',
+    templateUrl: './curate.component.html',
+    styleUrls: ['./curate.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class CurateComponent implements OnInit, OnDestroy {
   contents: NSContent.IContentMeta[] = []

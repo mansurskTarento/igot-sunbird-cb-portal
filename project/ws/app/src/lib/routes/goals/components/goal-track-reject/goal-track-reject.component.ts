@@ -5,9 +5,10 @@ import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-goal-track-reject',
-  templateUrl: './goal-track-reject.component.html',
-  styleUrls: ['./goal-track-reject.component.scss'],
+    selector: 'ws-app-goal-track-reject',
+    templateUrl: './goal-track-reject.component.html',
+    styleUrls: ['./goal-track-reject.component.scss'],
+    standalone: false
 })
 export class GoalTrackRejectComponent implements OnInit {
   @ViewChild('shareError', { static: true }) shareErrorMessage!: ElementRef<

@@ -6,9 +6,10 @@ import { AuthInitService } from '../../../../services/init.service'
 import { NSContent } from '../../../../interface/content'
 
 @Component({
-  selector: 'ws-auth-root-comments-dialog',
-  templateUrl: './comments-dialog.component.html',
-  styleUrls: ['./comments-dialog.component.scss'],
+    selector: 'ws-auth-root-comments-dialog',
+    templateUrl: './comments-dialog.component.html',
+    styleUrls: ['./comments-dialog.component.scss'],
+    standalone: false
 })
 export class CommentsDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup

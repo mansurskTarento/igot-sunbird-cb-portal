@@ -5,11 +5,12 @@ import _ from 'lodash'
 import { Router } from '@angular/router'
 /* tslint:enable */
 @Component({
-  selector: 'app-discuss-related-discussion',
-  templateUrl: './related-discussion.component.html',
-  styleUrls: ['./related-discussion.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'margin-left-l' },
+    selector: 'app-discuss-related-discussion',
+    templateUrl: './related-discussion.component.html',
+    styleUrls: ['./related-discussion.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'margin-left-l' },
+    standalone: false
 })
 export class RelatedDiscussionComponent implements OnInit {
   @Input()

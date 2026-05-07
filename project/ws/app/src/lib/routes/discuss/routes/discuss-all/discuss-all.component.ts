@@ -10,12 +10,12 @@ import _ from 'lodash'
 /* tslint:enable */
 
 @Component({
-  selector: 'app-discuss-all',
-  templateUrl: './discuss-all.component.html',
-  styleUrls: ['./discuss-all.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-discuss-all',
+    templateUrl: './discuss-all.component.html',
+    styleUrls: ['./discuss-all.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class DiscussAllComponent implements OnInit, AfterViewInit {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

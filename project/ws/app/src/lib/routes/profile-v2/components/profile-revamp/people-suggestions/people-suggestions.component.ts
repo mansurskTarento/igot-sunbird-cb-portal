@@ -6,9 +6,10 @@ import { Router } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-people-suggestions',
-  templateUrl: './people-suggestions.component.html',
-  styleUrls: ['./people-suggestions.component.scss']
+    selector: 'ws-app-people-suggestions',
+    templateUrl: './people-suggestions.component.html',
+    styleUrls: ['./people-suggestions.component.scss'],
+    standalone: false
 })
 export class PeopleSuggestionsComponent implements OnChanges {
   //#region (global variables)

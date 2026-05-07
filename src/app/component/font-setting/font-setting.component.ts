@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 @Component({
-  selector: 'ws-font-setting',
-  templateUrl: './font-setting.component.html',
-  styleUrls: ['./font-setting.component.scss'],
+    selector: 'ws-font-setting',
+    templateUrl: './font-setting.component.html',
+    styleUrls: ['./font-setting.component.scss'],
+    standalone: false
 })
 export class FontSettingComponent implements OnInit {
 

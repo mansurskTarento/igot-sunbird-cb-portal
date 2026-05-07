@@ -5,9 +5,10 @@ import { ExcelService } from '../excel.service'
 import { MatSelectChange } from '@angular/material/select'
 
 @Component({
-  selector: 'ws-app-admin',
-  templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss'],
+    selector: 'ws-app-admin',
+    templateUrl: './admin.component.html',
+    styleUrls: ['./admin.component.scss'],
+    standalone: false
 })
 export class AdminComponent implements OnInit {
   query!: any

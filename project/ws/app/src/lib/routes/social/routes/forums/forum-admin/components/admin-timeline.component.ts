@@ -6,9 +6,10 @@ import { ForumHandlerService } from '../../service/EmitterService/forum-handler.
 import { ForumService } from '../../service/forum.service'
 
 @Component({
-  selector: 'ws-app-admin-timeline',
-  templateUrl: './admin-timeline.component.html',
-  styleUrls: ['./admin-timeline.component.scss'],
+    selector: 'ws-app-admin-timeline',
+    templateUrl: './admin-timeline.component.html',
+    styleUrls: ['./admin-timeline.component.scss'],
+    standalone: false
 })
 export class AdminTimelineComponent implements OnInit {
   adminFlaggedTimelineReq: SocialForum.IAdminTimelineRequest = {

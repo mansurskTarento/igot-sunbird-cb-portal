@@ -7,12 +7,12 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-network-my-connection',
-  templateUrl: './network-my-connection.component.html',
-  styleUrls: ['./network-my-connection.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 mt-6 ' },
-  /* tslint:enable */
+    selector: 'ws-app-network-my-connection',
+    templateUrl: './network-my-connection.component.html',
+    styleUrls: ['./network-my-connection.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 mt-6 ' },
+    standalone: false
 })
 export class NetworkMyConnectionComponent implements OnInit {
   queryControl = new UntypedFormControl('')

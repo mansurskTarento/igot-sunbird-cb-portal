@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-web-module-container',
-  templateUrl: './web-module.component.html',
-  styleUrls: ['./web-module.component.scss'],
+    selector: 'viewer-web-module-container',
+    templateUrl: './web-module.component.html',
+    styleUrls: ['./web-module.component.scss'],
+    standalone: false
 })
 export class WebModuleComponent implements OnInit {
   @Input() isFetchingDataComplete = false

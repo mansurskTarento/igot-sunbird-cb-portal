@@ -5,9 +5,10 @@ import { SocialForum } from '../../models/SocialForumposts.model'
 import { FilterService } from '../../service/sub-services/filter.service'
 
 @Component({
-  selector: 'ws-app-filter-dispaly',
-  templateUrl: './filter-dispaly.component.html',
-  styleUrls: ['./filter-dispaly.component.scss'],
+    selector: 'ws-app-filter-dispaly',
+    templateUrl: './filter-dispaly.component.html',
+    styleUrls: ['./filter-dispaly.component.scss'],
+    standalone: false
 })
 export class FilterDispalyComponent implements OnInit {
   @Input() filtersResponse: SocialForum.IFilterUnitResponse[] = []

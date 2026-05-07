@@ -54,12 +54,10 @@ export interface IUsersData {
 }
 
 @Component({
-  selector: 'ws-auth-edit-meta',
-  templateUrl: './edit-meta.component.html',
-  styleUrls: ['./edit-meta.component.scss'],
-  // providers: [{
-  //   provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  // }],
+    selector: 'ws-auth-edit-meta',
+    templateUrl: './edit-meta.component.html',
+    styleUrls: ['./edit-meta.component.scss'],
+    standalone: false
 })
 export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   contentMeta!: NSContent.IContentMeta

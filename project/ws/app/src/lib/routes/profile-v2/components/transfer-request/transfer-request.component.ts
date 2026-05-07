@@ -14,9 +14,10 @@ import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-transfer-request',
-  templateUrl: './transfer-request.component.html',
-  styleUrls: ['./transfer-request.component.scss'],
+    selector: 'ws-transfer-request',
+    templateUrl: './transfer-request.component.html',
+    styleUrls: ['./transfer-request.component.scss'],
+    standalone: false
 })
 
 export class TransferRequestComponent implements OnInit, OnDestroy {

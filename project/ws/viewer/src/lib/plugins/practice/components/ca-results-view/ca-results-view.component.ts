@@ -6,9 +6,10 @@ import { ViewerHeaderSideBarToggleService } from '../../../../viewer-header-side
 // import { NsContent } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-ca-results-view',
-  templateUrl: './ca-results-view.component.html',
-  styleUrls: ['./ca-results-view.component.scss']
+    selector: 'viewer-ca-results-view',
+    templateUrl: './ca-results-view.component.html',
+    styleUrls: ['./ca-results-view.component.scss'],
+    standalone: false
 })
 export class CaResultsViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() results!: any

@@ -5,7 +5,7 @@ describe('ForumHandlerService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ForumHandlerService = TestBed.get(ForumHandlerService)
+    const service: ForumHandlerService = TestBed.inject(ForumHandlerService)
     expect(service).toBeTruthy()
   })
 })

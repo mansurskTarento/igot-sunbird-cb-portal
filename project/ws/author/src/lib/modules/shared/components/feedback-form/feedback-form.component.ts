@@ -27,9 +27,10 @@ import { Notify } from '../../../../constants/notificationMessage'
 const NOTIFICATION_TIME = 5
 
 @Component({
-  selector: 'ws-auth-shared-feedback',
-  templateUrl: './feedback-form.component.html',
-  styleUrls: ['./feedback-form.component.scss'],
+    selector: 'ws-auth-shared-feedback',
+    templateUrl: './feedback-form.component.html',
+    styleUrls: ['./feedback-form.component.scss'],
+    standalone: false
 })
 export class FeedbackFormComponent implements OnInit {
   forSelf = true

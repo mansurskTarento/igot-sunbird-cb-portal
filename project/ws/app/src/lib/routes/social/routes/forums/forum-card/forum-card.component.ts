@@ -3,9 +3,10 @@ import { SocialForum } from '../models/SocialForumposts.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-forum-card',
-  templateUrl: './forum-card.component.html',
-  styleUrls: ['./forum-card.component.scss'],
+    selector: 'ws-app-forum-card',
+    templateUrl: './forum-card.component.html',
+    styleUrls: ['./forum-card.component.scss'],
+    standalone: false
 })
 export class ForumCardComponent implements OnInit {
   @Input() post: SocialForum.ITimelineResult | null = null

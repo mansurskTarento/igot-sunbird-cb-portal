@@ -19,9 +19,10 @@ import { WidgetContentService } from '@sunbird-cb/toc'
 /* tslint:disable*/
 import _ from 'lodash'
 @Component({
-  selector: 'viewer-plugin-web-module',
-  templateUrl: './web-module.component.html',
-  styleUrls: ['./web-module.component.scss'],
+    selector: 'viewer-plugin-web-module',
+    templateUrl: './web-module.component.html',
+    styleUrls: ['./web-module.component.scss'],
+    standalone: false
 })
 export class WebModuleComponent implements OnInit, OnChanges, OnDestroy {
   @Input() collectionId = ''

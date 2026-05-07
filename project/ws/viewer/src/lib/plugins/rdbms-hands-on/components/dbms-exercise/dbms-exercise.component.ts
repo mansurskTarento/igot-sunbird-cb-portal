@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'viewer-dbms-exercise',
-  templateUrl: './dbms-exercise.component.html',
-  styleUrls: ['./dbms-exercise.component.scss'],
+    selector: 'viewer-dbms-exercise',
+    templateUrl: './dbms-exercise.component.html',
+    styleUrls: ['./dbms-exercise.component.scss'],
+    standalone: false
 })
 export class DbmsExerciseComponent implements OnDestroy, OnChanges {
   @Input() resourceContent: any

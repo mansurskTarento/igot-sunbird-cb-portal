@@ -8,9 +8,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-user-kb',
-  templateUrl: './user-kb.component.html',
-  styleUrls: ['./user-kb.component.scss'],
+    selector: 'ws-app-user-kb',
+    templateUrl: './user-kb.component.html',
+    styleUrls: ['./user-kb.component.scss'],
+    standalone: false
 })
 export class UserKbComponent implements OnInit, OnChanges {
   @Input() wid = ''

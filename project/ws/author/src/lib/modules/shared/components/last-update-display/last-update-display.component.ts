@@ -3,9 +3,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { AccessControlService } from '../../services/access-control.service'
 
 @Component({
-  selector: 'ws-auth-last-update-display',
-  templateUrl: './last-update-display.component.html',
-  styleUrls: ['./last-update-display.component.scss'],
+    selector: 'ws-auth-last-update-display',
+    templateUrl: './last-update-display.component.html',
+    styleUrls: ['./last-update-display.component.scss'],
+    standalone: false
 })
 export class LastUpdateDisplayComponent implements OnInit {
   @Input() lastUpdatedOn!: string

@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-forum-post-edit',
-  templateUrl: './forum-post-edit.component.html',
-  styleUrls: ['./forum-post-edit.component.scss'],
+    selector: 'ws-app-forum-post-edit',
+    templateUrl: './forum-post-edit.component.html',
+    styleUrls: ['./forum-post-edit.component.scss'],
+    standalone: false
 })
 export class ForumPostEditComponent implements OnInit {
 

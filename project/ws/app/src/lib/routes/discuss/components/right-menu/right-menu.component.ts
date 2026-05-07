@@ -2,12 +2,12 @@ import { Component, Input, OnInit } from '@angular/core'
 import { NSDiscussData } from '../../models/discuss.model'
 
 @Component({
-  selector: 'app-discuss-right-menu',
-  templateUrl: './right-menu.component.html',
-  styleUrls: ['./right-menu.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'app-discuss-right-menu',
+    templateUrl: './right-menu.component.html',
+    styleUrls: ['./right-menu.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class RightMenuComponent implements OnInit {
   @Input() tags!: NSDiscussData.ITag[]

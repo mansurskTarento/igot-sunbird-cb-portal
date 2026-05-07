@@ -9,9 +9,10 @@ export interface IWidgetBtnCallDialogData {
 }
 
 @Component({
-  selector: 'ws-widget-btn-call-dialog',
-  templateUrl: './btn-call-dialog.component.html',
-  styleUrls: ['./btn-call-dialog.component.scss'],
+    selector: 'ws-widget-btn-call-dialog',
+    templateUrl: './btn-call-dialog.component.html',
+    styleUrls: ['./btn-call-dialog.component.scss'],
+    standalone: false
 })
 export class BtnCallDialogComponent implements OnInit {
 

@@ -2,9 +2,10 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core'
 import { RatingService } from '../../_services/rating.service'
 
 @Component({
-  selector: 'ws-widget-rating-summary',
-  templateUrl: './rating-summary.component.html',
-  styleUrls: ['./rating-summary.component.scss'],
+    selector: 'ws-widget-rating-summary',
+    templateUrl: './rating-summary.component.html',
+    styleUrls: ['./rating-summary.component.scss'],
+    standalone: false
 })
 
 export class RatingSummaryComponent implements OnInit, OnChanges {

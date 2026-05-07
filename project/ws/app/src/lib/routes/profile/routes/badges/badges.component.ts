@@ -8,9 +8,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { debounceTime, throttleTime } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-app-badges',
-  templateUrl: './badges.component.html',
-  styleUrls: ['./badges.component.scss'],
+    selector: 'ws-app-badges',
+    templateUrl: './badges.component.html',
+    styleUrls: ['./badges.component.scss'],
+    standalone: false
 })
 export class BadgesComponent implements OnInit {
   status: TFetchStatus = 'none'

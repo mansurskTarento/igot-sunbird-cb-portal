@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 @Component({
-  selector: 'ws-app-description',
-  templateUrl: './description.component.html',
-  styleUrls: ['./description.component.scss']
+    selector: 'ws-app-description',
+    templateUrl: './description.component.html',
+    styleUrls: ['./description.component.scss'],
+    standalone: false
 })
 export class DescriptionComponent implements AfterViewInit {
     @ViewChild('descriptionElement') descriptionElement !: ElementRef

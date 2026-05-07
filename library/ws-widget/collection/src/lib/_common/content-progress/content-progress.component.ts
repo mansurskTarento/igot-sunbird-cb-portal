@@ -2,21 +2,21 @@ import { Component, HostBinding, Input, OnChanges } from '@angular/core'
 // import { ContentProgressService } from './content-progress.service'
 
 @Component({
-  selector: 'ws-widget-content-progress',
-  templateUrl: './content-progress.component.html',
-  styleUrls: ['./content-progress.component.scss'],
-  /* tslint:disable */
-  host: {
-    // Sets the role for this component to "progressbar"
-    role: 'progressbar',
-    // Sets the minimum and maximum values for the progressbar role.
-    'aria-valuemin': '0',
-    'aria-valuemax': '100',
-    'title': 'progres',
-    // Binding that updates the current value of the progressbar.
-    '[attr.aria-valuenow]': 'progress',
-  },
-  /* tslint:enable */
+    selector: 'ws-widget-content-progress',
+    templateUrl: './content-progress.component.html',
+    styleUrls: ['./content-progress.component.scss'],
+    /* tslint:disable */
+    host: {
+        // Sets the role for this component to "progressbar"
+        role: 'progressbar',
+        // Sets the minimum and maximum values for the progressbar role.
+        'aria-valuemin': '0',
+        'aria-valuemax': '100',
+        'title': 'progres',
+        // Binding that updates the current value of the progressbar.
+        '[attr.aria-valuenow]': 'progress',
+    },
+    standalone: false
 })
 export class ContentProgressComponent implements OnChanges {
   @Input()

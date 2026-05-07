@@ -8,9 +8,10 @@ import { MatTableDataSource } from '@angular/material/table'
 // import { BtnGoalsService } from "@sunbird-cb/collection";
 
 @Component({
-  selector: 'ws-app-goal-track-pending',
-  templateUrl: './goal-track-pending.component.html',
-  styleUrls: ['./goal-track-pending.component.scss'],
+    selector: 'ws-app-goal-track-pending',
+    templateUrl: './goal-track-pending.component.html',
+    styleUrls: ['./goal-track-pending.component.scss'],
+    standalone: false
 })
 export class GoalTrackPendingComponent implements OnInit {
   @ViewChild('remindError', { static: true }) remindErrorMessage!: ElementRef<

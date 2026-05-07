@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core'
 import { NSDiscussData } from '../../models/discuss.model'
 @Component({
-  selector: 'app-dicuss-card',
-  templateUrl: './discuss-card.component.html',
-  styleUrls: ['./discuss-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'app-dicuss-card',
+    templateUrl: './discuss-card.component.html',
+    styleUrls: ['./discuss-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 export class DiscussCardComponent implements OnInit, OnChanges {

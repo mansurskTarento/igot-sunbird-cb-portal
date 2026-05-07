@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-profile-visibility-settings',
-  templateUrl: './profile-visibility-settings.component.html',
-  styleUrls: ['./profile-visibility-settings.component.scss']
+    selector: 'ws-app-profile-visibility-settings',
+    templateUrl: './profile-visibility-settings.component.html',
+    styleUrls: ['./profile-visibility-settings.component.scss'],
+    standalone: false
 })
 export class ProfileVisibilitySettingsComponent implements OnInit {
   // Holds the selected visibility value

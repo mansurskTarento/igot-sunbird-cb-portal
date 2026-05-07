@@ -7,9 +7,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-user-playlist',
-  templateUrl: './user-playlist.component.html',
-  styleUrls: ['./user-playlist.component.scss'],
+    selector: 'ws-app-user-playlist',
+    templateUrl: './user-playlist.component.html',
+    styleUrls: ['./user-playlist.component.scss'],
+    standalone: false
 })
 export class UserPlaylistComponent implements OnInit, OnChanges {
   @Input() wid = ''

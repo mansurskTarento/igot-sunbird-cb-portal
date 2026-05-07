@@ -10,12 +10,12 @@ import _ from 'lodash'
 /* tslint:enable */
 
 @Component({
-  selector: 'app-profile-v2',
-  templateUrl: './profile.component.html',
-  styleUrls: ['./profile.component.scss'],
-  /* tslint:disable */
-  host: { class: 'margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-profile-v2',
+    templateUrl: './profile.component.html',
+    styleUrls: ['./profile.component.scss'],
+    /* tslint:disable */
+    host: { class: 'margin-top-l' },
+    standalone: false
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   sideNavBarOpened = true

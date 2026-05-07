@@ -11,9 +11,10 @@ export interface IActivityProgress {
 }
 
 @Component({
-  selector: 'ws-app-activities',
-  templateUrl: './activities.component.html',
-  styleUrls: ['./activities.component.scss'],
+    selector: 'ws-app-activities',
+    templateUrl: './activities.component.html',
+    styleUrls: ['./activities.component.scss'],
+    standalone: false
 })
 export class ActivitiesComponent implements OnInit {
 

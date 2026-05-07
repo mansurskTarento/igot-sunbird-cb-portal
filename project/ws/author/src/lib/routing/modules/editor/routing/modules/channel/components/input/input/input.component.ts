@@ -11,9 +11,10 @@ import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-input',
-  templateUrl: './input.component.html',
-  styleUrls: ['./input.component.scss'],
+    selector: 'ws-auth-input',
+    templateUrl: './input.component.html',
+    styleUrls: ['./input.component.scss'],
+    standalone: false
 })
 export class InputComponent implements OnInit {
   widget: IWidgetAuthor

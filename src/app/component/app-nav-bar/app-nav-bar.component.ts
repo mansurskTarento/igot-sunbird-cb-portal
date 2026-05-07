@@ -19,6 +19,7 @@ import { NotificationsService } from '../../services/notifications.service'
   selector: 'ws-app-nav-bar',
   templateUrl: './app-nav-bar.component.html',
   styleUrls: ['./app-nav-bar.component.scss'],
+  standalone: false
 })
 export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mode: 'top' | 'bottom' = 'top'
@@ -114,7 +115,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   ngOnInit() {
     if (this.configSvc) {
       this.jan26Data = this.configSvc.overrideThemeChanges
-      this.logoDisplayTime = this.jan26Data.desktop.logoDisplayTime
+      this.logoDisplayTime = this.jan26Data?.desktop?.logoDisplayTime
       this.displayLogo()
       setInterval(() => {
         this.janDataEnable = true
@@ -239,7 +240,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   displayLogo() {
-    const animationDur = this.jan26Data.desktop.animationDuration
+    const animationDur = this.jan26Data?.desktop?.animationDuration
     setTimeout(() => {
       this.janDataEnable = false
       // tslint:disable-next-line

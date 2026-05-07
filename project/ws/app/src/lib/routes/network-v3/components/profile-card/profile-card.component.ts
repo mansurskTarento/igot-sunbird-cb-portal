@@ -4,9 +4,10 @@ import { TranslateService } from '@ngx-translate/core';
 import * as _ from 'lodash';
 
 @Component({
-  selector: 'ws-app-profile-card',
-  templateUrl: './profile-card.component.html',
-  styleUrls: ['./profile-card.component.scss']
+    selector: 'ws-app-profile-card',
+    templateUrl: './profile-card.component.html',
+    styleUrls: ['./profile-card.component.scss'],
+    standalone: false
 })
 export class ProfileCardComponent implements OnInit, OnChanges {
   //#region (global variables)

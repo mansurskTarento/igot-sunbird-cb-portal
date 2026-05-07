@@ -9,9 +9,10 @@ import { SuccessDialogComponent } from '../survey-dialog/components/success-dial
 import { VideoPreviewDialogComponent } from '../survey-dialog/components/video-preview-dialog/video-preview-dialog.component'
 
 @Component({
-  selector: 'ws-app-review-page',
-  templateUrl: './review-page.component.html',
-  styleUrls: ['./review-page.component.scss'],
+    selector: 'ws-app-review-page',
+    templateUrl: './review-page.component.html',
+    styleUrls: ['./review-page.component.scss'],
+    standalone: false
 })
 export class ReviewPageComponent implements OnInit {
   requestId: string | null = null

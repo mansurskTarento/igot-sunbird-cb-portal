@@ -9,9 +9,10 @@ import { NsContent } from '@sunbird-cb/collection'
 
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 @Component({
-  selector: 'ws-app-learn-search',
-  templateUrl: './learn-search.component.html',
-  styleUrls: ['./learn-search.component.scss'],
+    selector: 'ws-app-learn-search',
+    templateUrl: './learn-search.component.html',
+    styleUrls: ['./learn-search.component.scss'],
+    standalone: false
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() param: any

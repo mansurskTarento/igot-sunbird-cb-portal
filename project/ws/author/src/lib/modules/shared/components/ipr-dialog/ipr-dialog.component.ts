@@ -1,9 +1,10 @@
 import { Component, OnInit, Inject } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 @Component({
-  selector: 'ws-auth-ipr-dialog',
-  templateUrl: './ipr-dialog.component.html',
-  styleUrls: ['./ipr-dialog.component.scss'],
+    selector: 'ws-auth-ipr-dialog',
+    templateUrl: './ipr-dialog.component.html',
+    styleUrls: ['./ipr-dialog.component.scss'],
+    standalone: false
 })
 export class IprDialogComponent implements OnInit {
   // constructor(public dialogRef: MatDialogRef<IprDialogComponent>,

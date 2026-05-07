@@ -7,6 +7,7 @@ import { NsContent } from '@sunbird-cb/utils-v2'
   selector: 'ws-app-channels-home',
   templateUrl: './channels-home.component.html',
   styleUrls: ['./channels-home.component.scss'],
+  standalone: false
 })
 export class ChannelsHomeComponent implements OnInit {
   labelFilters: IFilterUnitContent[] = []
@@ -17,7 +18,7 @@ export class ChannelsHomeComponent implements OnInit {
     this.contentSvc.search({
     }).subscribe(response => {
       if (response.notToBeShownFilters) {
-        const labels = response.notToBeShownFilters.find(unit => unit.type === 'labels')
+        const labels = response.notToBeShownFilters.find((unit: any) => unit.type === 'labels')
         if (labels) {
           this.labelFilters = labels.content
         }

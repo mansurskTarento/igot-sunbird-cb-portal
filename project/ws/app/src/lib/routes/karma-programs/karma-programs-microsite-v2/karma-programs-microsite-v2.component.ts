@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { DomSanitizer } from '@angular/platform-browser'
 
 @Component({
-  selector: 'ws-app-karma-programs-microsite-v2',
-  templateUrl: './karma-programs-microsite-v2.component.html',
-  styleUrls: ['./karma-programs-microsite-v2.component.scss'],
+    selector: 'ws-app-karma-programs-microsite-v2',
+    templateUrl: './karma-programs-microsite-v2.component.html',
+    styleUrls: ['./karma-programs-microsite-v2.component.scss'],
+    standalone: false
 })
 export class KarmaProgramsMicrositeV2Component implements OnInit {
   programName = ''

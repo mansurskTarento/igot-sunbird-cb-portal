@@ -11,9 +11,10 @@ interface IDialogData {
 }
 
 @Component({
-  selector: 'ws-widget-confirm-dialog',
-  templateUrl: './confirm-dialog.component.html',
-  styleUrls: ['./confirm-dialog.component.scss'],
+    selector: 'ws-widget-confirm-dialog',
+    templateUrl: './confirm-dialog.component.html',
+    styleUrls: ['./confirm-dialog.component.scss'],
+    standalone: false
 })
 export class ConfirmDialogComponent implements OnInit {
 

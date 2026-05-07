@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, EventEmitter, Output, ViewChild } from '@angular/core'
 import 'brace'
-import 'brace/ext/language_tools'
+// import 'brace/ext/language_tools'
 import 'brace/mode/json'
 import 'brace/snippets/json'
 import 'brace/theme/textmate'
@@ -9,6 +9,7 @@ import 'brace/theme/textmate'
   selector: 'ws-auth-ace-editor',
   templateUrl: './ace-editor.component.html',
   styleUrls: ['./ace-editor.component.scss'],
+  standalone: false
 })
 export class AceEditorComponent implements OnInit {
 

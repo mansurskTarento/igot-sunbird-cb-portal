@@ -8,6 +8,7 @@ import _ from 'lodash';
     selector: 'ws-app-welcome-onboard',
     templateUrl: './welcome-onboard.component.html',
     styleUrls: ['./welcome-onboard.component.scss'],
+    standalone: false
 })
 export class WelcomeOnboardComponent implements OnInit {
     constructor(private activatedRoute: ActivatedRoute, private route: Router, private translate: TranslateService) {

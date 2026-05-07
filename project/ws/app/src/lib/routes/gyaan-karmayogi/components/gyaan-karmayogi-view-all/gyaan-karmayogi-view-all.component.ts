@@ -11,9 +11,10 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { GyaanFilterComponent } from '../gyaan-filter/gyaan-filter.component'
 import { environment } from 'src/environments/environment'
 @Component({
-  selector: 'ws-app-gyaan-karmayogi-view-all',
-  templateUrl: './gyaan-karmayogi-view-all.component.html',
-  styleUrls: ['./gyaan-karmayogi-view-all.component.scss'],
+    selector: 'ws-app-gyaan-karmayogi-view-all',
+    templateUrl: './gyaan-karmayogi-view-all.component.html',
+    styleUrls: ['./gyaan-karmayogi-view-all.component.scss'],
+    standalone: false
 })
 export class GyaanKarmayogiViewAllComponent implements OnInit {
   sectorsList = []

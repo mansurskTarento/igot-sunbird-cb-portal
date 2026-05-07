@@ -18,9 +18,10 @@ import { MyFeedbackService } from '../../services/my-feedback.service'
 import { FeedbackFilterDialogComponent } from '../feedback-filter-dialog/feedback-filter-dialog.component'
 
 @Component({
-  selector: 'ws-app-feedback-list',
-  templateUrl: './feedback-list.component.html',
-  styleUrls: ['./feedback-list.component.scss'],
+    selector: 'ws-app-feedback-list',
+    templateUrl: './feedback-list.component.html',
+    styleUrls: ['./feedback-list.component.scss'],
+    standalone: false
 })
 export class FeedbackListComponent implements OnInit, OnDestroy {
   feedbackData!: IFeedbackSearchResult

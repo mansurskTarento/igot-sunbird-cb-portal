@@ -7,9 +7,10 @@ import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-connection-recommended-card',
-  templateUrl: './connection-recommended-card.component.html',
-  styleUrls: ['./connection-recommended-card.component.scss'],
+    selector: 'ws-app-connection-recommended-card',
+    templateUrl: './connection-recommended-card.component.html',
+    styleUrls: ['./connection-recommended-card.component.scss'],
+    standalone: false
 })
 export class ConnectionRecommendedCardComponent implements OnInit {
 

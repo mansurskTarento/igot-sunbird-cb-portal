@@ -4,9 +4,10 @@ import { NSDiscussData } from '../../models/discuss.model'
 import _ from 'lodash'
 /* tslint:enable */
 @Component({
-  selector: 'app-discuss-trending-tags',
-  templateUrl: './trending-tags.component.html',
-  styleUrls: ['./trending-tags.component.scss'],
+    selector: 'app-discuss-trending-tags',
+    templateUrl: './trending-tags.component.html',
+    styleUrls: ['./trending-tags.component.scss'],
+    standalone: false
 })
 export class TrendingTagsComponent implements OnInit {
   @Input() tags!: NSDiscussData.ITag[]

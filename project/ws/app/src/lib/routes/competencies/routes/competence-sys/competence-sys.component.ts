@@ -13,12 +13,12 @@ import { TranslateService } from '@ngx-translate/core'
 /* tslint:enable */
 
 @Component({
-  selector: 'app-competence-sys',
-  templateUrl: './competence-sys.component.html',
-  styleUrls: ['./competence-sys.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-competence-sys',
+    templateUrl: './competence-sys.component.html',
+    styleUrls: ['./competence-sys.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class CompetenceSysComponent implements OnInit {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

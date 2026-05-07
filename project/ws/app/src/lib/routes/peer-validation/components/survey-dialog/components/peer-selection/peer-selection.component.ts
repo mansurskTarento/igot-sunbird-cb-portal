@@ -4,9 +4,10 @@ const MIN_PEERS = 2
 const MAX_PEERS = 3
 
 @Component({
-  selector: 'ws-app-peer-selection',
-  templateUrl: './peer-selection.component.html',
-  styleUrls: ['./peer-selection.component.scss'],
+    selector: 'ws-app-peer-selection',
+    templateUrl: './peer-selection.component.html',
+    styleUrls: ['./peer-selection.component.scss'],
+    standalone: false
 })
 export class PeerSelectionComponent implements OnInit {
   @Input() selectedPeers: any

@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { MatDialogRef } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-dialog-user-role-select',
-  templateUrl: './dialog-user-role-select.component.html',
-  styleUrls: ['./dialog-user-role-select.component.scss'],
+    selector: 'ws-app-dialog-user-role-select',
+    templateUrl: './dialog-user-role-select.component.html',
+    styleUrls: ['./dialog-user-role-select.component.scss'],
+    standalone: false
 })
 export class DialogUserRoleSelectComponent implements OnInit {
 

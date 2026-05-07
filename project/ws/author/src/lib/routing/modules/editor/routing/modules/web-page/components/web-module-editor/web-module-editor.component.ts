@@ -38,12 +38,13 @@ import { ErrorParserComponent } from '../../../../../../../../modules/shared/com
 import { CommentsDialogComponent } from '../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 
 @Component({
-  selector: 'ws-auth-web-module-editor',
-  templateUrl: './web-module-editor.component.html',
-  styleUrls: ['./web-module-editor.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-web-module-editor',
+    templateUrl: './web-module-editor.component.html',
+    styleUrls: ['./web-module-editor.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 
 export class WebModuleEditorComponent implements OnInit, OnDestroy {

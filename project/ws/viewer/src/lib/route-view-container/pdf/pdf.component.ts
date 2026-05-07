@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
 @Component({
-  selector: 'viewer-pdf-container',
-  templateUrl: './pdf.component.html',
-  styleUrls: ['./pdf.component.scss'],
+    selector: 'viewer-pdf-container',
+    templateUrl: './pdf.component.html',
+    styleUrls: ['./pdf.component.scss'],
+    standalone: false
 })
 export class PdfComponent implements OnInit, OnDestroy {
   @Input() isFetchingDataComplete = false

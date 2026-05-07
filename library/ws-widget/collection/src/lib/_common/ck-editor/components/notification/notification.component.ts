@@ -8,9 +8,10 @@ interface IData {
 }
 
 @Component({
-  selector: 'ws-widget-notification',
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss'],
+    selector: 'ws-widget-notification',
+    templateUrl: './notification.component.html',
+    styleUrls: ['./notification.component.scss'],
+    standalone: false
 })
 export class NotificationComponent {
 

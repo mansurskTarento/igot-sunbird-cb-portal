@@ -4,9 +4,10 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-badges-share-dialog',
-  templateUrl: './badges-share-dialog.component.html',
-  styleUrls: ['./badges-share-dialog.component.scss'],
+    selector: 'ws-app-badges-share-dialog',
+    templateUrl: './badges-share-dialog.component.html',
+    styleUrls: ['./badges-share-dialog.component.scss'],
+    standalone: false
 })
 export class BadgesShareDialogComponent implements OnInit {
   @ViewChild('shareError', { static: true }) shareErrorMessage!: ElementRef<any>

@@ -4,9 +4,10 @@ import { ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-app-app-gallery',
-  templateUrl: './app-gallery.component.html',
-  styleUrls: ['./app-gallery.component.scss'],
+    selector: 'ws-app-app-gallery',
+    templateUrl: './app-gallery.component.html',
+    styleUrls: ['./app-gallery.component.scss'],
+    standalone: false
 })
 export class AppGalleryComponent implements OnInit, OnDestroy {
   data: any

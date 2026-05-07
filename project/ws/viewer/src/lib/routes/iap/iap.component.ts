@@ -8,9 +8,10 @@ import { filter } from 'rxjs/operators'
 import { ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-iap',
-  templateUrl: './iap.component.html',
-  styleUrls: ['./iap.component.scss'],
+    selector: 'viewer-iap',
+    templateUrl: './iap.component.html',
+    styleUrls: ['./iap.component.scss'],
+    standalone: false
 })
 export class IapComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

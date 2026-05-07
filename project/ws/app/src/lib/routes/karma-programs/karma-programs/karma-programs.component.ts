@@ -11,9 +11,10 @@ import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-karma-programs',
-  templateUrl: './karma-programs.component.html',
-  styleUrls: ['./karma-programs.component.scss']
+    selector: 'ws-app-karma-programs',
+    templateUrl: './karma-programs.component.html',
+    styleUrls: ['./karma-programs.component.scss'],
+    standalone: false
 })
 export class KarmaProgramsComponent implements OnInit {
 

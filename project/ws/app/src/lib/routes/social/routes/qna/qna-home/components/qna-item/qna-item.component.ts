@@ -5,9 +5,10 @@ import { NsDiscussionForum, DialogSocialDeletePostComponent } from '@sunbird-cb/
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-qna-item',
-  templateUrl: './qna-item.component.html',
-  styleUrls: ['./qna-item.component.scss'],
+    selector: 'ws-app-qna-item',
+    templateUrl: './qna-item.component.html',
+    styleUrls: ['./qna-item.component.scss'],
+    standalone: false
 })
 export class QnaItemComponent implements OnInit {
 

@@ -14,12 +14,13 @@ import { IContentAssignModel } from '@sunbird-cb/collection'
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
-  selector: 'ws-app-content-assignment',
-  templateUrl: './content-assignment.component.html',
-  styleUrls: ['./content-assignment.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true },
-  }],
+    selector: 'ws-app-content-assignment',
+    templateUrl: './content-assignment.component.html',
+    styleUrls: ['./content-assignment.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true },
+        }],
+    standalone: false
 })
 
 export class ContentAssignmentComponent implements OnInit {

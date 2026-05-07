@@ -4,9 +4,10 @@ import { NsGoal } from '../btn-goals.model'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-widget-btn-goals-dialog',
-  templateUrl: './btn-goals-dialog.component.html',
-  styleUrls: ['./btn-goals-dialog.component.scss'],
+    selector: 'ws-widget-btn-goals-dialog',
+    templateUrl: './btn-goals-dialog.component.html',
+    styleUrls: ['./btn-goals-dialog.component.scss'],
+    standalone: false
 })
 export class BtnGoalsDialogComponent implements OnInit {
   fetchGoals: TFetchStatus = 'none'

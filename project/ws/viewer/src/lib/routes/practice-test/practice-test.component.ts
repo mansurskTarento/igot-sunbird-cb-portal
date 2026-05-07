@@ -13,6 +13,7 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
     selector: 'viewer-practice',
     templateUrl: './practice-test.component.html',
     styleUrls: ['./practice-test.component.scss'],
+    standalone: false
 })
 export class PracticeTestComponent implements OnInit, OnDestroy {
     isPreviewMode = false

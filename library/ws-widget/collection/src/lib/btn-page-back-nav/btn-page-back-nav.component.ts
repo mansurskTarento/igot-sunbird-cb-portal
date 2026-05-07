@@ -6,9 +6,10 @@ import { BtnPageBackNavService } from './btn-page-back-nav.service'
 import { ConfirmDialogComponent } from '../_common/confirm-dialog/confirm-dialog.component'
 type TUrl = undefined | 'none' | 'back' | string
 @Component({
-  selector: 'ws-widget-btn-page-back-nav',
-  templateUrl: './btn-page-back-nav.component.html',
-  styleUrls: ['./btn-page-back-nav.component.scss'],
+    selector: 'ws-widget-btn-page-back-nav',
+    templateUrl: './btn-page-back-nav.component.html',
+    styleUrls: ['./btn-page-back-nav.component.scss'],
+    standalone: false
 })
 export class BtnPageBackNavComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<{ url: TUrl }> {

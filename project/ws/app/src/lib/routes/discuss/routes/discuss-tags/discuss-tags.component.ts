@@ -7,9 +7,10 @@ import { ActivatedRoute } from '@angular/router'
 import { DiscussUtilsService } from '../../services/discuss-utils.service'
 /* tslint:enable */
 @Component({
-  selector: 'app-discuss-tags',
-  templateUrl: './discuss-tags.component.html',
-  styleUrls: ['./discuss-tags.component.scss'],
+    selector: 'app-discuss-tags',
+    templateUrl: './discuss-tags.component.html',
+    styleUrls: ['./discuss-tags.component.scss'],
+    standalone: false
 })
 export class DiscussTagsComponent implements OnInit {
   tag = this.route.snapshot.data.availableTags.data

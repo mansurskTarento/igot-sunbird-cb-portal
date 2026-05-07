@@ -5,9 +5,10 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { NsContentStripMultiple, IPickerContentData, NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-auth-content-strip-multiple',
-  templateUrl: './content-strip-multiple.component.html',
-  styleUrls: ['./content-strip-multiple.component.scss'],
+    selector: 'ws-auth-content-strip-multiple',
+    templateUrl: './content-strip-multiple.component.html',
+    styleUrls: ['./content-strip-multiple.component.scss'],
+    standalone: false
 })
 export class ContentStripMultipleComponent implements OnInit {
 

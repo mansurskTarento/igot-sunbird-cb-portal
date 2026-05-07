@@ -3,9 +3,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 
 @Component({
-  selector: 'ws-app-video-preview-dialog',
-  templateUrl: './video-preview-dialog.component.html',
-  styleUrls: ['./video-preview-dialog.component.scss'],
+    selector: 'ws-app-video-preview-dialog',
+    templateUrl: './video-preview-dialog.component.html',
+    styleUrls: ['./video-preview-dialog.component.scss'],
+    standalone: false
 })
 export class VideoPreviewDialogComponent implements OnInit {
   @ViewChild('videoPlayer') videoPlayer!: ElementRef<HTMLVideoElement>

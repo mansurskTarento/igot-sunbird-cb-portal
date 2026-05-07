@@ -1,9 +1,10 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core'
 // import { ContentProgressService } from '@sunbird-cb/collection'
 @Component({
-  selector: 'ws-analytics-progress-radial',
-  templateUrl: './progress-radial.component.html',
-  styleUrls: ['./progress-radial.component.scss'],
+    selector: 'ws-analytics-progress-radial',
+    templateUrl: './progress-radial.component.html',
+    styleUrls: ['./progress-radial.component.scss'],
+    standalone: false
 })
 export class ProgressRadialComponent implements OnInit, OnChanges {
   @Input() contentId = ''

@@ -27,9 +27,10 @@ import { Notify } from '../../../../../../constants/notificationMessage'
 declare const CKEDITOR: any
 
 @Component({
-  selector: 'ws-auth-plain-ckeditor',
-  templateUrl: './plain-ckeditor.component.html',
-  styleUrls: ['./plain-ckeditor.component.scss'],
+    selector: 'ws-auth-plain-ckeditor',
+    templateUrl: './plain-ckeditor.component.html',
+    styleUrls: ['./plain-ckeditor.component.scss'],
+    standalone: false
 })
 export class PlainCKEditorComponent implements AfterViewInit, OnInit, OnDestroy {
   downloadRegex = new RegExp(`(https://.*?/content-store/.*?)(\\\)?\\\\?['"])`, 'gm')

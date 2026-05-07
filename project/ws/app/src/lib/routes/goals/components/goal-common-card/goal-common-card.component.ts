@@ -13,9 +13,10 @@ import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-goal-common-card',
-  templateUrl: './goal-common-card.component.html',
-  styleUrls: ['./goal-common-card.component.scss'],
+    selector: 'ws-app-goal-common-card',
+    templateUrl: './goal-common-card.component.html',
+    styleUrls: ['./goal-common-card.component.scss'],
+    standalone: false
 })
 export class GoalCommonCardComponent implements OnInit {
   @ViewChild('createGoalError', { static: true })

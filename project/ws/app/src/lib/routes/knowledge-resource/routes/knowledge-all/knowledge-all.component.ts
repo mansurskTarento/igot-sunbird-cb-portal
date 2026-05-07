@@ -10,11 +10,12 @@ import _ from 'lodash'
 // tslint:enable
 
 @Component({
-  selector: 'ws-app-knowledge-all',
-  templateUrl: './knowledge-all.component.html',
-  styleUrls: ['./knowledge-all.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'flex flex-1 mt-6 mb-6 knowledge_right' },
+    selector: 'ws-app-knowledge-all',
+    templateUrl: './knowledge-all.component.html',
+    styleUrls: ['./knowledge-all.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'flex flex-1 mt-6 mb-6 knowledge_right' },
+    standalone: false
 })
 export class KnowledgeAllComponent implements OnInit, OnDestroy {
 

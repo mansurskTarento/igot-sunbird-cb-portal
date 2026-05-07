@@ -4,9 +4,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-about-video',
-  templateUrl: './about-video.component.html',
-  styleUrls: ['./about-video.component.scss'],
+    selector: 'ws-app-about-video',
+    templateUrl: './about-video.component.html',
+    styleUrls: ['./about-video.component.scss'],
+    standalone: false
 })
 export class AboutVideoComponent implements OnInit {
   introVideos: any

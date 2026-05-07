@@ -6,7 +6,7 @@ describe('AppHomePageResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: AppHomePageResolverService = TestBed.get(AppHomePageResolverService)
+    const service: AppHomePageResolverService = TestBed.inject(AppHomePageResolverService)
     expect(service).toBeTruthy()
   })
 })

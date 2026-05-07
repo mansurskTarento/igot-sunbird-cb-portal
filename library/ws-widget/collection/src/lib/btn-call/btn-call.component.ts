@@ -13,9 +13,10 @@ export interface IWidgetBtnCall {
   replaceIconWithLabel?: boolean
 }
 @Component({
-  selector: 'ws-widget-btn-call',
-  templateUrl: './btn-call.component.html',
-  styleUrls: ['./btn-call.component.scss'],
+    selector: 'ws-widget-btn-call',
+    templateUrl: './btn-call.component.html',
+    styleUrls: ['./btn-call.component.scss'],
+    standalone: false
 })
 export class BtnCallComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IWidgetBtnCall> {

@@ -18,9 +18,10 @@ import { jsPlumb, jsPlumbInstance } from 'jsplumb'
 import { ClassDiagramService } from './class-diagram.service'
 
 @Component({
-  selector: 'viewer-plugin-class-diagram',
-  templateUrl: './class-diagram.component.html',
-  styleUrls: ['./class-diagram.component.scss'],
+    selector: 'viewer-plugin-class-diagram',
+    templateUrl: './class-diagram.component.html',
+    styleUrls: ['./class-diagram.component.scss'],
+    standalone: false
 })
 export class ClassDiagramComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 

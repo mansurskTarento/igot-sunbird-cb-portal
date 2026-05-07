@@ -13,9 +13,10 @@ export interface IBtnMailUser {
 }
 
 @Component({
-  selector: 'ws-widget-btn-mail-user',
-  templateUrl: './btn-mail-user.component.html',
-  styleUrls: ['./btn-mail-user.component.scss'],
+    selector: 'ws-widget-btn-mail-user',
+    templateUrl: './btn-mail-user.component.html',
+    styleUrls: ['./btn-mail-user.component.scss'],
+    standalone: false
 })
 export class BtnMailUserComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IBtnMailUser> {

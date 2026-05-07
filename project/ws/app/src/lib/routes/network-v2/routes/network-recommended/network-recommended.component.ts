@@ -8,12 +8,12 @@ import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-network-recommended',
-  templateUrl: './network-recommended.component.html',
-  styleUrls: ['./network-recommended.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 mt-6 ' },
-  /* tslint:enable */
+    selector: 'ws-app-network-recommended',
+    templateUrl: './network-recommended.component.html',
+    styleUrls: ['./network-recommended.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 mt-6 ' },
+    standalone: false
 })
 export class NetworkRecommendedComponent implements OnInit {
   data!: NSNetworkDataV2.INetworkUser[]

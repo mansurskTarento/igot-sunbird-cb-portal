@@ -6,9 +6,10 @@ import { BtnPlaylistService, NsPlaylist } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-playlist-notification',
-  templateUrl: './playlist-notification.component.html',
-  styleUrls: ['./playlist-notification.component.scss'],
+    selector: 'ws-app-playlist-notification',
+    templateUrl: './playlist-notification.component.html',
+    styleUrls: ['./playlist-notification.component.scss'],
+    standalone: false
 })
 export class PlaylistNotificationComponent implements OnInit {
   @ViewChild('errorAccept', { static: true }) errorAcceptMessage!: ElementRef<any>

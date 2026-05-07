@@ -8,9 +8,10 @@ import { Router, NavigationStart, NavigationEnd } from '@angular/router'
 import { MatDialog } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-widget-btn-apps',
-  templateUrl: './btn-apps.component.html',
-  styleUrls: ['./btn-apps.component.scss'],
+    selector: 'ws-widget-btn-apps',
+    templateUrl: './btn-apps.component.html',
+    styleUrls: ['./btn-apps.component.scss'],
+    standalone: false
 })
 export class BtnAppsComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<IBtnAppsConfig> {

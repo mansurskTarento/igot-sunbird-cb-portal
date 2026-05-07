@@ -6,9 +6,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-blog-view',
-  templateUrl: './blog-view.component.html',
-  styleUrls: ['./blog-view.component.scss'],
+    selector: 'ws-app-blog-view',
+    templateUrl: './blog-view.component.html',
+    styleUrls: ['./blog-view.component.scss'],
+    standalone: false
 })
 export class BlogViewComponent implements OnInit {
   conversation: NsDiscussionForum.IPostResult | null = null

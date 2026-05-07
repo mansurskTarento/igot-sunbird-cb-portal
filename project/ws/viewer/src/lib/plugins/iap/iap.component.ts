@@ -4,9 +4,10 @@ import { LoggerService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'viewer-plugin-iap',
-  templateUrl: './iap.component.html',
-  styleUrls: ['./iap.component.scss'],
+    selector: 'viewer-plugin-iap',
+    templateUrl: './iap.component.html',
+    styleUrls: ['./iap.component.scss'],
+    standalone: false
 })
 export class IapComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
   @Input() iapContent: NsContent.IContent | null = null

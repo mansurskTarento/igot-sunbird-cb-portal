@@ -56,16 +56,17 @@ const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
 const EMP_ID_PATTERN = /^[a-z0-9]+$/i
 
 @Component({
-  selector: 'app-profile-view',
-  templateUrl: './profile-view.component.html',
-  styleUrls: ['./profile-view.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex margin-bottom-l' },
-  /* tslint:enable */
-  providers: [
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'app-profile-view',
+    templateUrl: './profile-view.component.html',
+    styleUrls: ['./profile-view.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex margin-bottom-l' },
+    /* tslint:enable */
+    providers: [
+        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 
 export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {

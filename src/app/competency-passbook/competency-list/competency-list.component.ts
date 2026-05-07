@@ -1,6 +1,6 @@
 // Core imports
-import { Component, OnDestroy, OnInit, Inject } from '@angular/core'
-import { DOCUMENT } from '@angular/common'
+import { Component, OnDestroy, OnInit, Inject, DOCUMENT } from '@angular/core'
+
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
 // RxJS imports
@@ -16,9 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
-  selector: 'ws-competency-list',
-  templateUrl: './competency-list.component.html',
-  styleUrls: ['./competency-list.component.scss'],
+    selector: 'ws-competency-list',
+    templateUrl: './competency-list.component.html',
+    styleUrls: ['./competency-list.component.scss'],
+    standalone: false
 })
 
 export class CompetencyListComponent implements OnInit, OnDestroy {

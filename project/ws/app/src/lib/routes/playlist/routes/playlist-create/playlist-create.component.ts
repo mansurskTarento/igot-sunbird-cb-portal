@@ -10,9 +10,10 @@ import {
 } from '../../constants/playlist.constant'
 
 @Component({
-  selector: 'ws-app-playlist-create',
-  templateUrl: './playlist-create.component.html',
-  styleUrls: ['./playlist-create.component.scss'],
+    selector: 'ws-app-playlist-create',
+    templateUrl: './playlist-create.component.html',
+    styleUrls: ['./playlist-create.component.scss'],
+    standalone: false
 })
 export class PlaylistCreateComponent implements OnInit {
 

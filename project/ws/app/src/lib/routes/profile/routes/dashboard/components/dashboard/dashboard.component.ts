@@ -18,9 +18,10 @@ interface ILearningHistoryContent {
   fetchStatus: 'fetching' | 'done' | 'error'
 }
 @Component({
-  selector: 'ws-app-dashboard',
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss'],
+    selector: 'ws-app-dashboard',
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss'],
+    standalone: false
 })
 
 export class DashboardComponent implements OnInit {

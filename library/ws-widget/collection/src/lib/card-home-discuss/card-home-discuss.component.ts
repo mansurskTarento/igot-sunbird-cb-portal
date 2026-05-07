@@ -10,7 +10,7 @@ import { Router } from '@angular/router'
   selector: 'ws-widget-home-discuss-component',
   templateUrl: './card-home-discuss.component.html',
   styleUrls: ['./card-home-discuss.component.scss'],
-  // providers: [DiscussService],
+  standalone: false
 })
 export class CardHomeDiscussComponent extends WidgetBaseComponent implements OnInit, NsWidgetResolver.IWidgetData<any> {
   @Input() widgetData: any
@@ -30,7 +30,7 @@ export class CardHomeDiscussComponent extends WidgetBaseComponent implements OnI
   // starColorW: StarRatingColor = StarRatingColor.warn
   ngOnInit(): void {
     if (this.widgetData && this.widgetData.content) {
-      this.discuss = ([this.widgetData.content] || []).map((d: any) => {
+      this.discuss = (this.widgetData.content ? [this.widgetData.content] : []).map((d: any) => {
         return {
           tid: d.tid,
           title: d.title,

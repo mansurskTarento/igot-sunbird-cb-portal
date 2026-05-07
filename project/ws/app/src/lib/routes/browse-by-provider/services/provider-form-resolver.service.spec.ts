@@ -6,7 +6,7 @@ describe('ProviderFormResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ProviderFormResolverService = TestBed.get(ProviderFormResolverService)
+    const service: ProviderFormResolverService = TestBed.inject(ProviderFormResolverService)
     expect(service).toBeTruthy()
   })
 })

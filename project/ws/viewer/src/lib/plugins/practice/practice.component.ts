@@ -37,9 +37,10 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
-  selector: 'viewer-plugin-practice',
-  templateUrl: './practice.component.html',
-  styleUrls: ['./practice.component.scss'],
+    selector: 'viewer-plugin-practice',
+    templateUrl: './practice.component.html',
+    styleUrls: ['./practice.component.scss'],
+    standalone: false
 })
 // ComponentCanDeactivate
 export class PracticeComponent implements OnInit, OnChanges, OnDestroy {

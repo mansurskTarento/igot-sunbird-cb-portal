@@ -6,7 +6,7 @@ describe('NetworkV2ResolveService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: NetworkV2ResolveService = TestBed.get(NetworkV2ResolveService)
+    const service: NetworkV2ResolveService = TestBed.inject(NetworkV2ResolveService)
     expect(service).toBeTruthy()
   })
 })

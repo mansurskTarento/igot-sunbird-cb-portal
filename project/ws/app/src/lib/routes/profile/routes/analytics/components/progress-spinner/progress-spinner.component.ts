@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core'
 // import { ContentProgressService } from '@sunbird-cb/collection'
 @Component({
-  selector: 'ws-app-progress-spinner',
-  templateUrl: './progress-spinner.component.html',
-  styleUrls: ['./progress-spinner.component.scss'],
+    selector: 'ws-app-progress-spinner',
+    templateUrl: './progress-spinner.component.html',
+    styleUrls: ['./progress-spinner.component.scss'],
+    standalone: false
 })
 export class ProgressSpinnerComponent implements OnInit {
 //   @Input() contentId = ''

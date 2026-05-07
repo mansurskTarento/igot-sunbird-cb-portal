@@ -28,9 +28,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-app-playlist-detail',
-  templateUrl: './playlist-detail.component.html',
-  styleUrls: ['./playlist-detail.component.scss'],
+    selector: 'ws-app-playlist-detail',
+    templateUrl: './playlist-detail.component.html',
+    styleUrls: ['./playlist-detail.component.scss'],
+    standalone: false
 })
 export class PlaylistDetailComponent implements OnInit, OnDestroy {
   @ViewChild('playlistDeleteFailed', { static: true }) playlistDeleteFailedMessage!: ElementRef<any>

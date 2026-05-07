@@ -7,9 +7,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 import { IWidgetErrorSomethingsWrong } from './error-something-wrong.model'
 @Component({
-  selector: 'ws-widget-error-something-wrong',
-  templateUrl: './error-something-wrong.component.html',
-  styleUrls: ['./error-something-wrong.component.scss'],
+    selector: 'ws-widget-error-something-wrong',
+    templateUrl: './error-something-wrong.component.html',
+    styleUrls: ['./error-something-wrong.component.scss'],
+    standalone: false
 })
 export class ErrorSomethingWrongComponent implements OnInit, OnDestroy {
   @Input() errorData: IWidgetErrorSomethingsWrong | null = null

@@ -11,9 +11,10 @@ import { TncPublicResolverService } from '../../services/tnc-public-resolver.ser
 import { MatDialog } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-tnc',
-  templateUrl: './tnc.component.html',
-  styleUrls: ['./tnc.component.scss'],
+    selector: 'ws-tnc',
+    templateUrl: './tnc.component.html',
+    styleUrls: ['./tnc.component.scss'],
+    standalone: false
 })
 export class TncComponent implements OnInit, OnDestroy {
   tncData: NsTnc.ITnc | null = null

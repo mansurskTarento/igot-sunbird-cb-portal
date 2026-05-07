@@ -33,9 +33,10 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
 }
 
 @Component({
-  selector: 'ws-public-request',
-  templateUrl: './public-request.component.html',
-  styleUrls: ['./public-request.component.scss'],
+    selector: 'ws-public-request',
+    templateUrl: './public-request.component.html',
+    styleUrls: ['./public-request.component.scss'],
+    standalone: false
 })
 export class PublicRequestComponent implements OnInit {
   requestForm!: UntypedFormGroup

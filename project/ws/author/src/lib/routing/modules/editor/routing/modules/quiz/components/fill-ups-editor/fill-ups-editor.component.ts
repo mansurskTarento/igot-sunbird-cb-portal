@@ -24,9 +24,10 @@ import { Notify } from '../../../../../../../../constants/notificationMessage'
 import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-fill-ups-editor',
-  templateUrl: './fill-ups-editor.component.html',
-  styleUrls: ['./fill-ups-editor.component.scss'],
+    selector: 'ws-auth-fill-ups-editor',
+    templateUrl: './fill-ups-editor.component.html',
+    styleUrls: ['./fill-ups-editor.component.scss'],
+    standalone: false
 })
 export class FillUpsEditorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() submitPressed = false

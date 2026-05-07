@@ -11,9 +11,10 @@ import { RequestService } from '../../../../routes/services/request.service'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 
 @Component({
-  selector: 'ws-designation-request',
-  templateUrl: './designation-request.component.html',
-  styleUrls: ['./designation-request.component.scss'],
+    selector: 'ws-designation-request',
+    templateUrl: './designation-request.component.html',
+    styleUrls: ['./designation-request.component.scss'],
+    standalone: false
 })
 
 export class DesignationRequestComponent implements OnDestroy {

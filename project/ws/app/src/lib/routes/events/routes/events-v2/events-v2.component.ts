@@ -13,9 +13,10 @@ import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-events-v2',
-  templateUrl: './events-v2.component.html',
-  styleUrls: ['./events-v2.component.scss']
+    selector: 'ws-app-events-v2',
+    templateUrl: './events-v2.component.html',
+    styleUrls: ['./events-v2.component.scss'],
+    standalone: false
 })
 export class EventsV2Component {
 

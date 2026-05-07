@@ -6,9 +6,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-privacy-settings',
-  templateUrl: './privacy-settings.component.html',
-  styleUrls: ['./privacy-settings.component.scss'],
+    selector: 'ws-app-privacy-settings',
+    templateUrl: './privacy-settings.component.html',
+    styleUrls: ['./privacy-settings.component.scss'],
+    standalone: false
 })
 export class PrivacySettingsComponent implements OnInit {
 

@@ -26,9 +26,10 @@ import { ICatalog, ITodoItemFlatNode, TodoItemNode } from './models/catalog-mode
 // }
 
 @Component({
-  selector: 'ws-auth-catalog-select',
-  templateUrl: './catalog-select.component.html',
-  styleUrls: ['./catalog-select.component.scss'],
+    selector: 'ws-auth-catalog-select',
+    templateUrl: './catalog-select.component.html',
+    styleUrls: ['./catalog-select.component.scss'],
+    standalone: false
 })
 export class CatalogSelectComponent implements OnInit {
   status: TFetchStatus = 'none'

@@ -16,9 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 // } from '../../constants/playlist.constant'
 
 @Component({
-  selector: 'ws-app-playlist-card',
-  templateUrl: './playlist-card.component.html',
-  styleUrls: ['./playlist-card.component.scss'],
+    selector: 'ws-app-playlist-card',
+    templateUrl: './playlist-card.component.html',
+    styleUrls: ['./playlist-card.component.scss'],
+    standalone: false
 })
 export class PlaylistCardComponent implements OnInit {
   @Input()

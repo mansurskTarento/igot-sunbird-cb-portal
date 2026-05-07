@@ -11,17 +11,16 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // import { DiscussUtilsService } from '../services/discuss-util.service'
 
 @Injectable()
-export class DiscussConfigResolve
-   {
+export class DiscussConfigResolve {
   constructor(private discussionSvc: DiscussUtilsService,
-              public configSvc: ConfigurationsService) { }
+    public configSvc: ConfigurationsService) { }
 
   resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<any> {
 
-    const config = {
+    const config: any = {
       menuOptions: [
         {
           route: 'all-discussions',

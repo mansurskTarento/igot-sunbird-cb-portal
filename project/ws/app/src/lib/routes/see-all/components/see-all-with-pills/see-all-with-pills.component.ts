@@ -10,7 +10,7 @@ import {
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
-import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption/lib/_common/strips/content-strip-with-tabs-pills/content-strip-with-tabs-pills.model'
+import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption'
 import { catchError, map, mergeMap } from 'rxjs/operators'
 import { of } from 'rxjs'
 
@@ -19,6 +19,7 @@ import { of } from 'rxjs'
   selector: 'ws-app-see-all-with-pills',
   templateUrl: './see-all-with-pills.component.html',
   styleUrls: ['./see-all-with-pills.component.scss'],
+  standalone: false
 })
 export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 

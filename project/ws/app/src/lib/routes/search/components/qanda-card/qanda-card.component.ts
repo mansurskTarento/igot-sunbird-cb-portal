@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { IWsSocialSearchResultData } from '../../models/search.model'
 
 @Component({
-  selector: 'ws-app-qanda-card',
-  templateUrl: './qanda-card.component.html',
-  styleUrls: ['./qanda-card.component.scss'],
+    selector: 'ws-app-qanda-card',
+    templateUrl: './qanda-card.component.html',
+    styleUrls: ['./qanda-card.component.scss'],
+    standalone: false
 })
 export class QandaCardComponent implements OnInit {
   @Input() userId = ''

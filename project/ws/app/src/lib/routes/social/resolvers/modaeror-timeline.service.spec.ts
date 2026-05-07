@@ -6,7 +6,7 @@ describe('ModaerorTimelineService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ModeratorTimelineService = TestBed.get(ModeratorTimelineService)
+    const service: ModeratorTimelineService = TestBed.inject(ModeratorTimelineService)
     expect(service).toBeTruthy()
   })
 })

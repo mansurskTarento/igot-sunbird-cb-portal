@@ -6,9 +6,10 @@ import { EventService, WsEvents, MultilingualTranslationsService, Configurations
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-karma-programs-microsite-v1',
-  templateUrl: './karma-programs-microsite-v1.component.html',
-  styleUrls: ['./karma-programs-microsite-v1.component.scss'],
+    selector: 'ws-app-karma-programs-microsite-v1',
+    templateUrl: './karma-programs-microsite-v1.component.html',
+    styleUrls: ['./karma-programs-microsite-v1.component.scss'],
+    standalone: false
 })
 export class KarmaProgramsMicrositeV1Component implements OnInit {
   programName = ''

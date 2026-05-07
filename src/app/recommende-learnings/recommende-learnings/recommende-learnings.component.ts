@@ -9,9 +9,10 @@ import { SeeAllService } from '@ws/app'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Component({
-  selector: 'ws-recommende-learnings',
-  templateUrl: './recommende-learnings.component.html',
-  styleUrls: ['./recommende-learnings.component.scss'],
+    selector: 'ws-recommende-learnings',
+    templateUrl: './recommende-learnings.component.html',
+    styleUrls: ['./recommende-learnings.component.scss'],
+    standalone: false
 })
 export class RecommendeLearningsComponent implements OnInit {
   recommendedConfig: any

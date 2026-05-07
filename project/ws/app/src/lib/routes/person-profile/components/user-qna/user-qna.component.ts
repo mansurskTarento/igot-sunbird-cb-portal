@@ -4,9 +4,10 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { PersonProfileService } from '../../services/person-profile.service'
 import { Subscription } from 'rxjs'
 @Component({
-  selector: 'ws-app-user-qna',
-  templateUrl: './user-qna.component.html',
-  styleUrls: ['./user-qna.component.scss'],
+    selector: 'ws-app-user-qna',
+    templateUrl: './user-qna.component.html',
+    styleUrls: ['./user-qna.component.scss'],
+    standalone: false
 })
 export class UserQnaComponent implements OnInit {
   @Input() wid = ''

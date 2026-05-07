@@ -6,9 +6,10 @@ import { jsPDF } from 'jspdf'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-widget-app-profile-certificate-dialog',
-  templateUrl: './profile-certificate-dialog.component.html',
-  styleUrls: ['./profile-certificate-dialog.component.scss'],
+    selector: 'ws-widget-app-profile-certificate-dialog',
+    templateUrl: './profile-certificate-dialog.component.html',
+    styleUrls: ['./profile-certificate-dialog.component.scss'],
+    standalone: false
 })
 export class ProfileCertificateDialogComponent implements OnInit {
 

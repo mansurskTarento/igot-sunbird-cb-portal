@@ -9,9 +9,10 @@ export interface IDialogData {
   data: any
 }
 @Component({
-  selector: 'ws-auth-profanity-popup',
-  templateUrl: './profanity-popup.html',
-  styleUrls: ['./profanity-popup.scss'],
+    selector: 'ws-auth-profanity-popup',
+    templateUrl: './profanity-popup.html',
+    styleUrls: ['./profanity-popup.scss'],
+    standalone: false
 })
 export class ProfanityPopUpComponent implements OnInit {
   startForm!: UntypedFormGroup

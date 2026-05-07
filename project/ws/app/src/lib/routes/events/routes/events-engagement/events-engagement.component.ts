@@ -6,9 +6,10 @@ import { Router } from '@angular/router';
 
 
 @Component({
-  selector: 'ws-app-events-engagement',
-  templateUrl: './events-engagement.component.html',
-  styleUrls: ['./events-engagement.component.scss']
+    selector: 'ws-app-events-engagement',
+    templateUrl: './events-engagement.component.html',
+    styleUrls: ['./events-engagement.component.scss'],
+    standalone: false
 })
 export class EventsEngagementComponent implements OnInit {
 

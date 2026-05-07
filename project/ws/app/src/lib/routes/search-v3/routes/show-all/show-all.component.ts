@@ -5,9 +5,10 @@ import { ActivatedRoute } from '@angular/router';
 import { GbSearchService } from '../../services/gb-search.service';
 
 @Component({
-  selector: 'ws-app-show-all',
-  templateUrl: './show-all.component.html',
-  styleUrls: ['./show-all.component.scss']
+    selector: 'ws-app-show-all',
+    templateUrl: './show-all.component.html',
+    styleUrls: ['./show-all.component.scss'],
+    standalone: false
 })
 export class ShowAllComponent implements OnInit {
   courses: any[] = []

@@ -4,9 +4,10 @@ import { SignupAutoService } from './signup-auto.service'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-signup-auto',
-  templateUrl: './signup-auto.component.html',
-  styleUrls: ['./signup-auto.component.scss'],
+    selector: 'ws-signup-auto',
+    templateUrl: './signup-auto.component.html',
+    styleUrls: ['./signup-auto.component.scss'],
+    standalone: false
 })
 export class SignupAutoComponent implements OnInit {
   fetching = false

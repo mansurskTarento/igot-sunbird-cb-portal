@@ -7,9 +7,10 @@ import { MatListOption } from '@angular/material/list'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-btn-playlist-selection',
-  templateUrl: './btn-playlist-selection.component.html',
-  styleUrls: ['./btn-playlist-selection.component.scss'],
+    selector: 'ws-widget-btn-playlist-selection',
+    templateUrl: './btn-playlist-selection.component.html',
+    styleUrls: ['./btn-playlist-selection.component.scss'],
+    standalone: false
 })
 export class BtnPlaylistSelectionComponent implements OnInit {
   @ViewChild('contentAdd', { static: true }) contentAddMessage!: ElementRef<any>

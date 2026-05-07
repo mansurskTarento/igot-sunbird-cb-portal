@@ -4,9 +4,10 @@ import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { NsDiscussionForum } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-my-blog',
-  templateUrl: './my-blog.component.html',
-  styleUrls: ['./my-blog.component.scss'],
+    selector: 'ws-app-my-blog',
+    templateUrl: './my-blog.component.html',
+    styleUrls: ['./my-blog.component.scss'],
+    standalone: false
 })
 export class MyBlogComponent implements OnInit {
   validTabIds = ['drafts', 'published']

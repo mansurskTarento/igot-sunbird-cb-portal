@@ -4,9 +4,10 @@ import { UtilityService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-widget-display-contents[contents]',
-  templateUrl: './display-contents.component.html',
-  styleUrls: ['./display-contents.component.scss'],
+    selector: 'ws-widget-display-contents[contents]',
+    templateUrl: './display-contents.component.html',
+    styleUrls: ['./display-contents.component.scss'],
+    standalone: false
 })
 export class DisplayContentsComponent implements OnInit {
   @Input() contents: NsContent.IContent[] = []

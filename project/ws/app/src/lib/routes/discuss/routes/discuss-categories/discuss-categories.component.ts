@@ -4,9 +4,10 @@ import { ActivatedRoute } from '@angular/router'
 import { NSDiscussData } from '../../models/discuss.model'
 
 @Component({
-  selector: 'app-discuss-categories',
-  templateUrl: './discuss-categories.component.html',
-  styleUrls: ['./discuss-categories.component.scss'],
+    selector: 'app-discuss-categories',
+    templateUrl: './discuss-categories.component.html',
+    styleUrls: ['./discuss-categories.component.scss'],
+    standalone: false
 })
 export class DiscussCategoriesComponent implements OnInit {
   data = this.route.snapshot.data.availCategories.data

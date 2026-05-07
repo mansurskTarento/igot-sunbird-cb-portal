@@ -7,12 +7,12 @@ import { TopicService } from '../../services/topics.service'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-topic-card',
-  templateUrl: './topic-card.component.html',
-  styleUrls: ['./topic-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 top_main flex-col' },
-  /* tslint:enable */
+    selector: 'ws-app-topic-card',
+    templateUrl: './topic-card.component.html',
+    styleUrls: ['./topic-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 top_main flex-col' },
+    standalone: false
 })
 export class TopicCardComponent implements OnInit {
   @Input() topic!: NSProfileDataV3.ITopic

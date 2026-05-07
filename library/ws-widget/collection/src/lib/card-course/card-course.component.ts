@@ -3,10 +3,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { WidgetBaseComponent } from '@sunbird-cb/resolver'
 
 @Component({
-  selector: 'ws-widget-card-course',
-  templateUrl: './card-course.component.html',
-  styleUrls: ['./card-course.component.scss'],
-
+    selector: 'ws-widget-card-course',
+    templateUrl: './card-course.component.html',
+    styleUrls: ['./card-course.component.scss'],
+    standalone: false
 })
 
 export class CardCourseComponent extends WidgetBaseComponent implements OnInit {

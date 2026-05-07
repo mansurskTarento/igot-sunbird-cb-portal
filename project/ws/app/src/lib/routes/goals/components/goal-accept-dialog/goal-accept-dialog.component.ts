@@ -5,9 +5,10 @@ import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-accept-dialog',
-  templateUrl: './goal-accept-dialog.component.html',
-  styleUrls: ['./goal-accept-dialog.component.scss'],
+    selector: 'ws-app-goal-accept-dialog',
+    templateUrl: './goal-accept-dialog.component.html',
+    styleUrls: ['./goal-accept-dialog.component.scss'],
+    standalone: false
 })
 export class GoalAcceptDialogComponent implements OnInit {
   @ViewChild('errorAccept', { static: true }) errorAcceptMessage!: ElementRef<any>

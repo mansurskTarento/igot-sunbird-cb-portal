@@ -12,9 +12,10 @@ import { NsContent } from '@sunbird-cb/collection'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-competency-details',
-  templateUrl: './competency-details.component.html',
-  styleUrls: ['./competency-details.component.scss'],
+    selector: 'ws-app-competency-details',
+    templateUrl: './competency-details.component.html',
+    styleUrls: ['./competency-details.component.scss'],
+    standalone: false
 })
 export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   private paramSubscription: Subscription | null = null

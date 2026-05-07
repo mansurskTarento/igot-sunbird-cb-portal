@@ -9,12 +9,12 @@ import _ from 'lodash'
 /* tslint:enable */
 
 @Component({
-  selector: 'app-competence',
-  templateUrl: './competence.component.html',
-  styleUrls: ['./competence.component.scss'],
-  /* tslint:disable */
-  host: { class: 'margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-competence',
+    templateUrl: './competence.component.html',
+    styleUrls: ['./competence.component.scss'],
+    /* tslint:disable */
+    host: { class: 'margin-top-l' },
+    standalone: false
 })
 export class CompetenceComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

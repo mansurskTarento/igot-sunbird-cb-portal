@@ -4,7 +4,10 @@ import { CommunityContentCardComponent } from './community-content-card.componen
 import { NO_ERRORS_SCHEMA, Pipe, PipeTransform } from '@angular/core';
 
 // Create a mock pipe for numberShortener
-@Pipe({ name: 'numberShortener' })
+@Pipe({
+    name: 'numberShortener',
+    standalone: false
+})
 class MockNumberShortenerPipe implements PipeTransform {
   transform(value: number): string {
     // Handle null or undefined values
@@ -16,7 +19,10 @@ class MockNumberShortenerPipe implements PipeTransform {
 }
 
 // Create a mock pipe for plural
-@Pipe({ name: 'plural' })
+@Pipe({
+    name: 'plural',
+    standalone: false
+})
 class MockPluralPipe implements PipeTransform {
   transform(value: number, singular: string, plural: string): string {
     return value === 1 ? singular : plural;
@@ -24,7 +30,10 @@ class MockPluralPipe implements PipeTransform {
 }
 
 // Create a mock pipe for translate
-@Pipe({ name: 'translate' })
+@Pipe({
+    name: 'translate',
+    standalone: false
+})
 class MockTranslatePipe implements PipeTransform {
   transform(value: string): string {
     return value;

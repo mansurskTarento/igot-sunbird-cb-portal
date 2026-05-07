@@ -15,9 +15,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-qna-view',
-  templateUrl: './qna-view.component.html',
-  styleUrls: ['./qna-view.component.scss'],
+    selector: 'ws-app-qna-view',
+    templateUrl: './qna-view.component.html',
+    styleUrls: ['./qna-view.component.scss'],
+    standalone: false
 })
 export class QnaViewComponent implements OnInit, OnDestroy {
 

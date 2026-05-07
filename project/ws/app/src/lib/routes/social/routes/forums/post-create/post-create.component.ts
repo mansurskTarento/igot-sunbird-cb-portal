@@ -12,9 +12,10 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-app-post-create',
-  templateUrl: './post-create.component.html',
-  styleUrls: ['./post-create.component.scss'],
+    selector: 'ws-app-post-create',
+    templateUrl: './post-create.component.html',
+    styleUrls: ['./post-create.component.scss'],
+    standalone: false
 })
 export class PostCreateComponent implements OnInit {
   isCreatingPost = false

@@ -5,9 +5,10 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser'
 import { IFrac } from '../../interfaces/frac.model'
 
 @Component({
-  selector: 'ws-app-frac',
-  templateUrl: './frac.component.html',
-  styleUrls: ['./frac.component.scss'],
+    selector: 'ws-app-frac',
+    templateUrl: './frac.component.html',
+    styleUrls: ['./frac.component.scss'],
+    standalone: false
 })
 
 export class FracComponent implements

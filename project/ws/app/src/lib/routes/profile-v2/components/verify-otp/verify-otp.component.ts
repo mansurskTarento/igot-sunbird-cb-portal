@@ -12,9 +12,10 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 
 @Component({
-  selector: 'ws-verify-otp',
-  templateUrl: './verify-otp.component.html',
-  styleUrls: ['./verify-otp.component.scss'],
+    selector: 'ws-verify-otp',
+    templateUrl: './verify-otp.component.html',
+    styleUrls: ['./verify-otp.component.scss'],
+    standalone: false
 })
 
 export class VerifyOtpComponent implements OnInit, OnDestroy {

@@ -13,9 +13,10 @@ export interface IWidgetBtnKbAnalytics {
 }
 
 @Component({
-  selector: 'ws-widget-btn-kb-analytics',
-  templateUrl: './btn-kb-analytics.component.html',
-  styleUrls: ['./btn-kb-analytics.component.scss'],
+    selector: 'ws-widget-btn-kb-analytics',
+    templateUrl: './btn-kb-analytics.component.html',
+    styleUrls: ['./btn-kb-analytics.component.scss'],
+    standalone: false
 })
 export class BtnKbAnalyticsComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IWidgetBtnKbAnalytics> {

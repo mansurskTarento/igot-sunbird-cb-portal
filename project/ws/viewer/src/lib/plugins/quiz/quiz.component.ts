@@ -22,12 +22,12 @@ import { MatSidenav } from '@angular/material/sidenav'
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 
 @Component({
-  selector: 'viewer-plugin-quiz',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.scss'],
-  /* tslint:disable */
-  host: { class: 'h-inherit' },
-  /* tslint:enable */
+    selector: 'viewer-plugin-quiz',
+    templateUrl: './quiz.component.html',
+    styleUrls: ['./quiz.component.scss'],
+    /* tslint:disable */
+    host: { class: 'h-inherit' },
+    standalone: false
 })
 export class QuizComponent implements OnInit, OnChanges, OnDestroy {
 

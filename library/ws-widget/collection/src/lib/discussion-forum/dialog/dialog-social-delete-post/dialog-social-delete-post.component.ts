@@ -4,9 +4,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { WsDiscussionForumService } from '../../ws-discussion-forum.services'
 export interface IDialogueData { postId: string }
 @Component({
-  selector: 'ws-widget-dialog-social-delete-post',
-  templateUrl: './dialog-social-delete-post.component.html',
-  styleUrls: ['./dialog-social-delete-post.component.scss'],
+    selector: 'ws-widget-dialog-social-delete-post',
+    templateUrl: './dialog-social-delete-post.component.html',
+    styleUrls: ['./dialog-social-delete-post.component.scss'],
+    standalone: false
 })
 
 export class DialogSocialDeletePostComponent implements OnInit {

@@ -9,9 +9,10 @@ import { InterestService } from '../../../../profile/routes/interest/services/in
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-app-interests',
-  templateUrl: './interest.component.html',
-  styleUrls: ['./interest.component.scss'],
+    selector: 'ws-app-interests',
+    templateUrl: './interest.component.html',
+    styleUrls: ['./interest.component.scss'],
+    standalone: false
 })
 export class InterestComponent implements OnInit {
   interestsData: any

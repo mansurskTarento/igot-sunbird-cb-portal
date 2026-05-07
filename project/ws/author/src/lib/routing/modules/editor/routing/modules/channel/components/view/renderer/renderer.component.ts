@@ -18,9 +18,10 @@ import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant
 import { Notify } from '../../../../../../../../../constants/notificationMessage'
 
 @Component({
-  selector: 'ws-auth-renderer',
-  templateUrl: './renderer.component.html',
-  styleUrls: ['./renderer.component.scss'],
+    selector: 'ws-auth-renderer',
+    templateUrl: './renderer.component.html',
+    styleUrls: ['./renderer.component.scss'],
+    standalone: false
 })
 export class RendererComponent implements OnInit, OnChanges {
 

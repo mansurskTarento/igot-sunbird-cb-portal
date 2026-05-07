@@ -8,9 +8,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core'
 // import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-auth-base',
-  templateUrl: './base.component.html',
-  styleUrls: ['./base.component.scss'],
+    selector: 'ws-auth-base',
+    templateUrl: './base.component.html',
+    styleUrls: ['./base.component.scss'],
+    standalone: false
 })
 export class BaseComponent implements OnInit, OnDestroy {
   ngOnInit() { }

@@ -3,8 +3,9 @@ import { fromEvent } from 'rxjs'
 import { take } from 'rxjs/operators'
 
 @Directive({
-  // tslint:disable-next-line
-  selector: '[clickOutside]',
+    // tslint:disable-next-line
+    selector: '[clickOutside]',
+    standalone: false
 })
 export class ClickOutsideDirective implements OnInit {
   @Output() clickOutside = new EventEmitter()

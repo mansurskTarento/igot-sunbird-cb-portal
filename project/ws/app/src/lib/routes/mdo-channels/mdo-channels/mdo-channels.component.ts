@@ -11,9 +11,10 @@ import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-mdo-channels',
-  templateUrl: './mdo-channels.component.html',
-  styleUrls: ['./mdo-channels.component.scss'],
+    selector: 'ws-app-mdo-channels',
+    templateUrl: './mdo-channels.component.html',
+    styleUrls: ['./mdo-channels.component.scss'],
+    standalone: false
 })
 export class MdoChannelsComponent implements OnInit {
   public displayLoader!: Observable<boolean>

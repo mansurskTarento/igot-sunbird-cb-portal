@@ -10,11 +10,12 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { DiscussUtilsService } from '../../services/discuss-utils.service'
 
 @Component({
-  selector: 'app-discuss-discussion',
-  templateUrl: './discussion.component.html',
-  styleUrls: ['./discussion.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'flex flex-1 margin-top-l' }
+    selector: 'app-discuss-discussion',
+    templateUrl: './discussion.component.html',
+    styleUrls: ['./discussion.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class DiscussionComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>

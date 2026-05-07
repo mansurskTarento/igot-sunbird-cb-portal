@@ -74,10 +74,11 @@ export function urlOrDocumentValidator(): ValidatorFn {
 }
 
 @Component({
-  selector: 'ws-app-profile-entry-edit',
-  templateUrl: './profile-entry-edit.component.html',
-  styleUrls: ['./profile-entry-edit.component.scss'],
-  providers: [PipeCertificateImageURL]
+    selector: 'ws-app-profile-entry-edit',
+    templateUrl: './profile-entry-edit.component.html',
+    styleUrls: ['./profile-entry-edit.component.scss'],
+    providers: [PipeCertificateImageURL],
+    standalone: false
 })
 export class ProfileEntryEditComponent implements OnInit {
   //#region (global variables)

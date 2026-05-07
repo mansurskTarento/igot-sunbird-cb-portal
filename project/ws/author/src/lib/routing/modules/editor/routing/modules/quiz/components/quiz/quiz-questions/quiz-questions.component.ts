@@ -32,12 +32,13 @@ import { ConfirmDialogComponent } from '../../../../../../../../../modules/share
 import { CommentsDialogComponent } from '../../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 
 @Component({
-  selector: 'ws-auth-quiz-questions',
-  templateUrl: './quiz-questions.component.html',
-  styleUrls: ['./quiz-questions.component.scss'],
-  providers: [QuizResolverService, {
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-quiz-questions',
+    templateUrl: './quiz-questions.component.html',
+    styleUrls: ['./quiz-questions.component.scss'],
+    providers: [QuizResolverService, {
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class QuizQusetionsComponent implements OnInit, OnDestroy {
   @Output() data = new EventEmitter<string>()

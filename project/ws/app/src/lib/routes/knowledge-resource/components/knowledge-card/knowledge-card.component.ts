@@ -4,9 +4,10 @@ import { NSKnowledgeResource } from '../../models/knowledge-resource.models'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-knowledge-card',
-  templateUrl: './knowledge-card.component.html',
-  styleUrls: ['./knowledge-card.component.scss'],
+    selector: 'ws-app-knowledge-card',
+    templateUrl: './knowledge-card.component.html',
+    styleUrls: ['./knowledge-card.component.scss'],
+    standalone: false
 })
 export class KnowledgeCardComponent implements OnInit {
   environment: any

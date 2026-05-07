@@ -10,9 +10,10 @@ import { ForumHandlerService } from '../forums/service/EmitterService/forum-hand
 import { SocialSearchService } from './api/social-search.service'
 
 @Component({
-  selector: 'ws-app-social-search',
-  templateUrl: './social-search.component.html',
-  styleUrls: ['./social-search.component.scss'],
+    selector: 'ws-app-social-search',
+    templateUrl: './social-search.component.html',
+    styleUrls: ['./social-search.component.scss'],
+    standalone: false
 })
 export class SocialSearchComponent implements OnInit {
 

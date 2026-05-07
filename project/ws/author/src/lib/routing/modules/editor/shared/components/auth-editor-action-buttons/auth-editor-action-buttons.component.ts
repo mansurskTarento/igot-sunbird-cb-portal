@@ -10,9 +10,10 @@ import { IActionButtonConfig } from '../../../../../../interface/action-button'
  * @implements {OnInit}
  */
 @Component({
-  selector: 'ws-auth-editor-action-buttons',
-  templateUrl: './auth-editor-action-buttons.component.html',
-  styleUrls: ['./auth-editor-action-buttons.component.scss'],
+    selector: 'ws-auth-editor-action-buttons',
+    templateUrl: './auth-editor-action-buttons.component.html',
+    styleUrls: ['./auth-editor-action-buttons.component.scss'],
+    standalone: false
 })
 export class AuthEditorActionButtonsComponent implements OnInit {
   @Input() buttonConfig: IActionButtonConfig | null = null

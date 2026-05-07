@@ -15,9 +15,10 @@ import { filter } from 'rxjs/operators'
 // import { ViewerUtilService } from '@sunbird-cb/toc'
 import { environment } from 'src/environments/environment'
 @Component({
-  selector: 'viewer-html-mobile',
-  templateUrl: './html-mobile.component.html',
-  styleUrls: ['./html-mobile.component.scss'],
+    selector: 'viewer-html-mobile',
+    templateUrl: './html-mobile.component.html',
+    styleUrls: ['./html-mobile.component.scss'],
+    standalone: false
 })
 export class HtmlMobileComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null

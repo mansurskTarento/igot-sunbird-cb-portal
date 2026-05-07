@@ -6,9 +6,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialogRef } from '@angular/material/dialog'
 @Component({
-  selector: 'ws-app-custom-fields',
-  templateUrl: './custom-fields.component.html',
-  styleUrls: ['./custom-fields.component.scss']
+    selector: 'ws-app-custom-fields',
+    templateUrl: './custom-fields.component.html',
+    styleUrls: ['./custom-fields.component.scss'],
+    standalone: false
 })
 export class CustomFieldsComponent {
 

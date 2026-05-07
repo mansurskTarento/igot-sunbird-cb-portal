@@ -25,6 +25,7 @@ const pdfjsViewer = require('pdfjs-dist/web/pdf_viewer')
   selector: 'ws-widget-player-pdf',
   templateUrl: './player-pdf.component.html',
   styleUrls: ['./player-pdf.component.scss'],
+  standalone: false
 })
 export class PlayerPdfComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges, NsWidgetResolver.IWidgetData<any> {
@@ -374,7 +375,7 @@ export class PlayerPdfComponent extends WidgetBaseComponent
   }
 
   refresh() {
-    this.renderSubject.next()
+    this.renderSubject.next({})
   }
 
   private async loadDocument(url: string) {
@@ -390,7 +391,7 @@ export class PlayerPdfComponent extends WidgetBaseComponent
         ? this.widgetData.resumePage
         : 1,
     )
-    this.renderSubject.next()
+    this.renderSubject.next({})
     this.activityStartedAt = new Date()
     if (!this.widgetData.disableTelemetry) {
       this.eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded)

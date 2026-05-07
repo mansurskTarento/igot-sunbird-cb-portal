@@ -36,9 +36,10 @@ interface IStripUnitContentData {
   description?: string | null
 }
 @Component({
-  selector: 'ws-widget-network-strip-multiple',
-  templateUrl: './network-strip-multiple.component.html',
-  styleUrls: ['./network-strip-multiple.component.scss'],
+    selector: 'ws-widget-network-strip-multiple',
+    templateUrl: './network-strip-multiple.component.html',
+    styleUrls: ['./network-strip-multiple.component.scss'],
+    standalone: false
 })
 export class NetworkStripMultipleComponent extends WidgetBaseComponent
   implements

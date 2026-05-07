@@ -2,9 +2,10 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { IAuthSteps } from '../../../../interface/auth-stepper'
 
 @Component({
-  selector: 'ws-auth-editor-steps',
-  templateUrl: './auth-editor-steps.component.html',
-  styleUrls: ['./auth-editor-steps.component.scss'],
+    selector: 'ws-auth-editor-steps',
+    templateUrl: './auth-editor-steps.component.html',
+    styleUrls: ['./auth-editor-steps.component.scss'],
+    standalone: false
 })
 export class AuthEditorStepsComponent implements OnInit {
   @Input() currentStep = 0

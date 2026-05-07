@@ -13,7 +13,7 @@ export class FracService {
     private http: HttpClient) { }
 
   fetchFrac() {
-    const frac: Promise<IFrac> = this.http
+    const frac: Promise<IFrac | any> = this.http
       .get<IFrac>(`${this.configSvc.baseUrl}/feature/frac.json`)
       .toPromise()
     return frac

@@ -5,9 +5,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NsDiscussionForum } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-discuss',
-  templateUrl: './discuss.component.html',
-  styleUrls: ['./discuss.component.scss'],
+    selector: 'ws-discuss',
+    templateUrl: './discuss.component.html',
+    styleUrls: ['./discuss.component.scss'],
+    standalone: false
 })
 export class DiscussComponent implements OnInit {
   @Input() pageId = ''

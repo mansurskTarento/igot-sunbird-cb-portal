@@ -2,9 +2,10 @@ import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angu
 import { IIntranetSelector } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-auth-intranet-selector',
-  templateUrl: './intranet-selector.component.html',
-  styleUrls: ['./intranet-selector.component.scss'],
+    selector: 'ws-auth-intranet-selector',
+    templateUrl: './intranet-selector.component.html',
+    styleUrls: ['./intranet-selector.component.scss'],
+    standalone: false
 })
 export class IntranetSelectorComponent implements OnInit, OnChanges {
 

@@ -18,9 +18,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-card-content-v2',
-  templateUrl: './card-content-v2.component.html',
-  styleUrls: ['./card-content-v2.component.scss'],
+    selector: 'ws-widget-card-content-v2',
+    templateUrl: './card-content-v2.component.html',
+    styleUrls: ['./card-content-v2.component.scss'],
+    standalone: false
 })
 export class CardContentV2Component extends WidgetBaseComponent
   implements OnInit, OnDestroy, AfterViewInit, NsWidgetResolver.IWidgetData<NsCardContent.ICard> {

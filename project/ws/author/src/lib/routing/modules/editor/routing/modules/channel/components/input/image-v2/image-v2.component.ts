@@ -13,9 +13,10 @@ import { UploadService } from '../../../../../../shared/services/upload.service'
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-image-v2',
-  templateUrl: './image-v2.component.html',
-  styleUrls: ['./image-v2.component.scss'],
+    selector: 'ws-auth-image-v2',
+    templateUrl: './image-v2.component.html',
+    styleUrls: ['./image-v2.component.scss'],
+    standalone: false
 })
 export class ImageV2Component implements OnChanges {
   @Output() data = new EventEmitter<{ content: IWidgetElementHtml; isValid: boolean }>()

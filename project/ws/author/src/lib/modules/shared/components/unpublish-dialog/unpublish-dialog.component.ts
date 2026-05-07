@@ -19,9 +19,10 @@ import { Notify } from '../../../../constants/notificationMessage'
 import { NOTIFICATION_TIME } from '../../../../constants/constant'
 
 @Component({
-  selector: 'ws-auth-unpublish-dialog',
-  templateUrl: './unpublish-dialog.component.html',
-  styleUrls: ['./unpublish-dialog.component.scss'],
+    selector: 'ws-auth-unpublish-dialog',
+    templateUrl: './unpublish-dialog.component.html',
+    styleUrls: ['./unpublish-dialog.component.scss'],
+    standalone: false
 })
 export class UnpublishDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup

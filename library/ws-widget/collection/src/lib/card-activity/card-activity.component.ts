@@ -2,10 +2,10 @@ import { Component, HostBinding, Input, OnInit } from '@angular/core'
 import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
 
 @Component({
-  selector: 'ws-widget-card-activity',
-  templateUrl: './card-activity.component.html',
-  styleUrls: ['./card-activity.component.scss'],
-
+    selector: 'ws-widget-card-activity',
+    templateUrl: './card-activity.component.html',
+    styleUrls: ['./card-activity.component.scss'],
+    standalone: false
 })
 
 export class CardActivityComponent extends WidgetBaseComponent implements OnInit, NsWidgetResolver.IWidgetData<any>  {

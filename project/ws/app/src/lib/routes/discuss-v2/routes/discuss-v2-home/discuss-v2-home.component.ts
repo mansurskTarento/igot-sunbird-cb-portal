@@ -3,9 +3,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2';
 
 @Component({
-  selector: 'ws-app-discuss-v2-home',
-  templateUrl: './discuss-v2-home.component.html',
-  styleUrls: ['./discuss-v2-home.component.scss']
+    selector: 'ws-app-discuss-v2-home',
+    templateUrl: './discuss-v2-home.component.html',
+    styleUrls: ['./discuss-v2-home.component.scss'],
+    standalone: false
 })
 export class DiscussV2HomeComponent {
   shortCutData: any[]= [

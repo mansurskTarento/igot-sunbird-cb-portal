@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { NsAppRating } from '@sunbird-cb/toc'
 
@@ -31,7 +31,7 @@ export class RatingService {
         API_END_POINTS.GET_RATING(contentId, contentType, userId)
       )
     }
-    return Observable.of({})
+    return of({})
   }
 
   addOrUpdateRating(req: NsAppRating.IRating): Observable<any> {
@@ -47,7 +47,7 @@ export class RatingService {
         API_END_POINTS.GET_RATING_SUMMARY(contentId, contentType)
       )
     }
-    return Observable.of({})
+    return of({})
   }
 
   getRatingLookup(req: NsAppRating.ILookupRequest): Observable<any> {
@@ -63,7 +63,7 @@ export class RatingService {
         API_END_POINTS.POST_AUTHOR_REPLY, req
       )
     }
-    return Observable.of({})
+    return of({})
   }
 
   getRatingIcon(ratingIndex: number, avg: number): 'star' | 'star_border' | 'star_half' {

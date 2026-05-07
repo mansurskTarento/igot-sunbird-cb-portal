@@ -1,11 +1,11 @@
 import { Component, OnInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core'
 @Component({
-  selector: 'taxonomy-level-card',
-  templateUrl: './taxonomy-level-card.component.html',
-  styleUrls: ['./taxonomy-level-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'taxonomy-level-card',
+    templateUrl: './taxonomy-level-card.component.html',
+    styleUrls: ['./taxonomy-level-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 export class TaxonomyLevelCardComponent implements OnInit, OnChanges {

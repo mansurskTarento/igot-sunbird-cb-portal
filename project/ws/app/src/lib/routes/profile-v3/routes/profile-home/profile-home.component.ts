@@ -13,9 +13,10 @@ import { ProfileV3Service } from '../../services/profile_v3.service'
 import { InitService } from '../../../../routes/services/appInit.service'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-profile-home',
-  templateUrl: './profile-home.component.html',
-  styleUrls: ['./profile-home.component.scss'],
+    selector: 'ws-app-profile-home',
+    templateUrl: './profile-home.component.html',
+    styleUrls: ['./profile-home.component.scss'],
+    standalone: false
 })
 export class ProfileHomeComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef

@@ -6,7 +6,7 @@ describe('PostFetchResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: PostFetchResolverService = TestBed.get(PostFetchResolverService)
+    const service: PostFetchResolverService = TestBed.inject(PostFetchResolverService)
     expect(service).toBeTruthy()
   })
 })

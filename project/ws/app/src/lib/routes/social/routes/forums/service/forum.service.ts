@@ -61,7 +61,10 @@ export class ForumService {
           if (!this.forumsSubject) {
             this.forumsSubject = new ReplaySubject(1)
           }
-          this.forumsSubject.next()
+          this.forumsSubject.next({
+            hits: 0,
+            result: []
+          })
         },
       )
   }

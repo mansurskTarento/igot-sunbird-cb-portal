@@ -5,9 +5,10 @@ import { Router } from '@angular/router'
 import jsPDF from 'jspdf'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'app-badge-details',
-  templateUrl: './badge-details.component.html',
-  styleUrls: ['./badge-details.component.scss'],
+    selector: 'app-badge-details',
+    templateUrl: './badge-details.component.html',
+    styleUrls: ['./badge-details.component.scss'],
+    standalone: false
 })
 export class BadgeDetailsComponent {
   constructor(private userProfileService: BadgeService, private router: Router, private badgeService: BadgeService, private configSvc: ConfigurationsService) {

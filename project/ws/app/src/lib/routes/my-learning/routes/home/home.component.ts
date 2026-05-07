@@ -7,9 +7,10 @@ import { NSProfileData } from '../../../profile/models/profile.model'
 import { NSLearningData } from '../../models/my-learning.model'
 import { MyLearningService } from '../../services/my-learning.service'
 @Component({
-  selector: 'ws-app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+    selector: 'ws-app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
   learningData: any

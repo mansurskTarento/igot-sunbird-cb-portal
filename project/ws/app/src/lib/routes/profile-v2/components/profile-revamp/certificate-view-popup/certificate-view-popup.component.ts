@@ -3,10 +3,11 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-certificate-view-popup',
-  templateUrl: './certificate-view-popup.component.html',
-  styleUrls: ['./certificate-view-popup.component.scss'],
-  providers: [PipeCertificateImageURL]
+    selector: 'ws-app-certificate-view-popup',
+    templateUrl: './certificate-view-popup.component.html',
+    styleUrls: ['./certificate-view-popup.component.scss'],
+    providers: [PipeCertificateImageURL],
+    standalone: false
 })
 export class CertificateViewPopupComponent implements OnInit {
   certificateUrl = '';
