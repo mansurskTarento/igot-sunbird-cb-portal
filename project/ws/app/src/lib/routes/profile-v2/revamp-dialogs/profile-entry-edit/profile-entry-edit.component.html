@@ -446,6 +446,10 @@
                 <mat-error
                   *ngIf="!hasError('learningMinutes', 'pattern') && hasError('learningMinutes', 'max')">{{'NetworkV2Profile.learningMinutesShouldBeLessThan60'
                   | translate}}</mat-error>
+                <mat-error
+                  *ngIf="!hasError('learningMinutes', 'pattern') && !hasError('learningMinutes', 'max') && hasError('learningMinutes', 'maxHoursMinutes')">
+                  {{'NetworkV2Profile.validMinutes'| translate}}
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -458,7 +462,12 @@
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
               <div class="flex gap-2 items-center w-full">
-                <img src="/assets/icons/image.svg" alt="app icon">
+                <ng-container *ngIf="entryForm?.controls?.fileName?.value && entryForm?.controls?.fileName?.value?.includes('.pdf')">
+                  <img src="assets/icons/PDF_alternate.svg" alt="pdf">
+                </ng-container>
+                <ng-container *ngIf="entryForm?.controls?.fileName?.value && !entryForm?.controls?.fileName?.value?.includes('.pdf')">
+                  <img src="/assets/icons/image.svg" alt="app icon">
+                </ng-container>
                 <span class="iconName"
                   [title]="entryForm?.controls?.fileName?.value">{{getNameOfTheFile(entryForm?.controls?.fileName?.value)}}</span>
               </div>

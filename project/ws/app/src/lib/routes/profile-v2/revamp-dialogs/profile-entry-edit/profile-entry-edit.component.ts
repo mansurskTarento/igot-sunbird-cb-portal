@@ -1181,6 +1181,32 @@ export class ProfileEntryEditComponent implements OnInit {
       })
     }
 
+    // Watch for learningHours changes to validate learningMinutes when hours is 100
+    const learningHoursControl = this.entryForm.get('learningHours')
+    const learningMinutesControl = this.entryForm.get('learningMinutes')
+    if (learningHoursControl && learningMinutesControl) {
+      learningHoursControl.valueChanges.subscribe((hours: any) => {
+        const minutes = learningMinutesControl.value
+        if (Number(hours) === 100 && Number(minutes) > 1) {
+          learningMinutesControl.setErrors({ ...learningMinutesControl.errors, maxHoursMinutes: true })
+        } else {
+          const errors = { ...learningMinutesControl.errors }
+          delete errors['maxHoursMinutes']
+          learningMinutesControl.setErrors(Object.keys(errors).length ? errors : null)
+        }
+      })
+      learningMinutesControl.valueChanges.subscribe((minutes: any) => {
+        const hours = learningHoursControl.value
+        if (Number(hours) === 100 && Number(minutes) > 0) {
+          learningMinutesControl.setErrors({ ...learningMinutesControl.errors, maxHoursMinutes: true })
+        } else {
+          const errors = { ...learningMinutesControl.errors }
+          delete errors['maxHoursMinutes']
+          learningMinutesControl.setErrors(Object.keys(errors).length ? errors : null)
+        }
+      })
+    }
+
     this.valueChanges()
     this.addCompetencyMeta()
   }
@@ -1524,7 +1550,7 @@ export class ProfileEntryEditComponent implements OnInit {
     const reader = new FileReader()
     imagePath = files[0]
     if (imagePath && imagePath.size > (2000 * 1024)) {
-      this.openSnackbar('Selected image size is more than 2MB.')
+      this.openSnackbar('Selected image/PDF size is more than 2MB.')
       imagePath = ''
       return
     }
