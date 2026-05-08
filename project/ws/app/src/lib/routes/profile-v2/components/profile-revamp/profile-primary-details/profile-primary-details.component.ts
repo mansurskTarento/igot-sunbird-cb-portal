@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
 import { HttpErrorResponse } from '@angular/common/http'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 import { MatLegacyDialog } from '@angular/material/legacy-dialog'
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component'
@@ -56,6 +56,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     private dialog: MatLegacyDialog,
     private route: ActivatedRoute,
     private router: Router,
+    private events: EventService,
   ) { }
 
   ngOnInit(): void {
@@ -255,8 +256,25 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
 
   handleRedirectToCompetencyPassbook(): void {
+    this.raiseTelemetry('Competency Passbook')
     this.router.navigate(['/page/competency-passbook/list'])
   }
+
+  raiseTelemetry(tabname: string): void {
+    const name = tabname.toLowerCase().split(' ').join('-')
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: `${name}`,
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.PROFILE,
+      }
+    )
+  }
+
+
 
   handleTranslateTo(menuName: string): string {
     return this.profileV2RevampSvc.handleTranslateTo(menuName)
