@@ -1550,7 +1550,7 @@ export class ProfileEntryEditComponent implements OnInit {
     const reader = new FileReader()
     imagePath = files[0]
     if (imagePath && imagePath.size > (2000 * 1024)) {
-      this.openSnackbar('Selected image/PDF size is more than 2MB.')
+      this.openSnackbar('Selected file size is more than 2MB.')
       imagePath = ''
       return
     }
