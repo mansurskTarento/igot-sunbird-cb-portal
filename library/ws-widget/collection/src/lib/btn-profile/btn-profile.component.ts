@@ -61,7 +61,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
     private translate: TranslateService,
     private events: EventService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc:DomainConfService
+    private domainConfSvc: DomainConfService
   ) {
     super()
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
@@ -168,7 +168,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -237,7 +237,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   }
 
   handleRedirectToCompetencyPassbook() {
-    this.raiseTelemetry('Learning History')
+    this.raiseTelemetry('Competency Passbook')
     this.router.navigate(['/page/competency-passbook/list'])
   }
 
@@ -273,7 +273,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   //   )
   // }
   redirectToKBPortal() {
-    const kbUrl: any =  (environment && environment.missionKarmayogiPath)&& environment?.missionKarmayogiPath
+    const kbUrl: any = (environment && environment.missionKarmayogiPath) && environment?.missionKarmayogiPath
     window.open(kbUrl, '_blank')
-  }      
+  }
 }
