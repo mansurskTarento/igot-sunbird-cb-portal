@@ -448,7 +448,7 @@
                   | translate}}</mat-error>
                 <mat-error
                   *ngIf="!hasError('learningMinutes', 'pattern') && !hasError('learningMinutes', 'max') && hasError('learningMinutes', 'maxHoursMinutes')">
-                  {{'NetworkV2Profile.validMinutes'| translate}}
+                  {{'NetworkV2Profile.learningHoursShouldBeLessThan100'| translate}}
                 </mat-error>
               </mat-form-field>
             </div>
@@ -457,7 +457,7 @@
 
         <div class="w-full mb-5">
           <div class="lable mb-1 required">{{'NetworkV2Profile.upload' | translate}}
-            <mat-icon class="info-icon" matTooltip="PNG, JPG, JPEG and PDF files are supported (maximum size: 2MB).">info_outline</mat-icon>
+            <mat-icon class="info-icon" matTooltip="PNG, JPG, JPEG and PDF files are supported (maximum size: 5MB).">info_outline</mat-icon>
           </div>
           <ng-container *ngIf="entryForm?.controls?.fileName?.value; else uploadIcon">
             <div class="fileNameCard flex justify-between px-2 items-center">
