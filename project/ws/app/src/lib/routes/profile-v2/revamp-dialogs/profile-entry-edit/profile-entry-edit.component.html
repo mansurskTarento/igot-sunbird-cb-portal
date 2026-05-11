@@ -430,7 +430,7 @@
             </div>
             <div class="duration-input flex items-center gap-1">
               <mat-form-field appearance="outline" class="duration-field profile-control">
-                <input matInput type="number" min="0" max="100" step="1" formControlName="learningHours" placeholder="Hours"
+                <input matInput type="number" min="0" max="100" step="1" formControlName="learningHours" placeholder="Hours(0-100)"
                   (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
                 <mat-error *ngIf="hasError('learningHours', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningHours' | translate}}</mat-error>
                 <mat-error
@@ -439,7 +439,7 @@
               </mat-form-field>
               <span class="duration-separator">:</span>
               <mat-form-field appearance="outline" class="duration-field profile-control">
-                <input matInput type="number" min="0" max="59" step="1" formControlName="learningMinutes" placeholder="Minutes"
+                <input matInput type="number" min="0" max="59" step="1" formControlName="learningMinutes" placeholder="Minutes(0-59)"
                   (keydown)="preventNonNumericInput($event)" (paste)="preventNonNumericPaste($event)">
                 <mat-error *ngIf="hasError('learningMinutes', 'pattern')">{{'NetworkV2Profile.pleaseEnterValidLearningMinutes' |
                   translate}}</mat-error>
