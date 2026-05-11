@@ -9,10 +9,10 @@ import { SeeAllService } from '@ws/app'
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 
 @Component({
-    selector: 'ws-recommende-learnings',
-    templateUrl: './recommende-learnings.component.html',
-    styleUrls: ['./recommende-learnings.component.scss'],
-    standalone: false
+  selector: 'ws-recommende-learnings',
+  templateUrl: './recommende-learnings.component.html',
+  styleUrls: ['./recommende-learnings.component.scss'],
+  standalone: false
 })
 export class RecommendeLearningsComponent implements OnInit {
   recommendedConfig: any
@@ -27,7 +27,7 @@ export class RecommendeLearningsComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private widgetSvc: WidgetUserServiceLib,
     private translate: TranslateService,
-    //private configSvc: ConfigurationsService,
+    // private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService,
     private seeAllSvc: SeeAllService,
     private enrollSvc: WidgetEnrollService
@@ -69,27 +69,27 @@ export class RecommendeLearningsComponent implements OnInit {
       let enollData = await this.enrollSvc.fetchEnrollContentData(request).toPromise().then(async (res: any) => {
         if (res && res.result && res.result.courses && res.result.courses.length) {
           return res.result.courses
-        } else {
-          return []
         }
+        return []
+
       }).catch((_err: any) => {
         return []
       })
       const sRequest: any = {
-        "request": {
-          "filters": {
-            "identifier": response
+        'request': {
+          'filters': {
+            'identifier': response,
           },
           "offset": 0,
           "query": "",
           "sort_by": {
             "lastUpdatedOn": "desc"
           },
-        }
+        },
       }
       this.seeAllSvc.fetchSearchData(sRequest).subscribe((res: any) => {
         if (res && res.result && res.result.content) {
-          let courses = res.result.content
+          const courses = res.result.content
           this.getPilldata(courses, enollData, response)
         }
       })
@@ -105,7 +105,7 @@ export class RecommendeLearningsComponent implements OnInit {
       cbpData = result
     }))
     coursesArray.forEach((courseId: any) => {
-      let course = courses.find((item: any) => item.identifier === courseId)
+      const course = courses.find((item: any) => item.identifier === courseId)
       if (course) {
         if (cbpData) {
           const cbpelem = cbpData.find((_course: any) => _course.identifier === course.identifier)

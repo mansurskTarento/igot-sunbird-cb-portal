@@ -6,20 +6,20 @@ import { NetworkingService } from '../../services/networking.service'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-    selector: 'ws-app-connections',
-    templateUrl: './connections.component.html',
-    styleUrls: ['./connections.component.scss'],
-    standalone: false
+  selector: 'ws-app-connections',
+  templateUrl: './connections.component.html',
+  styleUrls: ['./connections.component.scss'],
+  standalone: false
 })
 export class ConnectionsComponent implements OnInit {
 
   // selectedTabKey = 'connections';
-  selectedTabIndex = 0;
+  selectedTabIndex = 0
   tabDetailsList: tabDetails[] = [
     { lable: 'NetworkLandingPage.myConnections', key: 'Approved', recordsCount: 0 },
     { lable: 'NetworkLandingPage.requests', key: 'Received', recordsCount: 0 },
     { lable: 'NetworkLandingPage.sent', key: 'Pending', recordsCount: 0 },
-    { lable: 'NetworkLandingPage.blocked', key: 'Blocked', recordsCount: 0 }
+    { lable: 'NetworkLandingPage.blocked', key: 'Blocked', recordsCount: 0 },
   ]
   connectionsList: any = [];
   connectionsLoading = false;
@@ -58,12 +58,12 @@ export class ConnectionsComponent implements OnInit {
     const formBody = {
       request: {
         filter: {
-          status: this.satesListToGetCount && this.satesListToGetCount.length ? this.satesListToGetCount : this.allStatesList
+          status: this.satesListToGetCount && this.satesListToGetCount.length ? this.satesListToGetCount : this.allStatesList,
         },
         facets: [
-          "status"
-        ]
-      }
+          'status',
+        ],
+      },
     }
 
     this.networkingSvc.getConnectionsCount(formBody).subscribe({
@@ -94,7 +94,7 @@ export class ConnectionsComponent implements OnInit {
             if (tab.key === 'Received') {
               const connectionsUpdate: connectionUpdates = {
                 routeId: 'connections',
-                showUpdate: count > 0 ? true : false
+                showUpdate: count > 0 ? true : false,
               }
               this.networkingSvc.sendConnectionUpdates(connectionsUpdate)
             }
@@ -102,7 +102,7 @@ export class ConnectionsComponent implements OnInit {
           })
           this.satesListToGetCount = []
         }
-      }
+      },
     })
   }
 

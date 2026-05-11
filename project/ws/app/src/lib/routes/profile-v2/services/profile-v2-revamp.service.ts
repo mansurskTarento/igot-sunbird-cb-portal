@@ -7,27 +7,26 @@ import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 
-
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
   UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch',
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
-  ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
-  BLOCK_CONNECTION: `apis/proxies/v8/connections/block`,
+  ADD_CONNECTION: 'apis/protected/v8/connections/v2/add/connection',
+  BLOCK_CONNECTION: 'apis/proxies/v8/connections/block',
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular',
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
   GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // old
   APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // old
   WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition', // old
-  COURSE_BATCH_LIST: `/apis/proxies/v8/learner/course/v1/batch/list`,
+  COURSE_BATCH_LIST: '/apis/proxies/v8/learner/course/v1/batch/list',
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
-  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', //OLD
-  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search', //OLD
-  GET_GROUPS: '/api/user/v1/groups', //OLD
+  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', // OLD
+  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search', // OLD
+  GET_GROUPS: '/api/user/v1/groups', // OLD
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
   GET_DEGREES_LIST: 'apis/proxies/v8/masterdata/list/degrees',
@@ -40,9 +39,9 @@ const API_END_POINTS = {
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
   UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update',
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
-  approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', //old
+  approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', // old
 
-  INSIGHTS: `apis/proxies/v8/read/user/insights`, //old
+  INSIGHTS: 'apis/proxies/v8/read/user/insights', // old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
@@ -56,12 +55,12 @@ const API_END_POINTS = {
   UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update',
   LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/list',
   DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete',
-  COMPETENCY_V6: `/apis/proxies/v8/framework/v1/read/kcmfinal_fw`,
+  COMPETENCY_V6: '/apis/proxies/v8/framework/v1/read/kcmfinal_fw',
 
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ProfileV2RevampService {
 
@@ -93,7 +92,6 @@ export class ProfileV2RevampService {
   //   }
   //   return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody).toPromise()
   // }
-
 
   configulreProfileDetails(requestBody: any) {
     if (this.configSvc && this.configSvc.userProfileV2) {
@@ -188,14 +186,14 @@ export class ProfileV2RevampService {
 
   fetchNodalDetails(rootOrgId: any, roles: string) {
     const reqBody = {
-      "request": {
-        "filters": {
-          "rootOrgId": rootOrgId,
-          "organisations.roles": roles
+      'request': {
+        'filters': {
+          'rootOrgId': rootOrgId,
+          'organisations.roles': roles,
         },
-        "fields": ["firstName", "profileDetails.personalDetails.primaryEmail"],
-        "limit": 1
-      }
+        'fields': ['firstName', 'profileDetails.personalDetails.primaryEmail'],
+        'limit': 1,
+      },
     }
     return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody)
   }
@@ -210,7 +208,7 @@ export class ProfileV2RevampService {
 
   getDistrictsList(state: string) {
     const formBody = {
-      contextName: state
+      contextName: state,
     }
     return this.http.post<any>(`${API_END_POINTS.GET_DISTRICTS_LIST}`, formBody)
   }
@@ -269,7 +267,6 @@ export class ProfileV2RevampService {
     return this.translateService.instant(translationKey)
   }
 
-
   getInsightsData(payload: any) {
     const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
     return result
@@ -286,7 +283,6 @@ export class ProfileV2RevampService {
   deleteAchievement(payload: any): Observable<any> {
     return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, { body: payload })
   }
-
 
   getEducationsQualificationsSearch(payload: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.SEARCH_EDUCATIONAL_QUALIFICATIONS, payload)

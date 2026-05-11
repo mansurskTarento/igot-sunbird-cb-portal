@@ -10,16 +10,16 @@ import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/reje
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
-    selector: 'ws-app-profile-primary-details',
-    templateUrl: './profile-primary-details.component.html',
-    styleUrls: ['./profile-primary-details.component.scss'],
-    standalone: false
+  selector: 'ws-app-profile-primary-details',
+  templateUrl: './profile-primary-details.component.html',
+  styleUrls: ['./profile-primary-details.component.scss'],
+  standalone: false
 })
 export class ProfilePrimaryDetailsComponent implements OnInit {
   @Input() primaryDetails: any
-  @Input() isCurrentUser = false;
-  @Input() enableWTR = false;
-  @Input() enableWR = false;
+  @Input() isCurrentUser = false
+  @Input() enableWTR = false
+  @Input() enableWR = false
   @Input() unVerifiedObj = {
     designation: '',
     group: '',
@@ -38,17 +38,16 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
   @Input() approvalPendingFields: any = []
 
-  @Output() openProfileEditDialog = new EventEmitter();
-  @Output() getApprovalStatus = new EventEmitter();
-  @Output() updateWithdrawalStatus = new EventEmitter();
-  @Output() designationApprovedTimeChange = new EventEmitter();
-
+  @Output() openProfileEditDialog = new EventEmitter()
+  @Output() getApprovalStatus = new EventEmitter()
+  @Output() updateWithdrawalStatus = new EventEmitter()
+  @Output() designationApprovedTimeChange = new EventEmitter()
 
   groupApprovedTime = 0
   designationApprovedTime = 0
   panelOpenState = false
-  isIgotOrg = false;
-  isNotMyUser = false;
+  isIgotOrg = false
+  isNotMyUser = false
 
   constructor(
     private profileV2RevampSvc: ProfileV2RevampService,
@@ -231,7 +230,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
       const payload = {
         action: 'WITHDRAW',
         state: 'SEND_FOR_APPROVAL',
-        userId: userId,
+        userId,
         applicationId: userId,
         actorUserId: userId,
         wfId: _obj.wfId,

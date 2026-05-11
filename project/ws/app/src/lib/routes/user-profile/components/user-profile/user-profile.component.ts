@@ -96,8 +96,8 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   phoneNumberPattern = '^((\\+91-?)|0)?[0-9]{10}$'
   pincodePattern = '(^[0-9]{6}$)'
   yearPattern = '(^[0-9]{4}$)'
-  namePatern = `^[a-zA-Z\\s\\']{1,32}$`
-  telephonePattern = `^[0-9]+-?[0-9]+$`
+  namePatern = "^[a-zA-Z\\s\\']{1,32}$"
+  telephonePattern = '^[0-9]+-?[0-9]+$'
   emailLengthVal = false
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>
   @ViewChild('toastError', { static: true }) toastError!: ElementRef<any>
@@ -156,7 +156,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   otpEmailSend = true
   showUpdateEmail = false
   isOtpSent = false
-  emailRegix = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`
+  emailRegix = '^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'
   updatePrimaryEmail: UntypedFormControl
   emailOtp: UntypedFormControl
   emailTimerSubscription: Subscription | null = null

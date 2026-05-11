@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, IWidgetsPlayerMediaData, NsDiscussionForum } from '@sunbird-cb/collection'
+import { NsContent, IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
@@ -17,9 +17,6 @@ export class YoutubeComponent implements OnInit {
   @Input() youtubeData: NsContent.IContent | null = null
   @Input() widgetResolverYoutubeData: NsWidgetResolver.IRenderConfigWithTypedData<
     IWidgetsPlayerMediaData
-  > | null = null
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
   > | null = null
   @Input() isScreenSizeLtMedium = false
   @Input() isPreviewMode = false

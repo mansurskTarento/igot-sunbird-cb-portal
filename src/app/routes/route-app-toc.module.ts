@@ -8,7 +8,7 @@ import { MatDialogModule } from '@angular/material/dialog'
   imports: [
     CommonModule,
     AppTocModule,
-    MatDialogModule
+    MatDialogModule,
   ],
 })
 export class RouteAppTocModule { }

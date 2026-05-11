@@ -52,13 +52,13 @@ import { CardsModule } from '@sunbird-cb/consumption'
         MatMenuModule,
         MatRadioModule,
         TranslateModule,
-        CardsModule
+        CardsModule,
     ],
     exports: [
         HeaderModule,
         MatCardModule,
         SharedModule,
     ],
-    providers: []
+    providers: [],
 })
 export class RecommendeLearningsModule { }

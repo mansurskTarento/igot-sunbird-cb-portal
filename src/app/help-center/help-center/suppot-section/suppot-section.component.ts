@@ -31,14 +31,14 @@ interface StateData {
 })
 export class SuppotSectionComponent implements OnInit, OnChanges {
 
-  @Input() enabledSections: any = {};
-  @Input() helpCenterData: any = null;
+  @Input() enabledSections: any = {}
+  @Input() helpCenterData: any = null
 
-  filteredStates: string[] = [];
+  filteredStates: string[] = []
 
-  selectedState: any | null = null;
+  selectedState: any | null = null
 
-  gridSearch = '';
+  gridSearch = ''
 
   @HostListener('document:keydown.escape')
   onEsc() {
@@ -48,18 +48,18 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
   stateContacts: Record<string, StateData> = {}
   utStates: Set<string> = new Set()
   activeRegion = 'all'
-  phoneNumbers: PhoneNumber[] = [];
-  supportHours = '8:00 AM – 8:00 PM IST';
+  phoneNumbers: PhoneNumber[] = []
+  supportHours = '8:00 AM – 8:00 PM IST'
 
   features = [
     { icon: 'shield', label: 'Dedicated Expert Team' },
     { icon: 'headset_mic', label: 'Multi-Channel Support' },
     { icon: 'bolt', label: 'Quick Resolution' },
-  ];
+  ]
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/support-html/zoho_karmayogi_form.html'
   constructor(private zohoFormService: ZohoFormService, private http: HttpClient,
-    private sanitizer: DomSanitizer, public dialog: MatDialog, private snackBar: MatSnackBar) {
+              private sanitizer: DomSanitizer, public dialog: MatDialog, private snackBar: MatSnackBar) {
 
   }
 
@@ -131,7 +131,7 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
       maxWidth: '100vw',
       position: {
         top: '0',
-        right: '0'
+        right: '0',
       },
       panelClass: 'right-side-dialog',
       data: {
@@ -141,7 +141,7 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
     })
     setTimeout(() => {
       this.initializeZohoForm()
-    }, 300)
+    },         300)
   }
 
   private initializeZohoForm(): void {

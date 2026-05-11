@@ -2,7 +2,6 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subscription } from 'rxjs'
 import {
   NsContent,
-  // NsDiscussionForum,
 } from '@sunbird-cb/collection'
 // import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
@@ -20,9 +19,6 @@ export class CertificationComponent implements OnInit, OnDestroy {
   certificationData: NsContent.IContent | null = null
   forPreview = window.location.href.includes('/author/')
 
-  // discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-  //   NsDiscussionForum.IDiscussionForumInput
-  // > | null = null
   constructor(private activatedRoute: ActivatedRoute, private contentSvc: WidgetContentService) { }
 
   ngOnInit() {
@@ -46,21 +42,6 @@ export class CertificationComponent implements OnInit, OnDestroy {
       this.routeDataSubscription.unsubscribe()
     }
   }
-
-  // formDiscussionForumWidget(content: NsContent.IContent) {
-  //   this.discussionForumWidget = {
-  //     widgetData: {
-  //       description: content.description,
-  //       id: content.identifier,
-  //       name: NsDiscussionForum.EDiscussionType.LEARNING,
-  //       title: content.name,
-  //       initialPostCount: 2,
-  //       isDisabled: this.forPreview,
-  //     },
-  //     widgetSubType: 'discussionForum',
-  //     widgetType: 'discussionForum',
-  //   }
-  // }
 
   private async setS3Cookie(contentId: string) {
     await this.contentSvc

@@ -57,7 +57,7 @@ export namespace NsUserProfileDetails {
     ALC = 'ALC/IB',
     EWS = 'EWS(Economically Weaker Section)',
     PhysicallyChallenged = 'Physically Challenged Person',
-    ExServicemen = 'Ex - Servicemen'
+    ExServicemen = 'Ex - Servicemen',
 
   }
   export interface IFieldApproval {

@@ -12,7 +12,6 @@ import {
     NetworkStripMultipleModule, ContentStripWithTabsModule, AvatarPhotoModule,
 } from '@sunbird-cb/collection'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection'
-import { ProfileCardStatsModule } from '@sunbird-cb/collection'
 import { PipeRelativeTimeModule, ImageResponsiveModule } from '@sunbird-cb/utils-v2'
 import { WeeklyClapsModule } from '@sunbird-cb/collection'
 import { TipsForLearnerModule } from '@sunbird-cb/collection'
@@ -28,7 +27,6 @@ import { PageContainerComponent } from '../component/page-container/page-contain
 import { ClientSliderComponent } from '../component/client-slider/client-slider.component'
 import { HomeOtherPortalModule } from '../component/home-other-portal/home-other-portal.module'
 import { HomeContainerComponent } from '../component/home-container/home-container.component'
-import { DiscussHubComponent } from './home/discuss-hub/discuss-hub.component'
 import { NetworkHubComponent } from './home/network-hub/network-hub.component'
 import { NotificationComponent } from './home/notification/notification.component'
 import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-form.component'
@@ -38,16 +36,10 @@ import { PendingRequestModule } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
 import { HttpClient } from '@angular/common/http'
-import { UserLeaderboardModule } from '@sunbird-cb/collection'
-import { MatTooltipModule } from '@angular/material/tooltip'
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatSelectModule } from '@angular/material/select'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
-import { MatAutocompleteModule } from '@angular/material/autocomplete'
-import { MatDialogModule } from '@angular/material/dialog'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
 
 
@@ -55,8 +47,8 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
     declarations: [
         HomeComponent,
         PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
-        HomeContainerComponent, DiscussHubComponent,
-        NetworkHubComponent, NotificationComponent, SurveyFormComponent
+        HomeContainerComponent,
+        NetworkHubComponent, NotificationComponent, SurveyFormComponent,
     ],
     imports: [
         CommonModule,
@@ -70,9 +62,6 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         MatCardModule,
         MatIconModule,
         SharedModule,
-        ProfileCardStatsModule,
-        UserLeaderboardModule,
-        MatIconModule,
         WeeklyClapsModule,
         TipsForLearnerModule,
         UpdatePostsModule,
@@ -85,10 +74,7 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         PendingRequestModule,
         ContentStripWithTabsLibModule,
         ContentStripWithTabsPillsModule,
-        MatFormFieldModule,
-        MatSelectModule,
         MatButtonModule,
-        MatAutocompleteModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
@@ -96,12 +82,10 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
                 deps: [HttpClient],
             },
         }),
-        MatTooltipModule,
         SurveyFormModule,
-        MatDialogModule,
         FeedListModule,
         InSightSideBarModule,
-        HomeOtherPortalModule
+        HomeOtherPortalModule,
     ],
     exports: [
         HeaderModule,
@@ -110,11 +94,11 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         TranslateModule,
         FeedListModule,
         InSightSideBarModule,
-        HomeOtherPortalModule
+        HomeOtherPortalModule,
     ],
     providers: [
         HomePageService,
         SignupService,
-    ]
+    ],
 })
 export class HomeModule { }

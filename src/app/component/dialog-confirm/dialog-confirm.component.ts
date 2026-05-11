@@ -11,7 +11,7 @@ import { TranslateService } from '@ngx-translate/core'
 export class DialogConfirmComponent {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { title: string, body: string },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string, body: string, button?: any[] },
     private dialogRef: MatDialogRef<DialogConfirmComponent>,
     private translate: TranslateService
   ) {

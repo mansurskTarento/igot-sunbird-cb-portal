@@ -39,7 +39,7 @@ export class CourseCompletionDialogComponent implements OnInit {
     if (badgeDetails && badgeDetails.length) {
       const badge = badgeDetails[0]
       const now = Date.now()
-      if (badge?.criteria == "partialRandomCompletion") {
+      if (badge?.criteria == 'partialRandomCompletion') {
         this.badge = null
         return
       }

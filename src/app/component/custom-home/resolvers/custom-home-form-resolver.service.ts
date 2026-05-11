@@ -6,7 +6,7 @@ import { catchError, map } from 'rxjs/operators'
 import { FormExtService } from '../../../services/form-ext.service'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CustomHomeFormResolverService {
 
@@ -24,8 +24,8 @@ export class CustomHomeFormResolverService {
     }
     const requestData: any = {
       'request': {
-        "type": "custom-home",
-        "subType": deptId,
+        'type': 'custom-home',
+        'subType': deptId,
         'action': 'page-configuration',
         'component': 'portal',
         'rootOrgId': '*',
@@ -44,4 +44,3 @@ export class CustomHomeFormResolverService {
     )
   }
 }
-

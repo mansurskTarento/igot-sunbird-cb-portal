@@ -79,6 +79,6 @@ export function EditorShareHttpLoaderFactory(http: HttpClient) {
         CompetencyAddPopUpComponent,
         TranslateModule,
     ],
-    providers: [UploadService]
+    providers: [UploadService],
 })
 export class EditorSharedModule { }

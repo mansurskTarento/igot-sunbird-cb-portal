@@ -5,12 +5,12 @@ import { BadgeDetailsComponent } from './badge-details/badge-details.component'
 const routes: Routes = [
   {
     path: '',
-    component: BadgeDetailsComponent
-  }
+    component: BadgeDetailsComponent,
+  },
 ]
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class BadgesRoutingModule { }

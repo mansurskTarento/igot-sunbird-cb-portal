@@ -20,8 +20,8 @@ export class ProviderPageComponent implements OnInit  {
   currentMonthAndYear: any
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
-    { title: `All Providers`,
-      url: `/app/learn/browse-by/provider/all-providers`,
+    { title: 'All Providers',
+      url: '/app/learn/browse-by/provider/all-providers',
       icon: '', disableTranslate: true,
     },
   ]

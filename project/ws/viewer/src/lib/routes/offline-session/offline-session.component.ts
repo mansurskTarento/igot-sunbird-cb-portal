@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { AccessControlService } from '@ws/author'
-import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
 import { environment } from 'src/environments/environment'
 import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService } from '@sunbird-cb/toc'
@@ -37,9 +36,6 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
   }
   isPreviewMode = false
   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   batchId = this.activatedRoute.snapshot.queryParamMap.get('batchId')
   batchData: any
 
@@ -70,9 +66,6 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
           this.offlineSessionData = data && data.content && data.content.data
           if (this.alreadyRaised && this.oldData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.oldData)
-          }
-          if (this.offlineSessionData) {
-            this.formDiscussionForumWidget(this.offlineSessionData)
           }
 
           if (this.offlineSessionData && this.offlineSessionData.artifactUrl.indexOf('content-store') >= 0) {
@@ -192,12 +185,6 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
 
   initData(data: any) {
     this.offlineSessionData = data && data.content && data.content.data
-    if (this.offlineSessionData) {
-      this.formDiscussionForumWidget(this.offlineSessionData)
-      if (this.discussionForumWidget) {
-        this.discussionForumWidget.widgetData.isDisabled = true
-      }
-    }
     if (this.activatedRoute.snapshot.queryParams.collectionId) {
       this.widgetResolverOfflineSessionData.widgetData.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
     } else {
@@ -238,55 +225,6 @@ export class OfflineSessionComponent implements OnInit, OnDestroy {
     const newUrl = newLink.join('/')
     return newUrl
   }
-
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
-  }
-
-  // async fetchContinueLearning(collectionId: string, OfflineSessionId: string): Promise<boolean> {
-  //   return new Promise(resolve => {
-
-  //     let userId
-  //     if (this.configSvc.userProfile) {
-  //       userId = this.configSvc.userProfile.userId || ''
-  //     }
-
-  //     const req: NsContent.IContinueLearningDataReq = {
-  //       request: {
-  //         userId,
-  //         batchId: this.batchId,
-  //         courseId: collectionId || '',
-  //         contentIds: [],
-  //         fields: ['progressdetails'],
-  //       },
-  //     }
-  //     this.contentSvc.fetchContentHistoryV2(req).subscribe(
-  //       data => {
-  //         if (data && data.result && data.result.contentList.length) {
-  //           for (const content of data.result.contentList) {
-  //             //  TO DO: Put the resume logic here in future
-  //             // if (content.contentId === OfflineSessionId && content.progressdetails && content.progressdetails.current) {
-  //             //   this.widgetResolverOfflineSessionData.widgetData.resumePage = Number(content.progressdetails.current.pop())
-  //             // }
-  //           }
-  //         }
-  //         resolve(true)
-  //       },
-  //       () => resolve(true),
-  //     )
-  //   })
-  // }
 
   private async setS3Cookie(contentId: string) {
     await this.contentSvc

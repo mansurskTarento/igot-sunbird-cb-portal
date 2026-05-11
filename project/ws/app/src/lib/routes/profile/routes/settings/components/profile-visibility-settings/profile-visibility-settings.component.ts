@@ -7,10 +7,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-    selector: 'ws-app-profile-visibility-settings',
-    templateUrl: './profile-visibility-settings.component.html',
-    styleUrls: ['./profile-visibility-settings.component.scss'],
-    standalone: false
+  selector: 'ws-app-profile-visibility-settings',
+  templateUrl: './profile-visibility-settings.component.html',
+  styleUrls: ['./profile-visibility-settings.component.scss'],
+  standalone: false
 })
 export class ProfileVisibilitySettingsComponent implements OnInit {
   // Holds the selected visibility value
@@ -66,7 +66,7 @@ export class ProfileVisibilitySettingsComponent implements OnInit {
       connections: 10,
       0: 'public',
       1: 'private',
-      10: 'connections'
+      10: 'connections',
     }
     return mapedValue[value]
   }
@@ -76,9 +76,9 @@ export class ProfileVisibilitySettingsComponent implements OnInit {
       request: {
         userId: _.get(this.configSvc, 'userProfileV2.userId'),
         profileDetails: {
-          profilePreference: this.getMapedValues(value)
-        }
-      }
+          profilePreference: this.getMapedValues(value),
+        },
+      },
     }
     if (this.updateApiSubscription) {
       this.updateApiSubscription.unsubscribe()

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+// tslint:disable
 import _ from 'lodash'
 import { MatDialog } from '@angular/material/dialog'
 import { CustomFieldsComponent } from '../custom-fields/custom-fields.component'
@@ -8,10 +9,10 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-    selector: 'ws-app-view-custom-fields',
-    templateUrl: './view-custom-fields.component.html',
-    styleUrls: ['./view-custom-fields.component.scss'],
-    standalone: false
+  selector: 'ws-app-view-custom-fields',
+  templateUrl: './view-custom-fields.component.html',
+  styleUrls: ['./view-custom-fields.component.scss'],
+  standalone: false
 })
 export class ViewCustomFieldsComponent {
 
@@ -26,14 +27,13 @@ export class ViewCustomFieldsComponent {
   currentUser: any = {}
   isMobile: any
 
-
   constructor(
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
     private dialog: MatDialog,
     private breakpointObserver: BreakpointObserver,
     private route: ActivatedRoute,
-    //private commondataSvc: CommonDataService
+    // private commondataSvc: CommonDataService
   ) {
     this.breakpointObserver.observe([Breakpoints.Handset])
       .subscribe(result => {
@@ -47,7 +47,7 @@ export class ViewCustomFieldsComponent {
           if (element) {
             element.scrollIntoView({
               behavior: 'smooth',
-              block: 'center'
+              block: 'center',
             })
             setTimeout(() => {
               this.handleEditCustomDetails()
@@ -63,7 +63,7 @@ export class ViewCustomFieldsComponent {
     console.log('Current User', this.currentUser)
     this.userId = this.currentUser.userId || ''
     this.orgId = this.currentUser.rootOrgId || ''
-    //this.orgId = "0140788510336040962"
+    // this.orgId = "0140788510336040962"
     this.getOrgDetails()
 
   }
@@ -83,19 +83,19 @@ export class ViewCustomFieldsComponent {
   }
 
   getCustomAttributes(): void {
-    let payload = {
+    const payload = {
       filterCriteriaMap: {
         organisationId: this.orgId,
-        //organisationId: "0140788510336040962",
+        // organisationId: "0140788510336040962",
         isEnabled: true,
         customFieldId: this.customAttrListIds,
       },
 
       pageNumber: 0,
       pageSize: 50,
-      orderDirection: "DESC",
+      orderDirection: 'DESC',
       orderBy: 'updatedOn',
-      facets: []
+      facets: [],
     }
     this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
@@ -111,7 +111,7 @@ export class ViewCustomFieldsComponent {
   readCustomattributeDetails() {
     this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
-      //this.commondataSvc.fetchMandatoryNotification()
+      // this.commondataSvc.fetchMandatoryNotification()
     }, error => {
       console.log('Error', error)
     })

@@ -1,8 +1,5 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
-import { EditorQuillModule } from '../discussion-forum/editor-quill/editor-quill.module'
-
 import { BtnContentFeedbackV2Component } from './components/btn-content-feedback-v2/btn-content-feedback-v2.component'
 import { BtnContentFeedbackDialogV2Component } from './components/btn-content-feedback-dialog-v2/btn-content-feedback-dialog-v2.component'
 import { FeedbackSnackbarComponent } from './components/feedback-snackbar/feedback-snackbar.component'
@@ -26,7 +23,6 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        EditorQuillModule,
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,

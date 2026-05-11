@@ -8,21 +8,21 @@ import { CertificateViewPopupComponent } from '../certificate-view-popup/certifi
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 
 @Component({
-    selector: 'ws-app-achievements',
-    templateUrl: './achievements.component.html',
-    styleUrls: ['./achievements.component.scss'],
-    providers: [PipeCertificateImageURL],
-    standalone: false
+  selector: 'ws-app-achievements',
+  templateUrl: './achievements.component.html',
+  styleUrls: ['./achievements.component.scss'],
+  providers: [PipeCertificateImageURL],
+  standalone: false
 })
 export class AchievementsComponent implements OnInit {
   //#region (global variables)
-  @Input() achievementsList: achievement[] = [];
-  @Input() isCurrentUser = false;
-  @Output() openProfileEntryEditDialog = new EventEmitter();
-  @Output() openProfileEntryDeleteDialog = new EventEmitter();
+  @Input() achievementsList: achievement[] = []
+  @Input() isCurrentUser = false
+  @Output() openProfileEntryEditDialog = new EventEmitter()
+  @Output() openProfileEntryDeleteDialog = new EventEmitter()
 
-  userId: string = '';
-  isPopup: boolean = false;
+  userId: string = ''
+  isPopup: boolean = false
   //#endregion
   constructor(
     private dialogRef: MatDialogRef<AchievementsComponent>,
@@ -61,7 +61,7 @@ export class AchievementsComponent implements OnInit {
           if (err) {
             this.openSnackbar('Something went wrong while fetching achievements, please try again later', 2000)
           }
-        }
+        },
       })
     }
   }
@@ -88,7 +88,7 @@ export class AchievementsComponent implements OnInit {
         width: '600px',
         panelClass: 'cover-photo-edit-popup',
         data: {
-          certificateUrl: url
+          certificateUrl: url,
         },
         disableClose: true,
         autoFocus: false,

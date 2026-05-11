@@ -6,20 +6,20 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from 'src/environments/environment'
 
 @Component({
-    selector: 'ws-app-mentors',
-    templateUrl: './mentors.component.html',
-    styleUrls: ['./mentors.component.scss'],
-    standalone: false
+  selector: 'ws-app-mentors',
+  templateUrl: './mentors.component.html',
+  styleUrls: ['./mentors.component.scss'],
+  standalone: false
 })
 export class MentorsComponent implements OnInit {
-  paginationSize = 12;
-  paginationSizeOptions = [12, 24, 36, 48];
-  paginationPage = 1;
-  totalItemsCount = 0;
-  defaultPaginationSize = 12;
+  paginationSize = 12
+  paginationSizeOptions = [12, 24, 36, 48]
+  paginationPage = 1
+  totalItemsCount = 0
+  defaultPaginationSize = 12
   mentorsList: any[] = [
   ]
-  mentorsListLoading = false;
+  mentorsListLoading = false
   mentorsGetSubscription: any
 
   constructor(

@@ -30,15 +30,9 @@
             "assets": [
               "src/favicon.ico",
               "src/favicon.png",
-              "src/fusion-assets/icons/",
-              "src/fusion-assets/images/",
               "src/dashboard-assets/",
-              "src/manifest.json",
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@sunbird-cb/discussions-ui-v8/assets",
-                "output": "./assets/discussion-ui"
-              }
+              "src/fusion-assets/",
+              "src/manifest.json"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -60,17 +54,11 @@
                 "bundleName": "theme-igot"
               },
               "node_modules/pdfjs-dist/web/pdf_viewer.css",
-              "src/fusion-assets/fonts/lato/stylesheet.css",
-              "src/fusion-assets/fonts/montserrat/stylesheet.css",
-              "node_modules/@sunbird-cb/discussions-ui-v8/assets/styles/global.scss",
-              "src/dashboard-assets/fonts/lato/stylesheet.css",
-              "src/dashboard-assets/fonts/montserrat/stylesheet.css",
               "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
               "node_modules/ckeditor5/dist/ckeditor5.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
               "node_modules/shepherd.js/dist/js/shepherd.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/js/smartechclient.js"
@@ -105,7 +93,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
@@ -131,7 +119,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
@@ -157,7 +145,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
@@ -183,7 +171,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
@@ -209,7 +197,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
               "budgets": [
                 {
@@ -260,12 +248,7 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/fusion-assets",
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@sunbird-cb/discussions-ui-v8/assets",
-                "output": "./assets/discussion-ui"
-              }
+              "src/fusion-assets"
             ],
             "styles": [
               "src/styles.scss"

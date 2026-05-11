@@ -72,7 +72,7 @@ export class UpcomingTimelineComponent implements OnInit {
       competencySubTheme: [],
       providers: [],
     }
-    let finalFilterData: any = event === 'apar' ? apar : event === 'overdue' ? overDue : upcomingData
+    const finalFilterData: any = event === 'apar' ? apar : event === 'overdue' ? overDue : upcomingData
     this.filterValueEmit.emit(finalFilterData)
   }
   scroll(el: any) {

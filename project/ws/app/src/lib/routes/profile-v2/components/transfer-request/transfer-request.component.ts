@@ -43,9 +43,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   onLoad = true
   designationListLoadCount = 50
   designationDefaultLoadCount = 50
-  isLoadingMoreDesignations = false;
+  isLoadingMoreDesignations = false
   desigantionFilterEnable = false
-  selectedOrgHasDesignations = false;
+  selectedOrgHasDesignations = false
   currentOrg: any = ''
 
   // deptFilterData: any[] = []
@@ -142,7 +142,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
             status: 'Live',
             category: 'designation',
             categories: [
-              this.selectedOrgId + '_odcs_designation'
+              this.selectedOrgId + '_odcs_designation',
             ],
             objectType: 'Term',
           },
@@ -165,7 +165,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         error: () => {
           this.selectedOrgHasDesignations = false
           this.getdesignationsMeta()
-        }
+        },
       })
     } else {
       this.selectedOrgHasDesignations = false
@@ -189,7 +189,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           status: 'Live',
           category: 'designation',
           categories: [
-            this.selectedOrgId + '_odcs_designation'
+            this.selectedOrgId + '_odcs_designation',
           ],
           objectType: 'Term',
         },
@@ -223,11 +223,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   getDefaultDesignations() {
     const requestBody: any = {
       filterCriteriaMap: {
-        status: 'Active'
+        status: 'Active',
       },
       requestedFields: [],
       pageNumber: this.designationsOffset,
-      pageSize: this.designationListLoadCount
+      pageSize: this.designationListLoadCount,
     }
     if (this.designationSearchText) {
       requestBody['searchString'] = this.designationSearchText
@@ -236,14 +236,14 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.profileV2RevampService.searchDesignation(requestBody).subscribe({
       next: (res: any) => {
         this.isLoadingMoreDesignations = false
-        let data = _.get(res, 'result.result.data', [])
-        let totalCount = _.get(res, 'result.result.totalCount', 0)
+        const data = _.get(res, 'result.result.data', [])
+        const totalCount = _.get(res, 'result.result.totalCount', 0)
         this.setDesignationResults(data, totalCount)
       }, error: (error: HttpErrorResponse) => {
         if (error) {
           this.matSnackBar.open('Something went wrong. Please try again later.')
         }
-      }
+      },
     })
   }
 
@@ -264,7 +264,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   handleCloseModal(): void {
     this.dialogRef.close()
   }
-
 
   handleSubmitRequest(): void {
     if (this.transferRequestForm.valid) {
@@ -292,7 +291,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           // this.matSnackBar.open(this.handleTranslateTo('transferRequestSent'))
           this.enableWithdraw.emit(true)
           this.handleCloseModal()
-        }, (error: HttpErrorResponse) => {
+        },         (error: HttpErrorResponse) => {
           if (!error.ok) {
             this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
           }
@@ -302,17 +301,17 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   getOrgRequest(_newCall: boolean, offsetValue: number, searchText: string): any {
     const request: any = {
-      "request": {
-        "filters": {
-          "isTenant": true,
-          "status": 1,
-          "isMdo": true,
-          "isCbp": true
+      'request': {
+        'filters': {
+          'isTenant': true,
+          'status': 1,
+          'isMdo': true,
+          'isCbp': true,
         },
-        "fields": ["channel", "rootOrgId"],
-        "limit": this.organizationDefaultLoadCount,
-        "offset": offsetValue
-      }
+        'fields': ['channel', 'rootOrgId'],
+        'limit': this.organizationDefaultLoadCount,
+        'offset': offsetValue,
+      },
     }
 
     if (searchText && searchText.trim() !== '') {
@@ -346,7 +345,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           }
 
           // Update the filtered data for display
-          this.deptFilterData = this.organizationData = this.organizationData.filter((item) => {
+          this.deptFilterData = this.organizationData = this.organizationData.filter(item => {
             return item?.rootOrgId !== loginUserRootOrgId
           })
         } else {
@@ -356,7 +355,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           }
         }
         this.isLoadingMoreOrganization = false
-      }, (error: HttpErrorResponse) => {
+      },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(this.handleTranslateTo('orgFetchDataFailed'))
         }
@@ -378,7 +377,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
   }
 
-
   checkCurrentDesignationPresent() {
 
     // Get the current designation value
@@ -396,7 +394,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           designation: currentDesignation,
           // Add any other required properties matching your data structure
           id: 'custom-' + Date.now(),
-          status: 'Active'
+          status: 'Active',
         }
         // Make sure the custom designation appears in the filtered list
         // if (this.designationData.length >= this.designationListLoadCount) {
@@ -407,7 +405,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
   setupScrollListener(opened: boolean): void {
     if (opened) {
@@ -426,7 +423,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         if (searchInput) {
           searchInput.focus()
         }
-      }, 100)
+      },         100)
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
@@ -436,11 +433,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this))
         }
 
-      }, 100)
+      },         100)
     }
   }
-
-
 
   onDesignationSelectScroll(event: any): void {
     const element = event.target
@@ -467,8 +462,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
     // }
   }
-
-
 
   onDesignationDropdownClosed(): void {
     const searchDesignationControl = this.transferRequestForm.get('searchDesignation')
@@ -515,7 +508,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         if (searchInput) {
           searchInput.focus()
         }
-      }, 100)
+      },         100)
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
@@ -525,7 +518,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           panel.addEventListener('scroll', this.onOrgSelectScroll.bind(this))
         }
 
-      }, 100)
+      },         100)
     }
   }
 

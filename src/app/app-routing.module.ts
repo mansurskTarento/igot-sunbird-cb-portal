@@ -11,47 +11,17 @@ import { ExternalUrlResolverService } from './guards/external-url-resolver.servi
 import { GeneralGuard } from './guards/general.guard'
 import { LoginGuard } from './guards/login.guard'
 import { RedirectGuard } from './guards/redirect.guard'
-import { FeaturesComponent } from './routes/features/features.component'
-import { FeaturesModule } from './routes/features/features.module'
-import { MobileAppHomeComponent } from './routes/public/mobile-app/components/mobile-app-home.component'
-import { PublicAboutComponent } from './routes/public/public-about/public-about.component'
-import { PublicContactComponent } from './routes/public/public-contact/public-contact.component'
-import { TncComponent } from './routes/tnc/tnc.component'
 import { TncAppResolverService } from './services/tnc-app-resolver.service'
 import { TncPublicResolverService } from './services/tnc-public-resolver.service'
-import { AppTocResolverService } from '@sunbird-cb/toc'
-import { PublicLogoutComponent } from './routes/public/public-logout/public-logout.component'
-import { PublicSignupComponent } from './routes/public/public-signup/public-signup.component'
-import { PublicContacthomeComponent } from './routes/public/public-contacthome/public-contacthome.component'
-import { PublicLoginWComponent } from './routes/public/public-login-w/public-login-w.component'
-import { PublicWelcomeComponent } from './routes/public/welcome/public-welcome.component'
-import { PublicLoginWGComponent } from './routes/public/public-login-wg/public-login-wg.component'
-import { WelcomeUserResolverService } from './services/welcome-user-resolver.service'
-import { PublicTocComponent } from './routes/public/public-toc/public-toc.component'
 import { environment } from 'src/environments/environment'
-import { AppPublicPositionResolverService } from './routes/public/public-signup/position-resolver.service'
-import { PublicRequestComponent } from './routes/public/public-request/public-request.component'
-import { AppPublicGroupResolverService } from './routes/public/public-signup/group-resolver.service'
-import { AppTourComponent } from './component/app-tour/app-tour.component'
 import { AppHierarchyResolverService } from './services/app-hierarchy-resolver.service'
 import { AppEnrollmentResolverService } from './services/app-enrollment-resolver.service'
 import { AppContentResolverService } from './services/app-content-read-resolver.service'
-import { SurveyShikshaComponent } from './component/survey-shiksha/survey-shiksha.component'
-import { MicrosotesComponent } from './routes/microsites/microsotes.component'
-import { MicrositesModule } from './routes/microsites/microsites.module'
 import { AppGyaanKarmayogiService } from './services/app-gyaan-karmayogi.service'
-import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
-import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
-import { AppHomePageResolverService } from './services/app-home-page-resolver.service'
 import { AppEventPageResolverService } from './services/app-event-page-resolver.service'
 import { HomeResolverService } from './home/home/home-resolver.service'
-import { PublicExtTocComponent } from './routes/public/public-ext-toc/public-ext-toc.component'
-import { AppTocExtPublicResolverService } from '@sunbird-cb/toc'
-import { PublicCrpComponent } from './routes/public/public-crp/public-crp.component'
-import { AppPublicOrganizationResolver } from './routes/public/public-signup/organization.resolver'
 import { FormDataResolverService } from './services/form-data-resolver.service'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
-import { FormMicroSiteDataService } from './services/form-micro-site-data.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
 // 😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵😵
@@ -166,21 +136,21 @@ const routes: Routes = [
       module: 'Learn',
     },
   },
-  {
-    path: 'app',
-    loadChildren: () =>
-      import('./routes/route-discuss.module').then(u => u.RouteDiscussModule),
-    canActivate: [GeneralGuard],
-    data: {
-      pageType: 'feature',
-      pageKey: 'discuss',
-      pageId: 'app',
-      module: 'Discuss',
-    },
-    resolve: {
-      pageData: PageResolve,
-    },
-  },
+  // {
+  //   path: 'app',
+  //   loadChildren: () =>
+  //     import('./routes/route-discuss.module').then(u => u.RouteDiscussModule),
+  //   canActivate: [GeneralGuard],
+  //   data: {
+  //     pageType: 'feature',
+  //     pageKey: 'discuss',
+  //     pageId: 'app',
+  //     module: 'Discuss',
+  //   },
+  //   resolve: {
+  //     pageData: PageResolve,
+  //   },
+  // },
   {
     path: 'app/knowledge-resource',
     loadChildren: () =>
@@ -471,7 +441,7 @@ const routes: Routes = [
   },
   {
     path: 'app/features',
-    component: FeaturesComponent,
+    loadChildren: () => import('./routes/features/features.module').then(m => m.FeaturesModule),
     canActivate: [GeneralGuard],
     data: {
       pageId: 'app/features',
@@ -480,7 +450,7 @@ const routes: Routes = [
   },
   {
     path: 'app/microsites',
-    component: MicrosotesComponent,
+    loadChildren: () => import('./routes/microsites/microsites.module').then(m => m.MicrositesModule),
     canActivate: [GeneralGuard],
     data: {
       pageId: 'app/features',
@@ -508,29 +478,17 @@ const routes: Routes = [
   },
   {
     path: 'app/invalid-user',
-    component: InvalidUserComponent,
+    loadChildren: () => import('./routes/route-invalid-user.module').then(m => m.RouteInvalidUserModule),
     data: {
       pageType: 'feature',
       pageKey: 'invalid-user',
       pageId: 'app/invalid-user',
       module: 'Error',
     },
-    resolve: {
-      pageData: PageResolve,
-    },
   },
   {
-    path: 'page/custom-home',
-    loadChildren: () => import('./routes/route-custom-home.module').then(m => m.RouteCustomHomeModule),
-    data: {
-      pageType: 'feature',
-      pageKey: 'custom-home',
-      pageId: 'app/custom-home',
-      module: 'CUSTOM_HOME'
-    },
-    resolve: {
-    },
-    canActivate: [GeneralGuard]
+    path: 'page',
+    loadChildren: () => import('./routes/route-page.module').then(m => m.RoutePageModule),
   },
   {
     path: 'app/my-learning',
@@ -623,21 +581,6 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/person-profile2',
-    loadChildren: () =>
-      import('./routes/route-person-profile.module').then(u => u.RoutePersonProfileModule),
-    canActivate: [GeneralGuard],
-    data: {
-      pageId: 'app/person-profile',
-      module: 'profile',
-    },
-  },
-  // {
-  //   path: 'app/events',
-  //   loadChildren: () => import('./routes/route-app-event.module').then(m => m.AppEventsModule),
-  //   canActivate: [GeneralGuard],
-  // },
-  {
     path: 'app/event-hub',
     loadChildren: () => import('./routes/route-events.module').then(u => u.RouteEventsModule),
     canActivate: [GeneralGuard],
@@ -676,7 +619,7 @@ const routes: Routes = [
       pageKey: 'globalsearch',
       pageId: 'app/globalsearch',
       module: 'Home',
-    }
+    },
   },
   {
     path: 'app/seeAll',
@@ -689,16 +632,6 @@ const routes: Routes = [
       module: 'Home',
     },
     resolve: { home: HomeResolverService },
-  },
-  {
-    path: 'app/social',
-    data: {
-      pageId: 'app/social',
-      module: 'social',
-    },
-    loadChildren: () =>
-      import('./routes/route-social-app.module').then(u => u.RouteSocialAppModule),
-    canActivate: [GeneralGuard],
   },
   {
     path: 'app/signup',
@@ -734,14 +667,9 @@ const routes: Routes = [
   },
   {
     path: 'app/tnc',
-    component: TncComponent,
-    resolve: {
-      tnc: TncAppResolverService,
-      pageId: 'app/tnc',
-      module: 'tnc',
-    },
-    data: {
-    },
+    loadChildren: () => import('./routes/route-tnc.module').then(m => m.RouteTncModule),
+    resolve: { tnc: TncAppResolverService },
+    data: { pageId: 'app/tnc', module: 'tnc' },
   },
   {
     path: 'app/user-profile',
@@ -772,16 +700,8 @@ const routes: Routes = [
   // },
   {
     path: 'crp/:qrCodeId/:orgId',
-    component: PublicCrpComponent,
-    data: {
-      module: 'Self Registration',
-      pageId: 'crp',
-    },
-    resolve: {
-      organization: AppPublicOrganizationResolver,
-      positions: AppPublicPositionResolverService,
-      group: AppPublicGroupResolverService,
-    },
+    loadChildren: () => import('./routes/route-public-crp.module').then(m => m.RoutePublicCrpModule),
+    data: { module: 'Self Registration', pageId: 'crp' },
   },
   {
     path: 'error-access-forbidden',
@@ -855,139 +775,15 @@ const routes: Routes = [
   {
     path: 'login',
     canActivate: [LoginGuard],
-    component: LoginRootComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'login',
-      pageId: 'login',
-      module: 'Login',
-    },
-    resolve: {
-      pageData: PageResolve,
-    },
+    loadChildren: () => import('./routes/route-login.module').then(m => m.RouteLoginModule),
+    data: { pageType: 'feature', pageKey: 'login', pageId: 'login', module: 'Login' },
   },
   { path: 'network', redirectTo: 'page/network', pathMatch: 'full' },
   {
-    path: 'page/toc',
-    redirectTo: '/',
-    pathMatch: 'full',
-  },
-  {
-    path: 'page/toc/:id',
-    data: {
-      pageType: 'page',
-      pageKey: 'toc',
-      pageId: 'page/toc/:id',
-      module: 'Learn',
-    },
-    resolve: {
-      pageData: PageResolve,
-      content: AppTocResolverService,
-    },
-    runGuardsAndResolvers: 'paramsChange',
-    component: PageComponent,
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'page/home',
-    loadChildren: () => import('./home/home.module').then(m => m.HomeModule),
-    data: {
-      pageType: 'page',
-      pageKey: 'home',
-      pageId: 'page/home',
-      module: 'Home',
-    },
-    resolve: {
-      microSiteData: FormMicroSiteDataService,
-      pageData: AppHomePageResolverService,
-      // module: ModuleNameResolve,
-      // pageId: PageNameResolve,
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'page/cbp',
-    loadChildren: () => import('./cbp/cbp.module').then(m => m.CbpModule),
-    data: {
-      pageType: 'page',
-      pageKey: 'cbp',
-    },
-    resolve: {
-      pageData: PageResolve,
-      module: ModuleNameResolve,
-      pageId: PageNameResolve,
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'page/recommended-learnings',
-    loadChildren: () => import('./recommende-learnings/recommende-learnings.module').then(m => m.RecommendeLearningsModule),
-    data: {
-      pageType: 'page',
-      pageKey: 'recommende-learnings',
-    },
-    resolve: {
-      pageData: PageResolve,
-      module: ModuleNameResolve,
-      pageId: PageNameResolve,
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'page/competency-passbook',
-    loadChildren: () => import('./competency-passbook/competency-passbook.module').then(m => m.CompetencyPassbookModule),
-    data: {
-      pageType: 'page',
-      pageKey: 'competency-passbook',
-    },
-    resolve: {
-      pageData: PageResolve,
-      module: ModuleNameResolve,
-      pageId: PageNameResolve,
-      home: HomeResolverService,
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'page/:id',
-    component: PageComponent,
-    data: {
-      pageType: 'page',
-      pageKey: 'id',
-    },
-    resolve: {
-      pageData: PageResolve,
-      module: ModuleNameResolve,
-      pageId: PageNameResolve,
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
     path: 'learner-advisory',
-    component: LearnerAdvisoryComponent,
+    loadChildren: () => import('./routes/route-learner-advisory.module').then(m => m.RouteLearnerAdvisoryModule),
     canActivate: [GeneralGuard],
-    resolve: {
-      home: HomeResolverService,
-    },
-    // data: {
-    //   module: 'learner-advisory',
-    //   // pageId: 'page/learner-advisory',
-    // },
-  },
-  {
-    path: 'page/explore/:tags',
-    data: {
-      pageType: 'page',
-      pageKey: 'catalog-details',
-      pageId: 'page/explore/:topic',
-      module: 'Learn',
-    },
-    resolve: {
-      pageData: ExploreDetailResolve,
-      module: PageNameResolve,
-    },
-    component: PageComponent,
-    canActivate: [GeneralGuard],
+    resolve: { home: HomeResolverService },
   },
   {
     path: 'page-leaders',
@@ -998,181 +794,24 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
   },
   {
-    path: 'public/about',
-    component: PublicAboutComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'about',
-      module: 'support',
-      pageId: 'public/about',
-    },
-    resolve: {
-      pageData: PageResolve,
-    },
-  },
-  {
-    path: 'public/contact',
-    component: PublicContacthomeComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'public-contact',
-      module: 'support',
-      pageId: 'public/contact',
-    },
-  },
-  {
-    path: 'public/faq',
-    component: PublicContactComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'public-faq',
-      module: 'support',
-      pageId: 'public/faq',
-    },
-    resolve: {
-      pageData: PageResolve,
-    },
-  },
-  {
-    path: 'public/logout',
-    component: PublicLogoutComponent,
-  },
-  // {
-  //   path: 'public/home',
-  //   component: PublicHomeComponent,
-  //   data: {
-  //     pageType: 'feature',
-  //     pageKey: 'public-home',
-  //     pageId: 'public/home',
-  //     module: 'home',
-  //   },
-  //   resolve: {
-  //     pageData: PageResolve,
-  //   },
-  // },
-  {
     path: 'public/home',
     pathMatch: 'full',
     redirectTo: 'static-home',
   },
   {
-    path: 'public/toc/:id/overview',
-    component: PublicTocComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'toc',
-      pageId: 'public/toc/:id',
-      module: 'Learn',
-    },
-    resolve: {
-      pageData: PageResolve,
-      content: AppTocResolverService,
-    },
-  },
-  {
-    path: 'public/toc/ext/:partner/:id',
-    component: PublicExtTocComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'toc',
-      pageId: 'public/toc/:id',
-      module: 'Learn',
-    },
-    resolve: {
-      extContent: AppTocExtPublicResolverService,
-    },
-  },
-  {
-    path: 'public/sso',
-    component: PublicLoginWComponent,
-    data: {
-      module: 'sso',
-      pageId: 'public/sso',
-    },
-  },
-
-  {
-    path: 'public/privacy-policy',
-    component: PrivacyPolicyComponent,
-    data: {
-      module: 'privacy-policy',
-      pageId: 'public/privacy-policy',
-    },
-  },
-
-  {
-    path: 'public/google/sso',
-    component: PublicLoginWGComponent,
-    data: {
-      module: 'Google SSO',
-      pageId: 'public/google/sso',
-    },
-  },
-  {
-    path: 'public/welcome',
-    component: PublicWelcomeComponent,
-    data: {
-      module: 'Welcome',
-      pageId: 'public/welcome',
-    },
-    resolve: {
-      userData: WelcomeUserResolverService,
-      group: AppPublicGroupResolverService,
-    },
-  },
-  {
-    path: 'public/google/sso',
-    component: PublicLoginWComponent,
-  },
-  {
-    path: 'public/sso',
-    component: PublicLoginWComponent,
-  },
-  {
     path: 'public/signup',
-    component: PublicSignupComponent,
-    data: {
-      module: 'Login',
-      pageId: 'public/signup',
-      pageType: 'feature',
-      pageKey: 'signup',
-    },
-    resolve: {
-      // pageData: PageResolve,
-      positions: AppPublicPositionResolverService,
-      group: AppPublicGroupResolverService,
-    },
-  },
-  {
-    path: 'public/request',
-    component: PublicRequestComponent,
-    data: {
-      module: 'Login',
-      pageId: 'public/request',
-    },
-  },
-  {
-    path: 'public/mobile-app',
-    component: MobileAppHomeComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'mobile-app',
-    },
-    resolve: {
-      pageData: PageResolve,
-    },
+    loadChildren: () => import('./routes/route-public-signup.module').then(m => m.RoutePublicSignupModule),
+    data: { module: 'Login', pageId: 'public/signup', pageType: 'feature', pageKey: 'signup' },
   },
   {
     path: 'public/tnc',
-    component: TncComponent,
-    data: {
-      isPublic: true,
-      module: 'support',
-      pageId: 'public/tnc',
-    },
-    resolve: {
-      tnc: TncPublicResolverService,
-    },
+    loadChildren: () => import('./routes/route-tnc.module').then(m => m.RouteTncModule),
+    data: { isPublic: true, module: 'support', pageId: 'public/tnc' },
+    resolve: { tnc: TncPublicResolverService },
+  },
+  {
+    path: 'public',
+    loadChildren: () => import('./routes/route-public.module').then(m => m.RoutePublicModule),
   },
   {
     path: 'viewer',
@@ -1185,7 +824,7 @@ const routes: Routes = [
       hierarchyData: AppHierarchyResolverService,
       enrollmentData: AppEnrollmentResolverService,
       contentRead: AppContentResolverService,
-      preAssessmentRead: AppPreAssessmentContentResolverService
+      preAssessmentRead: AppPreAssessmentContentResolverService,
     },
     loadChildren: () => import('./routes/route-viewer.module').then(u => u.RouteViewerModule),
     canActivate: [GeneralGuard],
@@ -1205,14 +844,12 @@ const routes: Routes = [
   },
   {
     path: 'app/tour',
-    component: AppTourComponent,
-    data: {
-      pageId: 'app-tour',
-    },
+    loadChildren: () => import('./routes/route-app-tour.module').then(m => m.RouteAppTourModule),
+    data: { pageId: 'app-tour' },
   },
   {
     path: 'surveyml/:id',
-    component: SurveyShikshaComponent,
+    loadChildren: () => import('./routes/route-survey-shiksha.module').then(m => m.RouteSurveyShikshaModule),
   },
   {
     path: 'badges',
@@ -1243,9 +880,6 @@ const routes: Routes = [
 ]
 @NgModule({
   imports: [
-    PageModule,
-    FeaturesModule,
-    MicrositesModule,
     RouterModule.forRoot(routes, {
       anchorScrolling: 'enabled',
       scrollPositionRestoration: 'top',
@@ -1256,6 +890,5 @@ const routes: Routes = [
     }),
   ],
   exports: [RouterModule],
-  providers: [ExploreDetailResolve],
 })
 export class AppRoutingModule { }

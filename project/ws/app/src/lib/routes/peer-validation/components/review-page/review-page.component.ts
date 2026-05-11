@@ -57,7 +57,6 @@ export class ReviewPageComponent implements OnInit {
     this.isReviewSubmitted = state['isReviewSubmitted'] || false
     const surveyEndDate = queryParams['surveyEndDate'] || state['surveyEndDate'] || null
 
-
     if (surveyEndDate && new Date(surveyEndDate) < new Date()) {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })
       this.location.back()

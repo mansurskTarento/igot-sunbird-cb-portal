@@ -2,19 +2,19 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 
 const API_END_POINTS = {
-  fetchBoards: `/apis/protected/v8/leaderboard/fetchLeaderBoardDetails`,
-  fetchBadges: `/apis/protected/v8/leaderboard/badgeDetails`,
-  fetchDealers: `/apis/protected/v8/leaderboard/dealersDetails`,
-  fetchBadgesWon: `/apis/protected/v8/leaderboard/badgeWon`,
-  fetchBadgesYetToWin: `/apis/protected/v8/leaderboard/badgeYetToWin`,
-  fetchUserProfile: `/apis/protected/v8/leaderboard/userDetails`,
-  updateApprovedPoints: `/apis/protected/v8/leaderboard/UpdateApprovedPoints`,
-  fetchGuildLeaderboard: `/apis/protected/v8/leaderboard/leaderboardGuild`,
-  fetchActivityLeaderboard: `/apis/protected/v8/leaderboard/leaderboardActivities`,
-  fetchConfigs: `/apis/protected/v8/leaderboard/fetchConfiguration`,
-  updateConfigs: `/apis/protected/v8/leaderboard/updateConfiguration`,
-  Getsso: `/apis/protected/v8/leaderboard/GetSSO`,
-  GetBalance: `/apis/protected/v8/leaderboard/GetBalance`,
+  fetchBoards: '/apis/protected/v8/leaderboard/fetchLeaderBoardDetails',
+  fetchBadges: '/apis/protected/v8/leaderboard/badgeDetails',
+  fetchDealers: '/apis/protected/v8/leaderboard/dealersDetails',
+  fetchBadgesWon: '/apis/protected/v8/leaderboard/badgeWon',
+  fetchBadgesYetToWin: '/apis/protected/v8/leaderboard/badgeYetToWin',
+  fetchUserProfile: '/apis/protected/v8/leaderboard/userDetails',
+  updateApprovedPoints: '/apis/protected/v8/leaderboard/UpdateApprovedPoints',
+  fetchGuildLeaderboard: '/apis/protected/v8/leaderboard/leaderboardGuild',
+  fetchActivityLeaderboard: '/apis/protected/v8/leaderboard/leaderboardActivities',
+  fetchConfigs: '/apis/protected/v8/leaderboard/fetchConfiguration',
+  updateConfigs: '/apis/protected/v8/leaderboard/updateConfiguration',
+  Getsso: '/apis/protected/v8/leaderboard/GetSSO',
+  GetBalance: '/apis/protected/v8/leaderboard/GetBalance',
 }
 
 @Injectable({

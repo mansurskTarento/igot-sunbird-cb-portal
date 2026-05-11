@@ -64,8 +64,8 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.htmlPickerData) {
       await this.contentSvc.continueLearning(this.htmlPickerData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.htmlPickerData) {
       await this.contentSvc.continueLearning(this.htmlPickerData.identifier)

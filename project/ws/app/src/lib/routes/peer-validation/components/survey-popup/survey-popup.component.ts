@@ -41,7 +41,7 @@ export class SurveyPopupComponent {
             this.peerValidationService.dashboardRefresh$.next()
             this.dialogRef.close('ignored')
           },
-          error: () => this.dialogRef.close()
+          error: () => this.dialogRef.close(),
         })
     } else {
       this.dialogRef.close()

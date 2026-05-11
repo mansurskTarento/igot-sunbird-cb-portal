@@ -10,7 +10,7 @@ const routes: Routes = [
     //     env: 'certs', pageid: 'certificate-details', type: 'view'
     //   }
     // }
-  }
+  },
 ]
 @NgModule({
   imports: [RouterModule.forChild(routes)],

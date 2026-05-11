@@ -11,7 +11,7 @@
     </div>
 
     <div class="user-details flex flex-col gap-1">
-      <div class="user-name" (click)="goToUserProfile(otherUserProfile)">{{ fullName }}</div>
+      <div class="user-name" (click)="goToUserProfile()">{{ fullName }}</div>
       <div class="user-designation">{{ otherUserProfile?.professionalDetails?.[0]?.designation }}</div>
       <div class="organisation">{{ otherUserProfile?.departmentName }}</div>
       <div class="location">{{ otherUserProfile?.location }} </div>

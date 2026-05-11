@@ -72,13 +72,13 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   expandedQuestionSetSubscription: any
 
   questionType = {
-    "mcq-sca": "Single selection-MCQs",
-    "mcq-mca": "Multiple selection-MCQs",
-    "fitb": "Fill in the blanks",
-    "mtf": "Match the following",
-    "mcq-mca-w": "Weightage Single Choice",
-    "mcq-sca-tf": "True/False",
-    "ftb": "Fill in the blanks",
+    'mcq-sca': 'Single selection-MCQs',
+    'mcq-mca': 'Multiple selection-MCQs',
+    'fitb': 'Fill in the blanks',
+    'mtf': 'Match the following',
+    'mcq-mca-w': 'Weightage Single Choice',
+    'mcq-sca-tf': 'True/False',
+    'ftb': 'Fill in the blanks',
   }
 
   constructor(

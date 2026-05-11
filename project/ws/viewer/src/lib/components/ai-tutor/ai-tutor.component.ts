@@ -12,10 +12,10 @@ import cloneDeep from 'lodash/cloneDeep'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
 
 @Component({
-    selector: 'viewer-ai-tutor',
-    templateUrl: './ai-tutor.component.html',
-    styleUrls: ['./ai-tutor.component.scss'],
-    standalone: false
+  selector: 'viewer-ai-tutor',
+  templateUrl: './ai-tutor.component.html',
+  styleUrls: ['./ai-tutor.component.scss'],
+  standalone: false
 })
 export class AiTutorComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   @Input() from = ''

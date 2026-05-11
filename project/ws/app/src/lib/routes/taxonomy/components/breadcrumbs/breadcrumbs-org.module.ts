@@ -15,6 +15,6 @@ import { MatIconModule } from '@angular/material/icon'
         MatIconModule,
         MatCardModule,
     ],
-    exports: [BreadcrumbsOrgComponent]
+    exports: [BreadcrumbsOrgComponent],
 })
 export class BreadcrumbsOrgModule { }

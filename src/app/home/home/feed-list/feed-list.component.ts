@@ -16,7 +16,7 @@ export class FeedListComponent implements OnInit {
   isMobile = false
   @Input() widgetData: any
   @Input() providerId: string = ''
-  
+
   @Output() telemetryRaisedLibrary = new EventEmitter()
   isTelemetryRaised = false
   constructor(private activatedRoute: ActivatedRoute,

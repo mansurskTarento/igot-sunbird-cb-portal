@@ -141,8 +141,8 @@ export class DocumentUploadComponent {
         data: {
           url: doc.url,
           name: doc.name,
-          type: doc.type
-        }
+          type: doc.type,
+        },
       })
     }
   }

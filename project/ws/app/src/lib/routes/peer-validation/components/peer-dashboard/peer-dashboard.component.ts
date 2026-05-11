@@ -89,7 +89,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       sortBy: this.sortBy,
       dateFilter: this.dateFilter,
       pageIndex: this.pageIndex,
-      pageSize: this.pageSize
+      pageSize: this.pageSize,
     }
 
     this.peerValidationService.getDashboardData(filters).subscribe(response => {
@@ -168,7 +168,7 @@ export class PeerDashboardComponent implements OnInit, OnDestroy {
       width: '1100px',
       maxWidth: '95vw',
       disableClose: true,
-      data: mockData
+      data: mockData,
     })
 
     dialogRef.afterClosed().subscribe(() => {

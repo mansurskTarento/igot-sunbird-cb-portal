@@ -9,8 +9,10 @@ import { MatIconModule } from '@angular/material/icon'
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 
-@NgModule({ declarations: [HelpCenterComponent, SuppotSectionComponent], imports: [CommonModule,
-        HelpCenterRoutingModule,
-        ReactiveFormsModule,
-        MatIconModule], providers: [provideHttpClient(withInterceptorsFromDi())] })
+@NgModule({
+  declarations: [HelpCenterComponent, SuppotSectionComponent], imports: [CommonModule,
+    HelpCenterRoutingModule,
+    ReactiveFormsModule,
+    MatIconModule], providers: [provideHttpClient(withInterceptorsFromDi())]
+})
 export class HelpCenterModule { }

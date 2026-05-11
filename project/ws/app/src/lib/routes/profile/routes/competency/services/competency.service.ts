@@ -6,7 +6,7 @@ import { map } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 // const PROTECTED_SLAG_V8 = `/LA1/api`
-const PROTECTED_SLAG_V8 = `/api`
+const PROTECTED_SLAG_V8 = '/api'
 const LA_API_END_POINTS = {
   ASSESSMENTS: `${PROTECTED_SLAG_V8}/v1/assessment`,
 }

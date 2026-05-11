@@ -11,7 +11,7 @@ export class CbpResolverService  {
 
     constructor(private http: HttpClient) { }
     resolve(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<any> {
-        return this.http.get(`/assets/configurations/page/cbp.json`).pipe(
+        return this.http.get('/assets/configurations/page/cbp.json').pipe(
             map(data => ({ data, error: null })),
             catchError(err => of({ data: null, error: err })),
           )

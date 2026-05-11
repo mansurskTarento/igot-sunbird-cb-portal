@@ -10,22 +10,22 @@ import { Router } from '@angular/router'
 
 
 @Component({
-    selector: 'ws-app-network',
-    templateUrl: './network.component.html',
-    styleUrls: ['./network.component.scss'],
-    standalone: false
+  selector: 'ws-app-network',
+  templateUrl: './network.component.html',
+  styleUrls: ['./network.component.scss'],
+  standalone: false
 })
 export class NetworkComponent implements OnInit {
 
   //#region (global variables)
-  communitySuggestionsList: any[] = [];
-  communitiesLoading = false;
+  communitySuggestionsList: any[] = []
+  communitiesLoading = false
   navigationItems: routesData[] = [
     {
       name: 'NetworkLandingPage.exploreNetwork',
       navigationUrl: '/app/network-v2/home',
       routeId: 'home',
-      imageUrl: './assets/icons/person_search.svg'
+      imageUrl: './assets/icons/person_search.svg',
     },
     // {
     //   name: 'Updates',
@@ -37,7 +37,7 @@ export class NetworkComponent implements OnInit {
       name: 'NetworkLandingPage.connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      imageUrl: './assets/icons/group.svg'
+      imageUrl: './assets/icons/group.svg',
     },
     // {
     //   name: 'Recommendations',
@@ -53,17 +53,17 @@ export class NetworkComponent implements OnInit {
       navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
       imageUrl: './assets/icons/connection.svg',
-      queryParams: { type: 'peopleYouMayKnow' }
+      queryParams: { type: 'peopleYouMayKnow' },
     },
     {
       name: 'NetworkLandingPage.mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/book_read.svg'
-    }
+      imageUrl: './assets/icons/book_read.svg',
+    },
   ]
-  userDetails: any = {};
-  profileDetailsLoading = false;
+  userDetails: any = {}
+  profileDetailsLoading = false
   //#endregion (global variables)
 
   constructor(
@@ -86,7 +86,6 @@ export class NetworkComponent implements OnInit {
     })
   }
 
-
   //#region (initialization)
   ngOnInit() {
     if (localStorage.getItem('websiteLanguage')) {
@@ -105,8 +104,8 @@ export class NetworkComponent implements OnInit {
 
   getCommunitesList() {
     const formBody = {
-      field: "countOfPeopleJoined",
-      limit: 3
+      field: 'countOfPeopleJoined',
+      limit: 3,
     }
     this.communitiesLoading = true
     this.networkingSvc.getCommunities(formBody).subscribe({
@@ -117,7 +116,7 @@ export class NetworkComponent implements OnInit {
       error: () => {
         this.communitiesLoading = false
         this.openSnackBar(this.handleTranslateTo('errorFetchingCommunities'))
-      }
+      },
     })
   }
 
@@ -135,7 +134,7 @@ export class NetworkComponent implements OnInit {
         error: () => {
           this.profileDetailsLoading = false
           this.openSnackBar(this.handleTranslateTo('errorFetchingProfileDetails'))
-        }
+        },
       })
     }
   }
@@ -167,6 +166,5 @@ export class NetworkComponent implements OnInit {
   }
 
   //#endregion (initialization)
-
 
 }

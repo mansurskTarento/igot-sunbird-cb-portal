@@ -39,9 +39,9 @@ export class SignupAutoComponent implements OnInit {
         const email = result.email
         this.showResonse = true
         switch (resonseCode) {
-          case '1001': this.msg = `Something went wrong, please contact administrator`
+          case '1001': this.msg = 'Something went wrong, please contact administrator'
             break
-          case '1002': this.msg = `Registered email address is not valid, so please contact administrator`
+          case '1002': this.msg = 'Registered email address is not valid, so please contact administrator'
             break
           case '1003': this.msg = `You have been already registered successfully on the platform with email ${email}.
           Please check your email`
@@ -52,14 +52,14 @@ export class SignupAutoComponent implements OnInit {
           case '1005': this.msg = `You have been registered successfully on the platform with email ${email}.
           Please check your email`
             break
-          default: this.msg = `Something went wrong, please contact administrator`
+          default: this.msg = 'Something went wrong, please contact administrator'
         }
         this.openSnackbar(this.msg)
       },
       err => {
         this.fetching = false
         this.showResonse = true
-        this.msg = `Something went wrong please try again later!!`
+        this.msg = 'Something went wrong please try again later!!'
         this.openSnackbar(err.error.msg)
       })
   }

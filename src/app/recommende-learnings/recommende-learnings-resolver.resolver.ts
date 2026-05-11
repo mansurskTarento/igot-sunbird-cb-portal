@@ -11,7 +11,7 @@ export class RecommendeLearningsResolverService  {
 
     constructor(private http: HttpClient) { }
     resolve(_route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): Observable<any> {
-        return this.http.get(`/assets/configurations/page/recommended-learnings.json`).pipe(
+        return this.http.get('/assets/configurations/page/recommended-learnings.json').pipe(
             map(data => ({ data, error: null })),
             catchError(err => of({ data: null, error: err })),
           )

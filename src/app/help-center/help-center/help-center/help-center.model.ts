@@ -66,7 +66,7 @@ export const GUIDE_CATEGORIES: Category[] = [
   { id: 'learning', label: 'Course & Certificates', icon: 'school', count: 3 },
   { id: 'community_ai', label: 'Community & AI ', icon: 'school', count: 3 },
   { id: 'discuss_hub', label: 'Discuss Hub Manual ', icon: 'school', count: 3 },
-  { id: 'reset_password', label: 'Reset Password', icon: 'school', count: 3 }
+  { id: 'reset_password', label: 'Reset Password', icon: 'school', count: 3 },
 ]
 
 export const GUIDE_MDO_CATEGORIES: Category[] = [
@@ -74,7 +74,7 @@ export const GUIDE_MDO_CATEGORIES: Category[] = [
   { id: 'user_onboarding', label: 'User Onboarding', icon: 'login', count: 1 },
   { id: 'user_management', label: 'User Management', icon: 'manage_accounts', count: 2 },
   { id: 'event', label: 'Event', icon: 'manage_accounts', count: 2 },
-  { id: 'comprehensive_assessment', label: 'Comprehensive Assessment', icon: 'manage_accounts', count: 2 }
+  { id: 'comprehensive_assessment', label: 'Comprehensive Assessment', icon: 'manage_accounts', count: 2 },
 ]
 
 export const GUIDE_CBP_CATEGORIES: Category[] = [
@@ -95,10 +95,8 @@ export const FAQ_CATEGORIES: Category[] = [
 export const FAQ_MDP_CATEGORIES: Category[] = [
   { id: 'all', label: 'All Categories', icon: 'grid', count: 5 },
   { id: 'user_onboarding', label: 'User Onboarding', icon: 'public', count: 3 },
-  { id: 'assessment_apar', label: 'Assessment & APAR', icon: 'login', count: 6 }
+  { id: 'assessment_apar', label: 'Assessment & APAR', icon: 'login', count: 6 },
 ]
-
-
 
 export const VIDEO_TUTORIALS: VideoTutorial[] = [
   {
@@ -156,7 +154,7 @@ export const VIDEO_TUTORIALS: VideoTutorial[] = [
     thumbnail: 'https://img.youtube.com/vi/rhEIXdD9vD4/hqdefault.jpg',
     youtubeUrl: 'https://youtu.be/rhEIXdD9vD4',
     category: 'profie_account',
-  }
+  },
 ]
 
 export const HOW_TO_GUIDES: HowToGuide[] = [
@@ -392,7 +390,7 @@ export const HOW_TO_GUIDES_MAP: Record<RoleTab, HowToGuide[]> = {
       thumbnail: '',
       category: 'comprehensive_assessment',
       pdfUrl: 'assets/help-pdf/MDO/COMPREHENSIVE ASSESSMENT MANUAL - Jan 26.pdf',
-    }
+    },
     // 👇 add remaining 6 guides like your screenshot
   ],
 
@@ -502,7 +500,6 @@ export const FAQ_ITEMS_MAP: Record<RoleTab, FaqItem[]> = {
   'content-building': [],
 }
 
-
 export const stateContacts = {
   'Andhra Pradesh': {
     region: 'south', admins: [
@@ -520,7 +517,7 @@ export const stateContacts = {
       { name: 'Sharmila', designation: 'N/A', email: 'N/A', mobile: '+91 88850 36359 ' },
       { name: 'Jhansi', designation: 'N/A', email: 'N/A', mobile: '+91 74160 61199 ' },
 
-    ]
+    ],
   },
   // 'Arunachal Pradesh': { region: 'northeast', admins: [{ name: 'Tage Ado', designation: 'State Nodal Officer', email: 'tage.ado@arunachal.gov.in', mobile: '+91 94403 45678' }] },
   // 'Assam': { region: 'northeast', admins: [{ name: 'Bhaskar Jyoti Das', designation: 'State IT Coordinator', email: 'bj.das@assam.gov.in', mobile: '+91 94404 56789' }, { name: 'Priyanka Kalita', designation: 'Admin Officer', email: 'p.kalita@assam.gov.in', mobile: '+91 94405 67890' }] },
@@ -531,7 +528,7 @@ export const stateContacts = {
       { name: 'श्री दिवाकर कुमार सिंह ', designation: 'प्रोग्रामर', email: 'N/A', mobile: '+91 95250 57691' },
       { name: 'श्री दिव्य सिंह', designation: 'प्रोग्रामर', email: 'N/A', mobile: '+91 87701 06951' },
       { name: 'श्री चंदन कुमार', designation: 'प्रोग्रामर', email: 'N/A', mobile: '+91 95553 06833' },
-    ]
+    ],
   },
   'Chhattisgarh': {
     region: 'central', admins: [
@@ -541,7 +538,7 @@ export const stateContacts = {
       { name: 'Ravi Nishad', designation: 'N/A', email: 'N/A', mobile: '+91 97532 54662' },
       { name: 'Manish Sahu', designation: 'N/A', email: 'N/A', mobile: '+91 97132 57582' },
       { name: 'Satish Singh Rajput', designation: 'N/A', email: 'N/A', mobile: '+91 90091 34545' },
-    ]
+    ],
   },
   'Goa': { region: 'west', admins: [{ name: 'Hegel', designation: 'N/A', email: 'N/A', mobile: '+91 98601 24328' }] },
   'Gujarat': {
@@ -551,19 +548,19 @@ export const stateContacts = {
       { name: 'Parimal Bhanderi', designation: 'ICT Officer', email: 'icto3-hrms-gnr@gujarat.gov.in', mobile: '+91 94288 59401' },
       { name: 'Tejas Vadhavaniya', designation: 'Deputy Section Officer', email: 'dyso3-hrms-gad@gujarat.gov.in', mobile: '+91 82007 12715' },
       { name: 'Kuldeep Dav', designation: 'Deputy Section Officer', email: 'dyso4-hrms-gad@gujarat.gov.in', mobile: '+91 95744 37940' },
-    ]
+    ],
   },
   // 'Haryana': { region: 'north', admins: [{ name: 'Rajesh Hooda', designation: 'State Nodal Officer', email: 'r.hooda@haryana.gov.in', mobile: '+91 94415 67890' }, { name: 'Poonam Yadav', designation: 'Deputy Director', email: 'poonam.yadav@haryana.gov.in', mobile: '+91 94416 78901' }] },
   'Himachal Pradesh': {
     region: 'north', admins: [
       { name: 'Ms. Kiran, Instructor', designation: 'Instructor (IT)', email: 'gotokirankuril@gmail.com', mobile: '+91 70182 21070' },
       { name: 'Sh. Lakshya Verma', designation: 'JOA(IT)', email: 'lakshya.verma18@gmail.com', mobile: '+91 9413 52977' },
-    ]
+    ],
   },
   'Jharkhand': {
     region: 'east', admins: [
       { name: 'Kumar Bhaskar', designation: 'N/A', email: 'N/A', mobile: '+91 99051 00272' },
-      { name: 'Vijay', designation: 'N/A', email: 'N/A', mobile: '+91 80924 82272' }]
+      { name: 'Vijay', designation: 'N/A', email: 'N/A', mobile: '+91 80924 82272' }],
   },
   // 'Karnataka': { region: 'south', admins: [{ name: 'Chandrashekar M', designation: 'State Nodal Officer', email: 'cshekhar@karnataka.gov.in', mobile: '+91 94420 12345' }, { name: 'Nandini R', designation: 'Programme Manager', email: 'nandini.r@karnataka.gov.in', mobile: '+91 94421 23456' }] },
   // 'Kerala': { region: 'south', admins: [{ name: 'Sreekumar P', designation: 'State Nodal Officer', email: 'sreekumar.p@kerala.gov.in', mobile: '+91 94422 34567' }, { name: 'Bindhu T', designation: 'IT Coordinator', email: 'bindhu.t@kerala.gov.in', mobile: '+91 94423 45678' }] },
@@ -586,17 +583,16 @@ export const stateContacts = {
       { name: 'Sanskruti Pawar', designation: 'N/A', email: 'igot-mh@mah.gov.in', mobile: '+91 90820 40662' },
       { name: 'Karuna Sawant', designation: 'N/A', email: 'igot-mh@mah.gov.in', mobile: '+91 77384 96727' },
 
-
-    ]
+    ],
   },
   'Manipur': {
     region: 'northeast', admins: [
       { name: 'H. Berlin Singh', designation: 'N/A', email: 'N/A', mobile: '+91 89743 55719' },
       { name: 'Ch. Rona Devi', designation: 'N/A', email: 'N/A', mobile: '+91 82598 30560' },
       { name: 'Laimayum Girija Devi', designation: 'N/A', email: 'N/A', mobile: '+91 70050 34306' },
-    ]
+    ],
   },
-  //'Meghalaya': { region: 'northeast', admins: [{ name: 'Banshanbor Lyngdoh', designation: 'State Coordinator', email: 'b.lyngdoh@meghalaya.gov.in', mobile: '+91 94430 12345' }] },
+  // 'Meghalaya': { region: 'northeast', admins: [{ name: 'Banshanbor Lyngdoh', designation: 'State Coordinator', email: 'b.lyngdoh@meghalaya.gov.in', mobile: '+91 94430 12345' }] },
   'Mizoram': {
     region: 'northeast', admins: [
       { name: 'Lalbiakenga', designation: 'N/A', email: 'mabiakasailo@gmail.com', mobile: '+91 94361 97512' },
@@ -604,21 +600,21 @@ export const stateContacts = {
       { name: 'Remlalliana', designation: 'N/A', email: 'remlalatuallawt@gmail.com', mobile: '+91 85759 27269' },
       { name: 'Rosangpuia', designation: 'N/A', email: 'rsangpuia@gmail.com', mobile: '+91 94361 53061' },
 
-    ]
+    ],
   },
-  //'Nagaland': { region: 'northeast', admins: [{ name: 'Zhoto Mere', designation: 'State Nodal Officer', email: 'z.mere@nagaland.gov.in', mobile: '+91 94432 34567' }] },
+  // 'Nagaland': { region: 'northeast', admins: [{ name: 'Zhoto Mere', designation: 'State Nodal Officer', email: 'z.mere@nagaland.gov.in', mobile: '+91 94432 34567' }] },
   'Odisha': {
     region: 'east', admins: [
       { name: 'Bikash Kumar Rout', designation: 'CA', email: 'N/A', mobile: '+91 81149 94116' },
       { name: 'Ashish Kumar Behera	', designation: 'ASO', email: 'N/A', mobile: '+91 94380 33844' },
       { name: 'Abhijit Jena', designation: 'MIS', email: 'N/A', mobile: '+91 94380 83383' },
       { name: 'Bikash Kumar Panda', designation: 'ASO', email: 'N/A', mobile: '+91 94372 80301' },
-    ]
+    ],
   },
   'Punjab': {
     region: 'north', admins: [
       { name: 'Sh. Pankaj Bhatia', designation: 'N/A', email: 'pankaj20089@gmail.com', mobile: '+91 99881 59689' },
-      { name: 'Sh. Raju Kumar', designation: 'N/A', email: 'rajukumars786.rk@gmail.com', mobile: '+91 98780 84267' }]
+      { name: 'Sh. Raju Kumar', designation: 'N/A', email: 'rajukumars786.rk@gmail.com', mobile: '+91 98780 84267' }],
   },
   // 'Rajasthan': { region: 'north', admins: [{ name: 'Mahesh Sharma', designation: 'State Nodal Officer', email: 'm.sharma@rajasthan.gov.in', mobile: '+91 94437 89012' }, { name: 'Sunita Meena', designation: 'IT Coordinator', email: 's.meena@rajasthan.gov.in', mobile: '+91 94438 90123' }] },
   // 'Sikkim': { region: 'northeast', admins: [{ name: 'Pema Wangchuk', designation: 'State Coordinator', email: 'p.wangchuk@sikkim.gov.in', mobile: '+91 94439 01234' }] },
@@ -632,19 +628,19 @@ export const stateContacts = {
       { name: 'Nirdesh Deb', designation: 'Cybercrime ', email: 'N/A', mobile: '+91  70051 60437' },
       { name: 'Rabin Paul', designation: 'Fireman ', email: 'N/A', mobile: '+91  97742 31065' },
       { name: 'Samadar Chakraborty', designation: 'Asst. ', email: 'N/A', mobile: '+91  87772 76610' },
-    ]
+    ],
   },
   'Uttar Pradesh': {
     region: 'north', admins:
       [{ name: 'Saurabh', designation: 'N/A', email: 'N/A', mobile: '+91 88403 47847' },
       { name: 'Vaibhav Raman', designation: 'N/A', email: 'N/A', mobile: '+91 95559 89069' },
-      { name: 'Gaurav', designation: 'N/A', email: 'N/A', mobile: '+91 63935 16970' }]
+      { name: 'Gaurav', designation: 'N/A', email: 'N/A', mobile: '+91 63935 16970' }],
   },
   'Uttarakhand': {
     region: 'north', admins:
       [{ name: 'Bikash Naik', designation: 'N/A', email: 'N/A', mobile: '+91 96342 44568' },
       { name: 'Swapnil', designation: 'N/A', email: 'N/A', mobile: '+91 91628 54104' },
-      { name: 'Vedant', designation: 'N/A', email: 'N/A', mobile: '+91 70603 12231' }]
+      { name: 'Vedant', designation: 'N/A', email: 'N/A', mobile: '+91 70603 12231' }],
   },
   // 'West Bengal': { region: 'east', admins: [{ name: 'Arnab Banerjee', designation: 'State Nodal Officer', email: 'a.banerjee@wb.gov.in', mobile: '+91 94451 23456' }, { name: 'Parna Ghosh', designation: 'IT Coordinator', email: 'p.ghosh@wb.gov.in', mobile: '+91 94452 34567' }] },
   // Union Territories
@@ -657,21 +653,21 @@ export const stateContacts = {
       { name: 'Shri Aloke Dutta ', designation: 'N/A', email: 'N/A', mobile: '+91 99332 05800' },
       { name: 'Ms Milan Sen ', designation: 'N/A', email: 'N/A', mobile: '+91 94742 10315' },
       { name: 'Shri Ravinder Singh ', designation: 'N/A', email: 'N/A', mobile: '+91 94760 16014' },
-      { name: 'Ms Babita Devi ', designation: 'N/A', email: 'N/A', mobile: '+91 96795 28246' }
-    ]
+      { name: 'Ms Babita Devi ', designation: 'N/A', email: 'N/A', mobile: '+91 96795 28246' },
+    ],
   },
   'Chandigarh': {
     region: 'ut', admins: [
 
       { name: 'Sh. Ravi Pratap Singh', designation: 'Network Admin', email: 'N/A', mobile: '+91 97799 92677' },
       { name: 'Sh. Samrat Sharma', designation: 'Network Engineer', email: 'N/A', mobile: '+91 80545 50093' },
-    ]
+    ],
   },
   'D&N Haveli & Daman': {
     region: 'ut', admins: [
       { name: 'Raj Sarkar', designation: 'N/A', email: 'N/A', mobile: '+91 93360 93360' },
       { name: 'Prashant Sharma', designation: 'N/A', email: 'N/A', mobile: '+91 99980 25015' },
-    ]
+    ],
   },
   'Delhi (NCT)': {
     region: 'ut', admins: [
@@ -680,7 +676,7 @@ export const stateContacts = {
       { name: 'Anu Arora', designation: 'N/A', email: 'N/A', mobile: '+91 98711 75875' },
       { name: 'Mamta', designation: 'N/A', email: 'N/A', mobile: '+91 99100 62682' },
       { name: 'Seema Rani', designation: 'N/A', email: 'N/A', mobile: '+91 98119 37780' },
-    ]
+    ],
   },
   'Jammu & Kashmir': { region: 'ut', admins: [{ name: 'Sahil', designation: 'N/A', email: 'N/A', mobile: '+91 60063 16293' }] },
   // 'Ladakh': { region: 'ut', admins: [{ name: 'Stanzin Norbu', designation: 'UT IT Officer', email: 's.norbu@ladakh.gov.in', mobile: '+91 94458 67890' }] },
@@ -690,7 +686,6 @@ export const stateContacts = {
 
 // export const utStates = new Set(['Andaman & Nicobar', 'Chandigarh', 'D&N Haveli & Daman', 'Delhi (NCT)', 'Jammu & Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'])
 export const utStates = new Set(['Andaman & Nicobar', 'Chandigarh', 'D&N Haveli & Daman', 'Delhi (NCT)', 'Jammu & Kashmir'])
-
 
 export const VIDEO_CATEGORIES_MAP: Record<RoleTab, Category[]> = {
   learner: VIDEO_CATEGORIES,

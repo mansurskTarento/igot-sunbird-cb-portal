@@ -1,12 +1,12 @@
-import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { NetworkComponent } from "./routes/network/network.component";
-import { NetworkHomeComponent } from "./routes/network-home/network-home.component";
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
+import { NetworkComponent } from './routes/network/network.component'
+import { NetworkHomeComponent } from './routes/network-home/network-home.component'
 // import { UpdatesComponent } from "./routes/updates/updates.component";
-import { ConnectionsComponent } from "./routes/connections/connections.component";
-import { RecommendationsComponent } from "./routes/recommendations/recommendations.component";
-import { MentorsComponent } from "./routes/mentors/mentors.component";
-import { AllRecommendationsComponent } from "./components/all-recommendations/all-recommendations.component";
+import { ConnectionsComponent } from './routes/connections/connections.component'
+import { RecommendationsComponent } from './routes/recommendations/recommendations.component'
+import { MentorsComponent } from './routes/mentors/mentors.component'
+import { AllRecommendationsComponent } from './components/all-recommendations/all-recommendations.component'
 
 const routes: Routes = [
   {
@@ -28,7 +28,7 @@ const routes: Routes = [
         data: {
           pageId: 'home',
           module: 'Network',
-        }
+        },
       },
       // {
       //   path: 'updates',
@@ -44,7 +44,7 @@ const routes: Routes = [
         data: {
           pageId: 'connections',
           module: 'Network',
-        }
+        },
       },
       {
         path: 'recommendations',
@@ -52,7 +52,7 @@ const routes: Routes = [
         data: {
           pageId: 'recommendations',
           module: 'Network',
-        }
+        },
       },
       {
         path: 'recommendations/all',
@@ -60,8 +60,8 @@ const routes: Routes = [
         data: {
           pageId: 'recommendations',
           module: 'Network',
-          recommendationType: 'peopleYouMayKnow'
-        }
+          recommendationType: 'peopleYouMayKnow',
+        },
       },
       {
         path: 'mentors',
@@ -69,11 +69,11 @@ const routes: Routes = [
         data: {
           pageId: 'mentors',
           module: 'Network',
-        }
-      }
-    ]
-  }
-];
+        },
+      },
+    ],
+  },
+]
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

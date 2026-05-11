@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component } from '@angular/core'
 
 @Component({
-    selector: 'ws-app-toc-home',
-    templateUrl: './toc-home.component.html',
-    styleUrls: ['./toc-home.component.scss'],
-    standalone: false
+  selector: 'ws-app-toc-home',
+  templateUrl: './toc-home.component.html',
+  styleUrls: ['./toc-home.component.scss'],
+  standalone: false
 })
 export class TocHomeComponent {
 

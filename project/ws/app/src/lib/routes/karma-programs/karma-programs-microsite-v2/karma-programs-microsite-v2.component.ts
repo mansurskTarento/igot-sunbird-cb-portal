@@ -23,8 +23,8 @@ export class KarmaProgramsMicrositeV2Component implements OnInit {
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
-      title: `Karma Programs`,
-      url: `/app/learn/karma-programs/all-programs`,
+      title: 'Karma Programs',
+      url: '/app/learn/karma-programs/all-programs',
       icon: '', disableTranslate: true,
     },
   ]
@@ -181,7 +181,7 @@ export class KarmaProgramsMicrositeV2Component implements OnInit {
       {
         type: 'click',
         subType: 'karma-programs',
-        id: `card-content`,
+        id: 'card-content',
       },
       {
         id: event.identifier,

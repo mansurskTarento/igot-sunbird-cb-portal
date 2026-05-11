@@ -46,10 +46,10 @@
                                     (keydown)="$event.stopPropagation()"
                                     autocomplete="off">
                         <button 
-                                    *ngIf="searchOrganization?.value" 
+                                    *ngIf="transferRequestForm.get('searchOrganization')?.value" 
                                     type="button" 
                                     class="clear-button" 
-                                    (click)="searchOrganization?.setValue('')">
+                                    (click)="transferRequestForm.get('searchOrganization')?.setValue('')">
                                     ✕
                         </button>
                       </div>

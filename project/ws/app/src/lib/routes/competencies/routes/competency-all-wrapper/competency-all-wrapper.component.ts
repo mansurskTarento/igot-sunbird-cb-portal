@@ -9,7 +9,7 @@ import { Component, OnInit, HostBinding } from '@angular/core'
 export class CompetencyAllWrapperComponent implements OnInit {
   currentRoute = 'all'
   @HostBinding('class')
-  public class = `competency_main_wrapper`
+  public class = 'competency_main_wrapper'
   constructor() { }
 
   ngOnInit() {

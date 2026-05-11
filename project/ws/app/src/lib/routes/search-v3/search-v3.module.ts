@@ -84,7 +84,7 @@ import { ShowAllComponent } from './routes/show-all/show-all.component'
     SearchSortInputComponent,
     SkeletonLoaderContentComponent,
     SkeletonLoaderPeoplesComponent,
-    ShowAllComponent
+    ShowAllComponent,
   ],
   imports: [
     CommonModule,
@@ -137,7 +137,7 @@ import { ShowAllComponent } from './routes/show-all/show-all.component'
     DialogComponentsModule,
     SkeletonLoaderModule,
     MatRadioModule,
-    CardsModule
+    CardsModule,
   ],
   exports: [SearchInputHomeComponent, NumberShortenerPipe, PluralPipe],
   providers: [],

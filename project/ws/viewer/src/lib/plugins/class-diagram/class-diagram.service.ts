@@ -5,7 +5,7 @@ import { map } from 'rxjs/operators'
 import { NSClassDiagram } from './class-diagram.model'
 
 const apiEndpoints = {
-  CLASS_DIAGRAM_SUBMIT: `/apis/protected/v8/user/class-diagram/classdiagram/submit/`,
+  CLASS_DIAGRAM_SUBMIT: '/apis/protected/v8/user/class-diagram/classdiagram/submit/',
 }
 @Injectable({
   providedIn: 'root',

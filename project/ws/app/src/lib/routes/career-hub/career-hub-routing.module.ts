@@ -3,8 +3,6 @@ import { Routes, RouterModule } from '@angular/router'
 import { CareersHomeComponent } from './routes/careers-home/careers-home.component'
 import { CareersComponent } from './routes/careers/careers.component'
 import { CareerDetailComponent } from './routes/career-detail/career-detail.component'
-import { CareerRecentResolve } from './resolvers/careers-resolve'
-import { CareerDetailResolve } from './resolvers/careers-detail-resolve'
 
 const routes: Routes = [
   {
@@ -28,7 +26,6 @@ const routes: Routes = [
           module: 'Careers',
         },
         resolve: {
-          topics: CareerRecentResolve,
         },
       },
       {
@@ -40,7 +37,6 @@ const routes: Routes = [
           module: 'Careers',
         },
         resolve: {
-          topic: CareerDetailResolve,
         },
       },
     ],
@@ -51,8 +47,6 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
   providers: [
-    CareerRecentResolve,
-    CareerDetailResolve,
   ],
 })
 export class CareerHubRoutingModule { }

@@ -1,11 +1,11 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
-import * as _ from 'lodash';
+import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import * as _ from 'lodash'
 
 @Component({
-    selector: 'ws-app-updates-card',
-    templateUrl: './updates-card.component.html',
-    styleUrls: ['./updates-card.component.scss'],
-    standalone: false
+  selector: 'ws-app-updates-card',
+  templateUrl: './updates-card.component.html',
+  styleUrls: ['./updates-card.component.scss'],
+  standalone: false
 })
 export class UpdatesCardComponent implements OnInit, OnChanges {
 
@@ -21,7 +21,7 @@ export class UpdatesCardComponent implements OnInit, OnChanges {
   }
 
   getInitials(): void {
-    const userName = _.get(this.profileUpdates, 'firstName', '');
+    const userName = _.get(this.profileUpdates, 'firstName', '')
     if (userName) {
       if (userName.split(' ').length > 1) {
         const nameArr = userName.split(' ')
@@ -33,9 +33,9 @@ export class UpdatesCardComponent implements OnInit, OnChanges {
   }
 
   openProfileLink(): void {
-    const profileLink = _.get(this.profileUpdates, 'profileLink', '');
+    const profileLink = _.get(this.profileUpdates, 'profileLink', '')
     if (profileLink) {
-      window.open(profileLink, '_blank');
+      window.open(profileLink, '_blank')
     }
   }
 

@@ -32,28 +32,28 @@ export class RequestSuccessDialogComponent implements OnInit {
     if (this.reqType === 'domain') {
       if (this.data.apiResponse && this.data.apiResponse.result && this.data.apiResponse.result.msgCode) {
         if (this.data.apiResponse.result.msgCode === 'DOMAIN_REQUEST_CREATED') {
-          this.headerMessage = `Your domain request has been successfully submitted`
+          this.headerMessage = 'Your domain request has been successfully submitted'
           // tslint:disable-next-line: max-line-length
-          this.body = `We will reach out to you in the next 48 hours to help you. Resume self-registration process to see if you have all the other required details for the registration process.`
+          this.body = 'We will reach out to you in the next 48 hours to help you. Resume self-registration process to see if you have all the other required details for the registration process.'
         }
         if (this.data.apiResponse.result.msgCode === 'DOMAIN_APPROVED') {
-          this.headerMessage = `This domain is already approved`
+          this.headerMessage = 'This domain is already approved'
           // tslint:disable-next-line: max-line-length
-          this.body = `The domain you are requesting approval for, is already approved. Resume self-registration process to see if you have all the other required details for the registration process.`
+          this.body = 'The domain you are requesting approval for, is already approved. Resume self-registration process to see if you have all the other required details for the registration process.'
         }
         if (this.data.apiResponse.result.msgCode === 'DOMAIN_REQUEST_ALREADY_PRESENT') {
-          this.headerMessage = `This domain is pending for approval`
+          this.headerMessage = 'This domain is pending for approval'
           // tslint:disable-next-line: max-line-length
-          this.body = `Once the domain is approved, please resume self-registration process to see if you have all the other required details for the registration process.`
+          this.body = 'Once the domain is approved, please resume self-registration process to see if you have all the other required details for the registration process.'
         }
         if (this.data.apiResponse.result.msgCode === 'DOMAIN_REQUEST_ALREADY_RAISED') {
-          this.headerMessage = `This domain is already requested`
+          this.headerMessage = 'This domain is already requested'
           // tslint:disable-next-line: max-line-length
-          this.body = `The domain you are requesting approval for, is already pending for approval. Once the domain is approved, please resume self-registration process to see if you have all the other required details for the registration process.`
+          this.body = 'The domain you are requesting approval for, is already pending for approval. Once the domain is approved, please resume self-registration process to see if you have all the other required details for the registration process.'
         }
         if (this.data.apiResponse.result.msgCode === 'DOMAIN_REQUEST_REJECTED') {
-          this.headerMessage = `This domain is rejected`
-          this.body = `The domain you are requesting approval for, is rejected.`
+          this.headerMessage = 'This domain is rejected'
+          this.body = 'The domain you are requesting approval for, is rejected.'
         }
       }
     } else {

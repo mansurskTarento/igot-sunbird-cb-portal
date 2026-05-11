@@ -119,16 +119,16 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
               inline: 'start',
             })
           }
-        }, 1000)
+        },         1000)
       }
     })
 
     // Subscribe to hashmap updates to dynamically update lock status
-    this.hashmapUpdateSubscription = this.appTocSvc.hashmapUpdated$.subscribe((update) => {
+    this.hashmapUpdateSubscription = this.appTocSvc.hashmapUpdated$.subscribe(update => {
       console.log('🔄 [NEXT BUTTON] Hashmap update received:', {
         hasUpdate: !!update,
         hasNextUrl: !!this.nextResourceUrl,
-        nextUrl: this.nextResourceUrl
+        nextUrl: this.nextResourceUrl,
       })
 
       if (update && this.nextResourceUrl) {
@@ -145,7 +145,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
             nextResourceId,
             previousLockState,
             newLockState: this.isNextResourceLocked,
-            changed: previousLockState !== this.isNextResourceLocked
+            changed: previousLockState !== this.isNextResourceLocked,
           })
 
           if (previousLockState !== this.isNextResourceLocked) {
@@ -295,12 +295,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
             console.log('⏱️ [300ms RECHECK] Next resource lock status changed:', {
               identifier: nextResourceIdForRecheck,
               oldStatus: this.isNextResourceLocked,
-              newStatus: recheckResult
+              newStatus: recheckResult,
             })
             this.isNextResourceLocked = recheckResult
             this.cdr.detectChanges()
           }
-        }, 300)
+        },         300)
 
         // Additional recheck after a longer delay to catch milestone lock computations
         setTimeout(() => {
@@ -309,12 +309,12 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
             console.log('⏱️ [1000ms RECHECK] Next resource lock status changed:', {
               identifier: nextResourceIdForRecheck,
               oldStatus: this.isNextResourceLocked,
-              newStatus: recheckResult
+              newStatus: recheckResult,
             })
             this.isNextResourceLocked = recheckResult
             this.cdr.detectChanges()
           }
-        }, 1000)
+        },         1000)
 
         if (data.nextResource.optionalReading && data.nextResource.primaryCategory === 'Learning Resource') {
           this.updateProgress(2, data.nextResource.identifier)
@@ -378,7 +378,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
         console.log(`Retrying lock status check, attempt ${attempt + 1}/${maxAttempts}`)
         this.recheckLockStatusWithRetry(attempt + 1)
       }
-    }, delay)
+    },         delay)
   }
 
   checkInitialLockStatus(): boolean {
@@ -389,7 +389,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
       currentResourceId,
       hasNextUrl: !!this.nextResourceUrl,
       hasHashmap: !!this.appTocSvc.hashmap,
-      hashmapSize: this.appTocSvc.hashmap ? Object.keys(this.appTocSvc.hashmap).length : 0
+      hashmapSize: this.appTocSvc.hashmap ? Object.keys(this.appTocSvc.hashmap).length : 0,
     })
 
     // Method 1: Check using nextResourceUrl if it's already set by subscription
@@ -411,7 +411,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
       if (currentContent) {
         console.log('Current content in hashmap:', {
           id: currentResourceId,
-          hasNextResource: !!currentContent.nextResource
+          hasNextResource: !!currentContent.nextResource,
         })
 
         // Check if there's a nextResource property
@@ -580,7 +580,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
         primaryCategory: this.collectionType,
         courseCategory: this.currentDataFromEnrollList.content.courseCategory,
         baseContentReadData: this.baseContentReadData,
-        collectionId: this.identifier // In case of multilingual course, redirection should happen to base collectionID
+        collectionId: this.identifier, // In case of multilingual course, redirection should happen to base collectionID
       },
     })
     dialogRef.afterClosed().subscribe(result => {
@@ -604,7 +604,7 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
   changeResource() {
     setTimeout(() => {
       this.appTocSvc.getPageScroll.next(true)
-    }, 700)
+    },         700)
   }
 
   checkForNextOfflineOnlineSession() {

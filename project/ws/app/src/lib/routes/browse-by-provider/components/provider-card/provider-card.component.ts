@@ -30,11 +30,11 @@ export class ProviderCardComponent implements OnInit {
     } else if (this.provider?.orgId) {
       url = `/app/learn/browse-by/provider/${this.provider.name}/${this.provider.orgId}/micro-sites`
     } else {
-      url = `app/seeAll/content`
+      url = 'app/seeAll/content'
       queryParams = {
         key: this.provider?.contentDisplayType || 'extContent',
         provider: this.provider?.id || '',
-        providerName: this.provider?.contentPartnerName || this.provider?.partnerCode || ''
+        providerName: this.provider?.contentPartnerName || this.provider?.partnerCode || '',
       }
     }
     this.router.navigate([url], { queryParams })

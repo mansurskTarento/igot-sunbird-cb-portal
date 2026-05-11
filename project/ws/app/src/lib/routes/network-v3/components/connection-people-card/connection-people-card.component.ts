@@ -1,17 +1,17 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router} from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { ConfigurationsService} from '@sunbird-cb/utils-v2';
-import { NSNetworkDataV2 } from '../../../network-v2/models/network-v2.model';
-import { NetworkV2Service } from '../../../network-v2/services/network-v2.service';
-import * as _ from 'lodash';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { NSNetworkDataV2 } from '../../../network-v2/models/network-v2.model'
+import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
+import * as _ from 'lodash'
 
 @Component({
-    selector: 'ws-app-connection-people-card',
-    templateUrl: './connection-people-card.component.html',
-    styleUrls: ['./connection-people-card.component.scss'],
-    standalone: false
+  selector: 'ws-app-connection-people-card',
+  templateUrl: './connection-people-card.component.html',
+  styleUrls: ['./connection-people-card.component.scss'],
+  standalone: false
 })
 export class ConnectionPeopleCardComponent implements OnInit {
   @Input() user!: NSNetworkDataV2.INetworkUser
@@ -40,16 +40,16 @@ export class ConnectionPeopleCardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.initialization();
+    this.initialization()
   }
 
-  initialization() { 
+  initialization() {
     this.getCurrentUser()
     this.howerUser = this.user
     this.unmappedUser = this.user
     this.userAvatarName = this.getUseravatarName
-    if(this.user ) {
-      if(this.user.verifiedKarmayogi) {
+    if (this.user) {
+      if (this.user.verifiedKarmayogi) {
         this.showBadge = true
       }
       if (this.user.role && this.user.role.some(role => role.toLowerCase() === 'mentor')) {
@@ -57,7 +57,6 @@ export class ConnectionPeopleCardComponent implements OnInit {
       }
     }
   }
-  
 
   getCurrentUser() {
     this.cirrentUser = this.configurationsService.userProfileV2
@@ -68,7 +67,7 @@ export class ConnectionPeopleCardComponent implements OnInit {
       if (this.user.firstName) {
         if (this.user.lastName && this.user.lastName !== null && this.user.lastName !== undefined) {
           name = `${this.user.firstName} ${this.user.lastName}`
-        } else  {
+        } else {
           name = `${this.user.firstName}`
         }
       } else if (this.user.fullName) {

@@ -45,7 +45,7 @@ export function NetworkV3HttpLoaderFactory(http: HttpClient) {
     ConnectionsCardComponent,
     UpdatesCardComponent,
     ConnectionPeopleCardComponent,
-    AllRecommendationsComponent
+    AllRecommendationsComponent,
   ],
   imports: [
     CommonModule,

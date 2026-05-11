@@ -52,7 +52,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       this.titleCasePipe.transform(this.selectedSector)
       this.titles = [
         { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
-        { title: breadCrumb, url: `none`, icon: '' },
+        { title: breadCrumb, url: 'none', icon: '' },
       ]
   })
   this.getFacetsData()
@@ -185,9 +185,9 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
             ...{ [gyaanConstants.requestSectorName]: this.sectorNames },
           }
         }
-        if(this.selectedContent === 'agkCaseStudies') {
+        if (this.selectedContent === 'agkCaseStudies') {
           strip.request.searchV6.request.filters['courseCategory'] = this.selectedFilter[gyaanConstants.resourceCategory]
-          if(strip.request.searchV6.request.filters[gyaanConstants.requestSectorName]){
+          if (strip.request.searchV6.request.filters[gyaanConstants.requestSectorName]) {
             delete strip.request.searchV6.request.filters[gyaanConstants.requestSectorName]
           }
         }
@@ -469,7 +469,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
         this.selectedFilter[key] = keyData.name
         this.titles = [
           { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
-          { title: this.titleCasePipe.transform(keyData.name), url: `none`, icon: '' },
+          { title: this.titleCasePipe.transform(keyData.name), url: 'none', icon: '' },
         ]
       } else {
         if (keyData.name === 'All' && !keyData.checked) {
@@ -541,7 +541,7 @@ export class GyaanKarmayogiViewAllComponent implements OnInit {
       this.titles = [
         { title: 'Amrit Gyaan Kosh', url: '/app/amrit-gyaan-kosh/all', disableTranslate: true, icon: 'menu_book' },
         { title: this.titleCasePipe.transform(filter[gyaanConstants.resourceCategory] ?
-           filter[gyaanConstants.resourceCategory] : ''), url: `none`, icon: '' },
+           filter[gyaanConstants.resourceCategory] : ''), url: 'none', icon: '' },
       ]
       this.facetsData = result.facetData
       this.facetsDataCopy = result.facetData

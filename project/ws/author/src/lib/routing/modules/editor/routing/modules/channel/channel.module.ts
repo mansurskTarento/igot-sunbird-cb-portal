@@ -100,6 +100,6 @@ import { AuthViewerModule } from '../../../../../../modules/viewer/viewer.module
         PickerContentModule,
         DraggableModule,
     ],
-    providers: [ChannelResolverService]
+    providers: [ChannelResolverService],
 })
 export class ChannelModule { }

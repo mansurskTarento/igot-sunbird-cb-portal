@@ -7,6 +7,12 @@ import { MicrositeService } from './microsites.service'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
 import { MatInputModule } from '@angular/material/input'
+import { RouterModule, Routes } from '@angular/router'
+
+const routes: Routes = [
+  { path: '', component: MicrosotesComponent },
+]
+
 @NgModule({
   declarations: [MicrosotesComponent],
   imports: [
@@ -21,6 +27,7 @@ import { MatInputModule } from '@angular/material/input'
     MatFormFieldModule,
     MatInputModule,
     CardsModule,
+    RouterModule.forChild(routes),
   ],
   providers: [MicrositeService, CommonMethodsService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

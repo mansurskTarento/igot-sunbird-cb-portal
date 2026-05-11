@@ -8,7 +8,7 @@ import { DiscussV2Module } from '@ws/app'
   declarations: [],
   imports: [
     CommonModule,
-    DiscussV2Module
-  ]
+    DiscussV2Module,
+  ],
 })
 export class RouteAppDiscussionV2Module { }

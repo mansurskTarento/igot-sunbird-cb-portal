@@ -39,6 +39,6 @@ import { MatToolbarModule } from '@angular/material/toolbar'
     ],
     exports: [
         ResourceCollectionComponent,
-    ]
+    ],
 })
 export class ResourceCollectionModule { }

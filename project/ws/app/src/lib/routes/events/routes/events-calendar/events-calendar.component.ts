@@ -10,27 +10,26 @@ import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bott
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
-
 @Component({
-    selector: 'ws-app-events-calendar',
-    templateUrl: './events-calendar.component.html',
-    styleUrls: ['./events-calendar.component.scss'],
-    standalone: false
+  selector: 'ws-app-events-calendar',
+  templateUrl: './events-calendar.component.html',
+  styleUrls: ['./events-calendar.component.scss'],
+  standalone: false
 })
 export class EventsCalendarComponent implements OnInit {
   @Input() eventCalendarDetails: any
-  selected = new Date();
+  selected = new Date()
   selectedDateText = 'Today'
-  currentMonth = new Date();
+  currentMonth = new Date()
   currentMonthYearText = ''
   daysInMonth: {
     date: Date,
     isPrevisDate: Boolean,
     hasRegisteredEvent: Boolean,
     isCurrentMonth: Boolean
-  }[] = [];
+  }[] = []
   calandarLoaders = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
-  weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
   userEventsList: any = []
   selectedDateEvents: any = []
   calendarLoading = false
@@ -76,8 +75,8 @@ export class EventsCalendarComponent implements OnInit {
         status: 'All',
         calendarEventEnabled: true,
         eventStartDate: firstDay,
-        eventEndDate: lastDay
-      }
+        eventEndDate: lastDay,
+      },
     }
     this.userEventsList = []
     this.calendarLoading = true
@@ -96,7 +95,7 @@ export class EventsCalendarComponent implements OnInit {
           this.generateCalendarDays()
           const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
           this.openSnackBar(errorMessage)
-        }
+        },
       })
     }
   }
@@ -122,10 +121,10 @@ export class EventsCalendarComponent implements OnInit {
         hasRegisteredEvent: Boolean,
         isCurrentMonth: Boolean
       } = {
-        date: date,
+        date,
         hasRegisteredEvent: this.hasEvent(date),
         isPrevisDate: date.getTime() < today.getTime(),
-        isCurrentMonth: false
+        isCurrentMonth: false,
       }
       this.daysInMonth.unshift(details)
     }
@@ -139,10 +138,10 @@ export class EventsCalendarComponent implements OnInit {
         hasRegisteredEvent: Boolean,
         isCurrentMonth: Boolean
       } = {
-        date: date,
+        date,
         hasRegisteredEvent: this.hasEvent(date),
         isPrevisDate: date.getTime() < today.getTime(),
-        isCurrentMonth: true
+        isCurrentMonth: true,
       }
       this.daysInMonth.push(details)
     }
@@ -253,11 +252,11 @@ export class EventsCalendarComponent implements OnInit {
       {
         type: 'click',
         subType: 'calendar-section',
-        id: "card-content",
+        id: 'card-content',
       },
       {
         id: _.get(myEvent, 'identifier'),
-        type: "event"
+        type: 'event',
       },
       {
         module: WsEvents.EnumTelemetrymodules.EVENTS,

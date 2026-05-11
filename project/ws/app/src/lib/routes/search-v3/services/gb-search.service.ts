@@ -18,36 +18,36 @@ import {
 import { SEARCH_SORT_DROPDOWN } from '@ws/author'
 
 const API_END_POINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  SEARCH_V4: `/apis/proxies/v8/sunbirdigot/v4/search`,
-  SEARCH_EXT_CONTENT: `/apis/proxies/v8/cios/v1/search/content`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  SEARCH_V4: '/apis/proxies/v8/sunbirdigot/v4/search',
+  SEARCH_EXT_CONTENT: '/apis/proxies/v8/cios/v1/search/content',
   // SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
-  SEARCH_PEOPLE: `/apis/proxies/v8/user/v5/public/search`,
-  SEARCH_COMMUNITY: `/apis/proxies/v8/community/v1/search`,
-  SEARCH_NLP: `/apis/proxies/v8/nlp/search`,
-  RECENT_CREATE: `apis/proxies/v8/search/v1/recent/create`,
-  RECENT_READ: `apis/proxies/v8/search/v1/recent/read`,
-  RECENT_DELETE_BY_USERID: `apis/proxies/v8/search/v1/recent/delete`,
+  SEARCH_PEOPLE: '/apis/proxies/v8/user/v5/public/search',
+  SEARCH_COMMUNITY: '/apis/proxies/v8/community/v1/search',
+  SEARCH_NLP: '/apis/proxies/v8/nlp/search',
+  RECENT_CREATE: 'apis/proxies/v8/search/v1/recent/create',
+  RECENT_READ: 'apis/proxies/v8/search/v1/recent/read',
+  RECENT_DELETE_BY_USERID: 'apis/proxies/v8/search/v1/recent/delete',
   RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `apis/proxies/v8/search/v1/recent/delete/timestamp/${id}` },
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`
   },
 
   EXPLORE_API: '/api/course/v1/explore',
-  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`,
-  GetApplicationsById: `apis/proxies/v8/forms/v2/bulkGetApplicationsById`
+  MICRO_CREDENTIALS: 'apis/proxies/v8/promotionalcontent/v1/assignedto/users',
+  GetApplicationsById: 'apis/proxies/v8/forms/v2/bulkGetApplicationsById',
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class GbSearchService {
-  private removeFilter = new Subject<any>();
-  searchConfig: any = null;
+  private removeFilter = new Subject<any>()
+  searchConfig: any = null
   /**
    * Observable string streams
    */
-  notifyObservable$ = this.removeFilter.asObservable();
+  notifyObservable$ = this.removeFilter.asObservable()
   constructor(
     private http: HttpClient,
     private configSrv: ConfigurationsService,
@@ -138,8 +138,6 @@ export class GbSearchService {
     return this.http.get(API_END_POINTS.EXPLORE_API)
   }
 
-
-
   getFirstSortOption(isExploreContentTab: boolean): any {
     let options = SEARCH_SORT_DROPDOWN
     let selectedOption = SortType.MostRelevent
@@ -152,7 +150,6 @@ export class GbSearchService {
     }
     return { options, selectedOption }
   }
-
 
   microCredentialsSearch(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.MICRO_CREDENTIALS)

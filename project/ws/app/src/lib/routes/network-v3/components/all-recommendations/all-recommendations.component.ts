@@ -5,10 +5,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { NetworkingService } from '../../services/networking.service'
 
 @Component({
-    selector: 'ws-app-all-recommendations',
-    templateUrl: './all-recommendations.component.html',
-    styleUrls: ['./all-recommendations.component.scss'],
-    standalone: false
+  selector: 'ws-app-all-recommendations',
+  templateUrl: './all-recommendations.component.html',
+  styleUrls: ['./all-recommendations.component.scss'],
+  standalone: false
 })
 export class AllRecommendationsComponent implements OnInit {
 
@@ -22,7 +22,6 @@ export class AllRecommendationsComponent implements OnInit {
   recommendationListLoading = false;
   apiCallSubscription: any
   defaultPaginationSize = 12
-
 
   constructor(
     private snackBar: MatSnackBar,

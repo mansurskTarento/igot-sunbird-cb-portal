@@ -6,19 +6,19 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 
 @Component({
-    selector: 'ws-app-educational-qualifications',
-    templateUrl: './educational-qualifications.component.html',
-    styleUrls: ['./educational-qualifications.component.scss'],
-    standalone: false
+  selector: 'ws-app-educational-qualifications',
+  templateUrl: './educational-qualifications.component.html',
+  styleUrls: ['./educational-qualifications.component.scss'],
+  standalone: false
 })
 export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
-  @Input() isCurrentUser = false;
-  @Output() openProfileEntryEditDialog = new EventEmitter();
+  @Input() isCurrentUser = false
+  @Output() openProfileEntryEditDialog = new EventEmitter()
 
-  userId: string = '';
-  isPopup: boolean = false;
+  userId: string = ''
+  isPopup: boolean = false
   //#endregion (global variables)
 
   constructor(
@@ -52,7 +52,7 @@ export class EducationalQualificationsComponent implements OnInit {
           if (err) {
             this.openSnackbar('Something went wrong while fetching educational qualifications, please try again later', 2000)
           }
-        }
+        },
       })
     }
   }

@@ -161,7 +161,6 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
       )
       this.redirectPath = this.domainConfSvc.getDomainRedirectPath()
 
-
       this.appIconSecondary = this.domSanitizer.bypassSecurityTrustResourceUrl(
         this.configSvc.instanceConfig.logos.appSecondary,
       )
@@ -233,7 +232,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   getMyCount() {
     this.notificationsService.getNotificationsData().subscribe((res: any) => {
       this.notificationsCount = _.get(res, 'result.unread', 0)
-    }, error => {
+    },                                                         error => {
       console.error('Error while fetching notifications count', error)
       this.notificationsCount = 0
     })

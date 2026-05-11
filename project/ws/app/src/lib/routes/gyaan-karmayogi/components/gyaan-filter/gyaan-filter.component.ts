@@ -98,11 +98,11 @@ export class GyaanFilterComponent implements OnInit {
 
         facet.checked = true
         this.defaultApplied = true
-        
+
         this.filterChange.emit({
           event: true,
           key: 'contentType',
-          keyData: facet
+          keyData: facet,
         })
       })
     })

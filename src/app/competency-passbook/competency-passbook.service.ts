@@ -3,13 +3,13 @@ import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs'
 
 const API_POINTS = {
-    COMPETENCY_LIST: `apis/proxies/v8/competency/v4/search`,
-    CERTIFICATE_URL: `apis/protected/v8/cohorts/course/batch/cert/download/`,
-    ALL_COMPETENCY_LIST: `apis/proxies/v8/framework/v1/read/kcmfinal_fw`,
+    COMPETENCY_LIST: 'apis/proxies/v8/competency/v4/search',
+    CERTIFICATE_URL: 'apis/protected/v8/cohorts/course/batch/cert/download/',
+    ALL_COMPETENCY_LIST: 'apis/proxies/v8/framework/v1/read/kcmfinal_fw',
     MY_COMPETENCY_LIST: 'apis/proxies/v8/learner/v1/competency/read',
     IGOT_COURSE_LIST: 'apis/proxies/v8/sunbirdigot/v4/search',
     EXT_COURSE_LIST: 'apis/proxies/v8/cios/v1/search/content',
-    ACHIEVEMENTS_LIST: 'apis/proxies/v8/learner/achievement/v2/list'
+    ACHIEVEMENTS_LIST: 'apis/proxies/v8/learner/achievement/v2/list',
 }
 
 @Injectable({ providedIn: 'root' })

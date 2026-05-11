@@ -52,7 +52,7 @@ import { ConfirmDialogModule } from '@sunbird-cb/collection'
     NotificationDropdownModule,
     TranslateModule,
     SkeletonLoaderModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   exports: [
     HeaderComponent,

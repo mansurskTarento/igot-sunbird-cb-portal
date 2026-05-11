@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 
 const API_END_POINTS = {
-  FORM_READ: `/apis/v1/form/read`,
+  FORM_READ: '/apis/v1/form/read',
 }
 @Injectable({
   providedIn: 'root',

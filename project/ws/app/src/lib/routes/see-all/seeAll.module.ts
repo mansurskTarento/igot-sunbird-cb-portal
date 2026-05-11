@@ -127,6 +127,6 @@ export function SeeAllModulesHttpLoaderFactory(http: HttpClient) {
   ],
   exports: [SeeAllHomeComponent],
   providers: [],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class SeeAllModule { }

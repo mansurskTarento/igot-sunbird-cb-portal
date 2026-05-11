@@ -2,11 +2,12 @@ import { Injectable } from '@angular/core'
 import { BehaviorSubject, Observable } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { map, tap } from 'rxjs/operators'
+// tslint:disable
 import _ from 'lodash'
 
 const API_END_POINTS = {
   // GET_DEPARTMENTS: `/api/user/registration/v1/getDeptDetails`,
-  REGISTER: `/api/user/registration/v1/register`,
+  REGISTER: '/api/user/registration/v1/register',
   GET_ALL_STATES: '/apis/public/v8/org/v1/list',
   GET_DEPARTMENTS_OF_STATE: '/apis/public/v8/org/v1/list',
   GET_ORGS_OF_DEPT: '/apis/public/v8/org/v1/list',
@@ -24,7 +25,7 @@ const API_END_POINTS = {
   CHECK_REGISTRATION_LINK_STATUS: '/api/customselfregistration/isregistrationqractive',
   STATE_MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/search',
   MINISTRY_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/ministry/search',
-  STATE_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/state/search'
+  STATE_FOR_REGISTRATION: 'apis/public/v8/org/hierarchy/state/search',
 }
 
 @Injectable({

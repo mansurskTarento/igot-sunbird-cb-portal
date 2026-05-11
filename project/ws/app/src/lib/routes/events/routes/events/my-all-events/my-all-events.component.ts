@@ -5,13 +5,13 @@ import { EventService } from '../../../services/events.service'
 import { ConfigurationsService, MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 import { EventService as libEventService } from '@sunbird-cb/utils-v2'
-//import { DatePipe } from '@angular/common';
+// import { DatePipe } from '@angular/common';
 
 @Component({
-    selector: 'ws-app-my-all-events',
-    templateUrl: './my-all-events.component.html',
-    styleUrls: ['./my-all-events.component.scss'],
-    standalone: false
+  selector: 'ws-app-my-all-events',
+  templateUrl: './my-all-events.component.html',
+  styleUrls: ['./my-all-events.component.scss'],
+  standalone: false
 })
 export class MyAllEventsComponent {
   titles: any = []
@@ -31,11 +31,11 @@ export class MyAllEventsComponent {
     private langtranslations: MultilingualTranslationsService,
     private events: libEventService,
     private configSvc: ConfigurationsService,
-    //private datePipe: DatePipe,
+    // private datePipe: DatePipe,
   ) {
     this.titles = [
       { title: 'events', url: '/app/event-hub/home', icon: 'event' },
-      { title: this.translateLabels("myEvents", 'events', ''), url: `none`, icon: '' }
+      { title: this.translateLabels('myEvents', 'events', ''), url: 'none', icon: '' },
     ]
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -54,7 +54,7 @@ export class MyAllEventsComponent {
     if (!this.isLoading) {
       this.contentDataList = [...this.contentDataList, ...this.transformSkeletonToWidgets(this.contnet)]
     }
-    console.log("tabSelected ", this.tabSelected)
+    console.log('tabSelected ', this.tabSelected)
     if (this.tabSelected === 'today') {
       this.tabIndex = 0
     } else if (this.tabSelected === 'upcoming') {
@@ -66,7 +66,7 @@ export class MyAllEventsComponent {
       request: {
         retiredCoursesEnabled: true,
         status: 'All',
-      }
+      },
     }
     this.isLoading = true
     if (_.get(this.configSvc, 'userProfile.userId')) {
@@ -75,7 +75,7 @@ export class MyAllEventsComponent {
         this.response = _.get(resp, 'result.events', [])
         this.contentDataList = this.contentDataList.slice(0, -12)
         if (this.response.length) {
-          console.log("response", this.response)
+          console.log('response', this.response)
           const processedEvents = this.processResult(this.response)
           this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(processedEvents, {})]
         } else {
@@ -83,7 +83,7 @@ export class MyAllEventsComponent {
         }
         this.isLoading = false
       }, error => {
-        console.log("error", error)
+        console.log('error', error)
         this.contentDataList = this.contentDataList.slice(0, -12)
         this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
         this.isLoading = false
@@ -126,7 +126,6 @@ export class MyAllEventsComponent {
     return this.sortData(processedEvents)
   }
 
-
   sortData(data: any) {
     return data.sort((a: any, b: any) => {
       const dateA = new Date(`${a.event.startDate}T${a.event.startTime}`)
@@ -138,11 +137,11 @@ export class MyAllEventsComponent {
   isLiveEvent(event: any) {
     if (event && event.startDate && event.endDate && event.startTime && event.endTime) {
       // Conver current time into milliseconds
-      let currentTime = new Date().getTime() / 1000
+      const currentTime = new Date().getTime() / 1000
       // Combining date and time for start event
-      let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+      const evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
       // Combining date and time for end event
-      let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+      const eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
       return (currentTime <= eventEndDate && currentTime >= evenStarttDate)
     }
     return false
@@ -157,11 +156,11 @@ export class MyAllEventsComponent {
       {
         type: 'click',
         subType: 'my-events',
-        id: "card-content",
+        id: 'card-content',
       },
       {
         id: _.get(event, 'widgetData.content.identifier', ''),
-        type: "event"
+        type: 'event',
       },
       {
         module: WsEvents.EnumTelemetrymodules.EVENTS,
@@ -179,10 +178,10 @@ export class MyAllEventsComponent {
       this.tabSelected = 'past'
     }
     this.resetData()
-    //this.fetchData()
+    // this.fetchData()
     this.contentDataList = this.contentDataList.slice(0, -12)
     if (this.response.length) {
-      console.log("response", this.response)
+      console.log('response', this.response)
       const processedEvents = this.processResult(this.response)
       this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets(processedEvents, {})]
     } else {

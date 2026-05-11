@@ -1,6 +1,6 @@
-export const AUTHORING_BASE = `/apis/authApi/`
-export const PROTECTED_SLAG_V8 = `/apis/protected/v8/`
-export const AUTHORING_SEARCH_BASE = `/apis/authSearchApi/`
+export const AUTHORING_BASE = '/apis/authApi/'
+export const PROTECTED_SLAG_V8 = '/apis/protected/v8/'
+export const AUTHORING_SEARCH_BASE = '/apis/authSearchApi/'
 export const AUTHORING_CONTENT_BASE = '/apis/authContent/'
 export const AUTHORING_IAP_BASE = '/apis/authIapApi/'
 export const AUTHORING_NOTIFICATION_BASE = '/apis/authNotificationApi/'
@@ -27,8 +27,8 @@ export const ORDINALS = `${ACTION_BASE}meta/v2/ordinals/list`
 export const INIT = `${AUTHORING_SEARCH_BASE}/v1/`
 
 export const UPLOAD_APPICON = `${CONTENT_FILE_BASE}TestAuth/`
-export const STREAM_FILES = `/assets/`
-export const NON_STREAM_FILES = `/artifacts/`
+export const STREAM_FILES = '/assets/'
+export const NON_STREAM_FILES = '/artifacts/'
 
 export const EMPLOYEE_LIST = `${AUTHORING_SEARCH_BASE}v1/autoComplete/`
 

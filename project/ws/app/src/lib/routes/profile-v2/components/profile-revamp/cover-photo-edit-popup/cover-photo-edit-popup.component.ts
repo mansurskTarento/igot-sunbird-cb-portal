@@ -5,23 +5,23 @@ import { ImageCroppedEvent } from 'ngx-image-cropper'
 import { IMAGE_SIZE_1MB } from '../../../models/profile-revamp.model'
 
 @Component({
-    selector: 'ws-app-cover-photo-edit-popup',
-    templateUrl: './cover-photo-edit-popup.component.html',
-    styleUrls: ['./cover-photo-edit-popup.component.scss'],
-    standalone: false
+  selector: 'ws-app-cover-photo-edit-popup',
+  templateUrl: './cover-photo-edit-popup.component.html',
+  styleUrls: ['./cover-photo-edit-popup.component.scss'],
+  standalone: false
 })
 export class CoverPhotoEditPopupComponent implements OnInit {
   //#region (global variables)
-  coverPhotoUrl = '';
-  imageChangedEvent: any = '';
-  showCropper = false; // Changed to false initially
+  coverPhotoUrl = ''
+  imageChangedEvent: any = ''
+  showCropper = false // Changed to false initially
   cropperPosition = {
     x1: 0,
     y1: 0,
     x2: 858,
-    y2: 215
-  };
-  imageFile: File | null = null;
+    y2: 215,
+  }
+  imageFile: File | null = null
   fileName = ''
   uploadImage = true
   //#endregion (global variables)
@@ -177,7 +177,7 @@ export class CoverPhotoEditPopupComponent implements OnInit {
 
   closePopup(isUpdated = false) {
     const croppedImage = {
-      isUpdated: isUpdated,
+      isUpdated,
       coverPhotoUrl: this.coverPhotoUrl,
       file: this.imageFile
     }

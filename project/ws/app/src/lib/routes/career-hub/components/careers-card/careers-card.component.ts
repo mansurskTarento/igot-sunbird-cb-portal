@@ -1,5 +1,4 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
@@ -12,7 +11,7 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 })
 export class CareersCardComponent implements OnInit {
   @Input()
-  discuss!: NSDiscussData.IDiscussionData
+  discuss!: any
 
   constructor(private router: Router, private translate: TranslateService,
               private langtranslations: MultilingualTranslationsService) {

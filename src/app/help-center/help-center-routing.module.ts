@@ -1,16 +1,15 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { HelpCenterComponent } from './help-center/help-center/help-center.component';
-
+import { NgModule } from '@angular/core'
+import { Routes, RouterModule } from '@angular/router'
+import { HelpCenterComponent } from './help-center/help-center/help-center.component'
 
 const routes: Routes = [
   {
-    path:'', component: HelpCenterComponent, pathMatch:'full'
-  }
-];
+    path:'', component: HelpCenterComponent, pathMatch:'full',
+  },
+]
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
 export class HelpCenterRoutingModule { }

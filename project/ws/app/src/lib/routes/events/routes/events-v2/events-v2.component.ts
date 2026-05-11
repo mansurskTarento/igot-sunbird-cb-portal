@@ -6,22 +6,21 @@ import { EventsEngagementComponent } from '../events-engagement/events-engagemen
 import { EventsCalendarComponent } from '../events-calendar/events-calendar.component'
 import { EventService } from '../../services/events.service'
 import { WsEvents, EventService as libEventService } from '@sunbird-cb/utils-v2'
-import { NsWidgetResolver } from '@sunbird-cb/resolver-v2'
 import { FormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-    selector: 'ws-app-events-v2',
-    templateUrl: './events-v2.component.html',
-    styleUrls: ['./events-v2.component.scss'],
-    standalone: false
+  selector: 'ws-app-events-v2',
+  templateUrl: './events-v2.component.html',
+  styleUrls: ['./events-v2.component.scss'],
+  standalone: false
 })
 export class EventsV2Component {
 
-  eventsHome!: NsWidgetResolver.IWidgetData<any>
-  banner!: NsWidgetResolver.IWidgetData<any>
+  eventsHome: any
+  banner: any
   engagementDetails: any = {
   }
 
@@ -69,7 +68,7 @@ export class EventsV2Component {
         }
       }, error: (error: HttpErrorResponse) => {
         if (error) { }
-      }
+      },
     })
   }
 
@@ -91,7 +90,7 @@ export class EventsV2Component {
     this.bottomSheet.open(EventsEngagementComponent, {
       data: {
         engagements: _.get(this.eventsHome, 'data.leftSection.data.myEngagements', {}),
-        engagementDetails: this.engagementDetails
+        engagementDetails: this.engagementDetails,
       },
       panelClass: 'events-bottomsheet',
     })
@@ -100,7 +99,7 @@ export class EventsV2Component {
   openEventCalendartBottomSheet() {
     this.bottomSheet.open(EventsCalendarComponent, {
       panelClass: 'events-bottomsheet',
-      data: _.get(this.eventsHome, 'data.leftSection.data.eventsCalendar', {})
+      data: _.get(this.eventsHome, 'data.leftSection.data.eventsCalendar', {}),
     })
   }
 
@@ -139,12 +138,12 @@ export class EventsV2Component {
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
-        subType: subType,
-        id: "card-content",
+        subType,
+        id: 'card-content',
       },
       {
         id: _.get(event, 'content.contentId'),
-        type: "event"
+        type: 'event',
       },
       {
         module: WsEvents.EnumTelemetrymodules.EVENTS,

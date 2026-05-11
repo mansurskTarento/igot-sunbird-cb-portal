@@ -147,7 +147,7 @@ export class VideoPreviewDialogComponent implements OnInit {
       if (this.isPlaying) {
         this.showControls = false
       }
-    }, 2000)
+    },                                    2000)
   }
 
   formatTime(seconds: number): string {
@@ -165,11 +165,11 @@ export class VideoPreviewDialogComponent implements OnInit {
 
     if (type.includes('mp4') || name.endsWith('.mp4')) {
       return 'video/mp4'
-    } else if (type.includes('webm') || name.endsWith('.webm')) {
+    }  if (type.includes('webm') || name.endsWith('.webm')) {
       return 'video/webm'
-    } else if (type.includes('m3u8') || name.endsWith('.m3u8')) {
+    }  if (type.includes('m3u8') || name.endsWith('.m3u8')) {
       return 'application/x-mpegURL'
-    } else if (type.includes('ogg') || name.endsWith('.ogg')) {
+    }  if (type.includes('ogg') || name.endsWith('.ogg')) {
       return 'video/ogg'
     }
     return 'video/mp4' // Default to mp4

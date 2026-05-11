@@ -135,11 +135,11 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           active: true,
           batchId: this.batchId,
           limit: 1,
-          currentOffSet: 0
-        }
-      }
+          currentOffSet: 0,
+        },
+      },
     }
-    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe(response => {
       this.totalUsersEnrolled = response?.totalCount || 0
     })
   }
@@ -266,12 +266,12 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         const youtubeId = videoId?.split('?')[0] || videoId
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
       } else if (this.eventData?.typeofEvent?.toLowerCase() === 'live') {
-        window.open(url, "_blank")
+        window.open(url, '_blank')
       } else {
-        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split('_').pop()}`])
       }
     } else {
-      window.open(this.getLink(), "_blank")
+      window.open(this.getLink(), '_blank')
     }
   }
 

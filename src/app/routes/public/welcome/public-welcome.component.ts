@@ -83,10 +83,10 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
 }
 
 @Component({
-    selector: 'ws-public-welcome',
-    templateUrl: './public-welcome.component.html',
-    styleUrls: ['./public-welcome.component.scss'],
-    standalone: false
+  selector: 'ws-public-welcome',
+  templateUrl: './public-welcome.component.html',
+  styleUrls: ['./public-welcome.component.scss'],
+  standalone: false
 })
 
 export class PublicWelcomeComponent implements OnInit, OnDestroy {

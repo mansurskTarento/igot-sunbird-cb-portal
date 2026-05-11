@@ -8,7 +8,7 @@ import {
   NsError,
   NsPlaylist,
   ROOT_WIDGET_CONFIG,
-  viewerRouteGenerator
+  viewerRouteGenerator,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'

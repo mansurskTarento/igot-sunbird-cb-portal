@@ -16,7 +16,6 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { PipeFilterModule, PipeHtmlTagRemovalModule, PipeOrderByModule, PipeRelativeTimeModule, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { AvatarPhotoModule, BtnPageBackModule } from '@sunbird-cb/collection'
 import { ProfileV2RoutingModule } from './profile-v2.rounting.module'
-import { DiscussModule } from '../discuss/discuss.module'
 import { EditorSharedModule } from '@ws/author'
 import { ProfileCertificateDialogModule } from './components/profile-certificate-dialog/profile-certificate-dialog.module'
 import { ProfileCardStatsModule } from '@sunbird-cb/collection'
@@ -70,7 +69,7 @@ import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/prof
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
+import { CertificateViewPopupModule } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.module'
 import { SearchV3Module } from '../search-v3/search-v3.module'
 import { CommunitySuggestionsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
 import { DescriptionComponent } from './components/profile-revamp/description/description.component'
@@ -107,17 +106,15 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         PrfileEditV2Component,
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
-        CertificateViewPopupComponent,
         DescriptionComponent,
         CustomFieldsComponent,
-        ViewCustomFieldsComponent
+        ViewCustomFieldsComponent,
     ],
     imports: [
         CommonModule,
         WidgetResolverModule,
         ReactiveFormsModule,
         ProfileV2RoutingModule,
-        DiscussModule,
         FormsModule,
         RouterModule,
         MatGridListModule,
@@ -165,6 +162,7 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         DragDropModule,
         SearchV3Module,
         CommunitySuggestionsModule,
+        CertificateViewPopupModule,
         DialogComponentsModule,
         TranslateModule.forRoot({
             loader: {
@@ -184,8 +182,8 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         ServiceHistoryComponent,
         EducationalQualificationsComponent,
         AchievementsComponent,
-        DatePipe
-    ]
+        DatePipe,
+    ],
 })
 export class ProfileV2Module {
 

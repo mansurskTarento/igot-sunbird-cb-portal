@@ -6,24 +6,24 @@ import * as _ from 'lodash'
 import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-    selector: 'ws-app-service-history',
-    templateUrl: './service-history.component.html',
-    styleUrls: ['./service-history.component.scss'],
-    providers: [DatePipe],
-    standalone: false
+  selector: 'ws-app-service-history',
+  templateUrl: './service-history.component.html',
+  styleUrls: ['./service-history.component.scss'],
+  providers: [DatePipe],
+  standalone: false
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)
-  @Input() serviceHistoryDetails: any = {};
-  @Input() isCurrentUser = false;
-  @Input() currentDesignation = '';
-  @Input() currentOrgName = '';
-  @Input() isUpdated = false;
-  @Output() openProfileEntryEditDialog = new EventEmitter();
+  @Input() serviceHistoryDetails: any = {}
+  @Input() isCurrentUser = false
+  @Input() currentDesignation = ''
+  @Input() currentOrgName = ''
+  @Input() isUpdated = false
+  @Output() openProfileEntryEditDialog = new EventEmitter()
 
   serviceHistoryList: any[] = []
-  userId: string = '';
-  isPopup: boolean = false;
+  userId: string = ''
+  isPopup: boolean = false
   //#endregion (global variables)
 
   constructor(

@@ -56,17 +56,17 @@ const PIN_CODE_PATTERN = /^[1-9][0-9]{5}$/
 const EMP_ID_PATTERN = /^[a-z0-9]+$/i
 
 @Component({
-    selector: 'app-profile-view',
-    templateUrl: './profile-view.component.html',
-    styleUrls: ['./profile-view.component.scss'],
-    /* tslint:disable */
-    host: { class: 'flex margin-bottom-l' },
-    /* tslint:enable */
-    providers: [
-        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-    ],
-    standalone: false
+  selector: 'app-profile-view',
+  templateUrl: './profile-view.component.html',
+  styleUrls: ['./profile-view.component.scss'],
+  /* tslint:disable */
+  host: { class: 'flex margin-bottom-l' },
+  /* tslint:enable */
+  providers: [
+    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+  ],
+  standalone: false
 })
 
 export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -210,12 +210,12 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
   isMatcompleteOpened = false
   designationListLoadCount = 50
   designationDefaultLoadCount = 50
-  isLoadingMoreDesignations = false;
+  isLoadingMoreDesignations = false
   desigantionFilterEnable = false
   editCustomDetails = false
   customAttrList: any = []
   customAttrForm: any = {}
-  //@ViewChild('scrollContainer') private scrollContainer!: ElementRef;
+  // @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
   constructor(
     public dialog: MatDialog,
     private configService: ConfigurationsService,
@@ -300,6 +300,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     })
 
     this.route.data.subscribe(data => {
+      debugger
       if (data.profile.data) {
         this.orgId = data.profile.data.rootOrgId
       }
@@ -341,7 +342,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.getProfilePageMetaData()
     this.loadDesignations()
     // this.loadDesignationsData()
-    //this.getMasterDesignation()
+    // this.getMasterDesignation()
     this.getSendApprovalStatus()
     this.getRejectedStatus()
     this.getApprovedFields()
@@ -444,11 +445,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.cadre = this.selectedService.cadreList.map((cadre: any) => cadre.name)
     }
 
-    // if((this.selectedServiceName.trim() === 'Indian Administrative Office (IAS)') ||
-    //                 (this.selectedServiceName.trim() === "Indian Police Service (IPS)") ||
-    //                 (this.selectedServiceName.trim() === "Indian Forest Service (IFoS)") && !this.editDetails) {
-    //                 this.showBatchForNoCadre = false
-    // }
     if (this.selectedService && this.selectedService.cadreControllingAuthority) {
       this.cadreControllingAuthority = this.selectedService.cadreControllingAuthority
     } else {
@@ -513,30 +509,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
   }
 
-  fetchDiscussionsData(): void {
-    this.discussion.loadSkeleton = true
-    this.homeService.getDiscussionsData(this.currentUser.userName)
-      .pipe(takeUntil(this.destroySubject$))
-      .subscribe(
-        (res: any) => {
-          this.discussion.loadSkeleton = false
-          this.updatesPosts.loadSkeleton = false
-          this.discussion.data = res && res.latestPosts
-          this.updatesPosts.data = res && res.latestPosts && res.latestPosts.sort((x: any, y: any) => {
-            return y.timestamp - x.timestamp
-          })
-        },
-        (error: HttpErrorResponse) => {
-          if (!error.ok) {
-            this.discussion.loadSkeleton = false
-            this.updatesPosts.loadSkeleton = false
-            this.discussion.error = true
-            this.updatesPosts.error = true
-            this.matSnackBar.open(this.handleTranslateTo('discussionsDataFail'))
-          }
-        }
-      )
-  }
 
   ngAfterViewInit(): void {
     if (this.params && this.params.tab) {
@@ -1844,7 +1816,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-      let payload: any = {}
+      const payload: any = {}
       if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
         payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
       }
@@ -1855,7 +1827,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.netCoreService.netCoreUserProfilePhotoUpdate(payload)
       this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), payload)
     }
-
 
   }
 
@@ -1873,7 +1844,7 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-      let payload: any = {}
+      const payload: any = {}
       if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
         payload['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
       }
@@ -1894,23 +1865,19 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
     //   'pk^userid': this.configService.unMappedUser.identifier.trim().toLowerCase(),
     //   'FULL_NAME' : this.profileName.trim().toLowerCase(),
     // })
-    //let formValueChanges:any
+    // let formValueChanges:any
     if (this.configService.netcoreConfig && this.configService.netcoreConfig.netcoreWebConfig
       && this.configService.netcoreConfig.netcoreWebConfig.isActive
       && this.configService.netcoreConfig.netcoreWebConfig.events
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update
       && this.configService.netcoreConfig.netcoreWebConfig.events.profile_update.isActive
     ) {
-      let profileUpdateObj: any = {}
-      let profileUpdateEventObj: any = []
+      const profileUpdateObj: any = {}
+      const profileUpdateEventObj: any = []
       if (this.configService && this.configService.unMappedUser && this.configService.unMappedUser.identifier) {
         profileUpdateObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
-        //profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
+        // profileUpdateEventObj['pk^userid'] = this.configService.unMappedUser.identifier.trim().toLowerCase()
       }
-
-
-
-
 
       // if (this.profileName) {
       //   profileUpdateObj['FULL_NAME'] = this.toTitleCase(this.profileName.trim())
@@ -1975,11 +1942,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         //   profileUpdateEventObj['PIN_CODE'] = this.portalProfile.personalDetails.pincode.trim()
         // }
 
-
-
-
-
-
         // if (this.portalProfile.id) {
         //   // profileUpdateEventObj['EMPLOYEE_ID'] = this.portalProfile.employmentDetails?.employeeCode.trim()
 
@@ -2003,16 +1965,15 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
 
       if (this.portalProfile && this.portalProfile.profileDetails) {
         profileUpdateObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
-        //profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
+        // profileUpdateEventObj['PROFILE_GROUP'] = this.toTitleCase(this.portalProfile.profileDetails.professionalDetails.group.trim().toLowerCase())
         // profileUpdateEventObj.push('PROFILE_GROUP')
       }
 
       if (this.portalProfile && this.portalProfile.profileDetails) {
         profileUpdateObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
-        //profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
+        // profileUpdateEventObj['PROFILE_DESIGNATION'] = this.toTitleCase(this.portalProfile.profileDetails.profileDesignationStatus.group.trim().toLowerCase())
         // profileUpdateEventObj.push('PROFILE_DESIGNATION')
       }
-
 
       if (this.portalProfile &&
         this.portalProfile.cadreDetails) {
@@ -2042,7 +2003,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
         // }
       }
 
-
       // profileUpdateEventObj = profileUpdateEventObj.toString()
       console.log('profileUpdateEventObj', profileUpdateEventObj)
 
@@ -2051,8 +2011,6 @@ export class ProfileViewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.netCoreService.trackEvent('profile_update', this.configService.unMappedUser.identifier.trim().toLowerCase(), profileUpdateEventObj)
     }
   }
-
-
 
   toTitleCase(str: string): string {
     return str

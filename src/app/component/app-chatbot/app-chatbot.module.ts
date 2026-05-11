@@ -20,7 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     ClickOutsideDirective,
     AppChatbotComponent,
     IGotSarthiComponent,
-    SupportAIComponent
+    SupportAIComponent,
   ],
   imports: [
     FormsModule,
@@ -33,7 +33,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     MarkdownModule.forRoot(),
     DragDropModule,
     NonReleventFeedbackDialogModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
   exports: [AppChatbotComponent, MarkdownModule, NonReleventFeedbackDialogModule],
   providers: [ChatbotService],

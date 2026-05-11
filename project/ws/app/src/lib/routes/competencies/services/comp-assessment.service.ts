@@ -7,7 +7,7 @@ import _ from 'lodash'
 // tslint:enable
 
 const API_ENDPOINTS = {
-    SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
+    SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
     searchAssessment: (id: string) => `apis/proxies/v8/assessment/read/${id}`,
 
 }
