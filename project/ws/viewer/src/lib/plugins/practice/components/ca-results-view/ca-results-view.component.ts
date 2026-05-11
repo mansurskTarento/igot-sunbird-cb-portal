@@ -6,10 +6,10 @@ import { ViewerHeaderSideBarToggleService } from '../../../../viewer-header-side
 // import { NsContent } from '@sunbird-cb/utils-v2'
 
 @Component({
-    selector: 'viewer-ca-results-view',
-    templateUrl: './ca-results-view.component.html',
-    styleUrls: ['./ca-results-view.component.scss'],
-    standalone: false
+  selector: 'viewer-ca-results-view',
+  templateUrl: './ca-results-view.component.html',
+  styleUrls: ['./ca-results-view.component.scss'],
+  standalone: false
 })
 export class CaResultsViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() results!: any
@@ -19,13 +19,13 @@ export class CaResultsViewComponent implements OnInit, OnChanges, OnDestroy {
   @Output() userSelection = new EventEmitter<string>()
 
   // Orchestration State Only
-  showOverallView = true;
-  selectedSection: NSPractice.IQuizSubmitResSec | null = null;
-  isSingleSection = false;
+  showOverallView = true
+  selectedSection: NSPractice.IQuizSubmitResSec | null = null
+  isSingleSection = false
   isPracticeAssessment = false
 
   // RxJS Lifecycle Management
-  destroy$ = new Subject<void>();
+  destroy$ = new Subject<void>()
 
   constructor(
     public viewerHeaderSideBarToggleService: ViewerHeaderSideBarToggleService,

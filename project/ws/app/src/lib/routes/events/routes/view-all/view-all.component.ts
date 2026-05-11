@@ -4,7 +4,6 @@ import { ConfigurationsService, MultilingualTranslationsService, NsContent } fro
 import { EventService } from '../../services/events.service'
 import * as _ from 'lodash'
 import { DatePipe } from '@angular/common'
-//import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormControl } from '@angular/forms'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { MatBottomSheet } from '@angular/material/bottom-sheet'
@@ -14,11 +13,11 @@ import { TranslateService } from '@ngx-translate/core'
 import { Subject, Subscription } from 'rxjs'
 
 @Component({
-    selector: 'ws-app-view-all',
-    templateUrl: './view-all.component.html',
-    styleUrls: ['./view-all.component.scss'],
-    providers: [DatePipe],
-    standalone: false
+  selector: 'ws-app-view-all',
+  templateUrl: './view-all.component.html',
+  styleUrls: ['./view-all.component.scss'],
+  providers: [DatePipe],
+  standalone: false
 })
 export class ViewAllComponent {
 
@@ -37,7 +36,7 @@ export class ViewAllComponent {
   total = 0
   showNextPage = false
   sortOptions: any = {
-    startDate: 'desc'
+    startDate: 'desc',
   }
   pageConfigData: any = {}
   private scrollSubject = new Subject<Event>()
@@ -78,7 +77,7 @@ export class ViewAllComponent {
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
     ]
     this.scrollSubject.pipe(debounceTime(500)).subscribe((event: any) => {
-      console.log("event ", event)
+      console.log('event ', event)
       this.onDebouncedScroll()
     })
   }
@@ -96,7 +95,6 @@ export class ViewAllComponent {
   onDebouncedScroll() {
     this.fetchData()
   }
-
 
   ngOnInit() {
     this.pageConfigData = this.activateRoute.snapshot.data['pageData'] && this.activateRoute.snapshot.data['pageData'].data || {}
@@ -138,7 +136,7 @@ export class ViewAllComponent {
         this.searchControl.setValue(null)
       }
     })
-    this.titles.push({ title: this.selectedResourceType, url: `none`, icon: '' },)
+    this.titles.push({ title: this.selectedResourceType, url: 'none', icon: '' })
     this.fetchData()
   }
 
@@ -162,7 +160,7 @@ export class ViewAllComponent {
         facets: ['sourceName', 'resourceType'],
         sort_by: this.sortOptions,
         limit: this.pageLimit || 9,
-        offset: (this.pageLimit * this.currentPage) || 0
+        offset: (this.pageLimit * this.currentPage) || 0,
       },
     }
     if (this.selectedFilters?.resourceType?.includes('Samuhik Charcha')) {
@@ -179,11 +177,11 @@ export class ViewAllComponent {
       if (this.selectedFilters?.tabSelected) {
         if (this.selectedFilters.tabSelected.toLowerCase() === 'upcoming events') {
           requestBody.request.filters['endDateTime'] = {
-            '>=': this.getCurrentTimeInUTC
+            '>=': this.getCurrentTimeInUTC,
           }
         } else if (this.selectedFilters.tabSelected.toLowerCase() === 'past events') {
           requestBody.request.filters['endDateTime'] = {
-            '<': this.getCurrentTimeInUTC
+            '<': this.getCurrentTimeInUTC,
           }
         }
       }
@@ -199,14 +197,14 @@ export class ViewAllComponent {
           endDate = this.datePipe.transform(new Date(), 'yyyy-MM-dd')
         }
         if (!this.selectedFilters.eventDate.includes('Today') && this.selectedFilters.eventDate.includes('Tomorrow')) {
-          let tomorrow = new Date()
+          const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)
           startDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
           endDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
         }
         if (this.selectedFilters.eventDate.includes('Today') && this.selectedFilters.eventDate.includes('Tomorrow')) {
           const today = new Date()
-          let tomorrow = new Date()
+          const tomorrow = new Date()
           tomorrow.setDate(tomorrow.getDate() + 1)
           startDate = this.datePipe.transform(today, 'yyyy-MM-dd')
           endDate = this.datePipe.transform(tomorrow, 'yyyy-MM-dd')
@@ -269,15 +267,15 @@ export class ViewAllComponent {
             ...requestBody.request.filters,
             resourceType: this.selectedFilters.resourceType ? this.selectedFilters.resourceType : [],
             ...(this.selectedSources.length ? { sourceName: this.selectedSources } : {}),
-            ...(startDate ? { "startDate": { ">=": [startDate] } } : {}),
-            ...(endDate ? { "endDate": { "<=": [endDate] } } : {}),
+            ...(startDate ? { 'startDate': { '>=': [startDate] } } : {}),
+            ...(endDate ? { 'endDate': { '<=': [endDate] } } : {}),
             ...(startDateTimeInEpoch ? {
-              "startDateTimeInEpoch":
-                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Upcoming' ? { ">=": [startDateTimeInEpoch] } : { "<=": [startDateTimeInEpoch] })
+              'startDateTimeInEpoch':
+                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Upcoming' ? { '>=': [startDateTimeInEpoch] } : { '<=': [startDateTimeInEpoch] }),
             } : {}),
             ...(endDateTimeInEpoch ? {
-              "endDateTimeInEpoch":
-                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Past Events' ? { "<=": [endDateTimeInEpoch] } : { ">=": [endDateTimeInEpoch] })
+              'endDateTimeInEpoch':
+                (_.get(this.selectedFilters, 'eventStatus[0]') === 'Past Events' ? { '<=': [endDateTimeInEpoch] } : { '>=': [endDateTimeInEpoch] }),
             } : {}),
           },
         },
@@ -349,7 +347,7 @@ export class ViewAllComponent {
       }
       this.isLoading = false
     }, error => {
-      console.log("error", error)
+      console.log('error', error)
       this.contentDataList = [...this.contentDataList, ...this.transformContentsToWidgets([], {})]
       this.isLoading = false
     })
@@ -358,26 +356,26 @@ export class ViewAllComponent {
   isLiveEvent(event: any) {
     if (event.startDate && event.endDate && event.startTime && event.endTime) {
       // Conver current time into milliseconds
-      let currentTime = new Date().getTime() / 1000
+      const currentTime = new Date().getTime() / 1000
       // Combining date and time for start event
-      let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+      const evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
       // Combining date and time for end event
-      let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+      const eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
       return (currentTime <= eventEndDate && currentTime >= evenStarttDate)
     }
     return false
   }
 
   processResult(events: any) {
-    let processedEvents: any = []
+    const processedEvents: any = []
     events.forEach((event: any) => {
       if (event.startDate && event.endDate && event.startTime && event.endTime) {
         // Conver current time into milliseconds
-        let currentTime = new Date().getTime() / 1000
+        const currentTime = new Date().getTime() / 1000
         // Combining date and time for start event
-        let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+        const evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
         // Combining date and time for end event
-        let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+        const eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
         if (currentTime > eventEndDate) {
           if (this.selectedFilters.eventStatus.includes('Past Events')) {
             processedEvents.push(event)
@@ -479,7 +477,7 @@ export class ViewAllComponent {
         clonedFilters: this.selectedFilters,
       },
       panelClass: 'filter-bottomsheet',
-      disableClose: true
+      disableClose: true,
     })
     bottomSheetRef.afterDismissed().subscribe((result: any) => {
       if (result && result.action === 'apply') {
@@ -517,7 +515,7 @@ export class ViewAllComponent {
     } else if (key === 'resourceType') {
       this.selectedFilters = {
         ... this.selectedFilters,
-        resourceType: this.selectedFilters.resourceType.filter((item: any) => item !== filter)
+        resourceType: this.selectedFilters.resourceType.filter((item: any) => item !== filter),
       }
     } else if (key === 'eventStatus') {
       const removeditems = this.selectedFilters.eventStatus.filter((item: any) => item !== filter)
@@ -526,7 +524,7 @@ export class ViewAllComponent {
       } else {
         this.selectedFilters = {
           ... this.selectedFilters,
-          eventStatus: removeditems
+          eventStatus: removeditems,
         }
       }
       this.selectedValue = null
@@ -537,7 +535,7 @@ export class ViewAllComponent {
       } else {
         this.selectedFilters = {
           ... this.selectedFilters,
-          eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter)
+          eventDate: this.selectedFilters.eventDate.filter((item: any) => item !== filter),
         }
       }
     } else if (key === 'sourceName') {
@@ -611,7 +609,7 @@ export class ViewAllComponent {
     if (event) {
       if (['resourceType', 'eventDate'].includes(key)) {
         if (this.selectedFilters[key]) {
-          let slected = this.selectedFilters[key]
+          const slected = this.selectedFilters[key]
           slected.push(keyData.name)
           this.selectedFilters[key] = slected
         } else {
@@ -637,7 +635,7 @@ export class ViewAllComponent {
         this.showMoreSources = false
       }
       if (['resourceType', 'eventDate'].includes(key)) {
-        let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
+        const filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
         } else {
@@ -652,7 +650,7 @@ export class ViewAllComponent {
   getName(filters: any, filter: any) {
     if (filters.key === 'resourceType') {
       return filter
-    } else if (filters.key === 'eventStatus' || filters.key === 'eventDate') {
+    } if (filters.key === 'eventStatus' || filters.key === 'eventDate') {
       return this.translateLabels(this.toCamelCase(filter), 'events')
     }
   }
@@ -665,7 +663,6 @@ export class ViewAllComponent {
       )
       .replace(/\s+/g, '')
   }
-
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateActualLabel(label, type, '')
@@ -715,4 +712,3 @@ export class ViewAllComponent {
     }))
   }
 }
-

@@ -25,7 +25,7 @@ import { EventsCalendarComponent } from './events-calendar.component'
 
 @NgModule({
   declarations: [
-    EventsCalendarComponent
+    EventsCalendarComponent,
   ],
   imports: [
     CommonModule,
@@ -51,13 +51,13 @@ import { EventsCalendarComponent } from './events-calendar.component'
     }),
   ],
   exports: [
-    EventsCalendarComponent
+    EventsCalendarComponent,
   ],
   providers: [
     { provide: MAT_BOTTOM_SHEET_DATA, useValue: {} },
     { provide: MatBottomSheetRef, useValue: {} },
     EventService,
-    DatePipe
-  ]
+    DatePipe,
+  ],
 })
 export class EventsCalendarModule { }

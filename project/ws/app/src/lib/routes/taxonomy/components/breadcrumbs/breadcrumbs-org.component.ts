@@ -6,7 +6,7 @@ import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { BreadcrumbsOrgService } from './breadcrumbs-org.service'
 
 type TUrl = undefined | 'none' | 'back' | string
-const APP_TAXONOMY = `/app/taxonomy/`
+const APP_TAXONOMY = '/app/taxonomy/'
 @Component({
     selector: 'ws-widget-breadcrumbs-org',
     templateUrl: './breadcrumbs-org.component.html',

@@ -5,7 +5,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
   providedIn: 'root',
 })
 export class ZohoFormService {
-  private SUBJECT_PREFIX = 'APAR/CA issue - ';
+  private SUBJECT_PREFIX = 'APAR/CA issue - '
   // private blockedFileExtensions = [
   //   'exe',
   //   'bat',
@@ -29,12 +29,12 @@ export class ZohoFormService {
     'doc',
     'pdf',
     'mp4',
-  ];
-  private userProfileData: any = null;
+  ]
+  private userProfileData: any = null
 
   // Attachment tracking
-  private zsAttachedAttachmentsCount = 0;
-  private zsAttachmentFileBrowserIdsList = [1, 2, 3, 4, 5];
+  private zsAttachedAttachmentsCount = 0
+  private zsAttachmentFileBrowserIdsList = [1, 2, 3, 4, 5]
 
   // Getter for attachment count (used in validation)
   getAttachedFilesCount(): number {
@@ -74,9 +74,8 @@ export class ZohoFormService {
       // Update subject field with issue type
       if (subjectInput) {
         if (value && value !== '') {
-          const selectedOption = (selectElement as HTMLSelectElement).options[
-            (selectElement as HTMLSelectElement).selectedIndex
-          ]
+          const selectedOption = (selectElement as HTMLSelectElement).options[(selectElement as HTMLSelectElement).selectedIndex
+]
           const issueLabel = selectedOption.text
           subjectInput.value = this.SUBJECT_PREFIX + issueLabel
         } else {
@@ -166,7 +165,7 @@ export class ZohoFormService {
           this.triggerFileInputClick()
         }
       }
-    }, 100)
+    },         100)
   }
 
   private triggerFileInputClick(): void {
@@ -329,7 +328,7 @@ export class ZohoFormService {
   // ===== Form Reset =====
   resetForm(formId: string): void {
     try {
-      const form = document.forms.namedItem('zsWebToCase_' + formId,) as HTMLFormElement
+      const form = document.forms.namedItem('zsWebToCase_' + formId) as HTMLFormElement
       if (form) form.reset()
 
       document
@@ -356,7 +355,7 @@ export class ZohoFormService {
     const aisLabelText = document.getElementById('ais-label-text')
     if (aisLabelText) aisLabelText.textContent = 'No'
 
-    const hiddenSelect = document.getElementById('CASECF29',) as HTMLSelectElement
+    const hiddenSelect = document.getElementById('CASECF29') as HTMLSelectElement
     if (hiddenSelect) hiddenSelect.value = 'No'
   }
 
@@ -371,17 +370,17 @@ export class ZohoFormService {
   }
 
   private resetSubjectField(): void {
-    const subjectInput = document.getElementById('subject-input',) as HTMLInputElement
+    const subjectInput = document.getElementById('subject-input') as HTMLInputElement
     if (subjectInput) subjectInput.value = this.SUBJECT_PREFIX
   }
 
   private resetConsentCheckbox(): void {
-    const consentCheckbox = document.getElementById('consent-checkbox',) as HTMLInputElement
+    const consentCheckbox = document.getElementById('consent-checkbox') as HTMLInputElement
     if (consentCheckbox) consentCheckbox.checked = true
   }
 
   clearSelectValue(elementId: string): void {
-    const selectElement = document.getElementById(elementId,) as HTMLSelectElement
+    const selectElement = document.getElementById(elementId) as HTMLSelectElement
     if (selectElement) {
       selectElement.value = ''
     }
@@ -453,12 +452,12 @@ export class ZohoFormService {
   }
 
    patchUserDataFromConfig(): void {
-    if (!this.userProfileData) return;
+    if (!this.userProfileData) return
 
     const personalDetails =
-      this.userProfileData['profileDetails']['personalDetails'] || {};
+      this.userProfileData['profileDetails']['personalDetails'] || {}
     const professionalDetails =
-      this.userProfileData['profileDetails']['professionalDetails'] || {};
+      this.userProfileData['profileDetails']['professionalDetails'] || {}
 
     // Map user data directly from profile
     const userData = {
@@ -509,7 +508,7 @@ export class ZohoFormService {
   // ===== Form Validation and Submission =====
   validateAndSubmitForm(): boolean {
     try {
-      const mandatoryFields = ['Contact Name', 'Email', 'Phone', 'Subject', "Issues related to Training Plan and Comprehensive"]
+      const mandatoryFields = ['Contact Name', 'Email', 'Phone', 'Subject', 'Issues related to Training Plan and Comprehensive']
       const form = document.forms.namedItem('zsWebToCase_120349000138968626') as HTMLFormElement
 
       if (!form) {
@@ -537,7 +536,7 @@ export class ZohoFormService {
           }
         }
         if (fieldName === 'Phone') {
-          var phone = field.value.trim()
+          const phone = field.value.trim()
           if (!/^\d{10}$/.test(phone)) {
             alert('Enter a valid 10 digit phone number')
             field.focus()
@@ -549,7 +548,7 @@ export class ZohoFormService {
       // Check if Centre/State is selected and validate accordingly
       const centreRadio = document.getElementById('CASECF21_centre') as HTMLInputElement
       const stateRadio = document.getElementById('CASECF21_state') as HTMLInputElement
-      
+
       if ((!centreRadio || !centreRadio.checked) && (!stateRadio || !stateRadio.checked)) {
         alert('Please select Centre or State')
         return false
@@ -602,8 +601,6 @@ export class ZohoFormService {
         }
       }
 
-
-
       // Validate captcha
       const captchaField = form['zsWebFormCaptchaWord'] as HTMLInputElement
       if (!captchaField || !captchaField.value.trim()) {
@@ -611,8 +608,6 @@ export class ZohoFormService {
         if (captchaField) captchaField.focus()
         return false
       }
-
-
 
       // Disable submit button
       const submitBtn = document.getElementById('zsSubmitButton_120349000138968626') as HTMLButtonElement

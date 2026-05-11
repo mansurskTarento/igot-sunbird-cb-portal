@@ -1,18 +1,18 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { EventService } from '../../../services/events.service';
-import { MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2';
+import { Component } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
+import { EventService } from '../../../services/events.service'
+import { MultilingualTranslationsService, NsContent, WsEvents } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
-import { catchError, map } from 'rxjs/operators';
-import { of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators'
+import { of } from 'rxjs'
 import { EventService as libEventService } from '@sunbird-cb/utils-v2'
 
 @Component({
-    selector: 'ws-app-see-all',
-    templateUrl: './see-all.component.html',
-    styleUrls: ['./see-all.component.scss'],
-    standalone: false
+  selector: 'ws-app-see-all',
+  templateUrl: './see-all.component.html',
+  styleUrls: ['./see-all.component.scss'],
+  standalone: false
 })
 export class SeeAllComponent {
   titles: any = []
@@ -40,7 +40,7 @@ export class SeeAllComponent {
       if (data.params.category) {
         this.category = data.params.category
         this.titles.push({
-          title: this.translateLabels(this.category, 'events', ''), url: `none`, icon: ''
+          title: this.translateLabels(this.category, 'events', ''), url: 'none', icon: '',
         })
       }
     })
@@ -57,7 +57,7 @@ export class SeeAllComponent {
         })
       ).subscribe(ids => {
         if (ids.length) {
-          this.fetchData(ids);
+          this.fetchData(ids)
         } else {
           this.contentDataList = this.transformContentsToWidgets([], {})
         }
@@ -68,12 +68,12 @@ export class SeeAllComponent {
   apiCall() {
     if (this.category === 'featuredEvents') {
       return this.eventSvc.getFeaturedEvents()
-    } else {
-      return this.eventSvc.getTrendingEvents()
     }
+    return this.eventSvc.getTrendingEvents()
+
   }
   fetchData(response: any) {
-    let requestBody: any = {
+    const requestBody: any = {
       locale: [
         'en',
       ],
@@ -83,7 +83,7 @@ export class SeeAllComponent {
         filters: {
           status: ['Live'],
           contentType: 'Event',
-          identifier: response
+          identifier: response,
         },
         sort_by: {
           startDate: 'desc',
@@ -92,13 +92,13 @@ export class SeeAllComponent {
       },
     }
     this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
-      let events: any = _.get(resp, 'result.Event', [])
+      const events: any = _.get(resp, 'result.Event', [])
       if (events.length) {
-        let proccessedEvents: any = []
+        const proccessedEvents: any = []
         response.forEach((id: any) => {
           const event = events.find((e: any) => e.identifier === id)
           if (event) {
-            proccessedEvents.push({ event: event })
+            proccessedEvents.push({ event })
           }
         })
         this.contentDataList = this.transformContentsToWidgets(proccessedEvents, {})
@@ -106,7 +106,7 @@ export class SeeAllComponent {
         this.contentDataList = this.transformContentsToWidgets([], {})
       }
     }, error => {
-      console.log("error", error)
+      console.log('error', error)
       this.contentDataList = this.transformContentsToWidgets([], {})
     })
   }
@@ -114,11 +114,11 @@ export class SeeAllComponent {
   isLiveEvent(event: any) {
     if (event && event.startDate && event.endDate && event.startTime && event.endTime) {
       // Conver current time into milliseconds
-      let currentTime = new Date().getTime() / 1000
+      const currentTime = new Date().getTime() / 1000
       // Combining date and time for start event
-      let evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+      const evenStarttDate = new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
       // Combining date and time for end event
-      let eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+      const eventEndDate = new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
       return (currentTime <= eventEndDate && currentTime >= evenStarttDate)
     }
     return false
@@ -140,12 +140,12 @@ export class SeeAllComponent {
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
-        subType: subType,
-        id: "card-content",
+        subType,
+        id: 'card-content',
       },
       {
         id: _.get(event, 'widgetData.content.identifier', ''),
-        type: "event"
+        type: 'event',
       },
       {
         module: WsEvents.EnumTelemetrymodules.EVENTS,

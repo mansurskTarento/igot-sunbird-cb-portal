@@ -40,7 +40,7 @@ export class RequestParams {
       'languageMapV1',
       'language',
       'completionSurveyLink',
-      'difficultyLevel'
+      'difficultyLevel',
     ]
     this.facets = [...SearchOthersFacet, ...competenciesKey]
     this.query = ''
@@ -102,9 +102,9 @@ export const SearchOthersFacet = [
   'courseCategory',
   'sectorDetails_v1.sectorName',
   'sectorDetails_v1.subSectorName',
-  "competencies_v6.competencyAreaName",
-  "competencies_v6.competencyThemeName",
-  "competencies_v6.competencySubThemeName"
+  'competencies_v6.competencyAreaName',
+  'competencies_v6.competencyThemeName',
+  'competencies_v6.competencySubThemeName',
 ]
 
 // Events
@@ -146,10 +146,10 @@ export const SearchResourceMimeType = [
 ]
 
 export const SearchResourceFacets = [
-  "resourceCategory",
-  "sectorDetails_v1.subSectorName",
-  "sectorDetails_v1.sectorName",
-  "years"
+  'resourceCategory',
+  'sectorDetails_v1.subSectorName',
+  'sectorDetails_v1.sectorName',
+  'years',
 ]
 
 export class SearchPeoplesRequest {
@@ -242,8 +242,8 @@ export enum FacetType {
   sectorId = 'sectorId',
   resourceCategory = 'resourceCategory',
   subSectorId = 'subSectorId',
-  subSectorNameResource = "subSectorName",
-  sectorNameResource = "sectorName",
+  subSectorNameResource = 'subSectorName',
+  sectorNameResource = 'sectorName',
   contentPartners = 'contentPartner.contentPartnerName',
   topic = 'topic',
   topicName = 'topicName',
@@ -278,7 +278,7 @@ export class SearchExternalRequest {
 
   constructor(competenciesKey: any) {
     this.filterCriteriaMap = {
-      "contentPartner.isActive": true
+      'contentPartner.isActive': true,
     }
     this.requestedFields = []
     this.pageNumber = 0
@@ -305,5 +305,5 @@ export const SearchResourcesFields = [
   'primaryCategory',
   'resourceType',
   'source',
-  'additionalTags'
+  'additionalTags',
 ]

@@ -31,18 +31,18 @@ const NEW_CONTENT_THRESHOLD_DAYS = 14
 })
 export class CourseContentCardComponent implements OnInit, OnChanges {
   @Input() content: any
-  @Input() enrollment: any[] = [];
-  @Input() cbpPlans: any[] = [];
-  @Input() igotSpecializationPrograms: any[] = [];
-  @Output() telemetry = new EventEmitter<any>();
-  contentBookmarked = false;
-  defaultThumbnail = '/assets/instances/eagle/app_logos/default.png';
-  defaultSLogo = '/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg';
+  @Input() enrollment: any[] = []
+  @Input() cbpPlans: any[] = []
+  @Input() igotSpecializationPrograms: any[] = []
+  @Output() telemetry = new EventEmitter<any>()
+  contentBookmarked = false
+  defaultThumbnail = '/assets/instances/eagle/app_logos/default.png'
+  defaultSLogo = '/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg'
   compentencyKey!: NsContent.ICompentencyKeys
 
   courseEnrollment: any
-  downloadCertificateLoading = false;
-  isIgot = false;
+  downloadCertificateLoading = false
+  isIgot = false
   igotSpecializationProgram: any
   CaCourseUnitIds = '[]'
   constructor(
@@ -123,7 +123,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
           new Date(a.lastIssuedOn).getTime() -
           new Date(b.lastIssuedOn).getTime()
       )
-      let certData: any = certificate && certificate.length && certificate[0]
+      const certData: any = certificate && certificate.length && certificate[0]
       this.certificateService
         .downloadCertificate_v2(certData.identifier)
         .subscribe((res: any) => {

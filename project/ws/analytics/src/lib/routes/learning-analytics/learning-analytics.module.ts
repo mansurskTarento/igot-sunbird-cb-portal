@@ -92,6 +92,6 @@ import { QuarterServiceService } from './services/quarter-filter.service'
         ReactiveFormsModule,
         MatNativeDateModule,
     ],
-    providers: [DatePipe, QuarterServiceService]
+    providers: [DatePipe, QuarterServiceService],
 })
 export class LearningAnalyticsModule { }

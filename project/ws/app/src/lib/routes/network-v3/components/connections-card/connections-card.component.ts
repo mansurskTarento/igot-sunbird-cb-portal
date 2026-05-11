@@ -9,10 +9,10 @@ import { MatDialog } from '@angular/material/dialog'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
-    selector: 'ws-app-connections-card',
-    templateUrl: './connections-card.component.html',
-    styleUrls: ['./connections-card.component.scss'],
-    standalone: false
+  selector: 'ws-app-connections-card',
+  templateUrl: './connections-card.component.html',
+  styleUrls: ['./connections-card.component.scss'],
+  standalone: false
 })
 export class ConnectionsCardComponent implements OnInit {
 
@@ -105,22 +105,22 @@ export class ConnectionsCardComponent implements OnInit {
           {
             classes: 'btn-out-line',
             text: this.handleTranslateTo('no'),
-            response: false
+            response: false,
           },
           {
             classes: 'succes-button',
             text: this.handleTranslateTo('yes'),
-            response: true
-          }
-        ]
+            response: true,
+          },
+        ],
       }
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: dialgoData,
         disableClose: true,
         width: '400px',
-        maxWidth: '90vw'
+        maxWidth: '90vw',
       })
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.updateConnection(action)
         }
@@ -164,11 +164,11 @@ export class ConnectionsCardComponent implements OnInit {
         userIdTo: this.otherUserProfile.userId,
         userNameTo: this.fullName,
         userDepartmentTo: this.otherUserProfile.departmentName ? this.otherUserProfile.departmentName : _.get(this.otherUserProfile, 'employmentDetails.departmentName', ''),
-        status: action
+        status: action,
       }
       this.otherUserProfile['connectionStatus'] = 'progress'
       this.networkingSvc.updateConnectionRequest(formBody).subscribe({
-        next: (response) => {
+        next: response => {
           if (response) {
             this.otherUserProfile['connectionStatus'] = action
             let listToGetCount: string[] = []
@@ -204,7 +204,7 @@ export class ConnectionsCardComponent implements OnInit {
             this.otherUserProfile['connectionStatus'] = ''
             this.openSnackbar('Something went wrong please try again')
           }
-        }
+        },
       })
     }
   }
@@ -212,11 +212,11 @@ export class ConnectionsCardComponent implements OnInit {
   raiseTelemetry(userId: string, eDataId: string, subType?: string) {
     const edata: any = {
       type: WsEvents.EnumInteractTypes.CLICK,
-      id: eDataId
+      id: eDataId,
     }
     const objDetails = {
       id: userId,
-      type: 'User'
+      type: 'User',
     }
     const env = {
       module: WsEvents.EnumTelemetrymodules.NETWORK,

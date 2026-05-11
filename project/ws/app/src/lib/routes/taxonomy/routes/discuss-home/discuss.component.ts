@@ -5,7 +5,7 @@ import { ValueService } from '@sunbird-cb/utils-v2'
 import { map } from 'rxjs/operators'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { TaxonomyService } from '../../services/taxonomy.service'
-const APP_TAXONOMY = `/app/taxonomy/`
+const APP_TAXONOMY = '/app/taxonomy/'
 @Component({
     selector: 'app-discuss',
     templateUrl: './discuss.component.html',

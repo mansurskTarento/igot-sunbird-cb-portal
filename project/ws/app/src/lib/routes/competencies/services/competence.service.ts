@@ -9,7 +9,7 @@ import _ from 'lodash'
 // tslint:enable
 
 const API_ENDPOINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
   searchCompetency: 'apis/protected/v8/frac/searchNodes',
   filterByMappings: 'apis/protected/v8/frac/filterByMappings',
   // searchCompetency: '/apis/protected/v8/competency/searchCompetency',

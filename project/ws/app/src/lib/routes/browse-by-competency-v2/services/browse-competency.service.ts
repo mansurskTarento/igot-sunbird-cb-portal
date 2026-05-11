@@ -4,10 +4,10 @@ import { BehaviorSubject, Subject, Observable } from 'rxjs'
 import { finalize } from 'rxjs/operators'
 
 const API_ENDPOINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
   // GET_COMPETENCY_AREA: `/apis/protected/v8/frac/getAllNodes/competencyarea`,
-  SEARCH_COMPETENCY: `/apis/proxies/v8/searchBy/competency`,
-  SEARCH_COMPETENCY_V2: `/apis/proxies/v8/searchBy/v2/competency`,
+  SEARCH_COMPETENCY: '/apis/proxies/v8/searchBy/competency',
+  SEARCH_COMPETENCY_V2: '/apis/proxies/v8/searchBy/v2/competency',
 }
 
 @Injectable({

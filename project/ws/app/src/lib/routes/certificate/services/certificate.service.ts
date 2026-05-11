@@ -44,8 +44,6 @@ export class CertificateService {
     return this.apiService.post(option.url, option.data)
   }
 
-
-
   downloadCertificate(id: string): Observable<ServerResponse> {
     const option = {
       url: `${urls.LEARNER_PREFIX}${urls.DOWNLOAD_CERTIFICATE(id)}`,
@@ -98,7 +96,7 @@ export class CertificateService {
   consentSubmit(request: any): Observable<ServerResponse> {
     const option = {
       url: `${urls.PROXIES_PREFIX}${urls.CONSENT_API}`,
-      data: request
+      data: request,
     }
     return this.apiService.post(option.url, option.data)
   }

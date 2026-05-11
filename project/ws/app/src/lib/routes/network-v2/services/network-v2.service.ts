@@ -8,12 +8,12 @@ import _ from 'lodash'
 
 const API_ENDPOINTS = {
   getRecommendedUsers: '/apis/protected/v8/connections/v2/connections/recommended',
-  createConnection: `/apis/protected/v8/connections/v2/add/connection`,
-  updateConnection: `/apis/protected/v8/connections/v2/update/connection`,
-  connectionRequests: `/apis/protected/v8/connections/v2/connections/requested`,
-  connectionRequestsReceived: `/apis/protected/v8/connections/v2/connections/requests/received`,
-  connectionEstablished: `/apis/protected/v8/connections/v2/connections/established`,
-  getSuggestedUsers: `/apis/protected/v8/connections/v2/connections/suggests`,
+  createConnection: '/apis/protected/v8/connections/v2/add/connection',
+  updateConnection: '/apis/protected/v8/connections/v2/update/connection',
+  connectionRequests: '/apis/protected/v8/connections/v2/connections/requested',
+  connectionRequestsReceived: '/apis/protected/v8/connections/v2/connections/requests/received',
+  connectionEstablished: '/apis/protected/v8/connections/v2/connections/established',
+  getSuggestedUsers: '/apis/protected/v8/connections/v2/connections/suggests',
   // getUserdetailsV2FromRegistry: '/apis/protected/v8/user/profileRegistry/getUserRegistryByUser',
   getUserdetailsV2FromRegistry: '/apis/proxies/v8/api/user/v2/read',
 }

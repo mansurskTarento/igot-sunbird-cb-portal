@@ -147,7 +147,7 @@ export class EventDetailComponent implements OnInit {
                 request: {
                   retiredCoursesEnabled: true,
                   courseId: [tempEventData?.courseLinked],
-                }
+                },
               }
               const userId = this.configSvc.userProfile ? this.configSvc.userProfile.userId || '' : ''
               return this.eventSvc.getCourseEnrollData(userId, reqBody).pipe(
@@ -257,7 +257,7 @@ export class EventDetailComponent implements OnInit {
         if (eventReads) {
           preEventReadsDetails.push({
             documentName: this.uploadedFileName(eventReads),
-            url: eventReads
+            url: eventReads,
           })
         }
       })
@@ -269,7 +269,7 @@ export class EventDetailComponent implements OnInit {
         if (eventSummary) {
           postEventSummaryDetails.push({
             documentName: this.uploadedFileName(eventSummary),
-            url: eventSummary
+            url: eventSummary,
           })
         }
       })
@@ -308,7 +308,6 @@ export class EventDetailComponent implements OnInit {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
         }
       }
-
 
     }
     if (this.eventData && userId) {

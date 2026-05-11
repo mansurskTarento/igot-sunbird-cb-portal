@@ -22,8 +22,8 @@ import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
         ContentRatingV2DialogModule,
         TranslateModule.forChild(),
         MatIconModule,
-        PipePublicURLModule
+        PipePublicURLModule,
     ],
-    exports: [CourseCompletionDialogComponent]
+    exports: [CourseCompletionDialogComponent],
 })
 export class CourseCompletionDialogModule { }

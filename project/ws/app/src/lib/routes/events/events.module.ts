@@ -23,7 +23,6 @@ import {
 import { EventsCardComponent } from './components/events-card/events-card.component'
 import { TodayEventCardComponent } from './components/today-event-card/today-event-card.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
-import { RelatedPostsComponent } from './components/related-posts/related-posts.component'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { RightMenuCardComponent } from './components/right-menu-card/right-menu-card.component'
 import { PresenterCardComponent } from './components/presenter-card/presenter-card.component'
@@ -78,7 +77,6 @@ import { MatRadioModule } from '@angular/material/radio'
     EventsCardComponent,
     TodayEventCardComponent,
     EventDetailComponent,
-    RelatedPostsComponent,
     RightMenuCardComponent,
     PresenterCardComponent,
     EventPlayerComponent,
@@ -161,7 +159,7 @@ import { MatRadioModule } from '@angular/material/radio'
     ViewerResolve,
     EventResolve,
     DatePipe,
-    EventsEngagementComponent
+    EventsEngagementComponent,
   ],
 })
 export class EventsModule { }

@@ -1,15 +1,14 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core'
 import { ConfigurationsService, DomainConfService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { Router } from '@angular/router'
-import { DiscussUtilsService } from '@ws/app'
 /* tslint:disable */
 import _ from 'lodash'
 /* tslint:enable */
 @Component({
-    selector: 'ws-footer-section',
-    templateUrl: './footer-section.component.html',
-    styleUrls: ['./footer-section.component.scss'],
-    standalone: false
+  selector: 'ws-footer-section',
+  templateUrl: './footer-section.component.html',
+  styleUrls: ['./footer-section.component.scss'],
+  standalone: false
 })
 export class FooterSectionComponent implements OnInit, OnChanges {
   @Input() environment: any
@@ -18,7 +17,6 @@ export class FooterSectionComponent implements OnInit, OnChanges {
   isKbPortal: boolean = true
   constructor(
     private configSvc: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
     private router: Router,
     private langtranslations: MultilingualTranslationsService,
     private domainConfSvc: DomainConfService
@@ -121,7 +119,6 @@ export class FooterSectionComponent implements OnInit, OnChanges {
       headerOptions: false,
       bannerOption: true,
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     this.router.navigate(['/app/discussion-forum'], { queryParams: { page: 'home' }, queryParamsHandling: 'merge' })
   }

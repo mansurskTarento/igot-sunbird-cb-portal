@@ -119,7 +119,7 @@ import { SearchV3Module } from '../search-v3/search-v3.module'
     MatDividerModule,
     UserAutocompleteModule,
     TranslateModule,
-    SearchV3Module
+    SearchV3Module,
   ],
   exports: [ItemTileComponent, SearchInputComponent, SearchInputHomeComponent],
   providers: [],

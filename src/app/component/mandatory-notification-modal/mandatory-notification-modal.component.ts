@@ -38,7 +38,7 @@ export class MandatoryNotificationModalComponent {
         type: this.data?.notification?.message?.data?.primaryCategory || 'Comprehensive Assessment Program',
       },
       {
-        module: 'mandatory-notification'
+        module: 'mandatory-notification',
       }
     )
   }

@@ -284,7 +284,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
 
   // on change of subsector dropdown will call this method
   subSectorChange(event: any) {
-    
+
     const addFilter: any = {}
     if (event && event.value === gyaanConstants.allSubSector) {
       this.categories = this.categories
@@ -374,7 +374,7 @@ export class GyaanKarmayogiHomeComponent implements OnInit {
   }
 // viewAllSector method is used to move to view all page
   viewAllSector() {
-    this.router.navigate([`/app/amrit-gyaan-kosh/view-all`], {
+    this.router.navigate(['/app/amrit-gyaan-kosh/view-all'], {
       queryParams : {
         sector: this.selectedSector,
         // preview: true

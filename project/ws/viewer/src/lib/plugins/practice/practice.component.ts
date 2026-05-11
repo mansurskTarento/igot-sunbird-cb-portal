@@ -37,10 +37,10 @@ import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms
 
 export type FetchStatus = 'hasMore' | 'fetching' | 'done' | 'error' | 'none'
 @Component({
-    selector: 'viewer-plugin-practice',
-    templateUrl: './practice.component.html',
-    styleUrls: ['./practice.component.scss'],
-    standalone: false
+  selector: 'viewer-plugin-practice',
+  templateUrl: './practice.component.html',
+  styleUrls: ['./practice.component.scss'],
+  standalone: false
 })
 // ComponentCanDeactivate
 export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
@@ -155,12 +155,12 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   questionParagraph = ''
   resCollectionId = ''
   resBatchId = ''
-  url = new URL(window.location.href);
+  url = new URL(window.location.href)
   forPreview =
     ['public', 'author', 'editMode'].some(segment =>
       this.url.pathname.split('/').includes(segment)
     ) ||
-    this.url.searchParams.get('preview') === 'true';
+    this.url.searchParams.get('preview') === 'true'
 
   forCreatorMode = window.location.href.includes('editMode=true')
 
@@ -274,7 +274,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       email: [
         '', [
           Validators.required,
-          Validators.pattern(`^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`),
+          Validators.pattern('^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'),
         ],
       ],
     })
@@ -327,7 +327,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHander(e: any) {
     // or directly false
-    const confirmationMessage = `\o/`
+    const confirmationMessage = '\o/'
     if (this.viewState !== 'initial' && !this.isSubmitted) {
       e.returnValue = confirmationMessage
       return confirmationMessage
@@ -1218,7 +1218,7 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
     if (isPreAssessment) {
       if (this.identifier) {
-        const MIME_TYPE = "application/vnd.ekstep.content-collection"
+        const MIME_TYPE = 'application/vnd.ekstep.content-collection'
         this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
         // Also update the local hashmap and trigger milestone lock update
         setTimeout(() => {
@@ -1446,8 +1446,8 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
       this.questionAnswerHash,
       this.quizSvc.mtfSrc.getValue() as any,
     )
-    let language: string = this.viewerSvc.getResourceContentLanguage(this.identifier)
-    let assessmentChildren: any = _.map(this.paperSections, (ps: NSPractice.IPaperSection) => {
+    const language: string = this.viewerSvc.getResourceContentLanguage(this.identifier)
+    const assessmentChildren: any = _.map(this.paperSections, (ps: NSPractice.IPaperSection) => {
       return {
         identifier: ps.identifier,
         objectType: ps.objectType,

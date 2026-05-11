@@ -20,6 +20,7 @@ import { EditMetaV2Component } from './components/editor/edit-meta-v2/edit-meta-
 import { LiveHtmlEditorComponent } from './components/live-html-editor/live-html-editor.component'
 import { OptionsComponent } from './components/options/options.component'
 import { FormsModule } from '@angular/forms'
+import { MatChipsModule } from '@angular/material/chips'
 import { CompetencyAddPopUpComponent } from './components/competency-add-popup/competency-add-popup'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
@@ -54,6 +55,7 @@ export function EditorShareHttpLoaderFactory(http: HttpClient) {
         DisplayContentTypeModule,
         // CKEditorModule,
         FormsModule,
+        MatChipsModule,
         SharedModule,
         // AceEditorModule,
         CatalogSelectModule,
@@ -79,6 +81,6 @@ export function EditorShareHttpLoaderFactory(http: HttpClient) {
         CompetencyAddPopUpComponent,
         TranslateModule,
     ],
-    providers: [UploadService]
+    providers: [UploadService],
 })
 export class EditorSharedModule { }

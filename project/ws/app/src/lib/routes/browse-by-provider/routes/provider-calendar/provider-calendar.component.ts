@@ -15,8 +15,8 @@ export class ProviderCalendarComponent implements OnInit {
     sectionList: any
 
     titles = [
-      { title: `Providers`,
-        url: `/app/learn/browse-by/provider/all-providers`,
+      { title: 'Providers',
+        url: '/app/learn/browse-by/provider/all-providers',
         textClass: 'ws-mat-default-text',
         icon: '', disableTranslate: true,
       },

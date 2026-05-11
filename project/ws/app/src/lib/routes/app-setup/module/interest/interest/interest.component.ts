@@ -29,12 +29,12 @@ export class InterestComponent implements OnInit {
   pageNavbar: Partial<NsPage.INavBackground> = this.configSvc.pageNavBar
   alreadyAddedInterest = new Set<string>()
   constructor(private activateRoute: ActivatedRoute,
-    private contentSvc: WidgetContentService,
-    private playlistSvc: BtnPlaylistService,
-    private configSvc: ConfigurationsService,
-    private router: Router,
-    private interestSvc: InterestService,
-    private snackbar: MatSnackBar) { }
+              private contentSvc: WidgetContentService,
+              private playlistSvc: BtnPlaylistService,
+              private configSvc: ConfigurationsService,
+              private router: Router,
+              private interestSvc: InterestService,
+              private snackbar: MatSnackBar) { }
   @ViewChild('createPlaylistSuccess', { static: true }) createPlaylistSuccessMessage!: ElementRef<any>
   @ViewChild('createPlaylistError', { static: true }) createPlaylistErrorMessage!: ElementRef<any>
   playlistsSubscription: Subscription | null = null

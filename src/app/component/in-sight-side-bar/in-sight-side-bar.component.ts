@@ -4,7 +4,6 @@ import { HomePageService } from '../../services/home-page.service'
 import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
-import { DiscussUtilsService } from '@ws/app'
 import { TranslateService } from '@ngx-translate/core'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialog } from '@angular/material/dialog'
@@ -30,39 +29,39 @@ const noData = {
 }
 
 @Component({
-    selector: 'ws-in-sight-side-bar',
-    templateUrl: './in-sight-side-bar.component.html',
-    styleUrls: ['./in-sight-side-bar.component.scss'],
-    animations: [
-        trigger('collapse', [
-            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-            state('true', style({ height: '0', visibility: 'hidden' })),
-            // tslint:disable-next-line
-            transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
-            // tslint:disable-next-line
-            transition('true => false', animate(DEFAULT_DURATION + 'ms ease-out')),
-        ]),
-        trigger('collapseWeekly', [
-            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-            state('true', style({ height: '0', visibility: 'hidden' })),
-            // state('true', style({  position: 'absolute', width: '90%',marginRight: '16px', marginLeft:'16px',top: '-118%', zIndex: '9' })),
-            // tslint:disable-next-line: prefer-template
-            transition('false => true', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-in')),
-            // tslint:disable-next-line: prefer-template
-            transition('true => false', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-out')),
-        ]),
-        trigger('collapsDiscuss', [
-            state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
-            state('true', style({ height: '0', visibility: 'hidden' })),
-            // tslint:disable-next-line:max-line-length
-            // state('true', style({  position: 'absolute', width: '80%', transform: 'scaleY(0.7)',marginRight: '32px', marginLeft:'32px',top: '-300%', zIndex: '6' })),
-            // tslint:disable-next-line: prefer-template
-            transition('false => true', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-in')),
-            // tslint:disable-next-line: prefer-template
-            transition('true => false', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-out')),
-        ]),
-    ],
-    standalone: false
+  selector: 'ws-in-sight-side-bar',
+  templateUrl: './in-sight-side-bar.component.html',
+  styleUrls: ['./in-sight-side-bar.component.scss'],
+  animations: [
+    trigger('collapse', [
+      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
+      // tslint:disable-next-line
+      transition('false => true', animate(DEFAULT_DURATION + 'ms ease-in')),
+      // tslint:disable-next-line
+      transition('true => false', animate(DEFAULT_DURATION + 'ms ease-out')),
+    ]),
+    trigger('collapseWeekly', [
+      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
+      // state('true', style({  position: 'absolute', width: '90%',marginRight: '16px', marginLeft:'16px',top: '-118%', zIndex: '9' })),
+      // tslint:disable-next-line: prefer-template
+      transition('false => true', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-in')),
+      // tslint:disable-next-line: prefer-template
+      transition('true => false', animate(DEFAULT_WEEKLY_DURATION + 'ms ease-out')),
+    ]),
+    trigger('collapsDiscuss', [
+      state('false', style({ height: AUTO_STYLE, visibility: AUTO_STYLE })),
+      state('true', style({ height: '0', visibility: 'hidden' })),
+      // tslint:disable-next-line:max-line-length
+      // state('true', style({  position: 'absolute', width: '80%', transform: 'scaleY(0.7)',marginRight: '32px', marginLeft:'32px',top: '-300%', zIndex: '6' })),
+      // tslint:disable-next-line: prefer-template
+      transition('false => true', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-in')),
+      // tslint:disable-next-line: prefer-template
+      transition('true => false', animate(DEFAULT_DISCUSS_DURATION + 'ms ease-out')),
+    ]),
+  ],
+  standalone: false
 })
 
 export class InsightSideBarComponent implements OnInit, OnDestroy {
@@ -117,7 +116,6 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     private homePageSvc: HomePageService,
     private configSvc: ConfigurationsService,
     private activatedRoute: ActivatedRoute,
-    private discussUtilitySvc: DiscussUtilsService,
     private translate: TranslateService,
     private events: EventService,
     private snackBar: MatSnackBar,
@@ -201,7 +199,6 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.getInsights()
     this.getPendingRequestData()
     this.noDataValue = noData
-    // this.getDiscussionsData()
     // this.displayRandomlearnAdvisoryData()
 
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data.assessmentData) {
@@ -273,7 +270,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
               if (resp.result.data.length > 0) {
                 resp.result.data.forEach((user: any) => {
                   if (user['designation']) {
-                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    const designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
                     if (!designationsArray.includes(user['designation'].toLowerCase())) {
                       this.showUpdateDesignations = true
                       this.desigantionUnderApproval = user
@@ -285,7 +282,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
                   this.configSvc.userProfile.professionalDetails[0] && this.configSvc.userProfile.professionalDetails[0].designation) {
                   let designation = this.configSvc.userProfile.professionalDetails[0].designation
                   if (designation) {
-                    let designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
+                    const designationsArray = this.designationList.map((des: any) => des.name.toLowerCase())
                     if (!designationsArray.includes(designation.toLowerCase())) {
                       this.showUpdateDesignations = true
                     }
@@ -397,22 +394,6 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     )
   }
 
-  getDiscussionsData(): void {
-    this.discussion.loadSkeleton = true
-    this.homePageSvc.getDiscussionsData(this.userData.userName).subscribe(
-      (res: any) => {
-        this.discussion.loadSkeleton = false
-        this.discussion.data = res && res.latestPosts
-      },
-      (error: HttpErrorResponse) => {
-        if (!error.ok) {
-          this.discussion.loadSkeleton = false
-          this.discussion.error = true
-        }
-      }
-    )
-  }
-
   getPendingRequestData() {
     this.pendingRequestSkeleton = false
     // this.homePageSvc.getRecentRequests().subscribe(
@@ -447,7 +428,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   }
 
   goToActivity(_e: any) {
-    this.router.navigateByUrl(`app/person-profile/me?tab=1`)
+    this.router.navigateByUrl('app/person-profile/me?tab=1')
   }
 
   navigate() {
@@ -489,7 +470,6 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       headerOptions: false,
       bannerOption: true,
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     this.router.navigate(['/app/discussion-forum'], { queryParams: { page: 'home' }, queryParamsHandling: 'merge' })
   }
@@ -581,7 +561,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       {
         type: WsEvents.EnumInteractTypes.CLICK,
         subType: this.selectDesignation,
-        id: "designation-master-import",
+        id: 'designation-master-import',
       },
       {},
       {
@@ -591,7 +571,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   }
 
   submitProfile() {
-    let payload: any = {
+    const payload: any = {
       request: {
         userId: this.configSvc.unMappedUser.id,
         profileDetails: {

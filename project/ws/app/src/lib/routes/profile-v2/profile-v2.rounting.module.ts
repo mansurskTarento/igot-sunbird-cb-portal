@@ -22,7 +22,7 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'me'
+        redirectTo: 'me',
       },
       // {
       //   path: 'me',
@@ -46,7 +46,7 @@ const routes: Routes = [
         },
         resolve: {
           profile: profileResolver,
-          entries: profileEntriesResolver
+          entries: profileEntriesResolver,
         },
       },
       {
@@ -84,7 +84,7 @@ const routes: Routes = [
         },
         resolve: {
           profile: profileResolver,
-          entries: profileEntriesResolver
+          entries: profileEntriesResolver,
         },
       },
 
@@ -99,7 +99,7 @@ const routes: Routes = [
     Profilev2Resolve,
     Profilev2BadgesResolve,
     profileResolver,
-    profileEntriesResolver
+    profileEntriesResolver,
   ],
 })
 export class ProfileV2RoutingModule { }

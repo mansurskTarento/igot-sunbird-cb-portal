@@ -16,10 +16,10 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
-    selector: 'ws-competency-list',
-    templateUrl: './competency-list.component.html',
-    styleUrls: ['./competency-list.component.scss'],
-    standalone: false
+  selector: 'ws-competency-list',
+  templateUrl: './competency-list.component.html',
+  styleUrls: ['./competency-list.component.scss'],
+  standalone: false
 })
 
 export class CompetencyListComponent implements OnInit, OnDestroy {
@@ -177,7 +177,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
     let enrollmentMapData: any = {}
     const userId: any = this.configService && this.configService.userProfile && this.configService.userProfile.userId
-    const req = { "request": { "retiredCoursesEnabled": true, "status": "Completed" } }
+    const req = { 'request': { 'retiredCoursesEnabled': true, 'status': 'Completed' } }
     this.widgetEnrollService.fetchInternalEnrollmentData(userId, req)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe(

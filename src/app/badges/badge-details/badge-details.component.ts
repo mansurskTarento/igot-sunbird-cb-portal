@@ -2,7 +2,7 @@ import { Component, HostListener } from '@angular/core'
 import * as _ from 'lodash'
 import { BadgeService } from '../../services/badge.service'
 import { Router } from '@angular/router'
-import jsPDF from 'jspdf'
+import {jsPDF} from 'jspdf'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
     selector: 'app-badge-details',
@@ -33,8 +33,8 @@ export class BadgeDetailsComponent {
 
     const payload = {
       request: {
-        status: status
-      }
+        status,
+      },
     }
 
     this.userProfileService.fetchBadgeDetails(payload).subscribe(
@@ -55,7 +55,7 @@ export class BadgeDetailsComponent {
               title: detail.badgeTitle,
               level: detail.badgeSubTitle,
               courseId: badge?.courseId,
-              badgeId: detail?.badgeId
+              badgeId: detail?.badgeId,
             }))
           )
 
@@ -70,13 +70,12 @@ export class BadgeDetailsComponent {
             progress: badge.completionPercentage + '%',
             continue: badge.completionPercentage < 100 && badge.completionPercentage > 0,
             courseId: badge?.courseId,
-            endDate: badge?.badgeDetails_v1?.[0]?.badgeEarningDateTime
+            endDate: badge?.badgeDetails_v1?.[0]?.badgeEarningDateTime,
           }))
 
         }
 
-      },
-      (error) => {
+      }, error => {
         console.log('Badge API Error', error)
       }
     )
@@ -107,8 +106,8 @@ export class BadgeDetailsComponent {
     url: 'home',
     titles: [
       { title: 'sdadsad', url: '/app/person-profile', icon: 'person', noTranslate: true },
-      { title: 'My Badges', url: 'none', icon: '', noTranslate: true }
-    ]
+      { title: 'My Badges', url: 'none', icon: '', noTranslate: true },
+    ],
   }
   openMenuBadge: any = null
 
@@ -154,7 +153,7 @@ export class BadgeDetailsComponent {
 
     earnedBadges: [],
 
-    inProgress: []
+    inProgress: [],
   }
   downloadBadgePng(badgeData: any) {
     const payload = {
@@ -210,7 +209,7 @@ export class BadgeDetailsComponent {
         a.click()
         a.remove()
       },
-      error: (err) => {
+      error:err => {
         console.error('Download failed', err)
       },
     })

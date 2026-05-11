@@ -3,7 +3,7 @@ import { EventService, NsContent, WsEvents } from '@sunbird-cb/utils-v2'
 import * as fileSaver from 'file-saver'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ResourceDownloadHelperService {
   downloadInProgress: { [key: string]: boolean } = {}
@@ -18,10 +18,10 @@ export class ResourceDownloadHelperService {
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
         edata: {
-          type: "click",
+          subType,
+          type: 'click',
           id: content?.identifier || '',
           pageid: pageId,
-          subType: subType,
         },
         object: {
           id: content?.identifier,
@@ -33,7 +33,7 @@ export class ResourceDownloadHelperService {
       },
       pageContext: {
         pageId: `/app/toc/${content?.identifier}`,
-        module: 'Player'
+        module: 'Player',
       },
       from: '',
       to: 'Telemetry',
@@ -64,7 +64,7 @@ export class ResourceDownloadHelperService {
     }
 
     // Return a promise to track completion
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       // Use fetch API instead of HttpClient for better control over the download
       this.downloadInProgress[identifier] = true
 
@@ -103,7 +103,7 @@ export class ResourceDownloadHelperService {
    * Attempt download using XMLHttpRequest as a fallback
    */
   private downloadWithXHR(url: string, fileName: string): Promise<void> {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const xhr = new XMLHttpRequest()
       xhr.open('GET', url, true)
       xhr.responseType = 'blob'
@@ -226,7 +226,7 @@ export class ResourceDownloadHelperService {
         if (document.body.contains(iframe)) {
           document.body.removeChild(iframe)
         }
-      }, 1000)
+      },         1000)
     }
   }
 }

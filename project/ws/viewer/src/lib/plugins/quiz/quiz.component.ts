@@ -148,7 +148,7 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
       return
     }
     const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-      this.activatedRoute.snapshot.queryParams.batchId, this.identifier)
+                                                         this.activatedRoute.snapshot.queryParams.batchId, this.identifier)
     const collectionId = (resData && resData.courseId) ? resData.courseId : this.activatedRoute.snapshot.queryParams.collectionId ?
       this.activatedRoute.snapshot.queryParams.collectionId : ''
     const batchId = (resData && resData.batchId) ? resData.batchId : this.activatedRoute.snapshot.queryParams.batchId ?
@@ -243,7 +243,7 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
       }
       const dialogRef = this.dialog.open(SubmitQuizDialogComponent, {
         width: '350px',
-        data: { submissionState: this.submissionState, primaryCategory: this.quizJson.primaryCategory, },
+        data: { submissionState: this.submissionState, primaryCategory: this.quizJson.primaryCategory },
       })
 
       dialogRef.afterClosed().subscribe(result => {
@@ -513,7 +513,7 @@ export class QuizComponent implements OnInit, OnChanges, OnDestroy {
           id: this.identifier,
         },
         {
-          pageIdExt: `quiz`,
+          pageIdExt: 'quiz',
           module: WsEvents.EnumTelemetrymodules.LEARN,
         })
     }

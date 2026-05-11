@@ -50,7 +50,7 @@ export const environment: IEnvironment = {
   compentencyVersionKey: (window as { [key: string]: any })['env']['compentencyVersionKey'] || '',
   cbcOrg: (window as { [key: string]: any })['env']['cbcOrg'] || '',
   portalsForNotifications: (((window as { [key: string]: any })['env']['portalsForNotifications'] || {})) || {},
-  publicContentSurveyId: (window as { [key: string]: any })['env']['publicContentSurveyId'] || ''
+  publicContentSurveyId: (window as { [key: string]: any })['env']['publicContentSurveyId'] || '',
 }
 interface IEnvironment {
   name: string,

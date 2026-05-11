@@ -12,7 +12,7 @@ const routes: Routes = [
         data: {
             module: 'National Learning Week',
             pageId: 'app/learn/nlw/karmayogi-saptah',
-            pageKey: 'karmayogi-saptah'
+            pageKey: 'karmayogi-saptah',
         },
         resolve: {
             formData: NationalLearningWeekFormService,
@@ -28,9 +28,9 @@ const routes: Routes = [
             pageKey: 'sadhana-saptah',
         },
         resolve: {
-            formData: NationalLearningWeekFormService
+            formData: NationalLearningWeekFormService,
         },
-    }
+    },
 ]
 
 @NgModule({

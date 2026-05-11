@@ -19,6 +19,6 @@ import { MatCardModule } from '@angular/material/card'
     WidgetResolverModule,
     MatCardModule
   ],
-  exports: [HomeOtherPortalComponent]
+  exports: [HomeOtherPortalComponent],
 })
 export class HomeOtherPortalModule { }

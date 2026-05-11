@@ -16,7 +16,7 @@ resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
 ): Observable<IResolveResponse<any>> {
-    const requestUrl: any = `/apis/proxies/v8/playList/v2/search`
+    const requestUrl: any = '/apis/proxies/v8/playList/v2/search'
     const requestData: any = {
       'filterCriteriaMap': {
         'type': 'program',

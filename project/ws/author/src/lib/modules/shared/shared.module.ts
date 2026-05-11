@@ -195,6 +195,6 @@ export function ShareHttpLoaderFactory(http: HttpClient) {
         NotificationService,
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: {} },
-    ]
+    ],
 })
 export class SharedModule { }

@@ -114,7 +114,7 @@ export function CompetencieHttpLoaderFactory(http: HttpClient) {
         InitResolver,
         CompetenceAssessmentService,
     ],
-    exports: []
+    exports: [],
 })
 export class CompetencieModule {
 

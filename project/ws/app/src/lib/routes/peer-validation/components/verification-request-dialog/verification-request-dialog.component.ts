@@ -49,7 +49,7 @@ export class VerificationRequestDialogComponent {
         isReviewSubmitted: this.data.isReviewSubmitted,
         surveyEndDate: this.data.surveyEndDate,
         notificationId: this.data.notificationId || '',
-        createdAt: this.data.createdAt || ''
+        createdAt: this.data.createdAt || '',
       },
     })
   }
@@ -62,7 +62,7 @@ export class VerificationRequestDialogComponent {
             this.peerValidationService.dashboardRefresh$.next()
             this.dialogRef.close('ignored')
           },
-          error: () => this.dialogRef.close()
+          error: () => this.dialogRef.close(),
         })
     } else {
       this.dialogRef.close()

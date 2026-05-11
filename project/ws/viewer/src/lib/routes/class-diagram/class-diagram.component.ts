@@ -76,8 +76,8 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier)

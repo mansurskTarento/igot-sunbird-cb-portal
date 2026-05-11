@@ -47,7 +47,7 @@ export function NotificationHttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   providers: [NotificationApiService, NotificationService, NotificationsService, LibNotificationsService],
 })

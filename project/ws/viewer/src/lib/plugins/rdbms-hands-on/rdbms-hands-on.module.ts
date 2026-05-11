@@ -58,6 +58,6 @@ import { MatTabsModule } from '@angular/material/tabs'
     ],
     exports: [
         RdbmsHandsOnComponent,
-    ]
+    ],
 })
 export class RdbmsHandsOnModule { }

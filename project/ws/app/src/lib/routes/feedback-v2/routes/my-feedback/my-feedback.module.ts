@@ -78,6 +78,6 @@ import { MatBadgeModule } from '@angular/material/badge'
         BtnContentFeedbackV2Module,
         MyFeedbackRoutingModule,
     ],
-    providers: [MyFeedbackService, FeedbackSummaryResolver, FeedbackConfigResolver]
+    providers: [MyFeedbackService, FeedbackSummaryResolver, FeedbackConfigResolver],
 })
 export class MyFeedbackModule { }

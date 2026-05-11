@@ -72,4 +72,3 @@ constructor(private http: HttpClient) { }
     return this.http.get<any>(API_END_POINTS.getFormV2ByID(formid))
   }
 }
-

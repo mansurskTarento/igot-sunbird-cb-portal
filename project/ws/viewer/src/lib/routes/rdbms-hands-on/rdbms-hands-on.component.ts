@@ -68,8 +68,8 @@ export class RdbmsHandsOnComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.rDbmsHandsOnData) {
       await this.contentSvc.continueLearning(this.rDbmsHandsOnData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.rDbmsHandsOnData) {
       await this.contentSvc.continueLearning(this.rDbmsHandsOnData.identifier)

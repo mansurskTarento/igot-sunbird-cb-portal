@@ -103,6 +103,6 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         BtnLinkedinShareModule,
         BtnFacebookShareModule,
         BtnTwitterShareModule,
-    ]
+    ],
 })
 export class PlaylistModule { }

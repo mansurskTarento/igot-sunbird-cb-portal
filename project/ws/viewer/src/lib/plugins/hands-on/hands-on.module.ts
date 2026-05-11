@@ -33,6 +33,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
     ],
     exports: [
         HandsOnComponent,
-    ]
+    ],
 })
 export class HandsOnModule { }

@@ -29,6 +29,6 @@ import { AuthViewerModule } from '../../../../../../modules/viewer/viewer.module
         HorizontalScrollerModule,
     ],
     providers: [WebStoreService],
-    exports: [AddWebPagesComponent]
+    exports: [AddWebPagesComponent],
 })
 export class WebPageModule { }

@@ -1,8 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Subscription } from 'rxjs'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService } from '@sunbird-cb/toc'
@@ -24,9 +23,6 @@ export class WebModuleComponent implements OnInit, OnDestroy {
   oldData: NsContent.IContent | null = null
   alreadyRaised = false
   webmoduleManifest: any
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private contentSvc: WidgetContentService,
@@ -46,9 +42,6 @@ export class WebModuleComponent implements OnInit, OnDestroy {
           this.webmoduleData = data
           if (this.alreadyRaised && this.oldData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.oldData)
-          }
-          if (this.webmoduleData) {
-            this.formDiscussionForumWidget(this.webmoduleData)
           }
           if (!this.forPreview && this.webmoduleData && this.webmoduleData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(this.webmoduleData.identifier)
@@ -113,20 +106,6 @@ export class WebModuleComponent implements OnInit, OnDestroy {
     return manifestFile
   }
 
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
-  }
   raiseEvent(state: WsEvents.EnumTelemetrySubType, data: NsContent.IContent) {
     // if (this.forPreview) {
     //   return

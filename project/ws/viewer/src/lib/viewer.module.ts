@@ -119,7 +119,7 @@ import { MarkdownModule } from 'ngx-markdown'
     FormsModule,
     MatSelectModule,
     MatFormFieldModule,
-    MarkdownModule.forRoot()
+    MarkdownModule.forRoot(),
   ],
   providers: [PdfScormDataService, DomainConfService],
 })

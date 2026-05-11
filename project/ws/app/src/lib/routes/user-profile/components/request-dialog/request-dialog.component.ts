@@ -34,9 +34,9 @@ export function forbiddenNamesValidatorPosition(optionsArray: any): ValidatorFn 
 })
 export class RequestDialogComponent implements OnInit {
   requestForm!: UntypedFormGroup
-  namePatern = `[a-zA-Z\\s\\']{1,32}$`
-  customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`
-  customCharsPatternOrg = `^[a-zA-Z0-9 \\w\-\&,\(\)]*$`
+  namePatern = "[a-zA-Z\\s\\']{1,32}$"
+  customCharsPattern = '^[a-zA-Z0-9 \\w\-\&\(\)]*$'
+  customCharsPatternOrg = '^[a-zA-Z0-9 \\w\-\&,\(\)]*$'
   confirm = false
   disableBtn = false
   requestType: any

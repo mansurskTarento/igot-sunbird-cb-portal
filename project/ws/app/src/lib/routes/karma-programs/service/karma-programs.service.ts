@@ -9,9 +9,9 @@ import { FormExtService } from '../../../routes/services/form-ext.service'
 // tslint:enable
 
 const API_END_POINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
-  PLAYLIST_SEARCH: `apis/proxies/v8/playList/read`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  TRENDING_CONTENT_SEARCH: 'apis/proxies/v8/trending/content/search',
+  PLAYLIST_SEARCH: 'apis/proxies/v8/playList/read',
 }
 
 @Injectable({

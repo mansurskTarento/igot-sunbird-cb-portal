@@ -6,7 +6,6 @@ import { AccessControlService } from '@ws/author'
 import {
   NsContent,
   IWidgetsPlayerMediaData,
-  NsDiscussionForum,
 } from '@sunbird-cb/collection'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
@@ -31,9 +30,6 @@ export class AudioComponent implements OnInit, OnDestroy {
   audioData: NsContent.IContent | null = null
   widgetResolverAudioData: NsWidgetResolver.IRenderConfigWithTypedData<
     IWidgetsPlayerMediaData
-  > | null = null
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
   > | null = null
   channelId: any
   constructor(
@@ -60,9 +56,6 @@ export class AudioComponent implements OnInit, OnDestroy {
       // to do make sure the data updates for two consecutive resource of same mimeType
       this.viewerDataSubscription = this.activatedRoute.data.subscribe(data => {
         this.audioData = data.content.data
-        if (this.audioData) {
-          this.formDiscussionForumWidget(this.audioData)
-        }
         this.widgetResolverAudioData = this.initWidgetResolverAudioData()
         if (this.activatedRoute.snapshot.queryParams.collectionId) {
           this.widgetResolverAudioData.widgetData.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
@@ -115,9 +108,6 @@ export class AudioComponent implements OnInit, OnDestroy {
         async data => {
           this.widgetResolverAudioData = null
           this.audioData = data.content.data
-          if (this.audioData) {
-            this.formDiscussionForumWidget(this.audioData)
-          }
           if (this.audioData && this.audioData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(this.audioData.identifier)
           }
@@ -233,21 +223,6 @@ export class AudioComponent implements OnInit, OnDestroy {
         collectionId: '',
       },
       widgetHostClass: 'video-full',
-    }
-  }
-
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
     }
   }
 

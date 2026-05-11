@@ -5,7 +5,7 @@ import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import * as _ from 'lodash'
 const API_END_POINTS = {
-    FORM_READ: `/apis/v1/form/read`,
+    FORM_READ: '/apis/v1/form/read',
 }
 
 @Injectable({
@@ -40,6 +40,5 @@ export class GlobalService {
     formReadData(request: any): Observable<any> {
         return this.http.post<any>(API_END_POINTS.FORM_READ, request)
     }
-
 
 }

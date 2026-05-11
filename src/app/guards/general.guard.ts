@@ -63,7 +63,7 @@ export class GeneralGuard {
       // } else {
       //   redirectUrl = document.baseURI
       // }
-      try { //NOSONAR
+      try { // NOSONAR
         Promise.resolve(this.authSvc.loginV2('S', refAppend))
         // return true
       } catch (e) {
@@ -114,7 +114,7 @@ export class GeneralGuard {
     }
     // Check if the user has roles & activities and topic in the profile
     if (!this.checkWelcome()) {
-      return this.router.parseUrl(`/app/setup`)
+      return this.router.parseUrl('/app/setup')
     }
 
     if (!this.configSvc.isActive) {

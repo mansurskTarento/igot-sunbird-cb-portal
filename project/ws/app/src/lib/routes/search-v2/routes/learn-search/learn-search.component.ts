@@ -377,7 +377,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       'courseCategory',
       'secureSettings',
       'languageMapV1',
-      'language'
+      'language',
     ]
     this.newQueryParam = data
     let modifiedDataCount = 0
@@ -456,10 +456,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.events.raiseInteractTelemetry(
         {
           type: 'click',
-          subType: `card-learnSearch`,
+          subType: 'card-learnSearch',
           // id: `${_.camelCase(content.primaryCategory)}-card`,
           id: `course-card-${i + 1}`,
-          pageid: `/app/globalsearch_${content.primaryCategory}-card`
+          pageid: `/app/globalsearch_${content.primaryCategory}-card`,
         },
         {
           id: content.identifier || '',

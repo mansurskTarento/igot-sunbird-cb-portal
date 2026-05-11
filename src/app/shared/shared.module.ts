@@ -1,19 +1,9 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
 import { DownloadAppComponent } from '../component/download-app/download-app.component'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-
-import { MatButtonModule } from '@angular/material/button'
-import { MatCheckboxModule } from '@angular/material/checkbox'
-import { MatFormFieldModule } from '@angular/material/form-field'
-import { MatIconModule } from '@angular/material/icon'
-import { MatInputModule } from '@angular/material/input'
-import { MatListModule } from '@angular/material/list'
-import { MatRadioModule } from '@angular/material/radio'
-import { MatTooltipModule } from '@angular/material/tooltip'
 import { HttpClient } from '@angular/common/http'
 
 // tslint:disable-next-line:function-name
@@ -23,23 +13,14 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @NgModule({
   declarations: [
-    DownloadAppComponent
+    DownloadAppComponent,
   ],
   imports: [
     CommonModule,
-    FormsModule,
     TranslateModule.forChild({}),
-    MatButtonModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatRadioModule,
-    MatTooltipModule
   ],
   exports: [
-    DownloadAppComponent
+    DownloadAppComponent,
   ],
 })
 export class SharedModule {

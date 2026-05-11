@@ -7,21 +7,21 @@ import { NetworkingService } from '../../services/networking.service'
 import { connectionUpdates } from '../../models/network-v3.model'
 
 @Component({
-    selector: 'ws-app-network-home',
-    templateUrl: './network-home.component.html',
-    styleUrls: ['./network-home.component.scss'],
-    standalone: false
+  selector: 'ws-app-network-home',
+  templateUrl: './network-home.component.html',
+  styleUrls: ['./network-home.component.scss'],
+  standalone: false
 })
 export class NetworkHomeComponent implements OnInit {
   //#region (global variables)
-  connectionRequestsList: any[] = [];
-  connectionsLoading: boolean = false;
-  connectionRequestsCount: number = 0;
+  connectionRequestsList: any[] = []
+  connectionsLoading: boolean = false
+  connectionRequestsCount: number = 0
   peopleYouMayKnowList: any[] = []
-  peopleYouMayKnowCount: number = 0;
-  suggestionsLoading: boolean = false;
+  peopleYouMayKnowCount: number = 0
+  suggestionsLoading: boolean = false
   mentorSuggestionsList: any[] = []
-  mentorsLoading: boolean = false;
+  mentorsLoading: boolean = false
   sliderConfig = {
     showNavs: true,
     showDots: true,
@@ -31,7 +31,7 @@ export class NetworkHomeComponent implements OnInit {
     responsive: {
       dotsAlign: true,
       showDots: true,
-    }
+    },
   }
 
   //#endregion (global variables)
@@ -66,7 +66,7 @@ export class NetworkHomeComponent implements OnInit {
         this.connectionRequestsCount = _.get(response, 'count', 0)
         const connectionsUpdate: connectionUpdates = {
           routeId: 'connections',
-          showUpdate: this.connectionRequestsList.length > 0 ? true : false
+          showUpdate: this.connectionRequestsList.length > 0 ? true : false,
         }
         this.networkingService.sendConnectionUpdates(connectionsUpdate)
       },
@@ -130,7 +130,7 @@ export class NetworkHomeComponent implements OnInit {
           break
         case 'peopleYouMayKnow':
           const queryParams = {
-            type
+            type,
           }
           this.router.navigate(['/app/network-v2/recommendations/all'], { queryParams })
           break
@@ -144,11 +144,11 @@ export class NetworkHomeComponent implements OnInit {
   get showEmptyData(): boolean {
     return (
       this.connectionRequestsList.length === 0 &&
-      this.connectionsLoading === false &&
+      !this.connectionsLoading &&
       this.peopleYouMayKnowList.length === 0 &&
-      this.suggestionsLoading === false &&
+      !this.suggestionsLoading &&
       this.mentorSuggestionsList.length === 0 &&
-      this.mentorsLoading === false
+      !this.mentorsLoading
     )
   }
 

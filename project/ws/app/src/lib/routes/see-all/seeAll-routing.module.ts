@@ -57,7 +57,7 @@ const routes: Routes = [
       pageId: 'app/amrit-gyaan-kosh',
     },
     resolve: {
-      pageData: FormDataResolverService
+      pageData: FormDataResolverService,
     },
   },
 ]

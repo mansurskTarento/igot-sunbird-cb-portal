@@ -38,6 +38,6 @@ import { QuizQusetionsComponent } from './components/quiz/quiz-questions/quiz-qu
         AuthViewerModule,
     ],
     providers: [QuizStoreService],
-    exports: [QuizComponent, QuizQusetionsComponent]
+    exports: [QuizComponent, QuizQusetionsComponent],
 })
 export class QuizModule { }

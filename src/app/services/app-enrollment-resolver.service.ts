@@ -5,14 +5,14 @@ import { ConfigurationsService, DataTransferService, IResolveResponse } from '@s
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
 
-const PROXIES_V8 = '/apis/proxies/v8';
-const  ENROLL_CONTENT_DATA= `${PROXIES_V8}/learner/course/v4/user/enrollment/details`
+const PROXIES_V8 = '/apis/proxies/v8'
+const  ENROLL_CONTENT_DATA = `${PROXIES_V8}/learner/course/v4/user/enrollment/details`
 @Injectable()
 export class AppEnrollmentResolverService
      {
     constructor(private configSvc: ConfigurationsService,
-        private http: HttpClient,
-        private dataTransfer: DataTransferService,
+                private http: HttpClient,
+                private dataTransfer: DataTransferService,
         ) {}
 
     resolve(
@@ -23,26 +23,25 @@ export class AppEnrollmentResolverService
         if (this.configSvc.userProfile) {
           userId = this.configSvc.userProfile.userId || ''
         }
-        
-        
+
         if (window.location.href.includes('/public/') || window.location.href.includes('&preview=true')) {
             return of({ error: null, data: null })
         }
-        let enrollData = this.dataTransfer.getEnrollData()
-        if(enrollData && enrollData.length) {
-            return of({ error: null, data: {courses: enrollData} })
-        } else {
-            let request: any = {
-                "request": {
-                    "retiredCoursesEnabled": true,
-                    "courseId": [_route.queryParams.collectionId],
-                }
+        const enrollData = this.dataTransfer.getEnrollData()
+        if (enrollData && enrollData.length) {
+            return of({ error: null, data: { courses: enrollData } })
+        }  {
+            const request: any = {
+                'request': {
+                    'retiredCoursesEnabled': true,
+                    'courseId': [_route.queryParams.collectionId],
+                },
               }
-            return  this.http.post(`${ENROLL_CONTENT_DATA}/${userId}`,request).pipe(
-                map((rData: any) => 
+            return  this.http.post(`${ENROLL_CONTENT_DATA}/${userId}`, request).pipe(
+                map((rData: any) =>
                     {
-                        
-                        if(rData.result && rData.result.courses && rData.result.courses.length) {
+
+                        if (rData.result && rData.result.courses && rData.result.courses.length) {
                             this.dataTransfer.setEnrollData(rData.result.courses)
                         }
                         return { data: rData.result, error: null }

@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs'
 import { NsAnalytics } from '../models/learning-analytics.model'
 
-const PROTECTED_SLAG_V8 = `/apis/proxies/v8/LA/api`
+const PROTECTED_SLAG_V8 = '/apis/proxies/v8/LA/api'
 
 const LA_API_END_POINTS = {
   TIME_SPENT: `${PROTECTED_SLAG_V8}/la/timespent`,

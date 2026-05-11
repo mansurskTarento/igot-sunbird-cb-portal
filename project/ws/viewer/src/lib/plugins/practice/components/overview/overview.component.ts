@@ -131,7 +131,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
           if (response) {
             this.canAttempt = response
           }
-        }, (err: any) => {
+        },                                           (err: any) => {
           this.quizSvc.checkAlreadySubmitAssessment.next(false)
           this.handleCanAttendError(err)
         })
@@ -146,7 +146,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
           if (response) {
             this.canAttempt = response
           }
-        }, (err: any) => {
+        },                                             (err: any) => {
           this.quizSvc.checkAlreadySubmitAssessment.next(false)
           this.handleCanAttendError(err)
         })

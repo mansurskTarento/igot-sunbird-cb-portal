@@ -1,11 +1,11 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Competency } from '../../../models/profile-revamp.model';
+import { Component, Input, OnInit } from '@angular/core'
+import { Competency } from '../../../models/profile-revamp.model'
 
 @Component({
-    selector: 'ws-app-competencies',
-    templateUrl: './competencies.component.html',
-    styleUrls: ['./competencies.component.scss'],
-    standalone: false
+  selector: 'ws-app-competencies',
+  templateUrl: './competencies.component.html',
+  styleUrls: ['./competencies.component.scss'],
+  standalone: false
 })
 export class CompetenciesComponent implements OnInit {
   //#region (global variable)
@@ -17,8 +17,8 @@ export class CompetenciesComponent implements OnInit {
 
   constructor() { }
 
-  ngOnInit() { 
-    if(this.competencies &&this.competencies.length > 0) {
+  ngOnInit() {
+    if (this.competencies && this.competencies.length > 0) {
       this.selectCompetency(0)
     }
   }
@@ -26,13 +26,13 @@ export class CompetenciesComponent implements OnInit {
   selectCompetency(index: number): void {
     this.selectedCompetencyIndex = index
     this.competencies.forEach((comp, i) => {
-      comp.active = i === index;
-    });
-    this.viewAll = false;
+      comp.active = i === index
+    })
+    this.viewAll = false
   }
-  
+
   toggleView(): void {
-    this.viewAll = !this.viewAll;
+    this.viewAll = !this.viewAll
   }
 
 }

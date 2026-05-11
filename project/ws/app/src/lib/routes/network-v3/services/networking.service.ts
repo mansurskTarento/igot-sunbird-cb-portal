@@ -1,11 +1,11 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import * as _ from 'lodash';
-import { connectionUpdates } from '../models/network-v3.model';
+import { HttpClient } from '@angular/common/http'
+import { Injectable } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { BehaviorSubject, Observable } from 'rxjs'
+import { map } from 'rxjs/operators'
+import * as _ from 'lodash'
+import { connectionUpdates } from '../models/network-v3.model'
 
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
@@ -22,7 +22,7 @@ const API_END_POINTS = {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class NetworkingService {
 
@@ -45,7 +45,7 @@ export class NetworkingService {
 
   configulreProfileDetails(requestBody: any) {
     if (this.configSvc && this.configSvc.userProfileV2) {
-      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '');
+      this.configSvc.userProfileV2['profileBannerUrl'] = _.get(requestBody, 'result.response.profileDetails.profileBannerUrl', '')
     }
   }
 
@@ -54,35 +54,35 @@ export class NetworkingService {
   }
 
   getQueryString(pageNo?: number, pageSize?: number): string {
-    let params: string[] = [];
+    const params: string[] = []
     if (pageNo !== undefined && pageNo !== null) {
-      params.push(`pageNo=${pageNo}`);
+      params.push(`pageNo=${pageNo}`)
     }
     if (pageSize !== undefined && pageSize !== null) {
-      params.push(`pageSize=${pageSize}`);
+      params.push(`pageSize=${pageSize}`)
     }
-    return params.length ? `?${params.join('&')}` : '';
+    return params.length ? `?${params.join('&')}` : ''
   }
 
   getConnectionRequests(pageNo?: number, pageSize?: number): Observable<any> {
-    const queryString = this.getQueryString(pageNo, pageSize);
+    const queryString = this.getQueryString(pageNo, pageSize)
     return this.http.get<any>(`${API_END_POINTS.GET_CONNECTION_REQUESTS}${queryString}`).pipe(
       map(response => {
 
         const modifiedResponse =  {
           data: this.formatedConnectionRequests(_.get(response, 'result.data')),
-          count: _.get(response, 'result.count', 0)
-        };
-        return modifiedResponse;
+          count: _.get(response, 'result.count', 0),
+        }
+        return modifiedResponse
       })
     )
   }
 
   formatedConnectionRequests(requests: any[]): any[] {
-    if(requests) {
+    if (requests) {
       requests.forEach((request: any) => {
-        if(request.createdAt) {
-          request['timeAgo'] = this.getTimeAgo(request.createdAt);
+        if (request.createdAt) {
+          request['timeAgo'] = this.getTimeAgo(request.createdAt)
         }
       })
     }
@@ -90,29 +90,29 @@ export class NetworkingService {
   }
 
   getTimeAgo(recievedAt: string): string {
-    const recievedDate = new Date(recievedAt);
-    if (isNaN(recievedDate.getTime())) return '';
+    const recievedDate = new Date(recievedAt)
+    if (isNaN(recievedDate.getTime())) return ''
 
-    const now = Date.now();
-    const diff = Math.max(0, now - recievedDate.getTime());
+    const now = Date.now()
+    const diff = Math.max(0, now - recievedDate.getTime())
 
-    const seconds = Math.floor(diff / 1000);
-    if (seconds < 60) return `${seconds}s`;
+    const seconds = Math.floor(diff / 1000)
+    if (seconds < 60) return `${seconds}s`
 
-    const minutes = Math.floor(seconds / 60);
-    if (minutes < 60) return `${minutes}m`;
+    const minutes = Math.floor(seconds / 60)
+    if (minutes < 60) return `${minutes}m`
 
-    const hours = Math.floor(minutes / 60);
-    if (hours < 24) return `${hours}h`;
+    const hours = Math.floor(minutes / 60)
+    if (hours < 24) return `${hours}h`
 
-    const days = Math.floor(hours / 24);
-    if (days < 30) return `${days}d`;
+    const days = Math.floor(hours / 24)
+    if (days < 30) return `${days}d`
 
-    const months = Math.floor(days / 30);
-    if (months < 12) return `${months}m`;
+    const months = Math.floor(days / 30)
+    if (months < 12) return `${months}m`
 
-    const years = Math.floor(months / 12);
-    return `${years}y`;
+    const years = Math.floor(months / 12)
+    return `${years}y`
   }
 
   getRecommendedUsers(formBody: any): Observable<any> {
@@ -124,12 +124,12 @@ export class NetworkingService {
   }
 
   getConnections(pageNo?: number, pageSize?: number): Observable<any> {
-    const queryString = this.getQueryString(pageNo, pageSize);
+    const queryString = this.getQueryString(pageNo, pageSize)
     return this.http.get<any>(`${API_END_POINTS.GET_CONNECTIONS}${queryString}`)
   }
 
   getRequestSent(pageNo?: number, pageSize?: number): Observable<any> {
-    const queryString = this.getQueryString(pageNo, pageSize);
+    const queryString = this.getQueryString(pageNo, pageSize)
     return this.http.get<any>(`${API_END_POINTS.GET_REQUESTS_SENT}${queryString}`)
   }
 

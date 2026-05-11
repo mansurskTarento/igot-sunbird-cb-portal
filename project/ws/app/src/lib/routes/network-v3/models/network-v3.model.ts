@@ -9,18 +9,18 @@ export interface routesData {
 }
 
 export interface PageChangeEmitter {
-  currentPage: number;
-  previousPage: number;
-  limit: number;
+  currentPage: number
+  previousPage: number
+  limit: number
 }
 
 export interface tabDetails {
-  lable: string;
-  key: string;
-  recordsCount: number;
+  lable: string
+  key: string
+  recordsCount: number
 }
 
 export interface connectionUpdates {
-  routeId: string;
-  showUpdate: boolean;
+  routeId: string
+  showUpdate: boolean
 }

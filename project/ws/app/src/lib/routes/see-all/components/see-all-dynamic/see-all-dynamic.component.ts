@@ -10,7 +10,7 @@ import { MultilingualTranslationsService, ValueService } from '@sunbird-cb/utils
 
 const configMap: any = {
   extContent: {
-    name: "Cohort Insights",
+    name: 'Cohort Insights',
     url: '/apis/proxies/v8/cios/v1/search/content',
     request: {
       filterCriteriaMap: {
@@ -21,30 +21,30 @@ const configMap: any = {
       facets: ['topic'],
       orderBy: 'createdOn',
       orderDirection: 'desc',
-      searchString: ''
-    }
+      searchString: '',
+    },
   },
   extContentAssigned: {
-    name: "Assigned Contents",
+    name: 'Assigned Contents',
     url: 'apis/proxies/v8/user/v1/assigned/externalcourses',
     isGetApi: false,  // POST API but with local search (no pagination)
     isLocalSearch: true,  // Flag to indicate local search only
     request: {
-      "partnerId": ""
-    }
-  }
+      'partnerId': '',
+    },
+  },
 }
 @Component({
-    selector: 'ws-app-see-all-dynamic',
-    templateUrl: './see-all-dynamic.component.html',
-    styleUrls: ['./see-all-dynamic.component.scss'],
-    standalone: false
+  selector: 'ws-app-see-all-dynamic',
+  templateUrl: './see-all-dynamic.component.html',
+  styleUrls: ['./see-all-dynamic.component.scss'],
+  standalone: false
 })
 export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewChecked {
   colors = [
     '#EF941D', '#F97440', '#35B5B0', '#9988FF', '#816FEC',
-    '#254092', '#926525', '#4F72DF'
-  ];
+    '#254092', '#926525', '#4F72DF',
+  ]
   headerBgColor = '#1a4ca1'
   contentItems: any[] = []
   originalContentItems: any[] = []
@@ -150,7 +150,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       {
         title: 'All Providers', url: 'none',
       },
-      { title: this.contentName, url: 'none', icon: '' }
+      { title: this.contentName, url: 'none', icon: '' },
     ]
   }
 
@@ -252,8 +252,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
           this.applySort()
           this.loading = false
           this.isLoadingMore = false
-        },
-        (_err) => {
+        }, _err => {
           if (!isLoadMore) {
             this.contentItems = []
             this.originalContentItems = []
@@ -299,8 +298,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
           order: index,  // Use array index as order
           values: values.map((item: any) => ({
             name: _.get(item, 'value', ''),  // API returns 'value', component expects 'name'
-            count: _.get(item, 'count', 0)
-          }))
+            count: _.get(item, 'count', 0),
+          })),
         })
       }
     })
@@ -323,8 +322,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
           order: filterConfig.length + transformedFacets.length,
           values: values.map((item: any) => ({
             name: _.get(item, 'value', ''),
-            count: _.get(item, 'count', 0)
-          }))
+            count: _.get(item, 'count', 0),
+          })),
         })
       }
     })
@@ -347,7 +346,6 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       .trim()
   }
 
-
   onFilterApplied(filters: any) {
     this.appliedFilters = filters
     // Apply filters and refresh content
@@ -369,17 +367,17 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       filterCriteriaMap: {
         isActive: true,
         liveCoursesCount: {
-          '>=': '1'
+          '>=': '1',
         },
         isTrainingInstitution: false,
         providerType: ['external', 'internal'],
-        id: this.filterProvider
+        id: this.filterProvider,
       },
       pageNumber: 0,
       pageSize: 10,
       facets: ['contentPartnerName'],
       orderBy: 'createdOn',
-      orderDirection: 'desc'
+      orderDirection: 'desc',
     }
 
     this.seeAllService
@@ -500,7 +498,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       this.router.navigate(
         [`app/toc/ext/${content.contentId}`])
     } else {
-      let urlData = await this.contSvc.getResourseLink(content)
+      const urlData = await this.contSvc.getResourseLink(content)
       const queryParams = {
         ...urlData.queryParams,
       }

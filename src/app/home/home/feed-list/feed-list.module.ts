@@ -29,6 +29,6 @@ import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, Content
     ContentStripWithTabsPillsModule,
     ContentStripWithTabsPillsNewModule,
   ],
-  exports: [FeedListComponent]
+  exports: [FeedListComponent],
 })
 export class FeedListModule { }

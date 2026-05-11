@@ -77,6 +77,6 @@ import { MatSliderModule } from '@angular/material/slider'
         MatCardModule,
         SharedModule,
     ],
-    providers: []
+    providers: [],
 })
 export class CbpModule { }

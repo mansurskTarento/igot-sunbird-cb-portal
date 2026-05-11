@@ -4,7 +4,6 @@ import { Router, NavigationEnd } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, MultilingualTranslationsService, NsInstanceConfig, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
-import { DiscussUtilsService } from '../_services/discuss-utils.service'
 import { environment } from 'src/environments/environment'
 // tslint:disable
 import _ from 'lodash'
@@ -16,22 +15,22 @@ import { LibNotificationsService } from '@sunbird-cb/notification'
 // }
 
 @Component({
-    selector: 'ws-widget-card-hubs-list',
-    templateUrl: './card-hubs-list.component.html',
-    styleUrls: ['./card-hubs-list.component.scss'],
-    animations: [
-        trigger('enterAnimation', [
-            transition(':enter', [
-                style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
-                animate('500ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1, 'transition-delay': '0s' })),
-            ]),
-            transition(':leave', [
-                style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 1 }),
-                animate('300ms', style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 0, 'transition-delay': '0s' })),
-            ]),
-        ]),
-    ],
-    standalone: false
+  selector: 'ws-widget-card-hubs-list',
+  templateUrl: './card-hubs-list.component.html',
+  styleUrls: ['./card-hubs-list.component.scss'],
+  animations: [
+    trigger('enterAnimation', [
+      transition(':enter', [
+        style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
+        animate('500ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1, 'transition-delay': '0s' })),
+      ]),
+      transition(':leave', [
+        style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 1 }),
+        animate('300ms', style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 0, 'transition-delay': '0s' })),
+      ]),
+    ]),
+  ],
+  standalone: false
 })
 export class CardHubsListComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<any> {
@@ -61,7 +60,6 @@ export class CardHubsListComponent extends WidgetBaseComponent
 
   constructor(
     private configSvc: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
     private router: Router,
     private valueSvc: ValueService,
     private langtranslations: MultilingualTranslationsService,
@@ -223,7 +221,6 @@ export class CardHubsListComponent extends WidgetBaseComponent
         nodebbid: this.configSvc.unMappedUser.nodebbid
       },
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     if (this.disableMenu) {
       return false

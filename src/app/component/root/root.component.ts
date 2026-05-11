@@ -267,7 +267,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.isInIframe = false
     }
 
-
     this.btnBackSvc.initialize()
 
     this.router.events.pipe(
@@ -291,7 +290,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.isHomePage = true
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
-        //this.commonDataSvc.fetchMandatoryNotification()
+        // this.commonDataSvc.fetchMandatoryNotification()
       } else {
         this.isHomePage = false
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
@@ -463,18 +462,17 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.disableHeightOnTop = false
     }
 
-
   }
 
   private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "iGOTAI",
-        "action": "page-configuration",
-        "component": "portal",
-        "rootOrgId": this.configSvc.unMappedUser.rootOrgId
-      }
+    const payload = {
+      'request': {
+        'type': 'page',
+        'subType': 'iGOTAI',
+        'action': 'page-configuration',
+        'component': 'portal',
+        'rootOrgId': this.configSvc.unMappedUser.rootOrgId,
+      },
     }
     const publicConfig: any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
     // console.log('publicConfig', publicConfig)

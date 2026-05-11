@@ -6,10 +6,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatDialogRef } from '@angular/material/dialog'
 @Component({
-    selector: 'ws-app-custom-fields',
-    templateUrl: './custom-fields.component.html',
-    styleUrls: ['./custom-fields.component.scss'],
-    standalone: false
+  selector: 'ws-app-custom-fields',
+  templateUrl: './custom-fields.component.html',
+  styleUrls: ['./custom-fields.component.scss'],
+  standalone: false
 })
 export class CustomFieldsComponent {
 
@@ -30,7 +30,6 @@ export class CustomFieldsComponent {
   orgId: string = ''
   currentUser: any = {}
 
-
   constructor(private fb: FormBuilder,
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
@@ -42,7 +41,7 @@ export class CustomFieldsComponent {
     this.currentUser = this.configService && this.configService.userProfile
     this.userId = this.currentUser.userId || ''
     this.orgId = this.currentUser.rootOrgId || ''
-    //this.orgId = "0140788510336040962"
+    // this.orgId = "0140788510336040962"
     this.getOrgDetails()
 
   }
@@ -62,19 +61,19 @@ export class CustomFieldsComponent {
   }
 
   getCustomAttributes(): void {
-    let payload = {
+    const payload = {
       filterCriteriaMap: {
         organisationId: this.orgId,
-        //organisationId: "0140788510336040962",
+        // organisationId: "0140788510336040962",
         isEnabled: true,
         customFieldId: this.customAttrListIds,
       },
 
       pageNumber: 0,
       pageSize: 50,
-      orderDirection: "DESC",
+      orderDirection: 'DESC',
       orderBy: 'updatedOn',
-      facets: []
+      facets: [],
     }
     this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
@@ -91,7 +90,6 @@ export class CustomFieldsComponent {
     this.dialogRef.close()
   }
 
-
   readCustomattributeDetails() {
     this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
@@ -107,7 +105,6 @@ export class CustomFieldsComponent {
     return customField ? customField.value : ''
   }
 
-
   getListItemName(arrtName: any, listItem: any) {
     const customField = this.customFieldValues.find((_filed: any) => _filed.attributeName === arrtName)
     if (customField && customField.values && customField.values.length) {
@@ -120,8 +117,6 @@ export class CustomFieldsComponent {
   getName(attributeName: string) {
     return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName
   }
-
-
 
   buildDynamicForm() {
     // Clear previous form state
@@ -151,7 +146,7 @@ export class CustomFieldsComponent {
       }
 
       if (field.type === 'text') {
-        let value = this.getValue(field.attributeName)
+        const value = this.getValue(field.attributeName)
         // Simple text field
         formControls[field.attributeName] = [value, validators]
       } else if (field.type === 'masterList') {
@@ -248,7 +243,6 @@ export class CustomFieldsComponent {
       }
     })
 
-
     console.log('customAttrForm', this.customAttrForm)
   }
 
@@ -274,6 +268,7 @@ export class CustomFieldsComponent {
     } else {
       return field.customFieldData || []
     }
+
   }
 
   // Extract the hierarchy fields from the data structure to support 5 levels
@@ -728,18 +723,18 @@ export class CustomFieldsComponent {
       })
       return
     }
-    let payload: any = []
+    const payload: any = []
     this.customAttrList.forEach((field: any) => {
-      let data: any = {
+      const data: any = {
         customFieldId: field.customFieldId,
         type: field.type,
-        attributeName: field.attributeName
+        attributeName: field.attributeName,
       }
       if (field.type === 'text') {
         data['value'] = this.customAttrForm.get(field.attributeName)?.value
         payload.push(data)
       } else if (field.type === 'masterList') {
-        let values: any = []
+        const values: any = []
         const group = this.customAttrForm.get(`${field.attributeName}_group`) as FormGroup
         if (group && group.value) {
           field.originalCustomFieldData.forEach((item: any) => {
@@ -747,7 +742,7 @@ export class CustomFieldsComponent {
               values.push({
                 attributeName: item.name,
                 value: group.value[item.name],
-                level: item.level || 1
+                level: item.level || 1,
               })
             }
           })
@@ -758,18 +753,18 @@ export class CustomFieldsComponent {
         }
       }
     })
-    let requestPalyoud: any = {
+    const requestPalyoud: any = {
       userId: this.userId,
       organisationId: this.orgId,
-      customFieldValues: payload
+      customFieldValues: payload,
     }
     this.userProfileService.updateCustomFields(requestPalyoud).subscribe((res: any) => {
-      if (res && res.result && res.result.response && res.result.response === "success") {
+      if (res && res.result && res.result.response && res.result.response === 'success') {
         this.editCustomDetails = false
         this.customAttrForm.reset()
         this.getCustomAttributes()
         this.dialogRef.close(true)
-        this.matSnackBar.open("Custom fields saved successfully")
+        this.matSnackBar.open('Custom fields saved successfully')
       }
     }, error => {
       this.matSnackBar.open(error.error.params.errMsg)
@@ -901,7 +896,6 @@ export class CustomFieldsComponent {
   // Find an item in the data source by field name and value
   findItemByFieldAndValue(data: any[], fieldName: string, fieldValue: string, isReversed: boolean): any {
     if (!data) return null
-
 
     // Try to find a direct match
     const directMatch = data.find(item =>

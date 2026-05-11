@@ -6,7 +6,6 @@ import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, MultilingualTranslationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 
 import { BtnPageBackService } from './btn-page-back.service'
-import { DiscussUtilsService } from '../_services/discuss-utils.service'
 import { environment } from 'src/environments/environment'
 // tslint:disable
 import _ from 'lodash'
@@ -15,22 +14,22 @@ import { TranslateService } from '@ngx-translate/core'
 
 type TUrl = undefined | 'none' | 'back' | string
 @Component({
-    selector: 'ws-widget-btn-page-back',
-    templateUrl: './btn-page-back.component.html',
-    styleUrls: ['./btn-page-back.component.scss'],
-    animations: [
-        trigger('enterAnimation', [
-            transition(':enter', [
-                style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
-                animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 })),
-            ]),
-            transition(':leave', [
-                style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 }),
-                animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 })),
-            ]),
-        ]),
-    ],
-    standalone: false
+  selector: 'ws-widget-btn-page-back',
+  templateUrl: './btn-page-back.component.html',
+  styleUrls: ['./btn-page-back.component.scss'],
+  animations: [
+    trigger('enterAnimation', [
+      transition(':enter', [
+        style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
+        animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 })),
+      ]),
+      transition(':leave', [
+        style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 }),
+        animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 })),
+      ]),
+    ]),
+  ],
+  standalone: false
 })
 export class BtnPageBackComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<{ url: TUrl }> {
@@ -47,7 +46,6 @@ export class BtnPageBackComponent extends WidgetBaseComponent
     private btnBackSvc: BtnPageBackService,
     public router: Router,
     private configSvc: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService
   ) {
@@ -148,7 +146,6 @@ export class BtnPageBackComponent extends WidgetBaseComponent
       headerOptions: false,
       bannerOption: true,
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     this.router.navigate(['/app/discussion-forum'], { queryParams: { page: 'home' }, queryParamsHandling: 'merge' })
   }

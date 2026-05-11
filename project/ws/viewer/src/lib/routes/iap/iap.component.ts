@@ -1,7 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { EventService, SubapplicationRespondService, WsEvents } from '@sunbird-cb/utils-v2'
 import { fromEvent, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
@@ -22,9 +21,6 @@ export class IapComponent implements OnInit, OnDestroy {
   iapData: NsContent.IContent | null = null
   oldData: NsContent.IContent | null = null
   alreadyRaised = false
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private contentSvc: WidgetContentService,
@@ -38,12 +34,6 @@ export class IapComponent implements OnInit, OnDestroy {
       this.routeDataSubscription = this.viewerSvc.getContent(this.activatedRoute.snapshot.paramMap.get('resourceId') || '').subscribe(
         async data => {
           this.iapData = data
-          if (this.iapData) {
-            this.formDiscussionForumWidget(this.iapData)
-            if (this.discussionForumWidget) {
-              this.discussionForumWidget.widgetData.isDisabled = true
-            }
-          }
           if (this.iapData && this.iapData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(this.iapData.identifier)
           }
@@ -56,9 +46,6 @@ export class IapComponent implements OnInit, OnDestroy {
           this.iapData = data.content.data
           if (this.alreadyRaised && this.oldData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.oldData)
-          }
-          if (this.iapData) {
-            this.formDiscussionForumWidget(this.iapData)
           }
           if (this.iapData && this.iapData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(this.iapData.identifier)
@@ -107,8 +94,8 @@ export class IapComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.iapData) {
       await this.contentSvc.continueLearning(this.iapData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.iapData) {
       await this.contentSvc.continueLearning(this.iapData.identifier)
@@ -125,20 +112,6 @@ export class IapComponent implements OnInit, OnDestroy {
     }
   }
 
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
-  }
   raiseEvent(state: WsEvents.EnumTelemetrySubType, data: NsContent.IContent) {
     if (!this.forPreview) {
       const event = {

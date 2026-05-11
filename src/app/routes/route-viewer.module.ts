@@ -5,7 +5,7 @@ import { MatDialogModule } from '@angular/material/dialog'
   declarations: [],
   imports: [
     ViewerModule,
-    MatDialogModule
+    MatDialogModule,
   ],
 })
 export class RouteViewerModule { }

@@ -7,7 +7,8 @@ import { NsContent } from './widget-content.model'
 import dayjs from 'dayjs'
 import { environment } from 'src/environments/environment'
 import { NsCardContent } from '../card-content-v2/card-content-v2.model'
-import lodash from 'lodash'
+// tslint:disable
+import _ from 'lodash'
 
 const PROTECTED_SLAG_V8 = '/apis/protected/v8'
 const API_END_POINTS = {
@@ -281,9 +282,9 @@ export class WidgetUserService {
 
           return secondDate > firstDate ? 1 : -1
         })
-        const uniqueUsersByID = lodash.uniqBy(sortedData, 'identifier')
-        const sortedByEndDate = lodash.orderBy(uniqueUsersByID, ['endDate'], ['asc'])
-        const sortedByStatus = lodash.orderBy(sortedByEndDate, ['contentStatus'], ['asc'])
+        const uniqueUsersByID = _.uniqBy(sortedData, 'identifier')
+        const sortedByEndDate = _.orderBy(uniqueUsersByID, ['endDate'], ['asc'])
+        const sortedByStatus = _.orderBy(sortedByEndDate, ['contentStatus'], ['asc'])
         localStorage.setItem('cbpData', JSON.stringify(sortedByStatus))
         return sortedByStatus
       }

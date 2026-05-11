@@ -212,7 +212,7 @@ export class EditorService {
   getAccessPath(): Observable<string[]> {
     return this.accessPath.length
       ? of()
-      : this.apiService.get<string[]>(`/apis/protected/V8/user/accessControl`).pipe(
+      : this.apiService.get<string[]>('/apis/protected/V8/user/accessControl').pipe(
         map((v: { special: { accessPaths: string[] }[] }) => {
           if (v) {
             v.special.forEach(acc => {

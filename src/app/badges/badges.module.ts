@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [
-    BadgeDetailsComponent
+    BadgeDetailsComponent,
   ],
   imports: [
     CommonModule,
@@ -25,10 +25,10 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     MatButtonModule,
     MatTooltipModule,
     BadgeModalComponent,
-    CardsModule
+    CardsModule,
   ],
   exports: [
-    BadgeDetailsComponent
-  ]
+    BadgeDetailsComponent,
+  ],
 })
 export class BadgesModule { }

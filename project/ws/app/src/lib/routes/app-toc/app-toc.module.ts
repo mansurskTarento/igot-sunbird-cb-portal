@@ -9,7 +9,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 
 // custom modules
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import { DiscussionUiModule } from '@sunbird-cb/discussions-ui-v8'
 import {
   PipeDurationTransformModule,
   PipeSafeSanitizerModule,
@@ -66,10 +65,6 @@ import { ConfirmDialogModule } from '@sunbird-cb/collection'
 import { KarmaPointsModule } from '@sunbird-cb/toc'
 import { TipsForLearnerModule } from '@sunbird-cb/collection'
 
-// Components
-import { AllDiscussionWidgetComponent } from '../discuss/widget/all-discussion-widget/category-widget/all-discussion-widget.component'
-import { TagWidgetComponent } from '../discuss/widget/tag-widget/tag-widget.component'
-
 // Services
 import { ApiService, AccessControlService } from '@ws/author'
 import { EditorService } from '@ws/author'
@@ -109,8 +104,6 @@ import { TocHomeComponent } from './toc-home/toc-home.component'
 import { AppTocLibModule } from '@sunbird-cb/toc'
 @NgModule({
   declarations: [
-    AllDiscussionWidgetComponent,
-    TagWidgetComponent,
     TocHomeComponent,
   ],
   imports: [
@@ -182,7 +175,6 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     BtnContentShareModule,
     UserAutocompleteModule,
     AvatarPhotoModule,
-    DiscussionUiModule,
     ConnectionNameModule,
     CardRatingCommentModule,
     InfiniteScrollModule,
@@ -198,7 +190,7 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     WidgetCommentModule,
     SlidersDynamicModule,
     NonReleventFeedbackDialogModule,
-    AppTocLibModule
+    AppTocLibModule,
   ],
   providers: [
     AppPublicTocResolverService,
@@ -211,9 +203,9 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     UserProfileService,
     OtpService,
     ContentLanguageService,
-    DatePipe
+    DatePipe,
   ],
   exports: [
-  ]
+  ],
 })
 export class AppTocModule { }

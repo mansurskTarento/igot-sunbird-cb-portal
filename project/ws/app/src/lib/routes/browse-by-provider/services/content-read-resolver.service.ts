@@ -32,7 +32,7 @@ export class ContentReadResolverService {
       filterCriteriaMap: {
         isActive: true,
         liveCoursesCount: {
-          '>=': '1'
+          '>=': '1',
         },
         isTrainingInstitution: true,
       },
@@ -40,7 +40,7 @@ export class ContentReadResolverService {
       pageSize: 10,
       facets: ['contentPartnerName'],
       orderBy: 'createdOn',
-      orderDirection: 'desc'
+      orderDirection: 'desc',
     }
 
     const headers = {
@@ -50,10 +50,9 @@ export class ContentReadResolverService {
       'locale': localStorage.getItem('websiteLanguage') || 'en',
       'org': 'dopt',
       'rootOrg': 'igot',
-      'hostPath': 'localhost_3000'
+      'hostPath': 'localhost_3000',
     }
 
     return this.http.post(url, requestBody, { headers })
   }
 }
-

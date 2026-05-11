@@ -133,13 +133,13 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
     // Wait for view update
     setTimeout(() => {
       this.stepper.next()
-    }, 0)
+    },         0)
   }
 
   isStepCompleted(index: number): boolean {
     if (index === 0) {
       return this.questionForm.valid
-    } else if (index === 1) {
+    }  if (index === 1) {
       return this.isStep2Completed
     }
     return false

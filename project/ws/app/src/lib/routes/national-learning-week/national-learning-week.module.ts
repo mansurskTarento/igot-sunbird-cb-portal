@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core'
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import {
   PipeOrderByModule,
@@ -101,5 +101,6 @@ export function NationalearningweekHttpLoaderFactory(http: HttpClient) {
     }),
   ],
   providers: [MdoChannelFormService, AllContentService, CommonMethodsService, MdoChannelDataService],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class NationalLearningWeekModule { }

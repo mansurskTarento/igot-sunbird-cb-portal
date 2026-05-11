@@ -32,7 +32,7 @@ const routes: Routes = [
           pageId: 'overview',
           module: 'Learn',
         },
-      }
+      },
     ],
   },
   {

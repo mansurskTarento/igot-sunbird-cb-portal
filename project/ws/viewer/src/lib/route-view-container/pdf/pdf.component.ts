@@ -1,6 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { PdfScormDataService } from '../../pdf-scorm-data-service'
@@ -25,9 +24,6 @@ export class PdfComponent implements OnInit, OnDestroy {
     },
   }
   @Input() isPreviewMode = false
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   isTypeOfCollection = false
   isRestricted = false
   playPdfContentFlag = true

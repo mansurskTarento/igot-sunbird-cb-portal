@@ -55,7 +55,7 @@ export class FinalAssessmentPopupComponent implements OnInit, OnDestroy {
         clearInterval(this.countdownInterval)
         // Auto-close will be handled by parent component
       }
-    }, 1000)
+    },                                   1000)
   }
 
   setTableColumns(columns: any) {

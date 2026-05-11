@@ -93,7 +93,7 @@ export class ViewerResolve {
         } else {
           this.viewerDataSvc.updateResource(null, {
             errorType: 'mimeTypeMismatch',
-            mimeType: mimeType,
+            mimeType,
             probableUrl: `${forPreview ? '/author' : ''}/viewer/${VIEWER_ROUTE_FROM_MIME(
               mimeType,
             )}/${content.identifier}`,

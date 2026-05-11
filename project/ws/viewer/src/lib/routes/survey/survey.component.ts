@@ -1,9 +1,8 @@
 import { AccessControlService } from '@ws/author'
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subscription } from 'rxjs'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
 import { WsEvents, EventService, ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@sunbird-cb/toc'
 import * as _ from 'lodash'
@@ -41,9 +40,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
   }
   isPreviewMode = false
   forPreview = window.location.href.includes('/author/')
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   batchId = this.activatedRoute.snapshot.queryParamMap.get('batchId')
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -64,12 +60,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
         .getContent(this.activatedRoute.snapshot.paramMap.get('resourceId') || '')
         .subscribe(async data => {
           this.surveyData = data.result.content
-          if (this.surveyData) {
-            this.formDiscussionForumWidget(this.surveyData)
-            if (this.discussionForumWidget) {
-              this.discussionForumWidget.widgetData.isDisabled = true
-            }
-          }
           if (this.surveyData && this.surveyData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(this.surveyData.identifier)
           }
@@ -106,12 +96,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
           this.surveyData = data.content.data
           if (this.alreadyRaised && this.oldData) {
             this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.oldData)
-          }
-          if (this.surveyData) {
-            this.formDiscussionForumWidget(this.surveyData)
-            if (this.discussionForumWidget) {
-              this.discussionForumWidget.widgetData.isDisabled = true
-            }
           }
 
           if (this.surveyData && this.surveyData.artifactUrl.indexOf('content-store') >= 0) {
@@ -166,38 +150,6 @@ export class SurveyComponent implements OnInit, OnDestroy {
       .fetchContent(this.widgetResolverSurveyData.widgetData.collectionId || '', 'minimal')
       .toPromise()
     this.widgetResolverSurveyData.widgetData.courseName = content.result.content.name
-  }
-
-  // generateUrl(oldUrl: string) {
-  //   const chunk = oldUrl.split('/')
-  //   const newChunk = environment.azureHost.split('/')
-  //   const newLink = []
-  //   for (let i = 0; i < chunk.length; i += 1) {
-  //     if (i === 2) {
-  //       newLink.push(newChunk[i])
-  //     } else if (i === 3) {
-  //       newLink.push(environment.azureBucket)
-  //     } else {
-  //       newLink.push(chunk[i])
-  //     }
-  //   }
-  //   const newUrl = newLink.join('/')
-  //   return newUrl
-  // }
-
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
   }
 
   raiseEvent(state: WsEvents.EnumTelemetrySubType, data: NsContent.IContent) {

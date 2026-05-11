@@ -73,7 +73,7 @@ import { AppOtpReaderComponent } from '../../../component/app-otp-reader/app-otp
         PipeOrderByModule,
         PipeDurationTransformModule,
         TranslateModule,
-        MatStepperModule
+        MatStepperModule,
     ],
     exports: [PublicSignupComponent, PublicCrpComponent],
     providers: [
@@ -86,6 +86,6 @@ import { AppOtpReaderComponent } from '../../../component/app-otp-reader/app-otp
             useValue: environment.recaptchaKey,
         },
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PublicSignupModule { }

@@ -29,7 +29,7 @@ import { MatInputModule } from '@angular/material/input'
         FormsModule,
         ReactiveFormsModule,
     ],
-    exports: [ProfileDetailComponent]
+    exports: [ProfileDetailComponent],
 })
 
 export class ProfileDetailModule { }

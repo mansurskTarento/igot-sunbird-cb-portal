@@ -19,6 +19,6 @@ import { MatDialogModule } from '@angular/material/dialog'
         MatButtonModule,
         MatDialogModule,
     ],
-    exports: [CatalogSelectComponent]
+    exports: [CatalogSelectComponent],
 })
 export class CatalogSelectModule { }

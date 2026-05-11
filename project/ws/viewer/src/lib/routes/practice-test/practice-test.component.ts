@@ -74,7 +74,6 @@ export class PracticeTestComponent implements OnInit, OnDestroy {
                 })
         }
 
-
     }
     init() {
         if (this.testData) {

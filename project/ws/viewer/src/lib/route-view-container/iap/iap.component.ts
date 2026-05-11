@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
@@ -13,9 +12,6 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 export class IapComponent implements OnInit {
   @Input() isFetchingDataComplete = false
   @Input() iapData: NsContent.IContent | null = null
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   @Input() isPreviewMode = false
   isTypeOfCollection = false
   @Input() forPreview = false
