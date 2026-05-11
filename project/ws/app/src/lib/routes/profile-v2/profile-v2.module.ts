@@ -78,6 +78,7 @@ import { MatRadioModule } from '@angular/material/radio'
 import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component'
 import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-custom-fields.component'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { ProfileVerificationDialogModule } from '../profile-verification-dialog/profile-verification-dialog.module'
 
 export function ProfileV2HttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http)
@@ -164,6 +165,7 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         CommunitySuggestionsModule,
         CertificateViewPopupModule,
         DialogComponentsModule,
+        ProfileVerificationDialogModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
