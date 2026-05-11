@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 import { TranslateModule } from '@ngx-translate/core'
 import { CertificateViewPopupComponent } from './certificate-view-popup.component'
 
@@ -15,4 +15,4 @@ import { CertificateViewPopupComponent } from './certificate-view-popup.componen
   ],
   exports: [CertificateViewPopupComponent],
 })
-export class CertificateViewPopupModule {}
+export class CertificateViewPopupModule { }

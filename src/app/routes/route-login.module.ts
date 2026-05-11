@@ -4,8 +4,8 @@ import { RouterModule } from '@angular/router'
 import { LoginRootComponent } from '../component/login-root/login-root.component'
 import { LoginRootDirective } from '../component/login-root/login-root.directive'
 import { LoginComponent } from '../component/login/login.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
 import { PageResolve } from '@sunbird-cb/utils-v2'
 
@@ -27,4 +27,4 @@ import { PageResolve } from '@sunbird-cb/utils-v2'
     ]),
   ],
 })
-export class RouteLoginModule {}
+export class RouteLoginModule { }

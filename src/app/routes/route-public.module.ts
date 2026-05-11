@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { RouterModule, Routes } from '@angular/router'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatCardModule } from '@angular/material/card'
 import { BtnPageBackModule } from '@sunbird-cb/collection'
 
 // Modules for components that have their own modules
