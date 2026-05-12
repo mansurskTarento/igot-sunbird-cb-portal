@@ -34,10 +34,11 @@
     <div class="search-container" [hidden]="!openSearchTemplate">
       <div class="search-results">
         <div class="search-categories mb-4">
-          <mat-chip-list>
-            <mat-chip *ngFor="let category of categories" [removable]="false" [highlighted]="false" [disableRipple]="true"
-              [selected]="category.value === selectedSearchCategory" (click)="selectSearchCategory(category.value)"
-              class="category-chip" [ngClass]="{'selected-search-category': category.value === selectedSearchCategory}">
+          <mat-chip-list class="mat-chip-list-content">
+            <mat-chip *ngFor="let category of categories" [removable]="false" [highlighted]="false"
+              [disableRipple]="true" [selected]="category.value === selectedSearchCategory"
+              (click)="selectSearchCategory(category.value)" class="category-chip"
+              [ngClass]="{'selected-search-category': category.value === selectedSearchCategory}">
               <mat-icon *ngIf="category.icon" [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
               {{ category.label }}
             </mat-chip>
@@ -49,15 +50,16 @@
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
             <a class="text-sm clear-all font-normal cursor-pointer" (click)="recentDeleteByUserId()">Clear All</a>
-          </div> 
+          </div>
           <ng-container *ngFor="let query of recentSearches">
             <mat-list-item class="recent-search-list">
-             <!-- {{ query.nlp_search_query | json }} ////
+              <!-- {{ query.nlp_search_query | json }} ////
              {{ query.search_category | json }} ---- -->
-            
-              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center" (click)="goToSearchItem(query)">
+
+              <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center"
+                (click)="goToSearchItem(query)">
                 <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">
-                  <span> {{ query?.search_query }} </span>
+                <span> {{ query?.search_query }} </span>
               </a>
               <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
@@ -72,7 +74,7 @@
             </div>
             <ng-container *ngFor="let result of allSearchResults">
               <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-                
+
                 <div matLine class="py-1 flex">
                   <mat-icon class="mr-3">search</mat-icon>
                   <span class="text-xs font-normal recent-search-text text-ellipse">

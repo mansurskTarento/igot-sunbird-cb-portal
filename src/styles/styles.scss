@@ -1489,3 +1489,198 @@ ngx-guided-tour {
     transform: translateX(0);
   }
 }
+
+.mat-mdc-button .mdc-button__label,
+.mat-mdc-raised-button .mdc-button__label,
+.mat-mdc-unelevated-button .mdc-button__label,
+.mat-mdc-outlined-button .mdc-button__label {
+  letter-spacing: 0 !important;
+}
+
+
+// ======================================
+// ANGULAR MATERIAL 16 → 20 TAB FIX
+// Restore legacy tab appearance
+// ======================================
+
+// Main tab group
+.mat-mdc-tab-group {
+  background: transparent;
+}
+
+// Remove MDC large height
+.mat-mdc-tab-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
+
+// Tab container alignment
+.mat-mdc-tab-label-container {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+// Individual tabs
+.mat-mdc-tab {
+  min-width: auto !important;
+  padding: 0 24px !important;
+  height: 48px !important;
+  opacity: 1 !important;
+}
+
+// Tab label text
+.mat-mdc-tab .mdc-tab__text-label {
+  font-size: 14px;
+  font-weight: normal;
+  color: #000 !important;
+  letter-spacing: normal !important;
+  font-family: Lato;
+}
+
+// Active tab text
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label {
+  font-weight: 700;
+  color: #000 !important;
+}
+
+// Remove MDC ripple
+.mat-mdc-tab .mat-ripple-element,
+.mat-mdc-tab .mdc-tab__ripple {
+  display: none !important;
+}
+
+// Ink bar
+.mat-mdc-tab-group.mat-primary .mdc-tab-indicator__content--underline {
+  border-color: #1b4ca1 !important;
+  border-top-width: 2px !important;
+  border-radius: 2px;
+}
+
+// Fix indicator position
+.mdc-tab-indicator {
+  display: flex;
+  justify-content: center;
+}
+
+// Prevent stretched underline
+.mdc-tab-indicator__content--underline {
+  width: 100% !important;
+}
+
+// Header pagination arrows
+.mat-mdc-tab-header-pagination-chevron {
+  border-color: rgba(0, 0, 0, 0.54);
+}
+
+// Remove weird MDC spacing
+.mat-mdc-tab-header-pagination {
+  min-width: 32px !important;
+}
+
+// Optional: center tabs like Angular 16
+.mat-mdc-tab-header .mat-mdc-tab-labels {
+  justify-content: flex-start;
+}
+
+// Tab body spacing
+.mat-mdc-tab-body-content {
+  overflow: hidden;
+}
+
+// Mobile
+@media (max-width: 768px) {
+
+  .mat-mdc-tab {
+    padding: 0 12px !important;
+  }
+
+  .mat-mdc-tab .mdc-tab__text-label {
+    font-size: 16px;
+  }
+}
+
+.mat-chip-list-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.mat-mdc-chip {
+  font-family: Lato;
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14.4px;
+  margin: 4px 2px;
+
+  .mdc-evolution-chip__action {
+    background-color: #ccc !important;
+    border-radius: 20px !important;
+  }
+
+  .mdc-evolution-chip__text-label {
+    color: #5f5f5f !important;
+  }
+
+  .mdc-evolution-chip__action .mat-mdc-chip-action .mdc-evolution-chip__action--primary .mdc-evolution-chip__action--presentational {
+    background-color: #1d4fa3 !important;
+  }
+}
+
+
+
+
+// ACTIVE CHIP
+.mat-mdc-chip.mat-mdc-chip-selected {
+
+  .mdc-evolution-chip__action {
+    background-color: #1d4fa3 !important;
+  }
+
+  .mdc-evolution-chip__text-label {
+    color: #5f5f5f !important;
+  }
+
+}
+
+
+
+// MDC replacement for .mat-chip-list-wrapper
+.mat-mdc-chip-set {
+
+  .mdc-evolution-chip-set__chips {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin: -4px;
+  }
+}
+
+// Remove unwanted MDC spacing
+.mdc-evolution-chip {
+  margin: 4px;
+}
+
+.mdc-evolution-chip__text-label {
+  color: inherit !important;
+}
+
+.mat-h4,
+.mat-subheading-1,
+.mat-typography .mat-h4,
+.mat-typography .mat-subheading-1,
+.mat-typography h4 {
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  font-family: Montserrat;
+  letter-spacing: normal;
+  margin: 0 0 16px;
+}
+
+.mat-mdc-card-content {
+  padding: 0 !important;
+}
+
+.mat-mdc-progress-bar {
+  background-color: #0000001a !important;
+}
