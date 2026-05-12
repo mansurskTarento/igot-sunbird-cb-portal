@@ -1627,7 +1627,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           setTimeout(() => {
             this.getAchievements()
           }, 500)
-          this.openSnackbar('Added Successfully and this will be reflected in the Learner Passbook after 30 minutes')
+          this.raiseLearnerPassbookTelemetry('Add Achievement')
+          this.openSnackbar('Added successfully and this will be reflected in the Learner Passbook after 30 minutes.')
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -1645,7 +1646,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           setTimeout(() => {
             this.getAchievements()
           }, 500)
-          this.openSnackbar('Updated Successfully and this will be reflected in the Learner Passbook after 30 minutes.')
+          this.openSnackbar('Updated successfully and this will be reflected in the Learner Passbook after 30 minutes.')
         }
       },
       error: (error: HttpErrorResponse) => {
@@ -2069,8 +2070,25 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   handleRedirectToCompetencyPassbook(): void {
+    this.raiseLearnerPassbookTelemetry('Competency Passbook')
     this.router.navigate(['/page/competency-passbook/list'])
   }
+
+  raiseLearnerPassbookTelemetry(tabname: string): void {
+    const name = tabname.toLowerCase().split(' ').join('-')
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: `${name}`,
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.PROFILE,
+      }
+    )
+  }
+
+
 
   openNlwCertificateDialog(): void {
     if (!this.nlwExperience?.banner?.onClick) { return }

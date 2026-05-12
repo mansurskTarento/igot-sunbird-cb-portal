@@ -238,7 +238,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
   }
 
   handleRedirectToCompetencyPassbook() {
-    this.raiseTelemetry('Learning History')
+    this.raiseTelemetry('Competency Passbook')
     this.router.navigate(['/page/competency-passbook/list'])
   }
 

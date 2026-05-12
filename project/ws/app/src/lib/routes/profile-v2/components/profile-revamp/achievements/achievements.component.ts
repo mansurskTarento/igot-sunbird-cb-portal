@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
+import { NlwCertificateDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-achievements',
@@ -79,6 +80,27 @@ export class AchievementsComponent implements OnInit {
       achievement.showMore = false
     } else {
       achievement['showMore'] = true
+    }
+  }
+
+  openPDF(content: any): void {
+    if (content?.uploadedDocumentUrl) {
+      let dialogData = {
+        pdfZoom: 'FitH',
+        type: 'PDF',
+        action: 'view',
+        title: content.contextData?.fileName || content?.contextData?.title || 'PDF Document',
+        url: content.uploadedDocumentUrl,
+      }
+      let dialogWidth = '700px'
+      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
+      this.dialog.open(NlwCertificateDialogComponent, {
+        data: dialogData,
+        panelClass: 'nlw-experience-dialog-container',
+        maxWidth: '95vw',
+        width: dialogWidth,
+        autoFocus: false,
+      })
     }
   }
 

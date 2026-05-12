@@ -119,8 +119,13 @@
                                         </ng-container>
                                         <ng-container *ngIf="activeTab === 'selfAchievement'">
                                             <ng-container *ngIf="eachCert?.externallyUploaded === 'true'">
-                                                <mat-icon class="icon cursor-pointer"
-                                                    (click)="openDocument(eachCert?.certificateId)">visibility</mat-icon>
+                                                <ng-container *ngIf="!eachCert?.certificateId?.endsWith('.pdf')">
+                                                    <mat-icon class="icon cursor-pointer"
+                                                        (click)="openDocument(eachCert?.certificateId)">visibility</mat-icon>
+                                                </ng-container>
+                                                <ng-container *ngIf="eachCert?.certificateId?.endsWith('.pdf')">
+                                                    <mat-icon class="icon cursor-pointer" (click)="openPDF(eachCert)">visibility</mat-icon>
+                                                </ng-container>
                                             </ng-container>
                                             <ng-container *ngIf="eachCert?.externallyUploaded === 'false'">
                                                 <mat-icon class="icon cursor-pointer" (click)="handleView(eachCert)">visibility</mat-icon>
@@ -153,14 +158,24 @@
                                             </ng-container>
                                             <ng-container *ngIf="activeTab === 'selfAchievement'">
                                                 <ng-container *ngIf="eachCert?.externallyUploaded === 'true'">
-                                                    <ng-container>
+                                                    <ng-container *ngIf="!eachCert?.certificateId?.endsWith('.pdf')">
                                                         <img [src]="eachCert?.certificateId" alt="{{ eachCert?.courseName }} certificate" />
+                                                        <div class="view-cert">
+                                                            <button type="button" (click)="openDocument(eachCert?.certificateId)">
+                                                                <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
+                                                            </button>
+                                                        </div>
                                                     </ng-container>
-                                                    <div class="view-cert">
-                                                        <button type="button" (click)="openDocument(eachCert?.certificateId)">
-                                                            <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
-                                                        </button>
-                                                    </div>
+                                                    <ng-container *ngIf="eachCert?.certificateId?.endsWith('.pdf')">
+                                                        <img [src]="'/assets/icons/competency/default-achievement.svg'"
+                                                            alt="{{ eachCert?.courseName }} certificate" />
+                                                        <div class="view-cert">
+                                                            <button type="button" (click)="openPDF(eachCert)">
+                                                                <span>{{ 'apptoccontentcard.viewCertificate' | translate }}</span>
+                                                            </button>
+                                                        </div>
+                                                    </ng-container>
+
                                                 </ng-container>
                                                 <ng-container *ngIf="eachCert?.externallyUploaded === 'false'">
                                                     <ng-container>

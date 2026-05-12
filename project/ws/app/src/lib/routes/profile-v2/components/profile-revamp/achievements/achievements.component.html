@@ -32,11 +32,15 @@
       <ng-container *ngIf="achievement?.contextData?.uploadedDocumentUrl && achievement?.contextData?.fileName">
         <div class="document-card flex justify-between items-center">
           <div class="flex items-center gap-4 flex-1 min-w-0">
-            <img [src]="getUrl(achievement?.contextData?.uploadedDocumentUrl)" class="certificate" alt="certificate">
+            <img [src]="getUrl(achievement?.contextData?.uploadedDocumentUrl)" class="certificate" alt="certificate"
+              *ngIf="!achievement?.contextData?.uploadedDocumentUrl?.endsWith('.pdf')">
+            <img src="/assets/icons/PDF_alternate.svg" class="certificate" alt="certificate"
+              *ngIf="achievement?.contextData?.uploadedDocumentUrl?.endsWith('.pdf')">
             <div class="document-name truncate" title="{{achievement?.contextData?.fileName}}">{{achievement?.contextData?.fileName}}</div>
           </div>
-          <mat-icon class="view-icon flex-shrink-0" (click)="openDocument(achievement?.contextData?.uploadedDocumentUrl)"
-            (keyup)="openDocument(achievement?.contextData?.uploadedDocumentUrl)">visibility</mat-icon>
+          <mat-icon class="view-icon flex-shrink-0"
+            (click)="achievement?.contextData?.uploadedDocumentUrl?.endsWith('.pdf') ? openPDF(achievement?.contextData) : openDocument(achievement?.contextData?.uploadedDocumentUrl)"
+            (keyup)="achievement?.contextData?.uploadedDocumentUrl?.endsWith('.pdf') ? openPDF(achievement?.contextData) : openDocument(achievement?.contextData?.uploadedDocumentUrl)">visibility</mat-icon>
         </div>
       </ng-container>
       <ng-container *ngIf="achievement?.contextData?.url">

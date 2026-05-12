@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { CertificateDialogComponent } from '@sunbird-cb/collection'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { CertificateViewPopupComponent } from '@ws/app'
-
+import { NlwCertificateDialogComponent } from '@sunbird-cb/consumption'
 @Component({
   selector: 'ws-competency-card-details-v2',
   templateUrl: './competency-card-details-v2.component.html',
@@ -460,6 +460,27 @@ export class CompetencyCardDetailsV2Component implements OnInit, OnDestroy {
           certificateUrl: url,
         },
         disableClose: true,
+        autoFocus: false,
+      })
+    }
+  }
+
+  openPDF(content: any): void {
+    if (content?.certificateId) {
+      let dialogData = {
+        pdfZoom: 'FitH',
+        type: 'PDF',
+        action: 'view',
+        title: content.certificateId.split("/")[-1] || content?.name || 'PDF Document',
+        url: content.certificateId,
+      }
+      let dialogWidth = '700px'
+      dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
+      this.dialog.open(NlwCertificateDialogComponent, {
+        data: dialogData,
+        panelClass: 'nlw-experience-dialog-container',
+        maxWidth: '95vw',
+        width: dialogWidth,
         autoFocus: false,
       })
     }
