@@ -35,7 +35,6 @@ import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { GlobalService } from './global.service'
 import { CommonDataService } from './common-data.service'
-import { NSProfileDataV3 } from '../profile-v3/models/profile-v3.models'
 declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */
@@ -572,12 +571,7 @@ export class InitService {
       .toPromise()
     return appsConfig
   }
-  private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
-    const welcomeConfig = await this.http
-      .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
-      .toPromise()
-    return welcomeConfig
-  }
+
   private setTelemetrySessionId() {
     if (localStorage.getItem('telemetrySessionId')) {
       localStorage.removeItem('telemetrySessionId')
@@ -702,7 +696,6 @@ export class InitService {
         this.configSvc.userGroups = new Set(details.group)
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
-        this.configSvc.welcomeTabs = await this.fetchWelcomeConfig()
 
         // nps check
         if (localStorage.getItem('platformratingTime')) {
