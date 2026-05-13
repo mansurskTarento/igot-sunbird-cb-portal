@@ -147,7 +147,7 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
             let eventDateTimeStamp = new Date(eventDateTime).getTime()
             let currentDateTimeStamp = new Date().getTime()
             if (currentDateTimeStamp >= eventDateTimeStamp) {
-              if (timeSpent && timeSpent % this.rateToFire === 0) {
+              if (timeSpent && (timeSpent % this.rateToFire === 0 || timeSpent >= this.eventData.duration * 60)) {
                 this.startInterval(timeSpent, lastTimeAccessed)
               }
               this.intervalStarted = true
@@ -158,10 +158,14 @@ export class EventYouTubeComponent implements OnInit, AfterViewInit, OnDestroy {
 
       }
       /* tslint:disable */
-      if (event['data'] && event['data']['playerStatus'] === 'ENDED') {
+      const isVideoEnded = event['data'] && (
+        event['data']['playerStatus'] === 'ENDED' ||
+        (event['data']['playerStatus'] === 'PAUSED' && timeSpent >= this.eventData.duration * 60)
+      )
+      if (isVideoEnded) {
         if (this.currentEvent) {
-          this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed)
-
+          // Video fully watched (ENDED or PAUSED-at-end) — treat as 100% complete regardless of video length vs required time
+          this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed, true)
         }
       }
       // if(event['data']['passThroughData'] && event['data']['passThroughData']['playerDuration']) {
