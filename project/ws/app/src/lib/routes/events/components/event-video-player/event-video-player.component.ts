@@ -213,11 +213,13 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
       console.log("event['data'] ", event['data'])
       /* tslint:disable */
-      if (event['data'] && event['data']['playerStatus'] === 'ENDED') {
-        if (this.currentEvent) {
-          this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed)
-
-        }
+      const isVideoEnded = event['data'] && (
+        event['data']['playerStatus'] === 'ENDED' ||
+        (event['data']['playerStatus'] === 'PAUSED' && this.player && this.player.ended())
+      )
+      if (isVideoEnded && this.currentEvent) {
+        // Video fully watched (ENDED or PAUSED-at-end) — treat as 100% complete regardless of video length vs required time
+        this.saveProgressUpdate(this.eventData.duration, timeSpent, lastTimeAccessed, true)
       }
       // if(event['data']['passThroughData'] && event['data']['passThroughData']['playerDuration']) {
       //   playerDuration =  event['data']['passThroughData']['playerDuration']
