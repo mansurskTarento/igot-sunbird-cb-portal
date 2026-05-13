@@ -1,12 +1,13 @@
 import { Component, OnInit, Input, EventEmitter, Output, OnChanges } from '@angular/core'
-import { IWidgetWrapperMedia } from '@sunbird-cb/collection/src/lib/video-wrapper/video-wrapper.model'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { IWidgetWrapperMedia } from '@sunbird-cb/collection'
+import { MatDialog } from '@angular/material/dialog'
+import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-media-wrapper',
-  templateUrl: './media-wrapper.component.html',
-  styleUrls: ['./media-wrapper.component.scss'],
+    selector: 'ws-auth-media-wrapper',
+    templateUrl: './media-wrapper.component.html',
+    styleUrls: ['./media-wrapper.component.scss'],
+    standalone: false
 })
 export class MediaWrapperComponent implements OnInit, OnChanges {
   @Input() identifier = ''

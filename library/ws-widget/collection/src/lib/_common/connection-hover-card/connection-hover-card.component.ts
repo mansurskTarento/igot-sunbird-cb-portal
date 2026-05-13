@@ -7,12 +7,12 @@ import { NsUser } from '@sunbird-cb/utils-v2'
 // import { ConnectionHoverService } from '../connection-name/connection-hover.servive'
 
 @Component({
-  selector: 'ws-widget-connection-hover-card',
-  templateUrl: './connection-hover-card.component.html',
-  styleUrls: ['./connection-hover-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'ws-widget-connection-hover-card',
+    templateUrl: './connection-hover-card.component.html',
+    styleUrls: ['./connection-hover-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class ConnectionHoverCardComponent implements OnInit, AfterViewInit {
   @Input() hoverUser!: any

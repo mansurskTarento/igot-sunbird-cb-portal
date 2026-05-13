@@ -7,9 +7,10 @@ import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { IWsTree } from '../tree/tree.model'
 
 @Component({
-  selector: 'ws-widget-tree-catalog',
-  templateUrl: './tree-catalog.component.html',
-  styleUrls: ['./tree-catalog.component.scss'],
+    selector: 'ws-widget-tree-catalog',
+    templateUrl: './tree-catalog.component.html',
+    styleUrls: ['./tree-catalog.component.scss'],
+    standalone: false
 })
 export class TreeCatalogComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<NSCatalog.ITreeCatalogData> {

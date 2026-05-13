@@ -1,8 +1,7 @@
 // import { HttpClient } from '@angular/common/http'
 import { Component, OnInit, Input, OnDestroy, ViewChild, ElementRef } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
-import { ConfigurationsService, EventService, WsEvents, NPSGridService  } from '@sunbird-cb/utils-v2'
-// import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
+import { ConfigurationsService, EventService, WsEvents, NPSGridService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 // import { map } from 'rxjs/operators'
 import { Router } from '@angular/router'
@@ -15,16 +14,17 @@ import {
 } from './grid-layout.model'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 // const API_END_POINTS = {
 //   fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
 // }
 
 @Component({
-  selector: 'ws-widget-grid-layout',
-  templateUrl: './grid-layout.component.html',
-  styleUrls: ['./grid-layout.component.scss'],
+    selector: 'ws-widget-grid-layout',
+    templateUrl: './grid-layout.component.html',
+    styleUrls: ['./grid-layout.component.scss'],
+    standalone: false
 })
 
 export class GridLayoutComponent extends WidgetBaseComponent
@@ -133,7 +133,7 @@ export class GridLayoutComponent extends WidgetBaseComponent
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -154,17 +154,17 @@ export class GridLayoutComponent extends WidgetBaseComponent
     })
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
       // this.fetchProfileById(this.configSvc.unMappedUser.id).subscribe(x => {
-        // console.log(x.profileDetails, "x.profileDetails====")
-        // if (x.profileDetails.mandatoryFieldsExists) {
-        //   this.isNudgeOpen = false
-        // }
-        if (this.configSvc.unMappedUser &&
+      // console.log(x.profileDetails, "x.profileDetails====")
+      // if (x.profileDetails.mandatoryFieldsExists) {
+      //   this.isNudgeOpen = false
+      // }
+      if (this.configSvc.unMappedUser &&
         this.configSvc.unMappedUser.profileDetails &&
         this.configSvc.unMappedUser.profileDetails.personalDetails &&
         this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified &&
         this.configSvc.unMappedUser.profileDetails.personalDetails.phoneVerified === 'true') {
-          this.isNudgeOpen = false
-        }
+        this.isNudgeOpen = false
+      }
       // })
     }
 
@@ -197,7 +197,7 @@ export class GridLayoutComponent extends WidgetBaseComponent
         },
       ]
     } else {
-      this. ratingList = [
+      this.ratingList = [
         {
           value: 0,
           image: '/assets/images/nps/0.svg',
@@ -410,34 +410,34 @@ export class GridLayoutComponent extends WidgetBaseComponent
         setTimeout(() => {
           this.isNPSOpen = false
           this.onSuccessRating = false
-        },         4000)
-          const feedIDN = JSON.parse(this.feedID).map((item: any) => {
-            return item.replace(/\"/g, '')
-           })
-          // const feedIDN = this.feedID.replace(/\"/g, '')
-          if (feedIDN.length > 0) {
-            if (localStorage.getItem('ratingformID')) {
-              localStorage.removeItem('ratingformID')
+        }, 4000)
+        const feedIDN = JSON.parse(this.feedID).map((item: any) => {
+          return item.replace(/\"/g, '')
+        })
+        // const feedIDN = this.feedID.replace(/\"/g, '')
+        if (feedIDN.length > 0) {
+          if (localStorage.getItem('ratingformID')) {
+            localStorage.removeItem('ratingformID')
+          }
+          if (localStorage.getItem('ratingfeedID')) {
+            localStorage.removeItem('ratingfeedID')
+          }
+          for (const item of feedIDN) {
+            const req = {
+              request: {
+                userId: this.configSvc.unMappedUser.id,
+                category: 'NPS',
+                feedId: item,
+              },
             }
-            if (localStorage.getItem('ratingfeedID')) {
-              localStorage.removeItem('ratingfeedID')
-            }
-            for (const item of feedIDN) {
-              const req = {
-                request: {
-                  userId: this.configSvc.unMappedUser.id,
-                  category: 'NPS',
-                  feedId: item,
-                },
-              }
-              this.npsService.deleteFeed(req).subscribe((res: any) => {
+            this.npsService.deleteFeed(req).subscribe((res: any) => {
               // tslint:disable-next-line
               console.log(res)
-              }
-              )
             }
+            )
           }
         }
+      }
       )
     }
   }
@@ -455,36 +455,36 @@ export class GridLayoutComponent extends WidgetBaseComponent
       }
       this.npsService.submitPlatformRating(reqbody).subscribe((resp: any) => {
         this.isNPSOpen = false
-         // tslint:disable-next-line
-         console.log(resp)
-          // const feedIDN = this.feedID.replace(/\"/g, '')
-          const feedIDN = JSON.parse(this.feedID).map((item: any) => {
-            return item.replace(/\"/g, '')
-           })
-           if (feedIDN.length > 0) {
-            if (localStorage.getItem('ratingformID')) {
-              localStorage.removeItem('ratingformID')
-            }
-            if (localStorage.getItem('ratingfeedID')) {
-              localStorage.removeItem('ratingfeedID')
-            }
-            for (const item of feedIDN) {
-              const req = {
-                request: {
-                  userId: this.configSvc.unMappedUser.id,
-                  category: 'NPS',
-                  feedId: item,
-                },
-              }
-              this.npsService.deleteFeed(req).subscribe((res: any) => {
-                if (res) {
-                  this.configSvc.updatePlatformRatingMethod({ bottom: '120px' })
-                  this.raisePlatformRatingEndTelemetry()
-                }
-              }
-              )
-            }
+        // tslint:disable-next-line
+        console.log(resp)
+        // const feedIDN = this.feedID.replace(/\"/g, '')
+        const feedIDN = JSON.parse(this.feedID).map((item: any) => {
+          return item.replace(/\"/g, '')
+        })
+        if (feedIDN.length > 0) {
+          if (localStorage.getItem('ratingformID')) {
+            localStorage.removeItem('ratingformID')
           }
+          if (localStorage.getItem('ratingfeedID')) {
+            localStorage.removeItem('ratingfeedID')
+          }
+          for (const item of feedIDN) {
+            const req = {
+              request: {
+                userId: this.configSvc.unMappedUser.id,
+                category: 'NPS',
+                feedId: item,
+              },
+            }
+            this.npsService.deleteFeed(req).subscribe((res: any) => {
+              if (res) {
+                this.configSvc.updatePlatformRatingMethod({ bottom: '120px' })
+                this.raisePlatformRatingEndTelemetry()
+              }
+            }
+            )
+          }
+        }
       })
     } else {
       this.isNPSOpen = false

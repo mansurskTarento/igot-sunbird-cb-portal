@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
   @extend %page-center;
@@ -9,13 +9,14 @@
 
   @media (max-width:1024px) {
     max-width: 100%;
-    margin:0px 8px!important
+    margin: 0px 8px !important
   }
 }
 
 .competency_main_wrapper {
   width: 100%;
-  border:2px solid green;
+  border: 2px solid green;
+
   @media (max-width:1024px) {
     width: 100%;
   }

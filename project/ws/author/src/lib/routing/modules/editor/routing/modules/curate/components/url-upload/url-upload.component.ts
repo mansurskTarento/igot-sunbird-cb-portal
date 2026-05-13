@@ -1,22 +1,23 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { IprDialogComponent } from '@ws/author/src/lib/modules/shared/components/ipr-dialog/ipr-dialog.component'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
 import { IFormMeta } from './../../../../../../../../interface/form'
 import { AuthInitService } from './../../../../../../../../services/init.service'
 import { URLCheckerClass } from './url-upload.helper'
+import { EditorContentService } from '../../../../../services/editor-content.service'
+import { NSContent } from '../../../../../../../../interface/content'
+import { IprDialogComponent } from '../../../../../../../../modules/shared/components/ipr-dialog/ipr-dialog.component'
+import { NotificationComponent } from '../../../../../../../../modules/shared/components/notification/notification.component'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../constants/constant'
 
 @Component({
-  selector: 'ws-auth-url-upload',
-  templateUrl: './url-upload.component.html',
-  styleUrls: ['./url-upload.component.scss'],
+    selector: 'ws-auth-url-upload',
+    templateUrl: './url-upload.component.html',
+    styleUrls: ['./url-upload.component.scss'],
+    standalone: false
 })
 export class UrlUploadComponent implements OnInit {
   urlUploadForm!: UntypedFormGroup

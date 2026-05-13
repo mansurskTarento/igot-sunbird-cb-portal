@@ -6,9 +6,10 @@ import { NsUser } from '@sunbird-cb/utils-v2'
 // import { NSProfileDataV2 } from '../../../profile-v2/models/profile-v2.model'
 
 @Component({
-  selector: 'ws-widget-connection-name',
-  templateUrl: './connection-name.component.html',
-  styleUrls: ['./connection-name.component.scss'],
+    selector: 'ws-widget-connection-name',
+    templateUrl: './connection-name.component.html',
+    styleUrls: ['./connection-name.component.scss'],
+    standalone: false
 })
 export class ConnectionNameComponent implements OnInit, AfterViewInit {
   @Input() hoverUser!: any

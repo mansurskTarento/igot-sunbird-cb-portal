@@ -8,10 +8,10 @@ import { PipeDurationTransformModule, PipeOrdinalModule } from '@sunbird-cb/util
 import { WeeklyClapsModule } from '../weekly-claps/weekly-claps.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { UserProfileService } from '../../_services/user-profile.service'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
     declarations: [UserLeaderboardComponent],

@@ -5,7 +5,7 @@ import { AppTocCiosHomeComponent } from '@sunbird-cb/toc'
 import { AppTocCiosResolverService } from '@sunbird-cb/toc'
 import { AppTocCiosUserEnrollResolverService } from '@sunbird-cb/toc'
 import { AppTocContentReadResolverService } from '@sunbird-cb/toc'
-import { FormDataResolverService } from '../../../../../../../src/app/services/form-data-resolver.service'
+import { FormDataResolverService } from './../../routes/services/form-data-resolver.service'
 
 import { TocHomeComponent } from './toc-home/toc-home.component'
 
@@ -32,7 +32,7 @@ const routes: Routes = [
           pageId: 'overview',
           module: 'Learn',
         },
-      }
+      },
     ],
   },
   {

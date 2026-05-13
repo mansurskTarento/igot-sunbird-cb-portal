@@ -1,10 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
 import { AbstractControl, UntypedFormArray, UntypedFormBuilder, UntypedFormGroup, UntypedFormControl } from '@angular/forms'
-import { MatSnackBar, MatDialog, MatChipInputEvent } from '@angular/material'
 import { IPickerContentData, NsContent, NsContentStripSingle } from '@sunbird-cb/collection'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs/operators'
 import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
@@ -15,11 +11,18 @@ import { SEARCHV6 } from './content-strip-single.constant'
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 import { Observable, of } from 'rxjs'
 import { InterestService } from './../../../../../../../../../../../../app/src/lib/routes/profile/routes/interest/services/interest.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-content-strip-single',
-  templateUrl: './content-strip-single.component.html',
-  styleUrls: ['./content-strip-single.component.scss'],
+    selector: 'ws-auth-content-strip-single',
+    templateUrl: './content-strip-single.component.html',
+    styleUrls: ['./content-strip-single.component.scss'],
+    standalone: false
 })
 export class ContentStripSingleComponent implements OnInit {
   @Output() data = new EventEmitter<{
@@ -310,7 +313,7 @@ export class ContentStripSingleComponent implements OnInit {
   }
 
   onSearchV6Change(event?: { content: Partial<NsContent.IContent>; checked: boolean },
-                   ids?: string[], fromAuthChips = false) {
+    ids?: string[], fromAuthChips = false) {
     const searchV6 = JSON.parse(JSON.stringify(SEARCHV6))
     searchV6.locale = [...this.language]
     searchV6.sort = [

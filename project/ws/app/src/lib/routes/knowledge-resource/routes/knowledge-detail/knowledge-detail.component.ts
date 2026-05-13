@@ -11,11 +11,12 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 // tslint:enable
 
 @Component({
-  selector: 'ws-app-knowledge-detail',
-  templateUrl: './knowledge-detail.component.html',
-  styleUrls: ['./knowledge-detail.component.scss'],
-  // tslint:disable-next-line
-  host: { class: 'flex flex-1 overflow-hidden' },
+    selector: 'ws-app-knowledge-detail',
+    templateUrl: './knowledge-detail.component.html',
+    styleUrls: ['./knowledge-detail.component.scss'],
+    // tslint:disable-next-line
+    host: { class: 'flex flex-1 overflow-hidden' },
+    standalone: false
 })
 
 export class KnowledgeDetailComponent implements OnInit {

@@ -1,5 +1,5 @@
-@import 'ws-common';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .web-module-container {
   height: 100%;
@@ -13,6 +13,7 @@
   height: 40px;
   display: flex;
   align-items: center;
+
   // @include breakpoint-gt-xs {
   //   width: 300px;
   // }
@@ -28,6 +29,7 @@
   overflow: hidden;
   font: inherit;
   flex-wrap: wrap;
+
   .page-input {
     width: 40px;
     border: 0;
@@ -38,9 +40,11 @@
     border-bottom: 1px solid;
     text-align: center;
   }
+
   .spacer {
     flex: 1 1 auto;
   }
+
   .full-screen-button {
     order: unset;
     // @include breakpoint-gt-xs {
@@ -48,6 +52,7 @@
     // }
   }
 }
+
 .web-module-sidenav-container {
   flex: 1 1 auto;
   height: calc(100% - 80px);
@@ -55,6 +60,7 @@
   //   height: calc(100% - 40px);
   // }
 }
+
 .web-module-sidenav {
   min-width: 320px;
   max-width: 95%;
@@ -63,12 +69,14 @@
   //   max-width: 600px;
   // }
 }
+
 .web-module-iframe {
   height: 100%;
   width: 100%;
   display: block;
   position: relative;
 }
+
 .iframeBlur {
   filter: blur(10px);
 }

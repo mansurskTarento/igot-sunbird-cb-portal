@@ -1,13 +1,14 @@
 import { Component, HostListener } from '@angular/core'
 import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'igot-cb-tour-guide'
 import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { UserProfileService } from '@ws/app'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'app-tour',
-  templateUrl: './app-tour.component.html',
-  styleUrls: ['./app-tour.component.scss'],
-  providers: [UserProfileService],
+    selector: 'app-tour',
+    templateUrl: './app-tour.component.html',
+    styleUrls: ['./app-tour.component.scss'],
+    providers: [UserProfileService],
+    standalone: false
 })
 
 export class AppTourComponent {
@@ -16,9 +17,9 @@ export class AppTourComponent {
   videoProgressTime = 114
   tourStatus: any = { visited: true, skipped: false }
   showpopup = true
-  noScroll  = true
+  noScroll = true
   closePopupIcon = true
-  showCompletePopup  = false
+  showCompletePopup = false
   showVideoTour = false
   isMobile = false
   hideCloseBtn = false
@@ -206,7 +207,7 @@ export class AppTourComponent {
         // tslint:disable-next-line: align
       }, 2000)
     } else {
-     this.guidedTourService.startTour(this.TOUR)
+      this.guidedTourService.startTour(this.TOUR)
       setTimeout(() => {
         // @ts-ignore
         const _left = parseFloat(document.getElementsByClassName('tour_learn')[0]['style']['left'].split('px')[0])
@@ -246,11 +247,11 @@ export class AppTourComponent {
     }, 2000)
     if (this.isMobile) {
       // tslint:disable-next-line: align
-       // @ts-ignore
-       setTimeout(() => {
-         this.guidedTourService.startTour(this.MOBILE_TOUR)
-         // tslint:disable-next-line: align
-       }, 2000)
+      // @ts-ignore
+      setTimeout(() => {
+        this.guidedTourService.startTour(this.MOBILE_TOUR)
+        // tslint:disable-next-line: align
+      }, 2000)
     }
   }
 
@@ -260,8 +261,8 @@ export class AppTourComponent {
     this.showCompletePopup = true
     setTimeout(() => {
       this.onCongrats()
-    // tslint: disable-next-line
-    },         3000)
+      // tslint: disable-next-line
+    }, 3000)
     this.raiseGetStartedEndTelemetry()
     this.updateTourstatus({ visited: true, skipped: false })
   }
@@ -298,7 +299,7 @@ export class AppTourComponent {
     console.log('currentStep', currentStep)
     this.hideCloseBtn = false
     this.currentWindow = stepObject
-    const currentStepObj: any = this.TOUR.steps[currentStep +  1]
+    const currentStepObj: any = this.TOUR.steps[currentStep + 1]
     // // tslint:disable-next-line: max-line-length
     this.raiseTemeletyInterat(`${currentStepObj.title.toLowerCase().replace(' ', '-')}-previous`, currentStepObj.title.toLowerCase())
   }
@@ -365,7 +366,7 @@ export class AppTourComponent {
 
   translateTo(name: string): string {
     // tslint:disable-next-line: prefer-template
-    const translationKey =  'tour.' + name
+    const translationKey = 'tour.' + name
     return this.translate.instant(translationKey)
   }
 }

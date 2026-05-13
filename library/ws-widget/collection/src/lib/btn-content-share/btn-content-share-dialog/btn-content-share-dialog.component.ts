@@ -6,18 +6,18 @@ import { WidgetContentShareService } from '../../_services/widget-content-share.
 import { NsContent } from '../../_services/widget-content.model'
 import { NsShare } from '../../_services/widget-share.model'
 import { ICommon } from '../../_models/common.model'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-// import { TitleTagService } from '@ws/app/src/lib/routes/app-toc/services/title-tag.service'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 export interface IContentShareData {
   content: NsContent.IContent
 }
 
 @Component({
-  selector: 'ws-widget-btn-content-share-dialog',
-  templateUrl: './btn-content-share-dialog.component.html',
-  styleUrls: ['./btn-content-share-dialog.component.scss'],
+    selector: 'ws-widget-btn-content-share-dialog',
+    templateUrl: './btn-content-share-dialog.component.html',
+    styleUrls: ['./btn-content-share-dialog.component.scss'],
+    standalone: false
 })
 export class BtnContentShareDialogComponent implements OnInit {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA, SEMICOLON]
@@ -166,6 +166,6 @@ export class BtnContentShareDialogComponent implements OnInit {
       {
         pageIdExt: 'btn-share',
         module: WsEvents.EnumTelemetrymodules.CONTENT,
-    })
+      })
   }
 }

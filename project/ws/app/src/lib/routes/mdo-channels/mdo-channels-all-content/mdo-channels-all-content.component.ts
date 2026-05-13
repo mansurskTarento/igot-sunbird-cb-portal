@@ -1,18 +1,19 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { NsContentStripWithTabs } from '@sunbird-cb/consumption/lib/_common/content-strip-with-tabs-lib/content-strip-with-tabs-lib.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/consumption'
 
 import { AllContentService } from './../service/all-content.service'
 import { EventService, UtilityService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../../routes/services/form-ext.service'
 
 @Component({
   selector: 'ws-app-mdo-channels-all-content',
   templateUrl: './mdo-channels-all-content.component.html',
   styleUrls: ['./mdo-channels-all-content.component.scss'],
+  standalone: false
 })
 export class MdoChannelsAllContentComponent implements OnInit {
 
@@ -28,42 +29,42 @@ export class MdoChannelsAllContentComponent implements OnInit {
   selectedTab: any
   titles: any = []
   constructor(public commonSvc: CommonMethodsService,
-              public activatedRoute: ActivatedRoute,
-              public formExtSvc: FormExtService,
-              public contentSvc: AllContentService,
-              private translate: TranslateService,
-              private langtranslations: MultilingualTranslationsService,
-              public utilitySvc: UtilityService,
-              public events: EventService,
+    public activatedRoute: ActivatedRoute,
+    public formExtSvc: FormExtService,
+    public contentSvc: AllContentService,
+    private translate: TranslateService,
+    private langtranslations: MultilingualTranslationsService,
+    public utilitySvc: UtilityService,
+    public events: EventService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translate.setDefaultLang('en')
-      const lang = localStorage.getItem('websiteLanguage')!
-      this.translate.use(lang)
-    }
-  })
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+      }
+    })
 
-   }
+  }
 
-  ngOnInit( ) {
+  ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.orgName = params['channel']
       this.orgId = params['orgId']
       this.tabSelected = this.activatedRoute.snapshot.queryParams.tabSelected || ''
       this.getFormData(this.activatedRoute.snapshot.queryParams)
       // if (this.activatedRoute.snapshot.queryParams && this.activatedRoute.snapshot.queryParams.stripData) {
-        // const data  = JSON.parse(this.activatedRoute.snapshot.queryParams.stripData)
-        // this.isMobile = this.utilitySvc.isMobile || false
-        // if (this.isMobile) {
-        //   data['stripConfig']['cardSubType'] = 'card-wide-lib'
-        //   data['loaderConfig']['cardSubType'] = 'card-wide-lib-skeleton'
-        // } else {
-        //   data['stripConfig']['cardSubType'] = 'card-wide-v2'
-        //   data['loaderConfig']['cardSubType'] = 'card-wide-v2-skeleton'
-        // }
-        // this.seeAllPageConfig = data
-        // this.contentDataList = this.commonSvc.transformSkeletonToWidgets(data)
+      // const data  = JSON.parse(this.activatedRoute.snapshot.queryParams.stripData)
+      // this.isMobile = this.utilitySvc.isMobile || false
+      // if (this.isMobile) {
+      //   data['stripConfig']['cardSubType'] = 'card-wide-lib'
+      //   data['loaderConfig']['cardSubType'] = 'card-wide-lib-skeleton'
+      // } else {
+      //   data['stripConfig']['cardSubType'] = 'card-wide-v2'
+      //   data['loaderConfig']['cardSubType'] = 'card-wide-v2-skeleton'
+      // }
+      // this.seeAllPageConfig = data
+      // this.contentDataList = this.commonSvc.transformSkeletonToWidgets(data)
       // }
     })
     // this.titles = [
@@ -87,11 +88,11 @@ export class MdoChannelsAllContentComponent implements OnInit {
     if (this.orgName && this.orgId) {
       const requestData: any = {
         'request': {
-            'type': 'MDO-channel',
-            'subType': 'microsite-v2',
-            'action': 'page-configuration',
-            'component': 'portal',
-            'rootOrgId': this.orgId,
+          'type': 'MDO-channel',
+          'subType': 'microsite-v2',
+          'action': 'page-configuration',
+          'component': 'portal',
+          'rootOrgId': this.orgId,
         },
       }
       this.formExtSvc.formReadData(requestData).subscribe((res: any) => {
@@ -103,8 +104,8 @@ export class MdoChannelsAllContentComponent implements OnInit {
             mainSectionData[0].column[0].data.tabSection &&
             mainSectionData[0].column[0].data.tabSection.contentTab) {
             const filterData = mainSectionData[0].column[0].data.tabSection.contentTab.filter((ele: any) => ele.key === queryparams.key)
-            if (filterData && filterData[0] && filterData[0].column[0]  && filterData[0].column[0].data.strips) {
-              const data  = filterData[0].column[0].data.strips[0]
+            if (filterData && filterData[0] && filterData[0].column[0] && filterData[0].column[0].data.strips) {
+              const data = filterData[0].column[0].data.strips[0]
               this.isMobile = this.utilitySvc.isMobile || false
               if (this.isMobile) {
                 data['stripConfig']['cardSubType'] = 'card-wide-lib'
@@ -117,13 +118,14 @@ export class MdoChannelsAllContentComponent implements OnInit {
               this.contentDataList = this.commonSvc.transformSkeletonToWidgets(data)
               this.titles = [
                 { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
-                { title: `MDO Channels`, url: `/app/learn/mdo-channels/all-channels`, icon: '', disableTranslate: true },
+                { title: 'MDO Channels', url: '/app/learn/mdo-channels/all-channels', icon: '', disableTranslate: true },
                 {
                   title: this.orgName,
                   url: `/app/learn/mdo-channels/${this.orgName}/${this.orgId}/micro-sites`,
                   disableTranslate: true,
                 },
-                { title: this.seeAllPageConfig.title,
+                {
+                  title: this.seeAllPageConfig.title,
                   icon: '',
                   url: 'none',
                   disableTranslate: false,
@@ -133,7 +135,7 @@ export class MdoChannelsAllContentComponent implements OnInit {
             }
           }
         }
-      },                                                  (_err: any) => {
+      }, (_err: any) => {
         this.contentDataList = []
       })
     }
@@ -232,9 +234,9 @@ export class MdoChannelsAllContentComponent implements OnInit {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
         this.contentSvc.postApiMethod(apiUrl, request).subscribe(results => {
-        resolve({ results })
-        },                                                       (error: any) => {
-        reject(error)
+          resolve({ results })
+        }, (error: any) => {
+          reject(error)
         },
         )
       }
@@ -251,7 +253,7 @@ export class MdoChannelsAllContentComponent implements OnInit {
       try {
         const response = await this.getRequestMethod(strip, strip.request.playlistRead, strip.request.apiUrl)
         if (response && response.results.result.content) {
-          const content  = response.results.result.content
+          const content = response.results.result.content
           this.originalContentlist = content
           this.contentDataList = this.commonSvc.transformContentsToWidgets(content, strip)
           // this.processStrip(
@@ -275,23 +277,23 @@ export class MdoChannelsAllContentComponent implements OnInit {
   }
 
   async getRequestMethod(strip: NsContentStripWithTabs.IContentStripUnit,
-                         request: NsContentStripWithTabs.IContentStripUnit['request'],
-                         apiUrl: string
+    request: NsContentStripWithTabs.IContentStripUnit['request'],
+    apiUrl: string
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
         this.contentSvc.getApiMethod(apiUrl).subscribe(results => {
-        const showViewMore = Boolean(
-        results.result.data && results.result.data.orgList.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
-        )
-        const viewMoreUrl = showViewMore
-        ? {
-        path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
-        }
-        : null
-        resolve({ results, viewMoreUrl })
-        },                                             (error: any) => {
-        reject(error)
+          const showViewMore = Boolean(
+            results.result.data && results.result.data.orgList.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
+          )
+          const viewMoreUrl = showViewMore
+            ? {
+              path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
+            }
+            : null
+          resolve({ results, viewMoreUrl })
+        }, (error: any) => {
+          reject(error)
         },
         )
       }
@@ -317,8 +319,8 @@ export class MdoChannelsAllContentComponent implements OnInit {
   filterContentList(searchText: string) {
     const data = [...this.originalContentlist]
     const filterValue = searchText.toLowerCase()
-    const filteredData = data.filter((p: any) => p &&  p.name && p.name.toLowerCase().includes(filterValue))
-    this.contentDataList  = this.commonSvc.transformContentsToWidgets(filteredData, this.seeAllPageConfig)
+    const filteredData = data.filter((p: any) => p && p.name && p.name.toLowerCase().includes(filterValue))
+    this.contentDataList = this.commonSvc.transformContentsToWidgets(filteredData, this.seeAllPageConfig)
   }
 
   getFullUrl(apiUrl: any, id: string) {

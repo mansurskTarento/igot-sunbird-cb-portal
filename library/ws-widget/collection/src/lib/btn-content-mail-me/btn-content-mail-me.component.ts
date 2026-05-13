@@ -9,8 +9,8 @@ import {
   IWidgetMailMeDialogComponentResponse,
 } from './btn-content-mail-me-dialog/btn-content-mail-me-dialog.component'
 import { WidgetContentShareService } from '../_services/widget-content-share.service'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 enum TMailMeResponse {
   NONE,
@@ -23,9 +23,10 @@ interface IMailMeResponseObj extends IWidgetMailMeDialogComponentResponse {
 const VALID_CATEGORIES = new Set(['leave behind'])
 
 @Component({
-  selector: 'ws-widget-btn-content-mail-me',
-  templateUrl: './btn-content-mail-me.component.html',
-  styleUrls: ['./btn-content-mail-me.component.scss'],
+    selector: 'ws-widget-btn-content-mail-me',
+    templateUrl: './btn-content-mail-me.component.html',
+    styleUrls: ['./btn-content-mail-me.component.scss'],
+    standalone: false
 })
 export class BtnContentMailMeComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<NsContent.IContent> {

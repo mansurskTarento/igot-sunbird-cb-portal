@@ -6,7 +6,7 @@ describe('CollectionResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: CollectionResolverService = TestBed.get(CollectionResolverService)
+    const service: CollectionResolverService = TestBed.inject(CollectionResolverService)
     expect(service).toBeTruthy()
   })
 })

@@ -5,15 +5,16 @@ import {
   ViewChild,
   ElementRef,
 } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsGoal, BtnGoalsService, NsAutoComplete } from '@sunbird-cb/collection'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-share-dialog',
-  templateUrl: './goal-share-dialog.component.html',
-  styleUrls: ['./goal-share-dialog.component.scss'],
+    selector: 'ws-app-goal-share-dialog',
+    templateUrl: './goal-share-dialog.component.html',
+    styleUrls: ['./goal-share-dialog.component.scss'],
+    standalone: false
 })
 export class GoalShareDialogComponent implements OnInit {
   @ViewChild('errorShare', { static: true }) errorShareMessage!: ElementRef<
@@ -56,7 +57,7 @@ export class GoalShareDialogComponent implements OnInit {
         !this.configSvc.restrictedFeatures.has('socialMediaLinkedinShare') ||
         !this.configSvc.restrictedFeatures.has('socialMediaTwitterShare')
     }
-   }
+  }
 
   updateUsers(users: NsAutoComplete.IUserAutoComplete[]) {
     if (Array.isArray(users)) {

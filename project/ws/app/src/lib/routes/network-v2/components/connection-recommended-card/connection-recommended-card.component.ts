@@ -1,15 +1,16 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Output, EventEmitter } from '@angular/core'
 import { NSNetworkDataV2 } from '../../models/network-v2.model'
 import { NetworkV2Service } from '../../services/network-v2.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-connection-recommended-card',
-  templateUrl: './connection-recommended-card.component.html',
-  styleUrls: ['./connection-recommended-card.component.scss'],
+    selector: 'ws-app-connection-recommended-card',
+    templateUrl: './connection-recommended-card.component.html',
+    styleUrls: ['./connection-recommended-card.component.scss'],
+    standalone: false
 })
 export class ConnectionRecommendedCardComponent implements OnInit {
 
@@ -43,7 +44,7 @@ export class ConnectionRecommendedCardComponent implements OnInit {
       if (this.user.firstName) {
         if (this.user.lastName && this.user.lastName !== null && this.user.lastName !== undefined) {
           name = `${this.user.firstName} ${this.user.lastName}`
-        } else  {
+        } else {
           name = `${this.user.firstName}`
         }
       }
@@ -88,15 +89,15 @@ export class ConnectionRecommendedCardComponent implements OnInit {
     }
     if (this.user.personalDetails) {
       req.userNameTo = `${this.user.personalDetails.firstname}`
-      req.userDepartmentTo =  this.user.employmentDetails.departmentName
+      req.userDepartmentTo = this.user.employmentDetails.departmentName
     }
     if (!this.user.personalDetails && this.user.first_name) {
       req.userNameTo = `${this.user.first_name}${this.user.last_name}`
-      req.userDepartmentTo =  this.user.department_name
+      req.userDepartmentTo = this.user.department_name
     }
     if (!this.user.personalDetails && this.user.firstName) {
       req.userNameTo = `${this.user.firstName}`
-      req.userDepartmentTo =  this.user.channel
+      req.userDepartmentTo = this.user.channel
     }
 
     this.networkV2Service.createConnection(req).subscribe(

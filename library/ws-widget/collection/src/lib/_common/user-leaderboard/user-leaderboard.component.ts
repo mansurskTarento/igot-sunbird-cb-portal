@@ -1,17 +1,19 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core'
 // import { Router } from '@angular/router'
-import { ConfigurationsService, MultilingualTranslationsService, PipeDurationTransformPipe
+import {
+  ConfigurationsService, MultilingualTranslationsService, PipeDurationTransformPipe
   , PipeOrdinalPipe,
- } from '@sunbird-cb/utils-v2'
-import { HomePageService } from 'src/app/services/home-page.service'
+} from '@sunbird-cb/utils-v2'
+import { HomePageService } from '../../_services/home-page.service'
 import moment from 'moment'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { UserProfileService } from '../../_services/user-profile.service'
 
 @Component({
-  selector: 'ws-widget-user-leaderboard',
-  templateUrl: './user-leaderboard.component.html',
-  styleUrls: ['./user-leaderboard.component.scss'],
-  providers: [PipeDurationTransformPipe, PipeOrdinalPipe],
+    selector: 'ws-widget-user-leaderboard',
+    templateUrl: './user-leaderboard.component.html',
+    styleUrls: ['./user-leaderboard.component.scss'],
+    providers: [PipeDurationTransformPipe, PipeOrdinalPipe],
+    standalone: false
 })
 export class UserLeaderboardComponent implements OnInit {
 
@@ -35,17 +37,17 @@ export class UserLeaderboardComponent implements OnInit {
   maxLength = 2
   tooltipDelay: any = 1000
   constructor(private configSvc: ConfigurationsService,
-              private homePageSvc: HomePageService,
-              private userProfileSvc: UserProfileService,
-              private langtranslations: MultilingualTranslationsService,
-              private ordinalPipe: PipeOrdinalPipe) { }
+    private homePageSvc: HomePageService,
+    private userProfileSvc: UserProfileService,
+    private langtranslations: MultilingualTranslationsService,
+    private ordinalPipe: PipeOrdinalPipe) { }
 
   ngOnInit() {
 
     this.currentUserId = this.configSvc.unMappedUser.id
     this.currentUserProfile = this.configSvc.unMappedUser.profileDetails
     this.loader = true
-    this.userInfo =  this.configSvc && this.configSvc.userProfile
+    this.userInfo = this.configSvc && this.configSvc.userProfile
     this.loading = true
     this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
       if (res && res.result && res.result.result && res.result.result.length) {
@@ -66,7 +68,7 @@ export class UserLeaderboardComponent implements OnInit {
         if (this.currentUserRank && this.currentUserRank.rank < this.currentUserRank.previous_rank) {
           const rankDiff = this.currentUserRank.previous_rank - this.currentUserRank.rank
           // tslint:disable-next-line: max-line-length
-          this.overLayText = `${this.translateLabels('overlayText1', 'learnerLeaderboard')} ${this.ordinalPipe.transform(this.currentUserRank.rank)} ${this.translateLabels('overlayText2', 'learnerLeaderboard')} ${(this.currentUserRank.previous_rank - this.currentUserRank.rank)} ${this.translateLabels((rankDiff === 1 ?  'overlayText3WithSingular' : 'overlayText3'), 'learnerLeaderboard')}`
+          this.overLayText = `${this.translateLabels('overlayText1', 'learnerLeaderboard')} ${this.ordinalPipe.transform(this.currentUserRank.rank)} ${this.translateLabels('overlayText2', 'learnerLeaderboard')} ${(this.currentUserRank.previous_rank - this.currentUserRank.rank)} ${this.translateLabels((rankDiff === 1 ? 'overlayText3WithSingular' : 'overlayText3'), 'learnerLeaderboard')}`
           const isMessageShown = localStorage.getItem('motivationalMessage')
           if (!isMessageShown) {
             this.showOverlayMessage()
@@ -94,7 +96,7 @@ export class UserLeaderboardComponent implements OnInit {
     this.updateMotivationalMessagestatus()
     setTimeout(() => {
       this.showOverlay = false
-    },         5000)
+    }, 5000)
   }
 
   translateLabels(label: string, type: any) {

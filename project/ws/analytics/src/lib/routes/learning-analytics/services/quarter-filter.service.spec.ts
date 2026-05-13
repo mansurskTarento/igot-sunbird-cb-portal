@@ -6,7 +6,7 @@ describe('QuarterFilterService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: QuarterFilterService = TestBed.get(QuarterFilterService)
+    const service: QuarterFilterService = TestBed.inject(QuarterFilterService)
     expect(service).toBeTruthy()
   })
 })

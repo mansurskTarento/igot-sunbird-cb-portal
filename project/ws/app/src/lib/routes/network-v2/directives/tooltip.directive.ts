@@ -6,7 +6,10 @@ import {
     ContentChild,
 } from '@angular/core'
 
-@Directive({ selector: '[wsTooltipDirective]' })
+@Directive({
+    selector: '[wsTooltipDirective]',
+    standalone: false
+})
 export class TooltipDirective {
     // private tooltipId!: string
     constructor(

@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { DisplayContentTypeModule } from '@sunbird-cb/collection'
 import { DefaultThumbnailModule, PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
-import { SharedModule } from '@ws/author/src/lib/modules/shared/shared.module'
 // import { AceEditorModule } from 'ng2-ace-editor'
 // import { CKEditorModule } from 'ng2-ckeditor'
 import { CatalogSelectModule } from '../shared/components/catalog-select/catalog-select.module'
@@ -21,10 +20,16 @@ import { EditMetaV2Component } from './components/editor/edit-meta-v2/edit-meta-
 import { LiveHtmlEditorComponent } from './components/live-html-editor/live-html-editor.component'
 import { OptionsComponent } from './components/options/options.component'
 import { FormsModule } from '@angular/forms'
+import { MatChipsModule } from '@angular/material/chips'
 import { CompetencyAddPopUpComponent } from './components/competency-add-popup/competency-add-popup'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
+import { SharedModule } from '../../../../modules/shared/shared.module'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function EditorShareHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [
@@ -50,13 +55,14 @@ import { HttpClient } from '@angular/common/http'
         DisplayContentTypeModule,
         // CKEditorModule,
         FormsModule,
+        MatChipsModule,
         SharedModule,
         // AceEditorModule,
         CatalogSelectModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: EditorShareHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),
@@ -75,6 +81,6 @@ import { HttpClient } from '@angular/common/http'
         CompetencyAddPopUpComponent,
         TranslateModule,
     ],
-    providers: [UploadService]
+    providers: [UploadService],
 })
 export class EditorSharedModule { }

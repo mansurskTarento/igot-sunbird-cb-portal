@@ -2,16 +2,17 @@ import { Component, ViewChild, ElementRef, HostListener } from '@angular/core'
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms'
 
 @Component({
-  selector: 'ws-widget-ctrl-file-upload',
-  templateUrl: './ctrl-file-upload.component.html',
-  styleUrls: ['./ctrl-file-upload.component.scss'],
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: CtrlFileUploadComponent,
-      multi: true,
-    },
-  ],
+    selector: 'ws-widget-ctrl-file-upload',
+    templateUrl: './ctrl-file-upload.component.html',
+    styleUrls: ['./ctrl-file-upload.component.scss'],
+    providers: [
+        {
+            provide: NG_VALUE_ACCESSOR,
+            useExisting: CtrlFileUploadComponent,
+            multi: true,
+        },
+    ],
+    standalone: false
 })
 export class CtrlFileUploadComponent implements ControlValueAccessor {
   @ViewChild('btnSelect', { static: true }) btnSelect!: ElementRef<

@@ -5,9 +5,10 @@ import { MultilingualTranslationsService, NsContent } from '@sunbird-cb/utils-v2
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-jan-karmayogi-home',
-  templateUrl: './jan-karmayogi-home.component.html',
-  styleUrls: ['./jan-karmayogi-home.component.scss'],
+    selector: 'ws-app-jan-karmayogi-home',
+    templateUrl: './jan-karmayogi-home.component.html',
+    styleUrls: ['./jan-karmayogi-home.component.scss'],
+    standalone: false
 })
 export class JanKarmayogiHomeComponent implements OnInit {
   pageData: any

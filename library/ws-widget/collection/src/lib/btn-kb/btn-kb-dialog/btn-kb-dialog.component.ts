@@ -4,14 +4,15 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { BtnKbService } from '../btn-kb.service'
 import { Router } from '@angular/router'
 import { BtnKbConfirmComponent } from '../btn-kb-confirm/btn-kb-confirm.component'
-import { MatLegacyDialog as MatDialog, MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacyListOption as MatListOption } from '@angular/material/legacy-list'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatListOption } from '@angular/material/list'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-widget-btn-kb-dialog',
   templateUrl: './btn-kb-dialog.component.html',
   styleUrls: ['./btn-kb-dialog.component.scss'],
+  standalone: false
 })
 export class BtnKbDialogComponent implements OnInit {
   @ViewChild('contentUpdated', { static: true }) contentUpdatedMessage!: ElementRef<any>
@@ -59,36 +60,43 @@ export class BtnKbDialogComponent implements OnInit {
     this.kbSvc.getMyKnowledgeBoards().subscribe(response => {
       this.fetchKbs = 'done'
       this.knowledgeBoards = response.result
-      this.knowledgeBoards.forEach(board => {
-        if (board.children.map((content: { identifier: any }) => content.identifier).includes(this.contentId)) {
-          this.selectedBoards.add(board.identifier)
-        }
-      })
-      this.knowledgeBoards.forEach(board => {
-        const sections = new Set<string>()
-        board.sections = []
-        board.selectedSection = []
-        board.newSelectedSection = ''
-        board.children.forEach((child: any) => {
-          if (child.identifier === this.contentId) {
-            if (child.childrenClassifiers.length) {
-              child.childrenClassifiers.forEach((childClassifier: any) => {
-                if (!board.selectedSection) {
-                  board.selectedSection = childClassifier
-                }
-              })
-            } else {
-              board.selectedSection = 'Default'
-            }
+      if (this.knowledgeBoards && this.knowledgeBoards.length) {
+        this.knowledgeBoards.forEach(board => {
+          if (board.children.map((content: { identifier: any }) => content.identifier).includes(this.contentId)) {
+            this.selectedBoards.add(board.identifier)
           }
-          child.childrenClassifiers.forEach((childClassifier: string) => {
-            if (!sections.has(childClassifier)) {
-              sections.add(childClassifier)
-              board.sections.push(childClassifier)
+        })
+      }
+
+      if (this.knowledgeBoards && this.knowledgeBoards.length) {
+        this.knowledgeBoards.forEach(board => {
+          const sections = new Set<string>()
+          board.sections = []
+          board.selectedSection = []
+          board.newSelectedSection = ''
+          board.children.forEach((child: any) => {
+            if (child.identifier === this.contentId) {
+              if (child.childrenClassifiers.length) {
+                child.childrenClassifiers.forEach((childClassifier: any) => {
+                  if (!board.selectedSection) {
+                    board.selectedSection = childClassifier
+                  }
+                })
+              } else {
+                board.selectedSection = 'Default'
+              }
             }
+            child.childrenClassifiers.forEach((childClassifier: string) => {
+              if (!sections.has(childClassifier)) {
+                sections.add(childClassifier)
+                board.sections.push(childClassifier)
+              }
+            })
           })
         })
-      })
+      }
+
+
     }
 
     )

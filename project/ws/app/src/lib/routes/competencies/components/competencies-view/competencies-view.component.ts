@@ -6,23 +6,21 @@ import { Router } from '@angular/router'
 import { CompetenceAssessmentService } from '../../services/comp-assessment.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import { Router } from '@angular/router'
 
 export interface IDialogData {
   name: string
 }
 @Component({
-  selector: 'app-competence-view',
-  templateUrl: './competencies-view.component.html',
-  styleUrls: ['./competencies-view.component.scss'],
-  /* tslint:disable */
-  /* host: { class: 'flex flex-1 margin-right-xs margin-top-xs margin-bottom-s' },*/
-  host: { class: 'flex flex-1' },
-
-  /* tslint:enable */
-
+    selector: 'app-competence-view',
+    templateUrl: './competencies-view.component.html',
+    styleUrls: ['./competencies-view.component.scss'],
+    /* tslint:disable */
+    /* host: { class: 'flex flex-1 margin-right-xs margin-top-xs margin-bottom-s' },*/
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 export class CompetenceViewComponent implements OnInit {
@@ -49,7 +47,7 @@ export class CompetenceViewComponent implements OnInit {
         this.translate.use(lang)
       }
     })
-   }
+  }
   ngOnInit() {
     if (this.dData && this.dData.competencySelfAttestedLevel && this.dData.competencySelfAttestedLevel !== '') {
       this.isUpdate = true

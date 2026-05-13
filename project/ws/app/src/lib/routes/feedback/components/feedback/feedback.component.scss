@@ -1,5 +1,5 @@
-@import 'ws-common';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .feedback-container {
   box-sizing: border-box;
@@ -16,6 +16,7 @@
   @include breakpoint-gt-m {
     width: 70%;
   }
+
   @include breakpoint-gt-xs {
     width: 85%;
   }

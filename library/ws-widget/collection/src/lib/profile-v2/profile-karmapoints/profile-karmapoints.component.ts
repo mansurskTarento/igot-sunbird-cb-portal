@@ -7,12 +7,12 @@ import { EventService, MultilingualTranslationsService, WsEvents } from '@sunbir
 import _ from 'lodash'
 /* tslint:enable */
 @Component({
-  selector: 'ws-widget-profile-v2-karmapoints',
-  templateUrl: './profile-karmapoints.component.html',
-  styleUrls: ['./profile-karmapoints.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'ws-widget-profile-v2-karmapoints',
+    templateUrl: './profile-karmapoints.component.html',
+    styleUrls: ['./profile-karmapoints.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class ProfileKarmapointsComponent extends WidgetBaseComponent implements OnInit, NsWidgetResolver.IWidgetData<any> {
   @Input() widgetData!: any

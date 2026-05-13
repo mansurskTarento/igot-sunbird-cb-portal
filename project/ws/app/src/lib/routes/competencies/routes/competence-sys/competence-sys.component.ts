@@ -1,24 +1,24 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { NSCompetencie } from '../../models/competencies.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute } from '@angular/router'
 import { CompetenceService } from '../../services/competence.service'
 /* tslint:disable */
-import _ from 'lodash';
-import { UntypedFormControl } from '@angular/forms';
-import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component';
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import _ from 'lodash'
+import { UntypedFormControl } from '@angular/forms'
+import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 /* tslint:enable */
 
 @Component({
-  selector: 'app-competence-sys',
-  templateUrl: './competence-sys.component.html',
-  styleUrls: ['./competence-sys.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-l' },
-  /* tslint:enable */
+    selector: 'app-competence-sys',
+    templateUrl: './competence-sys.component.html',
+    styleUrls: ['./competence-sys.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-l' },
+    standalone: false
 })
 export class CompetenceSysComponent implements OnInit {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef
@@ -195,18 +195,18 @@ export class CompetenceSysComponent implements OnInit {
         }
       },
         /* tslint:disable */() => {
-          this.snackBar.open(this.failureMsg.nativeElement.value, 'X');
+          this.snackBar.open(this.failureMsg.nativeElement.value, 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
   removeFromProfile(item: NSCompetencie.ICompetencie) {
     if (item) {
-      const currentCompetencies = _.get(this, 'currentProfile.competencies');
-      const updatedProfile = { ...this.currentProfile };
-      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id);
+      const currentCompetencies: any = _.get(this, 'currentProfile.competencies')
+      const updatedProfile: any = { ...this.currentProfile }
+      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id)
       if (updatedProfile) {
-        updatedProfile.competencies = currentCompetencies;
+        updatedProfile.competencies = currentCompetencies
       }
       const reqUpdate = {
         request: {
@@ -218,18 +218,18 @@ export class CompetenceSysComponent implements OnInit {
         (response) => {
           if (response) {
             // success => removed
-            this.snackBar.open(this.successRemoveMsg.nativeElement.value, 'X');
+            this.snackBar.open(this.successRemoveMsg.nativeElement.value, 'X')
           }
         },
         /* tslint:disable */() => {
-          this.snackBar.open(this.failureMsg.nativeElement.value, 'X');
+          this.snackBar.open(this.failureMsg.nativeElement.value, 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
   resetcomp() {
     // let data: any[] = [];
-    const allCompetencies = [...this.allCompetencies];
+    const allCompetencies = [...this.allCompetencies]
     // if (this.myCompetencies && this.myCompetencies.length > 0) {
     //   data = _.flatten(
     //     _.map(this.myCompetencies, (item: NSCompetencie.ICompetencie) =>
@@ -240,22 +240,22 @@ export class CompetenceSysComponent implements OnInit {
     //     )
     //   );
 
-      // this.filteredCompetencies = this.allCompetencies.filter((obj) => {
-      //   return data.indexOf(obj) === -1;
-      // });
+    // this.filteredCompetencies = this.allCompetencies.filter((obj) => {
+    //   return data.indexOf(obj) === -1;
+    // });
     //   this.filteredCompetencies = data
     // } else {
-      this.filteredCompetencies = allCompetencies;
+    this.filteredCompetencies = allCompetencies
     // }
   }
   refreshData() {
     this.searchJson = [
       { type: 'COMPETENCY', field: 'name', keyword: this.searchKey },
       { type: 'COMPETENCY', field: 'status', keyword: 'VERIFIED' },
-    ];
+    ]
     const searchObj = {
       searches: this.searchJson,
-    };
+    }
     this.competencySvc
       .fetchCompetency(searchObj)
       .subscribe((reponse: NSCompetencie.ICompetencieResponse) => {
@@ -271,13 +271,13 @@ export class CompetenceSysComponent implements OnInit {
           //     return data.indexOf(obj) === -1;
           //   });
           // } else {
-            this.filteredCompetencies = reponse.responseData;
+          this.filteredCompetencies = reponse.responseData
           // }
         }
-      });
+      })
   }
   setSelectedCompetency(id: string) {
-    this.selectedId = id;
+    this.selectedId = id
   }
 
   view(item?: NSCompetencie.ICompetencie) {
@@ -286,16 +286,16 @@ export class CompetenceSysComponent implements OnInit {
       // width: '80%',
       panelClass: 'remove-pad',
       data: item,
-    });
-    const instance = dialogRef.componentInstance;
-    instance.isUpdate = true;
+    })
+    const instance = dialogRef.componentInstance
+    instance.isUpdate = true
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response && response.action === 'ADD') {
-        this.addCompetency(response.id);
+        this.addCompetency(response.id)
         // this.refreshData(this.currentActivePage)
       } else if (response && response.action === 'DELETE') {
-        this.deleteCompetency(response.id);
+        this.deleteCompetency(response.id)
       }
-    });
+    })
   }
 }

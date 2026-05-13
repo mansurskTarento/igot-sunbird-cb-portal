@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { MatChipInputEvent } from '@angular/material'
@@ -9,9 +9,10 @@ export interface IDialogData {
   data: any
 }
 @Component({
-  selector: 'ws-auth-profanity-popup',
-  templateUrl: './profanity-popup.html',
-  styleUrls: ['./profanity-popup.scss'],
+    selector: 'ws-auth-profanity-popup',
+    templateUrl: './profanity-popup.html',
+    styleUrls: ['./profanity-popup.scss'],
+    standalone: false
 })
 export class ProfanityPopUpComponent implements OnInit {
   startForm!: UntypedFormGroup

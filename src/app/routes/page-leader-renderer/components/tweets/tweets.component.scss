@@ -1,4 +1,5 @@
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 .twitter-loaded {
   @include breakpoint-gt-xs {
     width: 650px;

@@ -1,6 +1,6 @@
-@import "ws-common";
-@import "ws-vars";
-@import "ws-mixins";
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .main_container {
     font-family: 'Poppins', sans-serif;
@@ -9,6 +9,7 @@
 
     background-size: cover;
 }
+
 .submitBtn {
     width: 100%;
     height: 40px;
@@ -34,6 +35,7 @@
     border: 2px solid rgba(0, 0, 0, 0.16);
     background: #fff;
 }
+
 .mat-radio-button.mat-radio-checked {
     border: 2px solid #0174b6;
     background: #f2f8fb !important;
@@ -74,6 +76,7 @@
 
 .logo_box {
     width: 320px;
+
     img.logo_img {
         width: 100%;
     }
@@ -142,10 +145,10 @@
         animation-iteration-count: infinite;
         animation-direction: alternate;
 
-      -webkit-animation-duration: 3000ms;
-      -webkit-animation-name: blink;
-      -webkit-animation-iteration-count: infinite;
-      -webkit-animation-direction: alternate;
+        -webkit-animation-duration: 3000ms;
+        -webkit-animation-name: blink;
+        -webkit-animation-iteration-count: infinite;
+        -webkit-animation-direction: alternate;
         /* Safari and Chrome */
 
         @keyframes blink {
@@ -185,13 +188,14 @@
         padding-right: 0;
     }
 }
+
 .btn-secondary:hover,
 .btn-secondary:active,
-.btn-check:focus + .btn-secondary,
+.btn-check:focus+.btn-secondary,
 .btn-secondary:focus,
 .btn-outline-secondary:hover,
 .btn-outline-secondary:active,
-.btn-check:focus + .btn-outline-secondary,
+.btn-check:focus+.btn-outline-secondary,
 .btn-outline-secondary:focus {
     background-color: #0074b6;
     color: #fff;
@@ -340,14 +344,14 @@ input[type="number"] {
         transition: all 0.125s ease-in-out;
     }
 
-    .radio-toolbar input[type="radio"]:checked + label {
+    .radio-toolbar input[type="radio"]:checked+label {
         background: #0074b6 0% 0% no-repeat padding-box;
         border-radius: 4px;
         border-color: #0074b6;
         color: #fff;
     }
 
-    .radio-toolbar input[type="radio"]:focus + label {
+    .radio-toolbar input[type="radio"]:focus+label {
         background: #0074b6 0% 0% no-repeat padding-box;
         border-radius: 4px;
         border-color: #0074b6;
@@ -492,7 +496,7 @@ input[type="number"] {
         }
     }
 
-   
+
 
     ::ng-deep .mat-form-field-flex {
         min-height: 48px;
@@ -515,6 +519,7 @@ input[type="number"] {
     @include breakpoint-xs {
         display: block;
     }
+
     @include breakpoint-s {
         display: block;
     }
@@ -660,7 +665,7 @@ input.mat-input-element {
 
 .orgBox {
     background-color: #f5f5f5;
-  }
+}
 
 ::ng-deep .mat-checkbox-inner-container {
     height: 23px !important;
@@ -694,6 +699,7 @@ input.mat-input-element {
     @include breakpoint-xs {
         margin: 0px 8px !important;
     }
+
     @include breakpoint-s {
         margin-right: 1rem !important;
     }
@@ -704,7 +710,7 @@ input.mat-input-element {
         margin: 0;
         padding: 10px 0;
 
-        
+
 
         .profile-cols {
             padding: 1rem;
@@ -740,28 +746,33 @@ input.mat-input-element {
         }
     }
 }
+
 mat-option.mat-option.custom {
     height: auto;
 }
+
 mat-option.mat-option.bordered {
     border-bottom: 1px solid #000;
 }
+
 // only show recaptcha badge on needed pages
 ::ng-deep.cs-recaptcha {
     .grecaptcha-badge {
         visibility: visible !important;
     }
 }
+
 .mobile-wrapper {
-    border: 1px dashed rgba(0,0,0,.40);
+    border: 1px dashed rgba(0, 0, 0, .40);
     padding: 16px;
     border-radius: 8px;
 }
 
 .mat-hint {
     width: 100% !important;
-  }
-  .close-rounded {
+}
+
+.close-rounded {
     position: absolute;
     right: -13px;
     top: -14px;
@@ -770,7 +781,8 @@ mat-option.mat-option.bordered {
     background: #eee;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.4);
     padding: 3px;
-  }
-  a.terms-text{
+}
+
+a.terms-text {
     cursor: pointer;
-  }
+}

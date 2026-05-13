@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common'
 import { TopicCardComponent } from './components/topic-card/topic-card.component'
 import { ProfileHomeComponent } from './routes/profile-home/profile-home.component'
 
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
+import { MatListModule } from '@angular/material/list'
 import { CurrentCompetenciesComponent } from './routes/current-competencies/current-competencies.component'
 import { MatSidenavModule } from '@angular/material/sidenav'
 import { RouterModule } from '@angular/router'
@@ -15,9 +15,8 @@ import { TopicComponent } from './routes/topics/topic.component'
 import { BrowseByCompetencyModule } from '../browse-by-competency/browse-by-competency.module'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { PipeFilterV2Module, PipeListFilterModule } from '@sunbird-cb/utils-v2'
-import { TreeCatalogModule } from '@sunbird-cb/collection/src/public-api'
+import { TreeCatalogModule } from '@sunbird-cb/collection'
 import { TopicService } from './services/topics.service'
-// import { PlayerVideoComponent } from '@sunbird-cb/collection/src/lib/player-video/player-video.component'
 import { PlatformWalkthroughComponent } from './routes/platform-walkthrough/platform-walkthrough.component'
 import { AddTopicDialogComponent } from './components/add-topic/add-topic.component'
 import { RolesAndActivitiesComponent } from './routes/roles-and-activities/roles-and-activities.component'
@@ -30,16 +29,16 @@ import { DialogBoxComponent } from './components/dialog-box/dialog-box.component
 import { DesiredcomptencyCardComponent } from './components/desiredcomptency-card/desiredcomptency-card.component'
 import { CompLocalService } from './services/comp.service'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
+import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
 
 @NgModule({
     declarations: [
@@ -90,6 +89,6 @@ import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/
         TopicService,
         RolesAndActivityService,
         CompLocalService,
-    ]
+    ],
 })
 export class ProfileV3Module { }

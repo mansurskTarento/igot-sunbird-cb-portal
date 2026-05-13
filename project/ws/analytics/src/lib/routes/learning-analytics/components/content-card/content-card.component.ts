@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 import { NsAnalytics } from '../../models/learning-analytics.model'
 @Component({
-  selector: 'ws-analytics-content-card',
-  templateUrl: './content-card.component.html',
-  styleUrls: ['./content-card.component.scss'],
+    selector: 'ws-analytics-content-card',
+    templateUrl: './content-card.component.html',
+    styleUrls: ['./content-card.component.scss'],
+    standalone: false
 })
 export class ContentCardComponent implements OnInit {
   @Input() pieData: any

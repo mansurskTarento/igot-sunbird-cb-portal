@@ -4,7 +4,6 @@ import { Router } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { BreadcrumbsOrgService } from './breadcrumbs-org.service'
-import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 
 type TUrl = undefined | 'none' | 'back' | string
 
@@ -13,8 +12,7 @@ type TUrl = undefined | 'none' | 'back' | string
   templateUrl: './breadcrumbs-org.component.html',
   styleUrls: ['./breadcrumbs-org.component.scss'],
   animations: [
-    trigger(
-      'enterAnimation', [
+    trigger('enterAnimation', [
       transition(':enter', [
         style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
         animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 })),
@@ -23,9 +21,9 @@ type TUrl = undefined | 'none' | 'back' | string
         style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 }),
         animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 })),
       ]),
-    ]
-    ),
+    ]),
   ],
+  standalone: false
 })
 export class BreadcrumbsOrgComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<{ url: TUrl }> {
@@ -39,8 +37,7 @@ export class BreadcrumbsOrgComponent extends WidgetBaseComponent
   constructor(
     private btnBackSvc: BreadcrumbsOrgService,
     private router: Router,
-    private configSvc: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
+    private configSvc: ConfigurationsService
   ) {
     super()
   }
@@ -124,7 +121,6 @@ export class BreadcrumbsOrgComponent extends WidgetBaseComponent
       headerOptions: false,
       bannerOption: true,
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     this.router.navigate(['/app/discussion-forum'], { queryParams: { page: 'home' }, queryParamsHandling: 'merge' })
   }

@@ -4,9 +4,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-upcoming-timeline',
-  templateUrl: './upcoming-timeline.component.html',
-  styleUrls: ['./upcoming-timeline.component.scss'],
+    selector: 'ws-upcoming-timeline',
+    templateUrl: './upcoming-timeline.component.html',
+    styleUrls: ['./upcoming-timeline.component.scss'],
+    standalone: false
 })
 export class UpcomingTimelineComponent implements OnInit {
   @Output()
@@ -71,7 +72,7 @@ export class UpcomingTimelineComponent implements OnInit {
       competencySubTheme: [],
       providers: [],
     }
-    let finalFilterData: any = event === 'apar' ? apar : event === 'overdue' ? overDue : upcomingData
+    const finalFilterData: any = event === 'apar' ? apar : event === 'overdue' ? overDue : upcomingData
     this.filterValueEmit.emit(finalFilterData)
   }
   scroll(el: any) {

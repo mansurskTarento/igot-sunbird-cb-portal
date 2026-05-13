@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 mat-expansion-panel {
   margin: 36px;
@@ -21,7 +22,7 @@ mat-expansion-panel {
 }
 
 :host ::ng-deep .settings-navigation {
-  .ws-active-discuss-route  {
+  .ws-active-discuss-route {
     background-color: transparent !important;
 
     .mat-list-item-content {

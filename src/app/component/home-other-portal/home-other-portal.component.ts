@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { NsPage, NsAppsConfig, ConfigurationsService, WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
-import { AccessControlService } from '@ws/author/src/public-api'
-import { ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection/src/lib/collection.config'
+import { AccessControlService } from '@ws/author'
+import { ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 
 /* tslint:disable*/
 import _ from 'lodash'
@@ -14,15 +14,16 @@ interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
 }
 
 @Component({
-  selector: 'ws-home-other-portal',
-  templateUrl: './home-other-portal.component.html',
-  styleUrls: ['./home-other-portal.component.scss']
+    selector: 'ws-home-other-portal',
+    templateUrl: './home-other-portal.component.html',
+    styleUrls: ['./home-other-portal.component.scss'],
+    standalone: false
 })
 export class HomeOtherPortalComponent implements OnInit {
 
   private readonly featuresConfig: IGroupWithFeatureWidgets[] = []
   portalLinks: any[] = []
-  noPortal = [1,2,3]
+  noPortal = [1, 2, 3]
   showSkeleton = true;
 
   constructor(
@@ -31,7 +32,7 @@ export class HomeOtherPortalComponent implements OnInit {
     private langtranslations: MultilingualTranslationsService,
     private translate: TranslateService,
     private events: EventService
-  ) { 
+  ) {
     if (this.configSvc.appsConfig) {
       const appsConfig = this.configSvc.appsConfig
       const availGroups: NsAppsConfig.IGroup[] = []
@@ -97,24 +98,24 @@ export class HomeOtherPortalComponent implements OnInit {
 
   getPortalLinks() {
     this.featuresConfig.forEach((feature: any) => {
-      if (feature.id === 'portal_admin' && feature.featureWidgets.length > 0) {   
-          // const unique = [...new Set(feature.featureWidgets.filter((item:any) => {
-          //   console.log(item.widgetData.actionBtn.name)
-          //   if(item && item.widgetData && item.widgetData.actionBtn && item.widgetData.actionBtn.name) {
-          //     return item.widgetData.actionBtn.name
-          //   }
-          // }))];
-        const unique = _.uniqBy(feature.featureWidgets, (item:any) => {
-            if(item && item.widgetData && item.widgetData.actionBtn && item.widgetData.actionBtn.name) {
-              return item.widgetData.actionBtn.name
-            }
+      if (feature.id === 'portal_admin' && feature.featureWidgets.length > 0) {
+        // const unique = [...new Set(feature.featureWidgets.filter((item:any) => {
+        //   console.log(item.widgetData.actionBtn.name)
+        //   if(item && item.widgetData && item.widgetData.actionBtn && item.widgetData.actionBtn.name) {
+        //     return item.widgetData.actionBtn.name
+        //   }
+        // }))];
+        const unique = _.uniqBy(feature.featureWidgets, (item: any) => {
+          if (item && item.widgetData && item.widgetData.actionBtn && item.widgetData.actionBtn.name) {
+            return item.widgetData.actionBtn.name
           }
-        );
+        }
+        )
         unique.forEach((fw: any) => {
           this.portalLinks.push(fw)
         })
       }
-      this.showSkeleton = false;
+      this.showSkeleton = false
     })
   }
 

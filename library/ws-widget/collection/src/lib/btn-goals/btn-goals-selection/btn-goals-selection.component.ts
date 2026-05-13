@@ -11,13 +11,14 @@ import { TFetchStatus, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { NsGoal } from '../btn-goals.model'
 import { BtnGoalsService } from '../btn-goals.service'
 import { BtnGoalsErrorComponent } from '../btn-goals-error/btn-goals-error.component'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyListOption as MatListOption } from '@angular/material/legacy-list'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatListOption } from '@angular/material/list'
 
 @Component({
-  selector: 'ws-widget-btn-goals-selection',
-  templateUrl: './btn-goals-selection.component.html',
-  styleUrls: ['./btn-goals-selection.component.scss'],
+    selector: 'ws-widget-btn-goals-selection',
+    templateUrl: './btn-goals-selection.component.html',
+    styleUrls: ['./btn-goals-selection.component.scss'],
+    standalone: false
 })
 export class BtnGoalsSelectionComponent implements OnInit {
   @Input() contentId!: string
@@ -113,6 +114,6 @@ export class BtnGoalsSelectionComponent implements OnInit {
       {
         pageIdExt: 'btn-goals',
         module: WsEvents.EnumTelemetrymodules.CONTENT,
-    })
+      })
   }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 /* tslint:disable */
 import _ from 'lodash'
 import moment from 'moment'
@@ -10,9 +10,10 @@ import { MultilingualTranslationsService, ConfigurationsService } from '@sunbird
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
 
 @Component({
-  selector: 'ws-app-event-player',
-  templateUrl: './event-player.component.html',
-  styleUrls: ['./event-player.component.scss']
+    selector: 'ws-app-event-player',
+    templateUrl: './event-player.component.html',
+    styleUrls: ['./event-player.component.scss'],
+    standalone: false
 })
 export class EventPlayerComponent implements OnInit {
   similarPosts!: any

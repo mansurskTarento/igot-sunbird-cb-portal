@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
-import { MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component'
 import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -12,13 +12,14 @@ import { ActivatedRoute, Router } from '@angular/router'
 @Component({
   selector: 'ws-app-profile-primary-details',
   templateUrl: './profile-primary-details.component.html',
-  styleUrls: ['./profile-primary-details.component.scss']
+  styleUrls: ['./profile-primary-details.component.scss'],
+  standalone: false
 })
 export class ProfilePrimaryDetailsComponent implements OnInit {
   @Input() primaryDetails: any
-  @Input() isCurrentUser = false;
-  @Input() enableWTR = false;
-  @Input() enableWR = false;
+  @Input() isCurrentUser = false
+  @Input() enableWTR = false
+  @Input() enableWR = false
   @Input() unVerifiedObj = {
     designation: '',
     group: '',
@@ -37,23 +38,22 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
   }
   @Input() approvalPendingFields: any = []
 
-  @Output() openProfileEditDialog = new EventEmitter();
-  @Output() getApprovalStatus = new EventEmitter();
-  @Output() updateWithdrawalStatus = new EventEmitter();
-  @Output() designationApprovedTimeChange = new EventEmitter();
-
+  @Output() openProfileEditDialog = new EventEmitter()
+  @Output() getApprovalStatus = new EventEmitter()
+  @Output() updateWithdrawalStatus = new EventEmitter()
+  @Output() designationApprovedTimeChange = new EventEmitter()
 
   groupApprovedTime = 0
   designationApprovedTime = 0
   panelOpenState = false
-  isIgotOrg = false;
-  isNotMyUser = false;
+  isIgotOrg = false
+  isNotMyUser = false
 
   constructor(
     private profileV2RevampSvc: ProfileV2RevampService,
-    private matSnackBar: MatLegacySnackBar,
+    private matSnackBar: MatSnackBar,
     private configService: ConfigurationsService,
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private route: ActivatedRoute,
     private router: Router,
     private events: EventService,
@@ -231,7 +231,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
       const payload = {
         action: 'WITHDRAW',
         state: 'SEND_FOR_APPROVAL',
-        userId: userId,
+        userId,
         applicationId: userId,
         actorUserId: userId,
         wfId: _obj.wfId,

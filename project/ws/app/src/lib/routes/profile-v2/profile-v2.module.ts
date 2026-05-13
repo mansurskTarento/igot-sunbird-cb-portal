@@ -5,28 +5,26 @@ import { RouterModule } from '@angular/router'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
 
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
+import { MatCardModule } from '@angular/material/card'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatGridListModule } from '@angular/material/grid-list'
 import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { PipeFilterModule, PipeHtmlTagRemovalModule, PipeOrderByModule, PipeRelativeTimeModule, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { AvatarPhotoModule, BtnPageBackModule } from '@sunbird-cb/collection'
 import { ProfileV2RoutingModule } from './profile-v2.rounting.module'
-import { DiscussModule } from '../discuss/discuss.module'
-import { EditorSharedModule } from '@ws/author/src/lib/routing/modules/editor/shared/shared.module'
+import { EditorSharedModule } from '@ws/author'
 import { ProfileCertificateDialogModule } from './components/profile-certificate-dialog/profile-certificate-dialog.module'
-import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module'
-import { WeeklyClapsModule } from '@sunbird-cb/collection/src/lib/_common/weekly-claps/weekly-claps.module'
-import { UpdatePostsModule } from '@sunbird-cb/collection/src/lib/_common/update-posts/update-posts.module'
-import { DiscussionsModule } from '@sunbird-cb/collection/src/lib/_common/discussions/discussions.module'
-import { RecentRequestsModule } from '@sunbird-cb/collection/src/lib/_common/recent-requests/recent-requests.module'
-import { PendingRequestModule } from '@sunbird-cb/collection/src/lib/_common/pending-request/pending-request.module'
-import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
+import { ProfileCardStatsModule } from '@sunbird-cb/collection'
+import { WeeklyClapsModule } from '@sunbird-cb/collection'
+import { UpdatePostsModule } from '@sunbird-cb/collection'
+import { DiscussionsModule } from '@sunbird-cb/collection'
+import { RecentRequestsModule } from '@sunbird-cb/collection'
+import { PendingRequestModule } from '@sunbird-cb/collection'
+import { UserLeaderboardModule } from '@sunbird-cb/collection'
 
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
 import { RightMenuComponent } from './components/right-menu/right-menu.component'
@@ -38,47 +36,54 @@ import { TransferRequestComponent } from './components/transfer-request/transfer
 import { WithdrawRequestComponent } from './components/withdraw-request/withdraw-request.component'
 import { DesignationRequestComponent } from './components/designation-request/designation-request.component'
 
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { LoaderService } from '@ws/author'
 import { InitResolver } from './resolvers/init-resolve.service'
 import { OtpService } from '../user-profile/services/otp.services'
 import { RejectionReasonPopupComponent } from './components/rejection-reason-popup/rejection-reason-popup.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTabsModule } from '@angular/material/tabs'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
 import { UserStatsComponent } from './components/profile-revamp/user-stats/user-stats.component'
 import { AchievementsComponent } from './components/profile-revamp/achievements/achievements.component'
 import { CompetenciesComponent } from './components/profile-revamp/competencies/competencies.component'
 import { EducationalQualificationsComponent } from './components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { ServiceHistoryComponent } from './components/profile-revamp/service-history/service-history.component'
-import { MatLegacyMenuModule } from '@angular/material/legacy-menu'
+import { MatMenuModule } from '@angular/material/menu'
 import { CoverPhotoEditPopupComponent } from './components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PeopleSuggestionsComponent } from './components/profile-revamp/people-suggestions/people-suggestions.component'
 import { ImageCropperModule } from 'ngx-image-cropper'
 import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
-import { MatLegacyCheckboxModule } from '@angular/material/legacy-checkbox'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { CertificateViewPopupComponent } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.component'
+import { CertificateViewPopupModule } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.module'
 import { SearchV3Module } from '../search-v3/search-v3.module'
 import { CommunitySuggestionsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
 import { DescriptionComponent } from './components/profile-revamp/description/description.component'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatRadioModule } from '@angular/material/radio'
 
 import { CustomFieldsComponent } from './routes/custom-fields/custom-fields.component'
 import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-custom-fields.component'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { ProfileVerificationDialogModule } from '../profile-verification-dialog/profile-verification-dialog.module'
+
+export function ProfileV2HttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 @NgModule({
     declarations: [
         ProfileComponent,
@@ -102,17 +107,15 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         PrfileEditV2Component,
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
-        CertificateViewPopupComponent,
         DescriptionComponent,
         CustomFieldsComponent,
-        ViewCustomFieldsComponent
+        ViewCustomFieldsComponent,
     ],
     imports: [
         CommonModule,
         WidgetResolverModule,
         ReactiveFormsModule,
         ProfileV2RoutingModule,
-        DiscussModule,
         FormsModule,
         RouterModule,
         MatGridListModule,
@@ -153,18 +156,20 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         MatDatepickerModule,
         MatAutocompleteModule,
         TranslateModule,
-        MatLegacyMenuModule,
+        MatMenuModule,
         ImageCropperModule,
-        MatLegacyCheckboxModule,
+        MatCheckboxModule,
         MatRadioModule,
         DragDropModule,
         SearchV3Module,
         CommunitySuggestionsModule,
+        CertificateViewPopupModule,
         DialogComponentsModule,
+        ProfileVerificationDialogModule,
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: ProfileV2HttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),
@@ -179,8 +184,8 @@ import { ViewCustomFieldsComponent } from './routes/view-custom-fields/view-cust
         ServiceHistoryComponent,
         EducationalQualificationsComponent,
         AchievementsComponent,
-        DatePipe
-    ]
+        DatePipe,
+    ],
 })
 export class ProfileV2Module {
 

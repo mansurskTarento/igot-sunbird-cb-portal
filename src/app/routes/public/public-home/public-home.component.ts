@@ -9,11 +9,12 @@ import { WidgetResolverService } from '@sunbird-cb/resolver/src/public-api'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-public-home',
-  templateUrl: './public-home.component.html',
-  styleUrls: ['./public-home.component.scss'],
-  // tslint:disable-next-line
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ws-public-home',
+    templateUrl: './public-home.component.html',
+    styleUrls: ['./public-home.component.scss'],
+    // tslint:disable-next-line
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class PublicHomeComponent implements OnInit, OnDestroy {
   contactUsMail = ''

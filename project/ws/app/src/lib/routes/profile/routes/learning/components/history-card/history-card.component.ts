@@ -2,9 +2,10 @@ import { Component, Input, OnInit } from '@angular/core'
 import { ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 import { NSProfileData } from '../../../../models/profile.model'
 @Component({
-  selector: 'ws-app-history-card',
-  templateUrl: './history-card.component.html',
-  styleUrls: ['./history-card.component.scss'],
+    selector: 'ws-app-history-card',
+    templateUrl: './history-card.component.html',
+    styleUrls: ['./history-card.component.scss'],
+    standalone: false
 })
 export class HistoryCardComponent implements OnInit {
   @Input() pieData: any

@@ -6,25 +6,24 @@ import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 import { BreadcrumbsOrgService } from './breadcrumbs-org.service'
 
 type TUrl = undefined | 'none' | 'back' | string
-const APP_TAXONOMY = `/app/taxonomy/`
+const APP_TAXONOMY = '/app/taxonomy/'
 @Component({
-  selector: 'ws-widget-breadcrumbs-org',
-  templateUrl: './breadcrumbs-org.component.html',
-  styleUrls: ['./breadcrumbs-org.component.scss'],
-  animations: [
-    trigger(
-      'enterAnimation', [
-      transition(':enter', [
-        style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
-        animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 })),
-      ]),
-      transition(':leave', [
-        style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 }),
-        animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 })),
-      ]),
-    ]
-    ),
-  ],
+    selector: 'ws-widget-breadcrumbs-org',
+    templateUrl: './breadcrumbs-org.component.html',
+    styleUrls: ['./breadcrumbs-org.component.scss'],
+    animations: [
+        trigger('enterAnimation', [
+            transition(':enter', [
+                style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
+                animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 })),
+            ]),
+            transition(':leave', [
+                style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1 }),
+                animate('300ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 })),
+            ]),
+        ]),
+    ],
+    standalone: false
 })
 export class BreadcrumbsOrgComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<{ url: TUrl }> {

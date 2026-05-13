@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core'
 import { NsSettings } from '../../settings.model'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { SettingsService } from '../../settings.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-privacy-settings',
-  templateUrl: './privacy-settings.component.html',
-  styleUrls: ['./privacy-settings.component.scss'],
+    selector: 'ws-app-privacy-settings',
+    templateUrl: './privacy-settings.component.html',
+    styleUrls: ['./privacy-settings.component.scss'],
+    standalone: false
 })
 export class PrivacySettingsComponent implements OnInit {
 
@@ -28,7 +29,7 @@ export class PrivacySettingsComponent implements OnInit {
       this.translate.use(lang)
     }
 
-   }
+  }
 
   ngOnInit() {
     this.userRoles = this.configSvc.userRoles || new Set()

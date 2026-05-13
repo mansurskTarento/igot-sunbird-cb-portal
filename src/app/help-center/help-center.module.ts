@@ -6,18 +6,13 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { HelpCenterComponent } from './help-center/help-center/help-center.component'
 import { SuppotSectionComponent } from './help-center/suppot-section/suppot-section.component'
 import { MatIconModule } from '@angular/material/icon'
-import { HttpClientModule } from '@angular/common/http'
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 
 
 @NgModule({
-  declarations: [HelpCenterComponent, SuppotSectionComponent],
-  imports: [
-    CommonModule,
+  declarations: [HelpCenterComponent, SuppotSectionComponent], imports: [CommonModule,
     HelpCenterRoutingModule,
     ReactiveFormsModule,
-    MatIconModule,
-    HttpClientModule,
-
-  ]
+    MatIconModule], providers: [provideHttpClient(withInterceptorsFromDi())]
 })
 export class HelpCenterModule { }

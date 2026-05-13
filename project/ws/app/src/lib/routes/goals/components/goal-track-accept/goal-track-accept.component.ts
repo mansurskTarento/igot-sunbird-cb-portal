@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-goal-track-accept',
-  templateUrl: './goal-track-accept.component.html',
-  styleUrls: ['./goal-track-accept.component.scss'],
+    selector: 'ws-app-goal-track-accept',
+    templateUrl: './goal-track-accept.component.html',
+    styleUrls: ['./goal-track-accept.component.scss'],
+    standalone: false
 })
 export class GoalTrackAcceptComponent implements OnInit {
 

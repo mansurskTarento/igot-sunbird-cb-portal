@@ -1,11 +1,11 @@
-import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, Inject, Output } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { DatePipe } from '@angular/common'
+import { Component, EventEmitter, Inject, Output } from '@angular/core'
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core'
-import { MomentDateAdapter } from '@angular/material-moment-adapter';
-import { TranslateService } from '@ngx-translate/core';
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { MomentDateAdapter } from '@angular/material-moment-adapter'
+import { TranslateService } from '@ngx-translate/core'
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 export const MY_FORMATS = {
   parse: {
@@ -19,13 +19,14 @@ export const MY_FORMATS = {
   },
 }
 @Component({
-  selector: 'ws-app-mobile-filters',
-  templateUrl: './mobile-filters.component.html',
-  styleUrls: ['./mobile-filters.component.scss'],
-  providers: [DatePipe,
-    { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
-  ],
+    selector: 'ws-app-mobile-filters',
+    templateUrl: './mobile-filters.component.html',
+    styleUrls: ['./mobile-filters.component.scss'],
+    providers: [DatePipe,
+        { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
+        { provide: MAT_DATE_FORMATS, useValue: MY_FORMATS },
+    ],
+    standalone: false
 })
 export class MobileFiltersComponent {
 
@@ -63,7 +64,7 @@ export class MobileFiltersComponent {
         this.selectedValue = { name: this.selectedFilters.eventStatus[0] }
       }
     }
-    console.log("data ", this.datePipe)
+    console.log('data ', this.datePipe)
   }
 
   returnZero() {
@@ -81,7 +82,7 @@ export class MobileFiltersComponent {
     if (event) {
       if (['resourceType', 'eventDate'].includes(key)) {
         if (this.selectedFilters[key]) {
-          let slected = this.selectedFilters[key]
+          const slected = this.selectedFilters[key]
           slected.push(keyData.name)
           this.selectedFilters[key] = slected
         } else {
@@ -104,7 +105,7 @@ export class MobileFiltersComponent {
       }
     } else {
       if (['resourceType', 'eventDate'].includes(key)) {
-        let filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
+        const filtered = this.selectedFilters[key].filter((item: any) => item !== keyData.name)
         if (filtered.length === 0) {
           delete this.selectedFilters[key]
         } else {

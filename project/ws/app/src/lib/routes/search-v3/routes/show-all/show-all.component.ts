@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { TranslateService } from '@ngx-translate/core';
-import { NsContent } from '@sunbird-cb/utils-v2';
-import { ActivatedRoute } from '@angular/router';
-import { GbSearchService } from '../../services/gb-search.service';
+import { Component, OnInit } from '@angular/core'
+import { TranslateService } from '@ngx-translate/core'
+import { NsContent } from '@sunbird-cb/utils-v2'
+import { ActivatedRoute } from '@angular/router'
+import { GbSearchService } from '../../services/gb-search.service'
 
 @Component({
   selector: 'ws-app-show-all',
   templateUrl: './show-all.component.html',
-  styleUrls: ['./show-all.component.scss']
+  styleUrls: ['./show-all.component.scss'],
+  standalone: false
 })
 export class ShowAllComponent implements OnInit {
   courses: any[] = []
   pagedCourses: any[] = []
-  initialPaginationSize = 10;
-  initialPaginationSizeOptions = [10, 20, 50, 100];
+  initialPaginationSize = 10
+  initialPaginationSizeOptions = [10, 20, 50, 100]
   currentPage = 1
   totalPages = 1
   sortKey = 'name'
@@ -21,23 +22,22 @@ export class ShowAllComponent implements OnInit {
   loading = false
   customOptions: any[] = []
   contentName: string = ''
-  constructor(private gbSvc: GbSearchService, private activatedRoute:ActivatedRoute,
-    private translate: TranslateService,) { 
-    if (localStorage.getItem('websiteLanguage')) {
-      this.translate.setDefaultLang('en');
-      const lang = localStorage.getItem('websiteLanguage')!;
-      this.translate.use(lang);
-    }
+  constructor(private gbSvc: GbSearchService, private activatedRoute: ActivatedRoute,
+    private translate: TranslateService) {
+      if (localStorage.getItem('websiteLanguage')) {
+        this.translate.setDefaultLang('en')
+        const lang = localStorage.getItem('websiteLanguage')!
+        this.translate.use(lang)
+      }
     this.customOptions = [
       { name: 'A-Z', value: 'a-z' },
-      { name: 'Z-A', value: 'z-a' }
-    ]
+      { name: 'Z-A', value: 'z-a' }]
 
   }
 
   ngOnInit() {
 
-    this.contentName = this.activatedRoute?.snapshot?.queryParams['name'] || '';
+    this.contentName = this.activatedRoute?.snapshot?.queryParams['name'] || ''
     this.fetchCourses()
   }
 
@@ -63,7 +63,6 @@ export class ShowAllComponent implements OnInit {
     this.courses.sort((a, b) => {
       let valA = a[this.sortKey]
       let valB = b[this.sortKey]
-      
       if (this.sortKey === 'avgRating') {
         valA = Number(valA) || 0
         valB = Number(valB) || 0
@@ -74,7 +73,6 @@ export class ShowAllComponent implements OnInit {
         valA = (valA || '').toString().toLowerCase()
         valB = (valB || '').toString().toLowerCase()
       }
-      
       if (valA < valB) return this.sortOrder === 'asc' ? -1 : 1
       if (valA > valB) return this.sortOrder === 'asc' ? 1 : -1
       return 0
@@ -100,28 +98,27 @@ export class ShowAllComponent implements OnInit {
     this.pagedCourses = this.courses.slice(start, end)
   }
 
-  onPageChange(event: any){
-    this.currentPage = event.currentPage;
-    this.initialPaginationSize = event.limit;
-    this.setPage(this.currentPage);
-
+  onPageChange(event: any) {
+    this.currentPage = event.currentPage
+    this.initialPaginationSize = event.limit
+    this.setPage(this.currentPage)
   }
   onChangeSortSearch(event: any) {
-    if(event === 'most_relevant'){
-    } else if(event === 'recently_added_newest'){
-    this.sortKey = 'createdOn';
-    this.sortOrder = 'desc';
-    } else if(event === 'highest_rated'){
-    this.sortKey = 'avgRating';
-    this.sortOrder = 'desc';
-    } else if(event === 'a-z'){
-    this.sortKey = 'name';
-    this.sortOrder = 'asc';
-    } else if(event === 'z-a'){
-    this.sortKey = 'name';
-    this.sortOrder = 'desc';
+    if (event === 'most_relevant') {
+    } else if (event === 'recently_added_newest') {
+      this.sortKey = 'createdOn'
+      this.sortOrder = 'desc'
+    } else if (event === 'highest_rated') {
+      this.sortKey = 'avgRating'
+      this.sortOrder = 'desc'
+    } else if (event === 'a-z') {
+      this.sortKey = 'name'
+      this.sortOrder = 'asc'
+    } else if (event === 'z-a') {
+      this.sortKey = 'name'
+      this.sortOrder = 'desc'
     }
-    this.applySort();
+    this.applySort()
   }
 
 }

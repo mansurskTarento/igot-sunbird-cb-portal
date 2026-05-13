@@ -1,12 +1,13 @@
-import { IWidgetCardBreadcrumb } from '@sunbird-cb/collection/src/lib/card-breadcrumb/card-breadcrumb.model'
+import { IWidgetCardBreadcrumb } from '@sunbird-cb/collection'
 import { distinctUntilChanged, debounceTime } from 'rxjs/operators'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, UntypedFormArray, Validators } from '@angular/forms'
 
 @Component({
-  selector: 'ws-auth-breadcrum',
-  templateUrl: './breadcrum.component.html',
-  styleUrls: ['./breadcrum.component.scss'],
+    selector: 'ws-auth-breadcrum',
+    templateUrl: './breadcrum.component.html',
+    styleUrls: ['./breadcrum.component.scss'],
+    standalone: false
 })
 export class BreadcrumComponent implements OnInit {
 

@@ -6,20 +6,20 @@ import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import _ from 'lodash'
 import { COMMA, ENTER } from '@angular/cdk/keycodes'
 import { RolesAndActivityService } from '../../services/rolesandActivities.service'
-import { DialogConfirmComponent } from 'src/app/component/dialog-confirm/dialog-confirm.component'
+import { DialogConfirmComponent } from '../../../../routes/dialog-confirm/dialog-confirm.component'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
-import { MatLegacyDialogRef as MatDialogRef, MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatDialogRef, MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
     selector: 'ws-app-roles-and-activities',
     templateUrl: './roles-and-activities.component.html',
     styleUrls: ['./roles-and-activities.component.scss'],
     /* tslint:disable */
     host: { class: 'w-100 role-card flex flex-1' },
-    /* tslint:enable */
+    standalone: false
 })
 export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
     createRole!: UntypedFormGroup
@@ -49,7 +49,7 @@ export class RolesAndActivitiesComponent implements OnInit, OnDestroy {
         private router: Router,
         private snackBar: MatSnackBar,
         private translate: TranslateService,
-        ) {
+    ) {
         this.updateRoles()
         if (localStorage.getItem('websiteLanguage')) {
             this.translate.setDefaultLang('en')

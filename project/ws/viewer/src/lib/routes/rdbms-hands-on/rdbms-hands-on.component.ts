@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-rdbms-hands-on',
-  templateUrl: './rdbms-hands-on.component.html',
-  styleUrls: ['./rdbms-hands-on.component.scss'],
+    selector: 'viewer-rdbms-hands-on',
+    templateUrl: './rdbms-hands-on.component.html',
+    styleUrls: ['./rdbms-hands-on.component.scss'],
+    standalone: false
 })
 export class RdbmsHandsOnComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null
@@ -67,8 +68,8 @@ export class RdbmsHandsOnComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.rDbmsHandsOnData) {
       await this.contentSvc.continueLearning(this.rDbmsHandsOnData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.rDbmsHandsOnData) {
       await this.contentSvc.continueLearning(this.rDbmsHandsOnData.identifier)

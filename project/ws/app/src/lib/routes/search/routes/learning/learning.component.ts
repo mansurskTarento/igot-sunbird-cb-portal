@@ -8,9 +8,10 @@ import { FilterDisplayComponent } from '../../components/filter-display/filter-d
 import { IFilterUnitResponse, ISearchRequestV2, ISearchTab } from '../../models/search.model'
 import { SearchServService } from '../../services/search-serv.service'
 @Component({
-  selector: 'ws-app-learning',
-  templateUrl: './learning.component.html',
-  styleUrls: ['./learning.component.scss'],
+    selector: 'ws-app-learning',
+    templateUrl: './learning.component.html',
+    styleUrls: ['./learning.component.scss'],
+    standalone: false
 })
 export class LearningComponent implements OnInit, OnDestroy {
   @ViewChild(FilterDisplayComponent)

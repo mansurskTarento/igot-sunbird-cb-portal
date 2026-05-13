@@ -6,7 +6,7 @@ describe('FeedbackApiService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: FeedbackApiService = TestBed.get(FeedbackApiService)
+    const service: FeedbackApiService = TestBed.inject(FeedbackApiService)
     expect(service).toBeTruthy()
   })
 })

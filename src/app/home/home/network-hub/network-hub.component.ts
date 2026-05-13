@@ -1,14 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { HomePageService } from 'src/app/services/home-page.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
+import { HomePageService } from '../../../services/home-page.service'
 
 @Component({
-  selector: 'ws-network-hub',
-  templateUrl: './network-hub.component.html',
-  styleUrls: ['./network-hub.component.scss'],
+    selector: 'ws-network-hub',
+    templateUrl: './network-hub.component.html',
+    styleUrls: ['./network-hub.component.scss'],
+    standalone: false
 })
 
 export class NetworkHubComponent implements OnInit {
@@ -44,11 +45,11 @@ export class NetworkHubComponent implements OnInit {
   ngOnInit() {
     this.userInfo = this.configService && this.configService.userProfile
     if (this.networkConfig.recentRequests.active) {
-      //this.fetchRecentRequests()
+      // this.fetchRecentRequests()
     }
 
     if (this.networkConfig.networkSuggestions.active) {
-      //this.fetchNetworkRecommendations()
+      // this.fetchNetworkRecommendations()
     }
   }
 
@@ -93,7 +94,7 @@ export class NetworkHubComponent implements OnInit {
   fetchNetworkRecommendations(): void {
     const payload = {
       size: 2,
-      offset: 0
+      offset: 0,
     }
 
     this.network.suggestionsLoader = true

@@ -2,9 +2,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
 import { MatTreeModule } from '@angular/material/tree'
-import { SharedModule } from '@ws/author/src/lib/modules/shared/shared.module'
-import { AuthViewerModule } from '@ws/author/src/lib/modules/viewer/viewer.module'
-import { EditorSharedModule } from '@ws/author/src/lib/routing/modules/editor/shared/shared.module'
 import { CurateModule } from './../curate/curate.module'
 import { UploadModule } from './../upload/upload.module'
 import { CollectionRoutingModule } from './collection-routing.module'
@@ -15,6 +12,9 @@ import { AuthTableTreeLabelComponent } from './components/auth-table-tree-label/
 import { CollectionComponent } from './components/collection/collection.component'
 import { WebPageModule } from '../web-page/web-page.module'
 import { QuizModule } from '../quiz/quiz.module'
+import { EditorSharedModule } from '../../../shared/shared.module'
+import { SharedModule } from '../../../../../../modules/shared/shared.module'
+import { AuthViewerModule } from '../../../../../../modules/viewer/viewer.module'
 
 @NgModule({
   declarations: [

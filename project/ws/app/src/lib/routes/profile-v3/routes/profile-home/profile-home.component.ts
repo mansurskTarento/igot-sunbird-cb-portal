@@ -10,12 +10,13 @@ import { Subscription } from 'rxjs'
 import { StepService } from '../../services/step.service'
 import { CompLocalService } from '../../services/comp.service'
 import { ProfileV3Service } from '../../services/profile_v3.service'
-import { InitService } from 'src/app/services/init.service'
+import { InitService } from '../../../../routes/services/appInit.service'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-profile-home',
-  templateUrl: './profile-home.component.html',
-  styleUrls: ['./profile-home.component.scss'],
+    selector: 'ws-app-profile-home',
+    templateUrl: './profile-home.component.html',
+    styleUrls: ['./profile-home.component.scss'],
+    standalone: false
 })
 export class ProfileHomeComponent implements OnInit, OnDestroy {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef
@@ -31,7 +32,7 @@ export class ProfileHomeComponent implements OnInit, OnDestroy {
 
   tabs: NSProfileDataV3.IProfileTab[] = []
   tabsData = this.route.parent && this.route.parent.snapshot.data.pageData.data.tabs || []
-  message = `Welcome to the Portal`
+  message = 'Welcome to the Portal'
   currentStep = 1
   mode$ = this.isLtMedium$.pipe(map((isMedium: any) => (isMedium ? 'over' : 'side')))
   constructor(

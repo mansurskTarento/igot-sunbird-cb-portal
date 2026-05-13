@@ -1,25 +1,24 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'ws-app-topics-all',
   templateUrl: './topics-all.component.html',
-  styleUrls: ['./topics-all.component.scss']
+  styleUrls: ['./topics-all.component.scss'],
+  standalone: false
 })
 export class TopicsAllComponent {
 
-  constructor(private router: Router){
-    
+  constructor(private router: Router) {
+
   }
 
-
-
-  topicCardrClick(topicData: any){
+  topicCardrClick(topicData: any) {
     this.router.navigate([`/app/discussion-forum-v2/communities/${topicData.value}`])
   }
 
   communityCardrClick(communityData: any) {
-    
+
     this.router.navigate(['/app/discussion-forum-v2/community', communityData.communityId])
   }
 

@@ -284,7 +284,7 @@
         </div>
 
         <div class="mt-1">
-          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery('',$event)"  [disabled]="!searchQuery || searchAPIResponseInProgress || !initiateSupportNewChat">
+          <button type="button" class="flex-auto-display send-btn" (click)="submitSearchQuery(autoResizeTextarea,$event)"  [disabled]="!searchQuery || !initiateSupportNewChat">
             <mat-icon class="send-btn-icon">send</mat-icon>
           </button>
         </div>

@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .buton {
   display: flex;
@@ -322,9 +322,11 @@ ul.tagIconList {
   list-style: none;
   vertical-align: middle;
 }
+
 ul.tagIconList li {
   float: left;
 }
+
 ul.tagIconList li a {
   width: 8px;
   margin-left: 3px;
@@ -332,36 +334,44 @@ ul.tagIconList li a {
   border-radius: 2px 2px;
   display: block;
 }
+
 a.activeTagIcon {
   background-color: #0074B6;
   border: 2px solid #0074B6;
 }
+
 a.activeLevelIcon {
   background-color: #1D8923;
   border: 2px solid #1D8923;
 }
+
 a.deactiveLevelIcon {
   background-color: rgba(0, 0, 0, 0.08);
   border: 2px solid #D13924;
 }
-a.disableTagIcon, a.disableLevelIcon {
+
+a.disableTagIcon,
+a.disableLevelIcon {
   background-color: rgba(0, 0, 0, 0.08);
   border: 2px solid rgba(0, 0, 0, 0.08);
 }
+
 .card_inner_content {
   width: 100%;
 
   .card_inner_title_box {
     width: 30%;
   }
+
   .proficiency_text_box {
     width: 30%;
   }
+
   .proficient_level_box {
     width: 25%;
   }
 }
 
 ::ng-deep .mat-form-field-prefix {
-  top:0 !important
+  top: 0 !important
 }

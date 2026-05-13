@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
 import { UntypedFormControl } from '@angular/forms'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService, EventService, IResolveResponse, WsEvents } from '@sunbird-cb/utils-v2'
 // import { startWith, map } from 'rxjs/operators'
@@ -9,9 +9,10 @@ import { debounceTime, distinctUntilChanged, startWith, switchMap } from 'rxjs/o
 import { InterestService } from '../../services/interest.service'
 
 @Component({
-  selector: 'ws-app-interest',
-  templateUrl: './interest.component.html',
-  styleUrls: ['./interest.component.scss'],
+    selector: 'ws-app-interest',
+    templateUrl: './interest.component.html',
+    styleUrls: ['./interest.component.scss'],
+    standalone: false
 })
 export class InterestComponent implements OnInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>
@@ -207,6 +208,6 @@ export class InterestComponent implements OnInit {
       {
         pageIdExt: 'interest',
         module: WsEvents.EnumTelemetrymodules.LEARN,
-    })
+      })
   }
 }

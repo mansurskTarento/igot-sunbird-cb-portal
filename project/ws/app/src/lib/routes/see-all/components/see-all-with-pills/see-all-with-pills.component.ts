@@ -10,15 +10,15 @@ import {
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
-import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption/lib/_common/strips/content-strip-with-tabs-pills/content-strip-with-tabs-pills.model'
+import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption'
 import { catchError, map, mergeMap } from 'rxjs/operators'
 import { of } from 'rxjs'
-
 
 @Component({
   selector: 'ws-app-see-all-with-pills',
   templateUrl: './see-all-with-pills.component.html',
   styleUrls: ['./see-all-with-pills.component.scss'],
+  standalone: false
 })
 export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
@@ -205,8 +205,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async searchV6Request(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-    _calculateParentStatus: boolean
+                        request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+                        _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     // console.log('calling -- ')
@@ -239,7 +239,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        }, (error: any) => {
+        },                                                  (error: any) => {
           reject(error)
         })
       }
@@ -268,7 +268,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             const currentTabFromMap = (allTabs && allTabs.length &&
               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabsAndPills.IContentStripTab
             this.getTabDataByNewReqTrending(strip, this.dynamicTabIndex, 0, currentTabFromMap,
-              calculateParentStatus)
+                                            calculateParentStatus)
           }
         }
 
@@ -355,7 +355,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
               }
             }
           }
-        }, error => {
+        },                                                          error => {
           console.error('Error fetching microcredentials', error)
           if (strip && strip.tabs) {
             strip.tabs.splice(microTabIndex, 1)
@@ -552,8 +552,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async trendingSearchRequest(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-    _calculateParentStatus: boolean
+                              request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+                              _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
@@ -604,7 +604,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             results = { response: { certifications: proccesedResult } }
           }
           resolve({ results, viewMoreUrl })
-        }, (error: any) => {
+        },                                                                     (error: any) => {
           if (error.error && error.error.status === 400) {
             // this.processStrip(strip, [], 'done', calculateParentStatus, null);
           }
@@ -616,14 +616,14 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async microCredentialsSearchRequest(strip: any,
-    request: any,
-    _calculateParentStatus: boolean
+                                      request: any,
+                                      _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
       if (request && request.microSearch && request.microSearch.request && request.microSearch.request.url) {
         this.seeAllSvc.microCredentialsSearch(request.microSearch.request.url).subscribe((response: any) => {
-          let results: any = response && response.result && response.result.content ? response.result.content : []
+          const results: any = response && response.result && response.result.content ? response.result.content : []
           const showViewMore = Boolean(
             results &&
             results.length > 5 &&
@@ -651,11 +651,11 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             }
             : null
           resolve({ results, viewMoreUrl })
-        }, (error: any) => {
+        },                                                                               (error: any) => {
           if (error.error && error.error.status === 400) {
             // this.processStrip(strip, [], 'done', calculateParentStatus, null);
           }
-          //this.processStrip(strip, [], 'done', calculateParentStatus, null)
+          // this.processStrip(strip, [], 'done', calculateParentStatus, null)
           reject(error)
         })
       }
@@ -785,12 +785,12 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
   // MY learning Strip methods starts here
   fetchUserEnrolledData(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-    tabIndex: number, pillIndex: any, calculateParentStatus = true) {
+                        tabIndex: number, pillIndex: any, calculateParentStatus = true) {
     if (strip.request && strip.request.enrollmentList
       && Object.keys(strip.request.enrollmentList).length) {
       if (strip && strip.tabs && strip.tabs.length && strip.tabs[tabIndex].pillsData) {
         if (strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length) {
-          let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
+          const currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
           if (currentPillFromMap.request && currentPillFromMap.request.type === 'enrollment') {
             this.fetchFromInternalEnrollmentList(strip, tabIndex, pillIndex, calculateParentStatus)
           } else if (currentPillFromMap.request && currentPillFromMap.request.type === 'eventEnrollment') {
@@ -801,10 +801,9 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     }
   }
 
-
   fetchFromInternalEnrollmentList(strip: NsContentStripWithTabsAndPills.IContentStripUnit, tabIndex: number, pillIndex: number, calculateParentStatus = true) {
     if (strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]) {
-      let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
+      const currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId
@@ -820,7 +819,6 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           if (_.get(res, 'result.courses', []).length > 0 && _.get(this.configSvc, 'userProfile.userId') && _.get(currentPillFromMap, 'request.payload.request.status') === 'Completed') {
             const formContextList: any[] = []
             const formRefMap: Record<string, any> = {} // contextId -> course reference map
-
 
             for (const course of res.result.courses) {
               const content = course.content
@@ -842,11 +840,11 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             if (formContextList.length) {
               const formBody = {
                 userId: _.get(this.configSvc, 'userProfile.userId'),
-                formContextList
+                formContextList,
               }
 
               return this.seeAllSvc.getApplicationsById(formBody).pipe(
-                map((response) => {
+                map(response => {
                   const statusList = _.get(response, 'result.response', [])
 
                   // Update course with survey status
@@ -859,7 +857,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
                   return res // Return the updated original response
                 }),
-                catchError((error) => {
+                catchError(error => {
                   console.error('Error fetching survey status:', error)
                   // Return the original response without survey status on error
                   return of(res)
@@ -881,17 +879,17 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
               ...courses,
               ...res?.result?.courses.filter((course: any) =>
                 course && course?.content && Object.keys(course?.content)?.length > 0
-              )
+              ),
             ]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
-        }, (_err: any) => {
+        },                                                                                       (_err: any) => {
           if (courses && courses?.length) {
             courses = [...courses]
             this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
           }
         })
-      }, (_err: any) => {
+      },          (_err: any) => {
         if (courses && courses?.length) {
           courses = [...courses]
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
@@ -902,7 +900,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
   fetchEventEnrollmentList(strip: NsContentStripWithTabsAndPills.IContentStripUnit, tabIndex: number, pillIndex: number, calculateParentStatus = true) {
     if (strip.tabs && strip.tabs[tabIndex] && strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData[pillIndex]) {
-      let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
+      const currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
       let userId = ''
       if (this.configSvc.userProfile) {
         userId = this.configSvc.userProfile.userId
@@ -918,7 +916,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           events = [...events, ...res.result.events]
         }
         this.formatNewEnrollmentData(strip, tabIndex, pillIndex, events, calculateParentStatus)
-      }, (_err: any) => {
+      },                                                                                             (_err: any) => {
 
       })
     }
@@ -949,7 +947,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       })
     }
 
-    let sortedContent: any = (content || []).sort((a: any, b: any) => {
+    const sortedContent: any = (content || []).sort((a: any, b: any) => {
       const dateA: any = new Date(a.lastContentAccessTime || 0)
       const dateB: any = new Date(b.lastContentAccessTime || 0)
       return dateB - dateA
@@ -957,11 +955,11 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
     if (strip && strip.tabs && strip.tabs.length) {
       if (strip.tabs[tabIndex].pillsData && strip.tabs[tabIndex].pillsData.length) {
-        let currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
+        const currentPillFromMap: any = strip.tabs[tabIndex].pillsData[pillIndex]
         currentPillFromMap['fetchTabStatus'] = 'done'
         this.resetSelectedPill(strip.tabs[tabIndex].pillsData)
         strip.tabs[tabIndex].pillsData[pillIndex]['selected'] = true
-        let widgets = this.transformContentsToWidgets(sortedContent, strip)
+        const widgets = this.transformContentsToWidgets(sortedContent, strip)
         strip.tabs[tabIndex].pillsData[pillIndex]['widgets'] = widgets
 
         this.resetSelectedPill(strip.tabs[tabIndex].pillsData)

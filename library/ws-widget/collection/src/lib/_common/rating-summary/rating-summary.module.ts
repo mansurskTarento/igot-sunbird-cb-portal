@@ -4,10 +4,14 @@ import { RatingSummaryComponent } from './rating-summary.component'
 import { PipeCountTransformModule } from '@sunbird-cb/utils-v2'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function RatingSummaryHttpLoaderFactory(http: HttpClient) {
+  return new TranslateHttpLoader(http)
+}
 
 @NgModule({
   declarations: [RatingSummaryComponent],
@@ -20,7 +24,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: RatingSummaryHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),

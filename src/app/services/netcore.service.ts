@@ -6,7 +6,7 @@ import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import * as _ from 'lodash'
 const API_END_POINTS = {
-  FORM_READ: `/apis/v1/form/read`,
+  FORM_READ: '/apis/v1/form/read',
   ORG_READ: '/api/org/v1/read',
 }
 
@@ -21,7 +21,7 @@ export class NetCoreService {
         private http: HttpClient,
         public configSvc: ConfigurationsService
       ) {
-    
+
       }
 
     getOrgReadData(organisationId: string): Observable<any> {
@@ -29,12 +29,12 @@ export class NetCoreService {
         request: {
         organisationId,
         },
-    };
+    }
     return this.http.post<any>(API_END_POINTS.ORG_READ, request).pipe(
         map((res: any) => {
-        return _.get(res, 'result.response');
+        return _.get(res, 'result.response')
         })
-    );
+    )
     }
 
     netCoreConfigReadData(payload:any): Observable<any> {
@@ -51,7 +51,7 @@ export class NetCoreService {
             )
             }
             ),
-        )          
+        )
     }
 
     formReadData(request: any): Observable<any> {
@@ -68,14 +68,14 @@ export class NetCoreService {
     netCoreUserNameUpdate(payload:any) {
          /* tslint:disable */
         //  console.log('this.configSvc.unMappedUser', payload)
-         /* tslint:enable */        
+         /* tslint:enable */
         smartech('contact', '', payload)
     }
 
     netCoreUserProfilePhotoUpdate(payload:any) {
         /* tslint:disable */
         // console.log('this.configSvc.unMappedUser', payload)
-        /* tslint:enable */        
+        /* tslint:enable */
        smartech('contact', '', payload)
     }
 
@@ -85,7 +85,7 @@ export class NetCoreService {
         /* tslint:enable */
         smartech('contact', '', payload)
     }
-    
+
     netCoreUserProfileUpdateEvent(payload:any, eventName: any, userIdentifier:any) {
         /* tslint:disable */
         // console.log('this.configSvc.unMappedUser', payload)
@@ -98,8 +98,8 @@ export class NetCoreService {
 
     trackEvent(eventName:any, userIdentifier:any, userpayload?:any) {
         // Get the current time (server time)
-        let serverTime = moment();
-        serverTime = serverTime.add(5, 'hours').add(30, 'minutes');
+        let serverTime = moment()
+        serverTime = serverTime.add(5, 'hours').add(30, 'minutes')
 
         // Display the server time
         /* tslint:disable */

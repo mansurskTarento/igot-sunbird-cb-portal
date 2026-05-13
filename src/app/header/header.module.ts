@@ -5,27 +5,25 @@ import { AppNavBarComponent } from '../component/app-nav-bar/app-nav-bar.compone
 import { RouterModule } from '@angular/router'
 import { GridLayoutModule, BtnFeatureModule, ErrorResolverModule, TourModule, StickyHeaderModule } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import { SearchV3Module, SearchModule } from '@ws/app/src/public-api'
+import { SearchV3Module, SearchModule } from '@ws/app'
 import { SharedModule } from '../shared/shared.module'
 import { FontSettingComponent } from './../component/font-setting/font-setting.component'
 import { TopRightNavBarComponent } from './../component/top-right-nav-bar/top-right-nav-bar.component'
 import { FormsModule } from '@angular/forms'
-import { HttpClient } from '@angular/common/http'
-import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from '../app.module'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { TranslateModule } from '@ngx-translate/core'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSliderModule } from '@angular/material/slider'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { LibNotificationsService, NotificationDropdownModule } from '@sunbird-cb/notification'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
+import { ConfirmDialogModule } from '@sunbird-cb/collection'
 @NgModule({
   declarations: [HeaderComponent, AppNavBarComponent, FontSettingComponent, TopRightNavBarComponent],
   imports: [
@@ -52,15 +50,9 @@ import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/conf
     MatTooltipModule,
     MatSnackBarModule,
     NotificationDropdownModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
-        deps: [HttpClient],
-      },
-    }),
+    TranslateModule,
     SkeletonLoaderModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   exports: [
     HeaderComponent,

@@ -5,11 +5,11 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 // import { EventService, ConfigurationsService } from '@sunbird-cb/utils-v2';
 import { Subscription } from 'rxjs'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
-// import { AccessControlService } from '@ws/author/src/public-api'
 @Component({
     selector: 'viewer-assessment',
     templateUrl: './assessment.component.html',
     styleUrls: ['./assessment.component.scss'],
+    standalone: false
 })
 export class AssessmentComponent implements OnInit {
     isPreviewMode = false

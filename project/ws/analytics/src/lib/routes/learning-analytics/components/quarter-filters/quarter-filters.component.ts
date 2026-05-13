@@ -5,9 +5,10 @@ import { NsAnalytics } from '../../models/learning-analytics.model'
 
 import { QuarterServiceService } from '../../services/quarter-filter.service'
 @Component({
-  selector: 'ws-analytics-quarter-filters',
-  templateUrl: './quarter-filters.component.html',
-  styleUrls: ['./quarter-filters.component.scss'],
+    selector: 'ws-analytics-quarter-filters',
+    templateUrl: './quarter-filters.component.html',
+    styleUrls: ['./quarter-filters.component.scss'],
+    standalone: false
 })
 export class QuarterFiltersComponent implements OnInit {
   @Output() filterEvent = new EventEmitter<string>()

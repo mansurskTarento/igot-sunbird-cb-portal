@@ -1,10 +1,11 @@
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
+
 import { AccessControlService } from './../../services/access-control.service'
-import { WorkFlowService } from '@ws/author/src/lib/services/work-flow.service'
-import { ISearchContent } from '@ws/author/src/lib/interface/search'
-import { NSContent } from '@ws/author/src/lib/interface/content'
 import { Component, Input, OnInit, Inject } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { ISearchContent } from '../../../../interface/search'
+import { NSContent } from '../../../../interface/content'
+import { AuthInitService } from '../../../../services/init.service'
+import { WorkFlowService } from '../../../../services/work-flow.service'
 
 interface IWorkFlowLog {
   name: string
@@ -25,9 +26,10 @@ interface IWorkFlowStepper {
 }
 
 @Component({
-  selector: 'ws-auth-status-track',
-  templateUrl: './status-track.component.html',
-  styleUrls: ['./status-track.component.scss'],
+    selector: 'ws-auth-status-track',
+    templateUrl: './status-track.component.html',
+    styleUrls: ['./status-track.component.scss'],
+    standalone: false
 })
 export class StatusTrackComponent implements OnInit {
   @Input() content!: NSContent.IContentMeta | ISearchContent

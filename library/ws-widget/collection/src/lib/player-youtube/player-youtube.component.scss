@@ -1,4 +1,4 @@
-// @import 'ws-mixins';
+// @use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;;
 
 :host.video-full {
   .video-js {
@@ -27,8 +27,8 @@
 
 .circular-progress-container {
   position: absolute;
-  top:50%;
-  left:50%;
+  top: 50%;
+  left: 50%;
   color: #ccc;
 }
 
@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.5em;
-  background: 
+  background:
     linear-gradient(#000, #000) content-box no-repeat,
     conic-gradient(transparent var(--percentage, 0), gray var(--percentage, 0)) border-box,
     conic-gradient(white 120deg, white 120deg 240deg, white 240deg) border-box;
@@ -50,34 +50,34 @@
 
 .up-next {
   position: absolute;
-    color: #fff;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    top: 43%;
-    left: 49.5%;
-    font-family: 'Montserrat';
-    font-weight: 600;
-    font-size: 16px;
-    line-height: 24px;
-    letter-spacing: 0.12px;
-  
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  top: 43%;
+  left: 49.5%;
+  font-family: 'Montserrat';
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.12px;
+
 }
 
 .cancel-auto-progress {
   position: absolute;
-    color: #fff;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    top: 65%;
-    left: 50.5%;
-    cursor: pointer;
-    font-family: 'Lato';
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    letter-spacing: 0.25px;
+  color: #fff;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  top: 65%;
+  left: 50.5%;
+  cursor: pointer;
+  font-family: 'Lato';
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.25px;
 }
 
 
@@ -92,7 +92,7 @@
 // }
 @media only screen and (min-width: 360px) and (max-width: 360px) {
   .video-js {
-    height:auto !important;
+    height: auto !important;
     width: 100%;
     min-height: auto !important;
     padding-top: 70% !important;
@@ -101,7 +101,7 @@
 
 @media only screen and (min-width: 375px) and (max-width: 389px) {
   .video-js {
-    height:auto !important;
+    height: auto !important;
     width: 100%;
     min-height: auto !important;
     padding-top: 60% !important;
@@ -111,7 +111,7 @@
 
 @media only screen and (min-width: 390px) and (max-width: 768px) {
   .video-js {
-    height:auto !important;
+    height: auto !important;
     width: 100%;
     min-height: auto !important;
     padding-top: 74% !important;
@@ -120,7 +120,7 @@
 
 @media only screen and (min-width: 390px) and (max-width: 539px) {
   .video-js {
-    height:auto !important;
+    height: auto !important;
     width: 100%;
     min-height: auto !important;
     padding-top: 74% !important;
@@ -129,7 +129,7 @@
 
 @media only screen and (min-width: 540px) and (max-width: 540px) {
   .video-js {
-    height:auto !important;
+    height: auto !important;
     width: 100%;
     min-height: auto !important;
     padding-top: 38% !important;
@@ -163,7 +163,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 4px; /* spacing between icon and text */
+  gap: 4px;
+  /* spacing between icon and text */
 }
 
 /* Make the image visible and aligned properly */
@@ -189,13 +190,14 @@
   width: 4.25em;
   font-size: 16px;
   vertical-align: middle;
-  margin:0.25em;
+  margin: 0.25em;
 
 }
 
 ::ng-deep .video-js.vjs-paused .vjs-play-control {
   margin: 0.5em !important;
 }
+
 ::ng-deep .video-js.vjs-playing .vjs-play-control {
   margin: 0.5em !important;
 }
@@ -206,8 +208,9 @@
   // background: linear-gradient(#eff3f9, #414244e3) !important;
   // border-radius: 0px 0px 12px 12px;
   background: linear-gradient(0deg, rgba(180, 181, 185, 0.38) 9.43%, rgba(154, 154, 154, 0.95) 92.51%);
-  
+
 }
+
 ::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
   background-color: #2b333f;
   background-color: rgba(43, 51, 63, .7);
@@ -222,16 +225,18 @@
     width: 3em;
     font-size: 16px;
     vertical-align: middle;
-    margin:0.25em;
-  
+    margin: 0.25em;
+
   }
 
   :host ::ng-deep .video-js.vjs-paused .vjs-play-control {
     margin: 0.5em !important;
   }
+
   :host ::ng-deep .video-js.vjs-playing .vjs-play-control {
     margin: 0.5em !important;
   }
+
   ::ng-deep .vjs-menu-button-popup .vjs-menu .vjs-menu-content {
     background-color: #2b333f;
     background-color: rgba(43, 51, 63, .7);

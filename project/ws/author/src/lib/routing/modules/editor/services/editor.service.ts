@@ -1,28 +1,16 @@
 import { Injectable } from '@angular/core'
 import { NsAutoComplete, UserAutocompleteService } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import {
-  AUTHORING_CONTENT_BASE,
-  CONTENT_BASE_COPY,
-  CONTENT_CREATE,
-  CONTENT_DELETE,
-  CONTENT_READ,
-  CONTENT_SAVE,
-  CONTENT_SAVE_V2,
-  SEARCH,
-  STATUS_CHANGE,
-  SEARCH_V6_ADMIN,
-  SEARCH_V6_AUTH,
-} from '@ws/author/src/lib/constants/apiEndpoints'
-import { NSApiResponse } from '@ws/author/src/lib/interface//apiResponse'
-import { NSApiRequest } from '@ws/author/src/lib/interface/apiRequest'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
+
 import { Observable, of } from 'rxjs'
 import { map, mergeMap, catchError } from 'rxjs/operators'
-import { CONTENT_READ_MULTIPLE_HIERARCHY } from './../../../../constants/apiEndpoints'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_COPY, CONTENT_CREATE, CONTENT_DELETE, CONTENT_READ, CONTENT_READ_MULTIPLE_HIERARCHY, CONTENT_SAVE, CONTENT_SAVE_V2, SEARCH, SEARCH_V6_ADMIN, SEARCH_V6_AUTH, STATUS_CHANGE } from './../../../../constants/apiEndpoints'
 import { ISearchContent, ISearchResult } from '../../../../interface/search'
+import { ApiService } from '../../../../modules/shared/services/api.service'
+import { AccessControlService } from '../../../../modules/shared/services/access-control.service'
+import { NSApiRequest } from '../../../../interface/apiRequest'
+import { NSApiResponse } from '../../../../interface/apiResponse'
+import { NSContent } from '../../../../interface/content'
 
 @Injectable()
 export class EditorService {
@@ -224,7 +212,7 @@ export class EditorService {
   getAccessPath(): Observable<string[]> {
     return this.accessPath.length
       ? of()
-      : this.apiService.get<string[]>(`/apis/protected/V8/user/accessControl`).pipe(
+      : this.apiService.get<string[]>('/apis/protected/V8/user/accessControl').pipe(
         map((v: { special: { accessPaths: string[] }[] }) => {
           if (v) {
             v.special.forEach(acc => {

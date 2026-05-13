@@ -21,16 +21,16 @@ import {
 import * as _ from 'lodash'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, WsEvents, NsContent } from '@sunbird-cb/utils-v2'
 import { SeeAllService } from '../../services/see-all.service'
-// import { WidgetUserService } from '@sunbird-cb/collection/src/lib/_services/widget-user.service'
 
-import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/collection'
 import { WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-see-all-home',
-  templateUrl: './see-all-home.component.html',
-  styleUrls: ['./see-all-home.component.scss'],
+    selector: 'ws-app-see-all-home',
+    templateUrl: './see-all-home.component.html',
+    styleUrls: ['./see-all-home.component.scss'],
+    standalone: false
 })
 export class SeeAllHomeComponent implements OnInit, OnDestroy {
 
@@ -238,8 +238,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   getInprogressAndCompleted(array: NsContent.IContent[],
-    customFilter: any,
-    strip: NsContentStripWithTabs.IContentStripUnit) {
+                            customFilter: any,
+                            strip: NsContentStripWithTabs.IContentStripUnit) {
     const inprogress: any[] = []
     const completed: any[] = []
     array.forEach((e, idx, arr) => {
@@ -406,7 +406,6 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     }
   }
 
-
   async fetchCiosContentData(strip: any, calculateParentStatus = true) {
     this.isCoisContent = true
     if (strip && strip.request.ciosContent && Object.keys(strip.request.ciosContent).length) {
@@ -442,19 +441,19 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       const response = await this.consumWidgetSvc.postApiMethod(_currentTab.request.apiUrl, _currentTab.request.ciosContent).toPromise()
       if (response && response.result && response.result.data && response.result.data.length) {
         strip.stripConfig.cardSubType = 'card-providers-lib'
-        let data = response.result.data.map((item: any) => {
+        const data = response.result.data.map((item: any) => {
           return {
             ...item,
-            "name": item?.contentPartnerName || '',
-            "logoUrl": item?.link || '',
-            "description": item?.description || '',
-            "contentDisplayType": _currentTab?.request?.condition || 'extContent',
-            "isExternalProvider": true
+            'name': item?.contentPartnerName || '',
+            'logoUrl': item?.link || '',
+            'description': item?.description || '',
+            'contentDisplayType': _currentTab?.request?.condition || 'extContent',
+            'isExternalProvider': true,
           }
         })
         const widgets = this.transformContentsToWidgets(data, strip)
 
-        let combinedWidgets = existingWidgets && existingWidgets.length ? [...existingWidgets, ...widgets] : [...widgets]
+        const combinedWidgets = existingWidgets && existingWidgets.length ? [...existingWidgets, ...widgets] : [...widgets]
         this.tabResults = []
 
         if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
@@ -473,7 +472,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         this.totalCount = response.result.totalCount
         this.totalPages = Math.ceil(response.result.totalCount / strip.request.ciosContent.pageSize)
       } else {
-        let combinedWidgets = existingWidgets && existingWidgets.length ? [...existingWidgets] : []
+        const combinedWidgets = existingWidgets && existingWidgets.length ? [...existingWidgets] : []
         this.tabResults = combinedWidgets
         if (this.seeAllPageConfig && this.seeAllPageConfig.tabs) {
           const allTabs = this.seeAllPageConfig.tabs
@@ -546,9 +545,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
         const widgets = this.transformContentsToWidgets(response.results.result, strip)
         combinedWidgets = existingwidgets && existingwidgets.length ? [...existingwidgets, ...widgets] : [...widgets]
 
-
       } else if (response.result.content) {
-        let featuredProvider = JSON.parse(response.result.content.featuredProviders || '[]')
+        const featuredProvider = JSON.parse(response.result.content.featuredProviders || '[]')
         combinedWidgets = this.transformContentsToWidgets(featuredProvider, strip)
 
       } else {
@@ -616,7 +614,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             const currentTabFromMap = (allTabs && allTabs.length &&
               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
             this.getTabDataByNewReqSearchV6(strip, this.dynamicTabIndex,
-              currentTabFromMap, calculateParentStatus)
+                                            currentTabFromMap, calculateParentStatus)
           }
         }
 
@@ -639,8 +637,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   async searchV6Request(strip: NsContentStripWithTabs.IContentStripUnit,
-    request: NsContentStripWithTabs.IContentStripUnit['request'],
-    _calculateParentStatus: boolean
+                        request: NsContentStripWithTabs.IContentStripUnit['request'],
+                        _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     // console.log('calling -- ')
@@ -673,7 +671,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        }, (error: any) => {
+        },                                                  (error: any) => {
           reject(error)
         })
       }
@@ -702,7 +700,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             const currentTabFromMap = (allTabs && allTabs.length &&
               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabs.IContentStripTab
             this.getTabDataByNewReqTrending(strip, this.dynamicTabIndex, currentTabFromMap,
-              calculateParentStatus)
+                                            calculateParentStatus)
           }
         }
 
@@ -727,8 +725,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   async trendingSearchRequest(strip: NsContentStripWithTabs.IContentStripUnit,
-    request: NsContentStripWithTabs.IContentStripUnit['request'],
-    _calculateParentStatus: boolean
+                              request: NsContentStripWithTabs.IContentStripUnit['request'],
+                              _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
@@ -781,7 +779,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        }, (error: any) => {
+        },                                                                     (error: any) => {
           if (error.error && error.error.status === 400) {
           }
           reject(error)
@@ -864,8 +862,8 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       }
       // with tabs
       else if (this.seeAllPageConfig.tabs && this.seeAllPageConfig.tabs.length) {
-        let tabdata = this.seeAllPageConfig.tabs[this.dynamicTabIndex]
-        let existingWidgets = tabdata.widgets || []
+        const tabdata = this.seeAllPageConfig.tabs[this.dynamicTabIndex]
+        const existingWidgets = tabdata.widgets || []
         if (tabdata && tabdata.request && tabdata.request.searchV6) {
           tabdata.request.searchV6.request['offset'] = this.page
           this.getTabDataByNewReqSearchV6(this.seeAllPageConfig, this.dynamicTabIndex, tabdata, true, existingWidgets)
@@ -880,7 +878,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       // Restore scroll position after DOM updates
       setTimeout(() => {
         window.scrollTo(0, currentScrollPosition)
-      }, 100)
+      },         100)
     }
   }
 
@@ -893,9 +891,9 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
     return this.langtranslations.translateLabel(label.toLowerCase(), type, '')
   }
   async postRequestMethod(strip: NsContentStripWithTabs.IContentStripUnit,
-    request: NsContentStripWithTabs.IContentStripUnit['request'],
-    apiUrl: string,
-    _calculateParentStatus: boolean
+                          request: NsContentStripWithTabs.IContentStripUnit['request'],
+                          apiUrl: string,
+                          _calculateParentStatus: boolean
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
@@ -919,7 +917,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
           } else {
             resolve({ results })
           }
-        }, (error: any) => {
+        },                                                            (error: any) => {
           // this.processStrip(strip, [], 'error', calculateParentStatus, null);
           reject(error)
         },
@@ -929,7 +927,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
   }
 
   takeExtClickAction(_item: any) {
-    this.telemetryToCaptureInteract(_item.contentId, "providers", 'card-content')
+    this.telemetryToCaptureInteract(_item.contentId, 'providers', 'card-content')
     if (_item.externalId) {
       this.router.navigate(
         [`app/toc/ext/${_item.contentId}`])
@@ -941,7 +939,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       {
         type: 'click',
         subType,
-        id: id,
+        id,
       },
       {
         id: contentId,

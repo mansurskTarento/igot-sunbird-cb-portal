@@ -7,7 +7,7 @@ import { ROOT_WIDGET_CONFIG } from '../collection.config'
 // import { NsContent } from '../_services/widget-content.model'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { WidgetContentService, ViewerDataService } from '@sunbird-cb/toc'
 import { HttpErrorResponse } from '@angular/common/http'
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms'
@@ -17,9 +17,10 @@ const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a
 const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/
 
 @Component({
-  selector: 'ws-widget-player-survey',
-  templateUrl: './player-survey.component.html',
-  styleUrls: ['./player-survey.component.scss'],
+    selector: 'ws-widget-player-survey',
+    templateUrl: './player-survey.component.html',
+    styleUrls: ['./player-survey.component.scss'],
+    standalone: false
 })
 export class PlayerSurveyComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any>, OnDestroy {

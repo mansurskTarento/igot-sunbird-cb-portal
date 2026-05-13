@@ -1,16 +1,16 @@
 import { StatusTrackComponent } from './../../../../../modules/shared/components/status-track/status-track.component'
-import { AuthExpiryDateConfirmComponent } from '@ws/author/src/lib/modules/shared/components/auth-expiry-date-confirm/auth-expiry-date-confirm.component'
-import { DraftDialogComponent } from '@ws/author/src/lib/modules/shared/components/draft-dialog/draft-dialog.component'
-import { UnpublishDialogComponent } from '@ws/author/src/lib/modules/shared/components/unpublish-dialog/unpublish-dialog.component'
-import { RestoreDialogComponent } from '@ws/author/src/lib/modules/shared/components/restore-dialog/restore-dialog.component'
 import { ValueService } from '@sunbird-cb/utils-v2'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { IAction } from './../../interface/content-card'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
-import { ISearchContent, ITranslation } from '@ws/author/src/lib/interface/search'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { DeleteDialogComponent } from '@ws/author/src/lib/modules/shared/components/delete-dialog/delete-dialog.component'
+import { MatDialog } from '@angular/material/dialog'
+import { ISearchContent, ITranslation } from '../../../../../interface/search'
+import { AccessControlService } from '../../../../../modules/shared/services/access-control.service'
+import { AuthInitService } from '../../../../../services/init.service'
+import { DeleteDialogComponent } from '../../../../../modules/shared/components/delete-dialog/delete-dialog.component'
+import { RestoreDialogComponent } from '../../../../../modules/shared/components/restore-dialog/restore-dialog.component'
+import { UnpublishDialogComponent } from '../../../../../modules/shared/components/unpublish-dialog/unpublish-dialog.component'
+import { DraftDialogComponent } from '../../../../../modules/shared/components/draft-dialog/draft-dialog.component'
+import { AuthExpiryDateConfirmComponent } from '../../../../../modules/shared/components/auth-expiry-date-confirm/auth-expiry-date-confirm.component'
 
 interface ILanguageBar {
   label: string
@@ -18,9 +18,10 @@ interface ILanguageBar {
 }
 
 @Component({
-  selector: 'ws-auth-content-card-v2',
-  templateUrl: './content-card-v2.component.html',
-  styleUrls: ['./content-card-v2.component.scss'],
+    selector: 'ws-auth-content-card-v2',
+    templateUrl: './content-card-v2.component.html',
+    styleUrls: ['./content-card-v2.component.scss'],
+    standalone: false
 })
 export class ContentCardV2Component implements OnInit {
   languages: ILanguageBar[] = []
@@ -49,7 +50,7 @@ export class ContentCardV2Component implements OnInit {
     private dialog: MatDialog,
     private initService: AuthInitService,
     private valueSvc: ValueService,
-  ) {}
+  ) { }
 
   getLocale(locale: string): string {
     const language = this.initService.ordinals.subTitles.find(

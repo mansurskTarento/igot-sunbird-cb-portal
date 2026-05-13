@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .comment-card {
   // width: 40%;
@@ -12,8 +12,9 @@
     margin-top: $size-s;
   }
 }
+
 .show-all {
-  margin: 0!important;
+  margin: 0 !important;
   font-weight: 700;
   float: right;
   cursor: pointer;
@@ -46,21 +47,21 @@
 .courseName {
   font-size: 14px;
   line-height: 20px;
-  font-weight: 400!important;
+  font-weight: 400 !important;
   font-family: lato;
 }
 
 .date-of-completed {
   font-size: 14px;
   line-height: 20px;
-  font-weight: 400!important;
+  font-weight: 400 !important;
   color: rgba(0, 0, 0, 0.54);
   font-family: lato;
 }
 
 .bonus-badge {
   border-radius: 63px;
-  border: 1px solid rgba(0,0,0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.08);
   opacity: 1;
   font-size: 12px;
   background-color: #e4e9f3;
@@ -70,7 +71,7 @@
 }
 
 .mat-subheading-1 {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
 
 

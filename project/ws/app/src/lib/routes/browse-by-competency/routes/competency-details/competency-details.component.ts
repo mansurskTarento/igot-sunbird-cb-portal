@@ -10,9 +10,10 @@ import { ValueService } from '@sunbird-cb/utils-v2'
 import { LocalDataService } from '../../services/localService';
 
 @Component({
-  selector: 'ws-app-competency-details',
-  templateUrl: './competency-details.component.html',
-  styleUrls: ['./competency-details.component.scss'],
+    selector: 'ws-app-competency-details',
+    templateUrl: './competency-details.component.html',
+    styleUrls: ['./competency-details.component.scss'],
+    standalone: false
 })
 export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   private paramSubscription: Subscription | null = null

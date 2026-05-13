@@ -4,13 +4,11 @@ import { Router, NavigationEnd } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, MultilingualTranslationsService, NsInstanceConfig, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
-import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 import { environment } from 'src/environments/environment'
 // tslint:disable
 import _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 // tslint:enable
-// import { AccessControlService } from '@ws/author/src/public-api'
 
 // interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
 //   featureWidgets: NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink>[]
@@ -21,8 +19,7 @@ import { LibNotificationsService } from '@sunbird-cb/notification'
   templateUrl: './card-hubs-list.component.html',
   styleUrls: ['./card-hubs-list.component.scss'],
   animations: [
-    trigger(
-      'enterAnimation', [
+    trigger('enterAnimation', [
       transition(':enter', [
         style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 0 }),
         animate('500ms', style({ transition: 'visibility 0s linear 0.23s, opacity 0.33s linear', opacity: 1, 'transition-delay': '0s' })),
@@ -31,9 +28,9 @@ import { LibNotificationsService } from '@sunbird-cb/notification'
         style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 1 }),
         animate('300ms', style({ transition: 'visibility 1s linear 0.33s, opacity 0.33s linear', opacity: 0, 'transition-delay': '0s' })),
       ]),
-    ]
-    ),
+    ]),
   ],
+  standalone: false
 })
 export class CardHubsListComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<any> {
@@ -63,7 +60,6 @@ export class CardHubsListComponent extends WidgetBaseComponent
 
   constructor(
     private configSvc: ConfigurationsService,
-    private discussUtilitySvc: DiscussUtilsService,
     private router: Router,
     private valueSvc: ValueService,
     private langtranslations: MultilingualTranslationsService,
@@ -88,7 +84,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails
       && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-        isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
     }
     // let isIgotOrg = true
     if (isNotMyUser && isIgotOrg) {
@@ -99,53 +95,53 @@ export class CardHubsListComponent extends WidgetBaseComponent
     }
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-          // certificate link check
-          this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true
-          // Hide loading indicator
-          // console.log('event', event)
-          if (event.url === '/' || event.url.includes('/page/home')) {
-            this.activeRoute = 'Home'
-          } else if (event.url.includes('/page/learn') || event.url.includes('/app/toc')) {
-            this.activeRoute = 'Learn'
-          } else if (event.url.includes('/app/discussion-forum-v2')) {
-            this.activeRoute = 'Discuss'
-          } else if (event.url.includes('app/network-v2')
+        // certificate link check
+        this.isHubEnable = (event.url.includes('/certs') || event.url.includes('/public/certs')) ? false : true
+        // Hide loading indicator
+        // console.log('event', event)
+        if (event.url === '/' || event.url.includes('/page/home')) {
+          this.activeRoute = 'Home'
+        } else if (event.url.includes('/page/learn') || event.url.includes('/app/toc')) {
+          this.activeRoute = 'Learn'
+        } else if (event.url.includes('/app/discussion-forum-v2')) {
+          this.activeRoute = 'Discuss'
+        } else if (event.url.includes('app/network-v2')
           || event.url.includes('app/person-profile') || event.url.includes('app/user-profile')) {
-            this.activeRoute = 'Network'
-          } else if (event.url.includes('app/careers')) {
-            this.activeRoute = 'Career'
-          } else if (event.url.includes('app/competencies')) {
-            this.activeRoute = 'Competencies'
-          } else if (event.url.includes('app/event-hub')) {
-            this.activeRoute = 'Events'
-          } else if (event.url.includes('/app/amrit-gyaan-kosh')) {
-            this.activeRoute = 'Amrit Gyaan Kosh'
-          } else if (event.url.includes('/app/jan-karmayogi')) {
-            this.activeRoute = 'Jan Karmayogi'
-          } else {
-            this.activeRoute = ''
-          }
-          this.visible = false
-          localStorage.setItem('activeRoute', this.activeRoute)
+          this.activeRoute = 'Network'
+        } else if (event.url.includes('app/careers')) {
+          this.activeRoute = 'Career'
+        } else if (event.url.includes('app/competencies')) {
+          this.activeRoute = 'Competencies'
+        } else if (event.url.includes('app/event-hub')) {
+          this.activeRoute = 'Events'
+        } else if (event.url.includes('/app/amrit-gyaan-kosh')) {
+          this.activeRoute = 'Amrit Gyaan Kosh'
+        } else if (event.url.includes('/app/jan-karmayogi')) {
+          this.activeRoute = 'Jan Karmayogi'
+        } else {
+          this.activeRoute = ''
+        }
+        this.visible = false
+        localStorage.setItem('activeRoute', this.activeRoute)
 
       }
 
-  })
-  if (this.disableMenu) {
-    this.router.navigateByUrl('app/person-profile/me#profileInfo')
-  }
-      // onclick="return false;"
+    })
+    if (this.disableMenu) {
+      this.router.navigateByUrl('app/person-profile/me#profileInfo')
+    }
+    // onclick="return false;"
     this.environment = environment
     this.environment.portals = this.environment.portals.filter(
       (obj: any) => ((obj.name !== 'Frac Dictionary') &&
-       (obj.isPublic || this.isAllowed(obj.id))))
+        (obj.isPublic || this.isAllowed(obj.id))))
     const instanceConfig = this.configSvc.instanceConfig
-    const userRoles: any  = this.configSvc.userRoles
+    const userRoles: any = this.configSvc.userRoles
     // console.log('this.configService.userRoles', userRoles.size, userRoles.has('1public'))
 
     if (userRoles !== null) {
       if (userRoles.size === 1 && userRoles.has('public')) {
-         // console.log(true);
+        // console.log(true);
         this.showDashboardIcon = false
       }
 
@@ -218,12 +214,13 @@ export class CardHubsListComponent extends WidgetBaseComponent
       routerSlug: '/app',
       headerOptions: false,
       bannerOption: true,
-      userProfile: { ...this.configSvc.userProfile,
-         ...this.configSvc.userProfileV2,
-         ...this.configSvc.unMappedUser.profileDetails,
-         nodebbid: this.configSvc.unMappedUser.nodebbid },
+      userProfile: {
+        ...this.configSvc.userProfile,
+        ...this.configSvc.userProfileV2,
+        ...this.configSvc.unMappedUser.profileDetails,
+        nodebbid: this.configSvc.unMappedUser.nodebbid
+      },
     }
-    this.discussUtilitySvc.setDiscussionConfig(config)
     localStorage.setItem('home', JSON.stringify(config))
     if (this.disableMenu) {
       return false
@@ -241,8 +238,8 @@ export class CardHubsListComponent extends WidgetBaseComponent
 
   trackTelemetry(name: any) {
     if (name.search('Portal')) {
-        const portalName = name.toLowerCase().split(' ').join('-')
-        this.raiseTelemetry(portalName)
+      const portalName = name.toLowerCase().split(' ').join('-')
+      this.raiseTelemetry(portalName)
     } else { this.raiseTelemetry(name.toLowerCase()) }
   }
 
@@ -274,7 +271,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
   }
   toggleVisibility(): any {
     if (this.disableMenu) {
-      return  false
+      return false
     }
     if (!this.visible) {
       this.visible = !this.visible
@@ -283,7 +280,7 @@ export class CardHubsListComponent extends WidgetBaseComponent
       this.visible = !this.visible
       setTimeout(() => {
         this.configSvc.changeNavBarFullView.next(this.visible)
-      },         200)
+      }, 200)
       this.activeRoute = ''
     }
 
@@ -345,12 +342,12 @@ export class CardHubsListComponent extends WidgetBaseComponent
       f: null,
       tab: 'explore-content',
       filtersPanel: 'show',
-    };
+    }
     const navigationExtras = {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
-    };
-    this.router.navigate(['/app/globalsearch'], navigationExtras);
+    }
+    this.router.navigate(['/app/globalsearch'], navigationExtras)
   }
 
   raiseTelemetryExploreContent() {

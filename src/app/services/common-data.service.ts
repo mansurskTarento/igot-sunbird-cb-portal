@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ProfileVerificationDialogComponent } from '../profile-verification-dialog/profile-verification-dialog.component'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
+import { UserProfileService } from '@ws/app'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar, MatSnackBarConfig as MatSnackBarConfig } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 import { MandatoryNotificationsService } from './mandatory-notifications.service'
 import { BehaviorSubject, Observable, of, Subscription, timer } from 'rxjs'
@@ -13,7 +13,7 @@ import { HttpClient } from '@angular/common/http'
 import { MandatoryNotificationModalComponent } from '../component/mandatory-notification-modal/mandatory-notification-modal.component'
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CommonDataService {
 
@@ -56,8 +56,8 @@ export class CommonDataService {
     this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
   }
   mandatoryDetails(isPlayer: boolean) {
-    let unMappedUser = this.configSvc.unMappedUser
-    let userProfileUpdateDate = unMappedUser && unMappedUser.profileDetails && unMappedUser.profileDetails.personalDetails && unMappedUser.profileDetails.personalDetails?.lastProfileVerificationPromptDate ? Number(unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate) : null
+    const unMappedUser = this.configSvc.unMappedUser
+    const userProfileUpdateDate = unMappedUser && unMappedUser.profileDetails && unMappedUser.profileDetails.personalDetails && unMappedUser.profileDetails.personalDetails?.lastProfileVerificationPromptDate ? Number(unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate) : null
     // Difference in milliseconds
     const currentEpochTime = new Date().getTime()
     let diffMs = 0
@@ -68,19 +68,19 @@ export class CommonDataService {
     const diffDays = diffMs / (1000 * 60 * 60 * 24)
 
     if ((diffDays && diffDays > 90) || userProfileUpdateDate === null) {
-      let userData = {
+      const userData = {
         ...this.configSvc?.userProfile,
         mobile: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.mobile || '',
         primaryEmail: this.configSvc.unMappedUser?.profileDetails?.personalDetails?.primaryEmail || '',
       }
-      let dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
+      const dialogRef = this.dialog.open(ProfileVerificationDialogComponent, {
         data: {
-          userProfile: userData
+          userProfile: userData,
         },
         panelClass: 'profile-verification-dialog-container',
         disableClose: true,
         maxWidth: '95vw',
-        width: '500px'
+        width: '500px',
       })
 
       dialogRef.afterClosed().subscribe(async (res: any) => {
@@ -97,15 +97,15 @@ export class CommonDataService {
   }
   callExtPatchProfile(isPlayer: boolean) {
     const currentEpoch = new Date().getTime().toString()
-    let request = {
-      "request": {
-        "userId": this.configSvc.unMappedUser.id,
-        "profileDetails": {
-          "personalDetails": {
-            "lastProfileVerificationPromptDate": currentEpoch
-          }
-        }
-      }
+    const request = {
+      'request': {
+        'userId': this.configSvc.unMappedUser.id,
+        'profileDetails': {
+          'personalDetails': {
+            'lastProfileVerificationPromptDate': currentEpoch,
+          },
+        },
+      },
     }
     this.userProfileService.editProfileDetails(request).subscribe((res: any) => {
       if (res && res.result && res.result.response?.toUpperCase() === 'SUCCESS') {
@@ -123,53 +123,52 @@ export class CommonDataService {
       request: { organisationId: this.rootOrgId },
     }
     if (Object.keys(this.configSvc && this.configSvc.orgReadData || {}).length > 0) {
-      let res: any = this.configSvc.orgReadData
+      const res: any = this.configSvc.orgReadData
       const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
       const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
       const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
       if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
         return this.readCustomattributeDetails(isPlayer)
-      } else {
+      }
         this.updatePlayerStatus(isPlayer)
         this.checkAndShowMandatoryNotification()
         return false
-      }
-    } else {
+
+    }
       this.userProfileService.readOrgData(request).subscribe((res: any) => {
         const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
         const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
         const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
         if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
           return this.readCustomattributeDetails(isPlayer)
-        } else {
+        }
           this.updatePlayerStatus(isPlayer)
           this.checkAndShowMandatoryNotification()
           return false
-        }
-      }, error => {
+
+      },                                                     error => {
         console.error('Error fetching organization details:', error)
         return false
       })
-    }
+
   }
   readCustomattributeDetails(isPlayer: boolean) {
     this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
-      let customFieldValues = _.get(res, 'result?.response?.customFieldValues', [])
+      const customFieldValues = _.get(res, 'result?.response?.customFieldValues', [])
       if (customFieldValues && customFieldValues.length === 0) {
         return this.redirectToCustomProfile()
-      } else {
-        //this.redirectToCustomProfile()
+      }
+        // this.redirectToCustomProfile()
 
         this.updatePlayerStatus(isPlayer)
         this.checkAndShowMandatoryNotification()
         return false
-      }
-    }, error => {
+
+    },                                                                                                           error => {
       console.error('Error fetching custom attribute details:', error)
       return false
     })
   }
-
 
   fetchMandatoryNotification() {
     this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
@@ -180,7 +179,7 @@ export class CommonDataService {
       } else {
         this.showMandatoryNotification = false
       }
-    }, error => {
+    },                                                                      error => {
       this.showMandatoryNotification = false
       console.error('Error fetching mandatory notification:', error)
     })
@@ -209,12 +208,12 @@ export class CommonDataService {
       this.isMandatoryModalOpen = false
       if (result === 'accepted') {
 
-        let request: any = {
+        const request: any = {
           request: {
             id: this.mandatoryNotificationData.notification_id,
             created_at: this.mandatoryNotificationData.created_at,
-            type: this.mandatoryNotificationData.type
-          }
+            type: this.mandatoryNotificationData.type,
+          },
         }
 
         this.mandatoryNotificationsService.markMandatoryAsRead(request).subscribe((res: any) => {
@@ -223,18 +222,18 @@ export class CommonDataService {
             this.mandatoryNotificationData.read = true
 
             this.setMandatoryTimer()
-            this.router.navigate(['/viewer/practice/', this.mandatoryNotificationData?.message?.data?.assessmentId,],
-              {
+            this.router.navigate(['/viewer/practice/', this.mandatoryNotificationData?.message?.data?.assessmentId],
+                                 {
                 queryParams: {
                   primaryCategory: this.mandatoryNotificationData?.message?.data?.primaryCategory,
                   collectionId: this.mandatoryNotificationData?.message?.data?.collectionId,
                   collectionType: this.mandatoryNotificationData?.message?.data?.collectionType,
                   batchId: this.mandatoryNotificationData?.message?.data?.batchId,
-                }
+                },
               }
             )
           }
-        }, error => {
+        },                                                                        error => {
           console.error('Error marking mandatory notification as read:', error)
           this.showMandatoryNotification = false
           this.setMandatoryTimer()
@@ -287,7 +286,6 @@ export class CommonDataService {
   updatePlayerStatus(isPlayer: boolean) {
     this.isPlayer = isPlayer
   }
-
 
   /**
    * Check NLW 2026 certification eligibility from user profile and cache in localStorage.

@@ -6,9 +6,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-sliders-dynamic',
-  templateUrl: './sliders-dynamic.component.html',
-  styleUrls: ['./sliders-dynamic.component.scss'],
+    selector: 'ws-widget-sliders-dynamic',
+    templateUrl: './sliders-dynamic.component.html',
+    styleUrls: ['./sliders-dynamic.component.scss'],
+    standalone: false
 })
 export class SlidersDynamicComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<ICarousel> {

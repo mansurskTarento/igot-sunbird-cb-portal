@@ -5,9 +5,10 @@ import { debounceTime, throttleTime } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-badge',
-  templateUrl: './badge.component.html',
-  styleUrls: ['./badge.component.scss'],
+    selector: 'ws-app-badge',
+    templateUrl: './badge.component.html',
+    styleUrls: ['./badge.component.scss'],
+    standalone: false
 })
 export class BadgeComponent implements OnInit {
   disableNext: boolean

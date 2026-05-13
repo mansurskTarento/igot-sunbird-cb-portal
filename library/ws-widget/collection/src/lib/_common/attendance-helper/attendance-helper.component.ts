@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-attendance-helper',
-  templateUrl: './attendance-helper.component.html',
-  styleUrls: ['./attendance-helper.component.scss'],
+    selector: 'ws-widget-attendance-helper',
+    templateUrl: './attendance-helper.component.html',
+    styleUrls: ['./attendance-helper.component.scss'],
+    standalone: false
 })
 export class AttendanceHelperComponent implements OnInit {
   helperConfig: any

@@ -1,22 +1,19 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-audio-native-container',
-  templateUrl: './audio-native.component.html',
-  styleUrls: ['./audio-native.component.scss'],
+    selector: 'viewer-audio-native-container',
+    templateUrl: './audio-native.component.html',
+    styleUrls: ['./audio-native.component.scss'],
+    standalone: false
 })
 export class AudioNativeComponent implements OnInit {
   @Input() isScreenSizeSmall = false
   @Input() forPreview = false
   @Input() isFetchingDataComplete = false
   @Input() audioData: NsContent.IContent | null = null
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   @Input() defaultThumbnail = ''
   @Input() isPreviewMode = false
   isTypeOfCollection = false

@@ -15,9 +15,10 @@ import { IWidgetGraphData, TChartJsGraphType, TChartJsColorPalette } from './gra
 import { COLOR_PALETTE, GRAPH_TYPES } from './graph-general-color-palette'
 // import { GraphGeneralService } from './graph-general.service'
 @Component({
-  selector: 'ws-widget-graph-general',
-  templateUrl: './graph-general.component.html',
-  styleUrls: ['./graph-general.component.scss'],
+    selector: 'ws-widget-graph-general',
+    templateUrl: './graph-general.component.html',
+    styleUrls: ['./graph-general.component.scss'],
+    standalone: false
 })
 export class GraphGeneralComponent extends WidgetBaseComponent
   implements

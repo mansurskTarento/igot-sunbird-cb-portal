@@ -6,7 +6,7 @@ describe('BtnPageBackNavService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: BtnPageBackNavService = TestBed.get(BtnPageBackNavService)
+    const service: BtnPageBackNavService = TestBed.inject(BtnPageBackNavService)
     expect(service).toBeTruthy()
   })
 })

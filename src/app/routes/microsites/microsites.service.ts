@@ -1,16 +1,16 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject } from 'rxjs'
-import { NSSearch } from '@sunbird-cb/collection/src/lib/_services/widget-search.model'
+import { NSSearch } from '@sunbird-cb/collection'
 
 // tslint:disable
 import _ from 'lodash'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../services/form-ext.service'
 // tslint:enable
 
 const API_END_POINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  TRENDING_CONTENT_SEARCH: 'apis/proxies/v8/trending/content/search',
 }
 
 @Injectable({
@@ -50,11 +50,11 @@ export class MicrositeService {
       this.getSeeAllConfig = {}
       const requestData: any = {
         'request': {
-            'type': 'page',
-            'subType': 'home',
-            'action': 'page-configuration',
-            'component': 'portal',
-            'rootOrgId': '*',
+          'type': 'page',
+          'subType': 'home',
+          'action': 'page-configuration',
+          'component': 'portal',
+          'rootOrgId': '*',
         },
       }
       this.getSeeAllConfig = await this.formSvc.homeFormReadData(requestData).toPromise()

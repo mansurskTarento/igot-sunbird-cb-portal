@@ -1,14 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { jsPDF } from 'jspdf'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-widget-app-profile-certificate-dialog',
-  templateUrl: './profile-certificate-dialog.component.html',
-  styleUrls: ['./profile-certificate-dialog.component.scss'],
+    selector: 'ws-widget-app-profile-certificate-dialog',
+    templateUrl: './profile-certificate-dialog.component.html',
+    styleUrls: ['./profile-certificate-dialog.component.scss'],
+    standalone: false
 })
 export class ProfileCertificateDialogComponent implements OnInit {
 

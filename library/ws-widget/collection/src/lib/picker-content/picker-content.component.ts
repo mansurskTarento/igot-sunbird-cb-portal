@@ -9,10 +9,9 @@ import {
   Output,
   ViewChild,
 } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
-// import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
 import { BehaviorSubject, EMPTY, Subscription, timer } from 'rxjs'
 import { debounce, mergeMap } from 'rxjs/operators'
 import { SearchServService } from '../_services/search-serv.service'
@@ -23,9 +22,10 @@ import { IPickerContentData, ISearchConfig } from './picker-content.model'
 import { PickerContentService } from './picker-content.service'
 
 @Component({
-  selector: 'ws-widget-picker-content[widgetData]',
-  templateUrl: './picker-content.component.html',
-  styleUrls: ['./picker-content.component.scss'],
+    selector: 'ws-widget-picker-content[widgetData]',
+    templateUrl: './picker-content.component.html',
+    styleUrls: ['./picker-content.component.scss'],
+    standalone: false
 })
 export class PickerContentComponent extends WidgetBaseComponent
   implements OnInit, OnChanges, OnDestroy, NsWidgetResolver.IWidgetData<IPickerContentData> {

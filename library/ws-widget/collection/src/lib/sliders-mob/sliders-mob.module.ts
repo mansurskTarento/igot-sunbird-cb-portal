@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core'
 import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 import { RouterModule } from '@angular/router'
 import { ImageResponsiveModule, NavigationModule } from '@sunbird-cb/utils-v2'
-import { MyHammerConfig } from '../sliders/sliders.module'
+import { MyHammerSliderConfig } from '../sliders/sliders.module'
 import { SlidersMobComponent } from './sliders-mob.component'
 
 // tslint:disable-next-line: max-classes-per-file
@@ -13,8 +13,8 @@ import { SlidersMobComponent } from './sliders-mob.component'
     providers: [
         {
             provide: HAMMER_GESTURE_CONFIG,
-            useClass: MyHammerConfig,
+            useClass: MyHammerSliderConfig,
         },
     ]
 })
-export class SlidersMobModule {}
+export class SlidersMobModule { }

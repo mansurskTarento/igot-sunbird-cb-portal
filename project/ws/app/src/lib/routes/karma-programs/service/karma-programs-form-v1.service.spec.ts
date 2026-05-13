@@ -6,7 +6,7 @@ describe('KarmaProgramsFormV1Service', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: KarmaProgramsFormV1Service = TestBed.get(KarmaProgramsFormV1Service)
+    const service: KarmaProgramsFormV1Service = TestBed.inject(KarmaProgramsFormV1Service)
     expect(service).toBeTruthy()
   })
 })

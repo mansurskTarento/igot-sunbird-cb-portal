@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Subscription } from 'rxjs'
 import { TSendStatus } from '@sunbird-cb/utils-v2'
 import {
@@ -11,9 +11,10 @@ import {
 } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-service-request',
-  templateUrl: './service-request.component.html',
-  styleUrls: ['./service-request.component.scss'],
+    selector: 'ws-app-service-request',
+    templateUrl: './service-request.component.html',
+    styleUrls: ['./service-request.component.scss'],
+    standalone: false
 })
 export class ServiceRequestComponent implements OnDestroy {
   sendStatus: TSendStatus

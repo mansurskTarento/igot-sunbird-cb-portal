@@ -1,10 +1,11 @@
 import { Component, OnInit, Inject, ViewChild, ComponentFactoryResolver, ComponentRef, ViewContainerRef, OnDestroy } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-widget-info-dialog',
-  templateUrl: './info-dialog.component.html',
-  styleUrls: ['./info-dialog.component.scss'],
+    selector: 'ws-widget-info-dialog',
+    templateUrl: './info-dialog.component.html',
+    styleUrls: ['./info-dialog.component.scss'],
+    standalone: false
 })
 export class InfoDialogComponent implements OnInit, OnDestroy {
   @ViewChild('target', { read: ViewContainerRef, static: true }) vcRef: ViewContainerRef | undefined

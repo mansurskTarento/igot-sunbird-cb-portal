@@ -6,7 +6,7 @@ import { NSSearch, TreeCatalogService } from '@sunbird-cb/collection'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { ITopic, ITopicRecommended } from '../models/interest.model'
-const PROTECTED_SLAG_V8 = `/apis/protected/v8`
+const PROTECTED_SLAG_V8 = '/apis/protected/v8'
 const API_END_POINTS = {
   userTopics: `${PROTECTED_SLAG_V8}/user/topics`,
   addMultiple: `${PROTECTED_SLAG_V8}/user/topics/addMultiple`,

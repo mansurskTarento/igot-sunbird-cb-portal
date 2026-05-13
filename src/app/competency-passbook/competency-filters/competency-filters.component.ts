@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 
 @Component({
-  selector: 'ws-competency-filters',
-  templateUrl: './competency-filters.component.html',
-  styleUrls: ['./competency-filters.component.scss'],
+    selector: 'ws-competency-filters',
+    templateUrl: './competency-filters.component.html',
+    styleUrls: ['./competency-filters.component.scss'],
+    standalone: false
 })
 export class CompetencyFiltersComponent implements OnInit {
 

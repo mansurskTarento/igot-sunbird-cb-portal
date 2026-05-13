@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { ActivatedRoute, Router } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 /* tslint:disable */
@@ -8,9 +8,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-mdo-channels-microsite',
-  templateUrl: './mdo-channels-microsite.component.html',
-  styleUrls: ['./mdo-channels-microsite.component.scss']
+    selector: 'ws-app-mdo-channels-microsite',
+    templateUrl: './mdo-channels-microsite.component.html',
+    styleUrls: ['./mdo-channels-microsite.component.scss'],
+    standalone: false
 })
 export class MdoChannelsMicrositeComponent implements OnInit {
   channnelName = ''
@@ -37,7 +38,7 @@ export class MdoChannelsMicrositeComponent implements OnInit {
     private eventSvc: EventService,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
-  ) { 
+  ) {
     if (this.route.snapshot.data && this.route.snapshot.data.formData
       && this.route.snapshot.data.formData.data
       && this.route.snapshot.data.formData.data.result
@@ -80,7 +81,7 @@ export class MdoChannelsMicrositeComponent implements OnInit {
   }
 
   triggerOpenDialog(event: boolean) {
-    if(event) {
+    if (event) {
       this.showModal = true
       document.body.style.overflow = 'hidden'
     }
@@ -145,13 +146,13 @@ export class MdoChannelsMicrositeComponent implements OnInit {
     if (contentStrip && contentStrip.strips && contentStrip.strips.length) {
       const stripData: any = contentStrip.strips[0]
       if (stripData && stripData.request) {
-        delete(stripData['loaderWidgets'])
+        delete (stripData['loaderWidgets'])
         this.router.navigate(
           [`/app/learn/mdo-channels/${this.channnelName}/${this.orgId}/all-content`],
           { queryParams: { stripData: JSON.stringify(stripData) } })
       }
     } else {
-       this.router.navigate(
+      this.router.navigate(
         [`/app/learn/browse-by/provider/${this.channnelName}/${this.orgId}/all-CBP`])
     }
   }

@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common'
 import { NgModule } from '@angular/core'
-import { FracModule } from '../../../project/ws/app/src/lib/routes/frac/frac.module'
+import { FracModule } from '@ws/app'
 
 @NgModule({
   declarations: [],

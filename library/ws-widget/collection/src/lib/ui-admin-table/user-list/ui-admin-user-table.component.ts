@@ -3,7 +3,7 @@ import {
   AfterViewInit, OnChanges, SimpleChanges,
 } from '@angular/core'
 import { SelectionModel } from '@angular/cdk/collections'
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
+import { MatTableDataSource } from '@angular/material/table'
 import { MatSort } from '@angular/material/sort'
 import * as _ from 'lodash'
 
@@ -11,14 +11,15 @@ import { ITableData, IColums } from '../interface/interfaces'
 import { Router, ActivatedRoute } from '@angular/router'
 import { UserPopupComponent } from '../user-popup/user-popup'
 import { CreateMDOService } from '../create-mdo.services'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatPaginator } from '@angular/material/paginator'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-ui-user-table',
-  templateUrl: './ui-admin-user-table.component.html',
-  styleUrls: ['./ui-admin-user-table.component.scss'],
+    selector: 'ws-widget-ui-user-table',
+    templateUrl: './ui-admin-user-table.component.html',
+    styleUrls: ['./ui-admin-user-table.component.scss'],
+    standalone: false
 })
 export class UIAdminUserTableComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() tableData!: ITableData | undefined
@@ -45,7 +46,7 @@ export class UIAdminUserTableComponent implements OnInit, AfterViewInit, OnChang
   @ViewChild(MatSort, { static: true }) sort?: MatSort
   selection = new SelectionModel<any>(true, [])
   constructor(private router: Router, public dialog: MatDialog, private activatedRoute: ActivatedRoute,
-              private createMDOService: CreateMDOService, private snackBar: MatSnackBar) {
+    private createMDOService: CreateMDOService, private snackBar: MatSnackBar) {
     this.dataSource = new MatTableDataSource<any>()
     this.actionsClick = new EventEmitter()
     this.clicked = new EventEmitter()
@@ -138,7 +139,7 @@ export class UIAdminUserTableComponent implements OnInit, AfterViewInit, OnChang
               this.snackBar.open('Admin assigned Successfully')
               this.router.navigate(['/app/home/directory', { department: this.departmentRole }])
             }
-          },                                                                                            (err: { error: any }) => {
+          }, (err: { error: any }) => {
             this.openSnackbar(err.error.message)
           })
         }

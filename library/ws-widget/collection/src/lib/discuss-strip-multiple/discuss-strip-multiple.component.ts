@@ -12,10 +12,7 @@ import {
   UtilityService,
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
-// import { DiscussUtilsService } from '@ws/app/src/lib/routes/discuss/services/discuss-utils.service'
 import { Router } from '@angular/router'
-// import { filter } from 'rxjs/operators'
-// import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
 
 interface IStripUnitContentData {
   key: string
@@ -40,9 +37,10 @@ interface IStripUnitContentData {
   stripLogo: any
 }
 @Component({
-  selector: 'ws-widget-discuss-strip-multiple',
-  templateUrl: './discuss-strip-multiple.component.html',
-  styleUrls: ['./discuss-strip-multiple.component.scss'],
+    selector: 'ws-widget-discuss-strip-multiple',
+    templateUrl: './discuss-strip-multiple.component.html',
+    styleUrls: ['./discuss-strip-multiple.component.scss'],
+    standalone: false
 })
 export class DiscussStripMultipleComponent extends WidgetBaseComponent
   implements

@@ -3,7 +3,7 @@ import { NSProfileDataV3 } from '../../models/profile-v3.models'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable-next-line
 import _ from 'lodash'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs'
@@ -12,12 +12,12 @@ import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-desired-competencies',
-  templateUrl: './desired-competencies.component.html',
-  styleUrls: ['./desired-competencies.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 comptency_main_div' },
-  /* tslint:enable */
+    selector: 'ws-app-desired-competencies',
+    templateUrl: './desired-competencies.component.html',
+    styleUrls: ['./desired-competencies.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 comptency_main_div' },
+    standalone: false
 })
 export class DesiredCompetenciesComponent implements OnInit, OnDestroy {
   searchJson!: NSProfileDataV3.ISearch[]

@@ -1,23 +1,23 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { NSCompetencie } from '../../models/competencies.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute } from '@angular/router'
 import { CompetenceService } from '../../services/competence.service'
 /* tslint:disable */
 import * as _ from 'lodash'
-import { UntypedFormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms'
 import { CompetenceViewComponent } from '../../components/competencies-view/competencies-view.component'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ConfigurationsService, WsEvents, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { ThemePalette } from '@angular/material/core'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'app-competence-all',
-  templateUrl: './competence-all.component.html',
-  styleUrls: ['./competence-all.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
-  /* tslint:enable */
+    selector: 'app-competence-all',
+    templateUrl: './competence-all.component.html',
+    styleUrls: ['./competence-all.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 margin-top-xl competency_main_block' },
+    standalone: false
 })
 export class CompetenceAllComponent implements OnInit {
   @ViewChild('stickyMenu', { static: true }) menuElement!: ElementRef
@@ -108,31 +108,31 @@ export class CompetenceAllComponent implements OnInit {
         this.myCompetencies =
           this.route.snapshot.data.profile.data[0].competencies || []
 
-          if (this.myCompetencies && this.myCompetencies.length > 0) {
-            if (this.allCompetencies && this.allCompetencies.length > 0) {
-              this.myCompetencies.forEach((comp: any) => {
-                if (comp.competencyCBPCompletionLevel) {
-                  if (!isNaN(Number(comp.competencyCBPCompletionLevel))) {
-                    comp.competencyCBPCompletionLevel = Number(comp.competencyCBPCompletionLevel)
-                  } else {
-                    comp.competencyCBPCompletionLevel = comp.competencyCBPCompletionLevel
-                  }
+        if (this.myCompetencies && this.myCompetencies.length > 0) {
+          if (this.allCompetencies && this.allCompetencies.length > 0) {
+            this.myCompetencies.forEach((comp: any) => {
+              if (comp.competencyCBPCompletionLevel) {
+                if (!isNaN(Number(comp.competencyCBPCompletionLevel))) {
+                  comp.competencyCBPCompletionLevel = Number(comp.competencyCBPCompletionLevel)
+                } else {
+                  comp.competencyCBPCompletionLevel = comp.competencyCBPCompletionLevel
                 }
-                if (comp.competencySelfAttestedLevel) {
-                  if (!isNaN(Number(comp.competencySelfAttestedLevel))) {
-                    comp.competencySelfAttestedLevel = Number(comp.competencySelfAttestedLevel)
-                  } else {
-                    comp.competencySelfAttestedLevel = comp.competencySelfAttestedLevel
-                  }
+              }
+              if (comp.competencySelfAttestedLevel) {
+                if (!isNaN(Number(comp.competencySelfAttestedLevel))) {
+                  comp.competencySelfAttestedLevel = Number(comp.competencySelfAttestedLevel)
+                } else {
+                  comp.competencySelfAttestedLevel = comp.competencySelfAttestedLevel
                 }
-                // const orgcomp = this.allCompetencies.filter((obj: any) => this.myCompetencies.includes(obj.id))
-                const orgcomp = this.allCompetencies.filter(x => x.id === comp.id)
-                if (orgcomp && orgcomp.length > 0) {
-                  comp.children =  orgcomp[0].children
-                }
-              })
-            }
+              }
+              // const orgcomp = this.allCompetencies.filter((obj: any) => this.myCompetencies.includes(obj.id))
+              const orgcomp = this.allCompetencies.filter(x => x.id === comp.id)
+              if (orgcomp && orgcomp.length > 0) {
+                comp.children = orgcomp[0].children
+              }
+            })
           }
+        }
       } else {
         this.myCompetencies = []
       }
@@ -154,7 +154,7 @@ export class CompetenceAllComponent implements OnInit {
   ngOnInit() { }
 
   translateHub(hubName: string): string {
-    const translationKey =  hubName
+    const translationKey = hubName
     return this.translate.instant(translationKey)
   }
 
@@ -186,7 +186,7 @@ export class CompetenceAllComponent implements OnInit {
               // const orgcomp = this.allCompetencies.filter((obj: any) => this.myCompetencies.includes(obj.id))
               const orgcomp = this.allCompetencies.filter(x => x.id === comp.id)
               if (orgcomp && orgcomp.length > 0) {
-                comp.children =  orgcomp[0].children && orgcomp[0].children.length > 0 ? orgcomp[0].children : []
+                comp.children = orgcomp[0].children && orgcomp[0].children.length > 0 ? orgcomp[0].children : []
               }
             })
           }
@@ -200,9 +200,9 @@ export class CompetenceAllComponent implements OnInit {
           // tslint:disable-next-line: ter-prefer-arrow-callback
           designationOther = _.find(profDetails, function (o) { return o.designationOther })
           // tslint:disable-next-line: max-line-length
-          this.userPosition = (_.isEmpty(designationOther) || _.isNil(designationOther)) ? null :  _.get(designationOther, 'designationOther')
+          this.userPosition = (_.isEmpty(designationOther) || _.isNil(designationOther)) ? null : _.get(designationOther, 'designationOther')
         } else {
-          this.userPosition = (_.isEmpty(designation) || _.isNil(designation)) ? null :  _.get(designation, 'designation')
+          this.userPosition = (_.isEmpty(designation) || _.isNil(designation)) ? null : _.get(designation, 'designation')
         }
         this.fetchMapping()
         this.fetchWatCompetency()
@@ -224,16 +224,16 @@ export class CompetenceAllComponent implements OnInit {
       }
 
       this.competencySvc
-      .fetchMappings(positionData)
-      .subscribe((response: NSCompetencie.ICompetencieResponse) => {
-        if (response.statusInfo && response.statusInfo.statusCode === 200) {
-          if (_.isEmpty(response.responseData)) {
-            this.userPosition = null
+        .fetchMappings(positionData)
+        .subscribe((response: NSCompetencie.ICompetencieResponse) => {
+          if (response.statusInfo && response.statusInfo.statusCode === 200) {
+            if (_.isEmpty(response.responseData)) {
+              this.userPosition = null
+            }
+            this.filteredCompetencies = response.responseData
+            // this.resetcomp()
           }
-          this.filteredCompetencies = response.responseData
-          // this.resetcomp()
-        }
-      })
+        })
     }
   }
 
@@ -256,7 +256,7 @@ export class CompetenceAllComponent implements OnInit {
         if (response.result && response.result.status === 'OK') {
           this.watCompetencies = response.result.data
         }
-    })
+      })
   }
 
   updateQuery(key: string) {
@@ -348,18 +348,18 @@ export class CompetenceAllComponent implements OnInit {
         }
       },
         /* tslint:disable */() => {
-          this.snackBar.open(this.failureMsg.nativeElement.value, 'X');
+          this.snackBar.open(this.failureMsg.nativeElement.value, 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
   removeFromProfile(item: NSCompetencie.ICompetencie) {
     if (item) {
       // console.log('item ---', item)
-      const currentCompetencies = _.get(this, 'currentProfile.competencies');
+      const currentCompetencies: any = _.get(this, 'currentProfile.competencies')
       // const updatedProfile = { ...this.currentProfile };
       let updatedProfile = this.currentProfile.competencies
-      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id);
+      _.remove(currentCompetencies, (itm) => _.get(itm, 'id') === item.id)
       if (item && item.competencyCBPCompletionLevel) {
         const newCompetence = {
           type: item.type,
@@ -376,7 +376,7 @@ export class CompetenceAllComponent implements OnInit {
         updatedProfile.push(newCompetence)
       }
       if (updatedProfile) {
-        updatedProfile = currentCompetencies;
+        updatedProfile = currentCompetencies
       }
       const reqUpdate = {
         request: {
@@ -396,19 +396,19 @@ export class CompetenceAllComponent implements OnInit {
         (response) => {
           if (response) {
             // success => removed
-            this.snackBar.open(this.successRemoveMsg.nativeElement.value, 'X');
+            this.snackBar.open(this.successRemoveMsg.nativeElement.value, 'X')
             this.configSvc.updateGlobalProfile(true)
           }
         },
         /* tslint:disable */() => {
-          this.snackBar.open(this.failureMsg.nativeElement.value, 'X');
+          this.snackBar.open(this.failureMsg.nativeElement.value, 'X')
         } /* tslint:disable */
-      );
+      )
     }
   }
   resetcomp() {
-    let data: any[] = [];
-    const allCompetencies = [...this.allCompetencies];
+    let data: any[] = []
+    const allCompetencies = [...this.allCompetencies]
     if (this.myCompetencies && this.myCompetencies.length > 0) {
       data = _.flatten(
         _.map(this.myCompetencies, (item: NSCompetencie.ICompetencie) =>
@@ -417,14 +417,14 @@ export class CompetenceAllComponent implements OnInit {
             (i: NSCompetencie.ICompetencie) => i.id === item.id
           )
         )
-      );
+      )
 
       this.filteredCompetencies = this.allCompetencies.filter((obj) => {
-        return data.indexOf(obj) === -1;
-      });
+        return data.indexOf(obj) === -1
+      })
       // this.filteredCompetencies = data
     } else {
-      this.filteredCompetencies = allCompetencies;
+      this.filteredCompetencies = allCompetencies
     }
   }
   refreshData() {
@@ -457,7 +457,7 @@ export class CompetenceAllComponent implements OnInit {
     //   });
   }
   setSelectedCompetency(id: string) {
-    this.selectedId = id;
+    this.selectedId = id
   }
 
   view(item?: NSCompetencie.ICompetencie) {
@@ -466,10 +466,10 @@ export class CompetenceAllComponent implements OnInit {
       // width: '80%',
       panelClass: 'remove-pad',
       data: item,
-    });
-    const instance = dialogRef.componentInstance;
+    })
+    const instance = dialogRef.componentInstance
     // console.log('item', item)
-    if(item && item.competencySelfAttestedLevel !== ''){
+    if (item && item.competencySelfAttestedLevel !== '') {
       instance.isUpdate = true
     } else {
       instance.isUpdate = false
@@ -477,12 +477,12 @@ export class CompetenceAllComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((response: any) => {
       if (response && response.action === 'ADD') {
-        this.addCompetency(response.id);
+        this.addCompetency(response.id)
         // this.refreshData(this.currentActivePage)
       } else if (response && response.action === 'DELETE') {
-        this.deleteCompetency(response.id);
+        this.deleteCompetency(response.id)
       }
-    });
+    })
   }
 
   public tabTelemetry(label: string, index: number) {

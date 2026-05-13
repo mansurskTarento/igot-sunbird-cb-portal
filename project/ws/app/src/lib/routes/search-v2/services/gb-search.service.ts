@@ -6,9 +6,9 @@ import { ISearchAutoComplete, ISearchQuery } from '../../search/models/search.mo
 import { SearchApiService } from '../../search/apis/search-api.service'
 
 const API_END_POINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  SEARCH_V4: `/apis/proxies/v8/sunbirdigot/v4/search`,
-  SEARCH_EXT_CONTENT: `/apis/proxies/v8/cios/v1/search/content`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  SEARCH_V4: '/apis/proxies/v8/sunbirdigot/v4/search',
+  SEARCH_EXT_CONTENT: '/apis/proxies/v8/cios/v1/search/content',
 }
 
 @Injectable({
@@ -51,7 +51,7 @@ export class GbSearchService {
     }
     return of(this.searchConfig).toPromise()
   }
-  searchAutoComplete(params: ISearchQuery): Promise<ISearchAutoComplete[]> {
+  searchAutoComplete(params: ISearchQuery): Promise<ISearchAutoComplete[] | any> {
     params.q = params.q.toLowerCase()
     if (params.l.split(',').length === 1 && params.l.toLowerCase() !== 'all') {
       return this.searchApi.getSearchAutoCompleteResults(params).toPromise()

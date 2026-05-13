@@ -4,9 +4,10 @@ import { IWidgetCardBreadcrumb, IBreadcrumbPath } from './card-breadcrumb.model'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-card-breadcrumb',
-  templateUrl: './card-breadcrumb.component.html',
-  styleUrls: ['./card-breadcrumb.component.scss'],
+    selector: 'ws-widget-card-breadcrumb',
+    templateUrl: './card-breadcrumb.component.html',
+    styleUrls: ['./card-breadcrumb.component.scss'],
+    standalone: false
 })
 export class CardBreadcrumbComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IWidgetCardBreadcrumb> {

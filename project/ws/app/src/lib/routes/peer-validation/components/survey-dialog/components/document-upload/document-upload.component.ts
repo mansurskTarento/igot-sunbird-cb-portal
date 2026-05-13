@@ -7,9 +7,10 @@ import { VideoPreviewDialogComponent } from '../video-preview-dialog/video-previ
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-document-upload',
-  templateUrl: './document-upload.component.html',
-  styleUrls: ['./document-upload.component.scss'],
+    selector: 'ws-app-document-upload',
+    templateUrl: './document-upload.component.html',
+    styleUrls: ['./document-upload.component.scss'],
+    standalone: false
 })
 export class DocumentUploadComponent {
   @Input() documents: NSPeerValidation.IUploadedDocument[] = []
@@ -140,8 +141,8 @@ export class DocumentUploadComponent {
         data: {
           url: doc.url,
           name: doc.name,
-          type: doc.type
-        }
+          type: doc.type,
+        },
       })
     }
   }

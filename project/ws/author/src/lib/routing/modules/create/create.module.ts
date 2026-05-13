@@ -1,4 +1,4 @@
-import { SharedModule } from '@ws/author/src/lib/modules/shared/shared.module'
+
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CreateComponent } from './components/create/create.component'
@@ -6,6 +6,7 @@ import { EntityCardComponent } from './components/entity-card/entity-card.compon
 import { RouterModule } from '@angular/router'
 import { CreateService } from './components/create/create.service'
 import { ConfirmationComponent } from './components/confirmation/confirmation.component'
+import { SharedModule } from '../../../modules/shared/shared.module'
 
 @NgModule({
   declarations: [

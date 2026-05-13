@@ -1,13 +1,14 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, IWidgetsPlayerMediaData, NsDiscussionForum } from '@sunbird-cb/collection'
+import { NsContent, IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-video-container',
-  templateUrl: './video.component.html',
-  styleUrls: ['./video.component.scss'],
+    selector: 'viewer-video-container',
+    templateUrl: './video.component.html',
+    styleUrls: ['./video.component.scss'],
+    standalone: false
 })
 export class VideoComponent implements OnInit {
   @Input() isScreenSizeSmall = false
@@ -17,9 +18,6 @@ export class VideoComponent implements OnInit {
   @Input() videoData: NsContent.IContent | null = null
   @Input() widgetResolverVideoData: NsWidgetResolver.IRenderConfigWithTypedData<
     IWidgetsPlayerMediaData
-  > | null = null
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
   > | null = null
   @Input() isPreviewMode = false
   isTypeOfCollection = false

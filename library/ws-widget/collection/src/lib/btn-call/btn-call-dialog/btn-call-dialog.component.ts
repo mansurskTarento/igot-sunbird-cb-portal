@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { EventService } from '@sunbird-cb/utils-v2'
 
 export interface IWidgetBtnCallDialogData {
@@ -9,9 +9,10 @@ export interface IWidgetBtnCallDialogData {
 }
 
 @Component({
-  selector: 'ws-widget-btn-call-dialog',
-  templateUrl: './btn-call-dialog.component.html',
-  styleUrls: ['./btn-call-dialog.component.scss'],
+    selector: 'ws-widget-btn-call-dialog',
+    templateUrl: './btn-call-dialog.component.html',
+    styleUrls: ['./btn-call-dialog.component.scss'],
+    standalone: false
 })
 export class BtnCallDialogComponent implements OnInit {
 

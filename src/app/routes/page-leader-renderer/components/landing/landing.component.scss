@@ -1,5 +1,5 @@
-@import 'ws-mixins';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 $app-background-lite-color: #f5f6f7;
 
@@ -26,6 +26,7 @@ $app-background-lite-color: #f5f6f7;
 .profile {
   display: block;
   margin-right: $size-l;
+
   img {
     $image-size: 162px;
     width: $image-size;
@@ -33,27 +34,33 @@ $app-background-lite-color: #f5f6f7;
     border-radius: 50%;
     margin-top: $size-s;
   }
+
   .designation {
     margin-bottom: $size-xs;
     display: inline-flex;
     align-items: center;
   }
+
   .nav-links {
     margin-top: $size-xl;
+
     a {
       display: block;
       padding: $size-xs / 2 0;
       padding-left: $size-xs;
       margin-bottom: $size-xs / 2;
     }
+
     a.active {
       font-weight: 600;
     }
   }
+
   @include breakpoint-lt-m {
     display: none;
   }
 }
+
 .banner-and-tabs {
   img {
     $img-size: 80px;
@@ -61,8 +68,10 @@ $app-background-lite-color: #f5f6f7;
     height: $img-size;
     border-radius: 50%;
   }
+
   .display-on-small {
     display: none;
+
     @include breakpoint-lt-m {
       display: block;
     }
@@ -71,6 +80,7 @@ $app-background-lite-color: #f5f6f7;
 
 .display-side-items {
   display: none;
+
   @include breakpoint-gt-s {
     display: block;
   }

@@ -1,13 +1,14 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-reject-dialog',
-  templateUrl: './goal-reject-dialog.component.html',
-  styleUrls: ['./goal-reject-dialog.component.scss'],
+    selector: 'ws-app-goal-reject-dialog',
+    templateUrl: './goal-reject-dialog.component.html',
+    styleUrls: ['./goal-reject-dialog.component.scss'],
+    standalone: false
 })
 export class GoalRejectDialogComponent implements OnInit {
   @ViewChild('errorReject', { static: true }) errorRejectMessage!: ElementRef<
@@ -24,9 +25,9 @@ export class GoalRejectDialogComponent implements OnInit {
     private goalSvc: BtnGoalsService,
     private dialogRef: MatDialogRef<GoalRejectDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public goal: NsGoal.IGoal,
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   rejectGoal() {
     if (this.goal && this.rejectMessage && this.rejectMessage.length) {

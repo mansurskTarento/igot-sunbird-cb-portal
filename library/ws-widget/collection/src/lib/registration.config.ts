@@ -56,7 +56,6 @@ import { CardNetworkModule } from './card-network/card-network.module'
 import { CardHomeNetworkModule } from './card-home-network/card-home-network.module'
 import { CardHomeTopModule } from './card-home-top/card-home-top.module'
 import { CardBrowseCourseModule } from './card-browse-course/card-browse-course.module'
-import { CardHomeDiscussModule } from './card-home-discuss/card-home-discuss.module'
 import { ChannelHubComponent } from './channel-hub/channel-hub.component'
 import { ChannelHubModule } from './channel-hub/channel-hub.module'
 
@@ -66,8 +65,6 @@ import { ContentStripMultipleModule } from './content-strip-multiple/content-str
 import { ContentStripNewMultipleModule } from './content-strip-new-multiple/content-strip-new-multiple.module'
 import { ContentStripSingleComponent } from './content-strip-single/content-strip-single.component'
 import { ContentStripSingleModule } from './content-strip-single/content-strip-single.module'
-import { DiscussionForumComponent } from './discussion-forum/components/discussion-forum/discussion-forum.component'
-import { DiscussionForumModule } from './discussion-forum/discussion-forum.module'
 import { ElementHtmlComponent } from './element-html/element-html.component'
 import { ElementHtmlModule } from './element-html/element-html.module'
 import { EmbeddedPageComponent } from './embedded-page/embedded-page.component'
@@ -144,7 +141,6 @@ import { VideoWrapperModule } from './video-wrapper/video-wrapper.module'
 // import { ContentStripVerticalModule } from './content-strip-vertical/content-strip-vertical.module'
 // import { ContentStripVerticalComponent } from './content-strip-vertical/content-strip-vertical.component'
 import { CardNetworkHomeComponent } from './card-network-home/card-network-home.component'
-import { CardHomeDiscussComponent } from './card-home-discuss/card-home-discuss.component'
 import { CardBrowseCourseComponent } from './card-browse-course/card-browse-course.component'
 import { CardHubsListModule } from './card-hubs-list/card-hubs-list.module'
 import { CardNotifyModule } from './card-notify/card-notify.module'
@@ -214,7 +210,6 @@ export const WIDGET_REGISTERED_MODULES = [
   CardHomeNetworkModule,
   CardHomeTopModule,
   CardBrowseCourseModule,
-  CardHomeDiscussModule,
   ContentStripMultipleModule,
   ContentStripNewMultipleModule,
   ContentStripSingleModule,
@@ -249,7 +244,6 @@ export const WIDGET_REGISTERED_MODULES = [
   ProfileKarmapointsModule,
   EmbeddedPageModule,
   SelectorResponsiveModule,
-  DiscussionForumModule,
   GridLayoutModule,
   ErrorResolverModule,
   BtnFeatureModule,
@@ -413,11 +407,6 @@ export const WIDGET_REGISTRATION_CONFIG: NsWidgetResolver.IRegistrationConfig[] 
     widgetType: ROOT_WIDGET_CONFIG.card._type,
     widgetSubType: ROOT_WIDGET_CONFIG.card.home_network,
     component: CardNetworkHomeComponent,
-  },
-  {
-    widgetType: ROOT_WIDGET_CONFIG.card._type,
-    widgetSubType: ROOT_WIDGET_CONFIG.card.home_discuss,
-    component: CardHomeDiscussComponent,
   },
   {
     widgetType: ROOT_WIDGET_CONFIG.channelHub._type,
@@ -614,11 +603,6 @@ export const WIDGET_REGISTRATION_CONFIG: NsWidgetResolver.IRegistrationConfig[] 
     widgetType: ROOT_WIDGET_CONFIG.selector._type,
     widgetSubType: ROOT_WIDGET_CONFIG.selector.responsive,
     component: SelectorResponsiveComponent,
-  },
-  {
-    widgetType: ROOT_WIDGET_CONFIG.discussionForum._type,
-    widgetSubType: ROOT_WIDGET_CONFIG.discussionForum.discussionForum,
-    component: DiscussionForumComponent,
   },
   {
     widgetType: ROOT_WIDGET_CONFIG.layout._type,

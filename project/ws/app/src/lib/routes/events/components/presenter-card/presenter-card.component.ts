@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'app-presenter-card',
-  templateUrl: './presenter-card.component.html',
-  styleUrls: ['./presenter-card.component.scss'],
+    selector: 'app-presenter-card',
+    templateUrl: './presenter-card.component.html',
+    styleUrls: ['./presenter-card.component.scss'],
+    standalone: false
 })
 export class PresenterCardComponent implements OnInit {
   @Input() userData: any

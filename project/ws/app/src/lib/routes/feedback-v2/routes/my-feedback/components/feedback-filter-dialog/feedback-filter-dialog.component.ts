@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import {
   IFeedbackFilterObj,
   EFeedbackType,
@@ -11,9 +11,10 @@ import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-app-feedback-filter-dialog',
-  templateUrl: './feedback-filter-dialog.component.html',
-  styleUrls: ['./feedback-filter-dialog.component.scss'],
+    selector: 'ws-app-feedback-filter-dialog',
+    templateUrl: './feedback-filter-dialog.component.html',
+    styleUrls: ['./feedback-filter-dialog.component.scss'],
+    standalone: false
 })
 export class FeedbackFilterDialogComponent implements OnInit, OnDestroy {
   filterForm: UntypedFormGroup
@@ -39,7 +40,7 @@ export class FeedbackFilterDialogComponent implements OnInit, OnDestroy {
       ),
       contentType: new UntypedFormControl(
         this.filterDialogData.viewedBy === this.feedbackRoles.User ||
-        this.filterDialogData.viewedBy === this.feedbackRoles.Author
+          this.filterDialogData.viewedBy === this.feedbackRoles.Author
           ? filterObj.contentType
           : null,
       ),

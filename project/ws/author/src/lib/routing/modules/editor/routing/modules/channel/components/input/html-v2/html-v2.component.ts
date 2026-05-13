@@ -1,11 +1,12 @@
 import { IWidgetElementHtml } from '@sunbird-cb/collection'
-import { CONTENT_BASE_WEBHOST_ASSETS } from '@ws/author/src/lib/constants/apiEndpoints'
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
+import { CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-html-v2',
-  templateUrl: './html-v2.component.html',
-  styleUrls: ['./html-v2.component.scss'],
+    selector: 'ws-auth-html-v2',
+    templateUrl: './html-v2.component.html',
+    styleUrls: ['./html-v2.component.scss'],
+    standalone: false
 })
 export class HtmlV2Component implements OnInit {
   showInfo = ''

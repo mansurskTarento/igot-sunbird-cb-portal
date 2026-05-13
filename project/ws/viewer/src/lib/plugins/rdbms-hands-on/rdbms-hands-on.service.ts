@@ -5,17 +5,17 @@ import { map } from 'rxjs/operators'
 import { NSRdbmsHandsOn } from './rdbms-hands-on.model'
 
 const API_END_POINTS = {
-  INITIALIZE_DB: `/apis/protected/v8/user/rdbms/initializeDb`,
-  EXECUTE: `/apis/protected/v8/user/rdbms/executeQuery`,
-  CONCEPT_DATA: `/apis/protected/v8/user/rdbms/conceptData`,
-  COMPOSITE: `/apis/protected/v8/user/rdbms/compositeQuery`,
-  EXPECTED_OUTPUT: `/apis/protected/v8/user/rdbms/expectedOutput`,
-  VERIFY: `/apis/protected/v8/user/rdbms/verifyExercise`,
-  SUBMIT: `/apis/protected/v8/user/rdbms/submitExercise`,
-  DB_STRUCTURE: `/apis/protected/v8/user/rdbms/dbStructure`,
-  TABLE_REFRESH: `/apis/protected/v8/user/rdbms/tableRefresh`,
-  PLAYGROUND: `/apis/protected/v8/user/rdbms/playground`,
-  COMPARE_QUERY: `/apis/protected/v8/user/rdbms/compareQuery`,
+  INITIALIZE_DB: '/apis/protected/v8/user/rdbms/initializeDb',
+  EXECUTE: '/apis/protected/v8/user/rdbms/executeQuery',
+  CONCEPT_DATA: '/apis/protected/v8/user/rdbms/conceptData',
+  COMPOSITE: '/apis/protected/v8/user/rdbms/compositeQuery',
+  EXPECTED_OUTPUT: '/apis/protected/v8/user/rdbms/expectedOutput',
+  VERIFY: '/apis/protected/v8/user/rdbms/verifyExercise',
+  SUBMIT: '/apis/protected/v8/user/rdbms/submitExercise',
+  DB_STRUCTURE: '/apis/protected/v8/user/rdbms/dbStructure',
+  TABLE_REFRESH: '/apis/protected/v8/user/rdbms/tableRefresh',
+  PLAYGROUND: '/apis/protected/v8/user/rdbms/playground',
+  COMPARE_QUERY: '/apis/protected/v8/user/rdbms/compareQuery',
 }
 
 @Injectable({

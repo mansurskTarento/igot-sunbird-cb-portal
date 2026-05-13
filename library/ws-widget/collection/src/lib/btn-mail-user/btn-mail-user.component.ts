@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { NsContent } from '../_services/widget-content.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { BtnMailUserDialogComponent } from './btn-mail-user-dialog/btn-mail-user-dialog.component'
 import { EventService, ConfigurationsService, WsEvents } from '@sunbird-cb/utils-v2'
 
@@ -13,9 +13,10 @@ export interface IBtnMailUser {
 }
 
 @Component({
-  selector: 'ws-widget-btn-mail-user',
-  templateUrl: './btn-mail-user.component.html',
-  styleUrls: ['./btn-mail-user.component.scss'],
+    selector: 'ws-widget-btn-mail-user',
+    templateUrl: './btn-mail-user.component.html',
+    styleUrls: ['./btn-mail-user.component.scss'],
+    standalone: false
 })
 export class BtnMailUserComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IBtnMailUser> {

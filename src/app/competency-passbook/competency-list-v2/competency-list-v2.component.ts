@@ -1,6 +1,6 @@
 // Core imports
-import { Component, OnDestroy, OnInit, Inject } from '@angular/core'
-import { DOCUMENT } from '@angular/common'
+import { Component, OnDestroy, OnInit, Inject, DOCUMENT } from '@angular/core'
+
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
 // RxJS imports
@@ -8,17 +8,18 @@ import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { CompetencyPassbookService } from '../competency-passbook.service'
 
 @Component({
-  selector: 'ws-competency-list-v2',
-  templateUrl: './competency-list-v2.component.html',
-  styleUrls: ['./competency-list-v2.component.scss'],
+    selector: 'ws-competency-list-v2',
+    templateUrl: './competency-list-v2.component.html',
+    styleUrls: ['./competency-list-v2.component.scss'],
+    standalone: false
 })
 
 export class CompetencyListV2Component implements OnInit, OnDestroy {
@@ -207,8 +208,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     this.getAllCompetencyList()
     setTimeout(() => {
       this.getMyCompetencyList()
-    }, 1000)
-
+    },         1000)
 
   }
 
@@ -267,7 +267,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
         if (!themeEntry) {
           themeEntry = {
             id: themeId,
-            areaId: areaId,
+            areaId,
             areaName: area,
             name: this.allThemeData.find((t: any) => t.refId === themeId)?.name || themeId,
             isThemeRemoved: isThemeRemoved,
@@ -365,7 +365,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     this.totalCompetencySubThemeCount = 0
     this.totalContentConsumed = 0
 
-    this.myCompetencies.forEach((areaEntry) => {
+    this.myCompetencies.forEach(areaEntry => {
       const subThemeCount = areaEntry.subThemes ? areaEntry.subThemes.length : 0
       const consumedCourse = areaEntry.counts.total || 0
       const themName = this.allCompetencies.find((comp: any) => comp.refId === areaEntry.id)?.name || areaEntry.id
@@ -382,7 +382,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   getAllCompetenciesCount(): number {
     return this.myCompetencies.reduce((sum, areaEntry) => {
       return sum + (areaEntry.themes?.length || 0)
-    }, 0)
+    },                                0)
   }
 
   getAllCompetencyList(): void {
@@ -416,8 +416,6 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     }
     return enrollData
   }
-
-
 
   handleLeftFilter(months: string): void {
     // Do not delete, need to work on this...

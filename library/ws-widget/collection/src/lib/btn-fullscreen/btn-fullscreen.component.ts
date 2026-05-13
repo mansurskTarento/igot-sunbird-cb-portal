@@ -9,9 +9,10 @@ import {
 } from './fullscreen.util'
 
 @Component({
-  selector: 'ws-widget-btn-fullscreen',
-  templateUrl: './btn-fullscreen.component.html',
-  styleUrls: ['./btn-fullscreen.component.scss'],
+    selector: 'ws-widget-btn-fullscreen',
+    templateUrl: './btn-fullscreen.component.html',
+    styleUrls: ['./btn-fullscreen.component.scss'],
+    standalone: false
 })
 export class BtnFullscreenComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<{ fsContainer: HTMLElement | null }> {

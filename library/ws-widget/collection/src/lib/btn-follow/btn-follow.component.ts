@@ -3,9 +3,10 @@ import { BtnFollowService } from './btn-follow.service'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-widget-btn-follow',
-  templateUrl: './btn-follow.component.html',
-  styleUrls: ['./btn-follow.component.scss'],
+    selector: 'ws-widget-btn-follow',
+    templateUrl: './btn-follow.component.html',
+    styleUrls: ['./btn-follow.component.scss'],
+    standalone: false
 })
 export class BtnFollowComponent implements OnInit, OnDestroy {
   @Output() unfollowed: EventEmitter<string> = new EventEmitter<string>()

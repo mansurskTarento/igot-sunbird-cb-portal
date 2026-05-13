@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core'
 // tslint:disable-next-line: import-spacing
 // import  defaultImg  from './base64.json'
 @Component({
-  selector: 'ws-widget-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-widget-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<ILeftMenu>  {

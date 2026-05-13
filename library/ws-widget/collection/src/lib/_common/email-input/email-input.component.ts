@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core'
 import { ENTER, COMMA, SEMICOLON } from '@angular/cdk/keycodes'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
+import { MatChipInputEvent } from '@angular/material/chips'
 
 interface IUserShareId {
   email: string
@@ -9,9 +9,10 @@ interface IUserShareId {
 }
 
 @Component({
-  selector: 'ws-widget-email-input',
-  templateUrl: './email-input.component.html',
-  styleUrls: ['./email-input.component.scss'],
+    selector: 'ws-widget-email-input',
+    templateUrl: './email-input.component.html',
+    styleUrls: ['./email-input.component.scss'],
+    standalone: false
 })
 export class EmailInputComponent implements OnInit {
 

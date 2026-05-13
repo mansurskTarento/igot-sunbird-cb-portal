@@ -4,9 +4,10 @@ import { CompLocalService } from '../../services/comp.service'
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-current-competency-card',
-  templateUrl: './current-competency-card.component.html',
-  styleUrls: ['./current-competency-card.component.scss'],
+    selector: 'ws-app-current-competency-card',
+    templateUrl: './current-competency-card.component.html',
+    styleUrls: ['./current-competency-card.component.scss'],
+    standalone: false
 })
 export class CurrentCompetencyCardComponent implements OnInit {
   @Input() selectedCompetency: any

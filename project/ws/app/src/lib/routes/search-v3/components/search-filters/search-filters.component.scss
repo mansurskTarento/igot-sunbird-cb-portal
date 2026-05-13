@@ -1,17 +1,22 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 .filter-section {
   .mat-expansion-panel-spacing {
     margin-bottom: 10px !important;
     box-shadow: none !important;
     border: 0;
   }
+
   .mat-expansion-panel {
     box-shadow: none !important;
     border: 0 !important;
   }
+
   .mat-expansion-panel-header {
     height: 30px !important;
   }
+
   .sublist-section {
     ul {
       list-style-type: none;
@@ -68,6 +73,7 @@
 }
 
 ::ng-deep {
+
   .content-provider-filter .mat-full-radius,
   .languages-filter .mat-full-radius,
   .designation-filter .mat-full-radius,
@@ -76,6 +82,7 @@
   .competency-filter .mat-full-radius,
   .sectorNames-filter .mat-full-radius {
     position: relative;
+
     .mat-form-field-appearance-outline {
       .mat-form-field-flex {
         height: 40px;
@@ -112,6 +119,7 @@
     padding: 2px 2px 2px 12px;
     border-radius: 18px;
     background-color: $lightGrayshade;
+
     span {
       /* stylelint-disable */
       font-family: Lato;
@@ -123,9 +131,11 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     mat-icon {
       font-size: 16px;
     }
+
     .mat-icon-button {
       width: 28px;
       height: 28px;
@@ -174,9 +184,10 @@
   max-width: 10em;
 }
 
-.adjust{
+.adjust {
   width: max-content
 }
+
 .sub-header {
   /* stylelint-disable */
   font-family: Lato;
@@ -189,6 +200,7 @@
 
 .search-input-themes {
   width: 100%;
+
   .search-icon {
     font-size: 22px;
   }
@@ -196,7 +208,7 @@
 
 ::ng-deep .search-input-themes {
   .mat-form-field-appearance-outline .mat-form-field-infix {
-    padding : 5px 0px;
+    padding: 5px 0px;
     border-top: 1px;
   }
 
@@ -206,7 +218,7 @@
 }
 
 .search-input-block {
-  width:100%
+  width: 100%
 }
 
 @media (max-width: 768px) {

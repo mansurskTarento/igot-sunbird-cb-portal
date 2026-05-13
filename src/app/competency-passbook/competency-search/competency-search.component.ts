@@ -5,9 +5,10 @@ import { fromEvent } from 'rxjs'
 import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-competency-search',
-  templateUrl: './competency-search.component.html',
-  styleUrls: ['./competency-search.component.scss'],
+    selector: 'ws-competency-search',
+    templateUrl: './competency-search.component.html',
+    styleUrls: ['./competency-search.component.scss'],
+    standalone: false
 })
 
 export class CompetencySearchComponent implements OnInit, AfterViewInit {

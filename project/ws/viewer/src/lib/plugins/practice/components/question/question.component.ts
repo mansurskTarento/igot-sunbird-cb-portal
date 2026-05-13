@@ -9,13 +9,14 @@ import { PracticeService } from '../../practice.service'
 // tslint:disable-next-line
 import _ from 'lodash'
 import { NsContent } from '@sunbird-cb/utils-v2'
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar, MatSnackBarConfig as MatSnackBarConfig } from '@angular/material/snack-bar'
 @Component({
-  selector: 'viewer-question',
-  templateUrl: './question.component.html',
-  styleUrls: ['./question.component.scss'],
-  // tslint:disable-next-line
-  encapsulation: ViewEncapsulation.None
+    selector: 'viewer-question',
+    templateUrl: './question.component.html',
+    styleUrls: ['./question.component.scss'],
+    // tslint:disable-next-line
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() artifactUrl = ''
@@ -71,13 +72,13 @@ export class QuestionComponent implements OnInit, OnChanges, AfterViewInit {
   expandedQuestionSetSubscription: any
 
   questionType = {
-    "mcq-sca": "Single selection-MCQs",
-    "mcq-mca": "Multiple selection-MCQs",
-    "fitb": "Fill in the blanks",
-    "mtf": "Match the following",
-    "mcq-mca-w": "Weightage Single Choice",
-    "mcq-sca-tf": "True/False",
-    "ftb": "Fill in the blanks",
+    'mcq-sca': 'Single selection-MCQs',
+    'mcq-mca': 'Multiple selection-MCQs',
+    'fitb': 'Fill in the blanks',
+    'mtf': 'Match the following',
+    'mcq-mca-w': 'Weightage Single Choice',
+    'mcq-sca-tf': 'True/False',
+    'ftb': 'Fill in the blanks',
   }
 
   constructor(

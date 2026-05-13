@@ -1,16 +1,16 @@
 // import external types but mock the actual implementations
-import { of } from 'rxjs';
+import { of } from 'rxjs'
 
 // Mock the component's external dependencies before importing the component
-// Mock @sunbird-cb/collection/src/public-api
-jest.mock('@sunbird-cb/collection/src/public-api', () => ({
+
+jest.mock('@sunbird-cb/collection', () => ({
   WidgetUserService: jest.fn().mockImplementation(() => ({
     fetchCbpPlanList: jest.fn().mockReturnValue(of([]))
   })),
   NsContent: {
     ICompentencyKeys: {}
   }
-}), { virtual: true });
+}), { virtual: true })
 
 // Mock @sunbird-cb/utils-v2
 jest.mock('@sunbird-cb/utils-v2', () => ({
@@ -18,19 +18,19 @@ jest.mock('@sunbird-cb/utils-v2', () => ({
   EventService: jest.fn(),
   MultilingualTranslationsService: jest.fn(),
   ValueService: jest.fn()
-}), { virtual: true });
+}), { virtual: true })
 
 // Mock @ngx-translate/core
 jest.mock('@ngx-translate/core', () => ({
   TranslateService: jest.fn()
-}), { virtual: true });
+}), { virtual: true })
 
 // Mock environment
 jest.mock('../../../../../../../../../src/environments/environment', () => ({
   environment: {
     compentencyVersionKey: 'v4'
   }
-}), { virtual: true });
+}), { virtual: true })
 
 // Now we can safely import the component
 // We'll use a proxy to avoid directly importing it
@@ -115,14 +115,14 @@ const LearnSearchComponentProxy = {
         filterCriteriaMap: {}
       },
       connectionRequestsSent: [],
-      
+
       // Mock the component's methods
       ngOnInit: jest.fn(),
       ngOnChanges: jest.fn(),
       ngOnDestroy: jest.fn(),
       updateNoResultMessage: jest.fn(),
       getName: jest.fn().mockImplementation((userDetails) => {
-        return userDetails.firstName ? userDetails.firstName : userDetails.firstname;
+        return userDetails.firstName ? userDetails.firstName : userDetails.firstname
       }),
       raiseTelemetry: jest.fn(),
       translateLabels: jest.fn().mockReturnValue('Translated Label'),
@@ -144,20 +144,20 @@ const LearnSearchComponentProxy = {
       constructQueryParam: jest.fn(),
       resetPagination: jest.fn(),
       ...deps
-    };
+    }
   }
-};
+}
 
 // Define the type for page change events
 type PageEventType = {
-  currentPage: number;
-  limit: number;
-  previousPage: number;
-};
+  currentPage: number
+  limit: number
+  previousPage: number
+}
 
 describe('LearnSearchComponent', () => {
-  let component: any; // Using any type since we're mocking the component
-  
+  let component: any // Using any type since we're mocking the component
+
   // Mock services
   const mockSearchV3Service = {
     searchCoursesv4: jest.fn().mockResolvedValue({
@@ -188,7 +188,7 @@ describe('LearnSearchComponent', () => {
         courses: []
       }
     }))
-  };
+  }
 
   const mockConfigSvc = {
     instanceConfig: {
@@ -213,11 +213,11 @@ describe('LearnSearchComponent', () => {
         vCompetencySubTheme: 'compSubTheme'
       }
     }
-  };
+  }
 
   const mockEventService = {
     raiseInteractTelemetry: jest.fn()
-  };
+  }
 
   const mockActivatedRoute = {
     snapshot: {
@@ -226,56 +226,56 @@ describe('LearnSearchComponent', () => {
         search: 'test-search'
       }
     }
-  };
+  }
 
   const mockValueSvc = {
     isLtMedium$: of(false)
-  };
+  }
 
   const mockTranslate = {
     setDefaultLang: jest.fn(),
     use: jest.fn(),
     get: jest.fn().mockReturnValue(of('No results found for {searchTerm}'))
-  };
+  }
 
   const mockRouter = {
     navigate: jest.fn()
-  };
+  }
 
   const mockLangTranslations = {
     translateLabel: jest.fn().mockReturnValue('Translated Label')
-  };
+  }
 
   const mockUserService = {
     fetchCbpPlanList: jest.fn().mockReturnValue(of([]))
-  };
+  }
 
   const mockNetworkV2Service = {
     fetchAllConnectionRequests: jest.fn().mockReturnValue(of({ result: { data: [] } }))
-  };
+  }
 
   // Mock localStorage
   const localStorageMock = (() => {
-    let store: Record<string, string> = {};
+    let store: Record<string, string> = {}
     return {
       getItem: (key: string) => store[key],
       setItem: (key: string, value: string) => {
-        store[key] = value.toString();
+        store[key] = value.toString()
       },
       clear: () => {
-        store = {};
+        store = {}
       }
-    };
-  })();
-  Object.defineProperty(window, 'localStorage', { value: localStorageMock });
+    }
+  })()
+  Object.defineProperty(window, 'localStorage', { value: localStorageMock })
 
   beforeEach(() => {
     // Reset mocks
-    jest.clearAllMocks();
-    
+    jest.clearAllMocks()
+
     // Set up localStorage mock
-    localStorageMock.setItem('websiteLanguage', 'en');
-    
+    localStorageMock.setItem('websiteLanguage', 'en')
+
     // Initialize component with mocked dependencies
     component = LearnSearchComponentProxy.getInstance({
       searchV3Service: mockSearchV3Service,
@@ -308,29 +308,29 @@ describe('LearnSearchComponent', () => {
       searchPeople: jest.fn().mockResolvedValue(undefined),
       searchcommunities: jest.fn().mockResolvedValue(undefined),
       isLoadingSearch: true
-    });
-  });
+    })
+  })
 
   it('should create the component', () => {
-    expect(component).toBeTruthy();
-  });
+    expect(component).toBeTruthy()
+  })
 
   it('should get user name correctly', () => {
-    const userWithFirstName = { firstName: 'John', lastname: 'Doe' };
-    const userWithFirstname = { firstname: 'Jane', lastName: 'Smith' };
-    
+    const userWithFirstName = { firstName: 'John', lastname: 'Doe' }
+    const userWithFirstname = { firstname: 'Jane', lastName: 'Smith' }
+
     // Use the actual component implementation for this test
-    expect(component.getName(userWithFirstName)).toBe('John');
-    expect(component.getName(userWithFirstname)).toBe('Jane');
-  });
+    expect(component.getName(userWithFirstName)).toBe('John')
+    expect(component.getName(userWithFirstname)).toBe('Jane')
+  })
 
   it('should raise telemetry when raiseTelemetry is called', () => {
     const content = {
       identifier: 'course-id',
       primaryCategory: 'Course',
       version: '1.0'
-    };
-    
+    }
+
     // Mock the actual method for testing
     component.raiseTelemetry = jest.fn((content, i) => {
       mockEventService.raiseInteractTelemetry(
@@ -349,11 +349,11 @@ describe('LearnSearchComponent', () => {
         {
           module: content.primaryCategory,
         }
-      );
-    });
-    
-    component.raiseTelemetry(content, 0);
-    
+      )
+    })
+
+    component.raiseTelemetry(content, 0)
+
     expect(mockEventService.raiseInteractTelemetry).toHaveBeenCalledWith(
       {
         type: 'click',
@@ -370,85 +370,85 @@ describe('LearnSearchComponent', () => {
       {
         module: 'Course'
       }
-    );
-  });
+    )
+  })
 
   it('should handle page change correctly for courses', () => {
     // Override the mocked method for this test
     component.onPageChange = jest.fn((event: PageEventType) => {
       if (component.seeAllResult === 'courses') {
-        component.searchRequestCourse.request.limit = event.limit;
-        component.searchRequestCourse.request.offset = event.currentPage * event.limit;
-        component.searchCourses();
+        component.searchRequestCourse.request.limit = event.limit
+        component.searchRequestCourse.request.offset = event.currentPage * event.limit
+        component.searchCourses()
       }
-      component.scrollToTop();
-    });
-    
-    component.seeAllResult = 'courses';
-    component.onPageChange({ currentPage: 1, limit: 20, previousPage: 0 });
-    
-    expect(component.searchRequestCourse.request.limit).toBe(20);
-    expect(component.searchRequestCourse.request.offset).toBe(20);
-    expect(component.searchCourses).toHaveBeenCalled();
-    expect(component.scrollToTop).toHaveBeenCalled();
-  });
+      component.scrollToTop()
+    })
+
+    component.seeAllResult = 'courses'
+    component.onPageChange({ currentPage: 1, limit: 20, previousPage: 0 })
+
+    expect(component.searchRequestCourse.request.limit).toBe(20)
+    expect(component.searchRequestCourse.request.offset).toBe(20)
+    expect(component.searchCourses).toHaveBeenCalled()
+    expect(component.scrollToTop).toHaveBeenCalled()
+  })
 
   it('should translate labels correctly', () => {
     // Use the actual component's implementation
     component.translateLabels = jest.fn((label, type) => {
-      return mockLangTranslations.translateLabel(label, type, '');
-    });
-    
-    const result = component.translateLabels('testLabel', 'testType');
-    expect(mockLangTranslations.translateLabel).toHaveBeenCalledWith('testLabel', 'testType', '');
-    expect(result).toBe('Translated Label');
-  });
+      return mockLangTranslations.translateLabel(label, type, '')
+    })
+
+    const result = component.translateLabels('testLabel', 'testType')
+    expect(mockLangTranslations.translateLabel).toHaveBeenCalledWith('testLabel', 'testType', '')
+    expect(result).toBe('Translated Label')
+  })
 
   it('should update no result message', () => {
     // Implement the actual method
     component.updateNoResultMessage = jest.fn((searchTerm) => {
       mockTranslate.get('learnsearch.noResultFound', { searchTerm })
         .subscribe((translatedText: string) => {
-          component.noResultMessage = translatedText;
-        });
-    });
-    
-    component.updateNoResultMessage('test query');
-    expect(mockTranslate.get).toHaveBeenCalledWith('learnsearch.noResultFound', { searchTerm: 'test query' });
-    expect(component.noResultMessage).toBe('No results found for {searchTerm}');
-  });
+          component.noResultMessage = translatedText
+        })
+    })
+
+    component.updateNoResultMessage('test query')
+    expect(mockTranslate.get).toHaveBeenCalledWith('learnsearch.noResultFound', { searchTerm: 'test query' })
+    expect(component.noResultMessage).toBe('No results found for {searchTerm}')
+  })
 
   it('should navigate to specified route', () => {
     // Implement the actual method
     component.navigateTo = jest.fn((route) => {
-      mockRouter.navigate([route]);
-    });
-    
-    component.navigateTo('/test-route');
-    expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route']);
-  });
+      mockRouter.navigate([route])
+    })
+
+    component.navigateTo('/test-route')
+    expect(mockRouter.navigate).toHaveBeenCalledWith(['/test-route'])
+  })
 
   it('should call getAllConnectionRequests when connectionUpdatePeopleCard is called with connection-updated', () => {
     // Implement the actual methods
     component.connectionUpdatePeopleCard = jest.fn((event) => {
       if (event === 'connection-updated') {
-        component.getAllConnectionRequests();
+        component.getAllConnectionRequests()
       }
-    });
-    
-    component.connectionUpdatePeopleCard('connection-updated');
-    expect(component.getAllConnectionRequests).toHaveBeenCalled();
-  });
+    })
+
+    component.connectionUpdatePeopleCard('connection-updated')
+    expect(component.getAllConnectionRequests).toHaveBeenCalled()
+  })
 
   it('should reset all search parameters', () => {
     // Set some values first
-    component.courseSearchResults = [{ id: 'course1' }];
-    component.eventsSearchResults = [{ id: 'event1' }];
-    component.peoplesSearchResults = [{ id: 'people1' }];
-    component.communitiesSearchResults = [{ id: 'community1' }];
-    component.seeAllResult = 'courses';
-    component.allResultsDepartmentName.add('Dept1');
-    
+    component.courseSearchResults = [{ id: 'course1' }]
+    component.eventsSearchResults = [{ id: 'event1' }]
+    component.peoplesSearchResults = [{ id: 'people1' }]
+    component.communitiesSearchResults = [{ id: 'community1' }]
+    component.seeAllResult = 'courses'
+    component.allResultsDepartmentName.add('Dept1')
+
     // Implement the actual method
     component.resetAllSearchParams = jest.fn(() => {
       component.searchRequestCourse = {
@@ -459,7 +459,7 @@ describe('LearnSearchComponent', () => {
           limit: 10,
           offset: 0
         }
-      };
+      }
       component.searchRequestEvents = {
         request: {
           filters: {},
@@ -468,63 +468,63 @@ describe('LearnSearchComponent', () => {
           limit: 10,
           offset: 0
         }
-      };
+      }
       component.searchRequestPeoples = {
         search: [],
         size: 10,
         offset: 0
-      };
+      }
       component.searchRequestCommunities = {
         pageSize: 10,
         pageNumber: 0,
         filterCriteriaMap: {}
-      };
-      
-      component.courseSearchResults = [];
-      component.eventsSearchResults = [];
-      component.peoplesSearchResults = [];
-      component.communitiesSearchResults = [];
-      
-      component.combinedFacets = [];
-      
-      component.courseSearchTotalCount = 0;
-      component.eventSearchTotalCount = 0;
-      component.peopleSearchTotalCount = 0;
-      component.communitiesSearchTotalCount = 0;
-      
-      component.seeAllResult = '';
-      component.allResultsDepartmentName = new Set<string>();
-    });
-    
-    component.resetAllSearchParams();
-    
-    expect(component.courseSearchResults).toEqual([]);
-    expect(component.eventsSearchResults).toEqual([]);
-    expect(component.peoplesSearchResults).toEqual([]);
-    expect(component.communitiesSearchResults).toEqual([]);
-    expect(component.seeAllResult).toBe('');
-    expect(component.allResultsDepartmentName.size).toBe(0);
-  });
+      }
+
+      component.courseSearchResults = []
+      component.eventsSearchResults = []
+      component.peoplesSearchResults = []
+      component.communitiesSearchResults = []
+
+      component.combinedFacets = []
+
+      component.courseSearchTotalCount = 0
+      component.eventSearchTotalCount = 0
+      component.peopleSearchTotalCount = 0
+      component.communitiesSearchTotalCount = 0
+
+      component.seeAllResult = ''
+      component.allResultsDepartmentName = new Set<string>()
+    })
+
+    component.resetAllSearchParams()
+
+    expect(component.courseSearchResults).toEqual([])
+    expect(component.eventsSearchResults).toEqual([])
+    expect(component.peoplesSearchResults).toEqual([])
+    expect(component.communitiesSearchResults).toEqual([])
+    expect(component.seeAllResult).toBe('')
+    expect(component.allResultsDepartmentName.size).toBe(0)
+  })
 
   it('should reset pagination', () => {
-    jest.useFakeTimers();
-    
+    jest.useFakeTimers()
+
     // Implement the actual method
     component.resetPagination = jest.fn(() => {
-      component.initialPaginationPage = 2;
+      component.initialPaginationPage = 2
       setTimeout(() => {
-        component.initialPaginationPage = 1;
-      });
-    });
-    
-    component.resetPagination();
-    
-    expect(component.initialPaginationPage).toBe(2);
-    
-    jest.runAllTimers();
-    
-    expect(component.initialPaginationPage).toBe(1);
-    
-    jest.useRealTimers();
-  });
-});
+        component.initialPaginationPage = 1
+      })
+    })
+
+    component.resetPagination()
+
+    expect(component.initialPaginationPage).toBe(2)
+
+    jest.runAllTimers()
+
+    expect(component.initialPaginationPage).toBe(1)
+
+    jest.useRealTimers()
+  })
+})

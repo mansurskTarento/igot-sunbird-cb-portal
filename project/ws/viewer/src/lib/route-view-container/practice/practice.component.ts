@@ -8,6 +8,7 @@ import { NSQuiz } from '../../plugins/quiz/quiz.model'
     selector: 'viewer-practice-container',
     templateUrl: './practice.component.html',
     styleUrls: ['./practice.component.scss'],
+    standalone: false
 })
 export class PracticeComponent implements OnInit, OnDestroy {
     @Input() isFetchingDataComplete = false

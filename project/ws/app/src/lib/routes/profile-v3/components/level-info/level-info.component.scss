@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .card-container {
     // height: 338px;
@@ -57,12 +57,14 @@
     position: inherit !important;
 }
 
-.title_text, .desc_text {
+.title_text,
+.desc_text {
     word-break: break-word;
     white-space: initial;
     text-overflow: ellipsis;
     display: -webkit-box;
 }
+
 .title_text {
     color: rgba($color: #000000, $alpha: 0.4);
 }

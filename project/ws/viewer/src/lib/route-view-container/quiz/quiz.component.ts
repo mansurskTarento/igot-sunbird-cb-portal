@@ -4,12 +4,12 @@ import { NSQuiz } from '../../plugins/quiz/quiz.model'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'viewer-quiz-container',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.scss'],
-  /* tslint:disable */
-  host: { class: 'h-inherit inline-block', style: 'height: inherit !important; overflow-y: scroll;width: 100%;'},
-  /* tslint:enable */
+    selector: 'viewer-quiz-container',
+    templateUrl: './quiz.component.html',
+    styleUrls: ['./quiz.component.scss'],
+    /* tslint:disable */
+    host: { class: 'h-inherit inline-block', style: 'height: inherit !important; overflow-y: scroll;width: 100%;' },
+    standalone: false
 })
 export class QuizComponent implements OnInit, OnDestroy {
 

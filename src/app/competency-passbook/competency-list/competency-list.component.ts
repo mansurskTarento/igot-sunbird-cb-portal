@@ -1,6 +1,6 @@
 // Core imports
-import { Component, OnDestroy, OnInit, Inject } from '@angular/core'
-import { DOCUMENT } from '@angular/common'
+import { Component, OnDestroy, OnInit, Inject, DOCUMENT } from '@angular/core'
+
 import { Router } from '@angular/router'
 import { HttpErrorResponse } from '@angular/common/http'
 // RxJS imports
@@ -9,16 +9,17 @@ import { takeUntil } from 'rxjs/operators'
 // Project files and components
 import { ConfigurationsService, MultilingualTranslationsService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 
 @Component({
   selector: 'ws-competency-list',
   templateUrl: './competency-list.component.html',
   styleUrls: ['./competency-list.component.scss'],
+  standalone: false
 })
 
 export class CompetencyListComponent implements OnInit, OnDestroy {
@@ -176,7 +177,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
 
     let enrollmentMapData: any = {}
     const userId: any = this.configService && this.configService.userProfile && this.configService.userProfile.userId
-    const req = {"request":{"retiredCoursesEnabled":true,"status":"Completed"}}
+    const req = { 'request': { 'retiredCoursesEnabled': true, 'status': 'Completed' } }
     this.widgetEnrollService.fetchInternalEnrollmentData(userId, req)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe(
@@ -216,7 +217,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
                     if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
                       .findIndex((_obj: any) => _obj.courseName === certObj.courseName) === -1) {
                       this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].certificate
-                      .push(certObj)
+                        .push(certObj)
                     }
                   })
 
@@ -224,11 +225,11 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
                   if (this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
                     .indexOf(eachCourse.courseName.trim()) === -1) {
                     this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].contentConsumed
-                    .push(eachCourse.courseName.trim())
+                      .push(eachCourse.courseName.trim())
 
                     // Completed on logic...
                     this.certificateMappedObject[v5Obj[this.compentencyKey.vCompetencyTheme]].completedOn
-                    .push(eachCourse.completedOn)
+                      .push(eachCourse.completedOn)
                   }
 
                 } else {
@@ -266,13 +267,13 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
             v5Obj.issuedCertificates = []
             // tslint:disable-next-line: max-line-length
             const competencyArea = (v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase() === 'behavioral')
-            ? 'behavioural' : v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase()
+              ? 'behavioural' : v5Obj[this.compentencyKey.vCompetencyArea].toLowerCase()
             if (this.competency[competencyArea]
               .findIndex((obj: any) =>
                 obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]
               ) === -1) {
-            this.competency[competencyArea].push(v5Obj)
-          }
+              this.competency[competencyArea].push(v5Obj)
+            }
 
             this.competency[competencyArea].forEach((_obj: any) => {
               if (_obj[this.compentencyKey.vCompetencyTheme] === v5Obj[this.compentencyKey.vCompetencyTheme]) {
@@ -298,7 +299,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
             this.competency.skeletonLoading = false
           }
         }
-    )
+      )
   }
 
   getOtherData(): void {
@@ -400,7 +401,7 @@ export class CompetencyListComponent implements OnInit, OnDestroy {
         filterAppliedOnLocal = filterAppliedOnLocal ? true : false
         finalFilterValue = (filterAppliedOnLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
           // tslint:disable-next-line: max-line-length
-          if (filterValue[this.compentencyKey.vCompetencyArea].some((r: any) =>  data[this.compentencyKey.vCompetencyArea].toLowerCase().trim().includes((r.toLowerCase() === 'behavior') ? 'behavioural' : r.toLowerCase()))) {
+          if (filterValue[this.compentencyKey.vCompetencyArea].some((r: any) => data[this.compentencyKey.vCompetencyArea].toLowerCase().trim().includes((r.toLowerCase() === 'behavior') ? 'behavioural' : r.toLowerCase()))) {
             return data
           }
         })

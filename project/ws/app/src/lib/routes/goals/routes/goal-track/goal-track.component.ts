@@ -4,9 +4,10 @@ import { BtnGoalsService, NsGoal } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-goal-track',
-  templateUrl: './goal-track.component.html',
-  styleUrls: ['./goal-track.component.scss'],
+    selector: 'ws-app-goal-track',
+    templateUrl: './goal-track.component.html',
+    styleUrls: ['./goal-track.component.scss'],
+    standalone: false
 })
 export class GoalTrackComponent implements OnInit {
   goal: NsGoal.IGoal | undefined = undefined

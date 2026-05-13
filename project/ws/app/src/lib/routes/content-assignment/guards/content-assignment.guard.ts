@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router'
 import { ContentAssignService } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Observable } from 'rxjs'
 
 @Injectable()
-export class ContentAssignmentGuard  {
+export class ContentAssignmentGuard {
   adminLevel = ''
   userType = ''
   stateUrl = ''
@@ -104,7 +104,7 @@ export class ContentAssignmentGuard  {
                     this.snackbar.open('You do not have access to this page')
                   }
                 }
-              },                                              err => {
+              }, err => {
                 if (err) {
                   observer.next(false)
                   observer.complete()

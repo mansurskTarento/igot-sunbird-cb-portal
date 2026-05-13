@@ -4,9 +4,10 @@ import { ActivatedRoute } from '@angular/router'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-others',
-  templateUrl: './goal-others.component.html',
-  styleUrls: ['./goal-others.component.scss'],
+    selector: 'ws-app-goal-others',
+    templateUrl: './goal-others.component.html',
+    styleUrls: ['./goal-others.component.scss'],
+    standalone: false
 })
 export class GoalOthersComponent {
   fetchGoalsStatus: TFetchStatus = 'none'

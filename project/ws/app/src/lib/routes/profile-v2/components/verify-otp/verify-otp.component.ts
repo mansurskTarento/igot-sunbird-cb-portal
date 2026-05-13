@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject, OnDestroy, ViewChild, Output, EventEmitter } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
@@ -12,9 +12,10 @@ import { OtpService } from '../../../user-profile/services/otp.services'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 
 @Component({
-  selector: 'ws-verify-otp',
-  templateUrl: './verify-otp.component.html',
-  styleUrls: ['./verify-otp.component.scss'],
+    selector: 'ws-verify-otp',
+    templateUrl: './verify-otp.component.html',
+    styleUrls: ['./verify-otp.component.scss'],
+    standalone: false
 })
 
 export class VerifyOtpComponent implements OnInit, OnDestroy {

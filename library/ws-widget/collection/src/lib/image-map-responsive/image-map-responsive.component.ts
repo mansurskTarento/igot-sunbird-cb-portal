@@ -6,9 +6,10 @@ import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
 import { IWidgetImageMap, IWidgetMapMeta, IWidgetScale, IWidgetMapCoords } from './image-map-responsive.model'
 
 @Component({
-  selector: 'ws-widget-image-map-responsive',
-  templateUrl: './image-map-responsive.component.html',
-  styleUrls: ['./image-map-responsive.component.scss'],
+    selector: 'ws-widget-image-map-responsive',
+    templateUrl: './image-map-responsive.component.html',
+    styleUrls: ['./image-map-responsive.component.scss'],
+    standalone: false
 })
 export class ImageMapResponsiveComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, NsWidgetResolver.IWidgetData<IWidgetImageMap> {

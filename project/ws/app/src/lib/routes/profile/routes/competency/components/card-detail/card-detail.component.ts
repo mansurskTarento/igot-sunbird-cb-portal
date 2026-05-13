@@ -8,9 +8,10 @@ import { NSCompetency } from '../../models/competency.model'
 import { AssessmentService } from '../../services/competency.service'
 
 @Component({
-  selector: 'ws-app-card-detail',
-  templateUrl: './card-detail.component.html',
-  styleUrls: ['./card-detail.component.scss'],
+    selector: 'ws-app-card-detail',
+    templateUrl: './card-detail.component.html',
+    styleUrls: ['./card-detail.component.scss'],
+    standalone: false
 })
 export class CardDetailComponent implements OnInit {
   lineChart: Chart | null = null
@@ -206,14 +207,14 @@ export class CardDetailComponent implements OnInit {
       },
       options: {
         scales: {
-          y: 
+          y:
             {
               beginAtZero: true,
               ticks: {
-                
+
               },
             },
-          
+
         },
       },
     })

@@ -1,8 +1,8 @@
-import { DeleteDialogComponent } from '@ws/author/src/lib/modules/shared/components/delete-dialog/delete-dialog.component'
+
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { UploadAudioComponent } from '../upload-audio/upload-audio.component'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop'
 
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout'
@@ -11,44 +11,40 @@ import { of, Observable, Subscription, forkJoin } from 'rxjs'
 import { ActivatedRoute, Router } from '@angular/router'
 import { UntypedFormGroup } from '@angular/forms'
 
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { CommentsDialogComponent } from '@ws/author/src/lib/modules/shared/components/comments-dialog/comments-dialog.component'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { ErrorParserComponent } from '@ws/author/src/lib/modules/shared/components/error-parser/error-parser.component'
-
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { EditorService } from '@ws/author/src/lib/routing/modules/editor/services/editor.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 
 import { Page, ModuleObj, WebModuleData } from '../web-module.class'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { NSApiRequest } from '@ws/author/src/lib/interface/apiRequest'
 
-import {
-  CONTENT_BASE_WEBHOST_ASSETS,
-  CONTENT_BASE_WEBHOST,
-  STREAM_FILES,
-  // AUTHORING_CONTENT_BASE,
-} from '@ws/author/src/lib/constants/apiEndpoints'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { NOTIFICATION_TIME, WEB_MODULE_JSON_FILE_NAME } from '../../constant/web-module.constants'
 import { IAudioObj } from '../../interface/page-interface'
 import { PlainCKEditorComponent } from '../../../../../shared/components/plain-ckeditor/plain-ckeditor.component'
-import { NotificationService } from '@ws/author/src/lib/services/notification.service'
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 import { WebStoreService } from '../../services/store.service'
+import { NSContent } from '../../../../../../../../interface/content'
+import { LoaderService } from '../../../../../../../../services/loader.service'
+import { EditorContentService } from '../../../../../services/editor-content.service'
+import { UploadService } from '../../../../../shared/services/upload.service'
+import { EditorService } from '../../../../../services/editor.service'
+import { AuthInitService } from '../../../../../../../../services/init.service'
+import { AccessControlService } from '../../../../../../../../modules/shared/services/access-control.service'
+import { NotificationService } from '../../../../../../../../services/notification.service'
+import { CONTENT_BASE_WEBHOST, CONTENT_BASE_WEBHOST_ASSETS, STREAM_FILES } from '../../../../../../../../constants/apiEndpoints'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
+import { NSApiRequest } from '../../../../../../../../interface/apiRequest'
+import { DeleteDialogComponent } from '../../../../../../../../modules/shared/components/delete-dialog/delete-dialog.component'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { ErrorParserComponent } from '../../../../../../../../modules/shared/components/error-parser/error-parser.component'
+import { CommentsDialogComponent } from '../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 
 @Component({
-  selector: 'ws-auth-web-module-editor',
-  templateUrl: './web-module-editor.component.html',
-  styleUrls: ['./web-module-editor.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-web-module-editor',
+    templateUrl: './web-module-editor.component.html',
+    styleUrls: ['./web-module-editor.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 
 export class WebModuleEditorComponent implements OnInit, OnDestroy {

@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA, MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 
 export interface IWidgetBtnContentMailMeDialogData {
   title: string
@@ -13,9 +13,10 @@ export interface IWidgetMailMeDialogComponentResponse {
 }
 
 @Component({
-  selector: 'ws-widget-btn-content-mail-me-dialog',
-  templateUrl: './btn-content-mail-me-dialog.component.html',
-  styleUrls: ['./btn-content-mail-me-dialog.component.scss'],
+    selector: 'ws-widget-btn-content-mail-me-dialog',
+    templateUrl: './btn-content-mail-me-dialog.component.html',
+    styleUrls: ['./btn-content-mail-me-dialog.component.scss'],
+    standalone: false
 })
 export class BtnContentMailMeDialogComponent implements OnInit {
 

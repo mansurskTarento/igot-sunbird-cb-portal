@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 // @import 'ckeditor5/ckeditor5.css';
 // @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;0,700;1,400;1,700&display=swap');
@@ -12,9 +12,9 @@
 }
 
 .container-balanced {
-  @extend %page-center;
-  height: auto;
-  min-height: 400px;
+	@extend %page-center;
+	height: auto;
+	min-height: 400px;
 }
 
 
@@ -42,8 +42,8 @@
 }
 
 
-.community-search{
-    input {
-        border: 1px solid #00000029;
-    }
+.community-search {
+	input {
+		border: 1px solid #00000029;
+	}
 }

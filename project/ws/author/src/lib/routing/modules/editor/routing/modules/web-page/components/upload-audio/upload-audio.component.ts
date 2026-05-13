@@ -1,14 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { CONTENT_BASE_WEBHOST_ASSETS } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import { AuthInitService } from '../../../../../../../../services/init.service'
 import { IAudioObj } from '../../interface/page-interface'
+import { UploadService } from '../../../../../shared/services/upload.service'
+import { LoaderService } from '../../../../../../../../services/loader.service'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../constants/constant'
+import { CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../constants/apiEndpoints'
 
 export interface IUsersData {
   name?: string
@@ -17,9 +17,10 @@ export interface IUsersData {
   languages: any[]
 }
 @Component({
-  selector: 'ws-auth-upload-audio',
-  templateUrl: './upload-audio.component.html',
-  styleUrls: ['./upload-audio.component.scss'],
+    selector: 'ws-auth-upload-audio',
+    templateUrl: './upload-audio.component.html',
+    styleUrls: ['./upload-audio.component.scss'],
+    standalone: false
 })
 
 export class UploadAudioComponent implements OnInit {
@@ -91,9 +92,9 @@ export class UploadAudioComponent implements OnInit {
     this.uploadService
       .upload(
         formdata, {
-          contentId: this.data.id,
-          contentType: CONTENT_BASE_WEBHOST_ASSETS,
-        })
+        contentId: this.data.id,
+        contentType: CONTENT_BASE_WEBHOST_ASSETS,
+      })
       .subscribe(
         v => {
           if (v.code) {
@@ -123,7 +124,7 @@ export class UploadAudioComponent implements OnInit {
             duration: NOTIFICATION_TIME * 1000,
           })
         },
-    )
+      )
   }
 
 }

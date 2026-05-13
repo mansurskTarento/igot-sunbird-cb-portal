@@ -10,10 +10,11 @@ import { TranslateService } from '@ngx-translate/core'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-provider-all-cbp',
-  templateUrl: './provider-all-cbp.component.html',
-  styleUrls: ['./provider-all-cbp.component.scss'],
-  host: { class: 'flex flex-1' },
+    selector: 'ws-app-provider-all-cbp',
+    templateUrl: './provider-all-cbp.component.html',
+    styleUrls: ['./provider-all-cbp.component.scss'],
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class ProviderAllCbpComponent implements OnInit, OnDestroy {
   private paramSubscription: Subscription | null = null

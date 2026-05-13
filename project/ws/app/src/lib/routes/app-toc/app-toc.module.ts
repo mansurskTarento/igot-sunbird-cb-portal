@@ -9,7 +9,6 @@ import { InfiniteScrollModule } from 'ngx-infinite-scroll'
 
 // custom modules
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
-import { DiscussionUiModule } from '@sunbird-cb/discussions-ui-v8'
 import {
   PipeDurationTransformModule,
   PipeSafeSanitizerModule,
@@ -53,26 +52,23 @@ import {
   CardRatingCommentModule,
   AttendanceHelperModule,
   AttendanceCardModule,
+  NonReleventFeedbackDialogModule,
 } from '@sunbird-cb/collection'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { ContentTocModule } from '@sunbird-cb/toc'
 import { TocKpiValuesModule } from '@sunbird-cb/toc'
 import { MicroSurveyModule } from '@sunbird-cb/micro-surveys'
-import { CardContentV2Module } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.module'
-import { ConnectionNameModule } from '@sunbird-cb/collection/src/lib/_common/connection-name/connection-name.module'
-import { CertificateDialogModule } from '@sunbird-cb/collection/src/lib/_common/certificate-dialog/certificate-dialog.module'
-import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
+import { CardContentV2Module } from '@sunbird-cb/collection'
+import { ConnectionNameModule } from '@sunbird-cb/collection'
+import { CertificateDialogModule } from '@sunbird-cb/collection'
+import { ConfirmDialogModule } from '@sunbird-cb/collection'
 import { KarmaPointsModule } from '@sunbird-cb/toc'
-import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tips-for-learner/tips-for-learner.module'
-
-// Components
-import { AllDiscussionWidgetComponent } from '../discuss/widget/all-discussion-widget/category-widget/all-discussion-widget.component'
-import { TagWidgetComponent } from '../discuss/widget/tag-widget/tag-widget.component'
+import { TipsForLearnerModule } from '@sunbird-cb/collection'
 
 // Services
-import { ApiService, AccessControlService } from '../../../../../author/src/public-api'
-import { EditorService } from '../../../../../author/src/lib/routing/modules/editor/services/editor.service'
-import { AppPublicTocResolverService } from 'src/app/routes/public/public-toc/app-public-toc-resolver.service'
+import { ApiService, AccessControlService } from '@ws/author'
+import { EditorService } from '@ws/author'
+import { AppPublicTocResolverService } from '../../routes/services/app-public-toc-resolver.service'
 
 // Resolver
 
@@ -80,37 +76,34 @@ import { AppPublicTocResolverService } from 'src/app/routes/public/public-toc/ap
 import { CommonMethodsService, ContentLanguageService } from '@sunbird-cb/consumption'
 import { UserProfileService } from '../user-profile/services/user-profile.service'
 import { OtpService } from '../user-profile/services/otp.services'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
 import { MatNativeDateModule } from '@angular/material/core'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { WidgetCommentModule } from '@sunbird-cb/discussion-v2'
-import { SlidersDynamicModule } from '@sunbird-cb/collection/src/lib/sliders-dynamic/sliders-dynamic.module'
-import { NonReleventFeedbackDialogModule } from '../../../../../../../library/ws-widget/collection/src/lib/_common/non-relevent-feedback-dialog/non-relevent-feedback-dialog.module'
+import { SlidersDynamicModule } from '@sunbird-cb/collection'
 import { TocHomeComponent } from './toc-home/toc-home.component'
 import { AppTocLibModule } from '@sunbird-cb/toc'
 @NgModule({
   declarations: [
-    AllDiscussionWidgetComponent,
-    TagWidgetComponent,
     TocHomeComponent,
   ],
   imports: [
@@ -182,7 +175,6 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     BtnContentShareModule,
     UserAutocompleteModule,
     AvatarPhotoModule,
-    DiscussionUiModule,
     ConnectionNameModule,
     CardRatingCommentModule,
     InfiniteScrollModule,
@@ -198,7 +190,7 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     WidgetCommentModule,
     SlidersDynamicModule,
     NonReleventFeedbackDialogModule,
-    AppTocLibModule
+    AppTocLibModule,
   ],
   providers: [
     AppPublicTocResolverService,
@@ -211,9 +203,9 @@ import { AppTocLibModule } from '@sunbird-cb/toc'
     UserProfileService,
     OtpService,
     ContentLanguageService,
-    DatePipe
+    DatePipe,
   ],
   exports: [
-  ]
+  ],
 })
 export class AppTocModule { }

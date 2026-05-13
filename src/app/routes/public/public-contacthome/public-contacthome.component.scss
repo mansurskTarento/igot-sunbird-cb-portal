@@ -1,6 +1,6 @@
-@import "ws-vars";
-@import "ws-common";
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
   max-width: 1202px;
@@ -57,6 +57,7 @@ a.mail_link {
   line-height: 0.6 !important;
   vertical-align: middle;
 }
+
 .text-danger {
   color: rgb(181, 12, 12);
 }
@@ -64,11 +65,13 @@ a.mail_link {
 .confrence-box {
   padding-top: 16px;
 }
+
 .confrence-box h1 {
-  margin-bottom: 8!important;
+  margin-bottom: 8 !important;
 }
+
 .confrence-box p {
-  margin-bottom: 4!important;
+  margin-bottom: 4 !important;
 }
 
 .meet_link {
@@ -76,7 +79,7 @@ a.mail_link {
   display: block;
   cursor: pointer;
   padding: 10px 12px;
-  color: #fff!important;
+  color: #fff !important;
   background-color: #0074b6;
   border-radius: 4px 4px;
   text-align: center;
@@ -87,7 +90,7 @@ a.mail_link {
   height: 40px;
   margin-top: 16px;
 
-  @include breakpoint-xs  {
+  @include breakpoint-xs {
     height: 35px;
     margin-top: 12px;
   }

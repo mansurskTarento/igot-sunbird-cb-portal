@@ -5,15 +5,15 @@ import { RootService } from './../root/root.service'
 import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
 import { CdkDragEnd } from '@angular/cdk/drag-drop'
-import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 @Component({
-  selector: 'ws-app-chatbot',
-  templateUrl: './app-chatbot.component.html',
-  styleUrls: ['./app-chatbot.component.scss'],
-  // providers: [ChatbotService]
+    selector: 'ws-app-chatbot',
+    templateUrl: './app-chatbot.component.html',
+    styleUrls: ['./app-chatbot.component.scss'],
+    standalone: false
 })
 export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges {
   @Input() rootOrgId: any

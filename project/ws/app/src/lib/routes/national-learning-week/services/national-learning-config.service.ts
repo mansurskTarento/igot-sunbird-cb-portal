@@ -2,28 +2,28 @@ import { Injectable } from '@angular/core'
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../../routes/services/form-ext.service'
 
 @Injectable({
   providedIn: 'root',
 })
-export class NationalLearningConfigService  {
-constructor(
-private formSvc: FormExtService) {}
+export class NationalLearningConfigService {
+  constructor(
+    private formSvc: FormExtService) { }
 
-resolve(
+  resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
-): Observable<any> {
+  ): Observable<any> {
     const requestData: any = {
       'request': {
-      'type': 'page',
+        'type': 'page',
         'subType': 'home',
         'action': 'page-configuration',
         'component': 'portal',
         'rootOrgId': '*',
       },
-  }
+    }
     return this.formSvc.homeFormReadData(requestData).pipe(
       map((rData: any) => ({ data: rData, error: null })),
       tap((resolveData: any) => {
@@ -31,6 +31,6 @@ resolve(
         return of({ error: null, configData: finalData })
       }),
       catchError((error: any) => of({ error, data: null })),
-      )
+    )
   }
 }

@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { IFeedbackThread } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-feedback-thread-item',
-  templateUrl: './feedback-thread-item.component.html',
-  styleUrls: ['./feedback-thread-item.component.scss'],
+    selector: 'ws-app-feedback-thread-item',
+    templateUrl: './feedback-thread-item.component.html',
+    styleUrls: ['./feedback-thread-item.component.scss'],
+    standalone: false
 })
 export class FeedbackThreadItemComponent implements OnInit {
   @Input() threadItem!: IFeedbackThread

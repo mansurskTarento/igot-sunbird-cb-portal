@@ -3,9 +3,10 @@ import { WsEvents, EventService } from '@sunbird-cb/utils-v2'
 /* tslint:disable*/
 import _ from 'lodash'
 @Component({
-  selector: 'app-discuss-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'app-discuss-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent implements OnInit {
   @Input() unseen = 0

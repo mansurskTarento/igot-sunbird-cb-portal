@@ -4,17 +4,15 @@ import { Observable, Subject } from 'rxjs'
 import { shareReplay } from 'rxjs/operators'
 
 const API_END_POINTS = {
-  INSIGHTS: `apis/proxies/v8/read/user/insights`,
-  DISCUSSIONS: `apis/proxies/v8/discussion/user/`,
+  INSIGHTS: 'apis/proxies/v8/read/user/insights',
   // NETWORK: `apis/protected/v8/connections/v2/connections/recommended`,
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
-  ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
-  UPDATE_CONNECTION: `apis/protected/v8/connections/v2/update/connection`,
-  CONN_REQUESTED: `apis/protected/v8/connections/v2/connections/requests/received`,
-  TRENDING_DISCUSSION: `apis/proxies/v8/discussion/popular`,
-  ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`,
-  LEADER_BOARD: `apis/proxies/v8/halloffame/learnerleaderboard`,
-  EVENT_ENROLL: `apis/proxies/v8/user/events/enroll/summary`
+  ADD_CONNECTION: 'apis/protected/v8/connections/v2/add/connection',
+  UPDATE_CONNECTION: 'apis/protected/v8/connections/v2/update/connection',
+  CONN_REQUESTED: 'apis/protected/v8/connections/v2/connections/requests/received',
+  ASSESSMENT_DATA: 'apis/proxies/v8/wheebox/read',
+  LEADER_BOARD: 'apis/proxies/v8/halloffame/learnerleaderboard',
+  EVENT_ENROLL: 'apis/proxies/v8/user/events/enroll/summary',
 }
 
 @Injectable({
@@ -33,10 +31,6 @@ export class HomePageService {
     return this.http.get(API_END_POINTS.EVENT_ENROLL)
   }
 
-  getDiscussionsData(username: string): Observable<any> {
-    return this.http.get(API_END_POINTS.DISCUSSIONS + username)
-  }
-
   getNetworkRecommendations(payload: any): Observable<any> {
     // return this.http.post(API_END_POINTS.NETWORK, payload)
     return this.http.post(API_END_POINTS.GET_RECOMMENDED_USERS, payload)
@@ -52,10 +46,6 @@ export class HomePageService {
 
   getRecentRequests(): Observable<any> {
     return this.http.get(API_END_POINTS.CONN_REQUESTED)
-  }
-
-  getTrendingDiscussions(): Observable<any> {
-    return this.http.get(API_END_POINTS.TRENDING_DISCUSSION)
   }
 
   getAssessmentinfo(): Observable<any> {

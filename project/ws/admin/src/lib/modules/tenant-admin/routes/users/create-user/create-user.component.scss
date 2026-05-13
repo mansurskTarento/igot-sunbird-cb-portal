@@ -1,41 +1,45 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 
 mat-expansion-panel {
-  box-shadow: none!important;
+  box-shadow: none !important;
+
   ::ng-deep .mat-expansion-panel-body {
-  @include breakpoint-xs {
-    padding:0;
+    @include breakpoint-xs {
+      padding: 0;
+    }
   }
 }
+
+.pannelheading {
+  margin: 0 !important;
 }
 
-.pannelheading{
-  margin:0!important;
-}
-
-.mat-expansion-panel-header{
+.mat-expansion-panel-header {
   @include breakpoint-xs {
-    padding-left:0;
+    padding-left: 0;
   }
 }
-.mat-expansion-panel-spacing{
+
+.mat-expansion-panel-spacing {
   margin: 0px 0;
 }
 
-.mat-radio-group{
+.mat-radio-group {
   margin: 15px;
 }
 
 .Email {
   width: 49%;
+
   @include breakpoint-lt-m {
     width: 100%;
   }
 }
-.genbutton{
+
+.genbutton {
   height: 3.35rem;
   margin-top: 0.2rem;
   margin-bottom: 1rem;
@@ -45,15 +49,18 @@ mat-expansion-panel {
   min-width: 60%;
 }
 
-.button-row{
+.button-row {
   border-top-style: none;
-.button{
-  margin-right: 1rem;
+
+  .button {
+    margin-right: 1rem;
+  }
 }
-}
-.flex-div{
+
+.flex-div {
   @include breakpoint-lt-m {
     flex-wrap: wrap;
+
     div {
       width: 100%;
       padding: 0;
@@ -62,13 +69,15 @@ mat-expansion-panel {
 }
 
 .changeWidth {
-   @include breakpoint-lt-m {
-    width:100%;
+  @include breakpoint-lt-m {
+    width: 100%;
   }
 }
-.mat-stroked-button{
-  margin-right:0.75rem;
+
+.mat-stroked-button {
+  margin-right: 0.75rem;
 }
-.mat-radio-group{
+
+.mat-radio-group {
   margin: 0;
 }

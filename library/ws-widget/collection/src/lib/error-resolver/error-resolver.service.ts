@@ -6,10 +6,10 @@ import { NsError } from './error-resolver.model'
   providedIn: 'root',
 })
 export class ErrorResolverService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   async getErrorConfig(path: string): Promise<NsError.IErrorConfig> {
-    const errorData: NsError.IErrorConfig = await this.http
+    const errorData: NsError.IErrorConfig | any = await this.http
       .get<NsError.IErrorConfig>(path)
       .toPromise()
     return errorData

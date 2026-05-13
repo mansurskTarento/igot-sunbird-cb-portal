@@ -4,9 +4,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { WIDGET_LIBRARY } from '../../../constants/widet'
 
 @Component({
-  selector: 'ws-auth-image-gallery',
-  templateUrl: './image-gallery.component.html',
-  styleUrls: ['./image-gallery.component.scss'],
+    selector: 'ws-auth-image-gallery',
+    templateUrl: './image-gallery.component.html',
+    styleUrls: ['./image-gallery.component.scss'],
+    standalone: false
 })
 export class ImageGalleryComponent implements OnInit {
   @Output() data = new EventEmitter<{

@@ -1,20 +1,10 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
 import { DownloadAppComponent } from '../component/download-app/download-app.component'
 import { TranslateModule, TranslateService } from '@ngx-translate/core'
-import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
-import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { HttpClient } from '@angular/common/http'
 
 // tslint:disable-next-line:function-name
 export function HttpLoaderFactory(http: HttpClient) {
@@ -23,23 +13,14 @@ export function HttpLoaderFactory(http: HttpClient) {
 
 @NgModule({
   declarations: [
-    DownloadAppComponent
+    DownloadAppComponent,
   ],
   imports: [
     CommonModule,
-    FormsModule,
     TranslateModule.forChild({}),
-    MatButtonModule,
-    MatCheckboxModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatRadioModule,
-    MatTooltipModule
   ],
   exports: [
-    DownloadAppComponent
+    DownloadAppComponent,
   ],
 })
 export class SharedModule {

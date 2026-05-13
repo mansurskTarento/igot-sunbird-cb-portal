@@ -10,85 +10,80 @@ import {
 } from './help-center.model'
 import { HelpCenterService } from '../../help-center.service'
 
-
-
 @Component({
   selector: 'app-help-center',
   templateUrl: './help-center.component.html',
   styleUrls: ['./help-center.component.scss'],
-  standalone: false
+  standalone: false,
 })
 export class HelpCenterComponent implements OnInit {
 
+  gridSearch = ''
 
-  gridSearch = '';
+  searchQuery = ''
 
-
-  searchQuery = '';
-
-  activeRoleTab: RoleTab = 'learner';
-  activeContentTab: ContentTab = 'all';
+  activeRoleTab: RoleTab = 'learner'
+  activeContentTab: ContentTab = 'all'
 
   // Section expand/collapse state
-  videoSectionOpen = true;
-  guidesSectionOpen = true;
-  faqSectionOpen = true;
+  videoSectionOpen = true
+  guidesSectionOpen = true
+  faqSectionOpen = true
 
   // Active category filters
-  activeVideoCategory = 'all';
-  activeGuideCategory = 'all';
-  activeFaqCategory = 'all';
+  activeVideoCategory = 'all'
+  activeGuideCategory = 'all'
+  activeFaqCategory = 'all'
 
-  helpCenterData: any = null;
-  enabledSections: any = {};
+  helpCenterData: any = null
+  enabledSections: any = {}
 
-  roleTabs: any[] = [];
-  contentTabs: any[] = [];
+  roleTabs: any[] = []
+  contentTabs: any[] = []
 
   constructor(private helpCenterSvc: HelpCenterService) {}
 
-  ngOnInit() {    
+  ngOnInit() {
     this.helpCenterSvc.fetchHelpCenterConfig().subscribe((config: any) => {
-      this.helpCenterData = config;
+      this.helpCenterData = config
       if (this.helpCenterData) {
-        this.roleTabs = this.helpCenterData.roleTabs || [];
-        this.contentTabs = this.helpCenterData.contentTabs || [];
-        this.enabledSections = this.helpCenterData.enabledSections || {};
+        this.roleTabs = this.helpCenterData.roleTabs || []
+        this.contentTabs = this.helpCenterData.contentTabs || []
+        this.enabledSections = this.helpCenterData.enabledSections || {}
       }
-    });
+    })
   }
 
   isSectionEnabled(section: string): boolean {
-    return this.enabledSections[section] !== false;
+    return this.enabledSections[section] !== false
   }
 
   get filteredVideos(): VideoTutorial[] {
-    let videos =
+    const videos =
       this.activeVideoCategory === 'all'
         ? this.allVideos
-        : this.allVideos.filter((v) => v.category === this.activeVideoCategory)
+        : this.allVideos.filter(v => v.category === this.activeVideoCategory)
 
     if (!this.searchQuery.trim()) return videos
 
     const q = this.searchQuery.toLowerCase()
 
-    return videos.filter((v) =>
+    return videos.filter(v =>
       v.title.toLowerCase().includes(q)
     )
   }
 
   get filteredGuides(): HowToGuide[] {
-    let guides =
+    const guides =
       this.activeGuideCategory === 'all'
         ? this.allGuides
-        : this.allGuides.filter((g) => g.category === this.activeGuideCategory)
+        : this.allGuides.filter(g => g.category === this.activeGuideCategory)
 
     if (!this.searchQuery.trim()) return guides
 
     const q = this.searchQuery.toLowerCase()
 
-    return guides.filter(
-      (g) =>
+    return guides.filter(g =>
         g.title.toLowerCase().includes(q) ||
         g.description.toLowerCase().includes(q) ||
         (g.titleHindi && g.titleHindi.toLowerCase().includes(q))
@@ -99,11 +94,10 @@ export class HelpCenterComponent implements OnInit {
     const byCategory =
       this.activeFaqCategory === 'all'
         ? this.allFaqs
-        : this.allFaqs.filter((f) => f.category === this.activeFaqCategory)
+        : this.allFaqs.filter(f => f.category === this.activeFaqCategory)
     if (!this.searchQuery.trim()) return byCategory
     const q = this.searchQuery.toLowerCase()
-    return byCategory.filter(
-      (f) => f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q)
+    return byCategory.filter(f => f.question.toLowerCase().includes(q) || f.answer.toLowerCase().includes(q)
     )
   }
 
@@ -187,7 +181,7 @@ export class HelpCenterComponent implements OnInit {
   }
 
   getVideoCount(catId: string): number {
-    let list =
+    const list =
       catId === 'all'
         ? this.allVideos
         : this.allVideos.filter(v => v.category === catId)
@@ -200,7 +194,7 @@ export class HelpCenterComponent implements OnInit {
   }
 
   getGuideCount(catId: string): number {
-    let list =
+    const list =
       catId === 'all'
         ? this.allGuides
         : this.allGuides.filter(g => g.category === catId)
@@ -217,7 +211,7 @@ export class HelpCenterComponent implements OnInit {
   }
 
   getFaqCount(catId: string): number {
-    let list =
+    const list =
       catId === 'all'
         ? this.allFaqs
         : this.allFaqs.filter(f => f.category === catId)
@@ -282,7 +276,6 @@ export class HelpCenterComponent implements OnInit {
     return (this.helpCenterData?.faqCategoriesMap && this.helpCenterData.faqCategoriesMap[this.activeRoleTab]) || []
   }
 
-
   get hasAnySearchResult(): boolean {
     if (!this.searchQuery.trim()) return true
 
@@ -296,7 +289,5 @@ export class HelpCenterComponent implements OnInit {
   clearSearch(): void {
     this.searchQuery = ''
   }
-
-
 
 }

@@ -1,13 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core'
 import { IActivityCard, IChallenges } from '../../interfaces/activities.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-challenge-strip',
-  templateUrl: './challenge-strip.component.html',
-  styleUrls: ['./challenge-strip.component.scss'],
+    selector: 'ws-app-challenge-strip',
+    templateUrl: './challenge-strip.component.html',
+    styleUrls: ['./challenge-strip.component.scss'],
+    standalone: false
 })
 export class ChallengeStripComponent implements OnInit {
   @Input() widgetData!: IChallenges

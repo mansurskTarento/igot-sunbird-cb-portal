@@ -17,7 +17,8 @@ import { NsContent } from '@sunbird-cb/utils-v2'
     templateUrl: './mcq-mca.component.html',
     styleUrls: ['./mcq-mca.component.scss'],
     // tslint:disable-next-line
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class MultipleChoiseQuesComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
     @Input() question: NSPractice.IQuestion = {

@@ -3,9 +3,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NSSearch } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-communications',
-  templateUrl: './communications.component.html',
-  styleUrls: ['./communications.component.scss'],
+    selector: 'ws-communications',
+    templateUrl: './communications.component.html',
+    styleUrls: ['./communications.component.scss'],
+    standalone: false
 })
 export class CommunicationsComponent implements OnInit {
   @Input() widgetSearchRequest: NsWidgetResolver.IRenderConfigWithTypedData<

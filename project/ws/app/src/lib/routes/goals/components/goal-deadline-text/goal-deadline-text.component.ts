@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-goal-deadline-text',
-  templateUrl: './goal-deadline-text.component.html',
-  styleUrls: ['./goal-deadline-text.component.scss'],
+    selector: 'ws-app-goal-deadline-text',
+    templateUrl: './goal-deadline-text.component.html',
+    styleUrls: ['./goal-deadline-text.component.scss'],
+    standalone: false
 })
 export class GoalDeadlineTextComponent implements OnInit {
 

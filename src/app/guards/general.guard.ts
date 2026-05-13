@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core'
-import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, 
-// RouterStateSnapshot,
-UrlTree } from '@angular/router'
+import {
+  ActivatedRouteSnapshot, Router, RouterStateSnapshot,
+  // RouterStateSnapshot,
+  UrlTree
+} from '@angular/router'
 import { ConfigurationsService, AuthKeycloakService } from '@sunbird-cb/utils-v2'
-import { NSProfileDataV3 } from '@ws/app/src/lib/routes/profile-v3/models/profile-v3.models'
+import { NSProfileDataV3 } from '@ws/app'
 // tslint:disable-next-line
 import _ from 'lodash'
 
 @Injectable({
   providedIn: 'root',
 })
-export class GeneralGuard  {
+export class GeneralGuard {
   constructor(
     private router: Router,
     private configSvc: ConfigurationsService,
@@ -46,7 +48,7 @@ export class GeneralGuard  {
     if (
       this.configSvc.userProfile === null
       && !(window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
-      || window.location.href.includes('/certs'))
+        || window.location.href.includes('/certs'))
       // !this.configSvc.isAuthenticated
     ) {
       let refAppend = ''
@@ -61,7 +63,7 @@ export class GeneralGuard  {
       // } else {
       //   redirectUrl = document.baseURI
       // }
-      try { //NOSONAR
+      try { // NOSONAR
         Promise.resolve(this.authSvc.loginV2('S', refAppend))
         // return true
       } catch (e) {
@@ -112,7 +114,7 @@ export class GeneralGuard  {
     }
     // Check if the user has roles & activities and topic in the profile
     if (!this.checkWelcome()) {
-      return this.router.parseUrl(`/app/setup`)
+      return this.router.parseUrl('/app/setup')
     }
 
     if (!this.configSvc.isActive) {

@@ -3,19 +3,19 @@ import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
 import { IResolveResponse } from '@sunbird-cb/utils-v2'
 import { Observable, of } from 'rxjs'
 import { catchError, map, tap } from 'rxjs/operators'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../../routes/services/form-ext.service'
 
 @Injectable({
   providedIn: 'root',
 })
-export class MdoChannelFormService  {
-constructor(
-private formSvc: FormExtService) {}
+export class MdoChannelFormService {
+  constructor(
+    private formSvc: FormExtService) { }
 
-resolve(
+  resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
-): Observable<IResolveResponse<any>> {
+  ): Observable<IResolveResponse<any>> {
     const orgId = _route.params && _route.params.orgId || ''
     let subTypeValue: any = 'microsite'
     if (_route && _route.data && _route.data.pageId && _route.data.pageId.includes('v2')) {
@@ -24,20 +24,20 @@ resolve(
     if (_route && _route.data && _route.data.pageId && _route.data.pageId.includes('v3')) {
       subTypeValue = 'microsite-v3'
     }
-    const localRedirectData:any = JSON.parse(localStorage.getItem('microSiteRedirectionData') || '{}')
+    const localRedirectData: any = JSON.parse(localStorage.getItem('microSiteRedirectionData') || '{}')
     if (localRedirectData) {
       localRedirectData.enabled = false
       localStorage.setItem('microSiteRedirectionData', JSON.stringify(localRedirectData))
     }
     const requestData: any = {
       'request': {
-      'type': 'MDO-channel',
+        'type': 'MDO-channel',
         'subType': subTypeValue,
         'action': 'page-configuration',
         'component': 'portal',
         'rootOrgId': orgId,
       },
-  }
+    }
     return this.formSvc.formReadData(requestData).pipe(
       map((rData: any) => ({ data: rData, error: null })),
       tap((resolveData: any) => {
@@ -45,6 +45,6 @@ resolve(
         return of({ error: null, data: finalData })
       }),
       catchError((error: any) => of({ error, data: null })),
-      )
+    )
   }
 }

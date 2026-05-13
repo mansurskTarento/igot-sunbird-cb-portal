@@ -6,7 +6,7 @@ describe('ContentPickerV2Service', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ContentPickerV2Service = TestBed.get(ContentPickerV2Service)
+    const service: ContentPickerV2Service = TestBed.inject(ContentPickerV2Service)
     expect(service).toBeTruthy()
   })
 })

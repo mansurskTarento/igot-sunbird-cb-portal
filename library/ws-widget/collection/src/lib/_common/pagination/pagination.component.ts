@@ -8,9 +8,10 @@ export interface PageChangeEmitter {
 }
 
 @Component({
-  selector: 'ws-widget-pagination',
-  templateUrl: './pagination.component.html',
-  styleUrls: ['./pagination.component.scss']
+    selector: 'ws-widget-pagination',
+    templateUrl: './pagination.component.html',
+    styleUrls: ['./pagination.component.scss'],
+    standalone: false
 })
 export class PaginationComponent implements OnInit, OnChanges {
   @Input() defaultPaginationSize: number = 10;

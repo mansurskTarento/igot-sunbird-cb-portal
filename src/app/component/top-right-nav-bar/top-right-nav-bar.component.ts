@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
@@ -7,15 +7,15 @@ import { HomePageService } from '../../services/home-page.service'
 import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { DomSanitizer } from '@angular/platform-browser'
 import { HttpClient } from '@angular/common/http'
-import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
+import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { Router } from '@angular/router'
-import { NotificationsService } from 'src/app/services/notifications.service'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { environment } from '../../../environments/environment'
-import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
-import { SurveyPopupComponent } from '@ws/app/src/lib/routes/peer-validation/components/survey-popup/survey-popup.component'
-import { VerificationRequestDialogComponent } from '@ws/app/src/lib/routes/peer-validation/components/verification-request-dialog/verification-request-dialog.component'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection'
+import { SurveyPopupComponent } from '@ws/app'
+import { VerificationRequestDialogComponent } from '@ws/app'
 import { RootService } from '../root/root.service'
+import { NotificationsService } from '../../services/notifications.service'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -40,9 +40,10 @@ import { RootService } from '../root/root.service'
 // ]
 
 @Component({
-  selector: 'ws-top-right-nav-bar',
-  templateUrl: './top-right-nav-bar.component.html',
-  styleUrls: ['./top-right-nav-bar.component.scss'],
+    selector: 'ws-top-right-nav-bar',
+    templateUrl: './top-right-nav-bar.component.html',
+    styleUrls: ['./top-right-nav-bar.component.scss'],
+    standalone: false
 })
 export class TopRightNavBarComponent implements OnInit, OnChanges {
   @Input() item: any
@@ -59,13 +60,13 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   roles: string[] = []
   enableSupportAI = false
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
-    private configSvc: ConfigurationsService,
-    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-    private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService, private snackBar: MatSnackBar,
-    private router: Router, private notificationsService: NotificationsService,
-    private rootService: RootService,
-    private matDialog: MatDialogNew) {
+              private configSvc: ConfigurationsService,
+              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+              private http: HttpClient, private sanitizer: DomSanitizer,
+              private events: EventService, private snackBar: MatSnackBar,
+              private router: Router, private notificationsService: NotificationsService,
+              private rootService: RootService,
+              private matDialog: MatDialogNew) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -124,7 +125,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         if (res.responseCode === 'OK') {
           this.notificationsCount = 0
         }
-      }, error => {
+      },                                                            error => {
         console.error('Error while fetching notifications count', error)
       })
     }
@@ -164,7 +165,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    }, 0)
+    },         0)
   }
 
   openDialog(): void {
@@ -239,11 +240,11 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     const profile = this.configSvc.userProfile
     const learnerName = `${profile?.firstName || ''} ${profile?.lastName || ''}`.trim()
     const notifData = notification.message?.data?.[0] || {}
-    if (notification.status === "SUBMITTED") {
+    if (notification.status === 'SUBMITTED') {
       this.snackBar.open('You have already completed the survey.', 'X', { duration: 3000 })
       return
     }
-    if (notification.status === "IGNORED") {
+    if (notification.status === 'IGNORED') {
       this.snackBar.open('You have already submitted the response.', 'X', { duration: 3000 })
       return
     }
@@ -285,11 +286,11 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   openVerificationPopup(notification: any) {
     const notifData = notification.message?.data?.[0] || {}
-    if (notification.status === "APPROVED" || notification.status === "REJECTED") {
+    if (notification.status === 'APPROVED' || notification.status === 'REJECTED') {
       this.snackBar.open('You have already submitted the review.', 'X', { duration: 3000 })
       return
     }
-    if (notification.status === "IGNORED") {
+    if (notification.status === 'IGNORED') {
       this.snackBar.open('You have already submitted the response.', 'X', { duration: 3000 })
       return
     }
@@ -335,7 +336,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   calculateCount(event: any) {
-    console.log("sds", event)
+    console.log('sds', event)
   }
 
   showDialog(data: any, url: string) {

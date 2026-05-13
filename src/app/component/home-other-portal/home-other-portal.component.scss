@@ -1,12 +1,14 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .other-portal-box {
-    background-color: rgba(27,76,161, 0.08)!important;
+    background-color: rgba(27, 76, 161, 0.08) !important;
     border-radius: 12px;
+    padding: 16px;
 }
+
 .icon-box {
     height: 64px;
     width: 72px;
@@ -19,12 +21,15 @@
     font: 400 12px/16px Lato, sans-serif;
     color: rgba(0, 0, 0, 0.6);
 }
+
 .card-text-box {
     vertical-align: middle;
 }
+
 .portal-box {
     margin-bottom: 16px;
 }
+
 .portal-box:last-child {
     margin-bottom: 0;
 }

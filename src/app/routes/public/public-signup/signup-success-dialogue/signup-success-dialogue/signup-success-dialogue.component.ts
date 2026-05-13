@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-signup-success-dialogue',
-  templateUrl: './signup-success-dialogue.component.html',
-  styleUrls: ['./signup-success-dialogue.component.scss'],
+    selector: 'ws-signup-success-dialogue',
+    templateUrl: './signup-success-dialogue.component.html',
+    styleUrls: ['./signup-success-dialogue.component.scss'],
+    standalone: false
 })
 export class SignupSuccessDialogueComponent implements OnInit {
 

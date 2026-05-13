@@ -1,9 +1,9 @@
 import { Component, OnInit, ElementRef, ViewChild } from '@angular/core'
 // import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { ActivatedRoute, Router } from '@angular/router'
-// import { MatSnackBar } from '@angular/material/legacy-snack-bar'
+// import { MatSnackBar } from '@angular/material/snack-bar'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 // import { DiscussService } from '../../../discuss/services/discuss.service'
 /* tslint:disable */
 import _, { isString } from 'lodash'
@@ -14,20 +14,20 @@ import { EventService } from '../../services/events.service'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService, ConfigurationsService, WidgetContentService } from '@sunbird-cb/utils-v2'
 import { NsDiscussionV2 } from '@sunbird-cb/discussion-v2'
-//import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
-import { CertificateDialogComponent } from './../../../../../../../../../library/ws-widget/collection/src/lib/_common/certificate-dialog/certificate-dialog.component'
+import { CertificateDialogComponent } from '@sunbird-cb/collection'
 // import { WidgetContentLibService } from '@sunbird-cb/consumption'
-import { NsContentStripWithTabs } from '@sunbird-cb/collection/src/lib/content-strip-with-tabs/content-strip-with-tabs.model'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
-import { NetCoreService } from '../../../../../../../../../src/app/services/netcore.service'
+import { NsContentStripWithTabs } from '@sunbird-cb/collection'
+import { NsContent } from '@sunbird-cb/collection'
+import { NetCoreService } from '../../../../routes/services/netcore.service'
 import { switchMap } from 'rxjs/operators'
 import { of } from 'rxjs'
 /* tslint:enable */
 
 @Component({
-  selector: 'ws-app-event-detail',
-  templateUrl: './event-detail.component.html',
-  styleUrls: ['./event-detail.component.scss'],
+    selector: 'ws-app-event-detail',
+    templateUrl: './event-detail.component.html',
+    styleUrls: ['./event-detail.component.scss'],
+    standalone: false
 })
 export class EventDetailComponent implements OnInit {
   @ViewChild('toastSuccess', { static: true }) toastSuccess!: ElementRef<any>
@@ -147,7 +147,7 @@ export class EventDetailComponent implements OnInit {
                 request: {
                   retiredCoursesEnabled: true,
                   courseId: [tempEventData?.courseLinked],
-                }
+                },
               }
               const userId = this.configSvc.userProfile ? this.configSvc.userProfile.userId || '' : ''
               return this.eventSvc.getCourseEnrollData(userId, reqBody).pipe(
@@ -257,7 +257,7 @@ export class EventDetailComponent implements OnInit {
         if (eventReads) {
           preEventReadsDetails.push({
             documentName: this.uploadedFileName(eventReads),
-            url: eventReads
+            url: eventReads,
           })
         }
       })
@@ -269,7 +269,7 @@ export class EventDetailComponent implements OnInit {
         if (eventSummary) {
           postEventSummaryDetails.push({
             documentName: this.uploadedFileName(eventSummary),
-            url: eventSummary
+            url: eventSummary,
           })
         }
       })
@@ -308,7 +308,6 @@ export class EventDetailComponent implements OnInit {
           this.discussWidgetData.commentsList.repliesSection.newCommentReply.commentTreeData.entityId = this.eventData.identifier
         }
       }
-
 
     }
     if (this.eventData && userId) {

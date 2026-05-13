@@ -5,10 +5,10 @@ import { Observable, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import * as _ from 'lodash'
 const API_END_POINTS = {
-    FORM_READ: `/apis/v1/form/read`,
+    FORM_READ: '/apis/v1/form/read',
     ORG_READ: '/api/org/v1/read',
     MANDATE_NOTIFICATION_READ: 'apis/proxies/v8/v1/notifications/mandatory',
-    MARK_MANDATORY_AS_READ: `apis/proxies/v8/v1/notifications/mandatory/read`,
+    MARK_MANDATORY_AS_READ: 'apis/proxies/v8/v1/notifications/mandatory/read',
 }
 
 declare const smartech: any

@@ -1,6 +1,6 @@
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core'
-import { MatLegacyPaginator as MatPaginator, LegacyPageEvent as PageEvent } from '@angular/material/legacy-paginator'
+import { MatPaginator, PageEvent } from '@angular/material/paginator'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ContentAssignService, NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
@@ -10,16 +10,17 @@ import { DialogAssignComponent } from '../../components/dialog-assign/dialog-ass
 import {
   UserFilterDisplayComponent,
 } from '../../components/user-filter-display/user-filter-display.component'
-import { IContentAssignModel } from '@sunbird-cb/collection/src/lib/content-assign/content-assign.model'
-import { MatLegacyDialog as MatDialog, MatLegacyDialogConfig as MatDialogConfig } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { IContentAssignModel } from '@sunbird-cb/collection'
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
-  selector: 'ws-app-content-assignment',
-  templateUrl: './content-assignment.component.html',
-  styleUrls: ['./content-assignment.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true },
-  }],
+    selector: 'ws-app-content-assignment',
+    templateUrl: './content-assignment.component.html',
+    styleUrls: ['./content-assignment.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { showError: true },
+        }],
+    standalone: false
 })
 
 export class ContentAssignmentComponent implements OnInit {
@@ -154,7 +155,7 @@ export class ContentAssignmentComponent implements OnInit {
         this.directReportees = false
         this.allReportees = false
       }
-    },         60)
+    }, 60)
     this.defaultSideNavBarOpenedSubscription = this.isLtMedium$.subscribe((isLtMedium: boolean) => {
       this.screenSizeIsLtMedium = isLtMedium
       this.sideNavBarOpened = !isLtMedium
@@ -271,7 +272,7 @@ export class ContentAssignmentComponent implements OnInit {
         this.filtersResponse = response.filters
         this.fetchUserStatus = 'done'
 
-      },                                                              err => {
+      }, err => {
         if (err) {
           this.fetchUserStatus = 'none'
           return
@@ -378,15 +379,15 @@ export class ContentAssignmentComponent implements OnInit {
               assignmentType: this.userType,
               isMandatory: this.isMandatory,
             } : {
-                contentIds: [...this.selectedContentIds],
-                userCriteria: {
-                  ...this.searchReqBody.filters,
-                  all_reportees: this.allReportees,
-                },
-                assignedBy: this.userId,
-                assignmentType: this.userType,
-                isMandatory: this.isMandatory,
-              }
+              contentIds: [...this.selectedContentIds],
+              userCriteria: {
+                ...this.searchReqBody.filters,
+                all_reportees: this.allReportees,
+              },
+              assignedBy: this.userId,
+              assignmentType: this.userType,
+              isMandatory: this.isMandatory,
+            }
             this.contentAssignSvc.assignContent(reqBody).subscribe(
               () => {
                 this.snackbar.open(this.contentAssignSuccessMessage.nativeElement.value)

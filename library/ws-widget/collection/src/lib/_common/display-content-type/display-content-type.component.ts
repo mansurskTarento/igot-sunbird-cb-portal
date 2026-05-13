@@ -3,9 +3,10 @@ import { NsContent } from '../../_services/widget-content.model'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-display-content-type',
-  templateUrl: './display-content-type.component.html',
-  styleUrls: ['./display-content-type.component.scss'],
+    selector: 'ws-widget-display-content-type',
+    templateUrl: './display-content-type.component.html',
+    styleUrls: ['./display-content-type.component.scss'],
+    standalone: false
 })
 export class DisplayContentTypeComponent implements OnInit {
 

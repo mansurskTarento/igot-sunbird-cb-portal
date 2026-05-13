@@ -3,11 +3,12 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-insights',
-  templateUrl: './insights.component.html',
-  styleUrls: ['./insights.component.scss'],
-  // tslint:disable-next-line: no-host-metadata-property
-  host: { class: 'flex flex-1' },
+    selector: 'ws-app-insights',
+    templateUrl: './insights.component.html',
+    styleUrls: ['./insights.component.scss'],
+    // tslint:disable-next-line: no-host-metadata-property
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class InsightsComponent implements OnInit {
 

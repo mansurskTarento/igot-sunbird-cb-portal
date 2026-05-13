@@ -1,21 +1,21 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject, throwError } from 'rxjs'
-import { NSSearch } from '@sunbird-cb/collection/src/lib/_services/widget-search.model'
+import { NSSearch } from '@sunbird-cb/collection'
 import { catchError, map } from 'rxjs/operators'
 
 // tslint:disable
 import _ from 'lodash'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../services/form-ext.service'
 // tslint:enable
 
 const API_END_POINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  TRENDING_CONTENT_SEARCH: `apis/proxies/v8/trending/content/search`,
-  MICRO_CREDENTIALS: `apis/proxies/v8/promotionalcontent/v1/assignedto/users`,
-  GetApplicationsById: `apis/proxies/v8/forms/v2/bulkGetApplicationsById`,
-  GetProviderDetails: `apis/proxies/v8/contentpartner/v1/search`,
-  GET_COURSES: `/apis/proxies/v8/cios/v1/search/content`
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  TRENDING_CONTENT_SEARCH: 'apis/proxies/v8/trending/content/search',
+  MICRO_CREDENTIALS: 'apis/proxies/v8/promotionalcontent/v1/assignedto/users',
+  GetApplicationsById: 'apis/proxies/v8/forms/v2/bulkGetApplicationsById',
+  GetProviderDetails: 'apis/proxies/v8/contentpartner/v1/search',
+  GET_COURSES: '/apis/proxies/v8/cios/v1/search/content',
 }
 
 @Injectable({

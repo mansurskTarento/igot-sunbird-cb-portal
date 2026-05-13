@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { TSendStatus, IResolveResponse, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import {
@@ -13,9 +13,10 @@ import {
 import { ActivatedRoute, Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-feedback',
-  templateUrl: './feedback.component.html',
-  styleUrls: ['./feedback.component.scss'],
+    selector: 'ws-app-feedback',
+    templateUrl: './feedback.component.html',
+    styleUrls: ['./feedback.component.scss'],
+    standalone: false
 })
 export class FeedbackComponent {
   positiveFeedbackSendStatus: TSendStatus

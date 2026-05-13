@@ -5,9 +5,10 @@ import { NSSearch } from '../_services/widget-search.model'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 
 @Component({
-  selector: 'ws-widget-btn-catalog',
-  templateUrl: './btn-catalog.component.html',
-  styleUrls: ['./btn-catalog.component.scss'],
+    selector: 'ws-widget-btn-catalog',
+    templateUrl: './btn-catalog.component.html',
+    styleUrls: ['./btn-catalog.component.scss'],
+    standalone: false
 })
 export class BtnCatalogComponent extends WidgetBaseComponent
   implements NsWidgetResolver.IWidgetData<any> {

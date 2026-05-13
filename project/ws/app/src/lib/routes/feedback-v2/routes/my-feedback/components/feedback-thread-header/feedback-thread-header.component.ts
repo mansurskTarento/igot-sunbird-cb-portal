@@ -11,9 +11,10 @@ import {
 } from '@sunbird-cb/collection'
 import { IResolveResponse, ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'ws-app-feedback-thread-header',
-  templateUrl: './feedback-thread-header.component.html',
-  styleUrls: ['./feedback-thread-header.component.scss'],
+    selector: 'ws-app-feedback-thread-header',
+    templateUrl: './feedback-thread-header.component.html',
+    styleUrls: ['./feedback-thread-header.component.scss'],
+    standalone: false
 })
 export class FeedbackThreadHeaderComponent implements OnInit {
   @Input() threadHead!: IFeedbackThread

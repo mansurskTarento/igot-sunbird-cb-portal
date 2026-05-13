@@ -7,31 +7,31 @@ import { concatMap, delay, map, retryWhen } from 'rxjs/operators'
 import _ from 'lodash'
 
 const API_END_POINTS = {
-  ASSESSMENT_SUBMIT_V2: `/apis/protected/v8/user/evaluate/assessment/submit/v2`,
-  ASSESSMENT_SUBMIT_V3: `/apis/protected/v8/user/evaluate/assessment/submit/v3`,
-  ASSESSMENT_SUBMIT_V4: `/apis/protected/v8/user/evaluate/assessment/submit/v4`,
-  ASSESSMENT_SUBMIT_V5: `/apis/protected/v8/user/evaluate/assessment/submit/v5`,
-  ASSESSMENT_SUBMIT_V6: `/apis/protected/v8/user/evaluate/assessment/submit/v6`,
-  ASSESSMENT_SUBMIT_V7: `/apis/protected/v8/user/evaluate/assessment/submit/v7`,
-  ASSESSMENT_RESULT_V4: `/apis/proxies/v8/user/assessment/v4/result`,
-  ASSESSMENT_RESULT_V5: `/apis/proxies/v8/user/assessment/v5/result`,
-  ASSESSMENT_RESULT_V7: `/apis/proxies/v8/user/assessment/v7/result`,
-  QUESTION_PAPER_SECTIONS_V4: `/apis/proxies/v8/assessment/read`,
-  QUESTION_PAPER_QUESTIONS_V4: `/apis/proxies/v8/question/read`,
-  QUESTION_PAPER_SECTIONS: `/apis/proxies/v8/assessment/v5/read`,
-  QUESTION_PAPER_QUESTIONS: `/apis/proxies/v8/question/v5/read`,
-  SAVE_AND_NEXT_QUESTION: `apis/proxies/v8/assessment/save`,
+  ASSESSMENT_SUBMIT_V2: '/apis/protected/v8/user/evaluate/assessment/submit/v2',
+  ASSESSMENT_SUBMIT_V3: '/apis/protected/v8/user/evaluate/assessment/submit/v3',
+  ASSESSMENT_SUBMIT_V4: '/apis/protected/v8/user/evaluate/assessment/submit/v4',
+  ASSESSMENT_SUBMIT_V5: '/apis/protected/v8/user/evaluate/assessment/submit/v5',
+  ASSESSMENT_SUBMIT_V6: '/apis/protected/v8/user/evaluate/assessment/submit/v6',
+  ASSESSMENT_SUBMIT_V7: '/apis/protected/v8/user/evaluate/assessment/submit/v7',
+  ASSESSMENT_RESULT_V4: '/apis/proxies/v8/user/assessment/v4/result',
+  ASSESSMENT_RESULT_V5: '/apis/proxies/v8/user/assessment/v5/result',
+  ASSESSMENT_RESULT_V7: '/apis/proxies/v8/user/assessment/v7/result',
+  QUESTION_PAPER_SECTIONS_V4: '/apis/proxies/v8/assessment/read',
+  QUESTION_PAPER_QUESTIONS_V4: '/apis/proxies/v8/question/read',
+  QUESTION_PAPER_SECTIONS: '/apis/proxies/v8/assessment/v5/read',
+  QUESTION_PAPER_QUESTIONS: '/apis/proxies/v8/question/v5/read',
+  SAVE_AND_NEXT_QUESTION: 'apis/proxies/v8/assessment/save',
   CAN_ATTEMPT: (assessmentId: any) => `/apis/proxies/v8/user/assessment/retake/${assessmentId}`,
   CAN_ATTEMPT_V5: (assessmentId: any) => `/apis/proxies/v8/user/assessment/v5/retake/${assessmentId}`,
   CAN_ATTEMPT_V7: (assessmentId: any) => `/apis/proxies/v8/user/assessment/v7/retake/${assessmentId}`,
-  PUBLIC_QUESTION_READ: `api/public/assessment/v5/read`,
-  PUBLIC_QUESTION_LIST: `/api/public/assessment/v5/question/list`,
-  PUBLIC_ASSESSMENT_SUBMIT: `api/public/assessment/v5/assessment/submit`,
-  PUBLIC_ASSESSMENT_RESULT: `api/public/assessment/v5/result`,
-  PUBLIC_QUESTION_V4_READ: `api/public/assessment/v1/read`,
-  PUBLIC_QUESTION_V4_LIST: `/api/public/assessment/v5/question/list`,
-  PUBLIC_ASSESSMENT_V4_SUBMIT: `api/public/assessment/v4/assessment/submit`,
-  PUBLIC_ASSESSMENT_V4_RESULT: `api/public/assessment/v5/result`,
+  PUBLIC_QUESTION_READ: 'api/public/assessment/v5/read',
+  PUBLIC_QUESTION_LIST: '/api/public/assessment/v5/question/list',
+  PUBLIC_ASSESSMENT_SUBMIT: 'api/public/assessment/v5/assessment/submit',
+  PUBLIC_ASSESSMENT_RESULT: 'api/public/assessment/v5/result',
+  PUBLIC_QUESTION_V4_READ: 'api/public/assessment/v1/read',
+  PUBLIC_QUESTION_V4_LIST: '/api/public/assessment/v5/question/list',
+  PUBLIC_ASSESSMENT_V4_SUBMIT: 'api/public/assessment/v4/assessment/submit',
+  PUBLIC_ASSESSMENT_V4_RESULT: 'api/public/assessment/v5/result',
 }
 const forcreator = window.location.href.includes('editMode=true')
 @Injectable({
@@ -245,12 +245,12 @@ export class PracticeService {
   }
 
   extractContent(htmlData: any) {
-    const spanData = document.createElement('span');
-    spanData.innerHTML = htmlData;
-    let text = spanData.textContent || spanData.innerText || "";
-    
+    const spanData = document.createElement('span')
+    spanData.innerHTML = htmlData
+    const text = spanData.textContent || spanData.innerText || ''
+
     // Replace non-breaking spaces (U+00A0) with regular spaces (U+0020)
-    return text.replace(/\u00A0/g, ' ');
+    return text.replace(/\u00A0/g, ' ')
   }
 
   sanitizeAssessmentSubmitRequest(requestData: NSPractice.IQuizSubmitRequest): NSPractice.IQuizSubmitRequest {
@@ -270,31 +270,31 @@ export class PracticeService {
         concatMap((error, count) => {
           // Only retry on 500 status code and maximum of 2 retries
           if (count < 2 && error.status === 500) {
-            return of(error).pipe(delay(1000)); // 1 second delay between retries
+            return of(error).pipe(delay(1000)) // 1 second delay between retries
           }
-          return throwError(error);
+          return throwError(error)
         })
       )
-    );
+    )
 
     if (forPreview && !forcreator) {
       return this.http.post<NSPractice.ISectionResponse>(
-        API_END_POINTS.PUBLIC_QUESTION_READ, 
+        API_END_POINTS.PUBLIC_QUESTION_READ,
         postReqData
-      ).pipe(retryOnServerError);
+      ).pipe(retryOnServerError)
     }
-    
+
     if (forcreator) {
       return this.http.get<NSPractice.ISectionResponse>(
         `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`
-      ).pipe(retryOnServerError);
+      ).pipe(retryOnServerError)
     }
-    
+
     return this.http.get<NSPractice.ISectionResponse>(
       `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`
-    ).pipe(retryOnServerError);
+    ).pipe(retryOnServerError)
 }
-  
+
   getQuestions(identifiers: string[], assessmentId: string,
                forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
     const data = {
@@ -328,18 +328,18 @@ export class PracticeService {
 
   }
 
-  getSectionV4(sectionId: string, forPreview?: any, postReqData?: any,collectionId?: any): Observable<any> {
+  getSectionV4(sectionId: string, forPreview?: any, postReqData?: any, collectionId?: any): Observable<any> {
     const retryOnServerError = retryWhen(errors =>
       errors.pipe(
         concatMap((error, count) => {
           // Only retry on 500 status code and maximum of 2 retries
           if (count < 2 && error.status === 500) {
-            return of(error).pipe(delay(1000)); // 1 second delay between retries
+            return of(error).pipe(delay(1000)) // 1 second delay between retries
           }
-          return throwError(error);
+          return throwError(error)
         })
       )
-    );
+    )
     if (forPreview && !forcreator) {
       return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_READ, postReqData).pipe(retryOnServerError)
     }

@@ -3,9 +3,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NSSearch } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-conversations',
-  templateUrl: './conversations.component.html',
-  styleUrls: ['./conversations.component.scss'],
+    selector: 'ws-conversations',
+    templateUrl: './conversations.component.html',
+    styleUrls: ['./conversations.component.scss'],
+    standalone: false
 })
 export class ConversationsComponent implements OnInit {
   @Input() widgetSearchRequest: NsWidgetResolver.IRenderConfigWithTypedData<

@@ -1,12 +1,30 @@
-import { Component, Input, Self, Optional, ElementRef, SimpleChanges, OnChanges, DoCheck, OnDestroy } from '@angular/core'
-import { NgControl, NgForm, FormGroupDirective, UntypedFormControl } from '@angular/forms'
-import { ErrorStateMatcher, CanUpdateErrorState } from '@angular/material/core'
-import { MatLegacyFormFieldControl as MatFormFieldControl } from '@angular/material/legacy-form-field'
+import {
+  Component,
+  Input,
+  Self,
+  Optional,
+  ElementRef,
+  SimpleChanges,
+  OnChanges,
+  DoCheck,
+  OnDestroy,
+} from '@angular/core'
+
+import {
+  NgControl,
+  NgForm,
+  FormGroupDirective,
+  UntypedFormControl,
+} from '@angular/forms'
+
+import { ErrorStateMatcher } from '@angular/material/core'
+import { MatFormFieldControl } from '@angular/material/form-field'
+
 import { Subject } from 'rxjs'
+
 import { QuillComponent } from '../rich-text-editor/quill.component'
 
-const nextUniqueId = 0
-// on hold
+let nextUniqueId = 0
 
 @Component({
   selector: 'ws-auth-root-live-html-editor',
@@ -17,22 +35,22 @@ const nextUniqueId = 0
       useExisting: LiveHtmlEditorComponent,
     },
   ],
+  standalone: false,
 })
-
-export class LiveHtmlEditorComponent extends QuillComponent implements
+export class LiveHtmlEditorComponent
+  extends QuillComponent
+  implements
   OnChanges,
   DoCheck,
   OnDestroy,
-  MatFormFieldControl<string>,
-  CanUpdateErrorState {
-
+  MatFormFieldControl<string> {
   @Input()
   public placeholder = ''
 
   @Input()
   public required = false
 
-  public errorStateMatcher = new ErrorStateMatcher
+  public errorStateMatcher: ErrorStateMatcher
 
   public errorState = false
 
@@ -44,7 +62,7 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
 
   private _id = ''
 
-  private _uid = `live-html-editor-${nextUniqueId + 1}`
+  private _uid = `live-html-editor-${++nextUniqueId}`
 
   constructor(
     el: ElementRef,
@@ -55,7 +73,9 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
   ) {
     super(el)
 
-    if (this.ngControl !== null) {
+    this.errorStateMatcher = this._defaultErrorStateMatcher
+
+    if (this.ngControl) {
       this.ngControl.valueAccessor = this
     }
   }
@@ -66,17 +86,15 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
   }
 
   set value(value: any) {
-    if (this.editor) {
-      if (value !== this.value) {
-        this.editor.setContents(value)
-        this.stateChanges.next()
-      }
+    if (this.editor && value !== this.value) {
+      this.editor.setContents(value)
+      this.stateChanges.next()
     }
   }
 
   @Input()
   get disabled(): boolean {
-    if (this.ngControl && this.ngControl.disabled !== null) {
+    if (this.ngControl?.disabled != null) {
       return this.ngControl.disabled
     }
 
@@ -85,6 +103,7 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
 
   set disabled(disabled: boolean) {
     this._disabled = disabled
+    this.stateChanges.next()
   }
 
   @Input()
@@ -94,54 +113,59 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
 
   set id(id: string) {
     this._id = id || this._uid
+    this.stateChanges.next()
   }
 
   get empty(): boolean {
-    return typeof this.value === 'undefined'
+    return !this.value
   }
 
   get focused(): boolean {
-    if (this.editor) {
-      return this.editor.hasFocus()
-    }
-    return false
+    return !!this.editor?.hasFocus()
   }
 
-  public ngOnChanges(changes: SimpleChanges): void {
-    if (typeof changes['value'] !== 'undefined' || typeof changes['required'] !== 'undefined') {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['value'] || changes['required']) {
       this.stateChanges.next()
     }
   }
 
-  public ngDoCheck(): void {
+  ngDoCheck(): void {
     if (this.ngControl) {
       this.updateErrorState()
     }
   }
 
-  public ngOnDestroy(): void {
+  ngOnDestroy(): void {
     this.stateChanges.complete()
   }
 
-  public onContainerClick(): void {
+  onContainerClick(): void {
     if (!this.focused) {
       this.focus()
     }
   }
 
-  public focus(): void {
+  focus(): void {
     if (this.editor) {
       this.editor.focus()
       this.stateChanges.next()
     }
   }
 
-  public updateErrorState(): void {
+  updateErrorState(): void {
     const oldState = this.errorState
+
     const parent = this._parentFormGroup || this._parentForm
-    const matcher = this.errorStateMatcher || this._defaultErrorStateMatcher
-    const control = this.ngControl ? <UntypedFormControl>this.ngControl.control : null
-    const newState = matcher.isErrorState(control, parent)
+
+    const control = this.ngControl
+      ? (this.ngControl.control as UntypedFormControl)
+      : null
+
+    const newState = this.errorStateMatcher.isErrorState(
+      control,
+      parent,
+    )
 
     if (newState !== oldState) {
       this.errorState = newState
@@ -149,7 +173,7 @@ export class LiveHtmlEditorComponent extends QuillComponent implements
     }
   }
 
-  public setDescribedByIds(): void {
+  setDescribedByIds(): void {
+    // Required by MatFormFieldControl
   }
-
 }

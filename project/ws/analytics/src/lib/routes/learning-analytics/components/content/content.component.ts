@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core'
 import { PageEvent } from '@angular/material'
 import { LearningAnalyticsService } from '../../services/learning-analytics.service'
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
+import { MatPaginator } from '@angular/material/paginator'
 import { NsAnalytics } from '../../models/learning-analytics.model'
 import { TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
@@ -10,9 +10,10 @@ import { ActivatedRoute } from '@angular/router'
 import { GraphGeneralService, IGraphWidget, ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-analytics-content',
-  templateUrl: './content.component.html',
-  styleUrls: ['./content.component.scss'],
+    selector: 'ws-analytics-content',
+    templateUrl: './content.component.html',
+    styleUrls: ['./content.component.scss'],
+    standalone: false
 })
 export class ContentComponent implements OnInit, OnDestroy {
   searchQuery = ''

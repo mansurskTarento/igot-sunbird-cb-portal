@@ -1,29 +1,34 @@
-@import 'ws-vars';
-@import 'ws-mixins';
-@import 'utility';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+// @import 'utility';
 
-.galleryBlock{
+.galleryBlock {
   width: 85%;
-  @include breakpoint-xs{
+
+  @include breakpoint-xs {
     width: auto;
   }
 }
-.galleryHead{
+
+.galleryHead {
   height: 40px;
 }
+
 .top-margin {
   margin-top: 2rem;
   margin-bottom: 2rem;
   margin-right: 5rem;
   margin-left: 5rem;
-  padding:0;
+  padding: 0;
+
   @include breakpoint-s {
     margin-top: 2rem;
     margin-bottom: 2rem;
     margin-right: 1.5rem;
     margin-left: 1.5rem;
   }
-   @include breakpoint-xs {
+
+  @include breakpoint-xs {
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
     margin-right: 1rem;
@@ -31,37 +36,42 @@
   }
 }
 
-.gallery-header{
+.gallery-header {
   font-size: $size-l;
   font-weight: 400;
+
   @include breakpoint-s {
-     font-size: $size-l;
-     font-weight: 400;
+    font-size: $size-l;
+    font-weight: 400;
   }
+
   @include breakpoint-xs {
-     font-size: $size-l;
-     font-weight: 400;
+    font-size: $size-l;
+    font-weight: 400;
   }
 }
 
-.event-select{
+.event-select {
   font-size: $size-s;
 
   @include breakpoint-s {
     width: 60%;
   }
+
   @include breakpoint-xs {
     width: 60%;
   }
 }
 
-.gallery-content{
+.gallery-content {
   margin-right: 5rem;
   margin-left: 5rem;
+
   @include breakpoint-s {
     margin-right: 3rem;
     margin-left: 3rem;
   }
+
   @include breakpoint-xs {
     margin-right: 2rem;
     margin-left: 2rem;
@@ -71,14 +81,15 @@
 .galleryImg {
   width: 100%;
   height: 100%;
-  img{
+
+  img {
     width: 100%;
     height: 100%;
   }
 }
 
 
-mat-divider{
+mat-divider {
   margin-bottom: 5px;
 }
 
@@ -86,19 +97,20 @@ mat-divider{
   @include breakpoint-s {
     width: 100% !important;
   }
-  @include breakpoint-xs{
+
+  @include breakpoint-xs {
     width: 100% !important;
   }
 }
 
-mat-label{
+mat-label {
   margin-top: 5px;
   margin-bottom: 4px;
 }
 
-.overlay-container{
-    position: fixed;
-    overflow: hidden;
+.overlay-container {
+  position: fixed;
+  overflow: hidden;
   top: 0;
   left: 0;
   bottom: 0;
@@ -110,20 +122,21 @@ mat-label{
   background-color: rgba(0, 0, 0, 0.75);
 }
 
-.gallery-image{
-  height:55vh;
+.gallery-image {
+  height: 55vh;
   width: 30vw;
   padding: 0 20px;
-  @include breakpoint-s{
-    width:50vw !important;
+
+  @include breakpoint-s {
+    width: 50vw !important;
   }
-  @include breakpoint-xs{
-    width:65vw !important;
+
+  @include breakpoint-xs {
+    width: 65vw !important;
     padding: 0 10px !important;
   }
 }
-.float-right{
+
+.float-right {
   text-align: right
 }
-
-

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, HostBinding, Input, OnInit, Output } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { WidgetContentService } from '@sunbird-cb/toc'
 import { WidgetBaseComponent, NsWidgetResolver } from '@sunbird-cb/resolver'
 import moment from 'moment'
@@ -9,12 +9,12 @@ import { AppTocService } from '@sunbird-cb/toc'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-widget-profile-cretifications-v2',
-  templateUrl: './profile-cretifications-v2.component.html',
-  styleUrls: ['./profile-cretifications-v2.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'ws-widget-profile-cretifications-v2',
+    templateUrl: './profile-cretifications-v2.component.html',
+    styleUrls: ['./profile-cretifications-v2.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 // developing for old skill+certifications

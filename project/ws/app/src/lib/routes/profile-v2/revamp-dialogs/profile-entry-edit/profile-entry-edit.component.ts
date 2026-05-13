@@ -1,11 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core'
 import { AbstractControl, FormBuilder, FormGroup, UntypedFormControl, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { HttpErrorResponse } from '@angular/common/http'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { designation, generateYears, organisation, state, URL_PATRON } from '../../models/profile-revamp.model'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
 
@@ -77,47 +77,48 @@ export function urlOrDocumentValidator(): ValidatorFn {
   selector: 'ws-app-profile-entry-edit',
   templateUrl: './profile-entry-edit.component.html',
   styleUrls: ['./profile-entry-edit.component.scss'],
-  providers: [PipeCertificateImageURL]
+  providers: [PipeCertificateImageURL],
+  standalone: false
 })
 export class ProfileEntryEditComponent implements OnInit {
   //#region (global variables)
-  header: string = '';
+  header: string = ''
   entryDetails: any
   entryForm!: FormGroup
   apiSubscriptions: any
 
   //#region (service history variables)
   isCurrentOrgDetails = false
-  selctedOrgDetails: any = {};
-  selectedOrgLogo: string = '';
-  selectedOrgId: string = '';
-  orgList: organisation[] = [];
-  orgOffset = 0;
-  orgLimit = 50;
+  selctedOrgDetails: any = {}
+  selectedOrgLogo: string = ''
+  selectedOrgId: string = ''
+  orgList: organisation[] = []
+  orgOffset = 0
+  orgLimit = 50
   organisationFilterEnable = false
   isLoadingMoreOrganisations = false
   organisationsCount = 50
 
-  designationsMeta: designation[] = [];
+  designationsMeta: designation[] = []
   designationsTotalCount = 0
   designationSearchText = ''
   designationsOffset = 0
-  isLoadingMoreDesignations = false;
+  isLoadingMoreDesignations = false
   designationListLoadCount = 50
-  selectedOrgHasDesignations = false;
+  selectedOrgHasDesignations = false
 
-  statesList: state[] = [];
-  districtsList: string[] = [];
-  todayDate: Date = new Date();
-  startDate: Date = new Date();
-  isCurrentlyWorking = false;
+  statesList: state[] = []
+  districtsList: string[] = []
+  todayDate: Date = new Date()
+  startDate: Date = new Date()
+  isCurrentlyWorking = false
   endDate: Date = new Date()
   //#endregion (service history variables)
 
   //#region (educational qualifications variables)
-  degreesMeta: any[] = [];
+  degreesMeta: any[] = []
   filterDegreesMeta: any[] = []
-  isLoadingMoredegrees = false;
+  isLoadingMoredegrees = false
   degreesFilterEnable = false
   degreeListLoadCount = 50
   degreeDefaultLoadCount = 50
@@ -125,7 +126,7 @@ export class ProfileEntryEditComponent implements OnInit {
   degreeTotalCount = 0
   degreeSearchText = ''
 
-  yearsList: string[] = [];
+  yearsList: string[] = []
   institutionsList: any[] = []
   filterInstitutionsList: any[] = []
   isLoadingMoreInstitutions = false
@@ -135,7 +136,7 @@ export class ProfileEntryEditComponent implements OnInit {
   institutePageNumber = 0
   instituteTotalCount = 0
   instituteSearchText = ''
-  yeasersList: string[] = [];
+  yeasersList: string[] = []
   //#endregion (educational qualifications variables)
 
   disableUpload = false
@@ -182,10 +183,10 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (global variables)
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatLegacyDialogRef<ProfileEntryEditComponent>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<ProfileEntryEditComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: any,
     private ProfileV2RevampService: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private pipeImgUrl: PipeCertificateImageURL
   ) {
     this.header = _.get(this.data, 'header', '')
@@ -224,7 +225,7 @@ export class ProfileEntryEditComponent implements OnInit {
       startDate: [_.get(this.entryDetails, 'startDate', '')],
       endDate: [_.get(this.entryDetails, 'endDate', ''), [endDateValidator('startDate')]],
       currentlyWorking: [_.get(this.entryDetails, 'currentlyWorking', 'false')],
-      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000)]]
+      description: [_.get(this.entryDetails, 'description', ''), [Validators.maxLength(1000)]],
     })
     this.isCurrentOrgDetails = _.get(this.entryDetails, 'isCurrentOrgDetails', false)
     const orgDistrictControl = this.entryForm.get('orgDistrict')
@@ -341,17 +342,17 @@ export class ProfileEntryEditComponent implements OnInit {
           isTenant: true,
           status: 1,
           isMdo: true,
-          isCbp: true
+          isCbp: true,
         },
         fields: [
           'orgName',
           'imgUrl',
           'identifier',
-          'rootOrgId'
+          'rootOrgId',
         ],
         limit: this.orgLimit,
-        offset: this.orgOffset
-      }
+        offset: this.orgOffset,
+      },
     }
     if (query) {
       formBody.request['query'] = query
@@ -374,7 +375,7 @@ export class ProfileEntryEditComponent implements OnInit {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
-      }
+      },
     })
   }
 
@@ -386,7 +387,7 @@ export class ProfileEntryEditComponent implements OnInit {
           identifier: this.selctedOrgDetails['orgId'],
           orgName: this.selctedOrgDetails['orgName'],
           imgUrl: this.selctedOrgDetails['orgLogo'],
-          rootOrgId: this.selctedOrgDetails['rootOrgId']
+          rootOrgId: this.selctedOrgDetails['rootOrgId'],
         }
         this.orgList.unshift(orgDetails)
       }
@@ -418,7 +419,7 @@ export class ProfileEntryEditComponent implements OnInit {
       if (!this.isLoadingMoreOrganisations && this.organisationsCount > this.orgList.length) {
         this.orgOffset = this.orgOffset + 1
         const searchOrgNameControl = this.entryForm.get('searchOrgName')
-        let query = searchOrgNameControl ? searchOrgNameControl.value : ''
+        const query = searchOrgNameControl ? searchOrgNameControl.value : ''
         this.getOrgList(query)
       }
     }
@@ -467,7 +468,7 @@ export class ProfileEntryEditComponent implements OnInit {
         error: () => {
           this.selectedOrgHasDesignations = false
           this.getdesignationsMeta()
-        }
+        },
       })
     } else {
       this.selectedOrgHasDesignations = false
@@ -490,24 +491,24 @@ export class ProfileEntryEditComponent implements OnInit {
     const requestBody: any = {
       request: {
         filters: {
-          status: "Live",
-          category: "designation",
+          status: 'Live',
+          category: 'designation',
           categories: [
             this.selctedOrgDetails['rootOrgId'] + '_odcs_designation',
           ],
-          objectType: "Term"
+          objectType: 'Term',
         },
         fields: [
-          "name"
+          'name',
         ],
         offset: this.designationsOffset,
         limit: this.designationListLoadCount,
         sort_by: {
-          lastUpdatedOn: "desc",
-          objectType: "Term"
+          lastUpdatedOn: 'desc',
+          objectType: 'Term',
         },
-        facets: []
-      }
+        facets: [],
+      },
     }
     if (this.designationSearchText) {
       requestBody['request']['query'] = this.designationSearchText
@@ -526,18 +527,18 @@ export class ProfileEntryEditComponent implements OnInit {
       error: () => {
         this.isLoadingMoreDesignations = false
         this.openSnackbar('Something went wrong. Please refresh or try again later.')
-      }
+      },
     })
   }
 
   private getDefaultDesignations() {
     const requestBody: any = {
       filterCriteriaMap: {
-        status: 'Active'
+        status: 'Active',
       },
       requestedFields: [],
       pageNumber: this.designationsOffset,
-      pageSize: this.designationListLoadCount
+      pageSize: this.designationListLoadCount,
     }
     if (this.designationSearchText) {
       requestBody['searchString'] = this.designationSearchText
@@ -561,7 +562,7 @@ export class ProfileEntryEditComponent implements OnInit {
       error: () => {
         this.isLoadingMoreDesignations = false
         this.openSnackbar('Something went wrong. Please refresh or try again later.')
-      }
+      },
     })
   }
 
@@ -597,7 +598,7 @@ export class ProfileEntryEditComponent implements OnInit {
         // Create a new designation object to match the structure of other items
         const newDesignation = {
           name: currentDesignation,
-          status: 'Active'
+          status: 'Active',
         }
         this.designationsMeta.unshift(newDesignation)
       }
@@ -644,7 +645,7 @@ export class ProfileEntryEditComponent implements OnInit {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
-      }
+      },
     })
   }
 
@@ -671,7 +672,7 @@ export class ProfileEntryEditComponent implements OnInit {
           if (err) {
             this.openSnackbar('Something went wrong. Please refresh or try again later.')
           }
-        }
+        },
       })
     } else {
       if (orgDistrictControl) {
@@ -881,16 +882,16 @@ export class ProfileEntryEditComponent implements OnInit {
     this.isLoadingMoreInstitutions = type === 'institute' ? true : this.isLoadingMoreInstitutions
 
     const payload: any = {
-      "type": type,
-      "request": {
-        "pageNumber": pageNumber,
-        "pageSize": type === 'degree' ? this.degreeListLoadCount : this.institutionListLoadCount,
-        "filters": {
-          "status": 1
+      'type': type,
+      'request': {
+        'pageNumber': pageNumber,
+        'pageSize': type === 'degree' ? this.degreeListLoadCount : this.institutionListLoadCount,
+        'filters': {
+          'status': 1,
         },
-        "sortBy": "name",
-        "orderBy": "ASC"
-      }
+        'sortBy': 'name',
+        'orderBy': 'ASC',
+      },
     }
 
     if (searchQuery && searchQuery.trim()) {
@@ -934,7 +935,7 @@ export class ProfileEntryEditComponent implements OnInit {
         if (error) {
           this.openSnackbar('Something went wrong. Please refresh or try again later.')
         }
-      }
+      },
     })
   }
 
@@ -970,7 +971,6 @@ export class ProfileEntryEditComponent implements OnInit {
   //     }
   //   })
   // }
-
 
   setupInstituteScrollListener(opened: boolean): void {
     const searchInstituteControl = this.entryForm.get('searchInstitute')
@@ -1082,11 +1082,10 @@ export class ProfileEntryEditComponent implements OnInit {
     const endYear = this.entryForm.get('endYear')?.value
     if (endYear && endYear < value) {
       this.entryForm.patchValue({
-        endYear: null
+        endYear: null,
       })
     }
   }
-
 
   //#endregion (educational qualifications)
 
@@ -1111,7 +1110,7 @@ export class ProfileEntryEditComponent implements OnInit {
     if (_.get(this.entryDetails?.contextData, 'fileName', '')) {
       const urlControl = this.entryForm.controls.url
       urlControl?.setValidators([
-        Validators.pattern(URL_PATRON)
+        Validators.pattern(URL_PATRON),
       ])
       urlControl.patchValue('')
       urlControl.disable()
@@ -1210,7 +1209,6 @@ export class ProfileEntryEditComponent implements OnInit {
     this.valueChanges()
     this.addCompetencyMeta()
   }
-
 
   get competenciesValue(): any[] {
     const control = this.entryForm?.get('competencies_v6') as UntypedFormControl | null
@@ -1595,7 +1593,7 @@ export class ProfileEntryEditComponent implements OnInit {
             const errorMessage = _.get(error, 'error.message', 'Something went wrong please try again')
             this.openSnackbar(errorMessage)
           }
-        }
+        },
       })
     }
   }

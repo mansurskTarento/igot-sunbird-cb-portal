@@ -4,13 +4,14 @@ import { IBadgeResponse } from './badges.model'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription, fromEvent } from 'rxjs'
 import { BadgesService } from './badges.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { debounceTime, throttleTime } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-app-badges',
-  templateUrl: './badges.component.html',
-  styleUrls: ['./badges.component.scss'],
+    selector: 'ws-app-badges',
+    templateUrl: './badges.component.html',
+    styleUrls: ['./badges.component.scss'],
+    standalone: false
 })
 export class BadgesComponent implements OnInit {
   status: TFetchStatus = 'none'

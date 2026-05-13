@@ -1,17 +1,16 @@
 import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { NSCompetencie } from '../../models/competencies.model'
 import { CompetenceViewComponent } from '../competencies-view/competencies-view.component'
 
 // import { Router } from '@angular/router'
 @Component({
-  selector: 'app-competence-card',
-  templateUrl: './competencies-card.component.html',
-  styleUrls: ['./competencies-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-row margin-right-xs margin-top-xs margin-bottom-s competency_main' },
-  /* tslint:enable */
-
+    selector: 'app-competence-card',
+    templateUrl: './competencies-card.component.html',
+    styleUrls: ['./competencies-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-row margin-right-xs margin-top-xs margin-bottom-s competency_main' },
+    standalone: false
 })
 
 export class CompetenceCardComponent implements OnInit {

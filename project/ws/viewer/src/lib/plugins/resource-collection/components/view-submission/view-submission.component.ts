@@ -1,12 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ResourceCollectionService } from 'project/ws/viewer/src/lib/plugins/resource-collection/resource-collection.service'
 
 @Component({
-  selector: 'viewer-view-submission',
-  templateUrl: './view-submission.component.html',
-  styleUrls: ['./view-submission.component.scss'],
+    selector: 'viewer-view-submission',
+    templateUrl: './view-submission.component.html',
+    styleUrls: ['./view-submission.component.scss'],
+    standalone: false
 })
 export class ViewSubmissionComponent implements OnInit {
   submissionUrl = ''

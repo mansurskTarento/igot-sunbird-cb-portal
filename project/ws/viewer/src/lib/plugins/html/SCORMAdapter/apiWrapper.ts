@@ -141,7 +141,7 @@ export class SCORMAdapterV2Service {
 
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSInitialize was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSInitialize was not successful.")
             return 'false'
         }
 
@@ -186,7 +186,7 @@ export class SCORMAdapterV2Service {
         if (!this.initialized) { return 'true' }
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSFinish was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSFinish was not successful.")
             return 'false'
         }
 
@@ -222,7 +222,7 @@ export class SCORMAdapterV2Service {
         const api = this.getAPIHandle()
         let result = ''
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSGetValue was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSGetValue was not successful.")
         } else if (!this.initialized && !this.doLMSInitialize()) {
             const err = this.ErrorHandler() // get why doLMSInitialize() returned false
             this.message(`LMSGetValue failed - Could not initialize communication with the LMS - error code: ${err.code}`)
@@ -255,7 +255,7 @@ export class SCORMAdapterV2Service {
         const api = this.getAPIHandle()
         let result = 'false'
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSSetValue was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSSetValue was not successful.")
         } else if (!this.initialized && !this.doLMSInitialize()) {
             const err = this.ErrorHandler() // get why doLMSInitialize() returned false
             this.message(`LMSSetValue failed - Could not initialize communication with the LMS - error code: ${err.code}`)
@@ -287,7 +287,7 @@ export class SCORMAdapterV2Service {
         const api = this.getAPIHandle()
         let result = 'false'
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSCommit was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSCommit was not successful.")
         } else if (!this.initialized && !this.doLMSInitialize()) {
             const errr = this.ErrorHandler() // get why doLMSInitialize() returned false
             this.message(`LMSCommit failed - Could not initialize communication with the LMS - error code: " + ${errr.code}`)
@@ -315,7 +315,7 @@ export class SCORMAdapterV2Service {
     doLMSGetLastError() {
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSGetLastError was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSGetLastError was not successful.")
             // since we can't get the error code from the LMS, return a general error
             return this._GeneralException.code // General Exception
         }
@@ -336,7 +336,7 @@ export class SCORMAdapterV2Service {
     doLMSGetErrorString(errorCode: any) {
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSGetErrorString was not successful.`)
+            this.message("Unable to locate the LMS's API Implementation.\nLMSGetErrorString was not successful.")
             return this._GeneralException.string
         }
 
@@ -357,8 +357,8 @@ export class SCORMAdapterV2Service {
     doLMSGetDiagnostic(errorCode: any) {
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nLMSGetDiagnostic was not successful.`)
-            return `Unable to locate the LMS's API Implementation. LMSGetDiagnostic was not successful.`
+            this.message("Unable to locate the LMS's API Implementation.\nLMSGetDiagnostic was not successful.")
+            return "Unable to locate the LMS's API Implementation. LMSGetDiagnostic was not successful."
         }
 
         return api.LMSGetDiagnostic(errorCode).toString()
@@ -388,10 +388,10 @@ export class SCORMAdapterV2Service {
         const error = { code: this._NoError.code, string: this._NoError.string, diagnostic: this._NoError.diagnostic }
         const api = this.getAPIHandle()
         if (api == null) {
-            this.message(`Unable to locate the LMS's API Implementation.\nCannot determine LMS error code.`)
+            this.message("Unable to locate the LMS's API Implementation.\nCannot determine LMS error code.")
             error.code = this._GeneralException.code
             error.string = this._GeneralException.string
-            error.diagnostic = `Unable to locate the LMS's API Implementation. Cannot determine LMS error code.`
+            error.diagnostic = "Unable to locate the LMS's API Implementation. Cannot determine LMS error code."
             return error
         }
 

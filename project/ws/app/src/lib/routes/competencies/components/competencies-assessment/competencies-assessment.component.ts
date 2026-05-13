@@ -11,8 +11,7 @@ import { NSCompetencie } from '../../models/competencies.model'
     styleUrls: ['./competencies-assessment.component.scss'],
     /* tslint:disable */
     host: { class: 'flex flex-row margin-right-xs margin-bottom-s competency_main_box' },
-    /* tslint:enable */
-
+    standalone: false
 })
 export class CompetenciesAssessmentComponent implements OnInit {
     @Input()

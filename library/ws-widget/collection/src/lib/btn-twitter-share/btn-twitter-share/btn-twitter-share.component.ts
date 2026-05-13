@@ -3,9 +3,10 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-btn-twitter-share',
-  templateUrl: './btn-twitter-share.component.html',
-  styleUrls: ['./btn-twitter-share.component.scss'],
+    selector: 'ws-widget-btn-twitter-share',
+    templateUrl: './btn-twitter-share.component.html',
+    styleUrls: ['./btn-twitter-share.component.scss'],
+    standalone: false
 })
 export class BtnTwitterShareComponent implements OnInit {
   @Input() url: SafeResourceUrl | null = null

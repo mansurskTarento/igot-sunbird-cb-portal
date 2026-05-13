@@ -3,14 +3,11 @@ import { Router } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
-// import { ActivitiesService } from '@ws/app/src/lib/routes/activities/services/activities.service'
-// import { IActivity, IActivityCard, IChallenges } from '@ws/app/src/lib/routes/activities/interfaces/activities.model'
-// import { MatSnackBar } from '@angular/material/snack-bar'
-
 @Component({
-  selector: 'ws-widget-card-welcome',
-  templateUrl: './card-browse-course.component.html',
-  styleUrls: ['./card-browse-course.component.scss'],
+    selector: 'ws-widget-card-welcome',
+    templateUrl: './card-browse-course.component.html',
+    styleUrls: ['./card-browse-course.component.scss'],
+    standalone: false
 })
 export class CardBrowseCourseComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<any> {

@@ -2,12 +2,12 @@ import { Component, Input, OnInit, OnDestroy, HostBinding } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ConfigurationsService, LogoutComponent, NsPage, NsAppsConfig, EventService, WsEvents, DomainConfService } from '@sunbird-cb/utils-v2'
 import { IBtnAppsConfig } from '../btn-apps/btn-apps.model'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Subscription } from 'rxjs'
 import { ROOT_WIDGET_CONFIG } from '../collection.config'
 /* tslint:disable*/
 import _ from 'lodash'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
+import { AccessControlService } from '../_services/access-control.service'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { LibNotificationsService } from '@sunbird-cb/notification'
@@ -17,9 +17,10 @@ interface IGroupWithFeatureWidgets extends NsAppsConfig.IGroup {
   featureWidgets: NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink>[]
 }
 @Component({
-  selector: 'ws-widget-btn-profile',
-  templateUrl: './btn-profile.component.html',
-  styleUrls: ['./btn-profile.component.scss'],
+    selector: 'ws-widget-btn-profile',
+    templateUrl: './btn-profile.component.html',
+    styleUrls: ['./btn-profile.component.scss'],
+    standalone: false
 })
 
 export class BtnProfileComponent extends WidgetBaseComponent
@@ -85,7 +86,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
             ...group,
             featureWidgets: _.compact(group.featureIds.map(
               (id: string): NsWidgetResolver.IRenderConfigWithTypedData<NsPage.INavLink> | undefined => {
-                const permissions = _.get(appsConfig, `features[${id}].permission`)
+                const permissions: any = _.get(appsConfig, `features[${id}].permission`)
                 if (!permissions || permissions.length === 0 || this.accessService.hasRole(permissions)) {
                   return ({
                     widgetType: ROOT_WIDGET_CONFIG.actionButton._type,

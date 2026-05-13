@@ -3,7 +3,8 @@ import { Router } from '@angular/router'
 import { MobileAppsService } from '../_services/mobile-apps.service'
 
 @Directive({
-  selector: '[wsWidgetUrlResolver]',
+    selector: '[wsWidgetUrlResolver]',
+    standalone: false
 })
 export class WidgetUrlResolverDirective {
   constructor(

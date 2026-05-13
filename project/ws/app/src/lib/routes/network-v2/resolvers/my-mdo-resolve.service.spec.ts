@@ -6,7 +6,7 @@ describe('MyMdoResolveService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: MyMdoResolveService = TestBed.get(MyMdoResolveService)
+    const service: MyMdoResolveService = TestBed.inject(MyMdoResolveService)
     expect(service).toBeTruthy()
   })
 })

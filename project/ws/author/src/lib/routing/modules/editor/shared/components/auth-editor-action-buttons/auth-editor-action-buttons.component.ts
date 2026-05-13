@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { IActionButtonConfig } from '@ws/author/src/lib/interface/action-button'
+import { IActionButtonConfig } from '../../../../../../interface/action-button'
 
 /**
  * @description
@@ -10,15 +10,16 @@ import { IActionButtonConfig } from '@ws/author/src/lib/interface/action-button'
  * @implements {OnInit}
  */
 @Component({
-  selector: 'ws-auth-editor-action-buttons',
-  templateUrl: './auth-editor-action-buttons.component.html',
-  styleUrls: ['./auth-editor-action-buttons.component.scss'],
+    selector: 'ws-auth-editor-action-buttons',
+    templateUrl: './auth-editor-action-buttons.component.html',
+    styleUrls: ['./auth-editor-action-buttons.component.scss'],
+    standalone: false
 })
 export class AuthEditorActionButtonsComponent implements OnInit {
   @Input() buttonConfig: IActionButtonConfig | null = null
   @Output() action = new EventEmitter<string>()
   showSettingButtons = true
-  constructor() {}
+  constructor() { }
 
   ngOnInit() {
     this.showSettingButtons = this.buttonConfig && this.buttonConfig.enabled ? true : false

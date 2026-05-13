@@ -3,7 +3,6 @@ import { UntypedFormControl } from '@angular/forms'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { WidgetContentService } from '@sunbird-cb/toc'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-// import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
 import { Subscription } from 'rxjs'
 
 interface ISearchQuery {
@@ -11,9 +10,10 @@ interface ISearchQuery {
   query: string
 }
 @Component({
-  selector: 'ws-widget-search-input',
-  templateUrl: './search-input.component.html',
-  styleUrls: ['./search-input.component.scss'],
+    selector: 'ws-widget-search-input',
+    templateUrl: './search-input.component.html',
+    styleUrls: ['./search-input.component.scss'],
+    standalone: false
 })
 export class SearchInputComponent implements OnInit, OnDestroy {
 

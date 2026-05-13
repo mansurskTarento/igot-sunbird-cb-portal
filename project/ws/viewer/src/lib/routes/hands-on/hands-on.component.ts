@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-hands-on',
-  templateUrl: './hands-on.component.html',
-  styleUrls: ['./hands-on.component.scss'],
+    selector: 'viewer-hands-on',
+    templateUrl: './hands-on.component.html',
+    styleUrls: ['./hands-on.component.scss'],
+    standalone: false
 })
 export class HandsOnComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null
@@ -60,8 +61,8 @@ export class HandsOnComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.handsOnData) {
       await this.contentSvc.continueLearning(this.handsOnData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.handsOnData) {
       await this.contentSvc.continueLearning(this.handsOnData.identifier)

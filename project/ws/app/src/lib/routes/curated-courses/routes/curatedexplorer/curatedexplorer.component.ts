@@ -9,9 +9,10 @@ import { Observable } from 'rxjs';
 
 
 @Component({
-  selector: 'ws-app-curatedexplorer',
-  templateUrl: './curatedexplorer.component.html',
-  styleUrls: ['./curatedexplorer.component.scss']
+    selector: 'ws-app-curatedexplorer',
+    templateUrl: './curatedexplorer.component.html',
+    styleUrls: ['./curatedexplorer.component.scss'],
+    standalone: false
 })
 export class CuratedexplorerComponent implements OnInit, OnDestroy {
   sideNavBarOpened = true

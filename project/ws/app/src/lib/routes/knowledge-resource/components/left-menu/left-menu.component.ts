@@ -9,9 +9,10 @@ import { NSKnowledgeResource } from '../../models/knowledge-resource.models'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-knowledge-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-app-knowledge-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent implements OnInit {
   @Input()

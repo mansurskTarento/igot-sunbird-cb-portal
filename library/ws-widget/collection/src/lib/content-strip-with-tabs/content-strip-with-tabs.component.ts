@@ -19,9 +19,9 @@ import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { environment } from 'src/environments/environment'
 // tslint:disable-next-line
 import * as _ from 'lodash'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { NsCardContent } from '../card-content-v2/card-content-v2.model'
-import { ITodayEvents } from '@ws/app/src/lib/routes/events/models/event'
+import { ITodayEvents } from '../_models/event'
 import { TranslateService } from '@ngx-translate/core'
 interface IStripUnitContentData {
   key: string
@@ -58,9 +58,10 @@ interface IStripUnitContentData {
 }
 
 @Component({
-  selector: 'ws-widget-content-strip-with-tabs',
-  templateUrl: './content-strip-with-tabs.component.html',
-  styleUrls: ['./content-strip-with-tabs.component.scss'],
+    selector: 'ws-widget-content-strip-with-tabs',
+    templateUrl: './content-strip-with-tabs.component.html',
+    styleUrls: ['./content-strip-with-tabs.component.scss'],
+    standalone: false
 })
 export class ContentStripWithTabsComponent extends WidgetBaseComponent
   implements

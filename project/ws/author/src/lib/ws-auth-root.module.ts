@@ -4,7 +4,6 @@ import { AuthInitService } from './services/init.service'
 import { ContentAndDataReadMultiLangTOCResolver } from './services/content-and-data-read-multi-lang.service'
 import { InitResolver } from './services/init-resolve.service'
 import { LoaderService } from './services/loader.service'
-// import { HomeModule } from '@ws/author/src/lib/routing/modules/home/home.module'
 import { NgModule, ErrorHandler } from '@angular/core'
 import { CommonModule, APP_BASE_HREF, PlatformLocation } from '@angular/common'
 

@@ -1,11 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewEncapsulation } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-star-rating',
-  templateUrl: './star-rating.component.html',
-  styleUrls: ['./star-rating.component.scss'],
-  encapsulation: ViewEncapsulation.Emulated,
+    selector: 'ws-widget-star-rating',
+    templateUrl: './star-rating.component.html',
+    styleUrls: ['./star-rating.component.scss'],
+    encapsulation: ViewEncapsulation.Emulated,
+    standalone: false
 })
 export class StarRatingComponent implements OnInit {
   // tslint:disable-next-line:no-input-rename

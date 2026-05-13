@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-// import { IActivityCard } from '@ws/app/src/lib/routes/activities/interfaces/activities.model'
 import { Router } from '@angular/router'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-widget-activity-card',
-  templateUrl: './activity-card.component.html',
-  styleUrls: ['./activity-card.component.scss'],
+    selector: 'ws-widget-activity-card',
+    templateUrl: './activity-card.component.html',
+    styleUrls: ['./activity-card.component.scss'],
+    standalone: false
 })
 export class ActivityCardComponent implements OnInit {
   @Input() widgetData!: any // IActivityCard

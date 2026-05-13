@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-platform-walkthrough',
-  templateUrl: './platform-walkthrough.component.html',
-  styleUrls: ['./platform-walkthrough.component.scss'],
+    selector: 'ws-app-platform-walkthrough',
+    templateUrl: './platform-walkthrough.component.html',
+    styleUrls: ['./platform-walkthrough.component.scss'],
+    standalone: false
 })
 export class PlatformWalkthroughComponent implements OnInit {
 

@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core'
 
 @Component({
-  selector: 'viewer-plugin-audio-native',
-  templateUrl: './audio-native.component.html',
-  styleUrls: ['./audio-native.component.scss'],
+    selector: 'viewer-plugin-audio-native',
+    templateUrl: './audio-native.component.html',
+    styleUrls: ['./audio-native.component.scss'],
+    standalone: false
 })
 export class AudioNativeComponent implements OnInit {
   @Input() artifactUrl: string | null = null

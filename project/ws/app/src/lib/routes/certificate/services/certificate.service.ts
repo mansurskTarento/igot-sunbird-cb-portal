@@ -3,7 +3,7 @@ import { Observable } from 'rxjs'
 import * as _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ServerResponse } from 'http'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
+import { ApiService } from '@ws/author'
 // /lib/modules/shared/services/api.service.ts'
 
 const urls = {
@@ -43,8 +43,6 @@ export class CertificateService {
     }
     return this.apiService.post(option.url, option.data)
   }
-
-
 
   downloadCertificate(id: string): Observable<ServerResponse> {
     const option = {
@@ -98,7 +96,7 @@ export class CertificateService {
   consentSubmit(request: any): Observable<ServerResponse> {
     const option = {
       url: `${urls.PROXIES_PREFIX}${urls.CONSENT_API}`,
-      data: request
+      data: request,
     }
     return this.apiService.post(option.url, option.data)
   }

@@ -3,9 +3,10 @@ import { UserProfileService } from '../../../../services/user-profile.service'
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms'
 
 @Component({
-  selector: 'ws-app-ehrms',
-  templateUrl: './ehrms.component.html',
-  styleUrls: ['./ehrms.component.scss'],
+    selector: 'ws-app-ehrms',
+    templateUrl: './ehrms.component.html',
+    styleUrls: ['./ehrms.component.scss'],
+    standalone: false
 })
 export class EhrmsComponent implements OnInit, OnChanges {
   @Input() ehrmsData: any

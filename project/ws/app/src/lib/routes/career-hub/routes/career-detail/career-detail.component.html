@@ -33,11 +33,4 @@
             </ng-container>
           </mat-card>
     </div>
-    <div class="flex flex-1 display-hide hidden-imp ">
-        <div *ngIf="fetchSingleCategoryLoader" class="w-full flex items-center justify-center">
-            <mat-spinner [diameter]="30"></mat-spinner>
-        </div>
-        <ws-app-related-posts class="margin-left-l related_post_div" *ngIf="!fetchSingleCategoryLoader" [relatedDiscussions]="similarPosts">
-        </ws-app-related-posts>
-    </div>
 </div>

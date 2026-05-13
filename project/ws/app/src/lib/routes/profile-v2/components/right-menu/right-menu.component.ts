@@ -4,12 +4,12 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NSProfileDataV2 } from '../../models/profile-v2.model'
 
 @Component({
-  selector: 'app-profile-v2-right-menu',
-  templateUrl: './right-menu.component.html',
-  styleUrls: ['./right-menu.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'app-profile-v2-right-menu',
+    templateUrl: './right-menu.component.html',
+    styleUrls: ['./right-menu.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class RightMenuComponent implements OnInit, OnDestroy {
   completedPercent!: number

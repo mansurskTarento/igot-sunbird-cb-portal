@@ -1,7 +1,9 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .mat-list-item {
   line-height: $size-m;
+
   .mat-list-base {
     font-size: unset;
   }
@@ -13,6 +15,7 @@ ws-widget-user-image {
   height: $user-size;
   font-size: $user-size;
 }
+
 a:link {
   color: black;
 }

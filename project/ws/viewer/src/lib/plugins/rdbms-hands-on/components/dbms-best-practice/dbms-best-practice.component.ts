@@ -1,13 +1,14 @@
 import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core'
 import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
 import { RdbmsHandsOnService } from '../../rdbms-hands-on.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 
 @Component({
-  selector: 'viewer-dbms-best-practice',
-  templateUrl: './dbms-best-practice.component.html',
-  styleUrls: ['./dbms-best-practice.component.scss'],
+    selector: 'viewer-dbms-best-practice',
+    templateUrl: './dbms-best-practice.component.html',
+    styleUrls: ['./dbms-best-practice.component.scss'],
+    standalone: false
 })
 export class DbmsBestPracticeComponent implements OnInit {
   @Input() resourceContent: any

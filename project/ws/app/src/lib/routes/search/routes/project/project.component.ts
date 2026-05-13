@@ -8,9 +8,10 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { NsError, ROOT_WIDGET_CONFIG } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-project',
-  templateUrl: './project.component.html',
-  styleUrls: ['./project.component.scss'],
+    selector: 'ws-app-project',
+    templateUrl: './project.component.html',
+    styleUrls: ['./project.component.scss'],
+    standalone: false
 })
 export class ProjectComponent implements OnInit, OnDestroy {
   defaultSideNavBarOpenedSubscription: Subscription | null = null

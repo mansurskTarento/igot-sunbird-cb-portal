@@ -5,9 +5,10 @@ import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import moment from 'moment'
 
 @Component({
-  selector: 'ws-app-today-event-card',
-  templateUrl: './today-event-card.component.html',
-  styleUrls: ['./today-event-card.component.scss'],
+    selector: 'ws-app-today-event-card',
+    templateUrl: './today-event-card.component.html',
+    styleUrls: ['./today-event-card.component.scss'],
+    standalone: false
 })
 export class TodayEventCardComponent implements OnInit {
   @Input() eventData: any

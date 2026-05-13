@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
+import { EditorContentService } from '../../../../../services/editor-content.service'
 // import { CollectionResolverService } from './../../services/resolver.service'
 
 @Component({
-  selector: 'ws-auth-table-tree-label',
-  templateUrl: './auth-table-tree-label.component.html',
-  styleUrls: ['./auth-table-tree-label.component.scss'],
+    selector: 'ws-auth-table-tree-label',
+    templateUrl: './auth-table-tree-label.component.html',
+    styleUrls: ['./auth-table-tree-label.component.scss'],
+    standalone: false
 })
 export class AuthTableTreeLabelComponent implements OnInit {
   @Input() identifier!: string

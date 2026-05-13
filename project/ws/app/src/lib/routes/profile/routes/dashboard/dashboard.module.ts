@@ -8,14 +8,14 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { CalendarModule } from '../../module/calendar-module/calendar.module'
 import { RouterModule } from '@angular/router'
 import { CoursePendingCardComponent } from './components/course-pending-card/course-pending-card.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
 import { MatDatepickerModule } from '@angular/material/datepicker'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
   declarations: [DashboardComponent, CoursePendingCardComponent],
@@ -39,4 +39,4 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     MatTooltipModule,
   ],
 })
-export class DashboardModule {}
+export class DashboardModule { }

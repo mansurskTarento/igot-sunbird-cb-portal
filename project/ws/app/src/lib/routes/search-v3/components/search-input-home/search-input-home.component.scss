@@ -1,17 +1,20 @@
-@import 'ws-vars';
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .search-v3 .autocomplete-form {
-  // width: 480px;
   font-size: 0.75em;
   display: block;
-  // margin: auto;
 }
 
-.x-small-typography .mat-form-field-prefix {
+// ===============================
+// FORM FIELD MDC MIGRATION
+// ===============================
+
+.x-small-typography .mat-mdc-form-field-icon-prefix {
+
   .mat-icon,
-  .x-small-typography .mat-form-field-suffix .mat-icon {
+  .x-small-typography .mat-mdc-form-field-icon-suffix .mat-icon {
     font-size: 120%;
   }
 }
@@ -20,40 +23,57 @@
   position: absolute;
   left: 0;
   top: 10px;
+  z-index: 2;
 }
-.search-v3 .search .mat-form-field-wrapper {
+
+.search-v3 .search .mat-mdc-text-field-wrapper {
   padding-bottom: 0 !important;
   border-radius: 31px;
   border: 2px solid transparent;
-  background: linear-gradient($white, $white) padding-box,
+  background:
+    linear-gradient($white, $white) padding-box,
     linear-gradient(90deg, #f3962f 0%, #266de6 100%) border-box;
 }
 
-.search-v3
-  .search
-  .mat-form-field-appearance-outline
-  .mat-form-field-outline-thick {
-  color: $white !important;
+// Remove MDC outline border
+.search-v3 .search {
+
+  .mdc-notched-outline__leading,
+  .mdc-notched-outline__notch,
+  .mdc-notched-outline__trailing {
+    border-color: transparent !important;
+  }
 }
 
 .search .mat-full-radius {
   position: relative;
-  .mat-form-field-appearance-outline {
-    .mat-form-field-flex {
-      height: 36px;
-      align-items: center;
-    }
 
-    .mat-form-field-infix {
-      min-height: 36px !important;
-      padding: 0px 0 6px 0;
-    }
-  }
-
-  .mat-form-field {
+  .mat-mdc-form-field {
     font-size: 14px;
+    width: 100%;
   }
-  input.global-search-input-element {
+
+  .mat-mdc-text-field-wrapper {
+    height: 36px !important;
+    align-items: center;
+  }
+
+  .mat-mdc-form-field-flex {
+    height: 36px;
+    align-items: center;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: 36px !important;
+    padding: 0 0 6px 0 !important;
+  }
+
+  .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+
+  input.global-search-input-element,
+  .mdc-text-field__input.global-search-input-element {
     margin-top: 8px;
     padding-left: 1.5rem !important;
     max-width: 80%;
@@ -68,56 +88,68 @@
   @extend %height-mat-toolbar-sibling;
 }
 
-// 821
-@media only screen and (max-width: 821px) {
+// Hide line ripple for MDC
+.mdc-line-ripple {
+  display: none !important;
 }
 
-.mat-form-field-underline {
-  display: none;
-}
+// ===============================
+// SEARCH CONTAINER
+// ===============================
 
 .search-container {
   position: absolute;
   top: 40px;
   z-index: 999;
   max-width: 710px;
-  // min-width: 710px;
   min-width: 500px;
+
   @media (min-width:481px) and (max-width: 768px) {
     min-width: 375px;
   }
+
   @media (max-width: 360px) {
     min-width: 240px;
   }
-    @media (min-width:361px) and (max-width: 480px) {
+
+  @media (min-width:361px) and (max-width: 480px) {
     min-width: 340px;
   }
+
   @media (min-width:769px) and (max-width: 920px) {
     min-width: 400px;
   }
 }
 
+// ===============================
+// CHIP MDC MIGRATION
+// ===============================
+
 .search-categories {
+
   mat-icon {
     height: 16px;
     width: 16px;
     font-size: 4px;
   }
-  mat-chip {
-    /* stylelint-disable */
+
+  .mat-chip-list-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .mat-mdc-chip {
     font-family: Lato;
-    /* stylelint-enable */
     font-weight: 400;
     font-size: 12px;
     line-height: 14.4px;
-    color: $matChipsStandardColor !important;
-  }
-
-  .mat-chip.mat-standard-chip {
+    color: #333d4c !important;
     background-color: $chipStandardBackground !important;
+    margin: 4px 2px;
   }
 
-  .mat-chip.mat-standard-chip.selected-search-category {
+  .mat-mdc-chip.selected-search-category {
     background-color: $brandAccentColor !important;
     color: $white !important;
 
@@ -126,20 +158,36 @@
     }
   }
 
-  .mat-chip-list-wrapper {
-    justify-content: center;
+  // MDC replacement for .mat-chip-list-wrapper
+  .mat-mdc-chip-set {
+
+    .mdc-evolution-chip-set__chips {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      margin: -4px;
+    }
   }
 
-  .mat-chip-list-wrapper .mat-standard-chip {
-    margin: 4px 2px;
+  // Remove unwanted MDC spacing
+  .mdc-evolution-chip {
+    margin: 4px;
+  }
+
+  .mdc-evolution-chip__text-label {
+    color: inherit !important;
+  }
 }
-}
+
+// ===============================
+// RECENT SEARCH
+// ===============================
 
 .recent-search-title {
   color: $textGreyShade3;
-  /* stylelint-disable */
   font-family: Lato;
-  /* stylelint-enable */
   font-weight: 400;
   font-size: 14px;
   line-height: 16.8px;
@@ -156,11 +204,13 @@
 
 .search-home-icon {
   height: 15px;
-  // margin-top: 14px;
-  // margin-right: 8px;
 }
 
-mat-list-item .mat-icon-button mat-icon {
+// ===============================
+// LIST MDC MIGRATION
+// ===============================
+
+mat-list-item .mat-mdc-icon-button mat-icon {
   color: $overleyDarkBackground !important;
   font-size: 16px;
   margin-top: -8px;
@@ -170,6 +220,7 @@ mat-list-item {
   height: 42px !important;
   padding: 0 10px;
   border-radius: 4px;
+
   &:hover {
     background-color: $matListHoverBg;
   }
@@ -180,6 +231,10 @@ mat-list-item {
     height: 16px;
     font-size: 16px;
   }
+
+  .mdc-list-item__content {
+    width: 100%;
+  }
 }
 
 .active-filters {
@@ -188,10 +243,14 @@ mat-list-item {
   align-items: center;
   flex-wrap: wrap;
 
-  .mat-chip-list {
+  .mat-mdc-chip-set {
     margin-right: 16px;
   }
 }
+
+// ===============================
+// SEARCH RESULTS
+// ===============================
 
 .search-results {
   background-color: white;
@@ -212,10 +271,16 @@ mat-list-item {
   }
 }
 
-// Responsive adjustments
+// ===============================
+// RESPONSIVE
+// ===============================
+
 @media (max-width: 599px) {
+
   .search-container {
+
     .search-categories {
+
       .mat-button-toggle-group {
         width: 100%;
         display: flex;
@@ -228,10 +293,15 @@ mat-list-item {
   }
 }
 
+// ===============================
+// CLOSE ICON
+// ===============================
+
 .search-close-icon {
   position: absolute;
   right: 66px;
   top: 8px;
+
   &.mat-icon {
     font-size: 18px;
     height: 18px;
@@ -239,10 +309,15 @@ mat-list-item {
   }
 }
 
+// ===============================
+// SEARCH BUTTON
+// ===============================
+
 .global-search {
   height: 30px !important;
   position: absolute !important;
   right: 3px;
+  top: 3px;
 }
 
 .disabled-search-btn {
@@ -251,23 +326,52 @@ mat-list-item {
   border: 1px solid $borderColor !important;
 }
 
-.disabled-search-btn.mat-flat-button[disabled] {
-  opacity: 100% !important;
+.disabled-search-btn.mat-mdc-unelevated-button[disabled],
+.disabled-search-btn.mat-mdc-raised-button[disabled] {
+  opacity: 1 !important;
 }
+
+// ===============================
+// GENERIC
+// ===============================
+
 .courser-pointer {
   cursor: pointer;
 }
+
 .recent_link {
   height: 40px;
   line-height: 1;
-  // span {
-  //   // margin-top: 14px;
-  // }
 }
-.recent-search-list {
-    width: 100% !important;
 
-    .mat-list-item-content {
-      padding: 0 16px !important;
-    }
+.recent-search-list {
+  width: 100% !important;
+
+  .mdc-list-item__content {
+    padding: 0 16px !important;
+  }
+}
+
+// ===============================
+// BUTTON MDC FIXES
+// ===============================
+
+.mat-mdc-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-outlined-button {
+
+  .mdc-button__label {
+    letter-spacing: normal !important;
+  }
+}
+
+// Remove default MDC padding issues
+.mat-mdc-form-field-infix {
+  width: auto !important;
+}
+
+// Fix chip focus overlay
+.mat-mdc-chip-focus-overlay {
+  display: none;
 }

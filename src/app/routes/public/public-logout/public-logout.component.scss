@@ -1,6 +1,6 @@
-@import "ws-common";
-@import "ws-vars";
-@import "ws-mixins";
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .main_container {
   font-family: "Poppins", sans-serif;
@@ -24,8 +24,8 @@
 
 .left_container {
   flex: 1;
-      position: relative;
-      max-width: 100%;
+  position: relative;
+  max-width: 100%;
 
   @include breakpoint-xs {
     display: none !important;
@@ -34,14 +34,16 @@
 
 .logo_box {
   width: 320px;
+
   img.logo_img {
     width: 100%;
   }
 }
 
 .logout_logo {
-width:300px;
+  width: 300px;
 }
+
 .slider_box {
   padding: 5rem 0 2rem 0;
   width: 320px;
@@ -116,9 +118,10 @@ width:300px;
 .mat-subheading-errmsg {
   font: 500 16px/24px Montserrat, sans-serif !important;
 }
+
 .parichay-errmsg {
-    text-decoration: underline;
-    cursor: pointer;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .features-image {
@@ -126,6 +129,7 @@ width:300px;
   justify-content: center;
   align-items: center;
 }
+
 .features-image img {
   max-width: 90%;
 }

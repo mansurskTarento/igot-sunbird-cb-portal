@@ -4,7 +4,7 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, Data } from '@angular/router'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
-import { MobileAppsService } from 'src/app/services/mobile-apps.service'
+import { MobileAppsService } from '../../../../services/mobile-apps.service'
 
 interface IMobileAppLink {
   appsAndroid: string
@@ -23,9 +23,10 @@ interface IMobileAppLink {
 }
 
 @Component({
-  selector: 'ws-app-mobile-app-home',
-  templateUrl: './mobile-app-home.component.html',
-  styleUrls: ['./mobile-app-home.component.scss'],
+    selector: 'ws-app-mobile-app-home',
+    templateUrl: './mobile-app-home.component.html',
+    styleUrls: ['./mobile-app-home.component.scss'],
+    standalone: false
 })
 export class MobileAppHomeComponent implements OnInit, OnDestroy {
   selectedTabIndex = this.matPlatform.IOS ? 1 : 0

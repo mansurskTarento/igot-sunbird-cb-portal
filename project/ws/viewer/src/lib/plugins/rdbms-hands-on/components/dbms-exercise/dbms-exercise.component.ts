@@ -3,13 +3,14 @@ import { RdbmsHandsOnService } from '../../rdbms-hands-on.service'
 import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
 import { SubmissionDialogComponent } from '../submission-dialog/submission-dialog.component'
 import { EventService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'viewer-dbms-exercise',
-  templateUrl: './dbms-exercise.component.html',
-  styleUrls: ['./dbms-exercise.component.scss'],
+    selector: 'viewer-dbms-exercise',
+    templateUrl: './dbms-exercise.component.html',
+    styleUrls: ['./dbms-exercise.component.scss'],
+    standalone: false
 })
 export class DbmsExerciseComponent implements OnDestroy, OnChanges {
   @Input() resourceContent: any
@@ -189,7 +190,7 @@ export class DbmsExerciseComponent implements OnDestroy, OnChanges {
         },
         {
           id: this.resourceContent.content.identifier,
-      })
+        })
     }
     if (event === 'codeinput') {
       this.isInput = false
@@ -203,14 +204,14 @@ export class DbmsExerciseComponent implements OnDestroy, OnChanges {
       if (this.isInput) {
         this.raiseInteractTelemetry('editor', 'codeinput')
       }
-    },                               2 * 60000)
+    }, 2 * 60000)
   }
   startClickTimer() {
     this.clickInterval = setInterval(() => {
       if (this.isClick) {
         this.raiseInteractTelemetry('editor', 'buttonclick')
       }
-    },                               2 * 60000)
+    }, 2 * 60000)
   }
 
 }

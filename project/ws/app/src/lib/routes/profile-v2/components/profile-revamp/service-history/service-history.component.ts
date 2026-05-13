@@ -1,81 +1,82 @@
-import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core';
-import { DatePipe } from '@angular/common';
-import { MAT_LEGACY_DIALOG_DATA, MatLegacyDialogRef } from '@angular/material/legacy-dialog';
-import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service';
-import * as _ from 'lodash';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
+import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnChanges, OnInit, Output } from '@angular/core'
+import { DatePipe } from '@angular/common'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
+import * as _ from 'lodash'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
   selector: 'ws-app-service-history',
   templateUrl: './service-history.component.html',
   styleUrls: ['./service-history.component.scss'],
-  providers: [DatePipe]
+  providers: [DatePipe],
+  standalone: false
 })
 export class ServiceHistoryComponent implements OnInit, OnChanges {
   //#region (global variables)
-  @Input() serviceHistoryDetails: any = {};
-  @Input() isCurrentUser = false;
-  @Input() currentDesignation = '';
-  @Input() currentOrgName = '';
-  @Input() isUpdated = false;
-  @Output() openProfileEntryEditDialog = new EventEmitter();
+  @Input() serviceHistoryDetails: any = {}
+  @Input() isCurrentUser = false
+  @Input() currentDesignation = ''
+  @Input() currentOrgName = ''
+  @Input() isUpdated = false
+  @Output() openProfileEntryEditDialog = new EventEmitter()
 
   serviceHistoryList: any[] = []
-  userId: string = '';
-  isPopup: boolean = false;
+  userId: string = ''
+  isPopup: boolean = false
   //#endregion (global variables)
 
   constructor(
     private datePipe: DatePipe,
-    private dialogRef: MatLegacyDialogRef<ServiceHistoryComponent>,
-        @Inject(MAT_LEGACY_DIALOG_DATA) private data: any,
+    private dialogRef: MatDialogRef<ServiceHistoryComponent>,
+    @Inject(MAT_DIALOG_DATA) private data: any,
     private profileV2RevampSvc: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
-  ) { 
+  ) {
     if (this.data && this.data.userId) {
-      this.userId = data.userId;
+      this.userId = data.userId
       this.isPopup = true
-      this.isCurrentUser = data.isCurrentUser || false;
-      this.currentDesignation = data.currentDesignation || '';
-      this.currentOrgName = data.currentOrgName || '';
+      this.isCurrentUser = data.isCurrentUser || false
+      this.currentDesignation = data.currentDesignation || ''
+      this.currentOrgName = data.currentOrgName || ''
     }
   }
 
   ngOnInit() {
-    if(this.isPopup) {
-      this.getServiceHistoryList();
+    if (this.isPopup) {
+      this.getServiceHistoryList()
     }
-   }
+  }
 
   getServiceHistoryList() {
     if (this.userId) {
       this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'serviceHistory').subscribe((res: any) => {
         if (res) {
-          this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', []);
-          this.serviceHistoryDetails = _.get(res, 'result.response', []);
-          this.formateData();
+          this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', [])
+          this.serviceHistoryDetails = _.get(res, 'result.response', [])
+          this.formateData()
         }
       }, (err: any) => {
-        if(err) {
-          this.openSnackbar('something went wrong while fetching service history please try again later', 5000);
+        if (err) {
+          this.openSnackbar('something went wrong while fetching service history please try again later', 5000)
         }
-      });
+      })
     }
   }
 
-  ngOnChanges() { 
-    if(this.serviceHistoryDetails) {
-      this.serviceHistoryList = _.get(this.serviceHistoryDetails, 'serviceHistoryList', []);
-      this.formateData();
-    } 
+  ngOnChanges() {
+    if (this.serviceHistoryDetails) {
+      this.serviceHistoryList = _.get(this.serviceHistoryDetails, 'serviceHistoryList', [])
+      this.formateData()
+    }
   }
 
   formateData() {
-    if(this.serviceHistoryList) {
+    if (this.serviceHistoryList) {
       let hasCurrentOrgDetails = false
       this.serviceHistoryList.forEach((service: any) => {
-        if(service.orgName === this.currentOrgName && service.designation === this.currentDesignation) {
+        if (service.orgName === this.currentOrgName && service.designation === this.currentDesignation) {
           service['isCurrentOrgDetails'] = true
           hasCurrentOrgDetails = true
         }
@@ -88,9 +89,9 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
         const yearGap = startDate ? endDate.getFullYear() - startDate.getFullYear() : 0
         service['orgDetails'] = orgDetails
         service['period'] = `${formatedStartDate} - ${formatedEndDate} - ${yearGap} year${yearGap === 1 ? 's' : ''}`
-        service['showMore'] = false;
+        service['showMore'] = false
       })
-      if(!hasCurrentOrgDetails) {
+      if (!hasCurrentOrgDetails) {
         const orgDetails: any = {
           orgName: this.currentOrgName,
           orgLogo: '',
@@ -98,33 +99,33 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
           isCurrentOrgDetails: true,
           orgDetails: this.currentOrgName,
         }
-        if(this.serviceHistoryList && this.serviceHistoryList.length > 0) {
+        if (this.serviceHistoryList && this.serviceHistoryList.length > 0) {
           this.serviceHistoryList.unshift(orgDetails)
         } else {
           this.serviceHistoryList = [orgDetails]
         }
         this.serviceHistoryDetails.count = this.serviceHistoryDetails.count + 1
 
-        if(!this.isPopup && this.serviceHistoryList && this.serviceHistoryList.length > 2) {
+        if (!this.isPopup && this.serviceHistoryList && this.serviceHistoryList.length > 2) {
           this.serviceHistoryList = this.serviceHistoryList.slice(0, 2)
         }
       }
       this.cdr.detectChanges()
-    } 
+    }
   }
-  
+
   //#region (functions)
   openEditDialog(entry: any = {}): void {
-    if(this.isPopup) { 
-      this.dialogRef.close(entry);
+    if (this.isPopup) {
+      this.dialogRef.close(entry)
     } else {
-      this.openProfileEntryEditDialog.emit(entry);
+      this.openProfileEntryEditDialog.emit(entry)
     }
   }
 
   closePopup(): void {
-    if(this.isPopup) {
-      this.dialogRef.close();
+    if (this.isPopup) {
+      this.dialogRef.close()
     }
   }
 
@@ -134,5 +135,5 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     })
   }
   //#endregion (functions)
-  
+
 }

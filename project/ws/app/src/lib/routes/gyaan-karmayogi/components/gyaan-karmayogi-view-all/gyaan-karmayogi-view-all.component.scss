@@ -1,8 +1,8 @@
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
-  @extend %page-center;
+    @extend %page-center;
 }
 
 .filter-wrapper {
@@ -11,8 +11,9 @@
     border: 1px 0px 0px 0px;
     background: rgba(255, 255, 255, 1);
     padding: 16px;
+
     p.title {
-       font-family: Montserrat;
+        font-family: Montserrat;
         font-size: 16px;
         font-weight: 600;
         line-height: 19.5px;
@@ -20,18 +21,21 @@
 
 
     }
-    .individual-block{
+
+    .individual-block {
         p.title {
             font-family: Montserrat;
             font-size: 16px;
             font-weight: 600;
             line-height: 19.5px;
             text-align: left;
-            
-    
+
+
         }
+
         .search-filter {
             position: relative;
+
             input {
                 width: 227px;
                 height: 42px;
@@ -39,17 +43,19 @@
                 border-radius: 4px;
                 border: 1px solid rgba(0, 0, 0, 0.16)
             }
-            mat-icon{
+
+            mat-icon {
                 position: absolute;
                 left: 8px;
                 top: 14px;
             }
 
         }
-        .check-list{
+
+        .check-list {
             padding: 4px 0;
         }
-        
+
     }
 
 }
@@ -60,9 +66,10 @@
         height: 40px;
         padding-left: 24px;
         margin-right: 24px;
-        
+
         border: none;
     }
+
     button {
         height: 40px;
         background-color: rgba(243, 150, 47, 1);
@@ -76,6 +83,7 @@
 
     }
 }
+
 .filter-skeleton {
     background: white;
     padding: 16px;

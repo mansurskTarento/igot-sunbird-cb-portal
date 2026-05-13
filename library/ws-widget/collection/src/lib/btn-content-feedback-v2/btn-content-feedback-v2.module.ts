@@ -1,20 +1,17 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-
-import { EditorQuillModule } from '../discussion-forum/editor-quill/editor-quill.module'
-
 import { BtnContentFeedbackV2Component } from './components/btn-content-feedback-v2/btn-content-feedback-v2.component'
 import { BtnContentFeedbackDialogV2Component } from './components/btn-content-feedback-dialog-v2/btn-content-feedback-dialog-v2.component'
 import { FeedbackSnackbarComponent } from './components/feedback-snackbar/feedback-snackbar.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatButtonModule } from '@angular/material/button'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatInputModule } from '@angular/material/input'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
     declarations: [
@@ -26,7 +23,6 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        EditorQuillModule,
         MatButtonModule,
         MatIconModule,
         MatTooltipModule,

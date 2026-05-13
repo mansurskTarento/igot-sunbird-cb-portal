@@ -1,16 +1,13 @@
 import { Component, OnInit, Input } from '@angular/core'
-// import {
-//   IChallenges,
-//   IActivityCard,
-// } from '../../../../../../project/ws/app/src/lib/routes/activities/interfaces/activities.model'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Router, NavigationExtras } from '@angular/router'
-import { LegacyProgressSpinnerMode as ProgressSpinnerMode } from '@angular/material/legacy-progress-spinner'
+import { ProgressSpinnerMode } from '@angular/material/progress-spinner'
 
 @Component({
-  selector: 'ws-widget-challenge',
-  templateUrl: './challenge.component.html',
-  styleUrls: ['./challenge.component.scss'],
+    selector: 'ws-widget-challenge',
+    templateUrl: './challenge.component.html',
+    styleUrls: ['./challenge.component.scss'],
+    standalone: false
 })
 export class ChallengeComponent implements OnInit {
   @Input() widgetData!: any // IChallenges

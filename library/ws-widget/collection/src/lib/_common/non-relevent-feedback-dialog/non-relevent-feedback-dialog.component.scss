@@ -1,4 +1,6 @@
-@import '_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-common.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
 
 .overlay-text {
   font-family: Montserrat;
@@ -9,5 +11,5 @@
 }
 
 ::ng-deep .cdk-overlay-dark-backdrop {
-  background: $overleyDarkBackground;
+  background: #00000099;
 }

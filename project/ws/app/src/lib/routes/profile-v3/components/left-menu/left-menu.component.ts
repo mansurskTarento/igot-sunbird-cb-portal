@@ -8,9 +8,10 @@ import { StepService } from '../../services/step.service'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-l-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-app-l-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class SetupLeftMenuComponent implements OnInit, OnDestroy {
   @Input()

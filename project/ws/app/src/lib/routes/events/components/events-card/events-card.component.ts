@@ -4,9 +4,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-events-card',
-  templateUrl: './events-card.component.html',
-  styleUrls: ['./events-card.component.scss'],
+    selector: 'ws-app-events-card',
+    templateUrl: './events-card.component.html',
+    styleUrls: ['./events-card.component.scss'],
+    standalone: false
 })
 export class EventsCardComponent implements OnInit {
   @Input() eventData: any

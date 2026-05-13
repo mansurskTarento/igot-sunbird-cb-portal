@@ -1,11 +1,12 @@
 import { Component, OnInit, OnChanges, Input, Output, EventEmitter } from '@angular/core'
-import { NsTnc } from '../../../../../../../../../src/app/models/tnc.model'
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select'
+import { NsTnc } from '../../../models/tnc.model'
+import { MatSelectChange } from '@angular/material/select'
 
 @Component({
-  selector: 'ws-app-tnc-renderer',
-  templateUrl: './tnc-renderer.component.html',
-  styleUrls: ['./tnc-renderer.component.scss'],
+    selector: 'ws-app-tnc-renderer',
+    templateUrl: './tnc-renderer.component.html',
+    styleUrls: ['./tnc-renderer.component.scss'],
+    standalone: false
 })
 export class TncRendererComponent implements OnInit, OnChanges {
 

@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-web-module-container',
-  templateUrl: './web-module.component.html',
-  styleUrls: ['./web-module.component.scss'],
+    selector: 'viewer-web-module-container',
+    templateUrl: './web-module.component.html',
+    styleUrls: ['./web-module.component.scss'],
+    standalone: false
 })
 export class WebModuleComponent implements OnInit {
   @Input() isFetchingDataComplete = false
@@ -15,9 +15,6 @@ export class WebModuleComponent implements OnInit {
   @Input() forPreview = false
   @Input() webmoduleData: NsContent.IContent | null = null
   @Input() webmoduleManifest: any
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   @Input() isPreviewMode = false
   isTypeOfCollection = false
   collectionId: string | null = null

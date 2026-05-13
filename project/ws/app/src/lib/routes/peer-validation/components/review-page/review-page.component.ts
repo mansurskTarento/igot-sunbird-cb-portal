@@ -9,9 +9,10 @@ import { SuccessDialogComponent } from '../survey-dialog/components/success-dial
 import { VideoPreviewDialogComponent } from '../survey-dialog/components/video-preview-dialog/video-preview-dialog.component'
 
 @Component({
-  selector: 'ws-app-review-page',
-  templateUrl: './review-page.component.html',
-  styleUrls: ['./review-page.component.scss'],
+    selector: 'ws-app-review-page',
+    templateUrl: './review-page.component.html',
+    styleUrls: ['./review-page.component.scss'],
+    standalone: false
 })
 export class ReviewPageComponent implements OnInit {
   requestId: string | null = null
@@ -55,7 +56,6 @@ export class ReviewPageComponent implements OnInit {
     this.createdAt = queryParams['createdAt'] || state['createdAt'] || null
     this.isReviewSubmitted = state['isReviewSubmitted'] || false
     const surveyEndDate = queryParams['surveyEndDate'] || state['surveyEndDate'] || null
-
 
     if (surveyEndDate && new Date(surveyEndDate) < new Date()) {
       this.snackBar.open('Survey has ended.', 'X', { duration: 3000 })

@@ -10,7 +10,7 @@
       "prefix": "ws",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "i18n": {
             "sourceLocale": "en-US",
             "locales": {
@@ -18,24 +18,21 @@
             }
           },
           "options": {
-            "outputPath": "dist/www/fusion",
+            "outputPath": {
+              "base": "dist/www/fusion"
+            },
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "src/polyfills.ts"
+            ],
             "tsConfig": "tsconfig.app.json",
             "preserveSymlinks": true,
             "assets": [
               "src/favicon.ico",
               "src/favicon.png",
-              "src/fusion-assets/icons/",
-              "src/fusion-assets/images/",
               "src/dashboard-assets/",
-              "src/manifest.json",
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@sunbird-cb/discussions-ui-v8/assets",
-                "output": "./assets/discussion-ui"
-              }
+              "src/fusion-assets/",
+              "src/manifest.json"
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -57,31 +54,24 @@
                 "bundleName": "theme-igot"
               },
               "node_modules/pdfjs-dist/web/pdf_viewer.css",
-              "src/fusion-assets/fonts/lato/stylesheet.css",
-              "src/fusion-assets/fonts/montserrat/stylesheet.css",
-              "node_modules/@sunbird-cb/discussions-ui-v8/assets/styles/global.scss",
-              "src/dashboard-assets/fonts/lato/stylesheet.css",
-              "src/dashboard-assets/fonts/montserrat/stylesheet.css",
               "node_modules/igot-cb-tour-guide/scss/guided-tour-base-theme.scss",
               "node_modules/@ctrl/ngx-emoji-mart/picker.css",
               "node_modules/ckeditor5/dist/ckeditor5.css"
             ],
             "scripts": [
-              "node_modules/jquery/dist/jquery.min.js",
               "node_modules/shepherd.js/dist/js/shepherd.min.js",
               "node_modules/@project-sunbird/telemetry-sdk/index.js",
               "src/js/smartechclient.js"
             ],
             "aot": false,
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
             "allowedCommonJsDependencies": [
               "@ckeditor/ckeditor5-editor-classic"
-            ]
+            ],
+            "browser": "src/main.ts"
           },
           "configurations": {
             "nb": {
@@ -103,10 +93,8 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -118,8 +106,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "np": {
               "fileReplacements": [
@@ -132,10 +119,8 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -147,8 +132,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "dev": {
               "fileReplacements": [
@@ -161,10 +145,8 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -176,8 +158,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "preprod": {
               "fileReplacements": [
@@ -190,10 +171,8 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -205,8 +184,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": false,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "benchmark": {
               "fileReplacements": [
@@ -219,10 +197,8 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": false,
+              "aot": true,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -234,8 +210,7 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             }
           },
           "defaultConfiguration": ""
@@ -244,24 +219,24 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "port": 3000,
-            "browserTarget": "fusion:build"
+            "buildTarget": "fusion:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "fusion:build:production"
+              "buildTarget": "fusion:build:production"
             },
             "nb": {
-              "browserTarget": "fusion:build:nb"
+              "buildTarget": "fusion:build:nb"
             },
             "de": {
-              "browserTarget": "fusion:build:de"
+              "buildTarget": "fusion:build:de"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "fusion:build"
+            "buildTarget": "fusion:build"
           }
         },
         "test": {
@@ -273,12 +248,7 @@
             "karmaConfig": "karma.conf.js",
             "assets": [
               "src/favicon.ico",
-              "src/fusion-assets",
-              {
-                "glob": "**/*.*",
-                "input": "./node_modules/@sunbird-cb/discussions-ui-v8/assets",
-                "output": "./assets/discussion-ui"
-              }
+              "src/fusion-assets"
             ],
             "styles": [
               "src/styles.scss"
@@ -471,7 +441,29 @@
   },
   "schematics": {
     "@schematics/angular:component": {
-      "style": "scss"
+      "style": "scss",
+      "type": "component"
+    },
+    "@schematics/angular:directive": {
+      "type": "directive"
+    },
+    "@schematics/angular:service": {
+      "type": "service"
+    },
+    "@schematics/angular:guard": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:interceptor": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:module": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:pipe": {
+      "typeSeparator": "."
+    },
+    "@schematics/angular:resolver": {
+      "typeSeparator": "."
     }
   },
   "cli": {

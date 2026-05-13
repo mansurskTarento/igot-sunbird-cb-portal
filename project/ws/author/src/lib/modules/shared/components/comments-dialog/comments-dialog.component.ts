@@ -1,13 +1,15 @@
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
+
 import { Component, OnInit, Inject } from '@angular/core'
 import { UntypedFormGroup, UntypedFormBuilder, Validators, AbstractControl } from '@angular/forms'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { NSContent } from '@ws/author/src/lib/interface/content'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { AuthInitService } from '../../../../services/init.service'
+import { NSContent } from '../../../../interface/content'
 
 @Component({
-  selector: 'ws-auth-root-comments-dialog',
-  templateUrl: './comments-dialog.component.html',
-  styleUrls: ['./comments-dialog.component.scss'],
+    selector: 'ws-auth-root-comments-dialog',
+    templateUrl: './comments-dialog.component.html',
+    styleUrls: ['./comments-dialog.component.scss'],
+    standalone: false
 })
 export class CommentsDialogComponent implements OnInit {
   commentsForm!: UntypedFormGroup
@@ -20,7 +22,7 @@ export class CommentsDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<CommentsDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: NSContent.IContentMeta,
     private authInitService: AuthInitService,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.showNewFlow = this.authInitService.authAdditionalConfig.allowActionHistory

@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .other-portal-box {
@@ -8,20 +8,24 @@
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.08);
 }
+
 .card-text-box {
     vertical-align: middle;
     width: 80%;
     margin: auto;
 }
+
 .portal-box {
-    padding:80px 0;
+    padding: 80px 0;
     text-align: center;
 }
+
 .discuss_icon {
     height: 48px;
     width: 48px;
     margin-bottom: 8px;
 }
+
 .start-discuss {
     margin-top: 16px;
     background-color: #1B4CA1;

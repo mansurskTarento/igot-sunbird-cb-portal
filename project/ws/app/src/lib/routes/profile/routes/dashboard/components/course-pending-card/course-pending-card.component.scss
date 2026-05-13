@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 // .card-img {
 //   width: 150px;
@@ -40,6 +41,7 @@
 
   $title-line-count: 2;
   $title-line-height: 1.3em;
+
   .title-text {
     margin: $size-s 0;
     position: relative;

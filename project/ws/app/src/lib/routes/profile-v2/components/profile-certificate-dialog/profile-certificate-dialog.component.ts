@@ -1,16 +1,17 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-profile-certificate-dialog',
-  templateUrl: './profile-certificate-dialog.component.html',
-  styleUrls: ['./profile-certificate-dialog.component.scss'],
+    selector: 'ws-app-profile-certificate-dialog',
+    templateUrl: './profile-certificate-dialog.component.html',
+    styleUrls: ['./profile-certificate-dialog.component.scss'],
+    standalone: false
 })
 export class ProfileCertificateDialogComponent implements OnInit {
 
   url!: string
   constructor(public dialogRef: MatDialogRef<ProfileCertificateDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: any) { }
+    @Inject(MAT_DIALOG_DATA) public data: any) { }
 
   ngOnInit() {
     this.url = this.data.cet

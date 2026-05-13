@@ -1,16 +1,17 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { EventService } from '../../services/event.service'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ViewUsersComponent } from './view-users/view-users.component'
 import { IUserDetails } from '../../interfaces/user-details.model'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-auth-profile-detail',
-  templateUrl: './profile-detail.component.html',
-  styleUrls: ['./profile-detail.component.scss'],
+    selector: 'ws-auth-profile-detail',
+    templateUrl: './profile-detail.component.html',
+    styleUrls: ['./profile-detail.component.scss'],
+    standalone: false
 })
 export class ProfileDetailComponent implements OnInit, OnDestroy {
   data: any

@@ -1,5 +1,4 @@
 import { Component, OnInit, Output, EventEmitter, Input, OnChanges, OnDestroy } from '@angular/core'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import {
   UntypedFormGroup,
   UntypedFormBuilder,
@@ -13,19 +12,22 @@ import { debounceTime, map } from 'rxjs/operators'
 import { Observable, Subscription } from 'rxjs'
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout'
 
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component.ts'
 import { FillUps, Option } from '../quiz-class'
 import { NOTIFICATION_TIME } from '../../constants/quiz-constants'
 
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
 import { QuizStoreService } from '../../services/store.service'
 import { OpenPlainCkEditorComponent } from '../../shared/components/open-plain-ck-editor/open-plain-ck-editor.component'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { NotificationComponent } from '../../../../../../../../modules/shared/components/notification/notification.component'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-fill-ups-editor',
-  templateUrl: './fill-ups-editor.component.html',
-  styleUrls: ['./fill-ups-editor.component.scss'],
+    selector: 'ws-auth-fill-ups-editor',
+    templateUrl: './fill-ups-editor.component.html',
+    styleUrls: ['./fill-ups-editor.component.scss'],
+    standalone: false
 })
 export class FillUpsEditorComponent implements OnInit, OnChanges, OnDestroy {
   @Input() submitPressed = false

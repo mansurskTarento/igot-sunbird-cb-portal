@@ -10,9 +10,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-curated-home',
-  templateUrl: './curated-home.component.html',
-  styleUrls: ['./curated-home.component.scss'],
+    selector: 'ws-app-curated-home',
+    templateUrl: './curated-home.component.html',
+    styleUrls: ['./curated-home.component.scss'],
+    standalone: false
 })
 export class CuratedHomeComponent implements OnInit {
   public displayLoader!: Observable<boolean>

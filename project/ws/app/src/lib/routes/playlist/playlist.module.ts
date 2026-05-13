@@ -3,20 +3,20 @@ import { NgModule } from '@angular/core'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 
 import {
-  BtnPageBackModule,
-  BtnPlaylistModule,
-  DisplayContentsModule,
-  DisplayContentTypeModule,
-  PickerContentModule,
-  TourModule,
-  // EmailInputModule,
-  TreeCatalogModule,
-  UserAutocompleteModule,
-  UserImageModule,
-  ContentPickerV2Module,
-  BtnLinkedinShareModule,
-  BtnFacebookShareModule,
-  BtnTwitterShareModule,
+    BtnPageBackModule,
+    BtnPlaylistModule,
+    DisplayContentsModule,
+    DisplayContentTypeModule,
+    PickerContentModule,
+    TourModule,
+    // EmailInputModule,
+    TreeCatalogModule,
+    UserAutocompleteModule,
+    UserImageModule,
+    ContentPickerV2Module,
+    BtnLinkedinShareModule,
+    BtnFacebookShareModule,
+    BtnTwitterShareModule,
 } from '@sunbird-cb/collection'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { DefaultThumbnailModule, PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
@@ -33,22 +33,22 @@ import { PlaylistEditComponent } from './routes/playlist-edit/playlist-edit.comp
 import { PlaylistHomeComponent } from './routes/playlist-home/playlist-home.component'
 import { PlaylistNotificationComponent } from './routes/playlist-notification/playlist-notification.component'
 import { DragDropModule } from '@angular/cdk/drag-drop'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatRippleModule } from '@angular/material/core'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
     declarations: [
         PlaylistCardComponent,
@@ -103,6 +103,6 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         BtnLinkedinShareModule,
         BtnFacebookShareModule,
         BtnTwitterShareModule,
-    ]
+    ],
 })
 export class PlaylistModule { }

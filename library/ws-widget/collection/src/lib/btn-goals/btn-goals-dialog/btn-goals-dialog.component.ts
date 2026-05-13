@@ -1,12 +1,13 @@
 import { Component, OnInit, Inject } from '@angular/core'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 import { NsGoal } from '../btn-goals.model'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-widget-btn-goals-dialog',
-  templateUrl: './btn-goals-dialog.component.html',
-  styleUrls: ['./btn-goals-dialog.component.scss'],
+    selector: 'ws-widget-btn-goals-dialog',
+    templateUrl: './btn-goals-dialog.component.html',
+    styleUrls: ['./btn-goals-dialog.component.scss'],
+    standalone: false
 })
 export class BtnGoalsDialogComponent implements OnInit {
   fetchGoals: TFetchStatus = 'none'

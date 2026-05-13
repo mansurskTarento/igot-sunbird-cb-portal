@@ -1,17 +1,17 @@
 import { Component, OnInit, Input } from '@angular/core'
-import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-careers-card',
-  templateUrl: './careers-card.component.html',
-  styleUrls: ['./careers-card.component.scss'],
+    selector: 'ws-app-careers-card',
+    templateUrl: './careers-card.component.html',
+    styleUrls: ['./careers-card.component.scss'],
+    standalone: false
 })
 export class CareersCardComponent implements OnInit {
   @Input()
-  discuss!: NSDiscussData.IDiscussionData
+  discuss!: any
 
   constructor(private router: Router, private translate: TranslateService,
               private langtranslations: MultilingualTranslationsService) {

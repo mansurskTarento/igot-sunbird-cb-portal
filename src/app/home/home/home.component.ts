@@ -2,7 +2,7 @@ import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarConfig as MatSnackBarConfig } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar, MatSnackBarConfig as MatSnackBarConfig } from '@angular/material/snack-bar'
 /* tslint:disable */
 import _ from 'lodash'
 
@@ -12,8 +12,7 @@ import { takeUntil } from 'rxjs/operators'
 
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
-// import { IUserProfileDetailsFromRegistry } from '@ws/app/src/lib/routes/user-profile/models/user-profile.model'
+import { UserProfileService } from '@ws/app'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 
 // import { NotificationComponent } from './notification/notification.component'
@@ -36,9 +35,10 @@ function isStripActive(strip: any): boolean {
 const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-  selector: 'ws-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+    selector: 'ws-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   rootOrgId: string = ''
 
   // You could also add it as a class property for better encapsulation
-  private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS;
+  private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS
 
   ngOnInit() {
     let isNotMyUser = false
@@ -269,7 +269,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     this.enrollInterval = setInterval(() => {
       this.getEnrollmentData()
-    }, 1000)
+    },                                1000)
 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -278,9 +278,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     // this.commondataSvc.mandatoryDetails()
   }
-
-
-
 
   ngAfterViewInit() {
     // Make the first few content strips visible initially
@@ -327,7 +324,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.handleUpdateMobileNudge()
         }
 
-      }, (error: HttpErrorResponse) => {
+      },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open('Unable to fetch pending approval list')
         }
@@ -426,7 +423,6 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.isKPPanelenabled = false
   }
 
-
   handleMDOMsgstatus() {
     const reqUpdates = {
       request: {
@@ -442,7 +438,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (res) {
         this.isMDOMsgOpen = true
       }
-    }, (error: HttpErrorResponse) => {
+    },                                                               (error: HttpErrorResponse) => {
       if (!error.ok) {
         this.matSnackBar.open(error.error.text)
       }
@@ -471,7 +467,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.approvedStatus = false
           }
         }
-      }, (error: HttpErrorResponse) => {
+      },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
@@ -500,7 +496,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.rejectedStatus = false
           }
         }
-      }, (error: HttpErrorResponse) => {
+      },         (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
@@ -512,7 +508,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
     }
     if (!this.isTelemetryRaised && event && !event.viewMoreUrl) {
-      if (event.contentId && event.contentId.includes("ext")) {
+      if (event.contentId && event.contentId.includes('ext')) {
         this.events.raiseInteractTelemetry(
           {
             type: 'click',
@@ -521,10 +517,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
           },
           {
             id: event.contentId || event.identifier,
-            type: 'External content'
+            type: 'External content',
           },
           {
-            module: WsEvents.EnumTelemetrymodules.HOME
+            module: WsEvents.EnumTelemetrymodules.HOME,
           }
         )
       } else {
@@ -548,7 +544,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         else if (event.typeOfTelemetry === 'providers') {
           id = event.orgId
           type = 'org'
-          _subType = `training-institutions`
+          _subType = 'training-institutions'
         }
 
         this.events.raiseInteractTelemetry(
@@ -556,7 +552,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             type: 'click',
             subType: _subType,
             id: 'card-content',
-            pageid: "/page/home"
+            pageid: '/page/home',
           },
           {
             id,
@@ -585,6 +581,5 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     )
   }
-
 
 }

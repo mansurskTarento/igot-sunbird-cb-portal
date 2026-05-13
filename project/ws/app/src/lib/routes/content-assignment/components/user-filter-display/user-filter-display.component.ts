@@ -2,12 +2,13 @@ import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angu
 import { ActivatedRoute } from '@angular/router'
 import { ContentAssignService } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { IUserSearchUnitFilterModel, IUserSearchRequestModel } from '@sunbird-cb/collection/src/lib/content-assign/content-assign.model'
+import { IUserSearchUnitFilterModel, IUserSearchRequestModel } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-user-filter-display',
-  templateUrl: './user-filter-display.component.html',
-  styleUrls: ['./user-filter-display.component.scss'],
+    selector: 'ws-app-user-filter-display',
+    templateUrl: './user-filter-display.component.html',
+    styleUrls: ['./user-filter-display.component.scss'],
+    standalone: false
 })
 export class UserFilterDisplayComponent implements OnInit, OnChanges {
   @Input() filterSearchRequest!: IUserSearchRequestModel
@@ -37,7 +38,7 @@ export class UserFilterDisplayComponent implements OnInit, OnChanges {
       if (this.userType === 'admin') {
         this.applyLevelFilter()
       }
-    },         10)
+    }, 10)
   }
 
   ngOnChanges() {

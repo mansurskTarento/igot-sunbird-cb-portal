@@ -28,6 +28,7 @@ export const typeMap = {
   selector: 'ws-widget-btn-feature',
   templateUrl: './btn-feature.component.html',
   styleUrls: ['./btn-feature.component.scss'],
+  standalone: false
 })
 export class BtnFeatureComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<NsPage.INavLink> {
@@ -60,7 +61,7 @@ export class BtnFeatureComponent extends WidgetBaseComponent
     if (this.widgetData.actionBtn && this.widgetData.actionBtn.badgeEndpoint) {
       this.btnFeatureSvc
         .getBadgeCount(this.widgetData.actionBtn.badgeEndpoint)
-        .then(count => {
+        .then((count: any) => {
           if (count > 99) {
             this.badgeCount = '99+'
           } else if (count > 0) {
@@ -154,7 +155,7 @@ export class BtnFeatureComponent extends WidgetBaseComponent
       {
         pageIdExt: 'btn-feature',
         module: WsEvents.EnumTelemetrymodules.CONTENT,
-    })
+      })
     this.configurationsSvc.pinnedApps.pipe(take(1)).subscribe(pinnedApps => {
       const newPinnedApps = new Set(pinnedApps)
       if (newPinnedApps.has(featureId)) {

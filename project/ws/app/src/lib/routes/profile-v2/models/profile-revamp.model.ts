@@ -21,14 +21,14 @@ export interface educationalQualifications {
 }
 
 export interface Theme {
-  name: string;
-  id: number;
+  name: string
+  id: number
 }
 
 export interface Competency {
-  name: string;
-  themes: Theme[];
-  active?: boolean;
+  name: string
+  themes: Theme[]
+  active?: boolean
 }
 
 export interface achievement {
@@ -40,41 +40,41 @@ export interface achievement {
 }
 
 export interface Community {
-  id: string;
-  name: string;
-  thumbnail?: string;
-  memberCount: number;
-  postCount: number;
-  ownerName: string;
-  ownerThumbnail?: string;
+  id: string
+  name: string
+  thumbnail?: string
+  memberCount: number
+  postCount: number
+  ownerName: string
+  ownerThumbnail?: string
 }
 
 export interface state {
-  stateId: string;
-  stateName: string;
+  stateId: string
+  stateName: string
 }
 
 export interface organisation {
-  identifier: string;
-  orgName: string;
-  imgUrl: string;
-  isRootOrg?: boolean | null;
-  rootOrgId?: string;
+  identifier: string
+  orgName: string
+  imgUrl: string
+  isRootOrg?: boolean | null
+  rootOrgId?: string
 }
 
 export interface designation {
-  id?: string;
-  name: string;
+  id?: string
+  name: string
 }
 
 export const generateYears = (startYear: number = 1900): string[] => {
-  const currentYear = new Date().getFullYear();
-  const years: string[] = [];
+  const currentYear = new Date().getFullYear()
+  const years: string[] = []
   for (let year = currentYear; year >= startYear; year--) {
-    years.push(year.toString());
+    years.push(year.toString())
   }
   return years
-};
+}
 
 export const EMAIL_PATTERN = /^[a-zA-Z0-9]+[a-zA-Z0-9._-]*[a-zA-Z0-9]+@[a-zA-Z0-9]+([-a-zA-Z0-9]*[a-zA-Z0-9]+)?(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}$/
 export const MOBILE_PATTERN = /^[0]?[6789]\d{9}$/

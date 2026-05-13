@@ -7,9 +7,10 @@ import { default as _rollupMoment } from 'moment'
 const moment = _rollupMoment || _moment
 
 @Component({
-  selector: 'ws-widget-channel-hub',
-  templateUrl: './channel-hub.component.html',
-  styleUrls: ['./channel-hub.component.scss'],
+    selector: 'ws-widget-channel-hub',
+    templateUrl: './channel-hub.component.html',
+    styleUrls: ['./channel-hub.component.scss'],
+    standalone: false
 })
 export class ChannelHubComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<IChannelHub> {

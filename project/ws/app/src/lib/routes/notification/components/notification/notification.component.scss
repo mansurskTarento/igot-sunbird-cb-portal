@@ -1,12 +1,15 @@
-@import 'ws-common';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 $size: 48px;
 
 .outer-container {
   margin: $size-m;
 }
+
 .notifications-container {
   min-height: calc(100vh - 144px);
+
   @include breakpoint-gt-s {
     margin: $size-xl;
   }

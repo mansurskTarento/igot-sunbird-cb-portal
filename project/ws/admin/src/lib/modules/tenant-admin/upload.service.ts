@@ -5,8 +5,8 @@ import { HttpClient } from '@angular/common/http'
 import * as fileSaver from 'file-saver'
 
 const API_ENDPOINTS = {
-  bulkUpload: `/apis/protected/v8/admin/userRegistration/bulkUpload`,
-  downloadReport: `/apis/protected/v8/admin/userRegistration/bulkUploadReport`,
+  bulkUpload: '/apis/protected/v8/admin/userRegistration/bulkUpload',
+  downloadReport: '/apis/protected/v8/admin/userRegistration/bulkUploadReport',
 }
 
 @Injectable()

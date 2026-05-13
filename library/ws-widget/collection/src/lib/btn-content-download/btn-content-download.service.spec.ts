@@ -6,7 +6,7 @@ describe('BtnContentDownloadService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: BtnContentDownloadService = TestBed.get(BtnContentDownloadService)
+    const service: BtnContentDownloadService = TestBed.inject(BtnContentDownloadService)
     expect(service).toBeTruthy()
   })
 })

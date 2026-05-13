@@ -6,9 +6,10 @@ import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { EFeedbackType } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+    selector: 'ws-app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnDestroy {
   pageNavbar: Partial<NsPage.INavBackground> = this.configSvc.pageNavBar

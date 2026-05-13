@@ -5,9 +5,10 @@ import { ChannelStoreService } from './../../../services/store.service'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-auth-content-strip-holder',
-  templateUrl: './content-strip-holder.component.html',
-  styleUrls: ['./content-strip-holder.component.scss'],
+    selector: 'ws-auth-content-strip-holder',
+    templateUrl: './content-strip-holder.component.html',
+    styleUrls: ['./content-strip-holder.component.scss'],
+    standalone: false
 })
 export class ContentStripHolderComponent implements OnInit, OnChanges {
 

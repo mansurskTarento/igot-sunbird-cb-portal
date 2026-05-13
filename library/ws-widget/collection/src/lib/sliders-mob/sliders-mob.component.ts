@@ -5,9 +5,10 @@ import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ICarousel } from '../sliders/sliders.model'
 
 @Component({
-  selector: 'ws-widget-sliders-mob',
-  templateUrl: './sliders-mob.component.html',
-  styleUrls: ['./sliders-mob.component.scss'],
+    selector: 'ws-widget-sliders-mob',
+    templateUrl: './sliders-mob.component.html',
+    styleUrls: ['./sliders-mob.component.scss'],
+    standalone: false
 })
 export class SlidersMobComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<ICarousel[]> {

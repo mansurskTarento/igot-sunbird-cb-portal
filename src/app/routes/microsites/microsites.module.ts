@@ -1,12 +1,18 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { MicrosotesComponent } from './microsotes.component'
-import { ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection/src/public-api'
+import { ContentStripWithTabsModule, SlidersModule } from '@sunbird-cb/collection'
 import { CardsModule, CommonMethodsService, CompetencyPassbookModule, ContentStripWithTabsLibModule, DataPointsModule, SlidersLibModule } from '@sunbird-cb/consumption'
 import { MicrositeService } from './microsites.service'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
+import { MatInputModule } from '@angular/material/input'
+import { RouterModule, Routes } from '@angular/router'
+
+const routes: Routes = [
+  { path: '', component: MicrosotesComponent },
+]
+
 @NgModule({
   declarations: [MicrosotesComponent],
   imports: [
@@ -21,6 +27,7 @@ import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy
     MatFormFieldModule,
     MatInputModule,
     CardsModule,
+    RouterModule.forChild(routes),
   ],
   providers: [MicrositeService, CommonMethodsService],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

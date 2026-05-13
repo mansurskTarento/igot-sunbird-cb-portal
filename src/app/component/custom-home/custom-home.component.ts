@@ -5,7 +5,7 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 /* tslint:disable */
 import _ from 'lodash'
 import moment from 'moment'
-import { HomePageService } from 'src/app/services/home-page.service'
+import { HomePageService } from '../../services/home-page.service'
 
 // Add this helper function before your component class
 function isStripActive(strip: any): boolean {
@@ -14,16 +14,17 @@ function isStripActive(strip: any): boolean {
     Array.isArray(strip.strips) &&
     strip.strips.length > 0 &&
     strip.strips[0] &&
-    strip.strips[0].active === true);
+    strip.strips[0].active === true)
 }
 
 // Add this constant at the top of your file (near other constants)
-const INITIAL_VISIBLE_STRIPS = 5;
+const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-  selector: 'ws-custom-home',
-  templateUrl: './custom-home.component.html',
-  styleUrls: ['./custom-home.component.scss']
+    selector: 'ws-custom-home',
+    templateUrl: './custom-home.component.html',
+    styleUrls: ['./custom-home.component.scss'],
+    standalone: false
 })
 export class CustomHomeComponent implements OnInit, AfterViewInit {
   widgetData = {}
@@ -66,7 +67,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.userData = this.configSvc && this.configSvc.userProfile
-    this.orgId = this.configSvc && this.configSvc.unMappedUser.organisations[0].organisationId  
+    this.orgId = this.configSvc && this.configSvc.unMappedUser.organisations[0].organisationId
     // Get department ID from route parameters
     this.departmentId = this.activatedRoute.snapshot.params['id']
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data
@@ -77,22 +78,22 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
       this.announcementData = this.activatedRoute.snapshot.data.pageData.data.announcementSection
       this.eventsCalendarData = this.activatedRoute.snapshot.data.pageData.data.eventCalendar
 
-        this.contentStripData = this.activatedRoute.snapshot.data.pageData.data || []
-        // tslint:disable-next-line: prefer-template
-        this.contentStripData = (this.contentStripData.newHomeStrip || []).sort((a: any, b: any) => a.order - b.order)
+      this.contentStripData = this.activatedRoute.snapshot.data.pageData.data || []
+      // tslint:disable-next-line: prefer-template
+      this.contentStripData = (this.contentStripData.newHomeStrip || []).sort((a: any, b: any) => a.order - b.order)
 
-        // Clear sectionList before adding new entries
-        this.sectionList = [];
+      // Clear sectionList before adding new entries
+      this.sectionList = []
 
-        // Add all content strips to sectionList with correct indices
-        this.contentStripData.forEach((strip: any, index: number) => {
-          const obj: any = {};
-          obj['section'] = 'section_' + index;
-          obj['isVisible'] = false;
-          obj['stripData'] = strip;
-          obj['isActive'] = isStripActive(strip);
-          this.sectionList.push(obj);
-        });
+      // Add all content strips to sectionList with correct indices
+      this.contentStripData.forEach((strip: any, index: number) => {
+        const obj: any = {}
+        obj['section'] = 'section_' + index
+        obj['isVisible'] = false
+        obj['stripData'] = strip
+        obj['isActive'] = isStripActive(strip)
+        this.sectionList.push(obj)
+      })
       this.enableLazyLoadingFlag = this.activatedRoute.snapshot.data.pageData.data.enableLazyLoading
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
@@ -104,16 +105,16 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
 
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
-      let slwConfigurationLocal:any = this.activatedRoute.snapshot.data.pageData.data &&
-      this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
+      let slwConfigurationLocal: any = this.activatedRoute.snapshot.data.pageData.data &&
+        this.activatedRoute.snapshot.data.pageData.data.stateLearningWeek || []
 
-      if(slwConfigurationLocal && slwConfigurationLocal.length) {
+      if (slwConfigurationLocal && slwConfigurationLocal.length) {
         let userData = this.configSvc.unMappedUser
-        if(userData && userData.profileDetails 
-          && userData.profileDetails.refRootOrg 
+        if (userData && userData.profileDetails
+          && userData.profileDetails.refRootOrg
           && userData.profileDetails.refRootOrg.orgId) {
-          for(let item of slwConfigurationLocal) {
-            if(item.orgId === userData.profileDetails.refRootOrg.orgId) {
+          for (let item of slwConfigurationLocal) {
+            if (item.orgId === userData.profileDetails.refRootOrg.orgId) {
               this.slwConfiguration = item
             }
           }
@@ -136,7 +137,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
     // Make the first few content strips visible initially
     for (let i = 0; i < this.sectionList.length && i < this.initialVisibleStrips; i++) {
       if (this.sectionList[i]['section'].startsWith('section_')) {
-        this.sectionList[i]['isVisible'] = true;
+        this.sectionList[i]['isVisible'] = true
       }
     }
   }
@@ -157,7 +158,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
     for (let i = 0; i < this.sectionList.length; i++) {
       if (!this.sectionList[i]['isVisible'] &&
         !this.sectionList[i]['section'].match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
-        this.checkSectionVisibility(this.sectionList[i]['section']);
+        this.checkSectionVisibility(this.sectionList[i]['section'])
       }
     }
   }
@@ -165,28 +166,28 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
   checkSectionVisibility(className: string) {
     // Skip already visible sections
     if (className.match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
-      return;
+      return
     }
 
     // Find the section in our list
-    const sectionIndex = this.sectionList.findIndex((item: any) => item.section === className);
-    if (sectionIndex === -1) return;
+    const sectionIndex = this.sectionList.findIndex((item: any) => item.section === className)
+    if (sectionIndex === -1) return
 
     // Check if the element is in viewport
-    const elements = document.getElementsByClassName(className);
+    const elements = document.getElementsByClassName(className)
     if (elements && elements.length > 0) {
-      const rect = elements[0].getBoundingClientRect();
-      const eleTop = rect.top;
-      const eleBottom = rect.bottom;
-      const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight);
+      const rect = elements[0].getBoundingClientRect()
+      const eleTop = rect.top
+      const eleBottom = rect.bottom
+      const isVisible = (eleTop >= 0) && (eleBottom <= window.innerHeight)
 
       // Update visibility
       if (isVisible) {
-        this.sectionList[sectionIndex]['isVisible'] = true;
+        this.sectionList[sectionIndex]['isVisible'] = true
       }
     }
   }
-  
+
   raiseTelemetryInteratEvent(event: any) {
     if (event && event.viewMoreUrl) {
       this.raiseTelemetry(`${event.stripTitle} ${event.viewMoreUrl.viewMoreText}`, event.typeOfTelemetry)
@@ -267,7 +268,7 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
   }
 
   triggerOpenDialog(event: boolean) {
-    if(event) {
+    if (event) {
       this.showModal = true
       document.body.style.overflow = 'hidden'
     }
@@ -285,113 +286,113 @@ export class CustomHomeComponent implements OnInit, AfterViewInit {
   }
 
   getInsights() {
-      this.profileDataLoading = true
-      const request = {
-        request: {
-            filters: {
-              primaryCategory: 'programs',
-              organisations: [
-                  'across',
-                  this.userData.rootOrgId,
-              ],
-            },
+    this.profileDataLoading = true
+    const request = {
+      request: {
+        filters: {
+          primaryCategory: 'programs',
+          organisations: [
+            'across',
+            this.userData.rootOrgId,
+          ],
         },
-      }
-  
-      this.homePageSvc.getInsightsData(request).subscribe((res: any) => {
-        if (res && res.result && res.result.response) {
-          this.insightsData = res.result.response
-          this.constructNudgeData()
-          this.constructWeeklyData()
-          this.profileDataLoading = false
-        }
-        // tslint:disable-next-line: align
-      }, (_error: any) => {
-        // tslint:disable-next-line: align
-        this.insightsData = ''
-        this.profileDataLoading = false
-        this.clapsDataLoading = false
-      })
-    }
-  
-    constructNudgeData() {
-      const nudgeData: any = {
-        type: 'data',
-        iconsDisplay: false,
-        cardClass: 'slider-container',
-        height: 'auto',
-        width: '',
-        sliderData: [],
-        negativeDisplay: false,
-        'dot-default': 'dot-grey',
-        'dot-active': 'dot-active',
-      }
-      const sliderData: { title: any; icon: string; data: string; colorData: string; }[] = []
-      this.insightsData.nudges.forEach((ele: any) => {
-        if (ele) {
-          const data = {
-            title: ele.label,
-            icon: ele.growth === 'positive' ?  'arrow_upward' : 'arrow_downward',
-            // tslint:disable-next-line: prefer-template
-            data: `${ele.growth === 'positive' && ele.progress > 1 ?  '+' + Math.round(ele.progress) + '%' : ''}`,
-            colorData: ele.growth === 'positive' ? 'color-green' : 'color-red',
-          }
-          sliderData.push(data)
-        }
-      })
-      nudgeData.sliderData = sliderData
-      this.insightsData['sliderData'] = nudgeData
-      this.profileDataLoading = false
-    }
-  
-    constructWeeklyData() {
-      if (this.insightsData && this.insightsData['weekly-claps']) {
-        this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
-      }
-      this.clapsDataLoading = false
+      },
     }
 
-    getNlwConfig() {
-        const startDate = moment(this.nwlConfiguration.startDate, 'DD-MMYYYY')
-        const endDate = moment(this.nwlConfiguration.endDate, 'DD-MMYYYY')
-        this.totalDays = endDate.diff(startDate, 'days')
-        const currentDate = moment()
-        if (currentDate.isBetween(startDate, endDate, null, '[]')) {
-          const daysPassed = currentDate.diff(startDate, 'days')
-          this.canShowNlwCard = true
-          this.daysCompleted = daysPassed
-    
-        } else if (currentDate.isBefore(startDate)) {
-          this.canShowNlwCard = false
-        } else if (currentDate.isAfter(endDate)) {
-          const daysPassed = currentDate.diff(endDate, 'days')
-          if (daysPassed === 0) {
-            this.canShowNlwCard = true
-            this.daysCompleted = this.totalDays
-          }
-        }
+    this.homePageSvc.getInsightsData(request).subscribe((res: any) => {
+      if (res && res.result && res.result.response) {
+        this.insightsData = res.result.response
+        this.constructNudgeData()
+        this.constructWeeklyData()
+        this.profileDataLoading = false
       }
-    
-      getSlwConfig() {
-        const startDate = moment(this.slwConfiguration.startDate, 'DD-MMYYYY')
-        const endDate = moment(this.slwConfiguration.endDate, 'DD-MMYYYY')
-        this.totalDays = endDate.diff(startDate, 'days')
-        const currentDate = moment()
-        if (currentDate.isBetween(startDate, endDate, null, '[]')) {
-          const daysPassed = currentDate.diff(startDate, 'days')
-          this.canShowSlwCard = true
-          this.daysCompleted = daysPassed
-    
-        } else if (currentDate.isBefore(startDate)) {
-          this.canShowSlwCard = false
-        } else if (currentDate.isAfter(endDate)) {
-          const daysPassed = currentDate.diff(endDate, 'days')
-          if (daysPassed === 0) {
-            this.canShowSlwCard = true
-            this.daysCompleted = this.totalDays
-          }
+      // tslint:disable-next-line: align
+    }, (_error: any) => {
+      // tslint:disable-next-line: align
+      this.insightsData = ''
+      this.profileDataLoading = false
+      this.clapsDataLoading = false
+    })
+  }
+
+  constructNudgeData() {
+    const nudgeData: any = {
+      type: 'data',
+      iconsDisplay: false,
+      cardClass: 'slider-container',
+      height: 'auto',
+      width: '',
+      sliderData: [],
+      negativeDisplay: false,
+      'dot-default': 'dot-grey',
+      'dot-active': 'dot-active',
+    }
+    const sliderData: { title: any; icon: string; data: string; colorData: string }[] = []
+    this.insightsData.nudges.forEach((ele: any) => {
+      if (ele) {
+        const data = {
+          title: ele.label,
+          icon: ele.growth === 'positive' ? 'arrow_upward' : 'arrow_downward',
+          // tslint:disable-next-line: prefer-template
+          data: `${ele.growth === 'positive' && ele.progress > 1 ? '+' + Math.round(ele.progress) + '%' : ''}`,
+          colorData: ele.growth === 'positive' ? 'color-green' : 'color-red',
         }
+        sliderData.push(data)
       }
+    })
+    nudgeData.sliderData = sliderData
+    this.insightsData['sliderData'] = nudgeData
+    this.profileDataLoading = false
+  }
+
+  constructWeeklyData() {
+    if (this.insightsData && this.insightsData['weekly-claps']) {
+      this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
+    }
+    this.clapsDataLoading = false
+  }
+
+  getNlwConfig() {
+    const startDate = moment(this.nwlConfiguration.startDate, 'DD-MMYYYY')
+    const endDate = moment(this.nwlConfiguration.endDate, 'DD-MMYYYY')
+    this.totalDays = endDate.diff(startDate, 'days')
+    const currentDate = moment()
+    if (currentDate.isBetween(startDate, endDate, null, '[]')) {
+      const daysPassed = currentDate.diff(startDate, 'days')
+      this.canShowNlwCard = true
+      this.daysCompleted = daysPassed
+
+    } else if (currentDate.isBefore(startDate)) {
+      this.canShowNlwCard = false
+    } else if (currentDate.isAfter(endDate)) {
+      const daysPassed = currentDate.diff(endDate, 'days')
+      if (daysPassed === 0) {
+        this.canShowNlwCard = true
+        this.daysCompleted = this.totalDays
+      }
+    }
+  }
+
+  getSlwConfig() {
+    const startDate = moment(this.slwConfiguration.startDate, 'DD-MMYYYY')
+    const endDate = moment(this.slwConfiguration.endDate, 'DD-MMYYYY')
+    this.totalDays = endDate.diff(startDate, 'days')
+    const currentDate = moment()
+    if (currentDate.isBetween(startDate, endDate, null, '[]')) {
+      const daysPassed = currentDate.diff(startDate, 'days')
+      this.canShowSlwCard = true
+      this.daysCompleted = daysPassed
+
+    } else if (currentDate.isBefore(startDate)) {
+      this.canShowSlwCard = false
+    } else if (currentDate.isAfter(endDate)) {
+      const daysPassed = currentDate.diff(endDate, 'days')
+      if (daysPassed === 0) {
+        this.canShowSlwCard = true
+        this.daysCompleted = this.totalDays
+      }
+    }
+  }
 
   getOrgId(stripData: any) {
     if (stripData && stripData.orgIDNeeded) {

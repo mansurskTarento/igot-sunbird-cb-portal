@@ -1,10 +1,11 @@
 import { Component, Inject } from '@angular/core'
 import { EventService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 @Component({
-  selector: 'ws-mandatory-notification-modal',
-  templateUrl: './mandatory-notification-modal.component.html',
-  styleUrls: ['./mandatory-notification-modal.component.scss'],
+    selector: 'ws-mandatory-notification-modal',
+    templateUrl: './mandatory-notification-modal.component.html',
+    styleUrls: ['./mandatory-notification-modal.component.scss'],
+    standalone: false
 })
 export class MandatoryNotificationModalComponent {
 
@@ -37,7 +38,7 @@ export class MandatoryNotificationModalComponent {
         type: this.data?.notification?.message?.data?.primaryCategory || 'Comprehensive Assessment Program',
       },
       {
-        module: 'mandatory-notification'
+        module: 'mandatory-notification',
       }
     )
   }

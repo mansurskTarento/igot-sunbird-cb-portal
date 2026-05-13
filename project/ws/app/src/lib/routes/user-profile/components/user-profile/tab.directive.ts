@@ -1,13 +1,16 @@
 import { Directive, AfterViewInit, OnDestroy, Optional } from '@angular/core'
 import { NgControl } from '@angular/forms'
-import { MatLegacyAutocompleteTrigger as MatAutocompleteTrigger } from '@angular/material/legacy-autocomplete'
+import { MatAutocompleteTrigger } from '@angular/material/autocomplete'
 
 // tslint:disable-next-line: directive-selector
-@Directive({ selector: '[tab-directive]' })
+@Directive({
+    selector: '[tab-directive]',
+    standalone: false
+})
 export class TabDirective implements AfterViewInit, OnDestroy {
   observable: any
   constructor(@Optional() private autoTrigger: MatAutocompleteTrigger,
-              @Optional() private control: NgControl) { }
+    @Optional() private control: NgControl) { }
   ngAfterViewInit() {
     this.observable = this.autoTrigger.panelClosingActions.subscribe(_x => {
       if (this.autoTrigger.activeOption) {

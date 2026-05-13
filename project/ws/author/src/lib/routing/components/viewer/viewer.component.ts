@@ -7,9 +7,10 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'ws-auth-card-viewer',
-  templateUrl: './viewer.component.html',
-  styleUrls: ['./viewer.component.scss'],
+    selector: 'ws-auth-card-viewer',
+    templateUrl: './viewer.component.html',
+    styleUrls: ['./viewer.component.scss'],
+    standalone: false
 })
 export class ViewerComponent implements OnInit, OnChanges, OnDestroy, AfterViewInit {
 

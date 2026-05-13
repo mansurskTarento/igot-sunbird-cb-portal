@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy } from '@angular/core'
 import { EventService } from '@sunbird-cb/utils-v2'
 import 'brace'
-import 'brace/ext/language_tools'
+// import 'brace/ext/language_tools'
 import 'brace/mode/css'
 import 'brace/mode/html'
 import 'brace/mode/javascript'
@@ -20,6 +20,7 @@ import { IHtmlPicker } from './html-picker.model'
   selector: 'viewer-plugin-html-picker',
   templateUrl: './html-picker.component.html',
   styleUrls: ['./html-picker.component.scss'],
+  standalone: false
 })
 export class HtmlPickerComponent implements OnInit, OnDestroy {
   @Input() identifier: string | null = null
@@ -183,8 +184,8 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
           id: this.identifier,
         },
         {
-        id: this.identifier,
-      })
+          id: this.identifier,
+        })
     }
     if (event === 'codeinput') {
       this.isInput = false
@@ -198,14 +199,14 @@ export class HtmlPickerComponent implements OnInit, OnDestroy {
       if (this.isInput) {
         this.raiseInteractTelemetry('editor', 'codeinput')
       }
-    },                               2 * 60000)
+    }, 2 * 60000)
   }
   startClickTimer() {
     this.clickInterval = setInterval(() => {
       if (this.isClick) {
         this.raiseInteractTelemetry('editor', 'buttonclick')
       }
-    },                               2 * 60000)
+    }, 2 * 60000)
   }
 
 }

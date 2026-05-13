@@ -5,19 +5,19 @@ import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { EventService } from '../../services/events.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { DialogConfirmComponent } from '../../../../../../../../../src/app/component/dialog-confirm/dialog-confirm.component'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { DialogConfirmComponent } from '../../../../routes/dialog-confirm/dialog-confirm.component'
 // import { ActivatedRoute } from '@angular/router'
 // import { ConfigurationsService } from '@ws-widget/utils'
 // import { NSProfileDataV2 } from '../../models/profile-v2.model'
 @Component({
-  selector: 'app-right-menu-card',
-  templateUrl: './right-menu-card.component.html',
-  styleUrls: ['./right-menu-card.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'app-right-menu-card',
+    templateUrl: './right-menu-card.component.html',
+    styleUrls: ['./right-menu-card.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   @Input() eventData: any
@@ -135,11 +135,11 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           active: true,
           batchId: this.batchId,
           limit: 1,
-          currentOffSet: 0
-        }
-      }
+          currentOffSet: 0,
+        },
+      },
     }
-    this.eventSvc.getUserEnrollCount(requestBody).subscribe((response) => {
+    this.eventSvc.getUserEnrollCount(requestBody).subscribe(response => {
       this.totalUsersEnrolled = response?.totalCount || 0
     })
   }
@@ -266,12 +266,12 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
         const youtubeId = videoId?.split('?')[0] || videoId
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
       } else if (this.eventData?.typeofEvent?.toLowerCase() === 'live') {
-        window.open(url, "_blank")
+        window.open(url, '_blank')
       } else {
-        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split("_").pop()}`])
+        this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/video/${this.videoId.split('_').pop()}`])
       }
     } else {
-      window.open(this.getLink(), "_blank")
+      window.open(this.getLink(), '_blank')
     }
   }
 

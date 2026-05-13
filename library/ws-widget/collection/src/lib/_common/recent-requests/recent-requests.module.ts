@@ -9,7 +9,11 @@ import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
 import { RecentRequestsComponent } from './recent-requests.component'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+export function RecentRequestHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 
 @NgModule({
     declarations: [RecentRequestsComponent],
@@ -22,7 +26,7 @@ import { HttpLoaderFactory } from 'src/app/app.module'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: RecentRequestHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

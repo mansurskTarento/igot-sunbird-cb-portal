@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { Subscription } from 'rxjs'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { SignupService } from './signup.service'
 
 @Component({
-  selector: 'ws-signup',
-  templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.scss'],
+    selector: 'ws-signup',
+    templateUrl: './signup.component.html',
+    styleUrls: ['./signup.component.scss'],
+    standalone: false
 })
 export class SignupComponent implements OnInit, OnDestroy {
   signupForm: UntypedFormGroup

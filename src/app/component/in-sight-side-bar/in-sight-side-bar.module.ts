@@ -5,16 +5,16 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { InsightSideBarComponent } from './in-sight-side-bar.component'
 
 // Material modules
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
+import { MatCardModule } from '@angular/material/card'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
+import { MatButtonModule } from '@angular/material/button'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatSelectModule } from '@angular/material/select'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 
 // Sunbird CB Collection modules
 import {
@@ -25,7 +25,7 @@ import {
   ContentStripNewMultipleModule,
   DiscussStripMultipleModule,
   NetworkStripMultipleModule,
-  UserImageModule
+  UserImageModule,
 } from '@sunbird-cb/collection'
 
 // Import WidgetResolverModule from the correct package
@@ -40,18 +40,18 @@ import {
   PipePartialContentModule,
   PipeDurationTransformModule,
   HorizontalScrollerModule,
-  HorizontalScrollerV2Module
+  HorizontalScrollerV2Module,
 } from '@sunbird-cb/utils-v2'
 
 // Import specific modules from collection (using full paths)
-import { WeeklyClapsModule } from '@sunbird-cb/collection/src/lib/_common/weekly-claps/weekly-claps.module'
-import { UpdatePostsModule } from '@sunbird-cb/collection/src/lib/_common/update-posts/update-posts.module'
-import { RecentRequestsModule } from '@sunbird-cb/collection/src/lib/_common/recent-requests/recent-requests.module'
-import { PendingRequestModule } from '@sunbird-cb/collection/src/lib/_common/pending-request/pending-request.module'
-import { ProfileCardStatsModule } from '@sunbird-cb/collection/src/lib/_common/profile-card-stats/profile-card-stats.module'
-import { UserLeaderboardModule } from '@sunbird-cb/collection/src/lib/_common/user-leaderboard/user-leaderboard.module'
-import { DiscussionsModule } from '@sunbird-cb/collection/src/lib/_common/discussions/discussions.module'
-import { TipsForLearnerModule } from '@sunbird-cb/collection/src/lib/_common/tips-for-learner/tips-for-learner.module'
+import { WeeklyClapsModule } from '@sunbird-cb/collection'
+import { UpdatePostsModule } from '@sunbird-cb/collection'
+import { RecentRequestsModule } from '@sunbird-cb/collection'
+import { PendingRequestModule } from '@sunbird-cb/collection'
+import { ProfileCardStatsModule } from '@sunbird-cb/collection'
+import { UserLeaderboardModule } from '@sunbird-cb/collection'
+import { DiscussionsModule } from '@sunbird-cb/collection'
+import { TipsForLearnerModule } from '@sunbird-cb/collection'
 
 // Import consumption modules
 import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, DialogComponentsModule } from '@sunbird-cb/consumption'
@@ -93,7 +93,7 @@ import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.mo
     NetworkStripMultipleModule,
     UserImageModule,
     WidgetResolverModule,
-    
+
     // Specific collection modules with full paths
     WeeklyClapsModule,
     UpdatePostsModule,
@@ -103,7 +103,7 @@ import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.mo
     UserLeaderboardModule,
     DiscussionsModule,
     TipsForLearnerModule,
-    
+
     // Consumption modules
     ContentStripWithTabsLibModule,
     ContentStripWithTabsPillsModule,
@@ -123,8 +123,8 @@ import { HomeOtherPortalModule } from '../home-other-portal/home-other-portal.mo
     TranslateModule,
 
     // Home other portal module
-    HomeOtherPortalModule
+    HomeOtherPortalModule,
   ],
-  exports: [InsightSideBarComponent]
+  exports: [InsightSideBarComponent],
 })
 export class InSightSideBarModule { }

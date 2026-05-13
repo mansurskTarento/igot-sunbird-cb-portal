@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core'
-import { NSDiscussData } from '../../../discuss/models/discuss.model'
 import { ActivatedRoute, Router } from '@angular/router'
 import { UntypedFormControl } from '@angular/forms'
 import { EventService } from '../../services/events.service'
 import moment from 'moment'
 import { ConfigurationsService, WsEvents, EventService as EventServiceGlobal, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacyTabChangeEvent as MatTabChangeEvent } from '@angular/material/legacy-tabs'
+import { MatTabChangeEvent } from '@angular/material/tabs'
 import { environment } from 'src/environments/environment'
 import { TranslateService } from '@ngx-translate/core'
 import * as _ from 'lodash'
@@ -13,12 +12,13 @@ import { GbSearchService } from '../../../search-v2/services/gb-search.service'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-app-events',
-  templateUrl: './events.component.html',
-  styleUrls: ['./events.component.scss'],
+    selector: 'ws-app-events',
+    templateUrl: './events.component.html',
+    styleUrls: ['./events.component.scss'],
+    standalone: false
 })
 export class EventsComponent implements OnInit {
-  data!: NSDiscussData.IDiscussionData
+  data!: any
   queryControl = new UntypedFormControl('')
   currentFilter = 'timestamp'
   pager = {}
@@ -32,7 +32,7 @@ export class EventsComponent implements OnInit {
   curatedEvents: any = []
   karmayogiSaptahEvents: any = []
   karmayogiTalksEvents: any = []
-  rajyaKarmayogiSaptahEvents:any = []
+  rajyaKarmayogiSaptahEvents: any = []
   alltypeEvents: any = []
   currentFilterSort = 'desc'
   departmentID: any
@@ -191,83 +191,83 @@ export class EventsComponent implements OnInit {
         if (response && response.result && response.result.Event && response.result.Event.length) {
           const allFilteredEvent = response.result.Event
 
-            const data = allFilteredEvent
-            const filterData: any = []
-            const featuredEvents: any = []
-            const curatedEvents: any = []
-            const karmayogiSaptahEvents: any = []
-            const rajyaKarmayogiSaptahEvents:any = []
-            const karmayogiTalksEvents: any = []
-            Object.keys(data).forEach((index: any) => {
-              const obj = data[index]
-              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
-              const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
-              // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
-              const floor = Math.floor
-              const hours = floor(obj.duration / 60)
-              const minutes = obj.duration % 60
-              const duration = (hours === 0) ? ((minutes === 0) ? '---' : `${minutes} minutes`) : (minutes === 0) ? (hours === 1) ?
-                `${hours} hour` : `${hours} hours` : (hours === 1) ? `${hours} hour ${minutes} minutes` :
-                `${hours} hours ${minutes} minutes`
-              const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
-              const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
-              const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
+          const data = allFilteredEvent
+          const filterData: any = []
+          const featuredEvents: any = []
+          const curatedEvents: any = []
+          const karmayogiSaptahEvents: any = []
+          const rajyaKarmayogiSaptahEvents: any = []
+          const karmayogiTalksEvents: any = []
+          Object.keys(data).forEach((index: any) => {
+            const obj = data[index]
+            // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+            const expiryStartTimeFormat = this.customDateFormat(obj.startDate, obj.startTime)
+            // const expiryEndTimeFormat = this.customDateFormat(obj.startDate, obj.endTime)
+            const floor = Math.floor
+            const hours = floor(obj.duration / 60)
+            const minutes = obj.duration % 60
+            const duration = (hours === 0) ? ((minutes === 0) ? '---' : `${minutes} minutes`) : (minutes === 0) ? (hours === 1) ?
+              `${hours} hour` : `${hours} hours` : (hours === 1) ? `${hours} hour ${minutes} minutes` :
+              `${hours} hours ${minutes} minutes`
+            const creatordata = obj.creatorDetails !== undefined ? obj.creatorDetails : []
+            const str = creatordata && creatordata.length > 0 ? creatordata.replace(/\\/g, '') : []
+            const creatorDetails = str && str.length > 0 ? JSON.parse(str) : creatordata
 
-              const stime = obj.startTime.split('+')[0]
-              const hour = stime.substr(0, 2)
-              const min = stime.substr(2, 3)
-              const starttime = `${hour}${min}`
+            const stime = obj.startTime.split('+')[0]
+            const hour = stime.substr(0, 2)
+            const min = stime.substr(2, 3)
+            const starttime = `${hour}${min}`
 
-              const etime = obj.endTime.split('+')[0]
-              const ehour = etime.substr(0, 2)
-              const emin = etime.substr(2, 3)
-              const endtime = `${ehour}${emin}`
+            const etime = obj.endTime.split('+')[0]
+            const ehour = etime.substr(0, 2)
+            const emin = etime.substr(2, 3)
+            const endtime = `${ehour}${emin}`
 
-              const eventDataObj = {
-                event: obj,
-                eventName: obj.name,
-                eventStartTime: starttime,
-                eventEndTime: endtime,
-                eventStartDate: obj.startDate,
-                eventCreatedOn: this.allEventDateFormat(obj.createdOn),
-                eventDuration: duration,
-                eventjoined: creatorDetails.length,
-                eventThumbnail: obj.appIcon && (obj.appIcon !== null || obj.appIcon !== undefined) ?
-                  this.eventSvc.getPublicUrl(obj.appIcon) :
-                  '/assets/icons/Events_default.png',
-                pastevent: false,
-              }
-              const now = new Date()
-              const today = moment(now).format('YYYY-MM-DD HH:mm')
-              if (expiryStartTimeFormat < today) {
-                eventDataObj.pastevent = true
-              }
-              filterData.push(eventDataObj)
-              if (obj.createdFor && obj.createdFor[0] === this.departmentID) {
-                featuredEvents.push(eventDataObj)
-              }
-              this.spvOrgId = environment.spvorgID
-              if (obj.createdFor && obj.createdFor[0] === this.spvOrgId) {
-                curatedEvents.push(eventDataObj)
-              }
-              if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
-                karmayogiSaptahEvents.push(eventDataObj)
-              }
-              if (obj.resourceType && obj.resourceType === 'Karmayogi Talks') {
-                karmayogiTalksEvents.push(eventDataObj)
-              }
-              if (obj.resourceType && obj.resourceType === 'Rajya Karmayogi Saptah') {
-                rajyaKarmayogiSaptahEvents.push(eventDataObj)
-              }
+            const eventDataObj = {
+              event: obj,
+              eventName: obj.name,
+              eventStartTime: starttime,
+              eventEndTime: endtime,
+              eventStartDate: obj.startDate,
+              eventCreatedOn: this.allEventDateFormat(obj.createdOn),
+              eventDuration: duration,
+              eventjoined: creatorDetails.length,
+              eventThumbnail: obj.appIcon && (obj.appIcon !== null || obj.appIcon !== undefined) ?
+                this.eventSvc.getPublicUrl(obj.appIcon) :
+                '/assets/icons/Events_default.png',
+              pastevent: false,
+            }
+            const now = new Date()
+            const today = moment(now).format('YYYY-MM-DD HH:mm')
+            if (expiryStartTimeFormat < today) {
+              eventDataObj.pastevent = true
+            }
+            filterData.push(eventDataObj)
+            if (obj.createdFor && obj.createdFor[0] === this.departmentID) {
+              featuredEvents.push(eventDataObj)
+            }
+            this.spvOrgId = environment.spvorgID
+            if (obj.createdFor && obj.createdFor[0] === this.spvOrgId) {
+              curatedEvents.push(eventDataObj)
+            }
+            if (obj.resourceType && obj.resourceType === 'Karmayogi Saptah') {
+              karmayogiSaptahEvents.push(eventDataObj)
+            }
+            if (obj.resourceType && obj.resourceType === 'Karmayogi Talks') {
+              karmayogiTalksEvents.push(eventDataObj)
+            }
+            if (obj.resourceType && obj.resourceType === 'Rajya Karmayogi Saptah') {
+              rajyaKarmayogiSaptahEvents.push(eventDataObj)
+            }
 
-            })
-            this.alltypeEvents = filterData
-            this.karmayogiSaptahEvents = karmayogiSaptahEvents
-            this.karmayogiTalksEvents = karmayogiTalksEvents
-            this.featuredEvents = featuredEvents
-            this.curatedEvents = curatedEvents
-            this.rajyaKarmayogiSaptahEvents = rajyaKarmayogiSaptahEvents
-          }
+          })
+          this.alltypeEvents = filterData
+          this.karmayogiSaptahEvents = karmayogiSaptahEvents
+          this.karmayogiTalksEvents = karmayogiTalksEvents
+          this.featuredEvents = featuredEvents
+          this.curatedEvents = curatedEvents
+          this.rajyaKarmayogiSaptahEvents = rajyaKarmayogiSaptahEvents
+        }
 
       })
     }
@@ -298,7 +298,7 @@ export class EventsComponent implements OnInit {
 
   navigateWithPage(page: any) {
     if (page !== this.currentActivePage) {
-      this.router.navigate([`/app/event-hub/home`], { queryParams: { page } })
+      this.router.navigate(['/app/event-hub/home'], { queryParams: { page } })
       this.fetchNewData = true
     }
   }
@@ -444,7 +444,7 @@ export class EventsComponent implements OnInit {
     let featuredEvents: any[] = []
     let curatedEvents: any[] = []
     let karmayogiSaptahEvents: any[] = []
-    let rajyaKarmayogiSaptahEvents:any[] = []
+    let rajyaKarmayogiSaptahEvents: any[] = []
     let karmayogiTalksEvents: any[] = []
     if (this.allEvents['all'] && this.allEvents['all'].length > 0) {
       this.allEvents['all'].forEach((event: any) => {
@@ -547,11 +547,11 @@ export class EventsComponent implements OnInit {
           event['isEventLive'] = true
           if (today >= event.eventCustomStartDate) {
             if (event.recordedLinks && event.recordedLinks.length > 0) {
-              event['isEventLive']  = false
+              event['isEventLive'] = false
             }
           }
         } else if (today >= event.eventCustomEndDate) {
-          event['isEventLive']  = false
+          event['isEventLive'] = false
           if (moment(today).isAfter(event.eventCustomEndDate) && moment(today).isAfter(event.eventCustomStartDate)) {
             event['isEventPast'] = true
           }
@@ -573,7 +573,7 @@ export class EventsComponent implements OnInit {
       liveEvents = this.sortEventsAsc(liveEvents)
       futureEvents = this.sortEventsAsc(futureEvents)
       pastEvents = this.sortEvents(pastEvents)
-      rajyaKarmayogiSaptahEvents  = [...liveEvents, ...futureEvents, ...pastEvents]
+      rajyaKarmayogiSaptahEvents = [...liveEvents, ...futureEvents, ...pastEvents]
 
     }
     if (this.allEvents['karmayogiTalksEvents'] && this.allEvents['karmayogiTalksEvents'].length > 0) {
@@ -639,7 +639,7 @@ export class EventsComponent implements OnInit {
           break
         case 'rajyaKarmayogiSaptahEvents':
           this.rajyaKarmayogiSaptahEvents = rajyaKarmayogiSaptahEvents
-          break          
+          break
         case 'karmayogiTalksEvents':
           this.karmayogiTalksEvents = karmayogiTalksEvents
           break

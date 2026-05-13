@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .card2 {
   margin: $size-m $size-s $size-m $size-s;

@@ -2,7 +2,8 @@ import { Pipe, PipeTransform } from '@angular/core'
 import { NsPlaylist } from '@sunbird-cb/collection'
 
 @Pipe({
-  name: 'filterPlaylist',
+    name: 'filterPlaylist',
+    standalone: false
 })
 export class FilterPlaylistPipe implements PipeTransform {
   transform(playlists: any, searchPlaylistQuery: string): NsPlaylist.IPlaylist[] | undefined {

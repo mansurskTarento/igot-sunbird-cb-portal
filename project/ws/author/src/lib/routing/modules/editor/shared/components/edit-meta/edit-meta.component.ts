@@ -13,19 +13,11 @@ import {
   Inject,
 } from '@angular/core'
 import { UntypedFormBuilder, UntypedFormControl, UntypedFormGroup } from '@angular/forms'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
-import { MatLegacyDialog as MatDialog, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { ConfigurationsService, ImageCropComponent } from '@sunbird-cb/utils-v2'
-import { CONTENT_BASE_STATIC, CONTENT_BASE_STREAM } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { IMAGE_MAX_SIZE, IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
-import { EditorService } from '@ws/author/src/lib/routing/modules/editor/services/editor.service'
 import { Observable, of, Subscription } from 'rxjs'
 import { InterestService } from '../../../../../../../../../app/src/lib/routes/profile/routes/interest/services/interest.service'
 import { UploadService } from '../../services/upload.service'
@@ -43,7 +35,15 @@ import {
   switchMap,
   map,
 } from 'rxjs/operators'
-import { MatLegacyAutocompleteSelectedEvent as MatAutocompleteSelectedEvent } from '@angular/material/legacy-autocomplete'
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete'
+import { NSContent } from '../../../../../../interface/content'
+import { CONTENT_BASE_STATIC, CONTENT_BASE_STREAM } from '../../../../../../constants/apiEndpoints'
+import { IMAGE_MAX_SIZE, IMAGE_SUPPORT_TYPES } from '../../../../../../constants/upload'
+import { EditorService } from '../../../services/editor.service'
+import { EditorContentService } from '../../../services/editor-content.service'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { Notify } from '../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../constants/constant'
 // import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 
 export interface IUsersData {
@@ -54,12 +54,10 @@ export interface IUsersData {
 }
 
 @Component({
-  selector: 'ws-auth-edit-meta',
-  templateUrl: './edit-meta.component.html',
-  styleUrls: ['./edit-meta.component.scss'],
-  // providers: [{
-  //   provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  // }],
+    selector: 'ws-auth-edit-meta',
+    templateUrl: './edit-meta.component.html',
+    styleUrls: ['./edit-meta.component.scss'],
+    standalone: false
 })
 export class EditMetaComponent implements OnInit, OnDestroy, AfterViewInit {
   contentMeta!: NSContent.IContentMeta

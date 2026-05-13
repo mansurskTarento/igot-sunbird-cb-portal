@@ -12,7 +12,6 @@ import {
 } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 // import { filter } from 'rxjs/operators'
-// import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
 
 interface IStripUnitContentData {
   key: string
@@ -37,9 +36,10 @@ interface IStripUnitContentData {
   description?: string | null
 }
 @Component({
-  selector: 'ws-widget-network-strip-multiple',
-  templateUrl: './network-strip-multiple.component.html',
-  styleUrls: ['./network-strip-multiple.component.scss'],
+    selector: 'ws-widget-network-strip-multiple',
+    templateUrl: './network-strip-multiple.component.html',
+    styleUrls: ['./network-strip-multiple.component.scss'],
+    standalone: false
 })
 export class NetworkStripMultipleComponent extends WidgetBaseComponent
   implements

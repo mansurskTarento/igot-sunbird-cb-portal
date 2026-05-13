@@ -1,18 +1,19 @@
 import { Component, OnInit, Inject, ViewChild, ElementRef } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ENTER, COMMA } from '@angular/cdk/keycodes'
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms'
 import { InterestService } from '../../../../../../../../../app/src/lib/routes/profile/routes/interest/services/interest.service'
-import { MatLegacyChipInputEvent as MatChipInputEvent } from '@angular/material/legacy-chips'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatChipInputEvent } from '@angular/material/chips'
+import { MatSnackBar } from '@angular/material/snack-bar'
 export interface IDialogData {
   animal: string
   name: string
 }
 @Component({
-  selector: 'ws-auth-competency-add-popup',
-  templateUrl: './competency-add-popup.html',
-  styleUrls: ['./competency-add-popup.scss'],
+    selector: 'ws-auth-competency-add-popup',
+    templateUrl: './competency-add-popup.html',
+    styleUrls: ['./competency-add-popup.scss'],
+    standalone: false
 })
 export class CompetencyAddPopUpComponent implements OnInit {
   startForm!: UntypedFormGroup

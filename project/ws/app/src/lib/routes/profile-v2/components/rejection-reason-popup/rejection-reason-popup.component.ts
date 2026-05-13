@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MAT_DIALOG_DATA } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-rejection-reason-popup',
-  templateUrl: './rejection-reason-popup.component.html',
-  styleUrls: ['./rejection-reason-popup.component.scss'],
+    selector: 'ws-app-rejection-reason-popup',
+    templateUrl: './rejection-reason-popup.component.html',
+    styleUrls: ['./rejection-reason-popup.component.scss'],
+    standalone: false
 })
 export class RejectionReasonPopupComponent implements OnInit {
 
@@ -15,7 +16,7 @@ export class RejectionReasonPopupComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.reason = data.comments,
-    this.buttonText = data.buttonText ? data.buttonText : 'OK'
+      this.buttonText = data.buttonText ? data.buttonText : 'OK'
   }
 
   ngOnInit() {

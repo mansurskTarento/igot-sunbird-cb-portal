@@ -1,6 +1,7 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+;
 
 .ws-pagination-wrapper {
   display: flex;
@@ -8,6 +9,7 @@
   justify-content: space-between;
   background-color: $white;
   border-top: 1px solid $matCardBorderColor;
+
   .pagination-size-select span {
     /* stylelint-disable */
     font-family: Lato;
@@ -16,6 +18,7 @@
     color: $textGreyShade1;
   }
 }
+
 ul {
   list-style: none;
   gap: 4px;
@@ -24,6 +27,7 @@ ul {
     width: 32px;
     height: 24px;
     text-align: center;
+
     a {
       color: $textGreyShade1;
       border: 0;
@@ -44,6 +48,7 @@ ul {
     &.active {
       background: #1b4ca1;
       border-radius: 99px;
+
       a {
         color: #ffffff !important;
       }
@@ -56,16 +61,11 @@ ul {
   max-width: 80px !important;
 }
 
-::ng-deep
-  .pagination-size-select.mat-full-radius-select
-  .mat-form-field-appearance-outline
-  .mat-form-field-infix {
+::ng-deep .pagination-size-select.mat-full-radius-select .mat-form-field-appearance-outline .mat-form-field-infix {
   padding: 0px 0 8px 0 !important;
 }
 
-::ng-deep
-  .pagination-size-select.mat-full-radius-select
-  .mat-form-field-wrapper {
+::ng-deep .pagination-size-select.mat-full-radius-select .mat-form-field-wrapper {
   padding-bottom: 0 !important;
 }
 
@@ -78,6 +78,7 @@ ul {
 @media screen and (max-width:768px) {
   ul {
     padding-inline-start: 20px;
+
     li {
       width: 28px;
 

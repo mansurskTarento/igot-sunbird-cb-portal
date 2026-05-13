@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { SeeAllModule } from '@ws/app/src/lib/routes/see-all/seeAll.module'
+import { SeeAllModule } from '@ws/app'
 
 @NgModule({
   declarations: [],

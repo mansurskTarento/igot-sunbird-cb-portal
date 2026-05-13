@@ -3,9 +3,10 @@ import { AnalyticsDirective } from './analytics.directive'
 import { AnalyticsService } from './analytics.service'
 
 @Component({
-  selector: 'ws-analytics-analytics',
-  templateUrl: './analytics.component.html',
-  styleUrls: ['./analytics.component.scss'],
+    selector: 'ws-analytics-analytics',
+    templateUrl: './analytics.component.html',
+    styleUrls: ['./analytics.component.scss'],
+    standalone: false
 })
 export class AnalyticsComponent implements OnInit {
   @ViewChild(AnalyticsDirective, { static: true }) wsAnalyticsAnalytics!: AnalyticsDirective

@@ -3,15 +3,16 @@ import { ActivatedRoute, Router } from '@angular/router'
 import { NsContent, BtnPlaylistService, NsPlaylist } from '@sunbird-cb/collection'
 import { TFetchStatus, NsPage, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { UntypedFormControl } from '@angular/forms'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Subscription } from 'rxjs'
 import { InterestService } from '../../../../profile/routes/interest/services/interest.service'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-app-interests',
-  templateUrl: './interest.component.html',
-  styleUrls: ['./interest.component.scss'],
+    selector: 'ws-app-interests',
+    templateUrl: './interest.component.html',
+    styleUrls: ['./interest.component.scss'],
+    standalone: false
 })
 export class InterestComponent implements OnInit {
   interestsData: any
@@ -28,12 +29,12 @@ export class InterestComponent implements OnInit {
   pageNavbar: Partial<NsPage.INavBackground> = this.configSvc.pageNavBar
   alreadyAddedInterest = new Set<string>()
   constructor(private activateRoute: ActivatedRoute,
-    private contentSvc: WidgetContentService,
-    private playlistSvc: BtnPlaylistService,
-    private configSvc: ConfigurationsService,
-    private router: Router,
-    private interestSvc: InterestService,
-    private snackbar: MatSnackBar) { }
+              private contentSvc: WidgetContentService,
+              private playlistSvc: BtnPlaylistService,
+              private configSvc: ConfigurationsService,
+              private router: Router,
+              private interestSvc: InterestService,
+              private snackbar: MatSnackBar) { }
   @ViewChild('createPlaylistSuccess', { static: true }) createPlaylistSuccessMessage!: ElementRef<any>
   @ViewChild('createPlaylistError', { static: true }) createPlaylistErrorMessage!: ElementRef<any>
   playlistsSubscription: Subscription | null = null

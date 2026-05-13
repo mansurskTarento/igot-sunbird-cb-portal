@@ -1,28 +1,28 @@
 <h1 mat-dialog-title>Add Content</h1>
 <mat-dialog-content>
-  <mat-chip-list class="mb-4 block">
+  <mat-chip-set class="mb-4 block">
     <mat-chip *ngFor="let content of selectedContents" [removable]="true"
       (removed)="selectedContentChanged(content, false)">
       <ng-container *ngIf="content.name; else noName">{{ content.name || '' }}</ng-container>
       <mat-icon matChipRemove>cancel</mat-icon>
     </mat-chip>
-  </mat-chip-list>
+  </mat-chip-set>
   <div class="flex-responsive">
     <mat-form-field class="width-expand margin-right-m" appearance="fill" floatLabel="never">
       <mat-icon matPrefix>search</mat-icon>
-      <mat-label >Search content</mat-label>
+      <mat-label>Search content</mat-label>
       <input matInput [(ngModel)]="query" (ngModelChange)="debounceSubject.next(true)" autocomplete="off"
         class="resize-none" />
     </mat-form-field>
     <div class="btn-filter">
-      <mat-slide-toggle [(ngModel)]="showMine" (change)="debounceSubject.next(true)" >Show only my contents
+      <mat-slide-toggle [(ngModel)]="showMine" (change)="debounceSubject.next(true)">Show only my contents
       </mat-slide-toggle>
     </div>
   </div>
-  <h2 *ngIf="searchFetchStatus === 'error'" class="mat-title" >
+  <h2 *ngIf="searchFetchStatus === 'error'" class="mat-title">
     Error fetching data
   </h2>
-  <h2 *ngIf="searchFetchStatus === 'done' && !searchResults?.length" class="mat-title" >
+  <h2 *ngIf="searchFetchStatus === 'done' && !searchResults?.length" class="mat-title">
     No results
   </h2>
   <div class="flex flex-wrap -mr-4" *ngIf="searchFetchStatus === 'done'">
@@ -58,12 +58,12 @@
       </div>
     </div>
   </div>
-  <ng-template #noName >Untitled Content</ng-template>
+  <ng-template #noName>Untitled Content</ng-template>
 </mat-dialog-content>
 <div mat-dialog-actions class="float-right">
-  <button mat-stroked-button mat-dialog-close cdkFocusInitial >Cancel</button>
-  <button mat-raised-button (click)="close()" [disabled]="!selectedContents || !selectedContents.length" color="primary"
-   >
+  <button mat-stroked-button mat-dialog-close cdkFocusInitial>Cancel</button>
+  <button mat-raised-button (click)="close()" [disabled]="!selectedContents || !selectedContents.length"
+    color="primary">
     Add
   </button>
 </div>

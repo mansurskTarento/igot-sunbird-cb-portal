@@ -1,14 +1,15 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ISelectorResponsive, ISelectorResponsiveUnit } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { WIDGET_LIBRARY } from '../../../constants/widet'
 import { ImageMapComponent } from './../image-map/image-map.component'
 
 @Component({
-  selector: 'ws-auth-selector-responsive-v2',
-  templateUrl: './selector-responsive-v2.component.html',
-  styleUrls: ['./selector-responsive-v2.component.scss'],
+    selector: 'ws-auth-selector-responsive-v2',
+    templateUrl: './selector-responsive-v2.component.html',
+    styleUrls: ['./selector-responsive-v2.component.scss'],
+    standalone: false
 })
 export class SelectorResponsiveV2Component implements OnInit {
   @Output() data = new EventEmitter<{
@@ -56,7 +57,7 @@ export class SelectorResponsiveV2Component implements OnInit {
           this.imageMapComponent.ngOnInit()
           setTimeout(() => this.imageMapComponent.ngAfterViewInit(), 100)
         }
-      },         10)
+      }, 10)
     }
   }
 

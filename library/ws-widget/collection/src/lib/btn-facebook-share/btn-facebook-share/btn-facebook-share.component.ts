@@ -3,9 +3,10 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-btn-facebook-share',
-  templateUrl: './btn-facebook-share.component.html',
-  styleUrls: ['./btn-facebook-share.component.scss'],
+    selector: 'ws-widget-btn-facebook-share',
+    templateUrl: './btn-facebook-share.component.html',
+    styleUrls: ['./btn-facebook-share.component.scss'],
+    standalone: false
 })
 export class BtnFacebookShareComponent implements OnInit {
   @Input() url = location.href

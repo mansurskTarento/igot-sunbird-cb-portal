@@ -13,14 +13,14 @@ export class ActivitiesService {
     private http: HttpClient) { }
 
   fetchActivites() {
-    const activities: Promise<IActivity> = this.http
+    const activities: Promise<IActivity | any> = this.http
       .get<IActivity>(`${this.configSvc.baseUrl}/feature/activities.json`)
       .toPromise()
     return activities
   }
 
   fetchLearnActivites() {
-    const activities: Promise<IActivity> = this.http
+    const activities: Promise<IActivity | any> = this.http
       .get<IActivity>(`${this.configSvc.baseUrl}/feature/learn-activities.json`)
       .toPromise()
     return activities

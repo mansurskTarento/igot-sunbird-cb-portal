@@ -3,9 +3,10 @@ import { MicrositeService } from './microsites.service'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
 
 @Component({
-  selector: 'ws-microsotes',
-  templateUrl: './microsotes.component.html',
-  styleUrls: ['./microsotes.component.scss'],
+    selector: 'ws-microsotes',
+    templateUrl: './microsotes.component.html',
+    styleUrls: ['./microsotes.component.scss'],
+    standalone: false
 })
 export class MicrosotesComponent implements OnInit {
 

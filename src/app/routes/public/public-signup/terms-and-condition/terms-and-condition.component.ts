@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-terms-and-condition',
-  templateUrl: './terms-and-condition.component.html',
-  styleUrls: ['./terms-and-condition.component.scss'],
+    selector: 'ws-terms-and-condition',
+    templateUrl: './terms-and-condition.component.html',
+    styleUrls: ['./terms-and-condition.component.scss'],
+    standalone: false
 })
 export class TermsAndConditionComponent implements OnInit {
 

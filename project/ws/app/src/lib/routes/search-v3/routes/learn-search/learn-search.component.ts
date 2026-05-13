@@ -39,15 +39,16 @@ import { forkJoin, Subject } from 'rxjs'
 import {
   NsContent,
   WidgetUserService,
-} from '@sunbird-cb/collection/src/public-api'
+} from '@sunbird-cb/collection'
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
 
 @Component({
-  selector: 'ws-app-learn-search',
-  templateUrl: './learn-search.component.html',
-  styleUrls: ['./learn-search.component.scss'],
+    selector: 'ws-app-learn-search',
+    templateUrl: './learn-search.component.html',
+    styleUrls: ['./learn-search.component.scss'],
+    standalone: false
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() searchQuery!: { query: string; nlp: string; searchCategory: string }

@@ -4,9 +4,10 @@ import { EventService } from '../../services/event.service'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-app-event',
-  templateUrl: './app-event.component.html',
-  styleUrls: ['./app-event.component.scss'],
+    selector: 'ws-app-app-event',
+    templateUrl: './app-event.component.html',
+    styleUrls: ['./app-event.component.scss'],
+    standalone: false
 })
 export class AppEventComponent implements OnInit {
   data: any

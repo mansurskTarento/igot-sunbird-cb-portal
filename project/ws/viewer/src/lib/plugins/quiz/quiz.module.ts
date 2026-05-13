@@ -9,19 +9,19 @@ import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submi
 import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/utils-v2'
 
 import {
-  BtnFullscreenModule,
+    BtnFullscreenModule,
 } from '@sunbird-cb/collection'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTableModule } from '@angular/material/table'
+import { MatTooltipModule } from '@angular/material/tooltip'
 
 @NgModule({
     declarations: [QuizComponent, OverviewComponent, QuestionComponent, SubmitQuizDialogComponent],
@@ -44,6 +44,6 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
     ],
     exports: [
         QuizComponent,
-    ]
+    ],
 })
 export class QuizModule { }

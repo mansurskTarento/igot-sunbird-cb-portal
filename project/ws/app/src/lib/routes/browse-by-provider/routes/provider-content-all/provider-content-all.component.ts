@@ -1,17 +1,18 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
-import { NsContentStripWithTabs } from '@sunbird-cb/consumption/lib/_common/content-strip-with-tabs-lib/content-strip-with-tabs-lib.model'
+import { NsContentStripWithTabs } from '@sunbird-cb/consumption'
 
 import { BrowseProviderService } from '../../services/browse-provider.service'
 import { UtilityService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
-import { FormExtService } from 'src/app/services/form-ext.service'
+import { FormExtService } from '../../../../routes/services/form-ext.service'
 
 @Component({
   selector: 'ws-app-provider-content-all',
   templateUrl: './provider-content-all.component.html',
   styleUrls: ['./provider-content-all.component.scss'],
+  standalone: false
 })
 export class ProviderContentAllComponent implements OnInit, OnDestroy {
 
@@ -27,18 +28,18 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
   selectedTab: any
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
-    { title: `All Providers`, url: `/app/learn/browse-by/provider/all-providers`, icon: '', disableTranslate: false },
+    { title: 'All Providers', url: '/app/learn/browse-by/provider/all-providers', icon: '', disableTranslate: false },
     // { title: `${this.provider}`, url: `none`, icon: '' },
   ]
   constructor(public commonSvc: CommonMethodsService,
-              public activatedRoute: ActivatedRoute,
-              public contentSvc: BrowseProviderService,
-              public utilitySvc: UtilityService,
-              public formExtSvc: FormExtService
+    public activatedRoute: ActivatedRoute,
+    public contentSvc: BrowseProviderService,
+    public utilitySvc: UtilityService,
+    public formExtSvc: FormExtService
   ) {
-   }
+  }
 
-  ngOnInit( ) {
+  ngOnInit() {
     this.activatedRoute.params.subscribe(params => {
       this.providerName = params['provider']
       this.providerId = params['orgId']
@@ -53,18 +54,18 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
     if (this.providerName && this.providerId) {
       const requestData: any = {
         'request': {
-            'type': 'ATI-CTI',
-            'subType': 'microsite-v2',
-            'action': 'page-configuration',
-            'component': 'portal',
-            'rootOrgId': this.providerId,
+          'type': 'ATI-CTI',
+          'subType': 'microsite-v2',
+          'action': 'page-configuration',
+          'component': 'portal',
+          'rootOrgId': this.providerId,
         },
       }
       this.formExtSvc.formReadData(requestData).subscribe((res: any) => {
         if (res && res.result && res.result.form && res.result.form.data && res.result.form.data.sectionList) {
           const filterData = res.result.form.data.sectionList.filter((ele: any) => ele.key === queryparams.key)
-          if (filterData && filterData[0] && filterData[0].column[0]  && filterData[0].column[0].data.strips) {
-            const data  = filterData[0].column[0].data.strips[0]
+          if (filterData && filterData[0] && filterData[0].column[0] && filterData[0].column[0].data.strips) {
+            const data = filterData[0].column[0].data.strips[0]
             this.isMobile = this.utilitySvc.isMobile || false
             if (this.isMobile) {
               data['stripConfig']['cardSubType'] = 'card-wide-lib'
@@ -75,13 +76,13 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
             }
             this.seeAllPageConfig = data
             const urlTomicrosite = `/app/learn/browse-by/provider/${this.providerName}/${this.providerId}/micro-sites`
-            this.titles.push({ title: this.providerName, icon: '', url: urlTomicrosite,  disableTranslate: true })
+            this.titles.push({ title: this.providerName, icon: '', url: urlTomicrosite, disableTranslate: true })
             this.titles.push({ title: this.seeAllPageConfig.title, icon: '', url: 'none', disableTranslate: false })
             this.contentDataList = this.commonSvc.transformSkeletonToWidgets(data)
             this.callApi()
           }
         }
-      },                                                  (_err: any) => {
+      }, (_err: any) => {
         this.contentDataList = []
       })
     }
@@ -121,23 +122,23 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
   }
 
   async getRequestMethod(strip: NsContentStripWithTabs.IContentStripUnit,
-                         request: NsContentStripWithTabs.IContentStripUnit['request'],
-                         apiUrl: string
+    request: NsContentStripWithTabs.IContentStripUnit['request'],
+    apiUrl: string
   ): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
         this.contentSvc.getApiMethod(apiUrl).subscribe(results => {
-        const showViewMore = Boolean(
-        results.result.data && results.result.data.orgList.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
-        )
-        const viewMoreUrl = showViewMore
-        ? {
-        path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
-        }
-        : null
-        resolve({ results, viewMoreUrl })
-        },                                             (error: any) => {
-        reject(error)
+          const showViewMore = Boolean(
+            results.result.data && results.result.data.orgList.length > 5 && strip.stripConfig && strip.stripConfig.postCardForSearch,
+          )
+          const viewMoreUrl = showViewMore
+            ? {
+              path: strip.viewMoreUrl && strip.viewMoreUrl.path || '',
+            }
+            : null
+          resolve({ results, viewMoreUrl })
+        }, (error: any) => {
+          reject(error)
         },
         )
       }
@@ -154,7 +155,7 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
       try {
         const response = await this.getRequestMethod(strip, strip.request.playlistRead, strip.request.apiUrl)
         if (response && response.results.result.content) {
-          const content  = response.results.result.content
+          const content = response.results.result.content
           this.originalContentlist = content
           this.contentDataList = this.commonSvc.transformContentsToWidgets(content, strip)
         } else {
@@ -240,9 +241,9 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
     return new Promise<any>((resolve, reject) => {
       if (request && request) {
         this.contentSvc.postApiMethod(apiUrl, request).subscribe(results => {
-        resolve({ results })
-        },                                                       (error: any) => {
-        reject(error)
+          resolve({ results })
+        }, (error: any) => {
+          reject(error)
         },
         )
       }
@@ -268,12 +269,12 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
   filterContentList(searchText: string) {
     const data = [...this.originalContentlist]
     const filterValue = searchText.toLowerCase()
-    const filteredData = data.filter((p: any) => p &&  p.name && p.name.toLowerCase().includes(filterValue))
-    this.contentDataList  = this.commonSvc.transformContentsToWidgets(filteredData, this.seeAllPageConfig)
+    const filteredData = data.filter((p: any) => p && p.name && p.name.toLowerCase().includes(filterValue))
+    this.contentDataList = this.commonSvc.transformContentsToWidgets(filteredData, this.seeAllPageConfig)
   }
 
   ngOnDestroy(): void {
-      localStorage.removeItem('stripData')
+    localStorage.removeItem('stripData')
   }
 
 }

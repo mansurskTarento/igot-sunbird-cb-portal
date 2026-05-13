@@ -15,36 +15,40 @@ import { MatExpansionModule } from '@angular/material/expansion'
 import { MatDividerModule } from '@angular/material/divider'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatCardModule } from '@angular/material/card'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms'
 /*CkEditorModule, CKEditorService,*/
 import { AvatarPhotoModule, BtnPageBackModule } from '@sunbird-cb/collection'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
+import { LoaderService } from '@ws/author'
 import { InitResolver } from './resolvers/init-resolve.service'
 import { CompetenceAllComponent } from './routes/competence-all/competence-all.component'
 import { CompetenceSysComponent } from './routes/competence-sys/competence-sys.component'
 import { CompetencyDetailedViewComponent } from './routes/competency-detailed-view/competency-detailed-view.component'
 import { CompetencyAllWrapperComponent } from './routes/competency-all-wrapper/competency-all-wrapper.component'
-import { EditorSharedModule } from '@ws/author/src/lib/routing/modules/editor/shared/shared.module'
+import { EditorSharedModule } from '@ws/author'
 import { CompetenciesAssessmentComponent } from './components/competencies-assessment/competencies-assessment.component'
 import { PracticePlModule } from '@ws/viewer/src/lib/plugins/practice/practice.module'
 import { CompetencyTestComponent } from './routes/competence-test/competence-test.component'
 import { ViewerTopBarModule } from '@ws/viewer/src/lib/components/viewer-top-bar/viewer-top-bar.module'
 import { CompetenceAssessmentService } from './services/comp-assessment.service'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
 import { HttpClient } from '@angular/common/http'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatButtonModule } from '@angular/material/button'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CompetencieHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [
@@ -99,7 +103,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CompetencieHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),
@@ -110,7 +114,7 @@ import { MatSidenavModule } from '@angular/material/sidenav'
         InitResolver,
         CompetenceAssessmentService,
     ],
-    exports: []
+    exports: [],
 })
 export class CompetencieModule {
 

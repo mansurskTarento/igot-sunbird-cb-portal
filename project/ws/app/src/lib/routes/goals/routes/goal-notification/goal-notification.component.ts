@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core'
 import { NsGoal } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { GoalAcceptDialogComponent } from '../../components/goal-accept-dialog/goal-accept-dialog.component'
 import { GoalRejectDialogComponent } from '../../components/goal-reject-dialog/goal-reject-dialog.component'
 
 @Component({
-  selector: 'ws-app-goal-notification',
-  templateUrl: './goal-notification.component.html',
-  styleUrls: ['./goal-notification.component.scss'],
+    selector: 'ws-app-goal-notification',
+    templateUrl: './goal-notification.component.html',
+    styleUrls: ['./goal-notification.component.scss'],
+    standalone: false
 })
 export class GoalNotificationComponent implements OnInit {
   goals: NsGoal.IGoal[] | null = this.route.snapshot.data.pendingGoals.data
@@ -21,9 +22,9 @@ export class GoalNotificationComponent implements OnInit {
     public configSvc: ConfigurationsService,
     private route: ActivatedRoute,
     private dialog: MatDialog,
-  ) {}
+  ) { }
 
-  ngOnInit() {}
+  ngOnInit() { }
 
   openAcceptGoalDialog(goal: NsGoal.IGoal) {
     const dialogRef = this.dialog.open(GoalAcceptDialogComponent, {

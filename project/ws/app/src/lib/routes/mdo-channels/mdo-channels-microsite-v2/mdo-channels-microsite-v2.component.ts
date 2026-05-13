@@ -3,16 +3,17 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-mdo-channels-microsite-v2',
-  templateUrl: './mdo-channels-microsite-v2.component.html',
-  styleUrls: ['./mdo-channels-microsite-v2.component.scss'],
+    selector: 'ws-app-mdo-channels-microsite-v2',
+    templateUrl: './mdo-channels-microsite-v2.component.html',
+    styleUrls: ['./mdo-channels-microsite-v2.component.scss'],
+    standalone: false
 })
 export class MdoChannelsMicrositeV2Component implements OnInit {
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
-      title: `MDO Channels`,
-      url: `/app/learn/mdo-channels/all-channels`,
+      title: 'MDO Channels',
+      url: '/app/learn/mdo-channels/all-channels',
       icon: '', disableTranslate: true,
     },
   ]
@@ -32,10 +33,10 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
       && this.route.snapshot.data.formData.data.result.form
       && this.route.snapshot.data.formData.data.result.form.data
       && this.route.snapshot.data.formData.data.result.form.data.sectionList
-     
+
     ) {
       this.sectionList = this.route.snapshot.data.formData.data.result.form.data.sectionList
-     
+
     }
     this.route.params.subscribe(params => {
       this.channnelName = params['channel']
@@ -55,7 +56,7 @@ export class MdoChannelsMicrositeV2Component implements OnInit {
     ) {
       this.slwConfig = this.route.snapshot.data.formData.data.result.form.data.stateLearningWeekConfig || {}
   }
-  
+
   }
 
 }

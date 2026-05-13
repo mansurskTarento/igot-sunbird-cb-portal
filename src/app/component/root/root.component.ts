@@ -37,21 +37,22 @@ import {
 import { delay, first, catchError, map, filter } from 'rxjs/operators'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { RootService } from './root.service'
-import { UrlService } from 'src/app/shared/url.service'
 
 import { CsModule } from '@project-sunbird/client-services'
 import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
+import { UrlService } from '../../shared/url.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
   styleUrls: ['./root.component.scss'],
   providers: [SwUpdate],
+  standalone: false
 })
 export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
@@ -266,7 +267,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.isInIframe = false
     }
 
-
     this.btnBackSvc.initialize()
 
     this.router.events.pipe(
@@ -290,7 +290,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.isHomePage = true
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
-        //this.commonDataSvc.fetchMandatoryNotification()
+        // this.commonDataSvc.fetchMandatoryNotification()
       } else {
         this.isHomePage = false
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
@@ -462,18 +462,17 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.disableHeightOnTop = false
     }
 
-
   }
 
   private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "iGOTAI",
-        "action": "page-configuration",
-        "component": "portal",
-        "rootOrgId": this.configSvc.unMappedUser.rootOrgId
-      }
+    const payload = {
+      'request': {
+        'type': 'page',
+        'subType': 'iGOTAI',
+        'action': 'page-configuration',
+        'component': 'portal',
+        'rootOrgId': this.configSvc.unMappedUser.rootOrgId,
+      },
     }
     const publicConfig: any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
     // console.log('publicConfig', publicConfig)
@@ -560,33 +559,33 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$)
       everySixHoursOnceAppIsStable$.subscribe(() => this.swUpdate.checkForUpdate())
       if (this.swUpdate.isEnabled) {
-        this.swUpdate.available.subscribe(() => {
-          const dialogRef = this.dialog.open(DialogConfirmComponent, {
-            data: {
-              title: (this.appUpdateTitleRef && this.appUpdateTitleRef.nativeElement.value) || '',
-              body: (this.appUpdateBodyRef && this.appUpdateBodyRef.nativeElement.value) || '',
-            },
-          })
-          dialogRef.afterClosed().subscribe(
-            result => {
-              if (result) {
-                this.swUpdate.activateUpdate().then(() => {
-                  if ('caches' in window) {
-                    caches.keys()
-                      .then(keyList => {
-                        timer(2000).subscribe(
-                          _ => window.location.reload(),
-                        )
-                        return Promise.all(keyList.map(key => {
-                          return caches.delete(key)
-                        }))
-                      })
-                  }
-                })
-              }
-            },
-          )
+        // this.swUpdate.available.subscribe(() => {
+        const dialogRef = this.dialog.open(DialogConfirmComponent, {
+          data: {
+            title: (this.appUpdateTitleRef && this.appUpdateTitleRef.nativeElement.value) || '',
+            body: (this.appUpdateBodyRef && this.appUpdateBodyRef.nativeElement.value) || '',
+          },
         })
+        dialogRef.afterClosed().subscribe(
+          result => {
+            if (result) {
+              this.swUpdate.activateUpdate().then(() => {
+                if ('caches' in window) {
+                  caches.keys()
+                    .then(keyList => {
+                      timer(2000).subscribe(
+                        _ => window.location.reload(),
+                      )
+                      return Promise.all(keyList.map(key => {
+                        return caches.delete(key)
+                      }))
+                    })
+                }
+              })
+            }
+          },
+        )
+        // })
       }
     }
   }

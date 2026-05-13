@@ -4,9 +4,10 @@ import { NsGoal, BtnGoalsService } from '@sunbird-cb/collection'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-goal-me',
-  templateUrl: './goal-me.component.html',
-  styleUrls: ['./goal-me.component.scss'],
+    selector: 'ws-app-goal-me',
+    templateUrl: './goal-me.component.html',
+    styleUrls: ['./goal-me.component.scss'],
+    standalone: false
 })
 export class GoalMeComponent implements OnInit {
   fetchGoalsStatus: TFetchStatus = 'none'

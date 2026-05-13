@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
   @extend %page-center;
@@ -35,10 +35,9 @@
 
 @media screen and (min-width: 820px) and (max-width: 1232px) {
   .container-balanced {
-    @extend %page-center;
+    // @extend %page-center;
     height: auto;
     min-height: 400px;
     max-width: calc(100vw - 100px) !important;
   }
 }
-

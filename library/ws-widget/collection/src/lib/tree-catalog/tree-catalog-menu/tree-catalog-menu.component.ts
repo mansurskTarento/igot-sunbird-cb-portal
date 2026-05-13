@@ -2,12 +2,13 @@ import { Component, ViewChild, ElementRef, Input } from '@angular/core'
 import { TFetchStatus } from '@sunbird-cb/utils-v2'
 
 import { NSSearch } from '../../_services/widget-search.model'
-import { MatLegacyMenuTrigger as MatMenuTrigger } from '@angular/material/legacy-menu'
+import { MatMenuTrigger } from '@angular/material/menu'
 
 @Component({
-  selector: 'ws-widget-tree-catalog-menu',
-  templateUrl: './tree-catalog-menu.component.html',
-  styleUrls: ['./tree-catalog-menu.component.scss'],
+    selector: 'ws-widget-tree-catalog-menu',
+    templateUrl: './tree-catalog-menu.component.html',
+    styleUrls: ['./tree-catalog-menu.component.scss'],
+    standalone: false
 })
 export class TreeCatalogMenuComponent {
 

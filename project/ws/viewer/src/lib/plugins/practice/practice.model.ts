@@ -1,4 +1,4 @@
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 
 export namespace NSPractice {
   export interface IQuiz {
@@ -397,6 +397,6 @@ export namespace NSPractice {
     attemptsAllowed: number
   }
   export interface IChoiceOptions {
-    options: any []
+    options: any[]
   }
 }

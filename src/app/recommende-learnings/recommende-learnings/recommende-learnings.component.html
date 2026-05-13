@@ -1,13 +1,13 @@
 <div class="main-container m-auto margin-top-l">
     <div class="heading flex flex-row">{{translateLabels(recommendedConfig?.strip?.title, 'home')}}</div>
     <div class="pill-container flex flex-row flex-wrap content-container mt-4 mb-10">
-        <mat-chip-list  class="content-pill" aria-label="Fish selection">
+        <mat-chip-listbox class="content-pill" aria-label="Fish selection">
             <ng-container *ngFor="let pill of recommendedConfig?.strip?.pillsData">
-                <mat-chip [selected]="pill?.selected" (click)="pillClicked(pill)" [selected]="slectedPill === pill?.value">
+                <mat-chip-option [selected]="slectedPill === pill?.value" (click)="pillClicked(pill)">
                     <span class="pill-name">{{pill?.label}}</span>
-                </mat-chip>
+                </mat-chip-option>
             </ng-container>
-        </mat-chip-list>
+        </mat-chip-listbox>
     </div>
     <div *ngIf="content?.length">
         <div class="flex flex-row flex-wrap content-container mt-4 mb-10">
@@ -23,8 +23,11 @@
 <ng-template #noDataTemplate>
     <div class="w-full flex flex-col items-center justify-center">
         <img alt="" class="mt-10 mb-5" src="assets/icons/home/nodataDefault.png">
-        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='ravailable'">{{ 'home.availablelearnings' | translate }}</div>
-        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='rinprogress'">{{ 'home.inprogresslearnings' | translate }}</div>
-        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='rcompleted'">{{ 'home.completedlearnings' | translate }}</div>
+        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='ravailable'">{{ 'home.availablelearnings' |
+            translate }}</div>
+        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='rinprogress'">{{ 'home.inprogresslearnings' |
+            translate }}</div>
+        <div class="mat-subheading-1 text-center" *ngIf="slectedPill ==='rcompleted'">{{ 'home.completedlearnings' |
+            translate }}</div>
     </div>
 </ng-template>

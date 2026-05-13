@@ -1,20 +1,20 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
-.container-balanced
- {
-    height: auto;
-    min-height: 400px;
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
+.container-balanced {
+  height: auto;
+  min-height: 400px;
 }
 
 .container-balanced {
-    max-width: 1202px;
-    margin-left: auto !important;
-    margin-right: auto !important;
+  max-width: 1202px;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
 
-.explore-all-content span{
+.explore-all-content span {
   /* stylelint-disable */
   font-family: Montserrat;
   /* stylelint-enable */

@@ -1,6 +1,7 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
+;
 
 .card-container {
     height: 238px;

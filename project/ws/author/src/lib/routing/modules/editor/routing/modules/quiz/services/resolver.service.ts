@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core'
-import { NSContent } from '@ws/author/src/lib/interface/content'
 import { AccessControlService } from '../../../../../../../modules/shared/services/access-control.service'
 import { Observable, of } from 'rxjs'
 import { ApiService } from '../../../../../../../modules/shared/services/api.service'
 import { CONTENT_READ_HIERARCHY_AND_DATA } from '../../../../../../../constants/apiEndpoints'
 import { catchError } from 'rxjs/operators'
 import { Router } from '@angular/router'
+import { NSContent } from '../../../../../../../interface/content'
 
 @Injectable()
 export class QuizResolverService {

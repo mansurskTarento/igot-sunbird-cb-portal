@@ -1,5 +1,5 @@
 import { Component, HostBinding, Input, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '../_services/widget-content.model'
@@ -16,9 +16,10 @@ const VALID_CONTENT_TYPES: NsContent.EContentTypes[] = [
 ]
 
 @Component({
-  selector: 'ws-widget-btn-playlist',
-  templateUrl: './btn-playlist.component.html',
-  styleUrls: ['./btn-playlist.component.scss'],
+    selector: 'ws-widget-btn-playlist',
+    templateUrl: './btn-playlist.component.html',
+    styleUrls: ['./btn-playlist.component.scss'],
+    standalone: false
 })
 export class BtnPlaylistComponent extends WidgetBaseComponent
   implements OnInit, NsWidgetResolver.IWidgetData<NsPlaylist.IBtnPlaylist> {

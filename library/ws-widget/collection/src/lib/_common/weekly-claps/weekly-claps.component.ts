@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { MultilingualTranslationsService, EventService, WsEvents  } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'ws-widget-weekly-claps',
-  templateUrl: './weekly-claps.component.html',
-  styleUrls: ['./weekly-claps.component.scss'],
+    selector: 'ws-widget-weekly-claps',
+    templateUrl: './weekly-claps.component.html',
+    styleUrls: ['./weekly-claps.component.scss'],
+    standalone: false
 })
 export class WeeklyClapsComponent implements OnInit {
   @Input() isLoading: any = ''
@@ -14,8 +15,8 @@ export class WeeklyClapsComponent implements OnInit {
   @Input() weeklyData: any = ''
 
   constructor(private dialog: MatDialog, private translate: TranslateService,
-              private langtranslations: MultilingualTranslationsService,
-              private eventService: EventService) {
+    private langtranslations: MultilingualTranslationsService,
+    private eventService: EventService) {
 
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -25,7 +26,7 @@ export class WeeklyClapsComponent implements OnInit {
       }
 
     })
-   }
+  }
 
   ngOnInit() {
     // if(this.activatedRoute.snapshot.data.pageData) {
@@ -46,15 +47,15 @@ export class WeeklyClapsComponent implements OnInit {
       }
     )
     const confirmDialog = this.dialog.open(InfoDialogComponent, {
-        width: '613px',
-        panelClass: 'custom-info-dialog',
-        backdropClass: 'info-dialog-backdrop',
-        data: {  template:  myDialog },
-      })
-      confirmDialog.afterClosed().subscribe((result: any) => {
-        if (result) {
-        }
-      })
+      width: '613px',
+      panelClass: 'custom-info-dialog',
+      backdropClass: 'info-dialog-backdrop',
+      data: { template: myDialog },
+    })
+    confirmDialog.afterClosed().subscribe((result: any) => {
+      if (result) {
+      }
+    })
   }
 
 }

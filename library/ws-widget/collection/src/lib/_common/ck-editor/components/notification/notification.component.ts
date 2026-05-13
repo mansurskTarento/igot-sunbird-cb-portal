@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core'
-import { MAT_LEGACY_SNACK_BAR_DATA as MAT_SNACK_BAR_DATA } from '@angular/material/legacy-snack-bar'
+import { MAT_SNACK_BAR_DATA } from '@angular/material/snack-bar'
 import { Notify } from '../../constants/notificationMessage'
 
 interface IData {
@@ -8,9 +8,10 @@ interface IData {
 }
 
 @Component({
-  selector: 'ws-widget-notification',
-  templateUrl: './notification.component.html',
-  styleUrls: ['./notification.component.scss'],
+    selector: 'ws-widget-notification',
+    templateUrl: './notification.component.html',
+    styleUrls: ['./notification.component.scss'],
+    standalone: false
 })
 export class NotificationComponent {
 

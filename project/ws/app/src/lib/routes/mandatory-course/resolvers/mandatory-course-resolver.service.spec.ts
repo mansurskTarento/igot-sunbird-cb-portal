@@ -6,7 +6,7 @@ describe('MandatoryCourseResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: MandatoryCourseResolverService = TestBed.get(MandatoryCourseResolverService)
+    const service: MandatoryCourseResolverService = TestBed.inject(MandatoryCourseResolverService)
     expect(service).toBeTruthy()
   })
 })

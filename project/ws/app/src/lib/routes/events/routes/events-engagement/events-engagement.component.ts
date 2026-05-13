@@ -1,14 +1,14 @@
-import { Component, Inject, Input, OnInit, Optional } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet';
+import { Component, Inject, Input, OnInit, Optional } from '@angular/core'
+import { MAT_BOTTOM_SHEET_DATA, MatBottomSheetRef } from '@angular/material/bottom-sheet'
 import * as _ from 'lodash'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { Router } from '@angular/router';
-
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'ws-app-events-engagement',
   templateUrl: './events-engagement.component.html',
-  styleUrls: ['./events-engagement.component.scss']
+  styleUrls: ['./events-engagement.component.scss'],
+  standalone: false
 })
 export class EventsEngagementComponent implements OnInit {
 
@@ -52,8 +52,8 @@ export class EventsEngagementComponent implements OnInit {
     if (this.bottomSheetRef && this.bottomSheet) {
       this.bottomSheetRef.dismiss()
     }
-    this.router.navigate([`app/seeAll/new`], {
-      queryParams: { key: 'continueLearning', tabSelected: 'Events', pillSelected: 'completed' }
+    this.router.navigate(['app/seeAll/new'], {
+      queryParams: { key: 'continueLearning', tabSelected: 'Events', pillSelected: 'completed' },
     })
   }
 

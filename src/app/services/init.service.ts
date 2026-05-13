@@ -27,13 +27,13 @@ import _ from 'lodash'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 // import { Subscription } from 'rxjs'
-import { NSProfileDataV3 } from '@ws/app/src/lib/routes/profile-v3/models/profile-v3.models'
-import { NPSGridService } from '@sunbird-cb/collection/src/lib/grid-layout/nps-grid.service'
+import { NSProfileDataV3 } from '@ws/app'
+import { NPSGridService } from '@sunbird-cb/collection'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
-import { BtnSettingsService } from '../../../library/ws-widget/collection/src/public-api'
+import { BtnSettingsService } from '@sunbird-cb/collection'
 import { GlobalService } from './global.service'
 import { CommonDataService } from './common-data.service'
 declare const smartech: any
@@ -93,7 +93,7 @@ export class InitService {
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
     private globalService: GlobalService,
-    private commonDataSvc:CommonDataService,
+    private commonDataSvc: CommonDataService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     // private router: Router,
@@ -244,7 +244,7 @@ export class InitService {
     // Invalid User
     try {
       const path = window.location.pathname
-      const isPublic = window.location.href.includes('/public/')|| window.location.href.includes('/helpcenter')
+      const isPublic = window.location.href.includes('/public/') || window.location.href.includes('/helpcenter')
         || window.location.href.includes('&preview=true') || window.location.href.includes('/certs') || window.location.href.includes('/achievements') || window.location.href.includes('/crp/')
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
@@ -303,7 +303,7 @@ export class InitService {
         window.location.href.includes('/crp/') ||
         window.location.href.includes('/certs') ||
         window.location.href.includes('/achievements') ||
-        window.location.href.includes('/viewer')|| window.location.href.includes('/helpcenter')
+        window.location.href.includes('/viewer') || window.location.href.includes('/helpcenter')
       )
     ) {
       this.logFirstLogin()
@@ -416,7 +416,7 @@ export class InitService {
   // }
 
   private async fetchDefaultConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.http
+    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/host.config.json`)
       .toPromise()
     this.configSvc.instanceConfig = publicConfig
@@ -431,7 +431,7 @@ export class InitService {
   }
 
   private async profileNudgeConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.http
+    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
       .toPromise()
     this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
@@ -439,13 +439,13 @@ export class InitService {
   }
 
   private async globalConfigData(): Promise<NsInstanceConfig.IConfig> {
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "globalConfig",
-        "action": "page-configuration",
-        "component": "portal", "rootOrgId": "*"
-      }
+    const payload = {
+      'request': {
+        'type': 'page',
+        'subType': 'globalConfig',
+        'action': 'page-configuration',
+        'component': 'portal', 'rootOrgId': '*',
+      },
     }
     const publicConfig: any = await this.globalService.globalConfigReadData(payload).toPromise()
     this.configSvc.globalConfig = publicConfig.globalConfig
@@ -456,29 +456,25 @@ export class InitService {
     // const publicConfig: any = await this.http
     //   .get<any>(`${this.baseUrl}/netcore.json`)
     //   .toPromise()
-    let payload = {
-      "request": {
-        "type": "page",
-        "subType": "netcore",
-        "action": "page-configuration",
-        "component": "portal", "rootOrgId": "*"
-      }
+    const payload = {
+      'request': {
+        'type': 'page',
+        'subType': 'netcore',
+        'action': 'page-configuration',
+        'component': 'portal', 'rootOrgId': '*',
+      },
     }
     const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     return publicConfig
   }
 
-
-
-
-
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
-        let badgeCount: any = res.result.badgeCount
+        const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['badgeCount'] = badgeCount
@@ -490,15 +486,15 @@ export class InitService {
           if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
             && userExternalCourseEnrolmentInfo.addinfo
             && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
-            let addInfo = userExternalCourseEnrolmentInfo.addinfo
+            const addInfo = userExternalCourseEnrolmentInfo.addinfo
             userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
             // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
           }
         }
-        let enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued']
+        const enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued']
         const userData = {
           enrolledCourseCount,
-          userCourseEnrolmentInfo
+          userCourseEnrolmentInfo,
         }
         console.log('userData', userData)
         localStorage.removeItem('userEnrollmentCount')
@@ -507,22 +503,22 @@ export class InitService {
       }
 
       if (this.configSvc.userProfile) {
-        let userProfile = this.configSvc && this.configSvc.userProfile
+        const userProfile = this.configSvc && this.configSvc.userProfile
         if (userProfile.rootOrgId) {
-          this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe((orgData) => {
-            //console.log('orgData--', orgData)
+          this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe(orgData => {
+            // console.log('orgData--', orgData)
             this.configSvc.orgReadData = orgData
             if (orgData && orgData['netcoreDisabled']) {
 
             } else {
-              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', "tin")
+              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', 'tin')
               smartech('register', 'b632681d782c843e187fd5447c97ed4d')
               smartech('identify', '')
               smartech('dispatch', 1, {})
               if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
                 && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
               ) {
-                let netCoreUserSetupFlag: any = localStorage.getItem('netCoreUserSetup') ? localStorage.getItem('netCoreUserSetup') : ''
+                const netCoreUserSetupFlag: any = localStorage.getItem('netCoreUserSetup') ? localStorage.getItem('netCoreUserSetup') : ''
                 if (netCoreUserSetupFlag === 'false' || netCoreUserSetupFlag === false || netCoreUserSetupFlag === '') {
                   this.netCoreUserLoginSetup()
                 }
@@ -533,18 +529,15 @@ export class InitService {
 
       }
 
-
-
-
       return res
     }).catch((_err: any) => {
-      let userCourseEnrolmentInfo = {
+      const userCourseEnrolmentInfo = {
         enrolledCourseCount: 0,
         karmaPoints: 0,
         timeSpentOnCompletedCourses: 0,
         certificatesIssued: 0,
         coursesInProgress: 0,
-        addinfo: {}
+        addinfo: {},
       }
       localStorage.removeItem('userEnrollmentCount')
       localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
@@ -553,7 +546,7 @@ export class InitService {
   }
 
   private async themeOverrideConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.http
+    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/theme-override-config.json`)
       .toPromise()
     this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
@@ -566,13 +559,13 @@ export class InitService {
       : 'en'
   }
 
-  private async fetchAppsConfig(): Promise<NsAppsConfig.IAppsConfig> {
+  private async fetchAppsConfig(): Promise<NsAppsConfig.IAppsConfig | any> {
     const appsConfig = await this.http
       .get<NsAppsConfig.IAppsConfig>(`${this.baseUrl}/feature/apps.json`)
       .toPromise()
     return appsConfig
   }
-  private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab> {
+  private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
     const welcomeConfig = await this.http
       .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
       .toPromise()
@@ -641,7 +634,7 @@ export class InitService {
             profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
             profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
             professionalDetails: _.get(userPidProfile, 'profileDetails.professionalDetails') || [],
-            userRootOrg: _.get(userPidProfile, 'rootOrg') || null
+            userRootOrg: _.get(userPidProfile, 'rootOrg') || null,
           }
 
           this.configSvc.userProfileV2 = {
@@ -781,7 +774,7 @@ export class InitService {
             profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
             profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
             professionalDetails: _.get(userPidProfile, 'profileDetails.professionalDetails') || [],
-            userRootOrg: _.get(userPidProfile, 'rootOrg') || null
+            userRootOrg: _.get(userPidProfile, 'rootOrg') || null,
           }
           this.configSvc.userProfileV2 = {
             userId: _.get(profileV2, 'userId') || userPidProfile.userId,
@@ -853,7 +846,7 @@ export class InitService {
 
   private async fetchInstanceConfig(): Promise<NsInstanceConfig.IConfig> {
     // TODO: use the rootOrg and org to fetch the instance
-    const publicConfig = await this.http
+    const publicConfig: any = await this.http
       .get<NsInstanceConfig.IConfig>(`${this.configSvc.sitePath}/site.config.json`)
       .toPromise()
     if (publicConfig.npsCategory) {
@@ -905,11 +898,11 @@ export class InitService {
 
   private async fetchFeaturesStatus(): Promise<Set<string>> {
     // TODO: use the rootOrg and org to fetch the features
-    const featureConfigs = await this.http
+    const featureConfigs: any = await this.http
       .get<IFeaturePermissionConfigs>(`${this.baseUrl}/features.config.json`)
       .toPromise()
     this.configSvc.restrictedFeatures = new Set(
-      Object.entries(featureConfigs)
+      Object.entries((featureConfigs || {}) as Record<string, any>)
         .filter(
           ([_k, v]) => !hasPermissions(v, this.configSvc.userRoles, this.configSvc.userGroups),
         )
@@ -917,7 +910,7 @@ export class InitService {
     )
     return this.configSvc.restrictedFeatures
   }
-  private async fetchWidgetStatus(): Promise<NsWidgetResolver.IRegistrationsPermissionConfig[]> {
+  private async fetchWidgetStatus(): Promise<NsWidgetResolver.IRegistrationsPermissionConfig[] | any> {
     const widgetConfigs = await this.http
       .get<NsWidgetResolver.IRegistrationsPermissionConfig[]>(`${this.baseUrl}/widgets.config.json`)
       .toPromise()

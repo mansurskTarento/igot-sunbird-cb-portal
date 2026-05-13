@@ -5,9 +5,10 @@ import { CompLocalService } from '../../services/comp.service'
 import _ from 'lodash'
 import { TranslateService } from '@ngx-translate/core'
 @Component({
-  selector: 'ws-app-desiredcomptency-card',
-  templateUrl: './desiredcomptency-card.component.html',
-  styleUrls: ['./desiredcomptency-card.component.scss'],
+    selector: 'ws-app-desiredcomptency-card',
+    templateUrl: './desiredcomptency-card.component.html',
+    styleUrls: ['./desiredcomptency-card.component.scss'],
+    standalone: false
 })
 export class DesiredcomptencyCardComponent implements OnInit {
   @Input() selectedLevelId: any

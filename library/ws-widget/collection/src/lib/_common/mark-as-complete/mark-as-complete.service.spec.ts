@@ -6,7 +6,7 @@ describe('MarkAsCompleteService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: MarkAsCompleteService = TestBed.get(MarkAsCompleteService)
+    const service: MarkAsCompleteService = TestBed.inject(MarkAsCompleteService)
     expect(service).toBeTruthy()
   })
 })

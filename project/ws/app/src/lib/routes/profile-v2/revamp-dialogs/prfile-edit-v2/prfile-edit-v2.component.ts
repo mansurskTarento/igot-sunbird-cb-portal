@@ -1,14 +1,14 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms'
-import { MatLegacyDialogRef, MAT_LEGACY_DIALOG_DATA, MatLegacyDialog } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import * as _ from 'lodash'
 import { HttpErrorResponse } from '@angular/common/http'
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { debounceTime, distinctUntilChanged, startWith, switchMap, takeUntil } from 'rxjs/operators'
 import { of, Subject } from 'rxjs'
 import { EMAIL_PATTERN, EMP_ID_PATTERN, IMAGE_SIZE_1MB, MOBILE_PATTERN, PIN_CODE_PATTERN, state } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
-import { ConfirmDialogComponent } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.component'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection'
 import { OtpService } from '../../../user-profile/services/otp.services'
 import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
 import { RejectionReasonPopupComponent } from '../../components/rejection-reason-popup/rejection-reason-popup.component'
@@ -16,43 +16,43 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { DatePipe, Location } from '@angular/common'
 import { ConfigurationsService, ImageCropComponent, PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author/src/lib/constants/upload'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
+import { NotificationComponent } from '@ws/author'
+import { PROFILE_IMAGE_SUPPORT_TYPES } from '@ws/author'
+import { Notify } from '@ws/author'
+import { NOTIFICATION_TIME } from '@ws/author'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { TranslateService } from '@ngx-translate/core'
 // import { Router } from '@angular/router';
 
-
 @Component({
   selector: 'ws-app-prfile-edit-v2',
   templateUrl: './prfile-edit-v2.component.html',
-  styleUrls: ['./prfile-edit-v2.component.scss']
+  styleUrls: ['./prfile-edit-v2.component.scss'],
+  standalone: false
 })
 
 export class PrfileEditV2Component implements OnInit, OnDestroy {
-  header = '';
+  header = ''
   profileDetails: any
   profileForm!: FormGroup
-  currentDate: Date = new Date();
-  initilisationInProgress = true;
+  currentDate: Date = new Date()
+  initilisationInProgress = true
 
-  orgHasDesignations = false;
+  orgHasDesignations = false
 
-  profileImage: string | null = null;
-  profileImageChanged = false;
-  userInitials = '';
-  statesList: state[] = [];
-  districtsList: string[] = [];
+  profileImage: string | null = null
+  profileImageChanged = false
+  userInitials = ''
+  statesList: state[] = []
+  districtsList: string[] = []
 
-  groupsList: any[] = [];
-  designationsMeta: any[] = [];
+  groupsList: any[] = []
+  designationsMeta: any[] = []
   designationsTotalCount = 0
   designationSearchText = ''
   designationsOffset = 0
   filterDesignationsMeta: any = []
-  isLoadingMoreDesignations = false;
+  isLoadingMoreDesignations = false
   designationListLoadCount = 50
 
   // Transfer Organization properties
@@ -64,21 +64,21 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   transferOrgDataTotalCount = 0
   selectedTransferOrgId: string = ''
 
-  verifyEmail: boolean = false;
-  verifyMobile: boolean = false;
+  verifyEmail: boolean = false
+  verifyMobile: boolean = false
   approvedDomainList: any = []
   destroySubject$ = new Subject()
   contextToken: any
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
-  masterLanguageBackup: any[] = [];
-  masterLanguages: any[] = [];
+  masterLanguageBackup: any[] = []
+  masterLanguages: any[] = []
   isMatcompleteOpened = false
   isCadreStatus = false
   showBatchForNoCadre = true
-  civilServiceTypeId = '';
-  civilServiceId = '';
-  cadreId = '';
+  civilServiceTypeId = ''
+  civilServiceId = ''
+  cadreId = ''
   noCadreDetails = true
   civilServiceData: any
   civilServiceTypes: any[] = []
@@ -120,15 +120,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkingEmail = false
   checkingPhone = false
 
-
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatLegacyDialogRef<PrfileEditV2Component>,
-    @Inject(MAT_LEGACY_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<PrfileEditV2Component>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private profileV2RevampService: ProfileV2RevampService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private otpService: OtpService,
-    private dialog: MatLegacyDialog,
+    private dialog: MatDialog,
     private datePipe: DatePipe,
     private pipeImgUrl: PipeCertificateImageURL,
     private userProfileService: UserProfileService,
@@ -198,14 +197,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     fetchEmailByRole(tryRoles[roleIdx])
   }
 
-
   getDesignationHint(): string {
     const translatedString = this.translate.instant('NetworkV2Profile.designationHint')
     return translatedString
       .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
       .replace('%NAME%', `<b>(${this.nodalName})</b>`)
   }
-
 
   private initForm(): void {
     switch (this.header) {
@@ -241,7 +238,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.profileForm = this.fb.group({
       firstname: [_.get(this.profileDetails, 'firstname', ''), [Validators.required, Validators.pattern(/^(?! )[a-zA-Z]+(?: [a-zA-Z]+)*(?<! )$/), Validators.maxLength(200), Validators.minLength(2)]],
       state: [_.get(this.profileDetails, 'state', '')],
-      district: [_.get(this.profileDetails, 'district', '')]
+      district: [_.get(this.profileDetails, 'district', '')],
     })
     setTimeout(() => {
       this.initilisationInProgress = false
@@ -275,7 +272,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         this.statesList = []
         this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'))
-      }
+      },
     })
   }
 
@@ -295,7 +292,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       error: (err: HttpErrorResponse) => {
         this.districtsList = []
         this.openSnackbar(_.get(err, 'error.params.errmsg', 'Something went wrong'))
-      }
+      },
     })
   }
 
@@ -304,21 +301,20 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (userName && userName.value) {
       if (/[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value) && /\d/.test(userName.value)) {
         return 'NetworkV2Profile.invalidNameFormat'
-      } else if (!userName.value.trim()) {
+      } if (!userName.value.trim()) {
         return 'NetworkV2Profile.nameIsRequired'
-      } else if (/^\s|\s$/.test(userName.value)) {
+      } if (/^\s|\s$/.test(userName.value)) {
         return 'NetworkV2Profile.nameCannotStartOrEndWithSpace'
-      } else if (/^[-']|[-']$/.test(userName.value) || /[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
+      } if (/^[-']|[-']$/.test(userName.value) || /[@#$%^&*()_+={}[\]|\\:;"<>?,./~`]/.test(userName.value)) {
         return 'NetworkV2Profile.specialCharNotAllowedInName'
-      } else if (/\d/.test(userName.value)) {
+      } if (/\d/.test(userName.value)) {
         return 'NetworkV2Profile.nameCannotContainNumbers'
-      } else if (/(\s{2,}|[-']{2,})/.test(userName.value)) {
+      } if (/(\s{2,}|[-']{2,})/.test(userName.value)) {
         return 'NetworkV2Profile.pleaseAvoidMultipleSpaces'
       }
     }
     return 'NetworkV2Profile.invalidNameFormat'
   }
-
 
   //#region (profile image)
 
@@ -386,7 +382,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           const urlSplice = createdUrl.split(folderNameToSplit)[1]
           this.profileImage = this.pipeImgUrl.transform(`${folderNameToSplit}${urlSplice}`)
           this.profileImageChanged = true
-        }
+        },
       })
     }
   }
@@ -452,7 +448,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           status: 'Live',
           category: 'designation',
           categories: [
-            _.get(this.configSvc, 'userProfile.rootOrgId', '') + '_odcs_designation'
+            _.get(this.configSvc, 'userProfile.rootOrgId', '') + '_odcs_designation',
           ],
           objectType: 'Term',
         },
@@ -475,7 +471,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       error: () => {
         this.orgHasDesignations = false
         this.getdesignationsMeta()
-      }
+      },
     })
   }
 
@@ -510,7 +506,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
           status: 'Live',
           category: 'designation',
           categories: [
-            _.get(this.configSvc, 'userProfile.rootOrgId', '') + '_odcs_designation'
+            _.get(this.configSvc, 'userProfile.rootOrgId', '') + '_odcs_designation',
           ],
           objectType: 'Term',
         },
@@ -544,11 +540,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   getDefaultDesignations() {
     const requestBody: any = {
       filterCriteriaMap: {
-        status: 'Active'
+        status: 'Active',
       },
       requestedFields: [],
       pageNumber: this.designationsOffset,
-      pageSize: this.designationListLoadCount
+      pageSize: this.designationListLoadCount,
     }
     if (this.designationSearchText) {
       requestBody['searchString'] = this.designationSearchText
@@ -562,7 +558,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       error: () => {
         this.isLoadingMoreDesignations = false
         this.openSnackbar('Something went wrong. Please refresh or try again later.')
-      }
+      },
     })
   }
 
@@ -614,7 +610,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         // Create a new designation object to match the structure of other items
         const newDesignation = {
           designation: currentDesignation,
-          status: 'Active'
+          status: 'Active',
         }
         this.designationsMeta.unshift(newDesignation)
       }
@@ -634,7 +630,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   private createAboutMeForm(): void {
     this.profileForm = this.fb.group({
-      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000)]]
+      aboutme: [_.get(this.profileDetails, 'aboutme', ''), [Validators.maxLength(2000)]],
     })
     // If server returned a value exceeding maxlength, mark control as touched/dirty
     const aboutControl = this.profileForm.get('aboutme')
@@ -742,7 +738,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const servicesList = [
       'Indian Administrative Service (IAS)',
       'Indian Police Service (IPS)',
-      'Indian Forest Service (IFoS)'
+      'Indian Forest Service (IFoS)',
     ]
     const serviceNameControl = this.profileForm.get('civilServiceName')
     const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
@@ -764,7 +760,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const servicesList = [
       'Indian Administrative Service (IAS)',
       'Indian Police Service (IPS)',
-      'Indian Forest Service (IFoS)'
+      'Indian Forest Service (IFoS)',
     ]
     const serviceNameControl = this.profileForm.get('civilServiceName')
     const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
@@ -832,9 +828,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 return this.profileV2RevampService.searchUserByField(
                   'email', value
                 )
-              } else {
-                this.verifyEmail = false
               }
+              this.verifyEmail = false
+
             } else {
               this.verifyEmail = false
             }
@@ -865,9 +861,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 return this.profileV2RevampService.searchUserByField(
                   'phone', value
                 )
-              } else {
-                this.verifyMobile = false
               }
+              this.verifyMobile = false
+
             } else {
               this.verifyMobile = false
             }

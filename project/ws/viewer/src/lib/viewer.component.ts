@@ -5,14 +5,13 @@ import { NsContent } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, UtilityService, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
-import { RootService } from '../../../../../src/app/component/root/root.service'
+import { RootService } from './services/root.service'
 import { ContentLanguageService, WidgetContentLibService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
-import { MobileAppsService } from '../../../../../src/app/services/mobile-apps.service'
+import { MobileAppsService } from './services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
 import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService, TStatus, ViewerDataService } from '@sunbird-cb/toc'
-
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -25,9 +24,10 @@ export enum ErrorType {
 }
 
 @Component({
-  selector: 'viewer-container',
-  templateUrl: './viewer.component.html',
-  styleUrls: ['./viewer.component.scss'],
+    selector: 'viewer-container',
+    templateUrl: './viewer.component.html',
+    styleUrls: ['./viewer.component.scss'],
+    standalone: false
 })
 
 export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -155,7 +155,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         }
       })
-    }, 100)
+    },         100)
   }
 
   checkMultilingual() {
@@ -188,7 +188,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       this.content = this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']
 
       if (this.content) {
-        let hashMap = this.tocSvc.hashmap
+        const hashMap = this.tocSvc.hashmap
         // console.log('hasMap', hashMap)
         // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
         if (!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
@@ -220,7 +220,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   getAuthDataIdentifer() {
     if (this.isPreAssessment) {
 
-
     } else {
       const collectionId = this.activatedRoute.snapshot.queryParams.collectionId
       this.widgetServ.fetchAuthoringContent(collectionId).subscribe((data: any) => {
@@ -249,7 +248,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         }
         return child
-      })
+      }),
     }
     console.log('✅ Milestone locks recomputed from hashmap')
   }
@@ -318,7 +317,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         // CRITICAL: For regular courses, call manipulateHierarchyData which does the mapping
         await this.manipulateHierarchyData()
 
-
         // manipulateHierarchyData created the hashmap, but we need to add the root entry
         // and get completion data from enrollment list (like TOC does)
         if (this.enrollmentList && this.enrollmentList.courses && this.collectionId) {
@@ -327,7 +325,6 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             c.content?.identifier === this.collectionId ||
             c.courseId === this.collectionId
           )
-
 
           if (enrolledCourse) {
             // Add root course entry to hashmap with actual completion data from enrollment
@@ -498,9 +495,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         }
         this.toggleAccessibilityAndChatbot(true)
 
-
       }
-
 
     })
     if (this.collectionId) {
@@ -590,7 +585,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             console.log('📊 [VIEWER] Current resource completed:', {
               id: currentResourceId,
               name: currentResource.name,
-              parent: currentResource.parent
+              parent: currentResource.parent,
             })
 
             // Recalculate parent progress recursively
@@ -663,15 +658,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       id: parentId,
       primaryCategory: parentData.primaryCategory,
       currentCompletionPercentage: parentData.completionPercentage,
-      currentCompletionStatus: parentData.completionStatus
+      currentCompletionStatus: parentData.completionStatus,
     })
 
     // Get all children of this parent
-    let allChildren = Object.keys(this.tocSvc.hashmap)
+    const allChildren = Object.keys(this.tocSvc.hashmap)
       .filter(key => this.tocSvc.hashmap[key].parent === parentId)
       .map(key => ({
         ...this.tocSvc.hashmap[key],
-        identifier: key
+        identifier: key,
       }))
 
     if (allChildren.length === 0) {
@@ -708,7 +703,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         completionStatus: child.completionStatus,
         status: child.status,
         completionPercentage: child.completionPercentage,
-        isComplete: isComplete ? '✅' : '❌'
+        isComplete: isComplete ? '✅' : '❌',
       })
 
       if (isComplete) {
@@ -731,7 +726,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
       console.log('✅ [VIEWER PROGRESS] Updated parent progress:', {
         name: parentData.name,
         newPercentage: newCompletionPercentage + '%',
-        newStatus: newCompletionStatus
+        newStatus: newCompletionStatus,
       })
 
       // Create new hashmap reference for Angular change detection
@@ -978,22 +973,20 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     window.history.back()
   }
 
-
-
   getPreEnrollmentResoureStateRead() {
-    let identifierArr: any = []
+    const identifierArr: any = []
     this.hierarchyData.map((item: any) => {
       identifierArr.push(item.identifier)
     })
     if (identifierArr && identifierArr.length) {
-      let req = {
-        "request": {
-          "contentIds": identifierArr,
-          "fields": [
+      const req = {
+        'request': {
+          'contentIds': identifierArr,
+          'fields': [
             // "lastAccessTime",
             // "completionPercentage"
-          ]
-        }
+          ],
+        },
       }
       this.tocSvc.readPreEnrollmentResourcesState(req).subscribe((data: any) => {
         // console.log('read resources progress data', data)

@@ -3,9 +3,10 @@ import { FormGroup, FormArray } from '@angular/forms'
 import { NSPeerValidation } from '../../../../models/peer-validation.model'
 
 @Component({
-  selector: 'ws-app-survey-questions',
-  templateUrl: './survey-questions.component.html',
-  styleUrls: ['./survey-questions.component.scss'],
+    selector: 'ws-app-survey-questions',
+    templateUrl: './survey-questions.component.html',
+    styleUrls: ['./survey-questions.component.scss'],
+    standalone: false
 })
 export class SurveyQuestionsComponent {
   @Input() questions: NSPeerValidation.ISurveyQuestion[] = []

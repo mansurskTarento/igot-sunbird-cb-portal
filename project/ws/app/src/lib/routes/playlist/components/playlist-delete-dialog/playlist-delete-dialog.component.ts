@@ -1,10 +1,11 @@
 import { Component } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 
 @Component({
-  selector: 'ws-app-playlist-delete-dialog',
-  templateUrl: './playlist-delete-dialog.component.html',
-  styleUrls: ['./playlist-delete-dialog.component.scss'],
+    selector: 'ws-app-playlist-delete-dialog',
+    templateUrl: './playlist-delete-dialog.component.html',
+    styleUrls: ['./playlist-delete-dialog.component.scss'],
+    standalone: false
 })
 export class PlaylistDeleteDialogComponent {
 

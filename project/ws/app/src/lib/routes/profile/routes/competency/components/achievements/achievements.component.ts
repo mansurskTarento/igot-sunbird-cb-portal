@@ -5,9 +5,10 @@ import { Subscription } from 'rxjs'
 import { ActivatedRoute, Data, Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-achievements',
-  templateUrl: './achievements.component.html',
-  styleUrls: ['./achievements.component.scss'],
+    selector: 'ws-app-achievements',
+    templateUrl: './achievements.component.html',
+    styleUrls: ['./achievements.component.scss'],
+    standalone: false
 })
 export class AchievementsComponent implements OnInit, OnDestroy {
   startDate = '2018-04-01'

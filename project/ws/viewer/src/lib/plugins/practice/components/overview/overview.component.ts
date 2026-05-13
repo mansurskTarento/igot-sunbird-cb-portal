@@ -5,12 +5,13 @@ import { ActivatedRoute } from '@angular/router'
 import { ViewerHeaderSideBarToggleService } from './../../../../viewer-header-side-bar-toggle.service'
 import { PracticeService } from '../../practice.service'
 import { FinalAssessmentPopupComponent } from './../final-assessment-popup/final-assessment-popup.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 @Component({
-  selector: 'viewer-overview',
-  templateUrl: './overview.component.html',
-  styleUrls: ['./overview.component.scss'],
+    selector: 'viewer-overview',
+    templateUrl: './overview.component.html',
+    styleUrls: ['./overview.component.scss'],
+    standalone: false
 })
 export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() learningObjective = ''
@@ -130,7 +131,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
           if (response) {
             this.canAttempt = response
           }
-        }, (err: any) => {
+        },                                           (err: any) => {
           this.quizSvc.checkAlreadySubmitAssessment.next(false)
           this.handleCanAttendError(err)
         })
@@ -145,7 +146,7 @@ export class OverviewComponent implements OnInit, OnChanges, OnDestroy {
           if (response) {
             this.canAttempt = response
           }
-        }, (err: any) => {
+        },                                             (err: any) => {
           this.quizSvc.checkAlreadySubmitAssessment.next(false)
           this.handleCanAttendError(err)
         })

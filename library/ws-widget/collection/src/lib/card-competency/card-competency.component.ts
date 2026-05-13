@@ -4,25 +4,26 @@ import { NsCardContent } from '../card-content-v2/card-content-v2.model'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver/src/public-api'
 
 @Component({
-  selector: 'ws-widget-card-competency',
-  templateUrl: './card-competency.component.html',
-  styleUrls: ['./card-competency.component.scss'],
-  animations: [
-    trigger('expandCollapse', [
-      state('collapsed', style({
-        height: '104px',
-        width: '320px',
-      })),
-      state('expanded', style({
-        minHeight: '120px',
-        width: '372px',
-        height: 'auto',
-      })),
-      transition('collapsed <=> expanded', [
-        animate('0.5s'),
-      ]),
-    ]),
-  ],
+    selector: 'ws-widget-card-competency',
+    templateUrl: './card-competency.component.html',
+    styleUrls: ['./card-competency.component.scss'],
+    animations: [
+        trigger('expandCollapse', [
+            state('collapsed', style({
+                height: '104px',
+                width: '320px',
+            })),
+            state('expanded', style({
+                minHeight: '120px',
+                width: '372px',
+                height: 'auto',
+            })),
+            transition('collapsed <=> expanded', [
+                animate('0.5s'),
+            ]),
+        ]),
+    ],
+    standalone: false
 })
 
 export class CardCompetencyComponent extends WidgetBaseComponent implements OnInit, NsWidgetResolver.IWidgetData<NsCardContent.ICard> {

@@ -5,7 +5,7 @@ import { ActivatedRoute, NavigationExtras, Params } from '@angular/router'
 import {
   // ContentProgressService,
   NsContent,
-  VIEWER_ROUTE_FROM_MIME
+  VIEWER_ROUTE_FROM_MIME,
 
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
@@ -62,6 +62,7 @@ interface ICollectionCard {
   selector: 'viewer-viewer-toc',
   templateUrl: './viewer-toc.component.html',
   styleUrls: ['./viewer-toc.component.scss'],
+  standalone: false
 })
 export class ViewerTocComponent implements OnInit, OnDestroy {
   @Output() hidenav = new EventEmitter<boolean>()
@@ -185,7 +186,6 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     //  console.log(this.hierarchyData,'hierarchyData')
     // tslint:disable-next-line
     //  console.log(contentRead,'contentRead')
-
 
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.logos) {
       const logo = this.configSvc.instanceConfig.logos.defaultContent || ''
@@ -489,7 +489,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     _collectionType: string,
   ): Promise<IViewerTocCard | null> {
     try {
-      const playlistFetchResponse = await this.contentSvc
+      const playlistFetchResponse: any = await this.contentSvc
         .fetchCollectionHierarchy('playlist', collectionId, 0, 1000)
         .toPromise()
 
@@ -754,8 +754,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
-        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
+        edata: { type: 'click', 'id': 'ai-tutor-player-page', 'pageid': `/viewer/${this.contentData?.identifier}` },
+        object: { 'id': this.contentData?.identifier, 'type': this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Loaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
@@ -767,14 +767,13 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
   }
 
-
   raiseAITutorEndTelemetry() {
     const event = {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
-        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
+        edata: { type: 'click', 'id': 'ai-tutor-player-page', 'pageid': `/viewer/${this.contentData?.identifier}` },
+        object: { 'id': this.contentData?.identifier, 'type': this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Unloaded,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
@@ -791,8 +790,8 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       eventType: WsEvents.WsEventType.Telemetry,
       eventLogLevel: WsEvents.WsEventLogLevel.Info,
       data: {
-        edata: { type: 'click', "id": "ai-tutor-player-page", "pageid": `/viewer/${this.contentData?.identifier}` },
-        object: { "id": this.contentData?.identifier, "type": this.contentData?.courseCategory },
+        edata: { type: 'click', 'id': 'ai-tutor-player-page', 'pageid': `/viewer/${this.contentData?.identifier}` },
+        object: { 'id': this.contentData?.identifier, 'type': this.contentData?.courseCategory },
         state: WsEvents.EnumTelemetrySubType.Interact,
         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
         mode: 'view',
@@ -809,12 +808,12 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
       if (node.length === 0) {
         // empty array
         return nodes
-      } else {
+      }
         // node is an array with items
         node.forEach((child: any) => {
           this.getLeafNodes(child, nodes)
         })
-      }
+
     } else if (node) {
       // node is a single object
       nodes.push(node)

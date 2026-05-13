@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
-import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '../../../../../../../../../library/ws-widget/collection/src/lib/_services/videojs-util'
+import { fireRealTimeProgressFunction, saveContinueLearningFunction, telemetryEventDispatcherFunction, videoJsInitializer } from '@sunbird-cb/collection'
 import { Subscription } from 'rxjs'
 import videoJs from 'video.js'
 import moment from 'moment'
@@ -45,7 +45,8 @@ const videoJsOptions: IYTOptions = {
 @Component({
   selector: 'ws-app-event-video-player',
   templateUrl: './event-video-player.component.html',
-  styleUrls: ['./event-video-player.component.scss']
+  styleUrls: ['./event-video-player.component.scss'],
+  standalone: false
 })
 export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestroy {
 
@@ -108,9 +109,7 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
   ngAfterViewInit() {
 
-
   }
-
 
   getBatchId() {
     let batchId = ''
@@ -125,11 +124,11 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
 
   eventStateRead() {
 
-    let req = {
+    const req = {
       eventId: this.eventData.identifier,
-      batchId: this.getBatchId()
+      batchId: this.getBatchId(),
     }
-    this.eventService.eventStateRead(req).subscribe((data) => {
+    this.eventService.eventStateRead(req).subscribe(data => {
       if (data && data.result && data.result.events && data.result.events.length) {
         let resumeFrom = JSON.parse(data.result.events[0]['progressdetails'])['stateMetaData']
         this.resumeEventStatus = data.result.events[0]['status']
@@ -139,21 +138,21 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
         }
 
         this.widgetData = {
-          "isVideojs": true,
-          "disableTelemetry": false,
-          "url": this.eventData.registrationLink,
-          "identifier": this.eventData.identifier,
-          "mimeType": "video/mp4",
-          "resumePoint": 0,
-          "continueLearning": true,
-          "subtitles": [],
-          "collectionId": this.eventData.identifier,
-          "contentType": "Event",
-          "primaryCategory": "Event",
-          "channel": this.eventData.channel,
-          "version": "2",
-          "size": "31",
-          "hideUpNext": false
+          'isVideojs': true,
+          'disableTelemetry': false,
+          'url': this.eventData.registrationLink,
+          'identifier': this.eventData.identifier,
+          'mimeType': 'video/mp4',
+          'resumePoint': 0,
+          'continueLearning': true,
+          'subtitles': [],
+          'collectionId': this.eventData.identifier,
+          'contentType': 'Event',
+          'primaryCategory': 'Event',
+          'channel': this.eventData.channel,
+          'version': '2',
+          'size': '31',
+          'hideUpNext': false,
         }
         this.initializePlayer(resumeFrom)
       } else {
@@ -173,7 +172,6 @@ export class EventVideoPlayerComponent implements OnInit, AfterViewInit, OnDestr
     const min = stime.substr(2, 3)
     return `${date} ${hour}${min}`
   }
-
 
   initializePlayer(resumeFrom: any) {
     let timeSpent = resumeFrom ? resumeFrom : 0

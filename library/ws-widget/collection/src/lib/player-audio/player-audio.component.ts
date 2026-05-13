@@ -46,6 +46,7 @@ const videoJsOptions: videoJs.PlayerOptions = {
   selector: 'ws-widget-player-audio',
   templateUrl: './player-audio.component.html',
   styleUrls: ['./player-audio.component.scss'],
+  standalone: false
 })
 export class PlayerAudioComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, NsWidgetResolver.IWidgetData<any> {
@@ -239,7 +240,7 @@ export class PlayerAudioComponent extends WidgetBaseComponent
     })
   }
   async fetchContent() {
-    const content = await this.contentSvc.fetchContent(this.widgetData.identifier || '', 'minimal').toPromise()
+    const content: any = await this.contentSvc.fetchContent(this.widgetData.identifier || '', 'minimal').toPromise()
     if (content.artifactUrl && content.artifactUrl.indexOf('/content-store/') > -1) {
       this.widgetData.url = content.artifactUrl
       const url = this.viewerSvc.getPublicUrl(content.posterImage || content.appIcon)

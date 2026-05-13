@@ -3,9 +3,10 @@ import { ActivatedRoute, NavigationEnd, Router, Event, NavigationError } from '@
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 
 @Component({
-  selector: 'ws-app-careers-home',
-  templateUrl: './careers-home.component.html',
-  styleUrls: ['./careers-home.component.scss'],
+    selector: 'ws-app-careers-home',
+    templateUrl: './careers-home.component.html',
+    styleUrls: ['./careers-home.component.scss'],
+    standalone: false
 })
 export class CareersHomeComponent implements OnInit, OnDestroy {
   titles = [{ title: 'CAREER', url: '/app/careers/home', icon: 'work' }]

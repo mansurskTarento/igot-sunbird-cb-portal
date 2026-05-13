@@ -21,13 +21,14 @@ interface FormattedQuestion extends NSPractice.ISectionQuestion {
         animate('300ms ease-in', style({ opacity: 0, transform: 'translateY(-10px)' }))
       ])
     ])
-  ]
+  ],
+  standalone: false
 })
 export class SectionResultsViewComponent implements OnInit {
   @Input() sectionData!: NSPractice.IQuizSubmitResSec
   @Input() hideSectionHeader = false
   @Input() selectedAssessmentCompatibilityLevel: number = 0
-  @Output() back = new EventEmitter<void>();
+  @Output() back = new EventEmitter<void>()
 
   // Question arrays for different tabs
   allQuestions: FormattedQuestion[] = []
@@ -65,7 +66,7 @@ export class SectionResultsViewComponent implements OnInit {
         const formatted: FormattedQuestion = {
           ...question,
           result: normalizedResult,
-          formattedTime: this.formatTime(question.timeSpent || '')
+          formattedTime: this.formatTime(question.timeSpent || ''),
         }
         all.push(formatted)
         if (normalizedResult === 'Correct') { correct.push(formatted) }

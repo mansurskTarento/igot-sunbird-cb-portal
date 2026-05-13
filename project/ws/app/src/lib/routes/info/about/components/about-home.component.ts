@@ -8,13 +8,14 @@ import {
 import { map } from 'rxjs/operators'
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
-import { IAboutObject } from '../../../../../../../../../src/app/routes/public/public-about/about.model'
+import { IAboutObject } from './../../../../routes/models/about.model'
 import { Subscription } from 'rxjs'
 
 @Component({
-  selector: 'ws-app-about-home',
-  templateUrl: './about-home.component.html',
-  styleUrls: ['./about-home.component.scss'],
+    selector: 'ws-app-about-home',
+    templateUrl: './about-home.component.html',
+    styleUrls: ['./about-home.component.scss'],
+    standalone: false
 })
 export class AboutHomeComponent implements OnInit, OnDestroy {
   objectKeys = Object.keys

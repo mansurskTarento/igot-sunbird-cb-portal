@@ -1,23 +1,24 @@
 import { Component, Inject, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { ConfigurationsService, TFetchStatus } from '@sunbird-cb/utils-v2'
-import { SEARCH_V6_AUTH } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
 import { BehaviorSubject, EMPTY, Subscription, timer } from 'rxjs'
 import { debounce, mergeMap } from 'rxjs/operators'
+import { NSContent } from '../../../../../../interface/content'
+import { ApiService } from '../../../../../../modules/shared/services/api.service'
+import { AccessControlService } from '../../../../../../modules/shared/services/access-control.service'
+import { SEARCH_V6_AUTH } from '../../../../../../constants/apiEndpoints'
 
 interface IAuthPickerData {
   filter: any
   selectedIds: string[]
 }
 @Component({
-  selector: 'ws-auth-picker',
-  templateUrl: './auth-picker.component.html',
-  styleUrls: ['./auth-picker.component.scss'],
-  // tslint:disable-next-line: use-component-view-encapsulation
-  encapsulation: ViewEncapsulation.None,
+    selector: 'ws-auth-picker',
+    templateUrl: './auth-picker.component.html',
+    styleUrls: ['./auth-picker.component.scss'],
+    // tslint:disable-next-line: use-component-view-encapsulation
+    encapsulation: ViewEncapsulation.None,
+    standalone: false
 })
 export class AuthPickerComponent implements OnInit, OnDestroy {
   query = ''

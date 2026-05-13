@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-karmayogi-saptah',
-  templateUrl: './karmayogi-saptah.component.html',
-  styleUrls: ['./karmayogi-saptah.component.scss'],
+    selector: 'ws-app-karmayogi-saptah',
+    templateUrl: './karmayogi-saptah.component.html',
+    styleUrls: ['./karmayogi-saptah.component.scss'],
+    standalone: false
 })
 export class KarmayogiSaptahComponent implements OnInit {
 

@@ -8,17 +8,18 @@ import { PlaylistContentDeleteDialogComponent } from '../../components/playlist-
 import { PlaylistContentDeleteErrorDialogComponent } from '../../components/playlist-content-delete-error-dialog/playlist-content-delete-error-dialog.component'
 import { PlaylistDeleteDialogComponent } from '../../components/playlist-delete-dialog/playlist-delete-dialog.component'
 import { PlaylistShareDialogComponent } from '../../components/playlist-share-dialog/playlist-share-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import {
 //   PLAYLIST_TITLE_MAX_LENGTH,
 //   PLAYLIST_TITLE_MIN_LENGTH,
 // } from '../../constants/playlist.constant'
 
 @Component({
-  selector: 'ws-app-playlist-card',
-  templateUrl: './playlist-card.component.html',
-  styleUrls: ['./playlist-card.component.scss'],
+    selector: 'ws-app-playlist-card',
+    templateUrl: './playlist-card.component.html',
+    styleUrls: ['./playlist-card.component.scss'],
+    standalone: false
 })
 export class PlaylistCardComponent implements OnInit {
   @Input()
@@ -36,11 +37,11 @@ export class PlaylistCardComponent implements OnInit {
   isListExpanded: { [playlistId: string]: boolean } = {}
 
   constructor(private route: ActivatedRoute,
-              private snackBar: MatSnackBar,
-              public dialog: MatDialog,
-              private playlistSvc: BtnPlaylistService,
-              public router: Router,
-              public configSvc: ConfigurationsService,
+    private snackBar: MatSnackBar,
+    public dialog: MatDialog,
+    private playlistSvc: BtnPlaylistService,
+    public router: Router,
+    public configSvc: ConfigurationsService,
 
   ) {
     const instanceConfig = this.configSvc.instanceConfig
@@ -57,7 +58,7 @@ export class PlaylistCardComponent implements OnInit {
     if (this.playlist) {
       this.playlistSvc.getPlaylist(this.playlist.identifier).subscribe(data => {
         this.playlist = data ? data.result.content : this.playlist
-         if (this.playlist && this.playlist.children && !this.playlist.icon) {
+        if (this.playlist && this.playlist.children && !this.playlist.icon) {
           this.playlist.icon = this.playlist.children[0].appIcon
         }
       })

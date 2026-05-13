@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http'
 @Injectable()
 export class CertificationService {
   API_ENDPOINTS = {
-    USER_CERTIFICATION: ``,
+    USER_CERTIFICATION: '',
   }
   constructor(private http: HttpClient) { }
 

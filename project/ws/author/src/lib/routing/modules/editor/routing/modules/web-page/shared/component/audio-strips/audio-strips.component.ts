@@ -1,14 +1,15 @@
 import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Subscription, fromEvent } from 'rxjs'
 import { AUTHORING_CONTENT_BASE } from '../../../../../../../../../constants/apiEndpoints'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
 import { IAudioObj } from '../../../interface/page-interface'
+import { ConfirmDialogComponent } from '../../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
 
 @Component({
-  selector: 'ws-auth-audio-strips',
-  templateUrl: './audio-strips.component.html',
-  styleUrls: ['./audio-strips.component.scss'],
+    selector: 'ws-auth-audio-strips',
+    templateUrl: './audio-strips.component.html',
+    styleUrls: ['./audio-strips.component.scss'],
+    standalone: false
 })
 export class AudioStripsComponent implements OnInit, OnDestroy {
 

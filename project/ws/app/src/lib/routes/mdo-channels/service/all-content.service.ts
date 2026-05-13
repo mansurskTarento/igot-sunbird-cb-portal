@@ -5,8 +5,8 @@ import { finalize } from 'rxjs/operators'
 import { NsContent } from '@sunbird-cb/utils-v2'
 
 const API_ENDPOINTS = {
-  SEARCH_V6: `/apis/proxies/v8/sunbirdigot/search`,
-  ALL_PROVIDERS: `/apis/proxies/v8/searchBy/provider`,
+  SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
+  ALL_PROVIDERS: '/apis/proxies/v8/searchBy/provider',
 }
 
 @Injectable({

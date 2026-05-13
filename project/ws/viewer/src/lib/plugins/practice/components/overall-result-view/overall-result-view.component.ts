@@ -19,9 +19,10 @@ interface FailureInfo {
 }
 
 @Component({
-  selector: 'viewer-overall-result-view',
-  templateUrl: './overall-result-view.component.html',
-  styleUrls: ['./overall-result-view.component.scss']
+    selector: 'viewer-overall-result-view',
+    templateUrl: './overall-result-view.component.html',
+    styleUrls: ['./overall-result-view.component.scss'],
+    standalone: false
 })
 export class OverallResultViewComponent implements OnInit, OnChanges, OnDestroy {
   @Input() resultsData: any

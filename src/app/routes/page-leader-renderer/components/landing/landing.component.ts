@@ -5,13 +5,14 @@ import { IWsEmailUserId, IWsUserFollow } from '../../model/leadership-email.mode
 import { IWsLeaderData } from '../../model/leadership.model'
 import { LeadershipService } from '../../services/leadership.service'
 import { SendMailDialogComponent } from '../send-mail-dialog/send-mail-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 
 @Component({
-  selector: 'ws-landing',
-  templateUrl: './landing.component.html',
-  styleUrls: ['./landing.component.scss'],
+    selector: 'ws-landing',
+    templateUrl: './landing.component.html',
+    styleUrls: ['./landing.component.scss'],
+    standalone: false
 })
 export class LandingComponent implements OnInit {
   @ViewChild('followed', { static: true }) followed!: ElementRef<any>

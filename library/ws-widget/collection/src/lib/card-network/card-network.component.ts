@@ -5,9 +5,10 @@ import { CardNetWorkService } from './card-network.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-card-network',
-  templateUrl: './card-network.component.html',
-  styleUrls: ['./card-network.component.scss'],
+    selector: 'ws-widget-card-network',
+    templateUrl: './card-network.component.html',
+    styleUrls: ['./card-network.component.scss'],
+    standalone: false
 })
 export class CardNetworkComponent extends WidgetBaseComponent
 

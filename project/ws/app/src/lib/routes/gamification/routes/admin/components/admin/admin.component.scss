@@ -1,5 +1,5 @@
-@import 'ws-common';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .item-container {
@@ -18,8 +18,8 @@ mat-card {
   padding: 0 !important;
 }
 
-.border{
-  border:1px solid;
+.border {
+  border: 1px solid;
 }
 
 .sidenav {
@@ -61,6 +61,7 @@ mat-card {
   .mat-form-field-wrapper {
     padding-bottom: 0px !important;
   }
+
   .mat-form-field-infix {
     border-top-width: 2px !important;
   }
@@ -74,6 +75,7 @@ mat-card {
   right: 0;
   min-height: calc(100vh - 164px);
 }
+
 .vertical-align {
   vertical-align: text-bottom;
 }
@@ -123,15 +125,19 @@ mat-card {
 
 .flex-dynamic {
   justify-content: flex-start;
+
   @include breakpoint-gt-s {
     justify-content: center;
   }
+
   @include breakpoint-gt-xs {
     justify-content: center;
   }
+
   @include breakpoint-xs {
     justify-content: center;
   }
+
   @include breakpoint-gt-m {
     justify-content: flex-start;
   }
@@ -143,11 +149,11 @@ mat-card {
   height: 32px;
 }
 
-.dimensions{
-  margin-top:20px;
+.dimensions {
+  margin-top: 20px;
   margin-left: 50%;
 }
 
-.align{
+.align {
   text-align: center;
 }

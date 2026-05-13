@@ -9,9 +9,10 @@ import {
 } from '@angular/core'
 import { PageChangeEmitter } from '../../models/search-v3.model'
 @Component({
-  selector: 'ws-app-pagination',
-  templateUrl: './pagination.component.html',
-  styleUrls: ['./pagination.component.scss'],
+    selector: 'ws-app-pagination',
+    templateUrl: './pagination.component.html',
+    styleUrls: ['./pagination.component.scss'],
+    standalone: false
 })
 export class PaginationComponent implements OnInit, OnChanges {
   private _currentPage: number = 1;

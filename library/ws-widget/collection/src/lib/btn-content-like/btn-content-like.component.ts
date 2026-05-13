@@ -5,9 +5,10 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 import { BtnContentLikeService } from './btn-content-like.service'
 
 @Component({
-  selector: 'ws-widget-btn-content-like',
-  templateUrl: './btn-content-like.component.html',
-  styleUrls: ['./btn-content-like.component.scss'],
+    selector: 'ws-widget-btn-content-like',
+    templateUrl: './btn-content-like.component.html',
+    styleUrls: ['./btn-content-like.component.scss'],
+    standalone: false
 })
 export class BtnContentLikeComponent extends WidgetBaseComponent
   implements

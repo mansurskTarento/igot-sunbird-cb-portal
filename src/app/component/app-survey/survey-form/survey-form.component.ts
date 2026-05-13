@@ -3,9 +3,10 @@ import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-survey-form',
-  templateUrl: './survey-form.component.html',
-  styleUrls: ['./survey-form.component.scss'],
+    selector: 'ws-survey-form',
+    templateUrl: './survey-form.component.html',
+    styleUrls: ['./survey-form.component.scss'],
+    standalone: false
 })
 export class SurveyFormComponent implements OnInit {
   surveyPopupData: any

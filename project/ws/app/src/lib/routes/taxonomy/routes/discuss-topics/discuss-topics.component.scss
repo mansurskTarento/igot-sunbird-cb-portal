@@ -1,39 +1,46 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
   @extend %page-center;
   height: auto;
   min-height: 400px;
 }
-.search{
+
+.search {
   margin-top: 20px;
   margin-left: 8.5%;
 }
-ws-widget-breadcrumbs-org{
+
+ws-widget-breadcrumbs-org {
   margin-left: -30px;
   margin-top: 15px;
 }
-.bot{
+
+.bot {
   margin-bottom: 40px;
 }
-.sidenav-align{
+
+.sidenav-align {
   overflow: auto;
   width: auto;
   min-width: 380px;
   min-height: 900px;
 
 }
-.min-height{
+
+.min-height {
   min-height: 900px;
 }
+
 .container-balanced-banner {
   max-width: 1600px;
   margin-left: auto !important;
   margin-right: auto !important;
   height: auto;
 }
+
 .container-balanced-local {
   max-width: 1600px;
   min-height: 1000px;
@@ -41,9 +48,11 @@ ws-widget-breadcrumbs-org{
   margin-right: auto !important;
   height: auto;
 }
+
 .min-wid {
   min-width: 300;
 }
+
 .flex-3 {
   flex: 3;
 }
@@ -68,6 +77,7 @@ ws-widget-breadcrumbs-org{
     flex-direction: column;
   }
 }
-.unit-cohort{
+
+.unit-cohort {
   background-color: green;
 }

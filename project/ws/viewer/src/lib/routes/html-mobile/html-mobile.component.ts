@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { AccessControlService } from '@ws/author'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { WidgetContentService } from '@sunbird-cb/toc'
 import {
   EventService,
@@ -15,9 +14,10 @@ import { filter } from 'rxjs/operators'
 // import { ViewerUtilService } from '@sunbird-cb/toc'
 import { environment } from 'src/environments/environment'
 @Component({
-  selector: 'viewer-html-mobile',
-  templateUrl: './html-mobile.component.html',
-  styleUrls: ['./html-mobile.component.scss'],
+    selector: 'viewer-html-mobile',
+    templateUrl: './html-mobile.component.html',
+    styleUrls: ['./html-mobile.component.scss'],
+    standalone: false
 })
 export class HtmlMobileComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null
@@ -30,9 +30,6 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
   oldData: NsContent.IContent | null = null
   alreadyRaised = false
   subApp = false
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   uuid: string | null | undefined = null
   realTimeProgressRequest = {
     content_type: 'Resource',
@@ -148,12 +145,6 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
             //   }
 
           }
-          if (this.htmlData) {
-            this.formDiscussionForumWidget(this.htmlData)
-            if (this.discussionForumWidget) {
-              this.discussionForumWidget.widgetData.isDisabled = true
-            }
-          }
         })
     } else {
       this.routeDataSubscription = this.activatedRoute.data.subscribe(
@@ -175,9 +166,6 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
               }
             }
             this.subApp = false
-          }
-          if (tempHtmlData) {
-            this.formDiscussionForumWidget(tempHtmlData)
           }
           if (tempHtmlData && tempHtmlData.artifactUrl.indexOf('content-store') >= 0) {
             await this.setS3Cookie(tempHtmlData.identifier)
@@ -319,21 +307,6 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
     //     clearTimeout(this.realTimeProgressTimer)
     //   }
     // }
-  }
-
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
   }
 
   private async setS3Cookie(contentId: string) {

@@ -6,9 +6,10 @@ import { PeerValidationService } from '../../../../services/peer-validation.serv
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-user-search-table',
-  templateUrl: './user-search-table.component.html',
-  styleUrls: ['./user-search-table.component.scss'],
+    selector: 'ws-app-user-search-table',
+    templateUrl: './user-search-table.component.html',
+    styleUrls: ['./user-search-table.component.scss'],
+    standalone: false
 })
 export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
   @Input() selectedUserIds: string[] = []   // Array of selected IDs (multi-select)
@@ -104,9 +105,9 @@ export class UserSearchTableComponent implements OnInit, OnChanges, OnDestroy {
     const lastName = user.lastName || ''
     if (firstName && lastName) {
       return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase()
-    } else if (firstName) {
+    }  if (firstName) {
       return firstName.substring(0, 2).toUpperCase()
-    } else if (user.name) {
+    }  if (user.name) {
       const parts = user.name.split(' ')
       if (parts.length > 1) {
         return `${parts[0].charAt(0)}${parts[1].charAt(0)}`.toUpperCase()

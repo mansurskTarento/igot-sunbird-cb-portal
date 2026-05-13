@@ -1,14 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { AppTocService } from '@sunbird-cb/toc'
 import { LoggerService, MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
-import { RatingService } from '@sunbird-cb/collection/src/public-api'
+import { RatingService } from '@sunbird-cb/collection'
 @Component({
-  selector: 'viewer-course-completion-dialog',
-  templateUrl: './course-completion-dialog.component.html',
-  styleUrls: ['./course-completion-dialog.component.scss'],
+    selector: 'viewer-course-completion-dialog',
+    templateUrl: './course-completion-dialog.component.html',
+    styleUrls: ['./course-completion-dialog.component.scss'],
+    standalone: false
 })
 export class CourseCompletionDialogComponent implements OnInit {
   courseName = ''
@@ -38,7 +39,7 @@ export class CourseCompletionDialogComponent implements OnInit {
     if (badgeDetails && badgeDetails.length) {
       const badge = badgeDetails[0]
       const now = Date.now()
-      if (badge?.criteria == "partialRandomCompletion") {
+      if (badge?.criteria == 'partialRandomCompletion') {
         this.badge = null
         return
       }

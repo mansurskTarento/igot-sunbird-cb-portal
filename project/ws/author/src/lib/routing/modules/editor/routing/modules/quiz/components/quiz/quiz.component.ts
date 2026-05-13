@@ -1,54 +1,43 @@
-import { DeleteDialogComponent } from '@ws/author/src/lib/modules/shared/components/delete-dialog/delete-dialog.component'
+
 import { Component, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar, MatLegacySnackBarRef as MatSnackBarRef } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar, MatSnackBarRef as MatSnackBarRef } from '@angular/material/snack-bar'
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout'
 import { map, mergeMap, tap, catchError } from 'rxjs/operators'
 import { forkJoin, of, Observable, Subscription } from 'rxjs'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute, Router } from '@angular/router'
 
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { CommentsDialogComponent } from '@ws/author/src/lib/modules/shared/components/comments-dialog/comments-dialog.component'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { ErrorParserComponent } from '@ws/author/src/lib/modules/shared/components/error-parser/error-parser.component'
-
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
 import { QuizStoreService } from '../../services/store.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { EditorService } from '@ws/author/src/lib/routing/modules/editor/services/editor.service'
 import { QuizResolverService } from '../../services/resolver.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { NotificationService } from '@ws/author/src/lib/services/notification.service'
-// import {
-//   FillUps,
-//   MatchQuiz,
-//   McqQuiz,
-// } from '@ws/author/src/lib/routing/modules/editor/routing/modules/quiz/components/quiz-class'
-import {
-  NOTIFICATION_TIME,
-  ASSESSMENT_JSON_WITH_KEY,
-  ASSESSMENT_JSON_WITHOUT_KEY,
-  ASSESSMENT,
-  QUIZ_JSON,
-} from '@ws/author/src/lib/routing/modules/editor/routing/modules/quiz/constants/quiz-constants'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { NSApiRequest } from '@ws/author/src/lib/interface/apiRequest'
-
-import { CONTENT_BASE_WEBHOST } from '@ws/author/src/lib/constants/apiEndpoints'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
 import { UntypedFormGroup } from '@angular/forms'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
+import { NSContent } from '../../../../../../../../interface/content'
+import { NotificationComponent } from '../../../../../../../../modules/shared/components/notification/notification.component'
+import { LoaderService } from '../../../../../../../../services/loader.service'
+import { EditorContentService } from '../../../../../services/editor-content.service'
+import { UploadService } from '../../../../../shared/services/upload.service'
+import { EditorService } from '../../../../../services/editor.service'
+import { NotificationService } from '../../../../../../../../services/notification.service'
+import { AuthInitService } from '../../../../../../../../services/init.service'
+import { AccessControlService } from '../../../../../../../../modules/shared/services/access-control.service'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { ErrorParserComponent } from '../../../../../../../../modules/shared/components/error-parser/error-parser.component'
+import { ASSESSMENT, ASSESSMENT_JSON_WITH_KEY, ASSESSMENT_JSON_WITHOUT_KEY, NOTIFICATION_TIME, QUIZ_JSON } from '../../constants/quiz-constants'
+import { NSApiRequest } from '../../../../../../../../interface/apiRequest'
+import { CONTENT_BASE_WEBHOST } from '../../../../../../../../constants/apiEndpoints'
+import { DeleteDialogComponent } from '../../../../../../../../modules/shared/components/delete-dialog/delete-dialog.component'
+import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
+import { CommentsDialogComponent } from '../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
 
 @Component({
-  selector: 'ws-auth-quiz',
-  templateUrl: './quiz.component.html',
-  styleUrls: ['./quiz.component.scss'],
-  providers: [QuizResolverService, {
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-quiz',
+    templateUrl: './quiz.component.html',
+    styleUrls: ['./quiz.component.scss'],
+    providers: [QuizResolverService, {
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class QuizComponent implements OnInit, OnDestroy {
 

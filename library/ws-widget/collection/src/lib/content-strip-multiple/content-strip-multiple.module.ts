@@ -6,13 +6,17 @@ import { HorizontalScrollerModule } from '@sunbird-cb/utils-v2'
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatChipsModule } from '@angular/material/chips'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function ContentStripMultipleHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
 
 @NgModule({
     declarations: [ContentStripMultipleComponent],
@@ -30,11 +34,11 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: ContentStripMultipleHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),
     ],
     exports: [ContentStripMultipleComponent]
 })
-export class ContentStripMultipleModule {}
+export class ContentStripMultipleModule { }

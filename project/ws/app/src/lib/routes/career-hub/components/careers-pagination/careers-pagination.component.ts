@@ -3,9 +3,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-careers-pagination',
-  templateUrl: './careers-pagination.component.html',
-  styleUrls: ['./careers-pagination.component.scss'],
+    selector: 'ws-app-careers-pagination',
+    templateUrl: './careers-pagination.component.html',
+    styleUrls: ['./careers-pagination.component.scss'],
+    standalone: false
 })
 export class CareersPaginationComponent implements OnInit {
 

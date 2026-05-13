@@ -1,9 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
 
 @Component({
-  selector: 'ws-analytics-analytics-tile',
-  templateUrl: './analytics-tile.component.html',
-  styleUrls: ['./analytics-tile.component.scss'],
+    selector: 'ws-analytics-analytics-tile',
+    templateUrl: './analytics-tile.component.html',
+    styleUrls: ['./analytics-tile.component.scss'],
+    standalone: false
 })
 export class AnalyticsTileComponent implements OnInit {
   @Input() uniqueUsers!: number

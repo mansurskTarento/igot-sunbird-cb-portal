@@ -1,18 +1,19 @@
 import { Component, OnInit, Inject, Input } from '@angular/core'
 import { UntypedFormGroup, UntypedFormControl, Validators } from '@angular/forms'
 import { EventService, WsEvents, LoggerService, NsContent } from '@sunbird-cb/utils-v2'
-import { RatingService } from '@sunbird-cb/collection/src/lib/_services/rating.service'
 import { switchMap, takeUntil } from 'rxjs/operators'
 import { Subject } from 'rxjs'
 import { NsAppRating } from '@sunbird-cb/toc'
 import { Router } from '@angular/router'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { RatingService } from '../../_services/rating.service'
 
 @Component({
-  selector: 'ws-widget-content-rating-v2-dialog',
-  templateUrl: './content-rating-v2-dialog.component.html',
-  styleUrls: ['./content-rating-v2-dialog.component.scss'],
+    selector: 'ws-widget-content-rating-v2-dialog',
+    templateUrl: './content-rating-v2-dialog.component.html',
+    styleUrls: ['./content-rating-v2-dialog.component.scss'],
+    standalone: false
 })
 
 export class ContentRatingV2DialogComponent implements OnInit {

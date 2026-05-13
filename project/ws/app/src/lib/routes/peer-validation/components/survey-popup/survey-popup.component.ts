@@ -5,9 +5,10 @@ import { SurveyDialogComponent } from '../survey-dialog/survey-dialog.component'
 import { PeerValidationService } from '../../services/peer-validation.service'
 
 @Component({
-  selector: 'ws-app-survey-popup',
-  templateUrl: './survey-popup.component.html',
-  styleUrls: ['./survey-popup.component.scss'],
+    selector: 'ws-app-survey-popup',
+    templateUrl: './survey-popup.component.html',
+    styleUrls: ['./survey-popup.component.scss'],
+    standalone: false
 })
 export class SurveyPopupComponent {
   constructor(
@@ -40,7 +41,7 @@ export class SurveyPopupComponent {
             this.peerValidationService.dashboardRefresh$.next()
             this.dialogRef.close('ignored')
           },
-          error: () => this.dialogRef.close()
+          error: () => this.dialogRef.close(),
         })
     } else {
       this.dialogRef.close()

@@ -8,22 +8,22 @@ import { HomeComponent } from './components/home/home.component'
 import { NotificationService } from './services/notification.service'
 import { NotificationApiService } from './services/notification-api.service'
 import { NotificationEventComponent } from './components/notification-event/notification-event.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatButtonModule } from '@angular/material/button'
 import { MatRippleModule } from '@angular/material/core'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
-import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatToolbarModule } from '@angular/material/toolbar'
 import { MyNotificationsComponent } from './components/my-notifications/my-notifications.component'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatTabsModule } from '@angular/material/tabs'
 import { AllNotificationsModule, LibNotificationsService } from '@sunbird-cb/notification'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
-import { NotificationsService } from '../../../../../../../src/app/services/notifications.service'
+import { NotificationsService } from '../../routes/services/notifications.service'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
-import { ConfirmDialogModule } from '@sunbird-cb/collection/src/lib/_common/confirm-dialog/confirm-dialog.module'
+import { ConfirmDialogModule } from '@sunbird-cb/collection'
 
-export function HttpLoaderFactory(http: HttpClient) {
+export function NotificationHttpLoaderFactory(http: HttpClient) {
   return new TranslateHttpLoader(http)
 }
 @NgModule({
@@ -43,11 +43,11 @@ export function HttpLoaderFactory(http: HttpClient) {
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
-        useFactory: HttpLoaderFactory,
+        useFactory: NotificationHttpLoaderFactory,
         deps: [HttpClient],
       },
     }),
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   providers: [NotificationApiService, NotificationService, NotificationsService, LibNotificationsService],
 })

@@ -1,26 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import * as _ from 'lodash';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { NetworkingService } from '../../services/networking.service';
-import { connectionUpdates } from '../../models/network-v3.model';
+import { Component, OnInit } from '@angular/core'
+import { Router } from '@angular/router'
+import * as _ from 'lodash'
+import { HttpErrorResponse } from '@angular/common/http'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { NetworkingService } from '../../services/networking.service'
+import { connectionUpdates } from '../../models/network-v3.model'
 
 @Component({
   selector: 'ws-app-network-home',
   templateUrl: './network-home.component.html',
-  styleUrls: ['./network-home.component.scss']
+  styleUrls: ['./network-home.component.scss'],
+  standalone: false
 })
-export class NetworkHomeComponent implements OnInit{
+export class NetworkHomeComponent implements OnInit {
   //#region (global variables)
-  connectionRequestsList: any[] = [];
-  connectionsLoading: boolean = false;
-  connectionRequestsCount: number = 0;
+  connectionRequestsList: any[] = []
+  connectionsLoading: boolean = false
+  connectionRequestsCount: number = 0
   peopleYouMayKnowList: any[] = []
-  peopleYouMayKnowCount: number = 0;
-  suggestionsLoading: boolean = false;
+  peopleYouMayKnowCount: number = 0
+  suggestionsLoading: boolean = false
   mentorSuggestionsList: any[] = []
-  mentorsLoading: boolean = false;
+  mentorsLoading: boolean = false
   sliderConfig = {
     showNavs: true,
     showDots: true,
@@ -30,14 +31,14 @@ export class NetworkHomeComponent implements OnInit{
     responsive: {
       dotsAlign: true,
       showDots: true,
-    }
+    },
   }
 
   //#endregion (global variables)
 
   constructor(
     private router: Router,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private networkingService: NetworkingService
     // private activatedRoute: ActivatedRoute
   ) { }
@@ -45,37 +46,37 @@ export class NetworkHomeComponent implements OnInit{
   //#region (initialization)
 
   ngOnInit() {
-    this.initialization();
+    this.initialization()
   }
 
   initialization() {
-    this.getConnectionRequests();
-    this.getPeopleYouMayKnow();
-    this.getMentorSuggestions();
+    this.getConnectionRequests()
+    this.getPeopleYouMayKnow()
+    this.getMentorSuggestions()
   }
 
   getConnectionRequests() {
-    const pageNo = 0;
-    const pageSize = 3; 
-    this.connectionsLoading = true;
+    const pageNo = 0
+    const pageSize = 3
+    this.connectionsLoading = true
     this.networkingService.getConnectionRequests(pageNo, pageSize).subscribe({
       next: (response) => {
-        this.connectionsLoading = false;
-        this.connectionRequestsList = _.get(response, 'data', []);
-        this.connectionRequestsCount = _.get(response, 'count', 0);
+        this.connectionsLoading = false
+        this.connectionRequestsList = _.get(response, 'data', [])
+        this.connectionRequestsCount = _.get(response, 'count', 0)
         const connectionsUpdate: connectionUpdates = {
           routeId: 'connections',
-          showUpdate: this.connectionRequestsList.length > 0 ? true : false
+          showUpdate: this.connectionRequestsList.length > 0 ? true : false,
         }
-        this.networkingService.sendConnectionUpdates(connectionsUpdate);
+        this.networkingService.sendConnectionUpdates(connectionsUpdate)
       },
       error: (error: HttpErrorResponse) => {
-        this.connectionsLoading = false;
-        if(error) {
-          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchConnectionRequests'), 3000);
+        this.connectionsLoading = false
+        if (error) {
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchConnectionRequests'), 3000)
         }
       }
-    });
+    })
   }
 
   getPeopleYouMayKnow() {
@@ -84,20 +85,20 @@ export class NetworkHomeComponent implements OnInit{
       offset: 0,
     }
 
-    this.suggestionsLoading = true;
+    this.suggestionsLoading = true
     this.networkingService.getRecommendedUsers(formBody).subscribe({
       next: (response) => {
-        this.suggestionsLoading = false;
-        this.peopleYouMayKnowList = _.get(response, 'result.response', []);
-        this.peopleYouMayKnowCount = _.get(response, 'result.count', 0);
+        this.suggestionsLoading = false
+        this.peopleYouMayKnowList = _.get(response, 'result.response', [])
+        this.peopleYouMayKnowCount = _.get(response, 'result.count', 0)
       },
       error: (error: HttpErrorResponse) => {
-        this.suggestionsLoading = false;
-        if(error) {
-          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchPeopleYouMayKnow'), 3000);
+        this.suggestionsLoading = false
+        if (error) {
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchPeopleYouMayKnow'), 3000)
         }
       }
-    });
+    })
   }
 
   getMentorSuggestions() {
@@ -105,19 +106,19 @@ export class NetworkHomeComponent implements OnInit{
       size: 15,
       offset: 0,
     }
-    this.mentorsLoading = true;
+    this.mentorsLoading = true
     this.networkingService.getRecommendedMentors(formBody).subscribe({
       next: (response) => {
-        this.mentorsLoading = false;
-        this.mentorSuggestionsList = _.get(response, 'result.response', []);
+        this.mentorsLoading = false
+        this.mentorSuggestionsList = _.get(response, 'result.response', [])
       },
       error: (error: HttpErrorResponse) => {
-        this.mentorsLoading = false;
+        this.mentorsLoading = false
         if (error) {
-          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchMentorSuggestions'), 3000); 
+          this.openSnackbar(this.handleTranslateTo('NetworkLandingPage.failedToFetchMentorSuggestions'), 3000)
         }
       }
-    });
+    })
   }
   //#endregion (initialization)
 
@@ -125,11 +126,11 @@ export class NetworkHomeComponent implements OnInit{
     if (type) {
       switch (type) {
         case 'connectionRequests':
-          this.router.navigate(['/app/network-v2/connections'], {queryParams: {tab: 'Received'}})
+          this.router.navigate(['/app/network-v2/connections'], { queryParams: { tab: 'Received' } })
           break
         case 'peopleYouMayKnow':
           const queryParams = {
-            type
+            type,
           }
           this.router.navigate(['/app/network-v2/recommendations/all'], { queryParams })
           break
@@ -143,11 +144,11 @@ export class NetworkHomeComponent implements OnInit{
   get showEmptyData(): boolean {
     return (
       this.connectionRequestsList.length === 0 &&
-      this.connectionsLoading === false &&
+      !this.connectionsLoading &&
       this.peopleYouMayKnowList.length === 0 &&
-      this.suggestionsLoading === false &&
+      !this.suggestionsLoading &&
       this.mentorSuggestionsList.length === 0 &&
-      this.mentorsLoading === false
+      !this.mentorsLoading
     )
   }
 

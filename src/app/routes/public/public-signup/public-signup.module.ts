@@ -12,33 +12,33 @@ import { AppPublicPositionResolverService } from './position-resolver.service'
 import { TermsAndConditionComponent } from './terms-and-condition/terms-and-condition.component'
 import { AppPublicGroupResolverService } from './group-resolver.service'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatLegacyAutocompleteModule as MatAutocompleteModule } from '@angular/material/legacy-autocomplete'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatButtonModule } from '@angular/material/button'
 import { MatButtonToggleModule } from '@angular/material/button-toggle'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
 import { MatNativeDateModule } from '@angular/material/core'
 import { MatDatepickerModule } from '@angular/material/datepicker'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTableModule } from '@angular/material/table'
+import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { PublicCrpComponent } from '../public-crp/public-crp.component'
 import { AppPublicOrganizationResolver } from './organization.resolver'
-import { AppOtpReaderComponent } from 'src/app/component/app-otp-reader/app-otp-reader.component'
-import { MatStepperModule } from '@angular/material/stepper';
+import { MatStepperModule } from '@angular/material/stepper'
+import { AppOtpReaderComponent } from '../../../component/app-otp-reader/app-otp-reader.component'
 @NgModule({
     declarations: [PublicSignupComponent, SignupSuccessDialogueComponent, TermsAndConditionComponent, PublicCrpComponent, AppOtpReaderComponent],
     imports: [
@@ -73,7 +73,7 @@ import { MatStepperModule } from '@angular/material/stepper';
         PipeOrderByModule,
         PipeDurationTransformModule,
         TranslateModule,
-        MatStepperModule
+        MatStepperModule,
     ],
     exports: [PublicSignupComponent, PublicCrpComponent],
     providers: [
@@ -86,6 +86,6 @@ import { MatStepperModule } from '@angular/material/stepper';
             useValue: environment.recaptchaKey,
         },
     ],
-    schemas: [CUSTOM_ELEMENTS_SCHEMA]
+    schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class PublicSignupModule { }

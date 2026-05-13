@@ -3,10 +3,7 @@ import { Subscription } from 'rxjs'
 import { AccessControlService } from '@ws/author'
 import {
   NsContent,
-  // IWidgetsPlayerMediaData,
-  NsDiscussionForum,
 } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute } from '@angular/router'
 import { ViewerUtilService } from '@sunbird-cb/toc'
@@ -15,9 +12,10 @@ import { environment } from 'src/environments/environment'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-video',
-  templateUrl: './video.component.html',
-  styleUrls: ['./video.component.scss'],
+    selector: 'viewer-video',
+    templateUrl: './video.component.html',
+    styleUrls: ['./video.component.scss'],
+    standalone: false
 })
 export class VideoComponent implements OnInit, OnDestroy {
   @Input() hideUpNext = false
@@ -33,9 +31,6 @@ export class VideoComponent implements OnInit, OnDestroy {
   //   IWidgetsPlayerMediaData
   // > | null = null
   widgetResolverVideoData: any = null
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   batchId = this.activatedRoute.snapshot.queryParamMap.get('batchId')
   channelId: any
   constructor(
@@ -62,9 +57,7 @@ export class VideoComponent implements OnInit, OnDestroy {
     ) {
       this.viewerDataSubscription = this.activatedRoute.data.subscribe(data => {
         this.videoData = data.content.data
-        if (this.videoData) {
-          this.formDiscussionForumWidget(this.videoData)
-        }
+
         // tslint:disable-next-line
         this.widgetResolverVideoData = this.initWidgetResolverVideoData(this.videoData!)
         if (this.activatedRoute.snapshot.queryParams.collectionId) {
@@ -126,10 +119,6 @@ export class VideoComponent implements OnInit, OnDestroy {
         async data => {
           this.widgetResolverVideoData = null
           this.videoData = data.content.data
-          console.log('this.videoData', this.videoData)
-          if (this.videoData) {
-            this.formDiscussionForumWidget(this.videoData)
-          }
           this.widgetResolverVideoData = this.initWidgetResolverVideoData(this.videoData as any)
           if (this.activatedRoute.snapshot.queryParams.collectionId) {
             this.widgetResolverVideoData.widgetData.collectionId = this.activatedRoute.snapshot.queryParams.collectionId
@@ -260,20 +249,6 @@ export class VideoComponent implements OnInit, OnDestroy {
     }
   }
 
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
-  }
   async fetchContinueLearning(videoId: string): Promise<boolean> {
     return new Promise(resolve => {
       let userId
@@ -324,8 +299,7 @@ export class VideoComponent implements OnInit, OnDestroy {
               }
             }
             resolve(true) // Resolve when subscription completes successfully
-          },
-          (error) => {
+          }, error => {
             console.error('Error fetching continue learning data:', error)
             resolve(true) // Resolve even on error to prevent hanging
           }

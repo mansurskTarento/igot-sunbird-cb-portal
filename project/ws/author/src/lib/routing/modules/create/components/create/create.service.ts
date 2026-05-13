@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { CONTENT_CREATE } from '@ws/author/src/lib/constants/apiEndpoints'
-import { NSApiResponse } from '@ws/author/src/lib/interface//apiResponse'
-import { NSApiRequest } from '@ws/author/src/lib/interface/apiRequest'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { environment } from '../../../../../../../../../../src/environments/environment'
+import { ApiService } from '../../../../../modules/shared/services/api.service'
+import { AccessControlService } from '../../../../../modules/shared/services/access-control.service'
+import { NSApiRequest } from '../../../../../interface/apiRequest'
+import { NSApiResponse } from '../../../../../interface/apiResponse'
+import { CONTENT_CREATE } from '../../../../../constants/apiEndpoints'
 
 @Injectable()
 export class CreateService {
@@ -87,7 +87,7 @@ export class CreateService {
     }
     return this.apiService
       .post<NSApiRequest.ICreateMetaRequestV2>(
-        `/apis/authApi/content/v3/create`,
+        '/apis/authApi/content/v3/create',
         requestBody,
       )
       .pipe(

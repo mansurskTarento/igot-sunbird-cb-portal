@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 
@@ -9,9 +9,10 @@ import { environment } from 'src/environments/environment'
   selector: 'ws-app-global-search',
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.scss'],
+  standalone: false
 })
 export class GlobalSearchComponent implements OnInit {
-  searchParam = ''
+  searchParam: any = ''
   userValue = ''
   searchparamFilters: any
   filtersPanel!: string | null
@@ -44,7 +45,7 @@ export class GlobalSearchComponent implements OnInit {
         this.searchParam = queryParams.get('q') || ''
       }
       if (queryParams.has('t')) {
-        this.searchParam = 'moderatedCourses' || ''
+        this.searchParam = 'moderatedCourses'
         this.userValue = 'moderatedCourses'
       }
       if (queryParams.has('f')) {

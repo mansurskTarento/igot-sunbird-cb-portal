@@ -1,4 +1,5 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars.scss';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins.scss' as *;
 
 .behavioural {
     background-color: #F8B861;
@@ -79,4 +80,3 @@
         }
     }
 }
-

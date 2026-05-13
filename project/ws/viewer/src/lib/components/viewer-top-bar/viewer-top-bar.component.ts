@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { ActivatedRoute, NavigationEnd, NavigationExtras, Router } from '@angular/router'
 import { WidgetContentService, AppTocService } from '@sunbird-cb/toc'
@@ -8,7 +8,7 @@ import { ConfigurationsService, LoggerService, NsPage, ValueService, EventServic
 import { Subscription } from 'rxjs'
 import { ViewerUtilService, ViewerDataService } from '@sunbird-cb/toc'
 import { CourseCompletionDialogComponent } from '../course-completion-dialog/course-completion-dialog.component'
-import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection/src/public-api'
+import { ContentRatingV2DialogComponent, RatingService } from '@sunbird-cb/collection'
 import { ViewerHeaderSideBarToggleService } from './../../viewer-header-side-bar-toggle.service'
 import { ResetRatingsService } from '@sunbird-cb/toc'
 import { WidgetContentLibService, ContentLanguageService } from '@sunbird-cb/consumption'
@@ -19,9 +19,10 @@ import _ from 'lodash'
 // import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
 @Component({
-  selector: 'viewer-viewer-top-bar',
-  templateUrl: './viewer-top-bar.component.html',
-  styleUrls: ['./viewer-top-bar.component.scss'],
+    selector: 'viewer-viewer-top-bar',
+    templateUrl: './viewer-top-bar.component.html',
+    styleUrls: ['./viewer-top-bar.component.scss'],
+    standalone: false
 })
 export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() frameReference: any

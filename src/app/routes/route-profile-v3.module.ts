@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { ProfileV3Module } from '@ws/app/src/lib/routes/profile-v3/profile-v3.module'
+import { ProfileV3Module } from '@ws/app'
 @NgModule({
   imports: [
     CommonModule, ProfileV3Module],

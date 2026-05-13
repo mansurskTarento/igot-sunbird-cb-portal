@@ -8,9 +8,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 import { IWidgetErrorInternalServer } from './error-internal-server.model'
 @Component({
-  selector: 'ws-widget-error-internal-server',
-  templateUrl: './error-internal-server.component.html',
-  styleUrls: ['./error-internal-server.component.scss'],
+    selector: 'ws-widget-error-internal-server',
+    templateUrl: './error-internal-server.component.html',
+    styleUrls: ['./error-internal-server.component.scss'],
+    standalone: false
 })
 export class ErrorInternalServerComponent implements OnInit, OnDestroy {
   @Input() errorData: IWidgetErrorInternalServer | null = null

@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-goal-accept-card',
-  templateUrl: './goal-accept-card.component.html',
-  styleUrls: ['./goal-accept-card.component.scss'],
+    selector: 'ws-app-goal-accept-card',
+    templateUrl: './goal-accept-card.component.html',
+    styleUrls: ['./goal-accept-card.component.scss'],
+    standalone: false
 })
 export class GoalAcceptCardComponent implements OnInit {
   @Input() accept: any

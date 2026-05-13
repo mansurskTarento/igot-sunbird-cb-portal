@@ -8,9 +8,10 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 import { IWidgetErrorFeatureUnavailable } from './error-feature-unavailable.model'
 @Component({
-  selector: 'ws-widget-error-feature-unavailable',
-  templateUrl: './error-feature-unavailable.component.html',
-  styleUrls: ['./error-feature-unavailable.component.scss'],
+    selector: 'ws-widget-error-feature-unavailable',
+    templateUrl: './error-feature-unavailable.component.html',
+    styleUrls: ['./error-feature-unavailable.component.scss'],
+    standalone: false
 })
 export class ErrorFeatureUnavailableComponent implements OnInit, OnDestroy {
   @Input() errorData: IWidgetErrorFeatureUnavailable | null = null

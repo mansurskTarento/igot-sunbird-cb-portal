@@ -8,9 +8,10 @@ import { ViewerUtilService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-class-diagram',
-  templateUrl: './class-diagram.component.html',
-  styleUrls: ['./class-diagram.component.scss'],
+    selector: 'viewer-class-diagram',
+    templateUrl: './class-diagram.component.html',
+    styleUrls: ['./class-diagram.component.scss'],
+    standalone: false
 })
 export class ClassDiagramComponent implements OnInit, OnDestroy {
   private routeDataSubscription: Subscription | null = null
@@ -75,8 +76,8 @@ export class ClassDiagramComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.classDiagramData) {
       await this.contentSvc.continueLearning(this.classDiagramData.identifier)

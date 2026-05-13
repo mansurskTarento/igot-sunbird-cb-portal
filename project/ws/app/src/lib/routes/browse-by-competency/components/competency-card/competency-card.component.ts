@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { BrowseCompetencyService } from '../../services/browse-competency.service'
 
 @Component({
-  selector: 'ws-app-competency-card',
-  templateUrl: './competency-card.component.html',
-  styleUrls: ['./competency-card.component.scss'],
+    selector: 'ws-app-competency-card',
+    templateUrl: './competency-card.component.html',
+    styleUrls: ['./competency-card.component.scss'],
+    standalone: false
 })
 export class CompetencyCardComponent implements OnInit {
   @Input() competency!: any

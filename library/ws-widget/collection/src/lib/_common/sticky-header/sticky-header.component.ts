@@ -30,22 +30,10 @@ import {
 // }
 
 @Component({
-  selector: 'ws-widget-sticky-header',
-  templateUrl: './sticky-header.component.html',
-  styleUrls: ['./sticky-header.component.scss'],
-  // animations: [
-  //   trigger('toggle', [
-  //     state(
-  //       VisibilityState.Hidden,
-  //       style({ opacity: 0, transform: 'translateY(-100%)' }),
-  //     ),
-  //     state(
-  //       VisibilityState.Visible,
-  //       style({ opacity: 1, transform: 'translateY(0)' }),
-  //     ),
-  //     transition('* => *', animate('200ms ease-in')),
-  //   ]),
-  // ],
+    selector: 'ws-widget-sticky-header',
+    templateUrl: './sticky-header.component.html',
+    styleUrls: ['./sticky-header.component.scss'],
+    standalone: false
 })
 export class StickyHeaderComponent implements AfterViewInit {
 

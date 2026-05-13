@@ -1,23 +1,21 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { NsGalleryView } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
-import {
-  AUTHORING_CONTENT_BASE,
-  CONTENT_BASE_WEBHOST_ASSETS,
-} from '@ws/author/src/lib/constants/apiEndpoints'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { UploadService } from '@ws/author/src/lib/routing/modules/editor/shared/services/upload.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { WIDGET_LIBRARY } from '../../../constants/widet'
 import { FILE_MAX_SIZE } from './../../../../../../../../../constants/upload'
+import { UploadService } from '../../../../../../shared/services/upload.service'
+import { LoaderService } from '../../../../../../../../../services/loader.service'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
+import { AUTHORING_CONTENT_BASE, CONTENT_BASE_WEBHOST_ASSETS } from '../../../../../../../../../constants/apiEndpoints'
 
 @Component({
-  selector: 'ws-auth-gallery-v2',
-  templateUrl: './gallery-v2.component.html',
-  styleUrls: ['./gallery-v2.component.scss'],
+    selector: 'ws-auth-gallery-v2',
+    templateUrl: './gallery-v2.component.html',
+    styleUrls: ['./gallery-v2.component.scss'],
+    standalone: false
 })
 export class GalleryV2Component implements OnInit {
   @Output() data = new EventEmitter<{
@@ -38,7 +36,7 @@ export class GalleryV2Component implements OnInit {
     private uploadService: UploadService,
     private loader: LoaderService,
     private snackBar: MatSnackBar,
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.currentStrip = this.content.cardMenu[this.index]

@@ -5,9 +5,10 @@ import { NsContent } from '@sunbird-cb/collection'
 // import { ConfigurationsService } from '@sunbird-cb/utils-v2';
 
 @Component({
-  selector: 'viewer-plugin-certification',
-  templateUrl: './certification.component.html',
-  styleUrls: ['./certification.component.scss'],
+    selector: 'viewer-plugin-certification',
+    templateUrl: './certification.component.html',
+    styleUrls: ['./certification.component.scss'],
+    standalone: false
 })
 export class CertificationComponent {
   @Input() certificationContent: NsContent.IContent | null = null

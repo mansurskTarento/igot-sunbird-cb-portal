@@ -11,9 +11,10 @@ interface IKbCardData {
 }
 
 @Component({
-  selector: 'ws-widget-card-knowledge',
-  templateUrl: './card-knowledge.component.html',
-  styleUrls: ['./card-knowledge.component.scss'],
+    selector: 'ws-widget-card-knowledge',
+    templateUrl: './card-knowledge.component.html',
+    styleUrls: ['./card-knowledge.component.scss'],
+    standalone: false
 })
 export class CardKnowledgeComponent implements OnInit, OnDestroy {
   @Input() widgetData!: IKbCardData

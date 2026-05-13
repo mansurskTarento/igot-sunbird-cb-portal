@@ -43,9 +43,10 @@ interface IStripUnitContentData {
 }
 
 @Component({
-  selector: 'ws-widget-content-strip-new-multiple',
-  templateUrl: './content-strip-new-multiple.component.html',
-  styleUrls: ['./content-strip-new-multiple.component.scss'],
+    selector: 'ws-widget-content-strip-new-multiple',
+    templateUrl: './content-strip-new-multiple.component.html',
+    styleUrls: ['./content-strip-new-multiple.component.scss'],
+    standalone: false
 })
 export class ContentStripNewMultipleComponent extends WidgetBaseComponent
   implements

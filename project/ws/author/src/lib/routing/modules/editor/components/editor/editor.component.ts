@@ -1,24 +1,26 @@
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
+
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute, NavigationStart, Router } from '@angular/router'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { EditorContentV2Service } from '@ws/author/src/lib/routing/modules/editor/services/editor-content-v2.service'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
+import { EditorContentV2Service } from './../../services/editor-content-v2.service'
+import { EditorContentService } from './../../services/editor-content.service'
 import { Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { ValueService } from '@sunbird-cb/utils-v2'
 import { StatusTrackComponent } from '../../../../../modules/shared/components/status-track/status-track.component'
+import { AuthInitService } from '../../../../../services/init.service'
+import { NOTIFICATION_TIME } from '../../../../../constants/constant'
+import { Notify } from '../../../../../constants/notificationMessage'
+import { NSContent } from '../../../../../interface/content'
+import { NotificationComponent } from '@sunbird-cb/notification/lib/notification.component'
 
 @Component({
-  selector: 'ws-auth-root-editor',
-  templateUrl: './editor.component.html',
-  styleUrls: ['./editor.component.scss'],
-  providers: [EditorContentService, EditorContentV2Service],
+    selector: 'ws-auth-root-editor',
+    templateUrl: './editor.component.html',
+    styleUrls: ['./editor.component.scss'],
+    providers: [EditorContentService, EditorContentV2Service],
+    standalone: false
 })
 export class EditorComponent implements OnInit, OnDestroy {
   routerSubscription!: Subscription

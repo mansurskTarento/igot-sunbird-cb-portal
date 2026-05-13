@@ -3,9 +3,9 @@ import { Observable } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 
 const API_END_POINTS = {
-  positionCreate: `/api/workflow/position/create`,
-  orgCreate: `/api/workflow/org/create`,
-  domainCreate: `/api/workflow/domain/create`,
+  positionCreate: '/api/workflow/position/create',
+  orgCreate: '/api/workflow/org/create',
+  domainCreate: '/api/workflow/domain/create',
   sendOtp: '/api/otp/v1/generate',
   ReSendOtp: '/api/otp/v1/generate',
 }

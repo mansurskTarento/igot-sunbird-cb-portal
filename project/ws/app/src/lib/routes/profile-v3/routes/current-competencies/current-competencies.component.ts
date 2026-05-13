@@ -5,19 +5,19 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
 import { ActivatedRoute } from '@angular/router'
 import { DialogBoxComponent } from '../../components/dialog-box/dialog-box.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { Subscription } from 'rxjs'
 import { CompLocalService } from '../../services/comp.service'
 import { UntypedFormControl } from '@angular/forms'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-current-competencies',
-  templateUrl: './current-competencies.component.html',
-  styleUrls: ['./current-competencies.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1 comptency_main_div' },
-  /* tslint:enable */
+    selector: 'ws-app-current-competencies',
+    templateUrl: './current-competencies.component.html',
+    styleUrls: ['./current-competencies.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1 comptency_main_div' },
+    standalone: false
 })
 export class CurrentCompetenciesComponent implements OnInit, OnDestroy {
   searchJson!: NSProfileDataV3.ISearch[]

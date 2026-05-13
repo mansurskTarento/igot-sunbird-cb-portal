@@ -4,13 +4,14 @@ import {
     OnInit,
 } from '@angular/core'
 
-import { MatLegacyDialogRef as MatDialogRef } from '@angular/material/legacy-dialog'
+import { MatDialogRef } from '@angular/material/dialog'
 import { RootService } from '../root/root.service'
 
 @Component({
     selector: 'ws-app-intro',
     templateUrl: './app-intro.component.html',
     styleUrls: ['./app-intro.component.scss'],
+    standalone: false
 })
 
 export class AppIntroComponent implements OnInit, AfterViewInit {

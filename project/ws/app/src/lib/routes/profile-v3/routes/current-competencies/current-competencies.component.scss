@@ -1,6 +1,6 @@
-@import "ws-common";
-@import "ws-vars";
-@import "ws-mixins";
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 ::ng-deep .comptency_main_div {
     width: 100%;
@@ -10,10 +10,12 @@
     @include breakpoint-xs {
         margin-top: 0.5rem;
     }
+
     @include breakpoint-s {
         margin-top: 0.5rem;
     }
 }
+
 .left_card_box {
     // width: 890px;
     width: 75%;
@@ -130,6 +132,7 @@
 
 a.hint_span {
     cursor: pointer;
+
     .mat-icon {
         vertical-align: middle;
     }
@@ -160,9 +163,10 @@ a.hint_span {
 }
 
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-prefix {
-    top: 6px!important;
+    top: 6px !important;
     margin-right: 6px;
 }
+
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-infix {
-    top: 0px!important;
+    top: 0px !important;
 }

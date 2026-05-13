@@ -5,7 +5,7 @@ import { BrowseCompetencyService } from '../../services/browse-competency.servic
 import { NSBrowseCompetency } from '../../models/competencies.model'
 import { debounceTime, switchMap, takeUntil } from 'rxjs/operators'
 import { Subject, Observable } from 'rxjs'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 
 // tslint:disable
 import _ from 'lodash'
@@ -15,9 +15,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-all-competencies',
-  templateUrl: './all-competencies.component.html',
-  styleUrls: ['./all-competencies.component.scss'],
+    selector: 'ws-app-all-competencies',
+    templateUrl: './all-competencies.component.html',
+    styleUrls: ['./all-competencies.component.scss'],
+    standalone: false
 })
 export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   private unsubscribe = new Subject<void>()

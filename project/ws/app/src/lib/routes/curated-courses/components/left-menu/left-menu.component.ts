@@ -4,9 +4,10 @@ import { WsEvents, EventService } from '@sunbird-cb/utils-v2'
 import _ from 'lodash'
 
 @Component({
-  selector: 'ws-app-curated-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss']
+    selector: 'ws-app-curated-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class LeftMenuComponent implements OnInit {
   @Input() unseen = 0

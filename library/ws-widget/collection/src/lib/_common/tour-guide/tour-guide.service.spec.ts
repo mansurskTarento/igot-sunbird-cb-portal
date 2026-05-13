@@ -6,7 +6,7 @@ describe('CustomTourService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: CustomTourService = TestBed.get(CustomTourService)
+    const service: CustomTourService = TestBed.inject(CustomTourService)
     expect(service).toBeTruthy()
   })
 })

@@ -1,10 +1,11 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core'
-import { MatLegacySelectChange as MatSelectChange } from '@angular/material/legacy-select'
+import { MatSelectChange } from '@angular/material/select'
 import { ConfigurationsService, NsInstanceConfig } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'ws-widget-language-selector',
-  templateUrl: './language-selector.component.html',
-  styleUrls: ['./language-selector.component.scss'],
+    selector: 'ws-widget-language-selector',
+    templateUrl: './language-selector.component.html',
+    styleUrls: ['./language-selector.component.scss'],
+    standalone: false
 })
 export class LanguageSelectorComponent implements OnInit {
   allowedLangCode: { [langCode: string]: NsInstanceConfig.ILocalsConfig } = {}

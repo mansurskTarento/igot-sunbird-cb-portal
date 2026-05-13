@@ -13,7 +13,7 @@ const API_END_POINTS = {
   AI_CHAT_FEEDBACK:`${PROXY_CREATE_V8}/chatbot/v3/feedbacks/save`,
   AI_GLOBAL_INTERNET_SEARCH: `${PROXY_CREATE_V8}/chatbot/v3/global/search`,
   SUPPORT_AI_START_CHAT: `${PROXY_CREATE_V8}/support/ai/chat/start`,
-  SUPPORT_AI_SEND_CHAT: `${PROXY_CREATE_V8}/support/ai/chat/send`
+  SUPPORT_AI_SEND_CHAT: `${PROXY_CREATE_V8}/support/ai/chat/send`,
 }
 
 @Injectable({
@@ -73,19 +73,19 @@ export class RootService {
     return this.http.post<any>(`${API_END_POINTS.AI_GLOBAL_SEARCH}?chatID=${chatId}&userID=${userID}`, requestBody).pipe(
       catchError(error => {
         if (error.status === 502) {
-          console.error('502 Bad Gateway from aiGlobalSearch');
+          console.error('502 Bad Gateway from aiGlobalSearch')
         } else if (error.status === 500) {
-          console.error('500 Internal Server Error from aiGlobalSearch');
+          console.error('500 Internal Server Error from aiGlobalSearch')
         } else {
-          console.error(`Unhandled error (${error.status}):`, error.message);
+          console.error(`Unhandled error (${error.status}):`, error.message)
         }
-        return throwError(() => error);
+        return throwError(() => error)
       })
-    );
+    )
   }
 
   saveAIChatPositiveContentRating(requestBody:any, chatId:any, userID:any) {
-    console.log('chatId=',chatId, 'userID=',userID)
+    console.log('chatId=', chatId, 'userID=', userID)
     return this.http.post<any>(`${API_END_POINTS.AI_CHAT_FEEDBACK}?chatID=${chatId}&userID=${userID}`, requestBody)
   }
 
@@ -101,8 +101,8 @@ export class RootService {
     const headers = new HttpHeaders()
       .set('user-id', userID)
     return this.http.post<any>(`${API_END_POINTS.SUPPORT_AI_START_CHAT}`, requestBody, {
-      headers
-      
+      headers,
+
     })
   }
 
@@ -110,8 +110,7 @@ export class RootService {
     const headers = new HttpHeaders()
       .set('user-id', userID)
     return this.http.post<any>(`${API_END_POINTS.SUPPORT_AI_SEND_CHAT}`, requestBody, {
-      headers
-      
+      headers,
     })
   }
 }

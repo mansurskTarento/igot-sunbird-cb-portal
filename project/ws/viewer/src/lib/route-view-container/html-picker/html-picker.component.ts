@@ -2,9 +2,10 @@ import { Component, Input } from '@angular/core'
 import { NsContent } from '@sunbird-cb/collection'
 
 @Component({
-  selector: 'viewer-html-picker-container',
-  templateUrl: './html-picker.component.html',
-  styleUrls: ['./html-picker.component.scss'],
+    selector: 'viewer-html-picker-container',
+    templateUrl: './html-picker.component.html',
+    styleUrls: ['./html-picker.component.scss'],
+    standalone: false
 })
 export class HtmlPickerComponent {
   @Input() isFetchingDataComplete = false

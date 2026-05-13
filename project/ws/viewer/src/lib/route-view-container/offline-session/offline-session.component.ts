@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-offline-session-container',
-  templateUrl: './offline-session.component.html',
-  styleUrls: ['./offline-session.component.scss'],
+    selector: 'viewer-offline-session-container',
+    templateUrl: './offline-session.component.html',
+    styleUrls: ['./offline-session.component.scss'],
+    standalone: false
 })
 export class OfflineSessionComponent implements OnInit {
   @Input() isFetchingDataComplete = false
@@ -24,9 +24,6 @@ export class OfflineSessionComponent implements OnInit {
     },
   }
   @Input() isPreviewMode = false
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   isTypeOfCollection = false
   isRestricted = false
   constructor(

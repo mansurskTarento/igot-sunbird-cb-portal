@@ -1,5 +1,5 @@
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
     @extend %page-center;
@@ -45,10 +45,12 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.06);
-    .logo-img{
+
+    .logo-img {
         max-width: 122px;
     }
-    &.top{
+
+    &.top {
         position: absolute;
         top: -54px;
     }
@@ -74,9 +76,11 @@
 .metrics-section {
     margin-top: -30px;
 }
+
 .empty-div {
     height: 15px;
 }
+
 .mob-metrics-sec {
     padding-top: 1rem;
 }
@@ -93,11 +97,13 @@
     left: 0;
     z-index: 1000;
 }
+
 .close-announcements-dialog {
     position: absolute;
     right: 30px;
     top: 30px;
 }
+
 .close-icon {
     color: #fff;
     border-radius: 15px;
@@ -107,16 +113,16 @@
     right: 15px;
 }
 
-@media screen and (max-width: 768px) { 
+@media screen and (max-width: 768px) {
 
     .metrics-section {
         margin-top: 0px;
     }
 }
 
-  ::ng-deep .mytabs .mat-tab-label.mat-tab-label-active:not(.mat-tab-disabled),
-  ::ng-deep .mytabs .mat-tab-label.mat-tab-label-active.cdk-keyboard-focused:not(.mat-tab-disabled) {
+::ng-deep .mytabs .mat-tab-label.mat-tab-label-active:not(.mat-tab-disabled),
+::ng-deep .mytabs .mat-tab-label.mat-tab-label-active.cdk-keyboard-focused:not(.mat-tab-disabled) {
     font-weight: 700;
     color: black;
     opacity: 1;
-  }
+}

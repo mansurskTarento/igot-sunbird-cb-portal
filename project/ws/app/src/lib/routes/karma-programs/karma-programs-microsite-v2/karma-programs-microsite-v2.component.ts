@@ -7,9 +7,10 @@ import { TranslateService } from '@ngx-translate/core'
 import { DomSanitizer } from '@angular/platform-browser'
 
 @Component({
-  selector: 'ws-app-karma-programs-microsite-v2',
-  templateUrl: './karma-programs-microsite-v2.component.html',
-  styleUrls: ['./karma-programs-microsite-v2.component.scss'],
+    selector: 'ws-app-karma-programs-microsite-v2',
+    templateUrl: './karma-programs-microsite-v2.component.html',
+    styleUrls: ['./karma-programs-microsite-v2.component.scss'],
+    standalone: false
 })
 export class KarmaProgramsMicrositeV2Component implements OnInit {
   programName = ''
@@ -22,8 +23,8 @@ export class KarmaProgramsMicrositeV2Component implements OnInit {
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
-      title: `Karma Programs`,
-      url: `/app/learn/karma-programs/all-programs`,
+      title: 'Karma Programs',
+      url: '/app/learn/karma-programs/all-programs',
       icon: '', disableTranslate: true,
     },
   ]
@@ -180,7 +181,7 @@ export class KarmaProgramsMicrositeV2Component implements OnInit {
       {
         type: 'click',
         subType: 'karma-programs',
-        id: `card-content`,
+        id: 'card-content',
       },
       {
         id: event.identifier,

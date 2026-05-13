@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core'
 import { GamificationService } from '../../../../services/gamification.service'
-import { MatSelectChange } from '@angular/material'
+import { MatSelectChange } from '@angular/material/select'
 @Component({
-  selector: 'ws-app-configurations',
-  templateUrl: './configurations.component.html',
-  styleUrls: ['./configurations.component.scss'],
+    selector: 'ws-app-configurations',
+    templateUrl: './configurations.component.html',
+    styleUrls: ['./configurations.component.scss'],
+    standalone: false
 })
 export class ConfigurationsComponent implements OnInit {
   fetchStatus = ''

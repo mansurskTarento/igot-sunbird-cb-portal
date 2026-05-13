@@ -1,15 +1,14 @@
-
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 
 .topicMainTitle {
     @include breakpoint-xs {
-        margin:1rem auto;
-      }
+        margin: 1rem auto;
+    }
 }
 
 .mat-button {
-    min-width: auto!important;
+    min-width: auto !important;
 }

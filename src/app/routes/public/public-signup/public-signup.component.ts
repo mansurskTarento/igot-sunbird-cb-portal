@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef } from '@angular/core'
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, DOCUMENT } from '@angular/core'
 import { Subscription, Observable, interval, Subject } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
@@ -7,7 +7,7 @@ import { startWith, map, pairwise, debounceTime, distinctUntilChanged, finalize,
 import { environment } from 'src/environments/environment'
 import { ReCaptchaV3Service } from 'ng-recaptcha'
 import { SignupSuccessDialogueComponent } from './signup-success-dialogue/signup-success-dialogue/signup-success-dialogue.component'
-import { DOCUMENT, isPlatformBrowser } from '@angular/common'
+import { isPlatformBrowser } from '@angular/common'
 // tslint:disable-next-line: import-name
 import _ from 'lodash'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -15,10 +15,10 @@ import { TermsAndConditionComponent } from './terms-and-condition/terms-and-cond
 import { TranslateService } from '@ngx-translate/core'
 import { HttpClient } from '@angular/common/http'
 import { DomSanitizer } from '@angular/platform-browser'
-import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app/src/lib/routes/profile-v3/components/dialog-box/dialog-box.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
-import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { UserProfileService } from '@ws/app'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -89,9 +89,10 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 // }
 
 @Component({
-  selector: 'ws-public-signup',
-  templateUrl: './public-signup.component.html',
-  styleUrls: ['./public-signup.component.scss'],
+    selector: 'ws-public-signup',
+    templateUrl: './public-signup.component.html',
+    styleUrls: ['./public-signup.component.scss'],
+    standalone: false
 })
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
@@ -103,9 +104,9 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   registrationFormStepOne!: UntypedFormGroup
   registrationFormStepTwo!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
-  namePatern = `[a-zA-Z\\s\\']{1,32}$`
+  namePatern = "[a-zA-Z\\s\\']{1,32}$"
   // emailWhitelistPattern = `^[a-zA-Z0-9._-]{3,}\\b@\\b[a-zA-Z0-9]*|\\b(.gov|.nic)\b\\.\\b(in)\\b$`
-  customCharsPattern = `^[a-zA-Z0-9 \\w\-\&\(\)]*$`
+  customCharsPattern = '^[a-zA-Z0-9 \\w\-\&\(\)]*$'
   positionsOriginal!: []
   postions!: any
   // masterPositions!: Observable<any> | undefined
@@ -135,32 +136,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   timerSubscriptionEmail: Subscription | null = null
   OTP_TIMER_EMAIL = environment.resendOTPTIme
   filteredOrgList: any = [{
-    "id": -1,
-    "orgName": "N/A",
-    "channel": "N/A",
-    "mapId": "N/A",
-    "orgCode": null,
-    "parentMapId": null,
-    "sbOrgId": "N/A",
-    "sbRootOrgId": null,
-    "sbOrgType": "N/A",
-    "sbOrgSubType": "N/A",
-    "l1MapId": null,
-    "l2MapId": null,
-    "l3MapId": null,
-    "l1OrgName": null,
-    "l2OrgName": null
+    'id': -1,
+    'orgName': 'N/A',
+    'channel': 'N/A',
+    'mapId': 'N/A',
+    'orgCode': null,
+    'parentMapId': null,
+    'sbOrgId': 'N/A',
+    'sbRootOrgId': null,
+    'sbOrgType': 'N/A',
+    'sbOrgSubType': 'N/A',
+    'l1MapId': null,
+    'l2MapId': null,
+    'l3MapId': null,
+    'l1OrgName': null,
+    'l2OrgName': null,
   }]
   orgList: any
   resultFetched = false
   heirarchyObject: any
   hideOrg = false
-  emailPattern = `^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$`
+  emailPattern = '^[\\w\-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$'
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/zoho-code.html'
   environment!: any
   desigantionFilterEnable = false
-  isLoadingMoreDesignations = false;
+  isLoadingMoreDesignations = false
   designationOffset = 0
   odcsDesignationCount = 0
   defaultSearchDesignationCount = 0
@@ -174,7 +175,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   /* ministry variables */
   ministryFilterEnable = false
-  isLoadingMoreMinistrys = false;
+  isLoadingMoreMinistrys = false
   ministryOffset = 0
   defaultSearchMinistryCount = 0
   ministryListLoadCount = 50
@@ -187,7 +188,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   /* State Variables */
 
   stateFilterEnable = false
-  isLoadingMoreStates = false;
+  isLoadingMoreStates = false
   stateOffset = 0
   defaultSearchStateCount = 0
   stateListLoadCount = 50
@@ -199,7 +200,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   /* Department variables */
 
   departmentFilterEnable = false
-  isLoadingMoreDepartments = false;
+  isLoadingMoreDepartments = false
   departmentOffset = 0
   defaultSearchDepartmentCount = 0
   departmentListLoadCount = 50
@@ -211,7 +212,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   /* Department variables */
 
   organisationFilterEnable = false
-  isLoadingMoreOrganisations = false;
+  isLoadingMoreOrganisations = false
   organisationOffset = 0
   defaultSearchOrganisationCount = 0
   organisationListLoadCount = 50
@@ -499,14 +500,14 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.masterData.departmentBackup = []
     this.resetOrganisationBackup()
     this.masterData.departmentBackup.push({
-      "identifier": "-1",
-      "orgHierarchyFrameworkStatus": null,
-      "orgName": "N/A",
-      "sbOrgType": null,
-      "description": null,
-      "sbOrgSubType": null,
-      "orgHierarchyFrameworkId": null
-    },)
+      'identifier': '-1',
+      'orgHierarchyFrameworkStatus': null,
+      'orgName': 'N/A',
+      'sbOrgType': null,
+      'description': null,
+      'sbOrgSubType': null,
+      'orgHierarchyFrameworkId': null,
+    })
 
   }
   private getDesignationSafe(): void {
@@ -519,13 +520,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   resetOrganisationBackup() {
     this.masterData.organisationBackup = [{
-      "identifier": "-1",
-      "orgHierarchyFrameworkStatus": null,
-      "orgName": "N/A",
-      "sbOrgType": null,
-      "description": null,
-      "sbOrgSubType": null,
-      "orgHierarchyFrameworkId": null
+      'identifier': '-1',
+      'orgHierarchyFrameworkStatus': null,
+      'orgName': 'N/A',
+      'sbOrgType': null,
+      'description': null,
+      'sbOrgSubType': null,
+      'orgHierarchyFrameworkId': null,
     }]
   }
 
@@ -550,7 +551,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
     const requestBody: any = {
       filterCriteriaMap: {
-        status: 'Active'
+        status: 'Active',
       },
       requestedFields: [],
       pageNumber: pageIndex,
@@ -614,7 +615,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // loading flag cleared in finalize()
           this.noMoreLegacyDesignations = true
           // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-        }
+        },
       })
   }
   checkCurrentDesignationPresent() {
@@ -633,7 +634,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           name: currentDesignation,
           // Add any other required properties matching your data structure
           id: 'custom-' + Date.now(),
-          description: currentDesignation
+          description: currentDesignation,
         }
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.designation?.length >= this.designationListLoadCount) {
@@ -659,7 +660,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           designationControl.setValue(currentDesignation)
         }
       }
-    }, 100)
+    },         100)
   }
 
   designationSearch(evt: any) {
@@ -700,7 +701,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (searchInput) {
             searchInput.focus()
           }
-        }, 100)
+        },         100)
 
         // Attach scroll listener safely
         setTimeout(() => {
@@ -725,7 +726,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             const scrollHandler = this.onDesignationSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
           }
-        }, 150)
+        },         150)
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
@@ -750,7 +751,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.designation = this.masterData?.designationBackup?.slice(0, this.designationListLoadCount)
               this.checkCurrentDesignationPresent()
               this.isLoadingMoreDesignations = false
-            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+            },         500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.designationBackup || []).length
@@ -849,7 +850,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.filteredOrgList = res.result.response.filter((org: any) => {
         return org.orgName.toLowerCase().indexOf(filterValue) >= 0
       })
-    }, (err: any) => {
+    },                                                                      (err: any) => {
       this.searching = false
       this.loggerSvc.error('Error in fetching organisations >', err)
       if (err.error && err.error.params && err.error.params.errmsg) {
@@ -1062,7 +1063,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // tslint:disable-next-line: align
       }, (error: any) => {
         const isError = _.get(error, 'error.params.errmsg')
-        const errMsg = isError ? "Your email domain isn’t recognised — please contact your department for registration." : "Please try again later"
+        const errMsg = isError ? 'Your email domain isn’t recognised — please contact your department for registration.' : 'Please try again later'
         this.snackBar.open(errMsg)
       })
     } else {
@@ -1240,10 +1241,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               // position: this.registrationFormStepOne.value.position.name || '',
               group: this.registrationFormStepTwo.value.group || '',
               source: `${environment.name}.${this.portalID}` || '',
-              orgName: orgName,
-              channel: channel,
-              organisationType: organisationType,
-              organisationSubType: organisationSubType,
+              orgName,
+              channel,
+              organisationType,
+              organisationSubType,
               mapId: orgId,
               sbOrgId: orgId,
               position: this.registrationFormStepOne.value.position || '',
@@ -1371,7 +1372,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    }, 0)
+    },         0)
   }
 
   callXMLRequest() {
@@ -1412,11 +1413,11 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       {
         type: WsEvents.EnumInteractTypes.CLICK,
         id: 'sign-up',
-        pageid: "/public/signup"
+        pageid: '/public/signup',
       },
       {},
       {
-        module: "User Registration",
+        module: 'User Registration',
       }
     )
 
@@ -1425,13 +1426,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         {
           type: WsEvents.EnumInteractTypes.CLICK,
           id: 'sign-up',
-          pageid: "/public/signup"
+          pageid: '/public/signup',
         }, {},
         {
-          module: "User Registration",
+          module: 'User Registration',
         })
 
-    }, 2000)
+    },         2000)
 
   }
 
@@ -1450,7 +1451,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.currentStep = 'step1'
 
   }
-
 
   /** Ministry Data */
 
@@ -1474,32 +1474,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.noMoreLegacyMinistrys = false
     }
     const requestBody: any = {
-      "request": {
+      'request': {
         // "filters": {
         //   "status": 1,
         //   "sbOrgType": this.registrationFormStepOne.controls.type.value
         // },
-        "query": "",
-        "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.ministryDefaultLoadCount,
-        "fields": [
-          "identifier",
-          "orgName",
-          "description",
-          "orgHierarchyFrameworkId",
-          "orgHierarchyFrameworkStatus",
-          "sbOrgType",
-          "sbOrgSubType",
-          "channel",
-          "hierarchyLevel",
-          "parentPathId",
-          "ministryOrStateId"
-        ]
-      }
+        'query': '',
+        'limit': reqLimit,
+        'offset': reqLimit > 0 ? pageIndex * reqLimit : this.ministryDefaultLoadCount,
+        'fields': [
+          'identifier',
+          'orgName',
+          'description',
+          'orgHierarchyFrameworkId',
+          'orgHierarchyFrameworkStatus',
+          'sbOrgType',
+          'sbOrgSubType',
+          'channel',
+          'hierarchyLevel',
+          'parentPathId',
+          'ministryOrStateId',
+        ],
+      },
     }
 
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText
+      requestBody['request']['query'] = searchText
       this.noMoreLegacyMinistrys = false
     }
 
@@ -1557,7 +1557,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // loading flag cleared in finalize()
           this.noMoreLegacyMinistrys = true
           // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-        }
+        },
       })
   }
 
@@ -1584,7 +1584,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (searchInput) {
             searchInput.focus()
           }
-        }, 100)
+        },         100)
 
         // Attach scroll listener safely
         setTimeout(() => {
@@ -1609,7 +1609,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             const scrollHandler = this.onMinistrySelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
           }
-        }, 150)
+        },         150)
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
@@ -1634,7 +1634,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.ministry = this.masterData?.ministryBackup?.slice(0, this.ministryListLoadCount)
               this.checkCurrentMinistryPresent()
               this.isLoadingMoreMinistrys = false
-            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+            },         500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.ministryBackup || []).length
@@ -1719,32 +1719,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.noMoreLegacyStates = false
     }
     const requestBody: any = {
-      "request": {
+      'request': {
         // "filters": {
         //   "status": 1,
         //   "sbOrgType": this.registrationFormStepOne.controls.type.value
         // },
-        "query": "",
-        "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.stateDefaultLoadCount,
-        "fields": [
-          "identifier",
-          "orgName",
-          "description",
-          "orgHierarchyFrameworkId",
-          "orgHierarchyFrameworkStatus",
-          "sbOrgType",
-          "sbOrgSubType",
-          "channel",
-          "hierarchyLevel",
-          "parentPathId",
-          "ministryOrStateId"
-        ]
-      }
+        'query': '',
+        'limit': reqLimit,
+        'offset': reqLimit > 0 ? pageIndex * reqLimit : this.stateDefaultLoadCount,
+        'fields': [
+          'identifier',
+          'orgName',
+          'description',
+          'orgHierarchyFrameworkId',
+          'orgHierarchyFrameworkStatus',
+          'sbOrgType',
+          'sbOrgSubType',
+          'channel',
+          'hierarchyLevel',
+          'parentPathId',
+          'ministryOrStateId',
+        ],
+      },
     }
 
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText
+      requestBody['request']['query'] = searchText
       this.noMoreLegacyStates = false
     }
 
@@ -1804,7 +1804,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // loading flag cleared in finalize()
           this.noMoreLegacyStates = true
           // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-        }
+        },
       })
   }
 
@@ -1831,7 +1831,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (searchInput) {
             searchInput.focus()
           }
-        }, 100)
+        },         100)
 
         // Attach scroll listener safely
         setTimeout(() => {
@@ -1856,7 +1856,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             const scrollHandler = this.onStateSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
           }
-        }, 150)
+        },         150)
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
@@ -1881,7 +1881,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.state = this.masterData?.stateBackup?.slice(0, this.stateListLoadCount)
               this.checkCurrentStatePresent()
               this.isLoadingMoreStates = false
-            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+            },         500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.stateBackup || []).length
@@ -1945,7 +1945,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   /** Department Data */
 
   getDepartmentData(searchText?: string, offset?: number): void {
-    //this.masterData['department'] = []
+    // this.masterData['department'] = []
     // avoid running on server-side render
     if (!isPlatformBrowser(this._platformId)) {
       return
@@ -1964,30 +1964,30 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.noMoreLegacyDepartments = false
     }
     const requestBody: any = {
-      "request": {
-        "filters": {
-          "status": 1,
-          "sbOrgType": this.registrationFormStepOne.controls.type.value,
-          "levelZeroOrgId": this.registrationFormStepOne.controls.state.value,
+      'request': {
+        'filters': {
+          'status': 1,
+          'sbOrgType': this.registrationFormStepOne.controls.type.value,
+          'levelZeroOrgId': this.registrationFormStepOne.controls.state.value,
         },
-        "query": "",
-        "limit": reqLimit,
-        "offset": reqLimit > 0 ? pageIndex * reqLimit : this.departmentDefaultLoadCount,
-        "fields": [
-          "identifier",
-          "orgName",
-          "description",
-          "orgHierarchyFrameworkId",
-          "orgHierarchyFrameworkStatus",
-          "sbOrgType",
-          "sbOrgSubType",
-          "channel"
-        ]
-      }
+        'query': '',
+        'limit': reqLimit,
+        'offset': reqLimit > 0 ? pageIndex * reqLimit : this.departmentDefaultLoadCount,
+        'fields': [
+          'identifier',
+          'orgName',
+          'description',
+          'orgHierarchyFrameworkId',
+          'orgHierarchyFrameworkStatus',
+          'sbOrgType',
+          'sbOrgSubType',
+          'channel',
+        ],
+      },
     }
 
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText
+      requestBody['request']['query'] = searchText
       this.noMoreLegacyDepartments = false
     }
 
@@ -2049,7 +2049,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // loading flag cleared in finalize()
           this.noMoreLegacyDepartments = true
           // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-        }
+        },
       })
   }
 
@@ -2076,7 +2076,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (searchInput) {
             searchInput.focus()
           }
-        }, 100)
+        },         100)
 
         // Attach scroll listener safely
         setTimeout(() => {
@@ -2101,7 +2101,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             const scrollHandler = this.onDepartmentSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
           }
-        }, 150)
+        },         150)
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
@@ -2126,7 +2126,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentListLoadCount)
               this.checkCurrentDepartmentPresent()
               this.isLoadingMoreDepartments = false
-            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+            },         500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.departmentBackup || []).length
@@ -2191,7 +2191,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.checkCurrentDepartmentPresent()
     }
 
-
   }
 
   /** Organisation Data */
@@ -2219,73 +2218,71 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     let requestBody: any = {}
     if (this.registrationFormStepOne.controls.type.value === 'ministry') {
 
-
       let filters: any = {
-        "status": 1,
-        "levelZeroOrgId": this.registrationFormStepOne.controls.ministry.value,
-        "hierarchyRequestType": "All"
+        'status': 1,
+        'levelZeroOrgId': this.registrationFormStepOne.controls.ministry.value,
+        'hierarchyRequestType': 'All',
       }
       for (let i = 0; i < this.masterData['ministryBackup'].length; i++) {
         if (this.masterData['ministryBackup'][i]?.['identifier'] === this.registrationFormStepOne.controls.ministry.value) {
           if (this.masterData['ministryBackup'][i]?.['hierarchyLevel'] === 'levelOne') {
             filters = {
-              "status": 1,
-              "levelZeroOrgId": this.masterData['ministryBackup'][i]['ministryOrStateId'],
-              "levelOneOrgId": this.masterData['ministryBackup'][i]['identifier'],
-              "hierarchyRequestType": "All"
+              'status': 1,
+              'levelZeroOrgId': this.masterData['ministryBackup'][i]['ministryOrStateId'],
+              'levelOneOrgId': this.masterData['ministryBackup'][i]['identifier'],
+              'hierarchyRequestType': 'All',
             }
           }
         }
       }
       requestBody = {
-        "request": {
-          "filters": filters,
-          "query": "",
-          "limit": reqLimit,
-          "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
-          "fields": [
-            "identifier",
-            "orgName",
-            "description",
-            "parentOrgName",
-            "orgHierarchyFrameworkId",
-            "orgHierarchyFrameworkStatus",
-            "sbOrgType",
-            "sbOrgSubType",
-            "channel"
-          ]
-        }
+        'request': {
+          'filters': filters,
+          'query': '',
+          'limit': reqLimit,
+          'offset': reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
+          'fields': [
+            'identifier',
+            'orgName',
+            'description',
+            'parentOrgName',
+            'orgHierarchyFrameworkId',
+            'orgHierarchyFrameworkStatus',
+            'sbOrgType',
+            'sbOrgSubType',
+            'channel',
+          ],
+        },
       }
     } else if (this.registrationFormStepOne.controls.type.value === 'state') {
       requestBody = {
-        "request": {
-          "filters": {
-            "status": 1,
-            "levelZeroOrgId": this.registrationFormStepOne.controls.state.value,
-            "levelOneOrgId": this.registrationFormStepOne.controls.department.value,
-            "hierarchyRequestType": "All"
+        'request': {
+          'filters': {
+            'status': 1,
+            'levelZeroOrgId': this.registrationFormStepOne.controls.state.value,
+            'levelOneOrgId': this.registrationFormStepOne.controls.department.value,
+            'hierarchyRequestType': 'All',
           },
-          "query": "",
-          "limit": reqLimit,
-          "offset": reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
-          "fields": [
-            "identifier",
-            "orgName",
-            "description",
-            "parentOrgName",
-            "orgHierarchyFrameworkId",
-            "orgHierarchyFrameworkStatus",
-            "sbOrgType",
-            "sbOrgSubType",
-            "channel"
-          ]
-        }
+          'query': '',
+          'limit': reqLimit,
+          'offset': reqLimit > 0 ? pageIndex * reqLimit : this.organisationDefaultLoadCount,
+          'fields': [
+            'identifier',
+            'orgName',
+            'description',
+            'parentOrgName',
+            'orgHierarchyFrameworkId',
+            'orgHierarchyFrameworkStatus',
+            'sbOrgType',
+            'sbOrgSubType',
+            'channel',
+          ],
+        },
       }
     }
 
-
     if (searchText?.length) {
-      requestBody["request"]['query'] = searchText
+      requestBody['request']['query'] = searchText
       this.noMoreLegacyOrganisations = false
     }
 
@@ -2304,7 +2301,6 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           //   (item: any) => item && item.sbOrgType === 'state'
           // );
           // if(res && res.result && res.result.response && res.result.response.content && res.result.response.content.length === 0) {
-
 
           if (mapped?.length === 0 || searchText?.length) {
             this.masterData['organisationBackup'] =
@@ -2355,7 +2351,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           // loading flag cleared in finalize()
           this.noMoreLegacyOrganisations = true
           // this.matSnackBar.open('Unable to fetch designation details, please try again later!')
-        }
+        },
       })
   }
 
@@ -2382,7 +2378,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           if (searchInput) {
             searchInput.focus()
           }
-        }, 100)
+        },         100)
 
         // Attach scroll listener safely
         setTimeout(() => {
@@ -2407,7 +2403,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
             const scrollHandler = this.onOrganisationSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
           }
-        }, 150)
+        },         150)
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
@@ -2432,7 +2428,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.organisation = this.masterData?.organisationBackup?.slice(0, this.organisationListLoadCount)
               this.checkCurrentOrganisationPresent()
               this.isLoadingMoreOrganisations = false
-            }, 500) // Small timeout to simulate loading and prevent multiple triggers
+            },         500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.organisationBackup || []).length
@@ -2558,7 +2554,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   onDepartmentChange(event: any) {
-    if (event && event.value && event.value !== "-1") {
+    if (event && event.value && event.value !== '-1') {
       if (this.masterData['departmentBackup'] && this.masterData['departmentBackup'].length) {
         this.currentMinistry = _.find(this.masterData.departmentBackup, { identifier: event.value })
       }

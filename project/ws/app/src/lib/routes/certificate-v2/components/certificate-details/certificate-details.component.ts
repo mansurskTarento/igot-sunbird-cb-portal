@@ -5,15 +5,16 @@ import moment from 'moment'
 import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { ApiService } from '@ws/author/src/public-api'
+import { ApiService } from '@ws/author'
 import { CertificateService } from '../../services/certificate.service'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 // import { IImpressionEventInput,  } from '@project-sunbird/telemetry-sdk'
 
 @Component({
-  selector: 'app-certificate-details',
-  templateUrl: './certificate-details.component.html',
-  styleUrls: ['./certificate-details.component.scss'],
+    selector: 'app-certificate-details',
+    templateUrl: './certificate-details.component.html',
+    styleUrls: ['./certificate-details.component.scss'],
+    standalone: false
 })
 export class CertificateDetailsComponent implements OnInit {
   appIcon: SafeUrl | null = null

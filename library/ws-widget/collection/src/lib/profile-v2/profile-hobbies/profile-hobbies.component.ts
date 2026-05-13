@@ -4,12 +4,12 @@ import { IProHobbies } from './profile-hobbies.model'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-widget-profile-v2-hobbies',
-  templateUrl: './profile-hobbies.component.html',
-  styleUrls: ['./profile-hobbies.component.scss'],
-  /* tslint:disable */
-  host: { class: 'flex flex-1' },
-  /* tslint:enable */
+    selector: 'ws-widget-profile-v2-hobbies',
+    templateUrl: './profile-hobbies.component.html',
+    styleUrls: ['./profile-hobbies.component.scss'],
+    /* tslint:disable */
+    host: { class: 'flex flex-1' },
+    standalone: false
 })
 
 // developing for old skill+certifications

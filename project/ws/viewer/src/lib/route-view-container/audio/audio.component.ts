@@ -1,12 +1,13 @@
 import { Component, Input, OnInit } from '@angular/core'
-import { NsContent, IWidgetsPlayerMediaData, NsDiscussionForum } from '@sunbird-cb/collection'
+import { NsContent, IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 @Component({
-  selector: 'viewer-audio-container',
-  templateUrl: './audio.component.html',
-  styleUrls: ['./audio.component.scss'],
+    selector: 'viewer-audio-container',
+    templateUrl: './audio.component.html',
+    styleUrls: ['./audio.component.scss'],
+    standalone: false
 })
 export class AudioComponent implements OnInit {
   @Input() isScreenSizeSmall = false
@@ -15,9 +16,6 @@ export class AudioComponent implements OnInit {
   @Input() audioData: NsContent.IContent | null = null
   @Input() widgetResolverAudioData: NsWidgetResolver.IRenderConfigWithTypedData<
     IWidgetsPlayerMediaData
-  > | null = null
-  @Input() discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
   > | null = null
   @Input() isPreviewMode = false
   @Input() forPreview = false

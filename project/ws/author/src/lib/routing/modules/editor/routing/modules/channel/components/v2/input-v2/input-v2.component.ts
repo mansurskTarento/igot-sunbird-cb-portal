@@ -1,16 +1,18 @@
 // import { ISelectorResponsive, NsGalleryView } from '@sunbird-cb/collection'
 import { Component, Inject, OnInit } from '@angular/core'
-import { MatDialogRef, MatSnackBar, MAT_DIALOG_DATA } from '@angular/material'
 import { NsWidgetResolver } from '@sunbird-cb/resolver/src/public-api'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
 import { COLUMN_WIDTH } from '../../input/image-v2/image-v2.constant'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { NotificationComponent } from '@sunbird-cb/notification'
+import { Notify } from '../../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../../constants/constant'
 
 @Component({
-  selector: 'ws-auth-input-v2',
-  templateUrl: './input-v2.component.html',
-  styleUrls: ['./input-v2.component.scss'],
+    selector: 'ws-auth-input-v2',
+    templateUrl: './input-v2.component.html',
+    styleUrls: ['./input-v2.component.scss'],
+    standalone: false
 })
 export class InputV2Component implements OnInit {
   isSubmitPressed = false
@@ -258,34 +260,34 @@ export class InputV2Component implements OnInit {
     read = false,
   ): NsWidgetResolver.IRenderConfigWithAnyData {
     switch (widgetData.widgetSubType) {
-    case 'selectorResponsive':
-      if (widgetData.widgetData.selectFrom) {
-        for (let index = 0; index < widgetData.widgetData.selectFrom.length; index = index + 1) {
-          if (widgetData.widgetData.selectFrom[index].widget.widgetSubType) {
-            widgetData.widgetData.selectFrom[index].widget = this.checkWidgetType(
+      case 'selectorResponsive':
+        if (widgetData.widgetData.selectFrom) {
+          for (let index = 0; index < widgetData.widgetData.selectFrom.length; index = index + 1) {
+            if (widgetData.widgetData.selectFrom[index].widget.widgetSubType) {
+              widgetData.widgetData.selectFrom[index].widget = this.checkWidgetType(
                 widgetData.widgetData.selectFrom[index].widget,
                 style,
                 read)
+            }
           }
         }
-      }
-      return widgetData
-    case 'pageEmbedded':
-    case 'galleryView':
-    case 'elementHtml':
-    case 'pageEmbedded':
-      this.isMarginAvailable = true
-      return this.setMarginContainerStyle(widgetData, style, read)
-    case 'sliderBanners':
-    case 'contentStripMultiple':
-    case 'contentStripSingle':
-    case 'imageMapResponsive':
-    case 'cardBreadcrumb':
-    case 'playerVideo':
-      this.isMarginAvailable = false
-      return widgetData
-    default:
-      return widgetData
+        return widgetData
+      case 'pageEmbedded':
+      case 'galleryView':
+      case 'elementHtml':
+      case 'pageEmbedded':
+        this.isMarginAvailable = true
+        return this.setMarginContainerStyle(widgetData, style, read)
+      case 'sliderBanners':
+      case 'contentStripMultiple':
+      case 'contentStripSingle':
+      case 'imageMapResponsive':
+      case 'cardBreadcrumb':
+      case 'playerVideo':
+        this.isMarginAvailable = false
+        return widgetData
+      default:
+        return widgetData
     }
   }
 

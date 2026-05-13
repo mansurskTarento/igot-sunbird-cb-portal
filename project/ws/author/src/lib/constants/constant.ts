@@ -1,5 +1,5 @@
-export const NOTIFICATION_TIME = 5;
-export const AVAILABLE_LOCALES = ['en'];
+export const NOTIFICATION_TIME = 5
+export const AVAILABLE_LOCALES = ['en']
 
 export const CATEGORY_TYPE = [
   {
@@ -137,7 +137,7 @@ export const CATEGORY_TYPE = [
     filters: [],
     disabled: false,
   },
-];
+]
 
 export const SEARCH_SORT_DROPDOWN = [
   { name: 'Most Relevant', value: 'most_relevant' },
@@ -146,14 +146,14 @@ export const SEARCH_SORT_DROPDOWN = [
   { name: 'A-Z', value: 'a-z' },
   { name: 'Z-A', value: 'z-a' },
   // { name: 'Most Enrolled', value: 'most_enrolled' },
-];
+]
 
 export const SEARCH_SORT_PEOPLES = [
   { name: 'A-Z', value: 'asc' },
   { name: 'Z-A', value: 'desc' },
   { name: 'Recently Added (Newest)', value: 'recently_added_newest' },
   { name: 'Most Relevant', value: 'most_relevant' },
-];
+]
 
 export const TypeOfEvents = [
   {
@@ -174,16 +174,16 @@ export const TypeOfEvents = [
     isChecked: false,
     displayName: 'Past Events',
   },
-];
+]
 
 export const ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION = [
-  "Invite-Only Program",
-  "Moderated Program",
-  "Blended Program",
-  "Curated Program",
-  "Standalone Assessment",
-  "Moderated Assessment",
-  "Invite-Only Assessment",
-  "Comprehensive Assessment Program",
-  "Pre Enrolment Assessment"
-];
+  'Invite-Only Program',
+  'Moderated Program',
+  'Blended Program',
+  'Curated Program',
+  'Standalone Assessment',
+  'Moderated Assessment',
+  'Invite-Only Assessment',
+  'Comprehensive Assessment Program',
+  'Pre Enrolment Assessment',
+]

@@ -1,5 +1,5 @@
 {
-  "/apis/*": {
+  "/apis": {
     "target": "https://portal.qa.karmayogibharat.net/",
     "secure": false,
     "logLevel": "debug",
@@ -8,79 +8,70 @@
       "/apis": "/apis"
     },
     "headers": {
-      "Cookie": "connect.sid=s%3Awq92f5rkgqCVTGEFFkaAjWD2eY0vR9Kc.thz7nTOV2vqbedXhgp3v88%2BNv98WavMRv1DMimP4T9g"
+      "Cookie": "connect.sid=s%3A_hNYsQKp7j4bywBFJdoq4KdmUi_tGryW.a9fPk2K5E%2F%2FMgqpOZ0e28v0lfXEbviUkFrsNYJljOT4"
     }
   },
-  "/api/*": {
+  "/api": {
     "target": "https://portal.qa.karmayogibharat.net/",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": "/apis"
+      "/api": "/api"
+    },
+    "headers": {
+      "Cookie": "connect.sid=s%3A_hNYsQKp7j4bywBFJdoq4KdmUi_tGryW.a9fPk2K5E%2F%2FMgqpOZ0e28v0lfXEbviUkFrsNYJljOT4"
     }
   },
-  "/content-api/*": {
+  "/content-api": {
     "target": "http://localhost:3004",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": ""
+      "^/content-api": ""
     }
   },
-  "/content-store/*": {
+  "/content-store": {
     "target": "http://localhost:3005",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": ""
+      "^/content-store": ""
     }
   },
-  "/chat-bot/*": {
+  "/chat-bot": {
     "target": "http://localhost:3006",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": ""
+      "^/chat-bot": ""
     }
   },
-  "/mobile-apps/*": {
+  "/mobile-apps": {
     "target": "http://localhost:3007",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": ""
+      "^/mobile-apps": ""
     }
   },
-  "/LA/*": {
+  "/LA": {
     "target": "http://localhost:3008",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "/apis": ""
+      "^/LA": ""
     }
   },
-  "/assets/*": {
+  "/assets": {
     "target": "http://127.0.0.1:8080",
     "secure": false,
     "logLevel": "debug",
-    "changeOrigin": true,
-    "pathRewrite": {
-      "/apis": ""
-    }
-  },
-  "/abcd/*": {
-    "target": "https://igot-qa.in",
-    "secure": false,
-    "logLevel": "debug",
-    "changeOrigin": true,
-    "pathRewrite": {
-      "/abcd": ""
-    }
+    "changeOrigin": true
   }
 }

@@ -7,7 +7,7 @@ import { Router } from '@angular/router'
   selector: 'ws-widget-card-carrier-home',
   templateUrl: './card-carrier-home.component.html',
   styleUrls: ['./card-carrier-home.component.scss'],
-
+  standalone: false
 })
 
 export class CardCarrierHomeComponent extends WidgetBaseComponent implements OnInit {
@@ -25,7 +25,7 @@ export class CardCarrierHomeComponent extends WidgetBaseComponent implements OnI
     // this.filldummyData()
     if (this.widgetData && this.widgetData.content) {
       // console.log(this.widgetData.content)
-      this.carrier = ([this.widgetData.content] || []).map((d: any) => {
+      this.carrier = (this.widgetData.content ? [this.widgetData.content] : []).map((d: any) => {
         return {
           title: d.title,
           description: d.title,

@@ -1,13 +1,14 @@
 import { ConfigurationsService, NsPage } from '@sunbird-cb/utils-v2'
 import { Component, OnInit, Inject, AfterViewInit, OnDestroy } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { CustomTourService } from '../tour-guide/tour-guide.service'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-app-tour-dialog',
-  templateUrl: './app-tour-dialog.component.html',
-  styleUrls: ['./app-tour-dialog.component.scss'],
+    selector: 'ws-widget-app-tour-dialog',
+    templateUrl: './app-tour-dialog.component.html',
+    styleUrls: ['./app-tour-dialog.component.scss'],
+    standalone: false
 })
 export class AppTourDialogComponent implements OnInit, AfterViewInit, OnDestroy {
   pageData: NsPage.IPage | null = null

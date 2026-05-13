@@ -6,7 +6,7 @@ describe('FormExtService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: FormExtService = TestBed.get(FormExtService)
+    const service: FormExtService = TestBed.inject(FormExtService)
     expect(service).toBeTruthy()
   })
 })

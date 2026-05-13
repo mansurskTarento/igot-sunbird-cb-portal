@@ -1,30 +1,31 @@
-import { Component, OnInit } from '@angular/core';
-import { connectionUpdates, routesData } from '../../models/network-v3.model';
-import * as _ from 'lodash';
-import { NetworkingService } from '../../services/networking.service';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
-import { TranslateService } from '@ngx-translate/core';
-import { MobileAppsService } from 'src/app/services/mobile-apps.service';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core'
+import { connectionUpdates, routesData } from '../../models/network-v3.model'
+import * as _ from 'lodash'
+import { NetworkingService } from '../../services/networking.service'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { TranslateService } from '@ngx-translate/core'
+import { MobileAppsService } from '../../../../routes/services/mobile-apps.service'
+import { Router } from '@angular/router'
 
 
 @Component({
   selector: 'ws-app-network',
   templateUrl: './network.component.html',
-  styleUrls: ['./network.component.scss']
+  styleUrls: ['./network.component.scss'],
+  standalone: false
 })
 export class NetworkComponent implements OnInit {
 
   //#region (global variables)
-  communitySuggestionsList: any[] = [];
-  communitiesLoading = false;
+  communitySuggestionsList: any[] = []
+  communitiesLoading = false
   navigationItems: routesData[] = [
     {
       name: 'NetworkLandingPage.exploreNetwork',
       navigationUrl: '/app/network-v2/home',
       routeId: 'home',
-      imageUrl: './assets/icons/person_search.svg'
+      imageUrl: './assets/icons/person_search.svg',
     },
     // {
     //   name: 'Updates',
@@ -36,7 +37,7 @@ export class NetworkComponent implements OnInit {
       name: 'NetworkLandingPage.connections',
       navigationUrl: '/app/network-v2/connections',
       routeId: 'connections',
-      imageUrl: './assets/icons/group.svg'
+      imageUrl: './assets/icons/group.svg',
     },
     // {
     //   name: 'Recommendations',
@@ -52,28 +53,28 @@ export class NetworkComponent implements OnInit {
       navigationUrl: '/app/network-v2/recommendations/all',
       routeId: 'recommendations',
       imageUrl: './assets/icons/connection.svg',
-      queryParams: { type: 'peopleYouMayKnow' }
+      queryParams: { type: 'peopleYouMayKnow' },
     },
     {
       name: 'NetworkLandingPage.mentors',
       navigationUrl: 'mentors',
       routeId: 'mentors',
-      imageUrl: './assets/icons/book_read.svg'
-    }
+      imageUrl: './assets/icons/book_read.svg',
+    },
   ]
-  userDetails: any = {};
-  profileDetailsLoading = false;
+  userDetails: any = {}
+  profileDetailsLoading = false
   //#endregion (global variables)
 
   constructor(
     private networkingSvc: NetworkingService,
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
     private translateService: TranslateService,
     private mobileAppsSvc: MobileAppsService,
     private router: Router,
     private langtranslations: MultilingualTranslationsService,
-  ) { 
+  ) {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.next(false)
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -85,7 +86,6 @@ export class NetworkComponent implements OnInit {
     })
   }
 
-
   //#region (initialization)
   ngOnInit() {
     if (localStorage.getItem('websiteLanguage')) {
@@ -93,57 +93,57 @@ export class NetworkComponent implements OnInit {
       const lang = localStorage.getItem('websiteLanguage')!
       this.translateService.use(lang)
     }
-    this.initialization();
+    this.initialization()
   }
-  
+
   initialization() {
-    this.subscribeToUpdates();
-    this.getCommunitesList();
-    this.getProfileDetails();
+    this.subscribeToUpdates()
+    this.getCommunitesList()
+    this.getProfileDetails()
   }
 
   getCommunitesList() {
     const formBody = {
-      field: "countOfPeopleJoined",
-      limit: 3
+      field: 'countOfPeopleJoined',
+      limit: 3,
     }
-    this.communitiesLoading = true;
+    this.communitiesLoading = true
     this.networkingSvc.getCommunities(formBody).subscribe({
       next: (responce: any) => {
-        this.communitiesLoading = false;
+        this.communitiesLoading = false
         this.communitySuggestionsList = _.get(responce, 'result.data')
       },
       error: () => {
-        this.communitiesLoading = false;
+        this.communitiesLoading = false
         this.openSnackBar(this.handleTranslateTo('errorFetchingCommunities'))
-      }
+      },
     })
   }
 
   getProfileDetails() {
-    const userId = _.get(this.configSvc, 'userProfile.userId')
-    if(_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
+    const userId: any = _.get(this.configSvc, 'userProfile.userId')
+    if (_.get(this.configSvc, 'userProfileV2.profileBannerUrl') || _.get(this.configSvc, 'userProfileV2.profileBannerUrl') === '') {
       this.userDetails = this.configSvc.userProfileV2
     } else {
-      this.profileDetailsLoading = true;
+      this.profileDetailsLoading = true
       this.networkingSvc.fetchProfile(userId).subscribe({
         next: (responce: any) => {
-          this.profileDetailsLoading = false;
+          this.profileDetailsLoading = false
           this.userDetails = _.get(responce, 'result.response')
         },
         error: () => {
-          this.profileDetailsLoading = false;
+          this.profileDetailsLoading = false
           this.openSnackBar(this.handleTranslateTo('errorFetchingProfileDetails'))
-        }
+        },
       })
     }
   }
 
-  subscribeToUpdates() { 
+  subscribeToUpdates() {
     this.networkingSvc.connectionsUpdates$.subscribe((update: connectionUpdates | null) => {
-      if(update && this.navigationItems) {
+      if (update && this.navigationItems) {
         this.navigationItems.forEach(item => {
-          if(item.routeId === update.routeId) {
+          if (item.routeId === update.routeId) {
             item['showUpdate'] = update.showUpdate
           }
         })
@@ -152,7 +152,7 @@ export class NetworkComponent implements OnInit {
   }
 
   navigateHome() {
-    this.router.navigate(['/page/home']);
+    this.router.navigate(['/page/home'])
   }
 
   handleTranslateTo(menuName: string): string {
@@ -164,8 +164,7 @@ export class NetworkComponent implements OnInit {
       duration,
     })
   }
-    
-  //#endregion (initialization)
 
+  //#endregion (initialization)
 
 }

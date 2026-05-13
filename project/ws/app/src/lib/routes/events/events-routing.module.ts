@@ -1,11 +1,7 @@
 import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { ViewerResolve } from '@ws/viewer/src/lib/viewer.resolve'
-// import { EventsHomeComponent } from './routes/events-home/events-home.component'
-// import { EventsComponent } from './routes/events/events.component'
 import { EventDetailComponent } from './routes/event-detail/event-detail.component'
-import { EventRecentResolve } from './resolvers/event-resolve'
-import { EventDetailResolve } from './resolvers/event-detail-resolve'
 import { EventPlayerComponent } from './routes/event-player/event-player.component'
 import { EventPdfPlayerComponent } from './components/event-pdf-player/event-pdf-player.component'
 import { EventYouTubeComponent } from './components/event-you-tube/event-you-tube.component'
@@ -15,7 +11,7 @@ import { ViewAllComponent } from './routes/view-all/view-all.component'
 import { SeeAllComponent } from './routes/events/see-all/see-all.component'
 import { EventVideoPlayerComponent } from './components/event-video-player/event-video-player.component'
 import { EventsV2Component } from './routes/events-v2/events-v2.component'
-import { AppEventPageResolverService } from 'src/app/services/app-event-page-resolver.service'
+import { AppEventPageResolverService } from '../../routes/services/app-event-page-resolver.service'
 import { MyAllEventsComponent } from './routes/events/my-all-events/my-all-events.component'
 
 const routes: Routes = [
@@ -32,17 +28,6 @@ const routes: Routes = [
         pathMatch: 'full',
         redirectTo: 'home',
       },
-      // {
-      //   path: 'home',
-      //   component: EventsComponent,
-      //   data: {
-      //     pageId: 'home',
-      //     module: 'Events',
-      //   },
-      //   resolve: {
-      //     topics: EventRecentResolve,
-      //   },
-      // },
       {
         path: 'home',
         component: EventsV2Component,
@@ -151,8 +136,6 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
   providers: [
-    EventRecentResolve,
-    EventDetailResolve,
   ],
 })
 export class EventsRoutingModule { }

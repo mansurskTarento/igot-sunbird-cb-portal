@@ -6,7 +6,7 @@ describe('ProfileResolverService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ProfileResolverService = TestBed.get(ProfileResolverService)
+    const service: ProfileResolverService = TestBed.inject(ProfileResolverService)
     expect(service).toBeTruthy()
   })
 })

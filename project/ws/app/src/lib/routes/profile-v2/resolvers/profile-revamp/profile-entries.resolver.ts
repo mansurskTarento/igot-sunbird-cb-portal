@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
-import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2';
-import { Observable, of } from 'rxjs';
-import { NSProfileDataV2 } from '../../models/profile-v2.model';
-import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service';
-import { catchError, map } from 'rxjs/operators';
-import * as _ from 'lodash';
+import { Injectable } from '@angular/core'
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router'
+import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
+import { Observable, of } from 'rxjs'
+import { NSProfileDataV2 } from '../../models/profile-v2.model'
+import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
+import { catchError, map } from 'rxjs/operators'
+import * as _ from 'lodash'
 
 @Injectable()
 export class profileEntriesResolver

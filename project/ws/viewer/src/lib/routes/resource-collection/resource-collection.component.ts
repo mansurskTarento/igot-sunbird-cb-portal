@@ -1,16 +1,16 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Subscription } from 'rxjs'
-import { NsContent, NsDiscussionForum } from '@sunbird-cb/collection'
-import { NsWidgetResolver } from '@sunbird-cb/resolver'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService, WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'viewer-resource-collection',
-  templateUrl: './resource-collection.component.html',
-  styleUrls: ['./resource-collection.component.scss'],
+    selector: 'viewer-resource-collection',
+    templateUrl: './resource-collection.component.html',
+    styleUrls: ['./resource-collection.component.scss'],
+    standalone: false
 })
 export class ResourceCollectionComponent implements OnInit, OnDestroy {
   private dataSubscription: Subscription | null = null
@@ -21,9 +21,6 @@ export class ResourceCollectionComponent implements OnInit, OnDestroy {
   oldData: NsContent.IContent | null = null
   alreadyRaised = false
   resourceCollectionManifest: any
-  discussionForumWidget: NsWidgetResolver.IRenderConfigWithTypedData<
-    NsDiscussionForum.IDiscussionForumInput
-  > | null = null
   constructor(
     private activatedRoute: ActivatedRoute,
     private contentSvc: WidgetContentService,
@@ -38,9 +35,6 @@ export class ResourceCollectionComponent implements OnInit, OnDestroy {
         this.resourceCollectionData = data.content.data
         if (this.alreadyRaised && this.oldData) {
           this.raiseEvent(WsEvents.EnumTelemetrySubType.Unloaded, this.oldData)
-        }
-        if (this.resourceCollectionData) {
-          this.formDiscussionForumWidget(this.resourceCollectionData)
         }
         if (
           this.resourceCollectionData &&
@@ -74,8 +68,8 @@ export class ResourceCollectionComponent implements OnInit, OnDestroy {
       this.activatedRoute.snapshot.queryParams.collectionType
       && this.resourceCollectionData) {
       await this.contentSvc.continueLearning(this.resourceCollectionData.identifier,
-        this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.collectionType,
+                                             this.activatedRoute.snapshot.queryParams.collectionId,
+                                             this.activatedRoute.snapshot.queryParams.collectionType,
       )
     } else if (this.resourceCollectionData) {
       await this.contentSvc.continueLearning(this.resourceCollectionData.identifier)
@@ -100,21 +94,6 @@ export class ResourceCollectionComponent implements OnInit, OnDestroy {
         .catch((_err: any) => { })
     }
     return manifestFile
-  }
-
-  formDiscussionForumWidget(content: NsContent.IContent) {
-    this.discussionForumWidget = {
-      widgetData: {
-        description: content.description,
-        id: content.identifier,
-        name: NsDiscussionForum.EDiscussionType.LEARNING,
-        title: content.name,
-        initialPostCount: 2,
-        isDisabled: this.forPreview,
-      },
-      widgetSubType: 'discussionForum',
-      widgetType: 'discussionForum',
-    }
   }
 
   raiseEvent(state: WsEvents.EnumTelemetrySubType, data: NsContent.IContent) {

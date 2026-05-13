@@ -2,9 +2,10 @@ import { Component, OnInit, Input } from '@angular/core'
 import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
 
 @Component({
-  selector: 'viewer-execution-result',
-  templateUrl: './execution-result.component.html',
-  styleUrls: ['./execution-result.component.scss'],
+    selector: 'viewer-execution-result',
+    templateUrl: './execution-result.component.html',
+    styleUrls: ['./execution-result.component.scss'],
+    standalone: false
 })
 export class ExecutionResultComponent implements OnInit {
 

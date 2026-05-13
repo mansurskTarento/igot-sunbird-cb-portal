@@ -1,5 +1,5 @@
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .result {
   font-weight: bold;
@@ -28,6 +28,7 @@
   color: #004c7e;
   font-weight: 700;
 }
+
 .code-container {
   min-height: 20vh;
   font-size: 14px;
@@ -68,8 +69,8 @@
   width: auto;
 }
 
-::ng-deep .table-bordered > tbody > tr > td,
-::ng-deep .table-bordered > thead > tr > th {
+::ng-deep .table-bordered>tbody>tr>td,
+::ng-deep .table-bordered>thead>tr>th {
   border: 1px solid #cecece;
   padding: 7px;
 }
@@ -144,7 +145,7 @@
   height: 213px;
 }
 
-.rdbmsheadings{
-  margin: 0!important;
+.rdbmsheadings {
+  margin: 0 !important;
   border-bottom: 1px solid #cecece;
 }

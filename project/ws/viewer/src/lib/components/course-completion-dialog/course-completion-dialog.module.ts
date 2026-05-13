@@ -1,12 +1,12 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CourseCompletionDialogComponent } from './course-completion-dialog.component'
-import { ContentRatingV2DialogModule } from '@sunbird-cb/collection/src/lib/_common/content-rating-v2-dialog/content-rating-v2-dialog.module'
+import { ContentRatingV2DialogModule } from '@sunbird-cb/collection'
 // import { HttpClient } from '@angular/common/http'
 import { TranslateModule } from '@ngx-translate/core'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatDividerModule } from '@angular/material/divider'
 import { MatIconModule } from '@angular/material/icon'
 import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
@@ -22,8 +22,8 @@ import { PipePublicURLModule } from '@sunbird-cb/utils-v2'
         ContentRatingV2DialogModule,
         TranslateModule.forChild(),
         MatIconModule,
-        PipePublicURLModule
+        PipePublicURLModule,
     ],
-    exports: [CourseCompletionDialogComponent]
+    exports: [CourseCompletionDialogComponent],
 })
 export class CourseCompletionDialogModule { }

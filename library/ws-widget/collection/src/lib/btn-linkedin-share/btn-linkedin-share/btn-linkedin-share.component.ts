@@ -3,9 +3,10 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-widget-btn-linkedin-share',
-  templateUrl: './btn-linkedin-share.component.html',
-  styleUrls: ['./btn-linkedin-share.component.scss'],
+    selector: 'ws-widget-btn-linkedin-share',
+    templateUrl: './btn-linkedin-share.component.html',
+    styleUrls: ['./btn-linkedin-share.component.scss'],
+    standalone: false
 })
 export class BtnLinkedinShareComponent implements OnInit {
   @Input() url = location.href

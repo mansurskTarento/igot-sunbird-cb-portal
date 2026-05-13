@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-faq',
-  templateUrl: './faq.component.html',
-  styleUrls: ['./faq.component.scss'],
+    selector: 'ws-app-faq',
+    templateUrl: './faq.component.html',
+    styleUrls: ['./faq.component.scss'],
+    standalone: false
 })
 export class FaqComponent implements OnInit {
   showSideMenu: Boolean = true

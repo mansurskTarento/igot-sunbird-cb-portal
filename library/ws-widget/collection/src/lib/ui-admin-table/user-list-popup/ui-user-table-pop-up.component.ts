@@ -3,8 +3,8 @@ import {
   AfterViewInit, OnChanges, SimpleChanges,
 } from '@angular/core'
 import { SelectionModel } from '@angular/cdk/collections'
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
+import { MatTableDataSource } from '@angular/material/table'
+import { MatPaginator } from '@angular/material/paginator'
 import { MatSort } from '@angular/material/sort'
 import * as _ from 'lodash'
 import { ITableData, IColums } from '../interface/interfaces'
@@ -13,9 +13,10 @@ import { UserViewPopUpService } from './ui-user-table-pop-up.services'
 interface IUser { fullname: string; email: string, userId: string }
 
 @Component({
-  selector: 'ws-widget-ui-user-table-pop-up',
-  templateUrl: './ui-user-table-pop-up.component.html',
-  styleUrls: ['./ui-user-table-pop-up.component.scss'],
+    selector: 'ws-widget-ui-user-table-pop-up',
+    templateUrl: './ui-user-table-pop-up.component.html',
+    styleUrls: ['./ui-user-table-pop-up.component.scss'],
+    standalone: false
 })
 export class UIUserTablePopUpComponent implements OnInit, AfterViewInit, OnChanges {
   tableData!: ITableData | undefined

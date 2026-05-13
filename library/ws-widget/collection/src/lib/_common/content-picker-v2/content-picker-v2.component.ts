@@ -2,8 +2,6 @@ import { Component, OnInit, Input, OnDestroy, Output, EventEmitter } from '@angu
 import { ValueService, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { NSSearch } from '../../_services/widget-search.model'
-// import { SearchApiService } from '@ws/app/src/lib/routes/search/apis/search-api.service'
-// import { SearchServService } from '@ws/app/src/lib/routes/search/services/search-serv.service'
 import { IWidgetData, IAppliedFilters } from './content-picker-v2.model'
 import { NsContent } from '../../_services/widget-content.model'
 import { ContentPickerV2Service } from './content-picker-v2.service'
@@ -11,9 +9,10 @@ import { UntypedFormControl } from '@angular/forms'
 import { distinctUntilChanged } from 'rxjs/operators'
 
 @Component({
-  selector: 'ws-widget-content-picker-v2',
-  templateUrl: './content-picker-v2.component.html',
-  styleUrls: ['./content-picker-v2.component.scss'],
+    selector: 'ws-widget-content-picker-v2',
+    templateUrl: './content-picker-v2.component.html',
+    styleUrls: ['./content-picker-v2.component.scss'],
+    standalone: false
 })
 export class ContentPickerV2Component implements OnInit, OnDestroy {
 

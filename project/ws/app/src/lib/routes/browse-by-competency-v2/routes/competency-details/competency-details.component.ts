@@ -3,18 +3,19 @@ import { BrowseCompetencyService } from '../../services/browse-competency.servic
 import { NSBrowseCompetency } from '../../models/competencies.model'
 // tslint:disable
 import _ from 'lodash'
-import { ActivatedRoute } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-import { UntypedFormGroup, UntypedFormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router'
+import { Subscription, Observable } from 'rxjs'
+import { UntypedFormGroup, UntypedFormControl } from '@angular/forms'
 import { ConfigurationsService, ValueService } from '@sunbird-cb/utils-v2'
-import { LocalDataService } from '../../services/localService';
-import { NsContent } from '@sunbird-cb/collection/src/public-api';
-import { environment } from 'src/environments/environment';
+import { LocalDataService } from '../../services/localService'
+import { NsContent } from '@sunbird-cb/collection'
+import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-competency-details',
-  templateUrl: './competency-details.component.html',
-  styleUrls: ['./competency-details.component.scss'],
+    selector: 'ws-app-competency-details',
+    templateUrl: './competency-details.component.html',
+    styleUrls: ['./competency-details.component.scss'],
+    standalone: false
 })
 export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   private paramSubscription: Subscription | null = null
@@ -83,7 +84,7 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
 
     // Fetch initial data
     // this.searchCompetency()
-    if(!this.currentComp) {
+    if (!this.currentComp) {
       this.searchCompetencyV2()
     }
     this.getCbps()
@@ -179,11 +180,11 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
     this.browseCompServ
       .searchCompetency(req)
       .subscribe(async (response: any) => {
-          // console.log('response :: ', response)
-            if (response) {
-              // this.competencyData = _.first(_.filter(response, { 'name': this.competencyName }))
-              this.competencyData = await this.filterCompetencyBySubtheme(response.result.content, this.competencyName)
-            }
+        // console.log('response :: ', response)
+        if (response) {
+          // this.competencyData = _.first(_.filter(response, { 'name': this.competencyName }))
+          this.competencyData = await this.filterCompetencyBySubtheme(response.result.content, this.competencyName)
+        }
       })
   }
 
@@ -191,7 +192,7 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
     // if (this.myAppliedFilters.length === 0) {
     //   this.searchReq = this.activatedRoute.snapshot.data.searchPageData.data.search.searchReq
     // }
-    this.searchReq.request.filters[`${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`].splice(0, 1, this.competencyName) 
+    this.searchReq.request.filters[`${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`].splice(0, 1, this.competencyName)
     this.browseCompServ.fetchSearchData(this.searchReq).subscribe((res: any) => {
       if (res && res.result && res.result) {
         this.courses = res.result.content || []
@@ -236,7 +237,7 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   modifyUserFilters(fil: any, mainparentType: any) {
     const filters = this.getFilterName(fil)
     if (filters.length > 0) {
-      this.userFilters.forEach((fs: any, index: number) => { 
+      this.userFilters.forEach((fs: any, index: number) => {
         if (fs.name === fil.name) {
           this.userFilters.splice(index, 1)
         }
@@ -377,48 +378,48 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   filterCompetencyBySubtheme(data: any[], subthemeDisplayName: string): Promise<any> {
     return new Promise((resolve, reject) => {
       try {
-        let result: any = null;
-  
+        let result: any = null
+
         function traverse(node: any, parentCompetencyType: string, parentCompetencyArea: string) {
           if (node.displayName === subthemeDisplayName || node.name === subthemeDisplayName) {
             result = {
-              name: node.displayName || node.name, 
-              id: node.identifier, 
-              description: node.description, 
-              type: parentCompetencyType, 
-              status: "", 
+              name: node.displayName || node.name,
+              id: node.identifier,
+              description: node.description,
+              type: parentCompetencyType,
+              status: "",
               source: "",
               competencyType: parentCompetencyType,
               competencyArea: parentCompetencyArea,
-              contentCount: node.count 
-            };
-            return true; 
+              contentCount: node.count
+            }
+            return true
           }
-  
+
           // Recursively process children if present
           if (node.children && node.children.length > 0) {
             for (const child of node.children) {
               if (traverse(child, parentCompetencyType, parentCompetencyArea)) {
-                return true; 
+                return true
               }
             }
           }
-          return false;
+          return false
         }
-  
+
         for (const item of data) {
           if (item.identifier.includes('competencyarea')) {
-            const competencyType = item.displayName || item.name;
-  
+            const competencyType = item.displayName || item.name
+
             for (const area of item.children) {
               if (area.identifier.includes('fw_theme')) {
-                const competencyArea = area.displayName || area.name; 
-  
+                const competencyArea = area.displayName || area.name
+
                 for (const subtheme of area.children) {
                   if (subtheme.identifier.includes('subtheme')) {
                     if (traverse(subtheme, competencyType, competencyArea)) {
-                      resolve(result);
-                      return;
+                      resolve(result)
+                      return
                     }
                   }
                 }
@@ -426,14 +427,14 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
             }
           }
         }
-  
+
         // If no match is found, resolve with null
-        resolve(result);
+        resolve(result)
       } catch (error) {
-        reject(error);
+        reject(error)
       }
-    });
+    })
   }
-  
+
 
 }

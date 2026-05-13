@@ -1,10 +1,13 @@
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
 ul,
 li {
   list-style-type: none;
   padding-inline-start: 0px;
-  padding-left:0px;
+  padding-left: 0px;
 }
+
 .nested-filters {
   padding-left: 2 * $size-xl;
 }
@@ -17,6 +20,7 @@ li {
   height: 20px;
   margin: 0 1em;
   display: none;
-  -webkit-animation: spin 2s linear infinite; /* Safari */
+  -webkit-animation: spin 2s linear infinite;
+  /* Safari */
   animation: spin 2s linear infinite;
 }

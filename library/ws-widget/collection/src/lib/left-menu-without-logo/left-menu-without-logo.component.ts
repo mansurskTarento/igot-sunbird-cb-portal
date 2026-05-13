@@ -4,9 +4,10 @@ import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { ILeftMenuWithoutLogo } from './left-menu-without-logo.model'
 
 @Component({
-  selector: 'ws-widget-left-menu-without-logo',
-  templateUrl: './left-menu-without-logo.component.html',
-  styleUrls: ['./left-menu-without-logo.component.scss'],
+    selector: 'ws-widget-left-menu-without-logo',
+    templateUrl: './left-menu-without-logo.component.html',
+    styleUrls: ['./left-menu-without-logo.component.scss'],
+    standalone: false
 })
 export class LeftMenuWithoutLogoComponent extends WidgetBaseComponent
   implements OnInit, OnDestroy, NsWidgetResolver.IWidgetData<ILeftMenuWithoutLogo[]>  {

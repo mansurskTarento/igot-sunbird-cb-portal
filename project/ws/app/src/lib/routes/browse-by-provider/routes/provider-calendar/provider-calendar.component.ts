@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-provider-calendar',
-  templateUrl: './provider-calendar.component.html',
-  styleUrls: ['./provider-calendar.component.scss'],
+    selector: 'ws-app-provider-calendar',
+    templateUrl: './provider-calendar.component.html',
+    styleUrls: ['./provider-calendar.component.scss'],
+    standalone: false
 })
 export class ProviderCalendarComponent implements OnInit {
 
@@ -14,8 +15,8 @@ export class ProviderCalendarComponent implements OnInit {
     sectionList: any
 
     titles = [
-      { title: `Providers`,
-        url: `/app/learn/browse-by/provider/all-providers`,
+      { title: 'Providers',
+        url: '/app/learn/browse-by/provider/all-providers',
         textClass: 'ws-mat-default-text',
         icon: '', disableTranslate: true,
       },

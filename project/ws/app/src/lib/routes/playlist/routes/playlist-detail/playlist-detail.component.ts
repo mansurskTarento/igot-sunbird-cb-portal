@@ -8,7 +8,7 @@ import {
   NsError,
   NsPlaylist,
   ROOT_WIDGET_CONFIG,
-  viewerRouteGenerator
+  viewerRouteGenerator,
 } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, NsPage, TFetchStatus, ValueService } from '@sunbird-cb/utils-v2'
@@ -23,14 +23,15 @@ import {
   PLAYLIST_TITLE_MAX_LENGTH,
   PLAYLIST_TITLE_MIN_LENGTH,
 } from '../../constants/playlist.constant'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-  selector: 'ws-app-playlist-detail',
-  templateUrl: './playlist-detail.component.html',
-  styleUrls: ['./playlist-detail.component.scss'],
+    selector: 'ws-app-playlist-detail',
+    templateUrl: './playlist-detail.component.html',
+    styleUrls: ['./playlist-detail.component.scss'],
+    standalone: false
 })
 export class PlaylistDetailComponent implements OnInit, OnDestroy {
   @ViewChild('playlistDeleteFailed', { static: true }) playlistDeleteFailedMessage!: ElementRef<any>

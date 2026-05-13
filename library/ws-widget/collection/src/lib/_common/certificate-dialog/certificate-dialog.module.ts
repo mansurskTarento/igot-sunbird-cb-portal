@@ -2,30 +2,33 @@ import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { CertificateDialogComponent } from './certificate-dialog.component'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { EditorQuillModule } from '../../discussion-forum/editor-quill/editor-quill.module'
-
 import { PipeSafeSanitizerModule } from '@sunbird-cb/utils-v2'
 import { SvgToPdfComponent } from './svg-to-pdf.component'
 import { HttpClient } from '@angular/common/http'
 import { TranslateModule, TranslateLoader } from '@ngx-translate/core'
-import { HttpLoaderFactory } from 'src/app/app.module'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatDialogModule } from '@angular/material/dialog'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySnackBarModule as MatSnackBarModule } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatInputModule } from '@angular/material/input'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatSnackBarModule } from '@angular/material/snack-bar'
+import { MatTooltipModule } from '@angular/material/tooltip'
+import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+
+export function CertificateHttpLoaderFactory(http: HttpClient) {
+    return new TranslateHttpLoader(http)
+}
+
 @NgModule({
     declarations: [CertificateDialogComponent, SvgToPdfComponent],
     imports: [
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
-        EditorQuillModule,
         MatButtonModule,
         MatCardModule,
         MatIconModule,
@@ -40,7 +43,7 @@ import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/le
         TranslateModule.forRoot({
             loader: {
                 provide: TranslateLoader,
-                useFactory: HttpLoaderFactory,
+                useFactory: CertificateHttpLoaderFactory,
                 deps: [HttpClient],
             },
         }),

@@ -13,9 +13,10 @@ import { AnalyticsResolver } from '../../resolvers/learning-analytics-filters.re
 import { LearningAnalyticsService } from '../../services/learning-analytics.service'
 import { UntypedFormControl } from '@angular/forms'
 @Component({
-  selector: 'ws-analytics-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+    selector: 'ws-analytics-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss'],
+    standalone: false
 })
 export class HomeComponent implements OnInit, OnDestroy {
   fetchStatus: TFetchStatus = 'none'

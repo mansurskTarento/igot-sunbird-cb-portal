@@ -1,8 +1,8 @@
-@import 'ws-mixins';
-@import 'ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
-  @extend %page-center;
+    @extend %page-center;
 }
 
 .container {
@@ -13,7 +13,7 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.16);
 }
 
-.banner-container{
+.banner-container {
     align-items: center;
     background: #eee;
     padding: 16px;
@@ -26,7 +26,7 @@
     max-width: 250px;
     background: #f5fdf1;
     padding: 8px;
-    border: 1px solid rgba(0,0,0,0.5);
+    border: 1px solid rgba(0, 0, 0, 0.5);
 }
 
 .title-section {
@@ -40,6 +40,7 @@
     width: 180px;
     // height:180px;
     position: relative;
+
     @include breakpoint-xs {
         width: 112px;
         height: 72px;
@@ -56,6 +57,7 @@
     font-size: 14px;
     margin-top: 4px;
     margin-bottom: 4px;
+
     @include breakpoint-xs {
         margin-top: 12px;
         margin-bottom: 16px;
@@ -73,17 +75,21 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.06);
+
     @include breakpoint-xs {
         width: 112px;
-        height:112px;
+        height: 112px;
     }
-    .logo-img{
+
+    .logo-img {
         max-width: 122px;
+
         @include breakpoint-xs {
             max-width: 84px;
         }
     }
-    &.top{
+
+    &.top {
         position: absolute;
         top: -110px
     }
@@ -118,14 +124,17 @@
 .infra-sec {
     padding: 25px 0px;
 }
+
 .infra-sec-desc {
     padding-top: 32px
 }
+
 .infra-background {
     align-items: center;
     justify-content: center;
     display: flex;
 }
+
 .contributors-background {
     align-items: center;
     justify-content: center;
@@ -141,9 +150,11 @@
 .infra-box {
     width: 256px;
 }
+
 .infra-box-review {
     width: 100%;
 }
+
 .infra-title {
     font-family: Montserrat;
     font-size: 24px;
@@ -152,6 +163,7 @@
     text-align: left;
     color: white;
 }
+
 .infra-title2 {
     font-family: Montserrat;
     font-size: 24px;
@@ -160,6 +172,7 @@
     text-align: left;
     color: #EF951E;
 }
+
 .infra-description {
     font-family: Lato;
     font-size: 14px;
@@ -191,9 +204,9 @@
     position: relative;
 }
 
-.info-slider{
-    position: absolute; 
-    top: -180px; 
+.info-slider {
+    position: absolute;
+    top: -180px;
     padding: 25px;
 }
 
@@ -227,6 +240,7 @@
     text-overflow: ellipsis;
     overflow: hidden;
 }
+
 .nav-up-arrow {
     height: 28px;
 }
@@ -238,6 +252,7 @@
 .img-right {
     right: 0;
 }
+
 .learner-title {
     //styleName: Heading 1;
     font-family: Montserrat;
@@ -248,28 +263,31 @@
     color: #000;
 }
 
-@media screen and (max-width: 1201px) { 
+@media screen and (max-width: 1201px) {
     .img-left {
         display: none;
     }
-    
+
     .img-right {
         display: none;
     }
 }
 
-@media screen and (max-width: 768px) { 
+@media screen and (max-width: 768px) {
     .infra-sec {
         padding: 0;
     }
+
     .infra-box {
         width: 99%;
         height: auto;
     }
-    .infra-box-review{
+
+    .infra-box-review {
         width: 99%;
         height: auto;
     }
+
     .infra-sec-desc {
         padding-top: 0;
     }
@@ -281,6 +299,7 @@
         line-height: 19.5px;
         text-align: left;
     }
+
     .infra-title2 {
         font-family: Montserrat;
         font-size: 16px;
@@ -288,16 +307,20 @@
         line-height: 19.5px;
         text-align: left;
     }
+
     .slider-background {
         height: 150px;
     }
+
     .slider-background1 {
         height: 150px;
     }
-    .info-slider{
-        position: absolute; 
-        top: -155px; 
+
+    .info-slider {
+        position: absolute;
+        top: -155px;
     }
+
     .sticky-navigator {
         align-items: center;
         justify-content: left;
@@ -305,15 +328,16 @@
     }
 
     .logo-box-rounded {
-        &.top{
+        &.top {
             position: absolute;
             top: -50px
         }
     }
+
     .learner-title {
         font-size: 16px;
     }
-    
+
 }
 
 .competencies-backgroud {
@@ -329,7 +353,8 @@
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
-.comp-back-img{
+
+.comp-back-img {
     bottom: 0;
     left: 0;
     right: 0;
@@ -344,6 +369,3 @@
     font-size: 16px;
     font-weight: 600;
 }
-
-
-

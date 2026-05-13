@@ -7,9 +7,9 @@ import { QuestionComponent } from './components/question/question.component'
 import { SubmitQuizDialogComponent } from './components/submit-quiz-dialog/submit-quiz-dialog.component'
 
 import { PipeDurationTransformModule, PipeLimitToModule } from '@sunbird-cb/utils-v2'
-import { SkeletonLoaderModule } from '@sunbird-cb/collection/src/lib/_common/skeleton-loader/skeleton-loader.module'
+import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import {
-    BtnFullscreenModule
+    BtnFullscreenModule,
 } from '@sunbird-cb/collection'
 import { ResultComponent } from './components/result/result.component'
 import { FillInTheBlankComponent } from './components/question/fitb/fitb.component'
@@ -26,30 +26,30 @@ import { AssessmentPerformanceSummaryComponent } from './components/assessment-p
 import { AssessmentPerformanceInsightSummaryComponent } from './components/assessment-performance-insight-summary/assessment-performance-insight-summary.component'
 import { FinalAssessmentPopupComponent } from './components/final-assessment-popup/final-assessment-popup.component'
 import { QuestionSafeUrlPipe } from './question-safe-pipe.pipe'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { MatLegacyChipsModule as MatChipsModule } from '@angular/material/legacy-chips'
-import { MatLegacyDialogModule as MatDialogModule } from '@angular/material/legacy-dialog'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDialogModule } from '@angular/material/dialog'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
+import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyListModule as MatListModule } from '@angular/material/legacy-list'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule } from '@angular/material/legacy-progress-spinner'
-import { MatLegacyRadioModule as MatRadioModule } from '@angular/material/legacy-radio'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
+import { MatInputModule } from '@angular/material/input'
+import { MatListModule } from '@angular/material/list'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
+import { MatRadioModule } from '@angular/material/radio'
+import { MatSelectModule } from '@angular/material/select'
 import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTableModule } from '@angular/material/table'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { ReactiveFormsModule } from '@angular/forms'
 import { NbspModule } from '@sunbird-cb/consumption'
 import { CaResultsViewComponent } from './components/ca-results-view/ca-results-view.component'
 import { OverallResultViewComponent } from './components/overall-result-view/overall-result-view.component'
 import { SectionResultsViewComponent } from './components/section-results-view/section-results-view.component'
-import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
+import { MatTabsModule } from '@angular/material/tabs'
 @NgModule({
     declarations: [
         FillInTheBlankComponent,
@@ -100,7 +100,7 @@ import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
         TranslateModule,
         MatMenuModule,
         MatSelectModule,
-        MatLegacyTabsModule,
+        MatTabsModule,
         NbspModule
 
     ],
@@ -113,6 +113,6 @@ import { MatLegacyTabsModule } from '@angular/material/legacy-tabs'
         AssessmentQuestionCountContainerComponent,
         AssessmentPerformanceSummaryComponent,
         AssessmentPerformanceInsightSummaryComponent,
-    ]
+    ],
 })
 export class PracticePlModule { }

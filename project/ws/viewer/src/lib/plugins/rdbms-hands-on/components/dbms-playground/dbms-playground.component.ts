@@ -4,9 +4,10 @@ import { NSRdbmsHandsOn } from '../../rdbms-hands-on.model'
 import { EventService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'viewer-dbms-playground',
-  templateUrl: './dbms-playground.component.html',
-  styleUrls: ['./dbms-playground.component.scss'],
+    selector: 'viewer-dbms-playground',
+    templateUrl: './dbms-playground.component.html',
+    styleUrls: ['./dbms-playground.component.scss'],
+    standalone: false
 })
 export class DbmsPlaygroundComponent implements OnChanges {
 

@@ -2,9 +2,10 @@ import { Component, OnInit, OnDestroy, Input } from '@angular/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-provider-left-menu',
-  templateUrl: './left-menu.component.html',
-  styleUrls: ['./left-menu.component.scss'],
+    selector: 'ws-app-provider-left-menu',
+    templateUrl: './left-menu.component.html',
+    styleUrls: ['./left-menu.component.scss'],
+    standalone: false
 })
 export class ProviderLeftMenuComponent implements OnInit, OnDestroy {
 

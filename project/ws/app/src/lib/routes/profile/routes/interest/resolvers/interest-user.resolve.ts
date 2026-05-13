@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core'
 
-
 import { Observable, of } from 'rxjs'
 import { InterestService } from '../services/interest.service'
 import { map, catchError } from 'rxjs/operators'

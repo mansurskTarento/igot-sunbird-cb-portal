@@ -3,8 +3,8 @@ import {
   AfterViewInit, OnChanges, SimpleChanges,
 } from '@angular/core'
 import { SelectionModel } from '@angular/cdk/collections'
-import { MatLegacyTableDataSource as MatTableDataSource } from '@angular/material/legacy-table'
-import { MatLegacyPaginator as MatPaginator } from '@angular/material/legacy-paginator'
+import { MatTableDataSource } from '@angular/material/table'
+import { MatPaginator } from '@angular/material/paginator'
 import { MatSort } from '@angular/material/sort'
 import * as _ from 'lodash'
 
@@ -12,9 +12,10 @@ import { ITableData, IColums } from '../interface/interfaces'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-directory-table',
-  templateUrl: './directory-table.component.html',
-  styleUrls: ['./directory-table.component.scss'],
+    selector: 'ws-widget-directory-table',
+    templateUrl: './directory-table.component.html',
+    styleUrls: ['./directory-table.component.scss'],
+    standalone: false
 })
 export class UIDirectoryTableComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() tableData!: ITableData | undefined

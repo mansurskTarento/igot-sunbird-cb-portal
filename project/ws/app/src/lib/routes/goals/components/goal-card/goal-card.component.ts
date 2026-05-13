@@ -13,14 +13,15 @@ import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { GoalDeleteDialogComponent } from '../goal-delete-dialog/goal-delete-dialog.component'
 import { GoalShareDialogComponent } from '../goal-share-dialog/goal-share-dialog.component'
 import { GoalSharedDeleteDialogComponent } from '../goal-shared-delete-dialog/goal-shared-delete-dialog.component'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 // import { NoAccessDialogComponent } from '../no-access-dialog/no-access-dialog.component'
 
 @Component({
-  selector: 'ws-app-goal-card[type]',
-  templateUrl: './goal-card.component.html',
-  styleUrls: ['./goal-card.component.scss'],
+    selector: 'ws-app-goal-card[type]',
+    templateUrl: './goal-card.component.html',
+    styleUrls: ['./goal-card.component.scss'],
+    standalone: false
 })
 export class GoalCardComponent implements OnInit {
   @ViewChild('errorDurationUpdate', { static: true })
@@ -94,8 +95,8 @@ export class GoalCardComponent implements OnInit {
         // .getGoalContent(this.goal.identifier)
         .getGoalContent(this.goal.identifier)
         .subscribe(data => {
-            this.goalData = data
-          },
+          this.goalData = data
+        },
 
         )
     }

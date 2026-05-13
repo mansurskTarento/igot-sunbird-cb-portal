@@ -6,7 +6,7 @@ describe('KnowledgeResourceService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: KnowledgeResourceService = TestBed.get(KnowledgeResourceService)
+    const service: KnowledgeResourceService = TestBed.inject(KnowledgeResourceService)
     expect(service).toBeTruthy()
   })
 })

@@ -3,10 +3,10 @@ import { NSDiscussData } from './discuss.model'
 import { Router } from '@angular/router'
 
 @Component({
-  selector: 'ws-widget-card-discuss',
-  templateUrl: './card-discuss.component.html',
-  styleUrls: ['./card-discuss.component.scss'],
-
+    selector: 'ws-widget-card-discuss',
+    templateUrl: './card-discuss.component.html',
+    styleUrls: ['./card-discuss.component.scss'],
+    standalone: false
 })
 
 export class CardDiscussComponent implements OnInit {

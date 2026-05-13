@@ -1,16 +1,17 @@
 import { Component, Inject } from '@angular/core'
-import { MatLegacyDialogRef as MatDialogRef, MAT_LEGACY_DIALOG_DATA as MAT_DIALOG_DATA } from '@angular/material/legacy-dialog'
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-dialog-confirm',
-  templateUrl: './dialog-confirm.component.html',
-  styleUrls: ['./dialog-confirm.component.scss'],
+    selector: 'ws-dialog-confirm',
+    templateUrl: './dialog-confirm.component.html',
+    styleUrls: ['./dialog-confirm.component.scss'],
+    standalone: false
 })
 export class DialogConfirmComponent {
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: { title: string, body: string },
+    @Inject(MAT_DIALOG_DATA) public data: { title: string, body: string, button?: any[] },
     private dialogRef: MatDialogRef<DialogConfirmComponent>,
     private translate: TranslateService
   ) {

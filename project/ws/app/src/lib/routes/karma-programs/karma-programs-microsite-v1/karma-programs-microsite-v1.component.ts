@@ -6,9 +6,10 @@ import { EventService, WsEvents, MultilingualTranslationsService, Configurations
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-karma-programs-microsite-v1',
-  templateUrl: './karma-programs-microsite-v1.component.html',
-  styleUrls: ['./karma-programs-microsite-v1.component.scss'],
+    selector: 'ws-app-karma-programs-microsite-v1',
+    templateUrl: './karma-programs-microsite-v1.component.html',
+    styleUrls: ['./karma-programs-microsite-v1.component.scss'],
+    standalone: false
 })
 export class KarmaProgramsMicrositeV1Component implements OnInit {
   programName = ''
@@ -21,8 +22,8 @@ export class KarmaProgramsMicrositeV1Component implements OnInit {
   titles = [
     { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
-      title: `Karma Programs`,
-      url: `/app/learn/karma-programs/all-programs`,
+      title: 'Karma Programs',
+      url: '/app/learn/karma-programs/all-programs',
       icon: '', disableTranslate: true,
     },
   ]
@@ -173,7 +174,7 @@ export class KarmaProgramsMicrositeV1Component implements OnInit {
       {
         type: 'click',
         subType: 'karma-programs',
-        id: `card-content`,
+        id: 'card-content',
       },
       {
         id: event.identifier,

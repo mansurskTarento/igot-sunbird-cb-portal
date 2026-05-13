@@ -1,9 +1,10 @@
 import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core'
 // import { saveAs } from 'file-saver'
 @Component({
-  selector: 'ws-widget-svg-to-pdf',
-  // tslint:disable-next-line: max-line-length
-  template: ``,
+    selector: 'ws-widget-svg-to-pdf',
+    // tslint:disable-next-line: max-line-length
+    template: ``,
+    standalone: false
 })
 export class SvgToPdfComponent implements AfterViewInit {
   @ViewChild('svg', { static: true }) svgElement!: ElementRef

@@ -3,16 +3,18 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core'
-import { MatSelectChange, MatButtonToggleChange } from '@angular/material'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { GamificationService } from '../../../../services/gamification.service'
 import { UntypedFormControl } from '@angular/forms'
 import { DatePipe } from '@angular/common'
+import { MatButtonToggleChange } from '@angular/material/button-toggle'
+import { MatSelectChange } from '@angular/material/select'
 
 @Component({
-  selector: 'ws-app-leaderboard',
-  templateUrl: './leaderboard-home.component.html',
-  styleUrls: ['./leaderboard-home.component.scss'],
+    selector: 'ws-app-leaderboard',
+    templateUrl: './leaderboard-home.component.html',
+    styleUrls: ['./leaderboard-home.component.scss'],
+    standalone: false
 })
 export class LeaderboardHomeComponent implements OnInit {
   public sideNavBarOpened = false

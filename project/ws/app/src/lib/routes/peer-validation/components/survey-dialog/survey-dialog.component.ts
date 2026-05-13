@@ -1,17 +1,18 @@
-import { Component, OnInit, OnDestroy, ViewChild, Renderer2, inject } from '@angular/core'
+import { Component, OnInit, OnDestroy, ViewChild, Renderer2, inject, DOCUMENT } from '@angular/core'
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms'
 import { MatStepper } from '@angular/material/stepper'
-import { DOCUMENT } from '@angular/common'
+
 import { NSPeerValidation } from '../../models/peer-validation.model'
 import { PeerValidationService } from '../../services/peer-validation.service'
 import { SuccessDialogComponent } from './components/success-dialog/success-dialog.component'
 
 @Component({
-  selector: 'ws-app-survey-dialog',
-  templateUrl: './survey-dialog.component.html',
-  styleUrls: ['./survey-dialog.component.scss'],
+    selector: 'ws-app-survey-dialog',
+    templateUrl: './survey-dialog.component.html',
+    styleUrls: ['./survey-dialog.component.scss'],
+    standalone: false
 })
 export class SurveyDialogComponent implements OnInit, OnDestroy {
   @ViewChild('stepper') stepper!: MatStepper
@@ -132,13 +133,13 @@ export class SurveyDialogComponent implements OnInit, OnDestroy {
     // Wait for view update
     setTimeout(() => {
       this.stepper.next()
-    }, 0)
+    },         0)
   }
 
   isStepCompleted(index: number): boolean {
     if (index === 0) {
       return this.questionForm.valid
-    } else if (index === 1) {
+    }  if (index === 1) {
       return this.isStep2Completed
     }
     return false

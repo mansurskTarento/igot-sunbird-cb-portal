@@ -1,6 +1,6 @@
-@import 'ws-common';
-@import 'ws-vars';
-@import 'ws-mixins';
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .autocomplete-form {
     width: 100%;
@@ -14,9 +14,11 @@
 .flex-direction {
     flex-direction: row;
 }
+
 .space-btwn {
     gap: 32px;
 }
+
 .empty_search {
     width: 200px;
     margin: auto;
@@ -31,4 +33,3 @@
         width: 100%
     }
 }
-

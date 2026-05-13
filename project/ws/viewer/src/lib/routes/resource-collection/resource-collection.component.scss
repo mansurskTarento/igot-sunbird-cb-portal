@@ -1,11 +1,11 @@
-@import 'ws-mixins';
-@import 'ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
-h1{
-    font-weight: 400 !important;
-    font-stretch: normal !important;
-    font-size: 30px !important;
-    line-height: 40px !important;
+h1 {
+  font-weight: 400 !important;
+  font-stretch: normal !important;
+  font-size: 30px !important;
+  line-height: 40px !important;
 }
 
 .textView {
@@ -13,7 +13,7 @@ h1{
 }
 
 .cardConatiner {
-  height:270px;
+  height: 270px;
 
 
 }
@@ -25,46 +25,52 @@ h1{
 //     line-height: 40px !important;
 //     padding-left: 19rem !important;
 // }
-.table{
+.table {
   width: 100% !important;
-   @include breakpoint-lt-m {
-      width: 100%;
-      margin:  1em 12em 2em -1em;
-    }
+
+  @include breakpoint-lt-m {
+    width: 100%;
+    margin: 1em 12em 2em -1em;
+  }
 }
 
-mat-card{
+mat-card {
   //left: 25% !important;
   position: relative;
   margin-left: 30px;
-  box-shadow: 0 10px 20px 10px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23) !important;
-   @include breakpoint-lt-m {
-      width: 100%;
-      left:0% ;
-      margin:  1em 12em 2em -1em;
-    }
+  box-shadow: 0 10px 20px 10px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23) !important;
 
-}
-td.mat-cell{
-  padding:10px !important;
-}
-th.mat-header-cell{
-   padding:10px !important;
-}
-
-.submissionbutton{
-  font-size: 16px !important;
-  border: 1px solid  #c0bebe;
   @include breakpoint-lt-m {
-      font-size: 12px !important;
+    width: 100%;
+    left: 0%;
+    margin: 1em 12em 2em -1em;
+  }
 
-    }
 }
-.submissionbutton:hover{
+
+td.mat-cell {
+  padding: 10px !important;
+}
+
+th.mat-header-cell {
+  padding: 10px !important;
+}
+
+.submissionbutton {
+  font-size: 16px !important;
+  border: 1px solid #c0bebe;
+
+  @include breakpoint-lt-m {
+    font-size: 12px !important;
+
+  }
+}
+
+.submissionbutton:hover {
   border: 1px solid #3f51b5;
 }
 
-.submit-reset{
+.submit-reset {
   right: 20px;
   bottom: 20px;
 }

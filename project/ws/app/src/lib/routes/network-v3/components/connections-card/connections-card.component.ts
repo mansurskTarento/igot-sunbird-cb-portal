@@ -1,44 +1,45 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import * as _ from 'lodash';
-import { HttpErrorResponse } from '@angular/common/http';
-import { MatLegacySnackBar } from '@angular/material/legacy-snack-bar';
-import { ConfigurationsService, EventService, NsUser, WsEvents } from '@sunbird-cb/utils-v2';
-import { Router } from '@angular/router';
-import { NetworkingService } from '../../services/networking.service';
-import { MatLegacyDialog } from '@angular/material/legacy-dialog';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import * as _ from 'lodash'
+import { HttpErrorResponse } from '@angular/common/http'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { ConfigurationsService, EventService, NsUser, WsEvents } from '@sunbird-cb/utils-v2'
+import { Router } from '@angular/router'
+import { NetworkingService } from '../../services/networking.service'
+import { MatDialog } from '@angular/material/dialog'
 import { ConfirmationDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-connections-card',
   templateUrl: './connections-card.component.html',
-  styleUrls: ['./connections-card.component.scss']
+  styleUrls: ['./connections-card.component.scss'],
+  standalone: false
 })
 export class ConnectionsCardComponent implements OnInit {
-  
-  @Input() otherUserProfile: any;
+
+  @Input() otherUserProfile: any
   @Input() currentTab = 'Requested'
   @Input() showBorder = true;
-  @Output() getCountOf: EventEmitter<string[]> = new EventEmitter<string[]>(); 
+  @Output() getCountOf: EventEmitter<string[]> = new EventEmitter<string[]>();
   nameInitials = '';
   fullName = '';
   currentUserDetails: NsUser.IUserProfile | null = null;
 
   constructor(
-    private snackBar: MatLegacySnackBar,
+    private snackBar: MatSnackBar,
     private router: Router,
     private configSvc: ConfigurationsService,
     private networkingSvc: NetworkingService,
-    private dialog: MatLegacyDialog,
-     private events: EventService,
+    private dialog: MatDialog,
+    private events: EventService,
   ) { }
 
   ngOnInit(): void {
-    this.getInitials();
-    this.getCurrentUserDetails();
+    this.getInitials()
+    this.getCurrentUserDetails()
   }
 
   getInitials(): void {
-    this.fullName = _.get(this.otherUserProfile, 'fullName', _.get(this.otherUserProfile, 'personalDetails.firstname', ''));
+    this.fullName = _.get(this.otherUserProfile, 'fullName', _.get(this.otherUserProfile, 'personalDetails.firstname', ''))
     if (this.fullName) {
       if (this.fullName.split(' ').length > 1) {
         const nameArr = this.fullName.split(' ')
@@ -50,11 +51,11 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   getCurrentUserDetails() {
-    this.currentUserDetails = this.configSvc.userProfileV2;
+    this.currentUserDetails = this.configSvc.userProfileV2
   }
 
   goToUserProfile() {
-    if(this.otherUserProfile && this.otherUserProfile.userId) {
+    if (this.otherUserProfile && this.otherUserProfile.userId) {
       this.router.navigate(['/app/person-profile', (this.otherUserProfile.userId)], { fragment: 'profileInfo' })
     }
   }
@@ -72,7 +73,7 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   viewProfile() {
-    if(this.otherUserProfile && this.otherUserProfile.userId) {
+    if (this.otherUserProfile && this.otherUserProfile.userId) {
       const userId = this.otherUserProfile.userId
       this.router.navigate(['/app/person-profile', (userId)], { fragment: 'profileInfo' })
     }
@@ -80,21 +81,21 @@ export class ConnectionsCardComponent implements OnInit {
 
   openConformationPopup(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
     let message = ''
-    switch(action) {
+    switch (action) {
       case 'Rejected':
         message = this.handleTranslateTo('areYouSureYouWantToIgnoreThisRequest')
-        break;
+        break
       case 'Withdrawn':
         message = this.handleTranslateTo('areYouSureYouWantToWithdrawThisRequest')
-        break;
+        break
       case 'Removed':
         message = this.handleTranslateTo('areYouSureYouWantToRemoveThisConnection')
-        break;
+        break
       case 'Unblocked':
         message = this.handleTranslateTo('areYouSureYouWantToUnblockThisUser')
-        break;
+        break
     }
-    if(message) {
+    if (message) {
       const dialgoData = {
         description: message,
         iconName: 'info',
@@ -104,22 +105,22 @@ export class ConnectionsCardComponent implements OnInit {
           {
             classes: 'btn-out-line',
             text: this.handleTranslateTo('no'),
-            response: false
+            response: false,
           },
           {
             classes: 'succes-button',
             text: this.handleTranslateTo('yes'),
-            response: true
-          }
-        ]
+            response: true,
+          },
+        ],
       }
       const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
         data: dialgoData,
         disableClose: true,
         width: '400px',
-        maxWidth: '90vw'
+        maxWidth: '90vw',
       })
-      dialogRef.afterClosed().subscribe((result) => {
+      dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.updateConnection(action)
         }
@@ -130,27 +131,27 @@ export class ConnectionsCardComponent implements OnInit {
   }
 
   updateConnection(action: string | 'Approved' | 'Rejected' | 'Withdrawn' | 'Unblocked' | 'Removed') {
-    if(this.otherUserProfile && this.currentUserDetails) {
-      if(['Approved', 'Rejected', 'Withdrawn', 'Unblocked'].includes(action)) {
+    if (this.otherUserProfile && this.currentUserDetails) {
+      if (['Approved', 'Rejected', 'Withdrawn', 'Unblocked'].includes(action)) {
         let subType = ''
         let eDataId = ''
         switch (action) {
           case 'Accepted':
             eDataId = 'accept-request'
             subType = 'network-hub-connection-requests'
-            break;
+            break
           case 'Rejected':
             eDataId = 'ignore-request'
             subType = 'network-hub-connection-requests'
-            break;
+            break
           case 'Withdrawn':
             eDataId = 'connect-withdraw'
             subType = 'network-hub-connections-sent'
-            break;
+            break
           case 'Unblocked':
             eDataId = 'profile-unblock'
             subType = 'network-hub-connections-blocked'
-            break;
+            break
         }
         this.raiseTelemetry(_.get(this.currentUserDetails, 'userId', ''), eDataId, subType)
       }
@@ -163,47 +164,47 @@ export class ConnectionsCardComponent implements OnInit {
         userIdTo: this.otherUserProfile.userId,
         userNameTo: this.fullName,
         userDepartmentTo: this.otherUserProfile.departmentName ? this.otherUserProfile.departmentName : _.get(this.otherUserProfile, 'employmentDetails.departmentName', ''),
-        status: action
+        status: action,
       }
       this.otherUserProfile['connectionStatus'] = 'progress'
       this.networkingSvc.updateConnectionRequest(formBody).subscribe({
-        next: (response) => {
+        next: response => {
           if (response) {
             this.otherUserProfile['connectionStatus'] = action
             let listToGetCount: string[] = []
-            switch(action) {
+            switch (action) {
               case 'Approved':
                 listToGetCount = ['Approved', 'Pending']
                 this.openSnackbar('Connection accepted successfully')
-                break;
+                break
               case 'Rejected':
                 listToGetCount = ['Pending']
                 this.openSnackbar('Connection rejected successfully')
-                break;
+                break
               case 'Withdrawn':
                 listToGetCount = ['Pending']
                 this.openSnackbar('Connection withdrawn successfully')
-                break;
+                break
               case 'Unblocked':
                 listToGetCount = ['Blocked']
                 this.openSnackbar('User unblocked successfully')
-                break;
+                break
               case 'Removed':
                 listToGetCount = ['Approved']
                 this.openSnackbar('Connection removed successfully')
-                break;
+                break
             }
-            if(listToGetCount && listToGetCount.length) {
+            if (listToGetCount && listToGetCount.length) {
               this.getCountOf.emit(listToGetCount)
             }
           }
         },
         error: (error: HttpErrorResponse) => {
-          if(error) {
+          if (error) {
             this.otherUserProfile['connectionStatus'] = ''
             this.openSnackbar('Something went wrong please try again')
           }
-        }
+        },
       })
     }
   }
@@ -211,16 +212,16 @@ export class ConnectionsCardComponent implements OnInit {
   raiseTelemetry(userId: string, eDataId: string, subType?: string) {
     const edata: any = {
       type: WsEvents.EnumInteractTypes.CLICK,
-      id: eDataId
+      id: eDataId,
     }
     const objDetails = {
       id: userId,
-      type: 'User'
+      type: 'User',
     }
     const env = {
       module: WsEvents.EnumTelemetrymodules.NETWORK,
     }
-    if(subType) {
+    if (subType) {
       edata['subType'] = subType
     }
     this.events.raiseInteractTelemetry(edata, objDetails, env)
@@ -229,7 +230,7 @@ export class ConnectionsCardComponent implements OnInit {
   handleTranslateTo(menuName: string): string {
     return this.networkingSvc.handleTranslateTo(menuName)
   }
-  
+
   openSnackbar(primaryMsg: string, duration: number = 5000) {
     this.snackBar.open(primaryMsg, 'X', {
       duration,

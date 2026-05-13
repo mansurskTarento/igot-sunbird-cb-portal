@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import {
   NsContent,
-} from '@sunbird-cb/collection/src/lib/_services/widget-content.model'
+} from '@sunbird-cb/collection'
 /* tslint:disable */
 import _ from 'lodash'
 /* tslint:enable */
@@ -10,7 +10,7 @@ import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween'
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
-import { NsCardContent } from '@sunbird-cb/collection/src/lib/card-content-v2/card-content-v2.model'
+import { NsCardContent } from '@sunbird-cb/collection'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
@@ -19,9 +19,10 @@ dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
 @Component({
-  selector: 'ws-cbp-plan',
-  templateUrl: './cbp-plan.component.html',
-  styleUrls: ['./cbp-plan.component.scss'],
+    selector: 'ws-cbp-plan',
+    templateUrl: './cbp-plan.component.html',
+    styleUrls: ['./cbp-plan.component.scss'],
+    standalone: false
 })
 export class CbpPlanComponent implements OnInit {
   cbpConfig: any

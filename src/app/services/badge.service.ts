@@ -4,7 +4,7 @@ import { Observable } from 'rxjs'
 
 const API_END_POINTS = {
   BADGE_DETAILS: 'apis/proxies/v8/user/v1/badge/details',
-  BADGE_DOWNLOAD: '/apis/proxies/v8/badge/dynamic/v1/generate'
+  BADGE_DOWNLOAD: '/apis/proxies/v8/badge/dynamic/v1/generate',
 }
 
 @Injectable({

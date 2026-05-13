@@ -1,35 +1,41 @@
-@import 'ws-mixins';
-.small-height-toolbar{
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
+.small-height-toolbar {
   @include breakpoint-xs {
     height: 32px;
   }
 }
+
 .margin-right {
   margin-right: 10px !important;
 }
-.center-align{
+
+.center-align {
   position: relative;
   left: 50%;
-  transform: translate(-50%,0);
+  transform: translate(-50%, 0);
+
   @include breakpoint-xs {
-    transform: translate(0,0);
+    transform: translate(0, 0);
     left: inherit;
   }
 }
-.width-full-wrapped{
+
+.width-full-wrapped {
   @include breakpoint-xs {
-  width: 100%;
+    width: 100%;
   }
 }
 
-.buttons-class{
+.buttons-class {
   margin: 0 24px;
-@include breakpoint-xs {
+
+  @include breakpoint-xs {
     margin: 0;
   }
 
 }
 
-.font-size-small{
+.font-size-small {
   font-size: x-small !important;
 }

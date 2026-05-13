@@ -1,4 +1,4 @@
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
+import { MatDialog } from '@angular/material/dialog'
 import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core'
 import { IWidgetsPlayerMediaData } from '@sunbird-cb/collection'
@@ -9,15 +9,16 @@ import { SettingsComponent } from '../profile/routes/settings/settings.component
 import { ActivatedRoute } from '@angular/router'
 
 @Component({
-  selector: 'ws-app-app-setup-home',
-  templateUrl: './app-setup-home.component.html',
-  styleUrls: ['./app-setup-home.component.scss'],
-  providers: [
-    {
-      provide: STEPPER_GLOBAL_OPTIONS,
-      useValue: { displayDefaultIndicatorType: false },
-    },
-  ],
+    selector: 'ws-app-app-setup-home',
+    templateUrl: './app-setup-home.component.html',
+    styleUrls: ['./app-setup-home.component.scss'],
+    providers: [
+        {
+            provide: STEPPER_GLOBAL_OPTIONS,
+            useValue: { displayDefaultIndicatorType: false },
+        },
+    ],
+    standalone: false
 })
 export class AppSetupHomeComponent implements OnInit, AfterViewInit {
   currentIndex = 0
@@ -50,7 +51,7 @@ export class AppSetupHomeComponent implements OnInit, AfterViewInit {
     | SettingsComponent
     | undefined = undefined
 
-  constructor(private configSvc: ConfigurationsService, private matDialog: MatDialog, private route: ActivatedRoute) {}
+  constructor(private configSvc: ConfigurationsService, private matDialog: MatDialog, private route: ActivatedRoute) { }
 
   ngOnInit(): void {
     // if (this.configSvc.restrictedFeatures) {
@@ -59,8 +60,8 @@ export class AppSetupHomeComponent implements OnInit, AfterViewInit {
 
     this.appLanguage = (this.configSvc.activeLocale && this.configSvc.activeLocale.path) || ''
     this.route.data.subscribe(data => {
-        this.introVideos = data.configData.data.introVideo
-      }
+      this.introVideos = data.configData.data.introVideo
+    }
     )
 
     this.widgetResolverData = {

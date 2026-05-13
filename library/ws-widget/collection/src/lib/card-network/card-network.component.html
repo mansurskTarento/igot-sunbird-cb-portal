@@ -5,7 +5,7 @@
     </mat-grid-tile>
     <mat-grid-tile>
       <mat-form-field>
-        <mat-placeholder>Search by name</mat-placeholder>
+        <mat-label>Search by name</mat-label>
         <input [(ngModel)]="nameFilter" (ngModelChange)="searchUser()" matInput type="search">
         <!-- <button mat-button matSuffix mat-stroked-button aria-label="search"> -->
         <span matPrefix>
@@ -17,11 +17,11 @@
   <mat-accordion multi>
     <mat-expansion-panel class="mat-elevation-z" [expanded]="true" hideToggle *ngIf="enableFeature">
       <mat-expansion-panel-header>
-        <mat-panel-title >New on IGOT Karmyogi</mat-panel-title>
+        <mat-panel-title>New on IGOT Karmyogi</mat-panel-title>
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div>
-          <h3 class="mat-error text-center" *ngIf="newUserArray.length === 0" >
+          <h3 class="mat-error text-center" *ngIf="newUserArray.length === 0">
             No Active User Info Available
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-gap-4">
@@ -39,12 +39,12 @@
     </mat-expansion-panel>
     <mat-expansion-panel class="mat-elevation-z" [expanded]="true" hideToggle *ngIf="enableFeature">
       <mat-expansion-panel-header>
-        <mat-panel-title >People to Follow</mat-panel-title>
+        <mat-panel-title>People to Follow</mat-panel-title>
 
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div>
-          <h3 class="mat-error text-center" *ngIf="departmentUserArray.length === 0" >
+          <h3 class="mat-error text-center" *ngIf="departmentUserArray.length === 0">
             No People info Available
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-gap-4">
@@ -61,12 +61,12 @@
     </mat-expansion-panel>
     <mat-expansion-panel class="mat-elevation-z" [expanded]="true" hideToggle *ngIf="!enableFeature">
       <mat-expansion-panel-header>
-        <mat-panel-title >User Search</mat-panel-title>
+        <mat-panel-title>User Search</mat-panel-title>
 
       </mat-expansion-panel-header>
       <ng-template matExpansionPanelContent>
         <div>
-          <h3 class="mat-error text-center" *ngIf="searchResultUserArray.length === 0 && !this.searchSpinner" >
+          <h3 class="mat-error text-center" *ngIf="searchResultUserArray.length === 0 && !this.searchSpinner">
             Search Result Not found.
           </h3>
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 col-gap-4">
@@ -90,7 +90,8 @@
         class="width-expand padding-left-xs">
         <div class="mat-body-strong cohorts-name">
           {{
-            { firstName: user.personalDetails.firstname, lastName: user.personalDetails.surname, email: user.personalDetails.primaryEmail} | pipeNameTransform
+          { firstName: user.personalDetails.firstname, lastName: user.personalDetails.surname, email:
+          user.personalDetails.primaryEmail} | pipeNameTransform
           }}
         </div>
         <div class="mat-caption cohorts-desc">{{ user.employmentDetails.departmentName }}</div>
@@ -106,8 +107,8 @@
         class="width-expand padding-left-xs">
         <div class="mat-body-strong cohorts-name">
           {{
-              { firstName: user.first_name, lastName: user.last_name, email: user.email} | pipeNameTransform
-            }}
+          { firstName: user.first_name, lastName: user.last_name, email: user.email} | pipeNameTransform
+          }}
         </div>
         <div class="mat-caption cohorts-desc">{{ user.email }}</div>
       </div>

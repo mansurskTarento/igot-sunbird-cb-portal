@@ -4,9 +4,10 @@ import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 
 @Component({
-  selector: 'ws-app-tour-video',
-  templateUrl: './app-tour-video.component.html',
-  styleUrls: ['./app-tour-video.component.scss'],
+    selector: 'ws-app-tour-video',
+    templateUrl: './app-tour-video.component.html',
+    styleUrls: ['./app-tour-video.component.scss'],
+    standalone: false
 })
 export class AppTourVideoComponent implements OnInit, OnDestroy {
   @Input() showVideoTour: any

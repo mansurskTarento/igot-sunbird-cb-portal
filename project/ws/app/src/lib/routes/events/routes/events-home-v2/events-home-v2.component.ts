@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { NavigationEnd, Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2';
+import { Component, OnInit } from '@angular/core'
+import { NavigationEnd, Router } from '@angular/router'
+import { TranslateService } from '@ngx-translate/core'
+import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
   selector: 'ws-app-events-home-v2',
   templateUrl: './events-home-v2.component.html',
-  styleUrls: ['./events-home-v2.component.scss']
+  styleUrls: ['./events-home-v2.component.scss'],
+  standalone: false
 })
 export class EventsHomeV2Component implements OnInit {
   isFullScreen: boolean = false

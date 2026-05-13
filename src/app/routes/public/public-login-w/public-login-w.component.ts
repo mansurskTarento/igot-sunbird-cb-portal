@@ -10,6 +10,7 @@ import _ from 'lodash'
     selector: 'public-login-w',
     templateUrl: './public-login-w.component.html',
     styleUrls: ['./public-login-w.component.scss'],
+    standalone: false
 })
 export class PublicLoginWComponent implements OnInit, OnDestroy {
     userMail = ''
@@ -35,7 +36,7 @@ export class PublicLoginWComponent implements OnInit, OnDestroy {
             // tslint:disable-next-line
             // console.log(`/apis/public/v8/google/callback?code=${code}&scope=${scope}&authuser=${authuser}&hd=${hd}&prompt=${prompt}`)
             if (code) {
-                this.httpClient.get(`/apis/public/v8/parichay/callback`, { params: { code, state } }).subscribe(rData => {
+                this.httpClient.get('/apis/public/v8/parichay/callback', { params: { code, state } }).subscribe(rData => {
                     // tslint:disable-next-line
                     console.log(rData)
                 })

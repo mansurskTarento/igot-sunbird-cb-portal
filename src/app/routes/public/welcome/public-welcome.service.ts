@@ -3,7 +3,7 @@ import { Observable } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 
 const API_END_POINTS = {
-  REGISTER: `/apis/proxies/v8/user/basicProfileUpdate`,
+  REGISTER: '/apis/proxies/v8/user/basicProfileUpdate',
   GET_ALL_STATES: '/apis/public/v8/org/v1/list',
   GET_DEPARTMENTS_OF_STATE: '/apis/public/v8/org/v1/list',
   GET_ORGS_OF_DEPT: '/apis/public/v8/org/v1/list',

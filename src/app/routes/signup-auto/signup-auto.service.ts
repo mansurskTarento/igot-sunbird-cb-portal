@@ -4,7 +4,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 const API_END_POINTS = {
-  USER_SIGNUP: `/apis/public/v8/signup/create`,
+  USER_SIGNUP: '/apis/public/v8/signup/create',
   // USER_SIGNUP: `http://localhost:3003/public/v8/signup/create`,
 }
 

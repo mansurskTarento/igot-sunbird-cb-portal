@@ -8,54 +8,34 @@ import { BrowserModule } from '@angular/platform-browser'
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
 
 import { WidgetResolverModule } from '@sunbird-cb/resolver'
+import { UserProfileService } from '@ws/app/src/lib/routes/user-profile/services/user-profile.service'
+import { AccessControlService, ApiService } from '@ws/author/src/public-api'
 import { SbUiResolverModule } from '@sunbird-cb/resolver-v2'
 import { LoggerService, PipeSafeSanitizerModule, ConfigurationsService, PipeOrderByModule, NPSGridService, DomainConfService } from '@sunbird-cb/utils-v2'
-import { SearchModule } from '@ws/app/src/public-api'
+
 import 'hammerjs'
-// import { KeycloakAngularModule } from 'keycloak-angular'
 import { AppRoutingModule } from './app-routing.module'
 import { InitService } from './services/init.service'
 import { GlobalErrorHandlingService } from './services/global-error-handling.service'
 import { AppTocResolverService, WIDGET_REGISTRATION_TOC_LIB_CONFIG } from '@sunbird-cb/toc'
 
 import { RootComponent } from './component/root/root.component'
-import { LoginComponent } from './component/login/login.component'
 import { AppFooterComponent } from './component/app-footer/app-footer.component'
 import { AppPublicNavBarComponent } from './component/app-public-nav-bar/app-public-nav-bar.component'
 import { DialogConfirmComponent } from './component/dialog-confirm/dialog-confirm.component'
-import { InvalidUserComponent } from './component/invalid-user/invalid-user.component'
-import { LoginRootComponent } from './component/login-root/login-root.component'
-import { LoginRootDirective } from './component/login-root/login-root.directive'
-import { TncRendererComponent } from './component/tnc-renderer/tnc-renderer.component'
-import { MobileAppModule } from './routes/public/mobile-app/mobile-app.module'
-import { PublicAboutModule } from './routes/public/public-about/public-about.module'
-import { PublicContactModule } from './routes/public/public-contact/public-contact.module'
-import { TncComponent } from './routes/tnc/tnc.component'
 import { AppInterceptorService } from './services/app-interceptor.service'
 import { AppRetryInterceptorService } from './services/app-retry-interceptor.service'
 import { TncAppResolverService } from './services/tnc-app-resolver.service'
 import { TncPublicResolverService } from './services/tnc-public-resolver.service'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms'
-import { ConfigService } from '@ws/app/src/lib/routes/discuss/services/config.service'
-import { DiscussionUiModule } from '@sunbird-cb/discussions-ui-v8'
 import { ServiceWorkerModule } from '@angular/service-worker'
 import { environment } from 'src/environments/environment'
-import { QuickTourModule } from '@ws/app/src/lib/routes/info/quick-tour/quick-tour.module'
+import { QuickTourModule } from '@ws/app'
 import { AppIntroComponent } from './component/app-intro/app-intro.component'
 import { NoConnectionComponent } from './component/no-connection/no-connection.component'
-import { PublicLogoutModule } from './routes/public/public-logout/public-logout.module'
-import { PublicSignupModule } from './routes/public/public-signup/public-signup.module'
 import { PublicHomeComponent } from './routes/public/public-home/public-home.component'
-import { PublicContacthomeComponent } from './routes/public/public-contacthome/public-contacthome.component'
-import { PublicLoginWComponent } from './routes/public/public-login-w/public-login-w.component'
-import { PublicLoginWGComponent } from './routes/public/public-login-wg/public-login-wg.component'
-import { PublicWelcomeModule } from './routes/public/welcome/public-welcome.module'
 import { WelcomeUserResolverService } from './services/welcome-user-resolver.service'
-import { PublicTocModule } from './routes/public/public-toc/public-toc.module'
-import { PublicRequestModule } from './routes/public/public-request/public-request.module'
-import { AppTourComponent } from './component/app-tour/app-tour.component'
-import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
-import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
+
 import { AppChatbotModule } from './component/app-chatbot/app-chatbot.module'
 import { AppHierarchyResolverService } from './services/app-hierarchy-resolver.service'
 import { AppEnrollmentResolverService } from './services/app-enrollment-resolver.service'
@@ -68,43 +48,26 @@ import { DialogBoxComponent } from './component/dialog-box/dialog-box.component'
 import { SocialLinkComponent } from './component/social-link/social-link.component'
 import { FooterSectionComponent } from './component/app-footer/footer-section/footer-section.component'
 import { AppLogoComponent } from './component/app-logo/app-logo.component'
-import { ProfileV3Module } from '@ws/app/src/lib/routes/profile-v3/profile-v3.module'
 import { NoDataComponent } from './component/no-data/no-data.component'
-import { SurveyShikshaComponent } from './component/survey-shiksha/survey-shiksha.component'
 import {
   CardsModule, WIDGET_REGISTRATION_LIB_CONFIG,
 } from '@sunbird-cb/consumption'
-import { PrivacyPolicyComponent } from './component/privacy-policy/privacy-policy.component'
-import { LearnerAdvisoryComponent } from './learner-advisory/learner-advisory.component'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
-import { MatLegacyCardModule as MatCardModule } from '@angular/material/legacy-card'
-import { MatLegacyCheckboxModule as MatCheckboxModule } from '@angular/material/legacy-checkbox'
-import { PublicExtTocModule } from './routes/public/public-ext-toc/public-ext-toc.module'
-import { MatRippleModule } from '@angular/material/core'
+import { MatButtonModule } from '@angular/material/button'
+import { MatCardModule } from '@angular/material/card'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDialogModule } from '@angular/material/dialog'
-import { MatDividerModule } from '@angular/material/divider'
 import { MatExpansionModule } from '@angular/material/expansion'
-import { MatLegacyFormFieldModule as MatFormFieldModule } from '@angular/material/legacy-form-field'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyInputModule as MatInputModule } from '@angular/material/legacy-input'
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
-import { MatLegacyProgressSpinnerModule as MatProgressSpinnerModule, MAT_LEGACY_PROGRESS_SPINNER_DEFAULT_OPTIONS as MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material/legacy-progress-spinner'
-import { MatLegacySelectModule as MatSelectModule } from '@angular/material/legacy-select'
-import { MatSidenavModule } from '@angular/material/sidenav'
-import { MatLegacySliderModule as MatSliderModule } from '@angular/material/legacy-slider'
-import { MAT_LEGACY_SNACK_BAR_DEFAULT_OPTIONS as MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/legacy-snack-bar'
-import { MatLegacyTableModule as MatTableModule } from '@angular/material/legacy-table'
-import { MatLegacyTabsModule as MatTabsModule } from '@angular/material/legacy-tabs'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
+import { MatProgressSpinnerModule, MAT_PROGRESS_SPINNER_DEFAULT_OPTIONS } from '@angular/material/progress-spinner'
+import { MAT_SNACK_BAR_DEFAULT_OPTIONS } from '@angular/material/snack-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
-import { PickerModule } from '@ctrl/ngx-emoji-mart'
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
 import { ResourceDownloadHelperService } from './services/resource-download-helper.service'
 import { ProfileVerificationDialogComponent } from './profile-verification-dialog/profile-verification-dialog.component'
 import { CommonDataService } from './services/common-data.service'
-import { WIDGET_REGISTRATION_CONFIG } from '../../library/ws-widget/collection/src/public-api'
+import { WIDGET_REGISTRATION_CONFIG } from '@sunbird-cb/collection'
 import { MandatoryNotificationModalComponent } from './component/mandatory-notification-modal/mandatory-notification-modal.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
@@ -133,34 +96,19 @@ export function HttpLoaderFactory(http: HttpClient) {
 @NgModule({
   declarations: [
     RootComponent,
-    LoginComponent,
-    // AppNavBarComponent,
     AppPublicNavBarComponent,
     NoDataComponent,
-    TncComponent,
     AppIntroComponent,
-    TncRendererComponent,
     AppFooterComponent,
-    InvalidUserComponent,
     DialogConfirmComponent,
-    LoginRootComponent,
-    LoginRootDirective,
     NoConnectionComponent,
     PublicHomeComponent,
-    PublicContacthomeComponent,
-    PublicLoginWComponent,
-    PublicLoginWGComponent,
-    AppTourVideoComponent,
-    AppTourComponent,
     DialogBoxComponent,
     SocialLinkComponent,
     FooterSectionComponent,
     AppLogoComponent,
-    SurveyShikshaComponent,
-    PrivacyPolicyComponent,
-    LearnerAdvisoryComponent,
     ProfileVerificationDialogComponent,
-    MandatoryNotificationModalComponent
+    MandatoryNotificationModalComponent,
   ],
   imports: [
     FormsModule,
@@ -170,7 +118,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     BrowserModule,
     HttpClientModule,
     HttpClientJsonpModule,
-    BrowserModule,
     BrowserAnimationsModule,
     AppRoutingModule,
 
@@ -178,41 +125,20 @@ export function HttpLoaderFactory(http: HttpClient) {
     WidgetResolverModule.forRoot([...WIDGET_REGISTRATION_CONFIG, ...WIDGET_REGISTRATION_LIB_CONFIG, ...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
     SbUiResolverModule.forRoot([...WIDGET_REGISTRATION_LIB_CONFIG, ...WIDGET_REGISTRATION_TOC_LIB_CONFIG]),
     // Material Imports
-    MatSliderModule,
-    MatFormFieldModule,
-    MatSelectModule,
     MatButtonModule,
     MatCardModule,
     MatToolbarModule,
     MatIconModule,
     MatMenuModule,
-    MatDividerModule,
     MatProgressBarModule,
     MatExpansionModule,
-    MatRippleModule,
     MatDialogModule,
-    MatInputModule,
-    MatTooltipModule,
-    MatTableModule,
     MatProgressSpinnerModule,
-    SearchModule,
     PipeOrderByModule,
-    PublicAboutModule,
-    PublicContactModule,
-    PublicLogoutModule,
-    PublicSignupModule,
-    PublicRequestModule,
-    PublicWelcomeModule,
-    PublicTocModule,
-    PublicExtTocModule,
-    MobileAppModule,
     PipeSafeSanitizerModule,
-    MatTabsModule,
-    GuidedTourModule,
     AppChatbotModule,
-    DiscussionUiModule.forRoot(ConfigService),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    HeaderModule,
+    // HeaderModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -220,13 +146,9 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
-    ProfileV3Module,
-    MatSidenavModule,
-    PickerModule,
-    CKEditorModule
+
   ],
   exports: [
-    TncComponent,
     HeaderModule,
     TranslateModule,
   ],
@@ -263,6 +185,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppPreAssessmentContentResolverService,
     HttpClient,
     CommonDataService,
+    UserProfileService,
+    AccessControlService,
+    ApiService,
     DomainConfService,
     {
       provide: APP_BASE_HREF,
@@ -278,7 +203,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     // { provide: HAMMER_GESTURE_CONFIG, useClass: HammerConfig },
     { provide: ErrorHandler, useClass: GlobalErrorHandlingService },
     { provide: 'environment', useValue: environment },
-    GuidedTourService,
     ResourceDownloadHelperService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

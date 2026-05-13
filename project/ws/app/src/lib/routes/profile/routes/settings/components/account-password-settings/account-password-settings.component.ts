@@ -2,13 +2,14 @@ import { Component, OnInit } from '@angular/core'
 import { NsSettings } from '../../settings.model'
 import { TFetchStatus, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { SettingsService } from '../../settings.service'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { TranslateService } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-app-account-password-settings',
-  templateUrl: './account-password-settings.component.html',
-  styleUrls: ['./account-password-settings.component.scss'],
+    selector: 'ws-app-account-password-settings',
+    templateUrl: './account-password-settings.component.html',
+    styleUrls: ['./account-password-settings.component.scss'],
+    standalone: false
 })
 export class AccountPasswordSettingsComponent implements OnInit {
 

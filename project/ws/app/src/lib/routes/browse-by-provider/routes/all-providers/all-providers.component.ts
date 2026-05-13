@@ -12,9 +12,10 @@ import { ActivatedRoute } from '@angular/router'
 // tslint:enable
 
 @Component({
-  selector: 'ws-app-all-providers',
-  templateUrl: './all-providers.component.html',
-  styleUrls: ['./all-providers.component.scss'],
+    selector: 'ws-app-all-providers',
+    templateUrl: './all-providers.component.html',
+    styleUrls: ['./all-providers.component.scss'],
+    standalone: false
 })
 export class AllProvidersComponent implements OnInit {
   public displayLoader!: Observable<boolean>

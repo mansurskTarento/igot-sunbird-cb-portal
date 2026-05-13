@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { ApiService } from '@ws/author/src/lib/modules/shared/services/api.service'
+import { ApiService } from '../../../../../../../modules/shared/services/api.service'
 // tslint:disable-next-line:max-line-length
 const VALIDATE_PDF_CONTENT = '/apis/protected/v8/profanity/validatePdfContent'
 // const backwordSlash = '/'

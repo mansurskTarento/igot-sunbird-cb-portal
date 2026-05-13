@@ -1,34 +1,37 @@
-import { DeleteDialogComponent } from '@ws/author/src/lib/modules/shared/components/delete-dialog/delete-dialog.component'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
+
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { UntypedFormGroup } from '@angular/forms'
-import { MatDialog, MatSnackBar } from '@angular/material'
 import { Router } from '@angular/router'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { NSApiRequest } from '@ws/author/src/lib/interface/apiRequest'
-import { NSContent } from '@ws/author/src/lib/interface/content'
-import { CommentsDialogComponent } from '@ws/author/src/lib/modules/shared/components/comments-dialog/comments-dialog.component'
-import { ConfirmDialogComponent } from '@ws/author/src/lib/modules/shared/components/confirm-dialog/confirm-dialog.component'
-import { ErrorParserComponent } from '@ws/author/src/lib/modules/shared/components/error-parser/error-parser.component'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { EditorContentService } from '@ws/author/src/lib/routing/modules/editor/services/editor-content.service'
-import { EditorService } from '@ws/author/src/lib/routing/modules/editor/services/editor.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { of } from 'rxjs'
 import { mergeMap, tap, catchError } from 'rxjs/operators'
 import { VIEWER_ROUTE_FROM_MIME } from '@sunbird-cb/collection'
-import { NotificationService } from '@ws/author/src/lib/services/notification.service'
 import { STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper'
+import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { AuthInitService } from '../../../../../../../../services/init.service'
+import { EditorContentService } from '../../../../../services/editor-content.service'
+import { EditorService } from '../../../../../services/editor.service'
+import { LoaderService } from '../../../../../../../../services/loader.service'
+import { AccessControlService } from '../../../../../../../../modules/shared/services/access-control.service'
+import { NotificationService } from '../../../../../../../../services/notification.service'
+import { NSContent } from '../../../../../../../../interface/content'
+import { NotificationComponent } from '../../../../../../../../modules/shared/components/notification/notification.component'
+import { Notify } from '../../../../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../../../../constants/constant'
+import { ErrorParserComponent } from '../../../../../../../../modules/shared/components/error-parser/error-parser.component'
+import { CommentsDialogComponent } from '../../../../../../../../modules/shared/components/comments-dialog/comments-dialog.component'
+import { NSApiRequest } from '../../../../../../../../interface/apiRequest'
+import { ConfirmDialogComponent } from '../../../../../../../../modules/shared/components/confirm-dialog/confirm-dialog.component'
+import { DeleteDialogComponent } from '../../../../../../../../modules/shared/components/delete-dialog/delete-dialog.component'
 
 @Component({
-  selector: 'ws-auth-upload',
-  templateUrl: './upload.component.html',
-  styleUrls: ['./upload.component.scss'],
-  providers: [{
-    provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
-  }],
+    selector: 'ws-auth-upload',
+    templateUrl: './upload.component.html',
+    styleUrls: ['./upload.component.scss'],
+    providers: [{
+            provide: STEPPER_GLOBAL_OPTIONS, useValue: { displayDefaultIndicatorType: false },
+        }],
+    standalone: false
 })
 export class UploadComponent implements OnInit, OnDestroy {
   contents: NSContent.IContentMeta[] = []

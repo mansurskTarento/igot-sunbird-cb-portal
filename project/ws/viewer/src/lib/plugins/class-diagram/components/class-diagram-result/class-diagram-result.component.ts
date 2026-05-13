@@ -1,9 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core'
 
 @Component({
-  selector: 'viewer-class-diagram-result',
-  templateUrl: './class-diagram-result.component.html',
-  styleUrls: ['./class-diagram-result.component.scss'],
+    selector: 'viewer-class-diagram-result',
+    templateUrl: './class-diagram-result.component.html',
+    styleUrls: ['./class-diagram-result.component.scss'],
+    standalone: false
 })
 export class ClassDiagramResultComponent implements OnInit {
 

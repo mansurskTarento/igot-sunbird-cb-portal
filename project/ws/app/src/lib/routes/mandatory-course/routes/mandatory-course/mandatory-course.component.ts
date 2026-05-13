@@ -1,12 +1,13 @@
 import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core'
-import { NsContent } from '@sunbird-cb/collection/src/public-api'
+import { NsContent } from '@sunbird-cb/collection'
 import { ActivatedRoute } from '@angular/router'
 import { NSMandatoryCourseData } from '../../models/mandatory-course.model'
 
 @Component({
-  selector: 'ws-app-mandatory-course',
-  templateUrl: './mandatory-course.component.html',
-  styleUrls: ['./mandatory-course.component.scss'],
+    selector: 'ws-app-mandatory-course',
+    templateUrl: './mandatory-course.component.html',
+    styleUrls: ['./mandatory-course.component.scss'],
+    standalone: false
 })
 export class MandatoryCourseComponent implements OnInit, OnDestroy, OnChanges {
   public displayLoader = false
@@ -48,7 +49,7 @@ export class MandatoryCourseComponent implements OnInit, OnDestroy, OnChanges {
         return acc
       }
       return acc
-    // tslint:disable-next-line: align
+      // tslint:disable-next-line: align
     }, [])
 
     if (goals && goals.length) {

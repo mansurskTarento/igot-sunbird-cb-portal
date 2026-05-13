@@ -6,7 +6,7 @@ describe('ContentStripMultipleService', () => {
   beforeEach(() => TestBed.configureTestingModule({}))
 
   it('should be created', () => {
-    const service: ContentStripMultipleService = TestBed.get(ContentStripMultipleService)
+    const service: ContentStripMultipleService = TestBed.inject(ContentStripMultipleService)
     expect(service).toBeTruthy()
   })
 })

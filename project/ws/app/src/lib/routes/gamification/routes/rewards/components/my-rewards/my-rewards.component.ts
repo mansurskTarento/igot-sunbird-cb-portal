@@ -4,9 +4,10 @@ import { Subscription } from 'rxjs'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 
 @Component({
-  selector: 'ws-app-my-rewards',
-  templateUrl: './my-rewards.component.html',
-  styleUrls: ['./my-rewards.component.scss'],
+    selector: 'ws-app-my-rewards',
+    templateUrl: './my-rewards.component.html',
+    styleUrls: ['./my-rewards.component.scss'],
+    standalone: false
 })
 
 export class MyRewardsComponent implements OnInit {

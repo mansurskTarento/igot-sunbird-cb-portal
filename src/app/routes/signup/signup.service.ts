@@ -4,7 +4,7 @@ import { Observable } from 'rxjs'
 import { map } from 'rxjs/operators'
 
 const API_END_POINTS = {
-  USER_SIGNUP: `/apis/public/v8/signup`,
+  USER_SIGNUP: '/apis/public/v8/signup',
 }
 
 @Injectable({

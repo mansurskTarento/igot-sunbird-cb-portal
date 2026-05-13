@@ -7,11 +7,11 @@ import { CourseCompletionDialogModule } from '../course-completion-dialog/course
 import { ViewerSecondaryTopBarComponent } from './viewer-secondary-top-bar.component'
 import { TranslateModule } from '@ngx-translate/core'
 import { ShareTocModule } from '@sunbird-cb/toc'
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button'
+import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
-import { MatLegacyProgressBarModule as MatProgressBarModule } from '@angular/material/legacy-progress-bar'
+import { MatProgressBarModule } from '@angular/material/progress-bar'
 import { MatToolbarModule } from '@angular/material/toolbar'
-import { MatLegacyTooltipModule as MatTooltipModule } from '@angular/material/legacy-tooltip'
+import { MatTooltipModule } from '@angular/material/tooltip'
 @NgModule({
   declarations: [ViewerSecondaryTopBarComponent],
   imports: [

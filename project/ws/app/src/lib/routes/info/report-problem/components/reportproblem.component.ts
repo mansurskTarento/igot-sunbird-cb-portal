@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core'
 
 @Component({
-  selector: 'ws-app-reportproblem',
-  templateUrl: './reportproblem.component.html',
-  styleUrls: ['./reportproblem.component.scss'],
+    selector: 'ws-app-reportproblem',
+    templateUrl: './reportproblem.component.html',
+    styleUrls: ['./reportproblem.component.scss'],
+    standalone: false
 })
 export class ReportproblemComponent implements OnInit {
   // domain = 'https://rain.tarento.com/'

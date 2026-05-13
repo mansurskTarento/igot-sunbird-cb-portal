@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component } from '@angular/core'
+import { Router } from '@angular/router'
 
 @Component({
   selector: 'ws-app-community-search',
   templateUrl: './community-search.component.html',
-  styleUrls: ['./community-search.component.scss']
+  styleUrls: ['./community-search.component.scss'],
+  standalone: false
 })
 export class CommunitySearchComponent {
-
 
   constructor(private router: Router) { }
 

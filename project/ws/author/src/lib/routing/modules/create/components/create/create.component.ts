@@ -1,23 +1,24 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
-import { MatLegacyDialog as MatDialog } from '@angular/material/legacy-dialog'
-import { MatLegacySnackBar as MatSnackBar } from '@angular/material/legacy-snack-bar'
+import { MatDialog } from '@angular/material/dialog'
+import { MatSnackBar } from '@angular/material/snack-bar'
 import { Router } from '@angular/router'
-import { NOTIFICATION_TIME } from '@ws/author/src/lib/constants/constant'
-import { Notify } from '@ws/author/src/lib/constants/notificationMessage'
-import { ICreateEntity } from '@ws/author/src/lib/interface/create-entity'
-import { ErrorParserComponent } from '@ws/author/src/lib/modules/shared/components/error-parser/error-parser.component'
-import { NotificationComponent } from '@ws/author/src/lib/modules/shared/components/notification/notification.component'
-import { AccessControlService } from '@ws/author/src/lib/modules/shared/services/access-control.service'
-import { AuthInitService } from '@ws/author/src/lib/services/init.service'
-import { LoaderService } from '@ws/author/src/lib/services/loader.service'
 import { Subscription } from 'rxjs'
 import { NSApiResponse } from '../../../../../interface/apiResponse'
 import { CreateService } from './create.service'
+import { ICreateEntity } from '../../../../../interface/create-entity'
+import { LoaderService } from '../../../../../services/loader.service'
+import { AccessControlService } from '../../../../../modules/shared/services/access-control.service'
+import { AuthInitService } from '../../../../../services/init.service'
+import { NotificationComponent } from '../../../../../modules/shared/components/notification/notification.component'
+import { Notify } from '../../../../../constants/notificationMessage'
+import { NOTIFICATION_TIME } from '../../../../../constants/constant'
+import { ErrorParserComponent } from '../../../../../modules/shared/components/error-parser/error-parser.component'
 
 @Component({
-  selector: 'ws-auth-generic',
-  templateUrl: './create.component.html',
-  styleUrls: ['./create.component.scss'],
+    selector: 'ws-auth-generic',
+    templateUrl: './create.component.html',
+    styleUrls: ['./create.component.scss'],
+    standalone: false
 })
 export class CreateComponent implements OnInit, OnDestroy {
   entity: ICreateEntity[] = []
