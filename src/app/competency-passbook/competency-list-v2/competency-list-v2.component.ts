@@ -68,6 +68,7 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
       name: string
       areaId: string
       areaName: string
+      isThemeRemoved: boolean,
       subThemes: { id: string, name: string }[]
       competencyDetails: any[]
       viewMore: boolean
@@ -162,6 +163,8 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
   tabValue = ''
   certificateMappedObject: any = {}
   compentencyKey!: NsContent.ICompentencyKeys
+  removedThemes: any = []
+  missingThemeDetails: any = []
   constructor(
     private router: Router,
     private matSnackBar: MatSnackBar,
@@ -255,12 +258,19 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
       }
       if (areaEntry) {
         let themeEntry = areaEntry.themes.find((t: any) => t.id === themeId)
+        let findTheme = this.allThemeData.find((t: any) => t.refId === themeId)
+        let isThemeRemoved = false
+        if (!findTheme) {
+          this.removedThemes.push(themeId)
+          isThemeRemoved = true
+        }
         if (!themeEntry) {
           themeEntry = {
             id: themeId,
             areaId: areaId,
             areaName: area,
-            name: this.allThemeData.find((t: any) => t.refId === themeId)?.name || '',
+            name: this.allThemeData.find((t: any) => t.refId === themeId)?.name || themeId,
+            isThemeRemoved: isThemeRemoved,
             subThemes: [],
             competencyDetails: [],
             viewMore: false,
@@ -312,8 +322,41 @@ export class CompetencyListV2Component implements OnInit, OnDestroy {
     })
     this.filteredCompetencyArray = this.myCompetencies
     this.findCounts()
+    if (this.removedThemes.length) {
+      this.findmissingThemes()
+    }
     this.updateShuffledThemes()
+  }
 
+  findmissingThemes() {
+    let payload: any = {
+      filterCriteriaMap: {
+        status: "Live",
+        isActive: true,
+        id: this.removedThemes
+      },
+      requestedFields: ["title", "id"],
+      pageNumber: 0,
+      pageSize: 1000
+    }
+    this.competencyPassbookSvc.fetchMissingThemes(payload).subscribe(
+      (response: any) => {
+        if (response && response.result && response.result.result && response.result.result.data) {
+          this.missingThemeDetails = response.result.result.data
+          console.log('missingThemeDetails', this.missingThemeDetails)
+        }
+      },
+      (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.matSnackBar.open('Unable to pull missing themes details!')
+        }
+      }
+    )
+
+  }
+
+  getThemeName(themeId: string): string {
+    return this.missingThemeDetails.find((t: any) => t.id === themeId)?.title || ''
   }
 
   findCounts(): void {
