@@ -9,7 +9,7 @@
     "build-preprod": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=15000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=preprod --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false",
     "build-benchmark": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=15000 ./node_modules/@angular/cli/bin/ng build --configuration production --configuration=benchmark --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false",
     "build": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=15000 ./node_modules/@angular/cli/bin/ng build --configuration production --output-path=dist/www/en --base-href=/ --subresource-integrity --optimization=true --aot=false",
-    "postbuild": "export NODE_OPTIONS=--openssl-legacy-provider && npm run compress:gzip && npm run compress:brotli",
+    "postbuild": "export NODE_OPTIONS=--openssl-legacy-provider && npm run compress:gzip && npm run compress:brotli && cp -r dist/www/en/browser/* dist/www/en/",
     "compress:brotli": "gzipper --brotli --gzip-level=9 --verbose ./dist/www",
     "compress:gzip": "gzipper --verbose --gzip-level=9 ./dist/www",
     "build:local": "export NODE_OPTIONS=--openssl-legacy-provider && node --max_old_space_size=15000 ./node_modules/@angular/cli/bin/ng build --configuration production --build-optimizer",
