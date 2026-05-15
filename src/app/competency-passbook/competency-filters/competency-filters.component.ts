@@ -10,6 +10,7 @@ export class CompetencyFiltersComponent implements OnInit {
   @Input() allCompetencies: any[] = []
   @Input() filteredCompetencyArray: any[] = []
   @Input() appliedFilter: any = { competencyarea: [], theme: [], subtheme: [] }
+  @Input() missingThemeDetails: any[] = []
 
   @Output() toggleFilter = new EventEmitter<boolean>()
   @Output() getFilterData = new EventEmitter<any>()
@@ -266,5 +267,13 @@ export class CompetencyFiltersComponent implements OnInit {
 
   closeFilter(): void {
     this.toggleFilter.emit(false)
+  }
+
+  getThemeName(theme: any): string {
+    if (theme.name === theme.refId) {
+      return this.missingThemeDetails.find((t: any) => t.id === theme.refId)?.title || theme.refId
+    } else {
+      return theme.name
+    }
   }
 }
