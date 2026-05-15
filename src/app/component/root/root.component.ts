@@ -534,7 +534,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   ngAfterViewInit() {
-    this.initAppUpdateCheck()
+    // this.initAppUpdateCheck()
   }
 
   getChildRouteData(snapshot: ActivatedRouteSnapshot, firstChild: ActivatedRouteSnapshot | null) {
