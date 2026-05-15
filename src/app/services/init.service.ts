@@ -27,7 +27,6 @@ import _ from 'lodash'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 // import { Subscription } from 'rxjs'
-import { NSProfileDataV3 } from '@ws/app'
 import { NPSGridService } from '@sunbird-cb/collection'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
@@ -565,12 +564,7 @@ export class InitService {
       .toPromise()
     return appsConfig
   }
-  private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
-    const welcomeConfig = await this.http
-      .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
-      .toPromise()
-    return welcomeConfig
-  }
+
   private setTelemetrySessionId() {
     if (localStorage.getItem('telemetrySessionId')) {
       localStorage.removeItem('telemetrySessionId')
@@ -695,7 +689,6 @@ export class InitService {
         this.configSvc.userGroups = new Set(details.group)
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
-        this.configSvc.welcomeTabs = await this.fetchWelcomeConfig()
 
         // nps check
         if (localStorage.getItem('platformratingTime')) {
