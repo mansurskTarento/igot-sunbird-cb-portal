@@ -10,6 +10,7 @@ const API_POINTS = {
     IGOT_COURSE_LIST: 'apis/proxies/v8/sunbirdigot/v4/search',
     EXT_COURSE_LIST: 'apis/proxies/v8/cios/v1/search/content',
     ACHIEVEMENTS_LIST: 'apis/proxies/v8/learner/achievement/v2/list',
+    FETCH_MISSING_THEMES: `apis/proxies/v8/competencyTheme/search`
 }
 
 @Injectable({ providedIn: 'root' })
@@ -43,5 +44,9 @@ export class CompetencyPassbookService {
 
     getAcheivementsList(payload: any): Observable<any> {
         return this.http.post(API_POINTS.ACHIEVEMENTS_LIST, payload)
+    }
+
+    fetchMissingThemes(payload: any): Observable<any> {
+        return this.http.post(API_POINTS.FETCH_MISSING_THEMES, payload)
     }
 }

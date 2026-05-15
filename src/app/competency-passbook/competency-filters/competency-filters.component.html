@@ -40,11 +40,10 @@
             <mat-icon class="search-icon">search</mat-icon>
             <input class="sinput" type="text" placeholder="Enter competency theme" [(ngModel)]="themeSearchText" (input)="filterThemes()" />
           </div>
-
           <div class="category-content" style="margin-top: 8px;">
             <div class="category-item" *ngFor="let theme of filteredThemes">
               <mat-checkbox [checked]="theme.selected" (change)="onThemeChange(theme, $event.checked)">
-                {{ theme.name }}
+                {{ getThemeName(theme) }}
               </mat-checkbox>
             </div>
             <div *ngIf="filteredThemes.length === 0" class="category-item" style="text-align: center; color: #999;">

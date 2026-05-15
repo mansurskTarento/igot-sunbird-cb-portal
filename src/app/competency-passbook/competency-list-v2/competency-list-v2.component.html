@@ -9,15 +9,23 @@
                     <div class="flex flex-row justify-between p-4 cursor-pointer gap-6" (click)="handleNavigate(item?.theme)">
                         <div class="flex flex-col gap-3 text-primary">
                             <div class="flex flex-row gap-2 align-baseline">
-                                <div class="competency-name font-semibold" [title]="item?.theme?.name">{{
-                                    item?.theme?.name }}</div>
+                                <ng-container *ngIf="item?.theme?.isThemeRemoved">
+                                    <div class="competency-name font-semibold" [title]="getThemeName(item?.theme?.id)">{{
+                                        getThemeName(item?.theme?.id) }}</div>
+                                </ng-container>
+                                <ng-container *ngIf="!item?.theme?.isThemeRemoved">
+                                    <div class="competency-name font-semibold" [title]="item?.theme?.name">{{
+                                        item?.theme?.name }}</div>
+                                </ng-container>
+
+
                                 <div class="flex items-baseline">
                                     <img src="assets/icons/competency/cp-arrow.svg" class="arrow-img" alt="cp arrow img" />
                                 </div>
                             </div>
                             <div class="flex flex-row gap-3">
                                 <mat-icon>school</mat-icon>
-                                <div class="text-base">{{ item?.theme?.counts?.total || 0 }}</div>
+                                <div class="text-base">{{ item?.theme?.subThemes?.length || 0 }}</div>
                             </div>
                         </div>
                         <div class="flex items-baseline">
@@ -290,6 +298,7 @@
 
 <ng-container *ngIf="toggleFilter">
     <ws-competency-filters [allCompetencies]="allCompetencies" [filteredCompetencyArray]="myCompetencies" [appliedFilter]="appliedFilter"
-        (toggleFilter)="handleFilter($event)" (getFilterData)="handleApplyFilter($event)" (clearFilterObj)="handleClearFilterObj($event)">
+        [missingThemeDetails]="missingThemeDetails" (toggleFilter)="handleFilter($event)" (getFilterData)="handleApplyFilter($event)"
+        (clearFilterObj)="handleClearFilterObj($event)">
     </ws-competency-filters>
 </ng-container>
