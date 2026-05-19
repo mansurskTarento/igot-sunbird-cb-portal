@@ -12,7 +12,13 @@
 }
 
 .nexPrevContainer {
-    gap: 16px;
+    // gap: 16px;
+}
+
+/* Optional: prevent MDC button width constraints */
+.nexPrevContainer .mat-mdc-icon-button.width-auto {
+    width: auto !important;
+    min-width: auto !important;
 }
 
 .font-bold-imp {
