@@ -2112,9 +2112,13 @@ ngx-guided-tour {
   }
 }
 
-.mat-mdc-dialog-surface {
-  background-color: transparent !important;
-  box-shadow: none !important;
+// .mat-mdc-dialog-surface {
+//   background-color: transparent !important;
+//   box-shadow: none !important;
+// }
+
+.mat-mdc-dialog-container {
+  background: #fff !important;
 }
 
 .activeResource .text-active {

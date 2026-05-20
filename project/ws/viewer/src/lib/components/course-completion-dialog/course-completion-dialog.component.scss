@@ -10,7 +10,7 @@
   box-shadow: none !important;
 }
 
-::ng-deep .course-completion-dialog .mat-dialog-container {
+::ng-deep .course-completion-dialog .mat-mdc-dialog-container {
   padding: 24px 0px;
 }
 
@@ -27,7 +27,7 @@
   background: url('/assets/images/animation/leaderboard_animation.gif') no-repeat center;
 }
 
-::ng-deep .course-completion-dialog .mat-dialog-container {
+::ng-deep .course-completion-dialog .mat-mdc-dialog-container {
   box-shadow: none !important;
   background: transparent !important;
   color: white !important;

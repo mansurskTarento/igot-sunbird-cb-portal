@@ -38,7 +38,7 @@
             <mat-chip *ngFor="let category of categories" [removable]="false" [highlighted]="false"
               [disableRipple]="true" [selected]="category.value === selectedSearchCategory"
               (click)="selectSearchCategory(category.value)" class="category-chip"
-              [ngClass]="{'selected-search-category': category.value === selectedSearchCategory}">
+              [ngClass]="{'selected-search-category active': category.value === selectedSearchCategory}">
               <mat-icon *ngIf="category.icon" [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
               {{ category.label }}
             </mat-chip>
