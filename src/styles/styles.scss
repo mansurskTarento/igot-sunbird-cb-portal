@@ -1604,60 +1604,60 @@ ngx-guided-tour {
 }
 
 .mat-mdc-chip {
-  font-family: Lato;
+  font-family: Lato, sans-serif;
   font-weight: 400;
   font-size: 12px;
   line-height: 14.4px;
-  margin: 4px 2px;
+  margin: 4px;
 
   .mdc-evolution-chip__action {
     border-radius: 20px !important;
+    background-color: #ffffff !important;
+    border: 1px solid #d6d6d6 !important;
+    min-height: 32px;
+    padding: 0 12px;
   }
 
   .mdc-evolution-chip__text-label {
     color: #5f5f5f !important;
   }
 
-  .mdc-evolution-chip__action .mat-mdc-chip-action .mdc-evolution-chip__action--primary .mdc-evolution-chip__action--presentational {
-    background-color: #1d4fa3 !important;
+  &:hover {
+    .mdc-evolution-chip__action {
+      background-color: #f5f5f5 !important;
+    }
+  }
+
+  // ACTIVE CHIP
+  &.active,
+  &.mat-mdc-chip-selected,
+  &.mdc-evolution-chip--selected {
+
+    .mdc-evolution-chip__action {
+      background-color: #1d4fa3 !important;
+      border-color: #1d4fa3 !important;
+    }
+
+    .mdc-evolution-chip__text-label {
+      color: #ffffff !important;
+    }
   }
 }
-
-
-
-
-// ACTIVE CHIP
-.mat-mdc-chip.mat-mdc-chip-selected {
-
-  .mdc-evolution-chip__action {
-    background-color: #1d4fa3 !important;
-  }
-
-  .mdc-evolution-chip__text-label {
-    color: #5f5f5f !important;
-  }
-
-}
-
-
 
 // MDC replacement for .mat-chip-list-wrapper
 .mat-mdc-chip-set {
 
   .mdc-evolution-chip-set__chips {
     display: flex;
-    flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    margin: -4px;
+    gap: 8px;
+    margin: 0;
   }
 }
 
-// Remove unwanted MDC spacing
-.mdc-evolution-chip {
-  margin: 4px;
-}
+
 
 .mdc-evolution-chip__text-label {
   color: inherit !important;
@@ -1674,6 +1674,7 @@ ngx-guided-tour {
   font-family: Montserrat;
   letter-spacing: normal;
   margin: 0 0 16px;
+  color: #000;
 }
 
 .mat-mdc-card {
@@ -1865,17 +1866,13 @@ ngx-guided-tour {
 
 .mat-mdc-dialog-container .mdc-dialog__surface {
   display: block;
-  padding: 24px !important;
+  padding: 24px 0 !important;
   border-radius: 4px !important;
   box-sizing: border-box;
   /* remove scrollbars */
   outline: 0;
+  overflow: hidden;
 
-  width: auto !important;
-  height: auto !important;
-
-  min-height: inherit;
-  max-height: 95vh !important;
 }
 
 /* Optional: content scrolling only when needed */
@@ -1972,19 +1969,16 @@ ngx-guided-tour {
   padding-left: 0 !important;
 }
 
-/* Reduce extra left spacing */
-.mat-mdc-text-field-wrapper {
-  padding-left: 0px !important;
-  padding-right: 0px !important;
-}
+// .mat-mdc-text-field-wrapper {
+//   padding-left: 0px !important;
+//   padding-right: 0px !important;
+// }
 
-/* Proper vertical alignment for input */
-.mat-mdc-input-element {
-  margin: 0 !important;
-  line-height: 8px !important;
-}
+// .mat-mdc-input-element {
+//   margin: 0 !important;
+//   line-height: 8px !important;
+// }
 
-/* Search icon spacing */
 .mat-mdc-form-field-icon-prefix {
   padding-right: 2px !important;
 
@@ -2012,4 +2006,121 @@ ngx-guided-tour {
   text-align: left;
   font-size: 14px !important;
   line-height: 24px;
+}
+
+.mat-drawer-container {
+  background: transparent !important;
+}
+
+.pagination-size-select.mat-full-radius-select .mat-mdc-form-field-infix {
+  padding: 4px 8px 4px 0 !important;
+}
+
+
+
+.pagination-size-select.mat-full-radius-select .mat-mdc-form-field-flex {
+  align-items: center !important;
+}
+
+.mat-mdc-card-header {
+  padding: 0 !important;
+}
+
+.filter-md {
+  width: 380px !important;
+}
+
+.mdc-list {
+  padding: 0 !important;
+}
+
+
+.mat-mdc-form-field {
+  width: 100%;
+}
+
+/* Main dropdown box */
+
+
+/* Value text */
+.mat-mdc-select-value {
+  display: flex;
+  align-items: center;
+}
+
+/* Arrow alignment */
+.mat-mdc-select-arrow-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* Remove legacy spacing */
+.mat-form-field-flex,
+.mat-mdc-form-field-flex {
+  padding: 0 !important;
+  margin-top: 0 !important;
+}
+
+.custom-rounded {
+  height: auto !important;
+}
+
+.mat-body,
+.mat-body-2,
+.mat-typography .mat-body,
+.mat-typography .mat-body-2,
+.mat-typography {
+  font: 400 14px / 21px Lato;
+  letter-spacing: normal;
+  color: #000 !important
+}
+
+.lang-chips {
+
+  .mat-mdc-chip.matchip-custom,
+  .mdc-evolution-chip.matchip-custom {
+    background: transparent !important;
+    border: 1px solid #fff;
+    color: #fff !important;
+    cursor: pointer;
+    margin: 0 4px !important;
+  }
+
+  /* Chip text */
+  .mat-mdc-chip .mdc-evolution-chip__text-label {
+    color: #fff !important;
+    gap: 16px
+  }
+
+  .mat-mdc-chip.matchip-custom:hover {
+    background: #fff !important;
+    border: 1px solid #fff !important;
+  }
+
+  /* Selected */
+  .mat-mdc-chip.matchip-custom.mat-mdc-chip-highlighted,
+  .mat-mdc-chip.matchip-custom.mdc-evolution-chip--selected {
+    background: #fff !important;
+    border: 1px solid #fff !important;
+  }
+
+  /* Text color */
+  .mat-mdc-chip.matchip-custom:hover .mdc-evolution-chip__text-label,
+  .mat-mdc-chip.matchip-custom.mat-mdc-chip-highlighted .mdc-evolution-chip__text-label,
+  .mat-mdc-chip.matchip-custom.mdc-evolution-chip--selected .mdc-evolution-chip__text-label {
+    color: #1b4ca1 !important;
+  }
+}
+
+.mat-mdc-dialog-surface {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.activeResource .text-active {
+  color: #fff !important;
+}
+
+.text-active {
+  color: #1a4ca1 !important;
 }

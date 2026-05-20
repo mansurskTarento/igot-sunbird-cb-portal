@@ -25,7 +25,7 @@
                             <ng-container>
                                 <mat-chip-list class="content-pill" aria-label="Fish selection">
                                     <ng-container *ngFor="let pill of tab?.pillsData;let p = index">
-                                        <mat-chip [selected]="pill?.selected"
+                                        <mat-chip [selected]="pill?.selected" [ngClass]="pill?.selected ? 'active':''"
                                             (click)="pillClicked(seeAllPageConfig, p, tabIndex)">
                                             <span class="pill-name">{{pill?.label}}</span></mat-chip>
                                     </ng-container>

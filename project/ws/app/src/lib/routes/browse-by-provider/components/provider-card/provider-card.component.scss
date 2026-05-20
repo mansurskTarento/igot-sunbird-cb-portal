@@ -7,12 +7,14 @@
     align-items: center;
     justify-content: center;
 }
+
 .name-container {
     height: 70px;
     overflow: hidden;
     width: 100%;
     text-align: left;
 }
+
 .provider-image-container {
     width: 150px;
     height: 150px;
@@ -20,7 +22,7 @@
     overflow: hidden;
     align-items: center;
     display: flex;
-    border: 1px solid rgba(0,0,0,.08);
+    border: 1px solid rgba(0, 0, 0, .08);
 
     img {
         height: 120px;
@@ -32,21 +34,24 @@
 
 // Remove this when card 2 is not needed
 .card2.single_provider_card {
-        // height: 315px;
-        height: 161px;
-        width: 282px;
-        padding:16px;
-        box-sizing: border-box;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
+    // height: 315px;
+    height: 161px;
+    width: 282px;
+    padding: 16px;
+    box-sizing: border-box;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+
     .name-container {
         // height: 70px;
-        
+
         overflow: hidden;
         width: 100%;
         text-align: left;
     }
+
     .provider-image-container {
         width: 150px;
         height: 150px;
@@ -54,19 +59,21 @@
         overflow: hidden;
         align-items: center;
         display: flex;
-        border: 1px solid rgba(0,0,0,.08);
-    
+        border: 1px solid rgba(0, 0, 0, .08);
+
         img {
             height: 120px;
             width: 120px;
             margin: 15px auto;
         }
     }
+
     .mat-subheading-1 {
         margin: 0;
-    }   
+    }
 
 }
+
 .name-provider {
     text-overflow: ellipsis;
     max-height: 61px;
@@ -84,23 +91,23 @@
 }
 
 .p-logo {
-    max-height: 62px; 
+    max-height: 62px;
     max-width: 250px;
 }
 
-::ng-deep .mat-drawer-content  {
-    overflow: hidden!important;
+::ng-deep .mat-drawer-content {
+    overflow: hidden !important;
 }
 
 
 .txt-ellipsis-3 {
-  display: inline;
-  -webkit-line-clamp: 3;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  word-wrap: break-word;
+    display: inline;
+    -webkit-line-clamp: 3;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    word-wrap: break-word;
 }
 
 .width-inherit {
