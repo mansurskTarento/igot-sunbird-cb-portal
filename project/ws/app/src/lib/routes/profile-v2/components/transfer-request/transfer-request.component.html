@@ -1,161 +1,265 @@
-<div class="flex flex-col gap-4">
+<div class="transfer-request-container">
     <div class="text-base font-semibold text-center">{{ 'profileInfo.transferHeader' | translate }}</div>
 
-    <form class="flex flex-col gap-4" [formGroup]="transferRequestForm">
+    <form class="transfer-request-form" [formGroup]="transferRequestForm">
         <div class="flex flex-col">
             <div class="text-sm font-bold required">Current organization</div>
-            <div>{{currentOrg}}</div>
-        </div>
-        <div class="flex flex-col">
-            <div class="text-sm font-bold required">
-                Target organization
-                <!-- {{ 'profileInfo.organization' | translate }} -->
+            <div class="current-org-field margin-top-s">
+                <input type="text" [value]="currentOrg" class="current-org-input" disabled>
             </div>
-            <mat-form-field class="profile-form-field mat-drop-down-select" appearance="none">
-                <!-- <mat-select formControlName="organization">
-                    <span class="search-box-span">
-                        <input (keyup)="searchOrg($event.target.value)" class="dept-seach-input" placeholder="Search organization">
-                    </span>
-                    
-                    <mat-option value="" disabled>{{ 'profileInfo.chooseOrganization' | translate }}</mat-option>
-                    <mat-option *ngFor="let dept of departmentData" value="{{ dept }}">{{ dept }}</mat-option>
-                </mat-select> -->
-                <!-- <div class="flex flex-row auto-complete-row" (click)="assignValue()">
-                    <input type="text" class="input-text" matInput formControlName="organization"
-                        [matAutocomplete]="departmentAuto">
-                    <mat-icon>arrow_drop_down</mat-icon>
-                </div>
-                <mat-autocomplete class="mat-autocomplete" #departmentAuto="matAutocomplete">
-                    <mat-option *ngFor="let dept of deptFilterData" value="{{ dept }}">{{ dept }}</mat-option>    
-                </mat-autocomplete>
-                <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
-                class="mat-error">
-                    Please enter a valid organization.  
-                  </mat-error> -->
-
-                  <mat-select placeholder="Select organization" formControlName="organization"    panelClass="search-panel"
-                   (openedChange)="setupOrgScrollListener($event)">
-                    <!-- Sticky search input container -->
-                    <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                      <div class="search-input-wrapper">
-                        <input 
-                                    type="text" 
-                                    placeholder="Search organization" 
-                                    formControlName="searchOrganization" 
-                                    class="search-org-input"
-                                    (keydown)="$event.stopPropagation()"
-                                    autocomplete="off">
-                        <button 
-                                    *ngIf="searchOrganization?.value" 
-                                    type="button" 
-                                    class="clear-button" 
-                                    (click)="searchOrganization?.setValue('')">
-                                    ✕
-                        </button>
-                      </div>
-                    </div>
-                    <!-- Options list -->
-                    <mat-option *ngFor="let org of deptFilterData;trackBy: trackByFn" [value]="org?.channel" (onSelectionChange)="onOrgSelectionChange(org)">
-                            {{ org?.channel }}
-                    </mat-option>
-                    <!-- Loading indicator -->
-                    <div *ngIf="isLoadingMoreOrganization" class="loading-indicator">
-                      Loading more...
-                    </div>
-                    <!-- No results message -->
-                    <mat-option *ngIf="(deptFilterData )?.length === 0" disabled>
-                            No matches found
-                    </mat-option>
-                  </mat-select>
-                  <mat-error *ngIf="transferRequestForm.controls['organization'].invalid && transferRequestForm.controls['organization'].touched"
-                  class="mat-error">
-                  Please Select a valid organization.
-                  </mat-error>
-
-            </mat-form-field>   
         </div>
 
-    
-        <ng-container *ngIf="otherDetails">
-            <div class="flex flex-col">
-                <div class="text-sm font-bold required">{{ 'profileInfo.group' | translate }}</div>
-                <mat-form-field class="profile-form-field mat-drop-down-select">
-                    <mat-select formControlName="group">
-                        <mat-option value="" disabled>{{ 'profileInfo.chooseAGroup' | translate }}</mat-option>
-                        <mat-option *ngFor="let group of data?.groupData" value="{{group}}">{{ group }}</mat-option>
+        <!-- Center/State Toggle in Single Line -->
+        <div class="input-wrapper margin-top-m type-wrapper">
+            <label for="type" class="margin-remove-bottom form-label required">
+                {{ 'publicsignup.centerOrState' | translate }}
+            </label>
+            <mat-radio-group #type class="margin-top-s radio-group-inline" formControlName="type" (change)="onTypeChange($event)">
+                <mat-radio-button class="mat-radio-button radio-select" [value]="'ministry'">
+                    {{ 'publicsignup.center' | translate }}
+                </mat-radio-button>
+                <mat-radio-button class="mat-radio-button radio-unselect margin-left-s" [value]="'state'">
+                    {{ 'publicsignup.state' | translate }}
+                </mat-radio-button>
+            </mat-radio-group>
+        </div>
+
+        <!-- Ministry Field (shown when type='ministry') -->
+        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='ministry'">
+            <div class="input-container">
+                <div class="label required">{{ 'publicsignup.ministry' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
+                        panelClass="search-panel-ministry" (openedChange)="setupScrollListenerForMinistry($event)"
+                        (selectionChange)="onMinistryChange($event)">
+                        <!-- Sticky search input container -->
+                        <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                                <input type="text" placeholder="Search ministry" formControlName="searchMinistry"
+                                    class="search-input-ministry" (keydown)="$event.stopPropagation()"
+                                    (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                                    (keyup)="ministrySearch($event)" autocomplete="off">
+                                <button *ngIf="searchMinistry?.value" type="button" class="clear-button"
+                                    (click)="searchMinistry?.setValue('')">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Options list -->
+                        <mat-option [value]="ministry.identifier" *ngFor="let ministry of masterData.ministry">
+                            {{ministry?.orgName}}
+                        </mat-option>
+                        <!-- Loading indicator -->
+                        <div *ngIf="isLoadingMoreMinistrys" class="loading-indicator">
+                            {{ 'publicsignup.loadMore' | translate }}
+                        </div>
+                        <!-- No results message -->
+                        <mat-option *ngIf="masterData.ministry?.length === 0" disabled>
+                            <div class="mat-error txt-size">{{ 'publicsignup.ministryNotFound' | translate }}
+                                <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>
+                                </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                        *ngIf="transferRequestForm?.get('ministry')?.touched && transferRequestForm?.get('ministry')?.invalid">
+                        {{ 'publicsignup.selectMinistryErrorMsg' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- State Field (shown when type='state') -->
+        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='state'">
+            <div class="input-container">
+                <div class="label required">{{ 'publicsignup.state' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #state formControlName="state" placeholder="Select state"
+                        panelClass="search-panel-state" (openedChange)="setupScrollListenerForState($event)"
+                        (selectionChange)="onStateChanged($event)">
+                        <!-- Sticky search input container -->
+                        <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                                <input type="text" placeholder="Search state" formControlName="searchState"
+                                    class="search-input-state" (keydown)="$event.stopPropagation()"
+                                    (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                                    (keyup)="stateSearch($event)" autocomplete="off">
+                                <button *ngIf="searchState?.value" type="button" class="clear-button"
+                                    (click)="searchState?.setValue('')">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Options list -->
+                        <mat-option [value]="state.identifier" *ngFor="let state of masterData.state">
+                            {{state?.orgName}}
+                        </mat-option>
+                        <!-- Loading indicator -->
+                        <div *ngIf="isLoadingMoreStates" class="loading-indicator">
+                            {{ 'publicsignup.loadMore' | translate }}
+                        </div>
+                        <!-- No results message -->
+                        <mat-option *ngIf="masterData.state?.length === 0" disabled>
+                            <div class="mat-error txt-size">{{ 'publicsignup.stateNotFound' | translate }}
+                                <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                        *ngIf="transferRequestForm?.get('state')?.touched && transferRequestForm?.get('state')?.invalid">
+                        {{ 'publicsignup.selectStateErrorMsg' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Department Field (shown when type='state') -->
+        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='state'">
+            <div class="input-container">
+                <div class="label required">{{ 'publicsignup.department' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #department formControlName="department" placeholder="Select department"
+                        panelClass="search-panel-department" (openedChange)="setupScrollListenerForDepartment($event)"
+                        (selectionChange)="onDepartmentChange($event)">
+                        <!-- Sticky search input container -->
+                        <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                                <input type="text" placeholder="Search department" formControlName="searchDepartment"
+                                    class="search-input-department" (keydown)="$event.stopPropagation()"
+                                    (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                                    (keyup)="departmentSearch($event)" autocomplete="off">
+                                <button *ngIf="searchDepartment?.value" type="button" class="clear-button"
+                                    (click)="searchDepartment?.setValue('')">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Options list -->
+                        <mat-option [value]="department.identifier" *ngFor="let department of masterData.department">
+                            {{department?.orgName}}
+                        </mat-option>
+                        <!-- Loading indicator -->
+                        <div *ngIf="isLoadingMoreDepartments" class="loading-indicator">
+                            {{ 'publicsignup.loadMore' | translate }}
+                        </div>
+                        <!-- No results message -->
+                        <mat-option *ngIf="masterData.department?.length === 0" disabled>
+                            <div class="mat-error txt-size">{{ 'publicsignup.departmentNotFound' | translate }}
+                                <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-error class="text-xs"
+                        *ngIf="transferRequestForm?.get('department')?.touched && transferRequestForm?.get('department')?.invalid">
+                        {{ 'publicsignup.selectDepartmentErrorMsg' | translate }}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Organisation Field -->
+        <div class="input-wrapper margin-top-s single-line-field field-row">
+            <div class="input-container">
+                <div class="label" [ngClass]="{ 'required': isOrganisationMandatory }">{{ 'publicsignup.organisation' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                    <mat-select #organisation formControlName="organisation" placeholder="Select organisation"
+                        panelClass="search-panel-organisation" (openedChange)="setupScrollListenerForOrganisation($event)"
+                        (selectionChange)="onOrganisationChanged($event)">
+                        <!-- Sticky search input container -->
+                        <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                                <input type="text" placeholder="Search organisation" formControlName="searchOrganisation"
+                                    class="search-input-organisation" (keydown)="$event.stopPropagation()"
+                                    (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
+                                    (keyup)="organisationSearch($event)" autocomplete="off">
+                                <button *ngIf="searchOrganisation?.value" type="button" class="clear-button"
+                                    (click)="searchOrganisation?.setValue('')">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Options list -->
+                        <ng-container *ngFor="let organisation of masterData.organisation">
+                            <mat-option *ngIf="isSelectableOrganisation(organisation)" [value]="organisation.identifier">
+                                {{organisation?.orgName}}
+                            </mat-option>
+                        </ng-container>
+                        <!-- Loading indicator -->
+                        <div *ngIf="isLoadingMoreOrganisations" class="loading-indicator">
+                            {{ 'publicsignup.loadMore' | translate }}
+                        </div>
+                        <!-- No results message -->
+                        <mat-option *ngIf="!hasSelectableOrganisation()" disabled>
+                            <div class="mat-error txt-size">{{ 'publicsignup.organisationNotFound' | translate }}
+                                <a class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' | translate }}</a>
+                            </div>
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="isOrganisationMandatory && transferRequestForm?.get('organisation')?.hasError('required') && transferRequestForm?.get('organisation')?.touched">Please select an organisation</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Group and Designation Field in Single Line -->
+        <div class="input-wrapper-row margin-top-s">
+            <div class="input-container flex-1">
+                <div class="label required">{{ 'publicsignup.group' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full">
+                    <mat-select #group placeholder=" Select group" formControlName="group"
+                        (openedChange)="setupScrollListenerForGroup($event)">
+                        <mat-option *ngFor="let grp of masterGroup" [value]="grp">{{grp}}</mat-option>
+                    </mat-select>
+                    <mat-error>{{ 'publicsignup.groupMandatory' | translate }}</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="input-container flex-1">
+                <div class="label required">{{ 'publicsignup.designation' | translate }}</div>
+                <mat-form-field appearance="outline" class="margin-top-s w-full">
+                    <mat-select #designation placeholder="Select Designation" formControlName="designation"
+                        (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
+                        (openedChange)="setupScrollListener($event)" (blur)="onDesignationDropdownClosed()">
+                        <!-- Sticky search input container -->
+                        <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                            <div class="search-input-wrapper">
+                                <input type="text" placeholder="Search designation"
+                                    formControlName="searchDesignation" class="search-input"
+                                    (keydown)="$event.stopPropagation()" autocomplete="off"
+                                    (keyup)="designationSearch($event)">
+                                <button *ngIf="searchDesignation?.value" type="button" class="clear-button"
+                                    (click)="searchDesignation?.setValue('')">
+                                    ✕
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Options list -->
+                        <mat-option *ngFor="let option of designationData" [value]="option?.designation">
+                            {{ option?.designation }}
+                        </mat-option>
+                        <!-- Loading indicator -->
+                        <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
+                            Loading more...
+                        </div>
+                        <!-- No results message -->
+                        <mat-option *ngIf="designationData?.length === 0" disabled>
+                            No matches found
+                        </mat-option>
+                        <mat-error
+                            *ngIf="transferRequestForm.controls['designation'].invalid && transferRequestForm.controls['designation'].touched"
+                            class="mat-error">
+                            Please enter a valid designation.
+                        </mat-error>
                     </mat-select>
                 </mat-form-field>
             </div>
-        
-            <div class="flex flex-col">
-                <div class="text-sm font-bold required">{{ 'profileInfo.designation' | translate }}</div>
-                <!-- <mat-form-field class="profile-form-field">
-                    <div class="flex flex-row auto-complete-row">
-                        <input type="text" class="input-text" matInput formControlName="designation"
-                            [matAutocomplete]="designationAuto">
-                        <mat-icon>arrow_drop_down</mat-icon>
-                    </div>
-                    <mat-autocomplete class="mat-autocomplete" #designationAuto="matAutocomplete">
-                        <mat-option *ngFor="let designation of designationData" value="{{ designation?.name }}">{{ designation?.name }}</mat-option>
-                    </mat-autocomplete>
-                    <mat-error *ngIf="transferRequestForm.controls['designation'].invalid && transferRequestForm.controls['designation'].touched"
-                        class="mat-error">
-                        Please enter a valid designation.
-                      </mat-error>
-                </mat-form-field> -->
-
-                <mat-form-field appearance="none" class="profile-form-field search-panel">
-                    <mat-select placeholder="Select Designation" formControlName="designation"  (closed)="onDesignationDropdownClosed()"  panelClass="search-panel" (openedChange)="setupScrollListener($event)">
-                      <!-- Sticky search input container -->
-                      <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                        <div class="search-input-wrapper">
-                          <input 
-                                      type="text" 
-                                      placeholder="Search designation" 
-                                      formControlName="searchDesignation" 
-                                      class="search-input"
-                                      (keydown)="$event.stopPropagation()"
-                                      autocomplete="off">
-                          <button 
-                                      *ngIf="searchDesignation?.value" 
-                                      type="button" 
-                                      class="clear-button" 
-                                      (click)="searchDesignation?.setValue('')">
-                                      ✕
-                          </button>
-                        </div>
-                      </div>
-                      <!-- Options list -->
-                      <mat-option *ngFor="let option of designationData " [value]="option?.designation">
-                              {{ option?.designation }}
-                      </mat-option>
-                      <!-- Loading indicator -->
-                      <div *ngIf="isLoadingMoreDesignations" class="loading-indicator">
-                        Loading more...
-                      </div>
-                      <!-- No results message -->
-                      <mat-option *ngIf="(designationData )?.length === 0" disabled>
-                              No matches found
-                      </mat-option>
-                        <mat-error *ngIf="transferRequestForm.controls['designation'].invalid && transferRequestForm.controls['designation'].touched"
-                        class="mat-error">
-                        Please enter a valid designation.
-                        </mat-error>
-                    </mat-select>
-                  </mat-form-field>
-            </div>
-        </ng-container>
-
-        <div class="flex flex-row gap-1 info-div">
-            <mat-icon>info</mat-icon>
-            <div>{{ 'profileInfo.transferWarnMsg' | translate }}</div>
         </div>
-        
-        <div class="flex flex-row justify-between mt-2">
+
+        <!-- Submit Button -->
+        <div class="flex flex-row justify-between mt-2 transfer-action-row">
             <button class="outline-button" (click)="handleCloseModal()">{{ 'profileInfo.cancel' | translate }}</button>
-            <button class="save-button" [disabled]="transferRequestForm?.invalid || 
-            isInValidOrgSelection" [ngClass]="{'disable-button': transferRequestForm?.invalid ||
-            isInValidOrgSelection}" (click)="handleSubmitRequest()">{{ 'profileInfo.submitRequest' | translate }}</button>
+            <button class="save-button" [disabled]="transferRequestForm?.invalid || isInValidOrgSelection"
+                [ngClass]="{'disable-button': transferRequestForm?.invalid || isInValidOrgSelection}"
+                (click)="handleSubmitRequest()">{{ 'profileInfo.submitRequest' | translate }}</button>
         </div>
+
     </form>
 </div>
