@@ -351,7 +351,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getAchievements() {
-    this.profileV2RevampSvc.listAchievements().subscribe((response: any) => {
+    this.profileV2RevampSvc.listAchievements(this.userId).subscribe((response: any) => {
       if (response) {
         const allAchievements = _.get(response, 'result.search_results.data', [])
         this.achievementsDetails.achievementsList = allAchievements.slice(0, 2)
