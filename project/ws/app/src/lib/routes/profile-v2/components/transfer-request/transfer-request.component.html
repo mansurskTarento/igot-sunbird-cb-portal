@@ -8,9 +8,14 @@
                 <input type="text" [value]="currentOrg" class="current-org-input" disabled>
             </div>
         </div>
-
+    <div class="flex flex-col margin-top-s">
+            <div class="text-sm font-bold required">Target organization</div>
+            <div class="current-org-field">
+                <!-- <input type="text" [value]="currentOrg" class="current-org-input" disabled> -->
+            </div>
+        </div>
         <!-- Center/State Toggle in Single Line -->
-        <div class="input-wrapper margin-top-m type-wrapper">
+        <div class="input-wrapper type-wrapper">
             <label for="type" class="margin-remove-bottom form-label required">
                 {{ 'publicsignup.centerOrState' | translate }}
             </label>
@@ -25,10 +30,10 @@
         </div>
 
         <!-- Ministry Field (shown when type='ministry') -->
-        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='ministry'">
+        <div class="input-wrapper single-line-field field-row field-animate-in" *ngIf="transferRequestForm?.get('type')?.value==='ministry' && showTypeSpecificField">
             <div class="input-container">
                 <div class="label required">{{ 'publicsignup.ministry' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                <mat-form-field appearance="outline" class="w-full required-select">
                     <mat-select #ministry formControlName="ministry" placeholder="Select ministry"
                         panelClass="search-panel-ministry" (openedChange)="setupScrollListenerForMinistry($event)"
                         (selectionChange)="onMinistryChange($event)">
@@ -69,10 +74,10 @@
         </div>
 
         <!-- State Field (shown when type='state') -->
-        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='state'">
+        <div class="input-wrapper single-line-field field-row field-animate-in" *ngIf="transferRequestForm?.get('type')?.value==='state' && showTypeSpecificField">
             <div class="input-container">
                 <div class="label required">{{ 'publicsignup.state' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                <mat-form-field appearance="outline" class="w-full required-select">
                     <mat-select #state formControlName="state" placeholder="Select state"
                         panelClass="search-panel-state" (openedChange)="setupScrollListenerForState($event)"
                         (selectionChange)="onStateChanged($event)">
@@ -113,10 +118,10 @@
         </div>
 
         <!-- Department Field (shown when type='state') -->
-        <div class="input-wrapper margin-top-s single-line-field field-row" *ngIf="transferRequestForm?.get('type')?.value==='state'">
+        <div class="input-wrapper single-line-field field-row field-animate-in" *ngIf="transferRequestForm?.get('type')?.value==='state' && showDepartmentField">
             <div class="input-container">
                 <div class="label required">{{ 'publicsignup.department' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                <mat-form-field appearance="outline" class="w-full required-select">
                     <mat-select #department formControlName="department" placeholder="Select department"
                         panelClass="search-panel-department" (openedChange)="setupScrollListenerForDepartment($event)"
                         (selectionChange)="onDepartmentChange($event)">
@@ -157,10 +162,10 @@
         </div>
 
         <!-- Organisation Field -->
-        <div class="input-wrapper margin-top-s single-line-field field-row">
+        <div class="input-wrapper single-line-field field-row field-animate-in" *ngIf="showOrganisationField">
             <div class="input-container">
                 <div class="label" [ngClass]="{ 'required': isOrganisationMandatory }">{{ 'publicsignup.organisation' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
+                <mat-form-field appearance="outline" class="w-full required-select">
                     <mat-select #organisation formControlName="organisation" placeholder="Select organisation"
                         panelClass="search-panel-organisation" (openedChange)="setupScrollListenerForOrganisation($event)"
                         (selectionChange)="onOrganisationChanged($event)">
@@ -199,12 +204,12 @@
             </div>
         </div>
 
-        <!-- Group and Designation Field in Single Line -->
-        <div class="input-wrapper-row margin-top-s">
-            <div class="input-container flex-1">
+        <!-- Group and Designation Fields in Single Line -->
+        <div class="input-wrapper-row field-animate-in" *ngIf="showGroupField || showDesignationField">
+            <div class="input-container flex-1" *ngIf="showGroupField">
                 <div class="label required">{{ 'publicsignup.group' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full">
-                    <mat-select #group placeholder=" Select group" formControlName="group"
+                <mat-form-field appearance="outline" class="w-full">
+                    <mat-select #group placeholder="Select Group" formControlName="group"
                         (openedChange)="setupScrollListenerForGroup($event)">
                         <mat-option *ngFor="let grp of masterGroup" [value]="grp">{{grp}}</mat-option>
                     </mat-select>
@@ -212,9 +217,9 @@
                 </mat-form-field>
             </div>
 
-            <div class="input-container flex-1">
+            <div class="input-container flex-1" *ngIf="showDesignationField">
                 <div class="label required">{{ 'publicsignup.designation' | translate }}</div>
-                <mat-form-field appearance="outline" class="margin-top-s w-full">
+                <mat-form-field appearance="outline" class="w-full">
                     <mat-select #designation placeholder="Select Designation" formControlName="designation"
                         (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
                         (openedChange)="setupScrollListener($event)" (blur)="onDesignationDropdownClosed()">
