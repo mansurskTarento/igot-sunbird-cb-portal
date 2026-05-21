@@ -976,6 +976,7 @@ $title-line-count: 2;
   max-width: 100%;
   min-width: 784px;
   display: flex;
+  flex-direction: row;
   // max-height: 172px;
 
   $title-line-count: 2;
@@ -1090,7 +1091,7 @@ $title-line-count: 2;
   }
 
   .mat-text-box {
-    padding: 12px;
+    padding: 12px !important;
     box-sizing: border-box;
     width: calc(100% - 315px);
 
