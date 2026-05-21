@@ -1,32 +1,33 @@
-.hide-overflow{
-    overflow: hidden;
-  }
+.hide-overflow {
+  overflow: hidden;
+}
 
-  .blue-border{
-    border: 2px  solid #0074b6 !important;
-    }
+.blue-border {
+  border: 2px solid #0074b6 !important;
+}
 
-    .no-shadow {
-      box-shadow: none !important;
-  }
+.no-shadow {
+  box-shadow: none !important;
+}
 
-  ::ng-deep  .course-completion-dialog .mat-dialog-container{
-    padding: 24px 0px;
-  }
-  ::ng-deep  .course-completion-dialog.mat-card-actions {
-    padding: 18px 7px;
-  }
+::ng-deep .course-completion-dialog .mat-mdc-dialog-container {
+  padding: 24px 0px;
+}
 
-  ::ng-deep .course-completion-dialog .mat-card>.mat-card-actions:last-child {
-    margin-bottom: -15px;
+::ng-deep .course-completion-dialog.mat-card-actions {
+  padding: 18px 7px;
+}
+
+::ng-deep .course-completion-dialog .mat-card>.mat-card-actions:last-child {
+  margin-bottom: -15px;
 }
 
 .congrats-container {
- text-align: center;
- background: url('/assets/images/animation/leaderboard_animation.gif') no-repeat center;
+  text-align: center;
+  background: url('/assets/images/animation/leaderboard_animation.gif') no-repeat center;
 }
 
-::ng-deep .course-completion-dialog .mat-dialog-container {
+::ng-deep .course-completion-dialog .mat-mdc-dialog-container {
   box-shadow: none !important;
   background: transparent !important;
   color: white !important;
@@ -47,7 +48,7 @@
   font-size: 14px;
   letter-spacing: 0.25px;
   line-height: 20px;
-  margin-top:8px;
+  margin-top: 8px;
   color: rgba(255, 255, 255, 0.7);
 }
 
@@ -58,6 +59,7 @@
   letter-spacing: 0.25px;
   line-height: 20px;
   margin-top: 16px;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 ::ng-deep .cdk-overlay-dark-backdrop {
@@ -66,7 +68,7 @@
 
 .seperator {
   border: 1px solid rgba(255, 255, 255, 0.16);
-    margin: 10px;
+  margin: 10px;
 }
 
 .star-panel {
@@ -78,10 +80,10 @@
 }
 
 .rating-icon {
- font-size: 28px;
+  font-size: 28px;
 }
 
-::ng-deep .rating-button.mat-icon-button{
+::ng-deep .rating-button.mat-icon-button {
   margin: 0 8px !important;
 }
 
@@ -99,6 +101,7 @@
     width: 100%;
   }
 }
+
 .badge-wrapper {
   display: inline-flex;
   flex-direction: column;

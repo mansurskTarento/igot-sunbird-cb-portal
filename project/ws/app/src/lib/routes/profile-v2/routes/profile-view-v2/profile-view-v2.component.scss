@@ -339,8 +339,8 @@
 
 .mentor-profile {
   background-color: #1B4CA1 !important;
-  width: 125px;
-  height: 20px;
+  width: 170px;
+  height: auto;
   border-radius: 4px;
   /* stylelint-disable */
   font: 400 10px Lato;
@@ -515,6 +515,7 @@
   border: 1px solid #fff;
   border-radius: 12px;
 }
+
 .nlw-cert-card {
   display: flex;
   flex-direction: column;
