@@ -296,8 +296,8 @@ export class ProfileV2RevampService {
     return this.http.put<any>(API_END_POINTS.UPDATE_ACHIEVEMENT_ENTRY, payload)
   }
 
-  listAchievements(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.LIST_ACHIEVEMENTS)
+  listAchievements(userId: any): Observable<any> {
+    return this.http.get<any>(`${API_END_POINTS.LIST_ACHIEVEMENTS}?id=${userId}`)
   }
 
   deleteAchievementEntry(payload: any): Observable<any> {

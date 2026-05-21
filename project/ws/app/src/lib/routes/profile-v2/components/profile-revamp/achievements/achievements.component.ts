@@ -51,7 +51,7 @@ export class AchievementsComponent implements OnInit {
 
   getAchievementsList(userId?: any): void {
     if (this.userId || userId) {
-      this.profileV2RevampSvc.listAchievements().subscribe({
+      this.profileV2RevampSvc.listAchievements(this.userId || userId).subscribe({
         next: (res: any) => {
           if (res) {
             this.achievementsList = _.get(res, 'result.search_results.data', [])
