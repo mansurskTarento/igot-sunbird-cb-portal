@@ -1,5 +1,25 @@
 $border-color: rgba($color: #000000, $alpha: 0.16);
 
+// Progressive field reveal animation
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field-animate-in {
+  animation: fadeInSlideDown 0.3s ease forwards;
+}
+::ng-deep .mat-dialog-container {
+  padding: 16px !important;
+}
+
+
 // Transfer Request Container Styling
 .transfer-request-container {
   width: 90%;

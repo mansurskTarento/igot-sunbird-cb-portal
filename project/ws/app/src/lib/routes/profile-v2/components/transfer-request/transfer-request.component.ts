@@ -131,6 +131,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   private isOrganisationConditionInitialized = false
   isOrganisationMandatory = true
 
+  // Progressive disclosure visibility flags
+  showTypeSpecificField = true    // ministry (center) or state field
+  showDepartmentField = false     // only for state flow, after state is selected
+  showOrganisationField = false   // after ministry / department is selected
+  showGroupField = false          // after org is selected or no org options available
+  showDesignationField = false    // after group is selected
+
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -142,7 +149,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     @Inject(PLATFORM_ID) private _platformId: any
   ) {
     if (this.data.portalProfile.professionalDetails && this.data.portalProfile.professionalDetails.length) {
-      this.transferRequestForm.controls.group.setValue(this.data.portalProfile.professionalDetails[0].group)
       this.transferRequestForm.controls.designation.setValue(this.data.portalProfile.professionalDetails[0].designation || '')
     }
 
@@ -369,7 +375,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     if (this.designationSearchText) {
       igotDesignationBody['request']['query'] = this.designationSearchText
     }
-    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).pipe(
+      finalize(() => {
+        this.isLoadingMoreDesignations = false
+      })
+    ).subscribe({
       next: (res: any) => {
         const igotData = _.get(res, 'result.Term', [])
         const data = igotData.map((item: any) => ({ designation: item.name, status: 'Active' }))
@@ -377,7 +387,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.setDesignationResults(data, totalCount)
       },
       error: () => {
-        this.isLoadingMoreDesignations = false
         this.matSnackBar.open('Something went wrong. Please refresh or try again later.')
       },
     })
@@ -396,9 +405,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       requestBody['searchString'] = this.designationSearchText
     }
     this.isLoadingMoreDesignations = true
-    this.profileV2RevampService.searchDesignation(requestBody).subscribe({
-      next: (res: any) => {
+    this.profileV2RevampService.searchDesignation(requestBody).pipe(
+      finalize(() => {
         this.isLoadingMoreDesignations = false
+      })
+    ).subscribe({
+      next: (res: any) => {
         let data = _.get(res, 'result.result.data', [])
         let totalCount = _.get(res, 'result.result.totalCount', 0)
         this.setDesignationResults(data, totalCount)
@@ -419,6 +431,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       )
     }
     this.designationsTotalCount = totalCount
+    this.isLoadingMoreDesignations = false
     this.checkCurrentDesignationPresent()
   }
 
@@ -484,9 +497,14 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   setupFormChangeListeners(): void {
     this.transferRequestForm.get('type')?.valueChanges.subscribe((type) => {
       this.isOrganisationConditionInitialized = false
-      // Store current group and designation values before clearing
-      const currentGroup = this.transferRequestForm.get('group')?.value
-      const currentDesignation = this.transferRequestForm.get('designation')?.value
+      // Reset downstream progressive visibility on type change
+      this.showDepartmentField = false
+      this.showOrganisationField = false
+      this.showGroupField = false
+      this.showDesignationField = false
+      // Reset group and designation on type change
+      this.transferRequestForm.get('group')?.setValue('', { emitEvent: false })
+      this.transferRequestForm.get('designation')?.setValue('', { emitEvent: false })
 
       if (type === 'state') {
         this.transferRequestForm.get('ministry')?.setValue('', { emitEvent: false })
@@ -511,20 +529,17 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.getMinistryData(undefined, 0)
       }
 
-      // Restore current group and designation if they still exist in the lists
-      if (currentGroup && this.masterGroup.includes(currentGroup)) {
-        this.transferRequestForm.get('group')?.setValue(currentGroup, { emitEvent: false })
-      }
-      if (currentDesignation && this.designationData.some((d: any) => d?.designation === currentDesignation)) {
-        this.transferRequestForm.get('designation')?.setValue(currentDesignation, { emitEvent: false })
-      }
-
       this.applyConditionalControlState()
     })
 
     this.transferRequestForm.get('state')?.valueChanges.subscribe((state) => {
       this.isOrganisationConditionInitialized = false
       if (state) {
+        this.showDepartmentField = true
+        this.showOrganisationField = false
+        this.showGroupField = false
+        this.showDesignationField = false
+        this.transferRequestForm.get('group')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('department')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('organisation')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('searchOrganisation')?.setValue('', { emitEvent: false })
@@ -541,6 +556,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.transferRequestForm.get('ministry')?.valueChanges.subscribe((ministry) => {
       this.isOrganisationConditionInitialized = false
       if (ministry) {
+        this.showOrganisationField = true
+        this.showGroupField = false
+        this.showDesignationField = false
+        this.transferRequestForm.get('group')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('organisation')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('searchOrganisation')?.setValue('', { emitEvent: false })
         this.organisationSearchText = ''
@@ -554,6 +573,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.transferRequestForm.get('department')?.valueChanges.subscribe((department) => {
       this.isOrganisationConditionInitialized = false
       if (department && department !== '-1') {
+        this.showOrganisationField = true
+        this.showGroupField = false
+        this.showDesignationField = false
+        this.transferRequestForm.get('group')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('organisation')?.setValue('', { emitEvent: false })
         this.transferRequestForm.get('searchOrganisation')?.setValue('', { emitEvent: false })
         this.organisationSearchText = ''
@@ -567,6 +590,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.transferRequestForm.get('organisation')?.valueChanges.subscribe(() => {
       this.transferRequestForm.get('designation')?.setValue('', { emitEvent: false })
       this.applyConditionalControlState()
+    })
+
+    this.transferRequestForm.get('group')?.valueChanges.subscribe((group) => {
+      if (group) {
+        this.showDesignationField = true
+      }
     })
 
     this.applyConditionalControlState()
@@ -1086,6 +1115,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
   // ========== TYPE CHANGE HANDLER ==========
   onTypeChange(_event: any) {
+    // Reveal type-specific field on first radio interaction
+    this.showTypeSpecificField = true
     // Data loading on type switch is handled by type valueChanges listener.
     this.applyConditionalControlState()
   }
@@ -1819,6 +1850,15 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.isLoadingMoreOrganisations = false
         this.checkCurrentOrganisationPresent()
         this.isOrganisationConditionInitialized = true
+        const hasOrganisationOptions = this.hasSelectableOrganisation()
+        // Show/hide organisation only on base load (not active search) to avoid flicker while typing.
+        if (!queryText?.length) {
+          this.showOrganisationField = hasOrganisationOptions
+          if (!hasOrganisationOptions) {
+            this.showGroupField = true
+            this.showDesignationField = false
+          }
+        }
         // Do not toggle enable/disable while user is typing in organisation search.
         if (!queryText?.length) {
           this.applyConditionalControlState()
@@ -1827,6 +1867,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       error: () => {
         this.noMoreLegacyOrganisations = true
         this.isOrganisationConditionInitialized = true
+        // On error, hide organisation and continue to Group so flow isn't blocked.
+        this.showOrganisationField = false
+        this.showGroupField = true
+        this.showDesignationField = false
         if (!queryText?.length) {
           this.applyConditionalControlState()
         }
@@ -1942,6 +1986,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   onOrganisationChanged(event: any) {
+    this.transferRequestForm.get('group')?.setValue('', { emitEvent: false })
     if (event.value && event.value !== '-1') {
       this.currentMinistry = _.find(this.masterData?.organisation, { identifier: event?.value })
       // Extract the selectedOrgId for ODCS designation lookup
@@ -1952,6 +1997,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.selectedOrgId = ''
       this.checkOrgHasDesignations()
     }
+    // Reveal Group field after an org is selected
+    this.showGroupField = true
+    this.showDesignationField = false
     this.applyConditionalControlState()
   }
 
