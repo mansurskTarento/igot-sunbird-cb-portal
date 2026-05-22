@@ -215,12 +215,16 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
             if (this.masterData && this.masterData?.ministryBackup) {
               this.masterData.ministry = this.masterData?.ministryBackup?.filter((item: any) =>
                 item?.identifier?.toLowerCase()?.includes(txt?.toLowerCase()))
+              if (!this.masterData.ministry?.length) {
+                this.markMandatoryFieldTouched('ministry')
+              }
             }
           } else {
             if (this.masterData && this.masterData.ministryBackup) {
               this.masterData.ministry = this.masterData.ministryBackup.slice(0, this.ministryDefaultLoadCount)
               this.ministryFilterEnable = false
               this.checkCurrentMinistryPresent()
+              this.markMandatoryFieldTouched('ministry')
             }
           }
         })
@@ -423,16 +427,23 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   setDesignationResults(data: any[], totalCount: number) {
+    const validData = (data || [])?.filter((item: any) =>
+      !!(item?.designation && item?.designation?.toString()?.trim())
+    )
+
     if (this.designationsOffset === 0) {
-      this.designationData = data
+      this.designationData = validData
     } else {
-      this.designationData = _.uniqBy([...this.designationData, ...data], (item: any) =>
+      this.designationData = _.uniqBy([...this.designationData, ...validData], (item: any) =>
         (item?.designation || '')?.toLowerCase()
       )
     }
     this.designationsTotalCount = totalCount
     this.isLoadingMoreDesignations = false
     this.checkCurrentDesignationPresent()
+    if (!this.designationData?.length && this.designationSearchText?.length) {
+      this.markMandatoryFieldTouched('designation')
+    }
   }
 
   ngOnInit() {
@@ -986,25 +997,24 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     const currentDesignation = this.transferRequestForm.get('designation')!.value
     // Check if current designation exists in the list
     if (currentDesignation) {
-      const designationExists = this.designationData.some(
-        (designation: any) => designation.designation.toLowerCase() === currentDesignation.toLowerCase()
+      const currentDesignationLabel = currentDesignation?.toString()?.trim()
+      if (!currentDesignationLabel) {
+        return
+      }
+      const currentDesignationText = currentDesignationLabel.toLowerCase()
+      this.designationData = (this.designationData || [])?.filter((designation: any) =>
+        !!(designation?.designation && designation?.designation?.toString()?.trim())
       )
 
-      // If designation doesn't exist in the list, add it
+      const designationExists = this.designationData.some(
+        (designation: any) => designation?.designation?.toString()?.trim()?.toLowerCase() === currentDesignationText
+      )
+
       if (!designationExists) {
-        // Create a new designation object to match the structure of other items
-        const newDesignation = {
-          designation: currentDesignation,
-          // Add any other required properties matching your data structure
-          id: 'custom-' + Date.now(),
-          status: 'Active'
-        }
-        // Make sure the custom designation appears in the filtered list
-        // if (this.designationData.length >= this.designationListLoadCount) {
-        //   // Replace the last item with the new one to maintain the same number of items
-        //   this.designationData.pop();
-        // }
-        this.designationData.unshift(newDesignation)
+        this.designationData?.unshift({
+          designation: currentDesignationLabel,
+          status: 'Active',
+        })
       }
     }
   }
@@ -1048,6 +1058,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       // Set panel width to match the select trigger width
       // Group field doesn't have a search, so we just set the width
       this.setPanelWidthDynamic('mat-select-panel.group', this.groupRef)
+    } else {
+      this.markMandatoryFieldTouched('group')
     }
   }
 
@@ -1085,10 +1097,14 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   onDesignationDropdownClosed(): void {
     const searchDesignationControl = this.transferRequestForm.get('searchDesignation')
     if (searchDesignationControl) {
-      searchDesignationControl.setValue('')
+      searchDesignationControl.setValue('', { emitEvent: false })
       this.designationSearchText = ''
     }
+    this.desigantionFilterEnable = false
+    this.designationsOffset = 0
+    this.getdesignationsMeta()
     this.checkCurrentDesignationPresent()
+    this.markMandatoryFieldTouched('designation')
     // Keep the designation value but clear the search input
     // const currentDesignation = this.transferRequestForm.get('designation')!.value;
     // setTimeout(() => {
@@ -1184,6 +1200,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyMinistrys = true
+          if (searchText?.length) {
+            this.markMandatoryFieldTouched('ministry')
+          }
         }
         if (this.defaultSearchMinistryCount && (this.masterData['ministryBackup'] || []).length >= this.defaultSearchMinistryCount) {
           this.noMoreLegacyMinistrys = true
@@ -1234,6 +1253,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     } else {
       scrollListenerAttached = false
+      this.onMinistryDropdownClosed()
     }
   }
 
@@ -1272,11 +1292,15 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       )
 
       if (!ministryExists) {
-        const newMinistry = { identifier: currentMinistry }
-        if (this.masterData?.ministry?.length >= this.ministryListLoadCount) {
-          this.masterData?.ministry.pop()
+        const existingMinistry = (this.masterData?.ministryBackup || []).find(
+          (ministry: any) => ministry?.identifier?.toLowerCase() === currentMinistry?.toLowerCase()
+        )
+        if (existingMinistry) {
+          if (this.masterData?.ministry?.length >= this.ministryListLoadCount) {
+            this.masterData?.ministry.pop()
+          }
+          this.masterData?.ministry?.unshift(existingMinistry)
         }
-        this.masterData?.ministry?.unshift(newMinistry)
         this.isLoadingMoreMinistrys = false
       }
     }
@@ -1300,11 +1324,32 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.masterData.ministry = this.masterData.ministryBackup.filter((item: any) =>
         (item?.orgName || item?.identifier || '')?.toLowerCase()?.includes(txt?.toLowerCase())
       )
+      this.checkCurrentMinistryPresent()
+      this.clearInvalidSelectedValue('ministry', this.masterData?.ministry, 'identifier')
+      if (!this.masterData?.ministry?.length) {
+        this.markMandatoryFieldTouched('ministry')
+      }
     } else if (this.masterData && this.masterData?.ministryBackup) {
       this.masterData.ministry = this.masterData?.ministryBackup.slice(0, this.ministryDefaultLoadCount)
       this.ministryFilterEnable = false
       this.checkCurrentMinistryPresent()
+      this.clearInvalidSelectedValue('ministry', this.masterData?.ministry, 'identifier')
+      this.markMandatoryFieldTouched('ministry')
     }
+  }
+
+  private onMinistryDropdownClosed(): void {
+    this.ministrySearchText = ''
+    this.ministryFilterEnable = false
+    this.transferRequestForm.get('searchMinistry')?.setValue('', { emitEvent: false })
+    if (this.masterData?.ministryBackup) {
+      this.masterData.ministry = this.masterData?.ministryBackup?.slice(0, this.ministryDefaultLoadCount)
+      this.checkCurrentMinistryPresent()
+      this.clearInvalidSelectedValue('ministry', this.masterData?.ministry, 'identifier')
+    } else {
+      this.getMinistryData(undefined, 0)
+    }
+    this.markMandatoryFieldTouched('ministry')
   }
 
   onMinistryChange(event: any) {
@@ -1382,6 +1427,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyStates = true
+          if (searchText?.length) {
+            this.markMandatoryFieldTouched('state')
+          }
         }
         if (this.defaultSearchStateCount && (this.masterData['stateBackup'] || [])?.length >= this.defaultSearchStateCount) {
           this.noMoreLegacyStates = true
@@ -1389,6 +1437,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         this.masterData['state'] = (this.masterData['stateBackup'] || [])?.slice(0, this.stateListLoadCount)
         this.checkCurrentStatePresent()
+        if (searchText?.length) {
+          this.clearInvalidSelectedValue('state', this.masterData?.state, 'identifier')
+        }
       },
       error: () => {
         this.noMoreLegacyStates = true
@@ -1432,6 +1483,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     } else {
       scrollListenerAttached = false
+      this.onStateDropdownClosed()
     }
   }
 
@@ -1470,11 +1522,15 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       )
 
       if (!stateExists) {
-        const newState = { identifier: currentState }
-        if (this.masterData?.state?.length >= this.stateListLoadCount) {
-          this.masterData?.state.pop()
+        const existingState = (this.masterData?.stateBackup || []).find(
+          (state: any) => state?.identifier?.toLowerCase() === currentState?.toLowerCase()
+        )
+        if (existingState) {
+          if (this.masterData?.state?.length >= this.stateListLoadCount) {
+            this.masterData?.state.pop()
+          }
+          this.masterData?.state?.unshift(existingState)
         }
-        this.masterData?.state?.unshift(newState)
         this.isLoadingMoreStates = false
       }
     }
@@ -1495,11 +1551,29 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.masterData.state = this.masterData?.stateBackup?.filter((item: any) =>
         (item?.orgName || item?.identifier || '')?.toLowerCase()?.includes(txt?.toLowerCase())
       )
+      this.checkCurrentStatePresent()
+      this.clearInvalidSelectedValue('state', this.masterData?.state, 'identifier')
+      if (!this.masterData?.state?.length) {
+        this.markMandatoryFieldTouched('state')
+      }
     } else if (this.masterData && this.masterData?.stateBackup) {
       this.masterData.state = this.masterData?.stateBackup?.slice(0, this.stateDefaultLoadCount)
       this.stateFilterEnable = false
       this.checkCurrentStatePresent()
     }
+  }
+
+  private onStateDropdownClosed(): void {
+    this.stateSearchText = ''
+    this.stateFilterEnable = false
+    this.transferRequestForm.get('searchState')?.setValue('', { emitEvent: false })
+    if (this.masterData?.stateBackup) {
+      this.masterData.state = this.masterData?.stateBackup?.slice(0, this.stateDefaultLoadCount)
+      this.checkCurrentStatePresent()
+    } else {
+      this.getStateData(undefined, 0)
+    }
+    this.markMandatoryFieldTouched('state')
   }
 
   onStateChanged(event: any) {
@@ -1574,7 +1648,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         const total = _.get(res, 'result.response.count', 0)
         this.defaultSearchDepartmentCount = total
 
-        if (!this.masterData['departmentBackup'] || reqOffset === 0) {
+        if (searchText?.length && reqOffset === 0) {
+          // For active search, show only current API-result set.
+          this.masterData['departmentBackup'] = mapped
+        } else if (!this.masterData['departmentBackup'] || reqOffset === 0) {
           const combined = (this.masterData['departmentBackup'] || [])?.concat(mapped)
           this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         } else {
@@ -1584,6 +1661,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyDepartments = true
+          if (searchText?.length) {
+            this.markMandatoryFieldTouched('department')
+          }
         }
         if (this.defaultSearchDepartmentCount && (this.masterData['departmentBackup'] || []).length >= this.defaultSearchDepartmentCount) {
           this.noMoreLegacyDepartments = true
@@ -1592,6 +1672,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.masterData['department'] = (this.masterData['departmentBackup'] || []).slice(0, this.departmentListLoadCount)
         this.isLoadingMoreDepartments = false
         this.checkCurrentDepartmentPresent()
+        if (searchText?.length) {
+          this.clearInvalidSelectedValue('department', this.masterData?.department, 'identifier')
+        }
       },
       error: () => {
         this.noMoreLegacyDepartments = true
@@ -1635,6 +1718,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     } else {
       scrollListenerAttached = false
+      this.onDepartmentDropdownClosed()
     }
   }
 
@@ -1673,11 +1757,15 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       )
 
       if (!departmentExists) {
-        const newDepartment = { identifier: currentDepartment }
-        if (this.masterData?.department?.length >= this.departmentListLoadCount) {
-          this.masterData?.department.pop()
+        const existingDepartment = (this.masterData?.departmentBackup || []).find(
+          (department: any) => department?.identifier?.toLowerCase() === currentDepartment?.toLowerCase()
+        )
+        if (existingDepartment) {
+          if (this.masterData?.department?.length >= this.departmentListLoadCount) {
+            this.masterData?.department.pop()
+          }
+          this.masterData?.department?.unshift(existingDepartment)
         }
-        this.masterData?.department?.unshift(newDepartment)
         this.isLoadingMoreDepartments = false
       }
     }
@@ -1705,11 +1793,29 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.masterData.department = this.masterData?.departmentBackup?.filter((item: any) =>
         (item?.orgName || item?.identifier || '').toLowerCase()?.includes(txt?.toLowerCase())
       )
+      this.checkCurrentDepartmentPresent()
+      this.clearInvalidSelectedValue('department', this.masterData?.department, 'identifier')
+      if (!this.masterData?.department?.length) {
+        this.markMandatoryFieldTouched('department')
+      }
     } else if (this.masterData && this.masterData?.departmentBackup) {
       this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentDefaultLoadCount)
       this.departmentFilterEnable = false
       this.checkCurrentDepartmentPresent()
     }
+  }
+
+  private onDepartmentDropdownClosed(): void {
+    this.departmentSearchText = ''
+    this.departmentFilterEnable = false
+    this.transferRequestForm.get('searchDepartment')?.setValue('', { emitEvent: false })
+    if (this.masterData?.departmentBackup) {
+      this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentDefaultLoadCount)
+      this.checkCurrentDepartmentPresent()
+    } else {
+      this.getDepartmentData(undefined, 0)
+    }
+    this.markMandatoryFieldTouched('department')
   }
 
   onDepartmentChange(event: any) {
@@ -1841,6 +1947,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyOrganisations = true
+          if (queryText?.length) {
+            this.markMandatoryFieldTouched('organisation')
+          }
         }
         if (this.defaultSearchOrganisationCount && (this.masterData['organisationBackup'] || [])?.length >= this.defaultSearchOrganisationCount) {
           this.noMoreLegacyOrganisations = true
@@ -1849,6 +1958,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.masterData['organisation'] = (this.masterData['organisationBackup'] || [])?.slice(0, this.organisationListLoadCount)
         this.isLoadingMoreOrganisations = false
         this.checkCurrentOrganisationPresent()
+        if (queryText?.length && this.transferRequestForm?.controls?.type?.value === 'state') {
+          this.clearInvalidSelectedValue('organisation', this.masterData?.organisation, 'identifier')
+        }
         this.isOrganisationConditionInitialized = true
         const hasOrganisationOptions = this.hasSelectableOrganisation()
         // Show/hide organisation only on base load (not active search) to avoid flicker while typing.
@@ -1914,6 +2026,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       }
     } else {
       scrollListenerAttached = false
+      this.onOrganisationDropdownClosed()
     }
   }
 
@@ -1950,11 +2063,15 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       )
 
       if (!organisationExists) {
-        const newOrganisation = { identifier: currentOrganisation }
-        if (this.masterData?.organisation?.length >= this.organisationListLoadCount) {
-          this.masterData?.organisation.pop()
+        const existingOrganisation = (this.masterData?.organisationBackup || []).find(
+          (organisation: any) => organisation?.identifier?.toLowerCase() === currentOrganisation?.toLowerCase()
+        )
+        if (existingOrganisation) {
+          if (this.masterData?.organisation?.length >= this.organisationListLoadCount) {
+            this.masterData?.organisation.pop()
+          }
+          this.masterData?.organisation?.unshift(existingOrganisation)
         }
-        this.masterData?.organisation?.unshift(newOrganisation)
         this.isLoadingMoreOrganisations = false
       }
     }
@@ -1978,11 +2095,34 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.masterData.organisation = this.masterData.organisationBackup.filter((item: any) =>
         (item?.orgName || item?.identifier || '')?.toLowerCase()?.includes(txt?.toLowerCase())
       )
+      this.checkCurrentOrganisationPresent()
+      this.clearInvalidSelectedValue('organisation',
+        (this.masterData?.organisation || [])?.filter((item: any) => this.isSelectableOrganisation(item)), 'identifier')
+      if (!this.hasSelectableOrganisation()) {
+        this.markMandatoryFieldTouched('organisation')
+      }
     } else if (this.masterData && this.masterData?.organisationBackup) {
-      this.masterData.organisation = this.masterData?.organisationBackup.slice(0, this.organisationDefaultLoadCount)
+      this.masterData.organisation = this.masterData?.organisationBackup?.slice(0, this.organisationDefaultLoadCount)
       this.organisationFilterEnable = false
       this.checkCurrentOrganisationPresent()
+      this.clearInvalidSelectedValue('organisation',
+        (this.masterData?.organisation || [])?.filter((item: any) => this.isSelectableOrganisation(item)), 'identifier')
     }
+  }
+
+  private onOrganisationDropdownClosed(): void {
+    this.organisationSearchText = ''
+    this.organisationFilterEnable = false
+    this.transferRequestForm.get('searchOrganisation')?.setValue('', { emitEvent: false })
+    if (this.masterData?.organisationBackup) {
+      this.masterData.organisation = this.masterData?.organisationBackup?.slice(0, this.organisationDefaultLoadCount)
+      this.checkCurrentOrganisationPresent()
+      this.clearInvalidSelectedValue('organisation',
+        (this.masterData?.organisation || [])?.filter((item: any) => this.isSelectableOrganisation(item)), 'identifier')
+    } else {
+      this.getOrganisationData(undefined, 0)
+    }
+    this.markMandatoryFieldTouched('organisation')
   }
 
   onOrganisationChanged(event: any) {
@@ -2121,6 +2261,10 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.designationData = this.designationData.filter((item: any) =>
         (item?.designation || item?.name || '')?.toLowerCase()?.includes(txt?.toLowerCase())
       )
+      this.checkCurrentDesignationPresent()
+      if (!this.designationData?.length) {
+        this.markMandatoryFieldTouched('designation')
+      }
     } else {
       this.desigantionFilterEnable = false
       this.designationsOffset = 0
@@ -2128,10 +2272,43 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       this.checkCurrentDesignationPresent()
     }
   }
+
+  private markMandatoryFieldTouched(controlName: string): void {
+    const control = this.transferRequestForm.get(controlName)
+    if (!control || control.disabled) {
+      return
+    }
+
+    if (!control?.value) {
+      control?.markAsTouched()
+      control?.updateValueAndValidity({ emitEvent: false })
+    }
+  }
+
+  private clearInvalidSelectedValue(controlName: string, options: any[], valueKey: string): void {
+    const control = this.transferRequestForm.get(controlName)
+    if (!control) {
+      return
+    }
+
+    const selectedValue = (control?.value || '')?.toString()?.trim()?.toLowerCase()
+    if (!selectedValue) {
+      return
+    }
+
+    const exists = (options || [])?.some((item: any) =>
+      (item?.[valueKey] || '')?.toString()?.trim()?.toLowerCase() === selectedValue
+    )
+
+    if (!exists) {
+      control?.setValue('', { emitEvent: false })
+      this.markMandatoryFieldTouched(controlName)
+    }
+  }
   setupOrgScrollListener(opened: boolean): void {
     if (opened) {
       if (this.transferRequestForm.get('searchOrganization')?.value) {
-        this.transferRequestForm.get('searchOrganization')!.setValue('')
+        this.transferRequestForm.get('searchOrganization')?.setValue('')
       } else {
         this.getAllDeptData(true, 0, '')
       }
