@@ -228,7 +228,8 @@
                             <div class="search-input-wrapper">
                                 <input type="text" placeholder="Search designation"
                                     formControlName="searchDesignation" class="search-input"
-                                    (keydown)="$event.stopPropagation()" autocomplete="off"
+                                    (keydown)="$event.stopPropagation()"
+                                    (keydown.enter)="$event.preventDefault(); $event.stopPropagation()" autocomplete="off"
                                     (keyup)="designationSearch($event)">
                                 <button *ngIf="searchDesignation?.value" type="button" class="clear-button"
                                     (click)="searchDesignation?.setValue('')">
@@ -248,12 +249,12 @@
                         <mat-option *ngIf="designationData?.length === 0" disabled>
                             No matches found
                         </mat-option>
-                        <mat-error
-                            *ngIf="transferRequestForm.controls['designation'].invalid && transferRequestForm.controls['designation'].touched"
-                            class="mat-error">
-                            Please enter a valid designation.
-                        </mat-error>
                     </mat-select>
+                    <mat-error
+                        *ngIf="transferRequestForm.controls['designation'].invalid && transferRequestForm.controls['designation'].touched"
+                        class="mat-error">
+                        Please enter a valid designation.
+                    </mat-error>
                 </mat-form-field>
             </div>
         </div>
