@@ -469,14 +469,14 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         nextMaxHeight = rect?.bottom - viewportPadding
       }
 
-      panel.style.maxHeight = `${Math.max(96, Math.floor(nextMaxHeight))}px`
+      panel.style.maxHeight = `${Math?.max(96, Math.floor(nextMaxHeight))}px`
       panel.style.overflowY = 'auto'
 
       const pane = panel?.closest('.cdk-overlay-pane') as HTMLElement | null
       if (pane) {
         const paneRect = pane.getBoundingClientRect()
-        if (paneRect.bottom > window.innerHeight - viewportPadding) {
-          const overflowBottom = paneRect.bottom - (window?.innerHeight - viewportPadding)
+        if (paneRect?.bottom > window?.innerHeight - viewportPadding) {
+          const overflowBottom = paneRect?.bottom - (window?.innerHeight - viewportPadding)
           pane.style.top = `${Math.max(viewportPadding, paneRect?.top - overflowBottom)}px`
         }
       }
