@@ -5,7 +5,7 @@
         <div class="flex flex-col">
             <div class="text-sm font-bold required">Current organization</div>
             <div class="current-org-field margin-top-s">
-                <input type="text" [value]="currentOrg" class="current-org-input" disabled>
+                <input type="text" [value]="currentOrg" [title]="currentOrg" class="current-org-input" disabled>
             </div>
         </div>
     <div class="flex flex-col margin-top-s">
@@ -222,7 +222,7 @@
                 <mat-form-field appearance="outline" class="w-full">
                     <mat-select #designation placeholder="Select Designation" formControlName="designation"
                         (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
-                        (openedChange)="setupScrollListener($event)" (blur)="onDesignationDropdownClosed()">
+                        (openedChange)="setupScrollListener($event)" (blur)="onDesignationDropdownClosed()" disableOptionCentering="true" yPosition="above">
                         <!-- Sticky search input container -->
                         <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper">
