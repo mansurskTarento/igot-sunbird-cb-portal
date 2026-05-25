@@ -441,9 +441,49 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     this.designationsTotalCount = totalCount
     this.isLoadingMoreDesignations = false
     this.checkCurrentDesignationPresent()
+    this.adjustDesignationPanelViewport()
     if (!this.designationData?.length && this.designationSearchText?.length) {
       this.markMandatoryFieldTouched('designation')
     }
+  }
+
+  private adjustDesignationPanelViewport(): void {
+    if (!isPlatformBrowser(this._platformId)) {
+      return
+    }
+
+    // Recalculate and nudge the pane inside viewport after async option rendering.
+    const applyViewportBounds = () => {
+      const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
+      if (!panel) {
+        return
+      }
+
+      const viewportPadding = 12
+      const rect = panel?.getBoundingClientRect()
+      let nextMaxHeight = rect?.height || 0
+
+      if (rect?.bottom > window.innerHeight - viewportPadding) {
+        nextMaxHeight = window.innerHeight - rect?.top - viewportPadding
+      } else if (rect?.top < viewportPadding) {
+        nextMaxHeight = rect?.bottom - viewportPadding
+      }
+
+      panel.style.maxHeight = `${Math?.max(96, Math.floor(nextMaxHeight))}px`
+      panel.style.overflowY = 'auto'
+
+      const pane = panel?.closest('.cdk-overlay-pane') as HTMLElement | null
+      if (pane) {
+        const paneRect = pane.getBoundingClientRect()
+        if (paneRect?.bottom > window?.innerHeight - viewportPadding) {
+          const overflowBottom = paneRect?.bottom - (window?.innerHeight - viewportPadding)
+          pane.style.top = `${Math.max(viewportPadding, paneRect?.top - overflowBottom)}px`
+        }
+      }
+    }
+
+    setTimeout(() => applyViewportBounds(), 0)
+    setTimeout(() => applyViewportBounds(), 120)
   }
 
   ngOnInit() {
@@ -1033,6 +1073,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       // this.designationData = this.data.designationsMeta.slice(0, this.designationDefaultLoadCount);
 
       this.checkCurrentDesignationPresent()
+      this.adjustDesignationPanelViewport()
       setTimeout(() => {
         const searchInput = document.querySelector('.search-input') as HTMLInputElement
         if (searchInput) {
