@@ -2128,3 +2128,18 @@ ngx-guided-tour {
 .text-active {
   color: #1a4ca1 !important;
 }
+
+.mat-mdc-tooltip {
+  --mdc-plain-tooltip-container-color: rgba(97, 97, 97, .9) !important;
+  --mdc-plain-tooltip-supporting-text-color: #ffffff !important;
+}
+
+.mat-mdc-tooltip .mdc-tooltip__surface {
+  background-color: rgba(97, 97, 97, .9) !important;
+  color: #fff !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  max-width: 220px !important;
+}
