@@ -1,6 +1,7 @@
 @use '@sunbird-cb/design-system/src/styles/ws-common';
 @use '@sunbird-cb/design-system/src/styles/ws-vars';
 @use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
+
 .user-image {
     $icon-size: 36px;
     font-size: $icon-size;
@@ -59,6 +60,7 @@ mat-expansion-panel-header {
 .divider {
     margin-bottom: 1.5rem !important;
     padding-right: 24px !important;
+
     @include breakpoint-lt-m {
         margin-top: 0.5rem !important;
         margin-bottom: 1.5rem !important;
@@ -81,6 +83,7 @@ mat-expansion-panel-body {
 
 .btn-display-top {
     margin-top: 0.25rem !important;
+
     @include breakpoint-lt-m {
         display: none;
     }
@@ -88,9 +91,11 @@ mat-expansion-panel-body {
 
 .btn-display-bottom {
     margin-top: 0.25rem !important;
+
     @include breakpoint-gt-m {
         display: none
     }
+
     @include breakpoint-m {
         display: none;
     }
@@ -106,7 +111,7 @@ mat-expansion-panel-body {
 }
 
 .explore_btn {
-    background-color: #fff!important;
+    background-color: #fff !important;
 
     @media (max-width:768px) {
         margin-bottom: 8px;
@@ -116,4 +121,5 @@ mat-expansion-panel-body {
 .channle-icon {
     height: 28px;
     padding-bottom: 2px;
+    vertical-align: middle;
 }
