@@ -848,7 +848,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         this.handleCloseModal()
       }, (error: HttpErrorResponse) => {
         if (!error.ok) {
-          this.matSnackBar.open(this.handleTranslateTo('transferRequestFailed'))
+          this.matSnackBar.open(this.handleTranslateTo('transferRequestFailedNew'))
         }
       })
   }
@@ -875,13 +875,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   getAllDeptData(onLoad: boolean, offsetValue: number, searchText: string): void {
-    let loginUserRootOrgId = ''
-    if (this.configService.unMappedUser &&
-      this.configService.unMappedUser.rootOrg &&
-      this.configService.unMappedUser.rootOrg.id) {
-      loginUserRootOrgId = this.configService.unMappedUser.rootOrg.id
-    }
-
     // let user_org = this.data.portalProfile?.professionalDetails[0]['osid']
 
     this.userProfileService.getOrganizationData(this.getOrgRequest(onLoad, offsetValue, searchText))
@@ -899,9 +892,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           }
 
           // Update the filtered data for display
-          this.deptFilterData = this.organizationData = this.organizationData.filter((item) => {
-            return item?.rootOrgId !== loginUserRootOrgId
-          })
+          this.deptFilterData = this.organizationData
         } else {
           if (onLoad) {
             this.organizationData = []
@@ -1248,11 +1239,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           this.masterData['ministryBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
 
-        // Exclude current login user's organization from the ministry list
-        this.masterData['ministryBackup'] = (this.masterData['ministryBackup'] || []).filter(
-          (item: any) => item?.identifier !== this.loginUserRootOrgId
-        )
-
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyMinistrys = true
           if (searchText?.length) {
@@ -1479,11 +1465,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           const combined = (this.masterData['stateBackup'] || [])?.concat(mapped)
           this.masterData['stateBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
-
-        // Exclude current login user's organization from the state list
-        this.masterData['stateBackup'] = (this.masterData['stateBackup'] || []).filter(
-          (item: any) => item?.identifier !== this.loginUserRootOrgId
-        )
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyStates = true
@@ -1719,9 +1700,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
 
-        // Exclude current login user's organization from the department list
+        // Exclude N/A from the department list
         this.masterData['departmentBackup'] = (this.masterData['departmentBackup'] || []).filter(
-          (item: any) => item?.identifier !== this.loginUserRootOrgId && item?.orgName !== 'N/A'
+          (item: any) => item?.orgName !== 'N/A'
         )
 
         if (!mapped || mapped?.length === 0) {
@@ -2010,11 +1991,6 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
 
-        // Exclude current login user's organization from the list
-        this.masterData['organisationBackup'] = (this.masterData['organisationBackup'] || []).filter(
-          (item: any) => item?.identifier !== this.loginUserRootOrgId
-        )
-
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyOrganisations = true
           if (queryText?.length) {
@@ -2214,7 +2190,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   isSelectableOrganisation(org: any): boolean {
-    return !!org && org?.identifier !== '-1' && org?.orgName !== 'N/A' && org?.identifier !== this.loginUserRootOrgId
+    return !!org && org?.identifier !== '-1' && org?.orgName !== 'N/A'
   }
 
   hasSelectableOrganisation(): boolean {
@@ -2363,6 +2339,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
     const selectedValue = (control?.value || '')?.toString()?.trim()?.toLowerCase()
     if (!selectedValue) {
+      return
+    }
+
+    // Allow explicit N/A selection for organisation.
+    if (controlName === 'organisation' && selectedValue === '-1') {
       return
     }
 
