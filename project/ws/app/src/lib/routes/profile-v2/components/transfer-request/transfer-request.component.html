@@ -183,6 +183,7 @@
                             </div>
                         </div>
                         <!-- Options list -->
+                        <mat-option value="-1">N/A</mat-option>
                         <ng-container *ngFor="let organisation of masterData.organisation">
                             <mat-option *ngIf="isSelectableOrganisation(organisation)" [value]="organisation.identifier">
                                 {{organisation?.orgName}}
@@ -260,7 +261,7 @@
         </div>
         <div class="flex flex-row gap-1 info-div">
             <mat-icon>info</mat-icon>
-            <div>{{ 'profileInfo?.transferWarnMsgNew' | translate }}</div>
+            <div>{{ 'profileInfo.transferWarnMsgNew' | translate }}</div>
         </div>
 
         <!-- Submit Button -->
