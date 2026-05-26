@@ -131,6 +131,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   private isOrganisationConditionInitialized = false
   isOrganisationMandatory = true
 
+  // Store current login user's org ID to exclude from organisation dropdown
+  loginUserRootOrgId: string = ''
+
   // Progressive disclosure visibility flags
   showTypeSpecificField = true    // ministry (center) or state field
   showDepartmentField = false     // only for state flow, after state is selected
@@ -154,6 +157,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
     if (this.data.portalProfile.employmentDetails) {
       this.currentOrg = this.data.portalProfile.employmentDetails?.departmentName || ''
+    }
+    // Get the login user's root org ID for filtering
+    if (this.configService?.unMappedUser &&
+      this.configService?.unMappedUser?.rootOrg &&
+      this.configService?.unMappedUser?.rootOrg?.id) {
+      this.loginUserRootOrgId = this.configService?.unMappedUser?.rootOrg?.id
     }
 
     // Setup search subject subscriptions for debouncing
@@ -1239,6 +1248,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           this.masterData['ministryBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
 
+        // Exclude current login user's organization from the ministry list
+        this.masterData['ministryBackup'] = (this.masterData['ministryBackup'] || []).filter(
+          (item: any) => item?.identifier !== this.loginUserRootOrgId
+        )
+
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyMinistrys = true
           if (searchText?.length) {
@@ -1465,6 +1479,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           const combined = (this.masterData['stateBackup'] || [])?.concat(mapped)
           this.masterData['stateBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
+
+        // Exclude current login user's organization from the state list
+        this.masterData['stateBackup'] = (this.masterData['stateBackup'] || []).filter(
+          (item: any) => item?.identifier !== this.loginUserRootOrgId
+        )
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyStates = true
@@ -1699,6 +1718,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           const combined = (this.masterData['departmentBackup'] || [])?.concat(mapped)
           this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
+
+        // Exclude current login user's organization from the department list
+        this.masterData['departmentBackup'] = (this.masterData['departmentBackup'] || []).filter(
+          (item: any) => item?.identifier !== this.loginUserRootOrgId && item?.orgName !== 'N/A'
+        )
 
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyDepartments = true
@@ -1986,6 +2010,11 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           this.masterData['organisationBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '')?.toLowerCase())
         }
 
+        // Exclude current login user's organization from the list
+        this.masterData['organisationBackup'] = (this.masterData['organisationBackup'] || []).filter(
+          (item: any) => item?.identifier !== this.loginUserRootOrgId
+        )
+
         if (!mapped || mapped?.length === 0) {
           this.noMoreLegacyOrganisations = true
           if (queryText?.length) {
@@ -2185,7 +2214,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
 
   isSelectableOrganisation(org: any): boolean {
-    return !!org && org?.identifier !== '-1' && org?.orgName !== 'N/A'
+    return !!org && org?.identifier !== '-1' && org?.orgName !== 'N/A' && org?.identifier !== this.loginUserRootOrgId
   }
 
   hasSelectableOrganisation(): boolean {
