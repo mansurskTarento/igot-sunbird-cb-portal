@@ -7,6 +7,7 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  signal,
   // TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -61,6 +62,169 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   isHomePage = false
+  menuBarDetails = {
+    "logoUrl": "/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg",
+    "headerText": "",
+    "defaultOpen": true,
+    "navSections": [
+      {
+        "cardType": "nav_list",
+        "sectionTitle": "",
+        "disableTranslate": true,
+        "collapsible": false,
+        "showViewAll": false,
+        "viewAllLabel": "",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": null,
+        "items": [
+          {
+            "iconName": "home",
+            "iconUrl": "",
+            "label": "Home",
+            "navUrl": "/home",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "book-open",
+            "iconUrl": "",
+            "label": "Explore Content",
+            "navUrl": "/content",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "device-desktop",
+            "iconUrl": "",
+            "label": "My Learning",
+            "navUrl": "/my-learning",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "notebook",
+            "iconUrl": "",
+            "label": "Learner Passbook",
+            "navUrl": "/passbook",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "users",
+            "iconUrl": "",
+            "label": "iGOT Community",
+            "navUrl": "/community",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "calendar",
+            "iconUrl": "",
+            "label": "Events",
+            "navUrl": "/events",
+            "disableTranslate": true
+          }
+        ]
+      },
+      {
+        "cardType": "stat_cards",
+        "sectionTitle": "My Achievements",
+        "disableTranslate": true,
+        "collapsible": true,
+        "showViewAll": true,
+        "viewAllLabel": "View all achievements",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": 3,
+        "items": [
+          {
+            "iconName": "",
+            "iconUrl": "",
+            "headerLabel": "You're now standing at",
+            "value": "7th Rank",
+            "navUrl": "/rank",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "",
+            "iconUrl": "",
+            "headerLabel": "You Earned",
+            "value": "403 Karma Points",
+            "navUrl": "/karma",
+            "disableTranslate": true
+          },
+          {
+            "iconName": "",
+            "iconUrl": "url",
+            "headerLabel": "Your Earned",
+            "value": "3 Badges",
+            "navUrl": "/badges",
+            "disableTranslate": true
+          }
+        ]
+      },
+      {
+        "cardType": "info_cards",
+        "sectionTitle": "Quick Actions",
+        "disableTranslate": true,
+        "collapsible": true,
+        "showViewAll": false,
+        "viewAllLabel": "",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": null,
+        "items": [
+          {
+            "hasChildren": false,
+            "iconName": "",
+            "iconUrl": "url",
+            "title": "Help Centre",
+            "description": "Need help? You're in the right place.",
+            "navUrl": "/help",
+            "disableTranslate": true
+          },
+          {
+            "hasChildren": false,
+            "iconName": "",
+            "iconUrl": "url",
+            "title": "Help Centre",
+            "description": "Need help? You're in the right place.",
+            "navUrl": "/help",
+            "disableTranslate": true
+          },
+          {
+            "hasChildren": true,
+            "iconName": "",
+            "iconUrl": "",
+            "title": "Other Portals",
+            "description": "",
+            "navUrl": "",
+            "disableTranslate": true,
+            "children": [
+              {
+                "iconName": "",
+                "iconUrl": "url",
+                "title": "MDO Portal",
+                "description": "Manage users, training and approvals.",
+                "navUrl": "/mdo",
+                "disableTranslate": true
+              },
+              {
+                "iconName": "",
+                "iconUrl": "url",
+                "title": "Content Portal",
+                "description": "Create, publish and manage content",
+                "navUrl": "/content-portal",
+                "disableTranslate": true
+              },
+              {
+                "iconName": "",
+                "iconUrl": "url",
+                "title": "SPV Portal",
+                "description": "Manage MDOs, users and competency",
+                "navUrl": "/spv",
+                "disableTranslate": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  leftNavBarIsOpen = signal(true)
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -614,5 +778,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       // this.showTour = this.showTour
     }
     this.changeDetector.detectChanges()
+  }
+
+  sidebarStateChanged(event: any) {
+    if (event) {
+      this.leftNavBarIsOpen.set(event.isOpen)
+    }
   }
 }
