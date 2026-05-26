@@ -202,13 +202,40 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     padding: 4px;
     font-size: 12px;
     line-height: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
 
     .mat-icon {
         width: 14px;
         height: 14px;
         font-size: 14px;
         color: #212121;
+        flex-shrink: 0;
+        margin-top: 2px;
     }
+
+    div {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
+    }
+}
+
+@media (max-width: 480px) {
+  .info-div {
+    padding: 6px 8px;
+    font-size: 11px;
+    line-height: 13px;
+    gap: 6px;
+
+    .mat-icon {
+      width: 13px;
+      height: 13px;
+      font-size: 13px;
+      margin-top: 1px;
+    }
+  }
 }
 .mat-select-panel-wrap {
     // margin-top removed to allow proper dropdown positioning
