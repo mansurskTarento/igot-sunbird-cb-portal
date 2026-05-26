@@ -156,10 +156,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     if (this.data.portalProfile.employmentDetails) {
-      debugger
       this.currentOrg = this.data.portalProfile.employmentDetails?.departmentName || ''
     }
-    debugger
     // Get the login user's root org ID for filtering
     if (this.configService?.unMappedUser &&
       this.configService?.unMappedUser?.rootOrg &&
