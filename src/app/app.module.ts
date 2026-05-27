@@ -70,6 +70,9 @@ import { CommonDataService } from './services/common-data.service'
 import { WIDGET_REGISTRATION_CONFIG } from '@sunbird-cb/collection'
 import { MandatoryNotificationModalComponent } from './component/mandatory-notification-modal/mandatory-notification-modal.component'
 import { HeaderV2Component } from './header/header-v2/header-v2.component'
+import { AppTourComponent } from './component/app-tour/app-tour.component'
+import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
+import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -110,6 +113,8 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppLogoComponent,
     ProfileVerificationDialogComponent,
     MandatoryNotificationModalComponent,
+    AppTourVideoComponent,
+    AppTourComponent,
   ],
   imports: [
     FormsModule,
@@ -149,6 +154,7 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
+    GuidedTourModule
 
   ],
   exports: [
@@ -206,6 +212,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     // { provide: HAMMER_GESTURE_CONFIG, useClass: HammerConfig },
     { provide: ErrorHandler, useClass: GlobalErrorHandlingService },
     { provide: 'environment', useValue: environment },
+    GuidedTourService,
     ResourceDownloadHelperService,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
