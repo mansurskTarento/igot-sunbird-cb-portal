@@ -1,6 +1,14 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-vars';
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
+.top-nav-bar-on-menubar-open {
+  width: calc(100% - 328px);
+}
+
+.top-nav-bar-on-menubar-close {
+  width: calc(100% - 73px);
+}
+
 .hideForNav {
   display: none !important;
 }
@@ -30,7 +38,7 @@
 }
 
 .mobile-height {
-  height: 56px !important;
+  height: 64px !important;
 }
 
 .mobile {
@@ -163,6 +171,7 @@
   text-align: center;
   flex: 4;
   max-width: 650px;
+  width: 650px;
 }
 
 .mobile-download-app-desc {

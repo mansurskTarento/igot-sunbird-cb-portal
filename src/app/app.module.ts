@@ -73,6 +73,7 @@ import { HeaderV2Component } from './header/header-v2/header-v2.component'
 import { AppTourComponent } from './component/app-tour/app-tour.component'
 import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
+import { NoConnectionV2Component } from './component/no-connection-v2/no-connection-v2.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -145,6 +146,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppChatbotModule,
     DynamicSidebarComponent,
     HeaderV2Component,
+    NoConnectionV2Component,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     // HeaderModule,
     TranslateModule.forRoot({

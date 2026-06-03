@@ -22,6 +22,7 @@ import { SharedModule } from '../shared/shared.module'
 import { FeedListModule } from './home/feed-list/feed-list.module'
 
 import { HomeComponent } from './home/home.component'
+import { HomeV2Component } from './home-v2/home-v2.component'
 import { DiscussionInfoComponent } from '../component/discussion-info/discussion-info.component'
 import { PageContainerComponent } from '../component/page-container/page-container.component'
 import { ClientSliderComponent } from '../component/client-slider/client-slider.component'
@@ -36,7 +37,7 @@ import { PendingRequestModule } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
 import { HttpClient } from '@angular/common/http'
-import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
+import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, ContetnSectionsComponent } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
@@ -46,6 +47,7 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
 @NgModule({
     declarations: [
         HomeComponent,
+        HomeV2Component,
         PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
         HomeContainerComponent,
         NetworkHubComponent, NotificationComponent, SurveyFormComponent,
@@ -86,6 +88,7 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         FeedListModule,
         InSightSideBarModule,
         HomeOtherPortalModule,
+        ContetnSectionsComponent,
     ],
     exports: [
         HeaderModule,

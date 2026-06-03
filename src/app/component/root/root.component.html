@@ -1,14 +1,14 @@
-<div class="flex gap-0">
+<div class="flex gap-0 root-container">
   @if ((isXSmall$ | async) === false) {
   <div class="w-fit">
-    <app-dynamic-sidebar [menuBarDetails]="menuBarDetails"
-      (sidebarStateChange)="sidebarStateChanged($event)"></app-dynamic-sidebar>
+    <app-dynamic-sidebar [menuBarDetails]="menuBarDetails" (sidebarStateChange)="sidebarStateChanged($event)"
+      (navItemClicked)="onNavItemClicked($event)"></app-dynamic-sidebar>
   </div>
   }
   <div
     [ngClass]="(isXSmall$ | async) === true ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
     <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop"></app-tour>
-    <app-no-connection></app-no-connection>
+    <app-no-connection-v2></app-no-connection-v2>
     <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
     </mat-progress-bar>
     <!-- <p class="skipnav">
