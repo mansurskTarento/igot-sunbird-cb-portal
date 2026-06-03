@@ -42,8 +42,11 @@ import { SurveyFormModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
-
-
+import { CarouselBannerModule, CardsModule } from '@sunbird-cb/consumption'
+import { ContinueLearningModule } from './home/continue-learning/continue-learning.module'
+import { WelcomeGreetingModule } from './home/welcome-greeting/welcome-greeting.module'
+import { KarmaLeaderboardModule } from './home/karma-leaderboard/karma-leaderboard.module'
+import { InSpotlightModule } from './home/in-spotlight/in-spotlight.module'
 @NgModule({
     declarations: [
         HomeComponent,
@@ -89,6 +92,12 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         InSightSideBarModule,
         HomeOtherPortalModule,
         ContetnSectionsComponent,
+        CarouselBannerModule,
+        ContinueLearningModule,
+        WelcomeGreetingModule,
+        CardsModule,
+        KarmaLeaderboardModule,
+        InSpotlightModule,
     ],
     exports: [
         HeaderModule,
