@@ -1,0 +1,206 @@
+@if (widgetData()?.actionBtn && widgetData()?.config?.type) {
+@switch (widgetData().config!.type) {
+@case (displayType.cardFull) {
+<ng-container *ngTemplateOutlet="cardFull" [ngTemplateOutletContext]="widgetData()"></ng-container>
+}
+@case (displayType.cardMini) {
+<ng-container *ngTemplateOutlet="cardMini" [ngTemplateOutletContext]="widgetData()"></ng-container>
+}
+@case (displayType.cardSmall) {
+<ng-container *ngTemplateOutlet="cardSmall" [ngTemplateOutletContext]="widgetData()"></ng-container>
+}
+@case (displayType.externalLinkButton) {
+<ng-container *ngTemplateOutlet="externalLinkButton" [ngTemplateOutletContext]="widgetData()"></ng-container>
+}
+@case (displayType.menuItem) {
+<a [routerLink]="widgetData().actionBtn?.url" mat-menu-item>
+  <ng-container *ngTemplateOutlet="buttonContent" [ngTemplateOutletContext]="widgetData()"></ng-container>
+</a>
+}
+@case (displayType.featureItem) {
+<ng-container *ngTemplateOutlet="featureItem" [ngTemplateOutletContext]="widgetData()"></ng-container>
+}
+@case (displayType.matButton) {
+<a [name]="widgetData().actionBtnName" [routerLink]="widgetData().actionBtn?.url" mat-button>
+  <ng-container *ngTemplateOutlet="buttonContent" [ngTemplateOutletContext]="widgetData()"></ng-container>
+</a>
+}
+@case (displayType.matFabButton) {
+<a mat-fab>
+  <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="widgetData().actionBtn"></ng-container>
+</a>
+}
+@case (displayType.matFlatButton) {
+<a [routerLink]="widgetData().actionBtn?.url" mat-flat-button>
+  <ng-container *ngTemplateOutlet="buttonContent" [ngTemplateOutletContext]="widgetData()"></ng-container>
+</a>
+}
+@case (displayType.matIconButton) {
+<a [name]="widgetData().actionBtnName" [routerLink]="widgetData().actionBtn?.url" mat-icon-button>
+  <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="widgetData().actionBtn"></ng-container>
+</a>
+}
+@case (displayType.matMiniFabButton) {
+<a [routerLink]="widgetData().actionBtn?.url" mat-mini-fab>
+  <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="widgetData().actionBtn"></ng-container>
+</a>
+}
+@case (displayType.matRaisedButton) {
+<a [routerLink]="widgetData().actionBtn?.url" mat-raised-button>
+  <ng-container *ngTemplateOutlet="buttonContent" [ngTemplateOutletContext]="widgetData()"></ng-container>
+</a>
+}
+@case (displayType.matStrokedButton) {
+<a [routerLink]="widgetData().actionBtn?.url" mat-stroked-button>
+  <ng-container *ngTemplateOutlet="buttonContent" [ngTemplateOutletContext]="widgetData()"></ng-container>
+</a>
+}
+}
+}
+
+<!-- TEMPLATES -->
+<ng-template #buttonContent let-actionBtn="actionBtn" let-config="config">
+  <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="actionBtn"></ng-container>
+  @if (!config?.hideTitle) {
+  <span id="widgetInstanceId" [ngClass]="{ 'ml-2': actionBtn?.icon }">{{ actionBtn?.name }}</span>
+  }
+</ng-template>
+
+<ng-template #buttonExternalLinkTextContent let-actionBtn="actionBtn">
+  <span>{{ actionBtn?.name }}</span>
+</ng-template>
+
+<ng-template #cardFull let-actionBtn="actionBtn" let-config="config">
+  <mat-card class="card-full mr-4" [id]="actionBtn?.id">
+    <a [href]="actionBtn?.url" [url]="actionBtn?.url" [wsWidgetUrlResolverV2]="actionBtn?.isExternal" matRipple
+      class="feature mbord-allign">
+      <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="{
+          iconType: actionBtn?.iconType,
+          icon: actionBtn?.icon,
+          scale: 2
+        }"></ng-container>
+      <h2 class="mat-subheading-2 mt-3">{{ actionBtn?.name }}</h2>
+      <div class="mat-subheading-1 margin-remove-bottom">{{ actionBtn?.description }}</div>
+    </a>
+    @if (isPinFeatureAvailable()) {
+    <button class="pin" mat-icon-button (click)="togglePin(actionBtn?.id, $event)">
+      @if (!isPinned()) {
+      <mat-icon color="accent">bookmark_border</mat-icon>
+      }
+      @if (isPinned()) {
+      <mat-icon color="accent">bookmark</mat-icon>
+      }
+    </button>
+    }
+  </mat-card>
+</ng-template>
+
+<ng-template #externalLinkButton let-actionBtn="actionBtn" let-config="config">
+  <a [href]="actionBtn?.url" [target]="actionBtn?.target ? actionBtn?.target : '_self'"
+    class="external-link-button flex items-center justify-center mbord-allign"
+    [ngClass]="{'mat-button' : !config?.hideTitle, 'mat-icon-button': config?.hideTitle}">
+    <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="{
+            iconType: actionBtn?.iconType,
+            icon: actionBtn?.icon
+          }"></ng-container>
+    @if (!config?.hideTitle) {
+    <span>{{ actionBtn?.name }}</span>
+    }
+  </a>
+</ng-template>
+
+<ng-template #cardSmall let-actionBtn="actionBtn" let-config="config">
+  <a [href]="actionBtn?.url" [url]="actionBtn?.url" [wsWidgetUrlResolverV2]="actionBtn?.isExternal" matRipple
+    class="feature card-small mat-card mbord-allign">
+    <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="{
+        iconType: actionBtn?.iconType,
+        icon: actionBtn?.icon,
+        scale: 1.5
+      }"></ng-container>
+    <div class="mt-2">{{ actionBtn?.name }}</div>
+  </a>
+</ng-template>
+
+<ng-template #cardMini let-actionBtn="actionBtn" let-config="config">
+  <a role="link" matRipple [routerLink]="actionBtn?.url" active [wsWidgetUrlResolverV2]="actionBtn?.isExternal"
+    [attr.aria-label]="actionBtn?.name" routerLinkActive="ws-mat-selected-home-menu"
+    class="flex items-center flex-col px-4 box-sizing-box rem mbord-allign">
+    <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="widgetData().actionBtn"></ng-container>
+  </a>
+</ng-template>
+
+<ng-template #featureItem let-actionBtn="actionBtn" let-config="config">
+  @if (desktopVisible()) {
+  <div class="relative py-2" [id]="actionBtn?.id" [ngClass]="{
+      'mat-card rounded py-6 h-full box-sizing-box': config?.treatAsCard,
+      greyOut: actionBtn?.greyOut
+    }">
+    <a class="text-center block mbord-allign" [href]="actionBtn?.url" [url]="actionBtn?.url"
+      [wsWidgetUrlResolverV2]="actionBtn?.isExternal" [mobileAppFunction]="actionBtn?.mobileAppFunction">
+      <ng-container *ngTemplateOutlet="icon" [ngTemplateOutletContext]="{
+            iconType: actionBtn?.iconType,
+            icon: actionBtn?.icon,
+            scale: 1.7,
+            color: actionBtn?.color
+          }"></ng-container>
+      @if (!config?.useShortName) {
+      <div class="mt-2 text-center" [attr.id]="actionBtn?.icon">{{ actionBtn?.name }}</div>
+      }
+      @if (config?.useShortName) {
+      <div class="mt-2 text-center">{{ actionBtn?.shortName }}</div>
+      }
+    </a>
+    @if (!config?.hidePin && isPinFeatureAvailable()) {
+    <mat-icon role="button" class="feature-pin" color="accent" (click)="togglePin(actionBtn?.id, $event)">
+      {{ isPinned() ? 'bookmark' : 'bookmark_border' }}
+    </mat-icon>
+    }
+  </div>
+  }
+</ng-template>
+
+<ng-template #icon let-iconType="iconType" let-icon="icon" let-scale="scale" let-color="color">
+  @if (!badgeCount().length) {
+  @if (iconType === 'mat-icon') {
+  <mat-icon role="img" aria-hidden="false" [attr.aria-label]="icon" [attr.aria-labelledby]="icon" [color]="color"
+    [ngStyle]="
+          scale
+            ? {
+                'font-size': scale * defaultIconSize + 'px',
+                height: scale * defaultIconSize + 'px',
+                width: scale * defaultIconSize + 'px'
+              }
+            : {}
+        ">
+    {{ icon }}
+  </mat-icon>
+  }
+  }
+  @if (badgeCount().length) {
+  @if (iconType === 'mat-icon') {
+  <mat-icon [matBadge]="badgeCount()" matBadgeColor="warn" class="ws-mat-primary-default-text badge-notify"
+    aria-hidden="false" role="img" [attr.aria-label]="icon" [attr.aria-labelledby]="icon" matBadgeSize="small"
+    [color]="color" [ngStyle]="
+          scale
+            ? {
+                'font-size': scale * defaultIconSize + 'px',
+                height: scale * defaultIconSize + 'px',
+                width: scale * defaultIconSize + 'px'
+              }
+            : {}
+        ">
+    {{ icon }}
+  </mat-icon>
+  }
+  }
+  @if (iconType === 'url') {
+  <img class="feature-icon-img" [ngStyle]="
+        scale
+          ? {
+              height: scale * defaultIconSize + 'px',
+              width: scale * defaultIconSize + 'px'
+            }
+          : {}
+      " [src]="icon" i18n-alt alt="icon" />
+  }
+</ng-template>
