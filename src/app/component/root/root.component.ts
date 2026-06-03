@@ -7,6 +7,7 @@ import {
   ElementRef,
   HostListener,
   OnInit,
+  signal,
   // TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -47,6 +48,8 @@ import { concat, interval, timer, of } from 'rxjs'
 import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
 import { UrlService } from '../../shared/url.service'
+import { LibNotificationsService } from '@sunbird-cb/notification'
+import { HomePageService } from '../../services/home-page.service'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -61,6 +64,178 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   isHomePage = false
+  menuBarDetails: any = {
+    "logoUrl": "/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg",
+    "headerText": "",
+    "defaultOpen": true,
+    "activeItemCode": "",
+    "navSections": [
+      {
+        "cardType": "nav_list",
+        "sectionTitle": "",
+        "sectionLoading": false,
+        "disableTranslate": true,
+        "collapsible": false,
+        "showViewAll": false,
+        "viewAllLabel": "",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": null,
+        "items": [
+          {
+            "code": "home",
+            "iconName": "",
+            "iconUrl": "home",
+            "label": "Home",
+            "navUrl": "/page/home",
+            "disableTranslate": true
+          },
+          {
+            "code": "explore_content",
+            "iconName": "",
+            "iconUrl": "school",
+            "label": "Explore Content",
+            "navUrl": "",
+            "disableTranslate": true
+          },
+          {
+            "code": "my_learning",
+            "iconName": "",
+            "iconUrl": "chatt_msg",
+            "label": "My Learning",
+            "navUrl": "/page/learn",
+            "disableTranslate": true
+          },
+          {
+            "code": "learner_passbook",
+            "iconName": "",
+            "iconUrl": "menu_book",
+            "label": "Learner Passbook",
+            "navUrl": "/passbook",
+            "disableTranslate": true
+          },
+          {
+            "code": "igot_community",
+            "iconName": "",
+            "iconUrl": "chatt_msg",
+            "label": "iGOT Community",
+            "navUrl": "/community",
+            "disableTranslate": true
+          },
+          {
+            "code": "events",
+            "iconName": "",
+            "iconUrl": "calendar_month",
+            "label": "Events",
+            "navUrl": "/app/event-hub/home",
+            "disableTranslate": true
+          }
+        ]
+      },
+      {
+        "cardType": "stat_cards",
+        "sectionTitle": "My Achievements",
+        "sectionLoading": false,
+        "disableTranslate": true,
+        "collapsible": true,
+        "showViewAll": true,
+        "viewAllLabel": "View all achievements",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": 3,
+        "items": [
+          {
+            "code": "rank",
+            "iconName": "",
+            "iconUrl": "trophi",
+            "headerLabel": "You're now standing at",
+            "value": "",
+            "navUrl": "",
+            "disableTranslate": true
+          },
+          {
+            "code": "karma_points",
+            "iconName": "",
+            "iconUrl": "badge",
+            "headerLabel": "You Earned",
+            "value": "0 Karma Points",
+            "navUrl": "/karma",
+            "disableTranslate": true
+          },
+          {
+            "code": "badges",
+            "iconName": "",
+            "iconUrl": "trophi",
+            "headerLabel": "Your Earned",
+            "value": "0 Badges",
+            "navUrl": "/badges",
+            "disableTranslate": true
+          }
+        ]
+      },
+      {
+        "cardType": "info_cards",
+        "sectionTitle": "Quick Actions",
+        "sectionLoading": false,
+        "disableTranslate": true,
+        "collapsible": true,
+        "showViewAll": false,
+        "viewAllLabel": "",
+        "disableTranslateOnViewAll": true,
+        "maxItemsVisible": null,
+        "items": [
+          {
+            "code": "help_centre",
+            "hasChildren": false,
+            "iconName": "",
+            "iconUrl": "unknown_document",
+            "title": "Help Centre",
+            "description": "Need help? You're in the right place.",
+            "navUrl": "/help",
+            "disableTranslate": true
+          },
+          {
+            "code": "other_portals",
+            "hasChildren": true,
+            "iconName": "",
+            "iconUrl": "",
+            "title": "Other Portals",
+            "description": "",
+            "navUrl": "",
+            "disableTranslate": true,
+            "children": [
+              {
+                "code": "mdo_portal",
+                "iconName": "groups_2",
+                "iconUrl": "",
+                "title": "MDO Portal",
+                "description": "Manage users, training and approvals.",
+                "navUrl": "https://mdo.qa.karmayogibharat.net/",
+                "disableTranslate": true
+              },
+              {
+                "code": "content_portal",
+                "iconName": "",
+                "iconUrl": "video",
+                "title": "Content Portal",
+                "description": "Create, publish and manage content",
+                "navUrl": "https://cbp.qa.karmayogibharat.net/",
+                "disableTranslate": true
+              },
+              {
+                "code": "spv_portal",
+                "iconName": "settings_account_box",
+                "iconUrl": "",
+                "title": "SPV Portal",
+                "description": "Manage MDOs, users and competency",
+                "navUrl": "https://spv.qa.karmayogibharat.net/",
+                "disableTranslate": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  leftNavBarIsOpen = signal(true)
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -82,6 +257,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private urlService: UrlService,
     private iGOTAIService: iGOTAIService,
     private commonDataSvc: CommonDataService,
+    private libNotificationsService: LibNotificationsService,
+    private homePageSvc: HomePageService
 
     // private dialogRef: MatDialogRef<any>,
   ) {
@@ -438,6 +615,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.showNavbar = display
     })
 
+    this.loadMenuBarAchievements()
+
     let isNotMyUser = false
     let isIgotOrg = false
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
@@ -616,4 +795,112 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     this.changeDetector.detectChanges()
   }
+
+  sidebarStateChanged(event: any) {
+    if (event) {
+      this.leftNavBarIsOpen.set(event.isOpen)
+    }
+  }
+
+  onNavItemClicked(event: string) {
+    console.log('Nav item clicked:', event)
+    switch (event) {
+      case 'explore_content':
+        this.exploreContent()
+        this.menuBarDetails.activeItemCode = event
+        break
+      default:
+        this.menuBarDetails.activeItemCode = event
+    }
+  }
+
+  exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
+    this.raiseTelemetryExploreContent()
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    }
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    }
+    this.router.navigate(['/app/globalsearch'], navigationExtras)
+  }
+
+  raiseTelemetryExploreContent() {
+    this.eventSvc.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'explore-content',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+  }
+
+  private loadMenuBarAchievements() {
+    // Fetch karma points and badge count from localStorage (same source as profile-card-stats)
+    const achievementsSection = this.menuBarDetails.navSections
+      .find((section: any) => section.cardType === 'stat_cards')
+    achievementsSection.sectionLoading = true
+    const enrollListRaw = localStorage.getItem('userEnrollmentCount')
+    if (enrollListRaw) {
+      try {
+        const enrollList = JSON.parse(enrollListRaw)
+        const karmaPoints = enrollList?.userCourseEnrolmentInfo?.karmaPoints ?? 0
+        const badgeCount = enrollList?.userCourseEnrolmentInfo?.badgeCount ?? 0
+
+        if (achievementsSection?.items) {
+          const karmaItem = achievementsSection.items.find((item: any) => item.code === 'karma_points')
+          if (karmaItem) {
+            karmaItem.value = `${karmaPoints} Karma Points`
+          }
+
+          const badgeItem = achievementsSection.items.find((item: any) => item.code === 'badges')
+          if (badgeItem) {
+            badgeItem.value = `${badgeCount} Badges`
+          }
+        }
+      } catch (_e) {
+        // Invalid JSON in localStorage, keep defaults
+      }
+    }
+
+    // Fetch leaderboard rank (same source as profile-card-stats)
+    const currentUserId = this.configSvc?.unMappedUser?.id
+    if (currentUserId) {
+      this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+        const results = res?.result?.result
+        if (Array.isArray(results)) {
+          const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+          const rank = currentUserRank?.rank
+
+          if (rank != null) {
+            const achievementsSection = this.menuBarDetails.navSections
+              .find((section: any) => section.cardType === 'stat_cards')
+            const rankItem = achievementsSection?.items?.find((item: any) => item.code === 'rank')
+            if (rankItem) {
+              rankItem.value = `${this.toOrdinal(rank)} Rank`
+            }
+          }
+        }
+      })
+    }
+    achievementsSection.sectionLoading = false
+  }
+
+  private toOrdinal(n: number): string {
+    const s = ['th', 'st', 'nd', 'rd']
+    const v = n % 100
+    return n + (s[(v - 20) % 10] || s[v] || s[0])
+  }
+
 }

@@ -50,7 +50,7 @@ import { FooterSectionComponent } from './component/app-footer/footer-section/fo
 import { AppLogoComponent } from './component/app-logo/app-logo.component'
 import { NoDataComponent } from './component/no-data/no-data.component'
 import {
-  CardsModule, WIDGET_REGISTRATION_LIB_CONFIG,
+  CardsModule, DynamicSidebarComponent, WIDGET_REGISTRATION_LIB_CONFIG,
 } from '@sunbird-cb/consumption'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -69,9 +69,11 @@ import { ProfileVerificationDialogComponent } from './profile-verification-dialo
 import { CommonDataService } from './services/common-data.service'
 import { WIDGET_REGISTRATION_CONFIG } from '@sunbird-cb/collection'
 import { MandatoryNotificationModalComponent } from './component/mandatory-notification-modal/mandatory-notification-modal.component'
+import { HeaderV2Component } from './header/header-v2/header-v2.component'
 import { AppTourComponent } from './component/app-tour/app-tour.component'
 import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
+import { NoConnectionV2Component } from './component/no-connection-v2/no-connection-v2.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -142,6 +144,9 @@ export function HttpLoaderFactory(http: HttpClient) {
     PipeOrderByModule,
     PipeSafeSanitizerModule,
     AppChatbotModule,
+    DynamicSidebarComponent,
+    HeaderV2Component,
+    NoConnectionV2Component,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     // HeaderModule,
     TranslateModule.forRoot({

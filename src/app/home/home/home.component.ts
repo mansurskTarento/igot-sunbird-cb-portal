@@ -35,10 +35,10 @@ function isStripActive(strip: any): boolean {
 const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-    selector: 'ws-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
-    standalone: false
+  selector: 'ws-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+  standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
@@ -89,6 +89,139 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
   canShowCustomAttrOpen: boolean = false
   rootOrgId: string = ''
+
+  homePageSections = [
+    {
+      sectionKey: 'popularCourses',
+      header: 'Popular Courses',
+      translateHeader: true,
+      visibilityMode: 'visible',
+      displayType: 'tabs', // tabs | pills | cards
+
+      defaultTabKey: 'apparel',
+      tabs: [
+        {
+          tabKey: 'apparel',
+          tabLabel: 'Apparel Report',
+          translateLabel: true,
+          visibilityMode: 'visible',
+
+          hasPills: false,
+
+          contentConfig: {
+            apiDetailsKey: 'popularCoursesApi',
+            cardType: 'courseCard',
+            maxCardsToShow: 4,
+            cardClickUrl: '/app/course/:identifier',
+            viewAllUrl: '/app/popular-courses',
+            showViewAll: true
+          }
+        },
+        {
+          tabKey: 'caProgram',
+          tabLabel: 'C.A Program',
+          translateLabel: true,
+          visibilityMode: 'visible',
+
+          hasPills: true,
+          defaultPillKey: 'beginner',
+
+          pills: [
+            {
+              pillKey: 'beginner',
+              pillLabel: 'Beginner',
+              translateLabel: true,
+              visibilityMode: 'visible',
+
+              contentConfig: {
+                apiDetailsKey: 'caProgramBeginnerApi',
+                cardType: 'courseCard',
+                maxCardsToShow: 4,
+                cardClickUrl: '/app/course/:identifier',
+                viewAllUrl: '/app/ca-program/beginner',
+                showViewAll: true
+              }
+            },
+            {
+              pillKey: 'advanced',
+              pillLabel: 'Advanced',
+              translateLabel: true,
+              visibilityMode: 'visible',
+
+              contentConfig: {
+                apiDetailsKey: 'caProgramAdvancedApi',
+                cardType: 'courseCard',
+                maxCardsToShow: 4,
+                cardClickUrl: '/app/course/:identifier',
+                viewAllUrl: '/app/ca-program/advanced',
+                showViewAll: true
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+    {
+      sectionKey: 'spotlight',
+      header: 'In Spotlight',
+      translateHeader: true,
+      visibilityMode: 'visible',
+      displayType: 'cards',
+
+      contentConfig: {
+        apiDetailsKey: 'spotlightApi',
+        cardType: 'spotlightCard',
+        maxCardsToShow: 8,
+        cardClickUrl: '/app/spotlight/:identifier',
+        viewAllUrl: null,
+        showViewAll: false
+      }
+    },
+
+    {
+      sectionKey: 'trendingCourses',
+      header: 'Trending on iGOT',
+      translateHeader: true,
+      visibilityMode: 'visible',
+      displayType: 'pills',
+
+      defaultPillKey: 'all',
+
+      pills: [
+        {
+          pillKey: 'all',
+          pillLabel: 'All',
+          translateLabel: true,
+          visibilityMode: 'visible',
+
+          contentConfig: {
+            apiDetailsKey: 'trendingAllApi',
+            cardType: 'courseCard',
+            maxCardsToShow: 4,
+            cardClickUrl: '/app/course/:identifier',
+            viewAllUrl: '/app/trending',
+            showViewAll: true
+          }
+        },
+        {
+          pillKey: 'cyber',
+          pillLabel: 'Cyber Security',
+          translateLabel: true,
+          visibilityMode: 'visible',
+
+          contentConfig: {
+            apiDetailsKey: 'trendingCyberApi',
+            cardType: 'courseCard',
+            maxCardsToShow: 4,
+            cardClickUrl: '/app/course/:identifier',
+            viewAllUrl: '/app/trending/cyber',
+            showViewAll: true
+          }
+        }
+      ]
+    }
+  ];
 
   // You could also add it as a class property for better encapsulation
   private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS
@@ -269,7 +402,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     this.enrollInterval = setInterval(() => {
       this.getEnrollmentData()
-    },                                1000)
+    }, 1000)
 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -324,7 +457,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.handleUpdateMobileNudge()
         }
 
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open('Unable to fetch pending approval list')
         }
@@ -438,7 +571,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (res) {
         this.isMDOMsgOpen = true
       }
-    },                                                               (error: HttpErrorResponse) => {
+    }, (error: HttpErrorResponse) => {
       if (!error.ok) {
         this.matSnackBar.open(error.error.text)
       }
@@ -467,7 +600,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.approvedStatus = false
           }
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
@@ -496,7 +629,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.rejectedStatus = false
           }
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
