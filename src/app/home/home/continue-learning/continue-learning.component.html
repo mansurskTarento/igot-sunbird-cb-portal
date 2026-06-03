@@ -1,0 +1,33 @@
+<!-- ============================================================
+   Continue Learning Wrapper
+   Heading row (outside cards) + two child cards side by side
+   ============================================================ -->
+<div class="cl-container" role="region" aria-labelledby="cl-section-heading">
+
+  <!-- Top heading row -->
+  <div class="cl-header" *ngIf="isInProgressLoading || inProgressCourse">
+    <h3 class="cl-heading" id="cl-section-heading">{{ 'continueLearning.heading' | translate }}</h3>
+    <button class="cl-view-all-btn" (click)="viewAll()" aria-label="View all in-progress courses">{{
+      'continueLearning.viewAll' | translate }}</button>
+  </div>
+
+  <!-- Two cards row -->
+  <div class="cl-cards-row">
+    <!-- In Progress card — hidden when not loading and no course data -->
+    <div class="cl-card-wrap" *ngIf="isInProgressLoading || inProgressCourse" [attr.aria-busy]="isInProgressLoading"
+      [attr.aria-label]="isInProgressLoading ? 'Loading in-progress course' : null">
+      <ws-in-progress-card [course]="inProgressCourse" [isLoading]="isInProgressLoading">
+      </ws-in-progress-card>
+    </div>
+
+    <!-- Weekly Claps card — spans full width automatically when left card is absent -->
+    <div class="cl-card-wrap" [attr.aria-busy]="isWeeklyLoading"
+      [attr.aria-label]="isWeeklyLoading ? 'Loading weekly claps' : null">
+      <ws-weekly-claps-card [insightsData]="insightsData" [weeklyData]="weeklyData" [isLoading]="isWeeklyLoading">
+      </ws-weekly-claps-card>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== OLD CONTENT BELOW — REPLACED ===== -->

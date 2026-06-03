@@ -589,6 +589,7 @@ export class InitService {
     if (!localStorage.getItem('firsLogin')) {
       this.http.get<any>(endpoint.FIRST_LOGIN_API).pipe(map((res: any) => {
         if (res && res.result) {
+          this.configSvc.isNewUser = !res?.result?.last_login
           localStorage.setItem('firsLogin', 'true')
         }
       })).toPromise()
