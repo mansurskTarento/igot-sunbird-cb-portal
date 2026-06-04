@@ -30,6 +30,8 @@
     @if (primaryNavbarConfig?.mediumScreen) {
     <div>
 
+      <ws-top-right-nav-bar-v2 [item]="{type: 'widgetButton'}" [rightNavConfig]="headerFooterConfigData()" />
+
       @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
       <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
@@ -66,6 +68,8 @@
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
       }
+      <!-- Theme Toggle Button -->
+      <ws-top-right-nav-bar-v2 [item]="{type: 'themeToggle'}" [rightNavConfig]="headerFooterConfigData()" />
     </div>
   </div>
   }
