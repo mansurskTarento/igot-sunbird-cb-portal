@@ -86,7 +86,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "iconName": "",
             "iconUrl": "home",
             "label": "Home",
-            "navUrl": "/page/home",
+            "navUrl": "/page/home/v2",
             "disableTranslate": true
           },
           {
