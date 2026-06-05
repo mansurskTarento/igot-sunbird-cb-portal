@@ -139,6 +139,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         "collapsible": true,
         "showViewAll": true,
         "viewAllLabel": "View all achievements",
+        "viewAllKey": "view_all_achievements",
         "disableTranslateOnViewAll": true,
         "maxItemsVisible": 3,
         "items": [
@@ -809,9 +810,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.exploreContent()
         this.menuBarDetails.activeItemCode = event
         break
+      case 'view_all_achievements':
+        this.viewAllAchievements()
+        break
       default:
         this.menuBarDetails.activeItemCode = event
     }
+  }
+
+  viewAllAchievements() {
   }
 
   exploreContent() {
