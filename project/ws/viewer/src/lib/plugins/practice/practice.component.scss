@@ -387,6 +387,7 @@ $nav-height: 40px;
   // }
   width: 123px;
   border-radius: 63px;
+  padding: 0 13px;
 }
 
 .quest_btn_review {
@@ -1695,4 +1696,9 @@ mat-spinner {
   .butto_box {
     margin-top: 0;
   }
+}
+
+:host ::ng-deep .mat-mdc-chip .mdc-evolution-chip__action {
+  border: none !important;
+  background-color: inherit !important;
 }
