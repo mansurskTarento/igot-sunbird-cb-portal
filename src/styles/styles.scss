@@ -1866,8 +1866,8 @@ ngx-guided-tour {
 
 .mat-mdc-dialog-container .mdc-dialog__surface {
   display: block;
-  padding: 24px 0 !important;
-  border-radius: 4px !important;
+  padding: 24px !important;
+  border-radius: 8px !important;
   box-sizing: border-box;
   /* remove scrollbars */
   outline: 0;
@@ -2081,26 +2081,26 @@ ngx-guided-tour {
   .mdc-evolution-chip.matchip-custom {
     background: transparent !important;
     border: 1px solid #fff;
-    color: #fff !important;
+    color: #1b4ca1 !important;
     cursor: pointer;
     margin: 0 4px !important;
   }
 
   /* Chip text */
   .mat-mdc-chip .mdc-evolution-chip__text-label {
-    color: #fff !important;
+    color: #1b4ca1 !important;
     gap: 16px
   }
 
   .mat-mdc-chip.matchip-custom:hover {
-    background: #fff !important;
+    background: #1b4ca1 !important;
     border: 1px solid #fff !important;
   }
 
   /* Selected */
   .mat-mdc-chip.matchip-custom.mat-mdc-chip-highlighted,
   .mat-mdc-chip.matchip-custom.mdc-evolution-chip--selected {
-    background: #fff !important;
+    background: #1b4ca1 !important;
     border: 1px solid #fff !important;
   }
 
@@ -2142,4 +2142,12 @@ ngx-guided-tour {
   border-radius: 4px !important;
   padding: 8px 12px !important;
   max-width: 220px !important;
+}
+
+.cancelButton {
+  cursor: pointer !important;
+}
+
+.acceptbtn {
+  cursor: pointer !important;
 }
