@@ -2151,3 +2151,14 @@ ngx-guided-tour {
 .acceptbtn {
   cursor: pointer !important;
 }
+
+.mat-mdc-dialog-container {
+  border-radius: 8px !important;
+}
+
+.mat-mdc-progress-spinner,
+.mat-mdc-progress-spinner * {
+  border-color: #1b4ca1 !important;
+  stroke: #1b4ca1 !important;
+  color: #1b4ca1 !important;
+}
