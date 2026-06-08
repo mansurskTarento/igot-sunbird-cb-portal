@@ -1,5 +1,6 @@
 <!-- ===== LOADING SKELETON ===== -->
-<div class="wc-card" *ngIf="isLoading" aria-hidden="true">
+@if (isLoading) {
+<div class="wc-card" aria-hidden="true">
   <div class="wc-skeleton wc-sk-badge"></div>
   <div class="wc-skeleton wc-sk-desc"></div>
   <div class="wc-skeleton wc-sk-desc wc-sk-desc-short"></div>
@@ -8,22 +9,26 @@
     <div class="wc-right-section">
       <div class="wc-skeleton wc-sk-total"></div>
       <div class="wc-weeks-row">
-        <div class="wc-week-col" *ngFor="let w of [1,2,3,4]">
+        @for (w of [1,2,3,4]; track w) {
+        <div class="wc-week-col">
           <div class="wc-skeleton wc-sk-label"></div>
           <div class="wc-skeleton wc-sk-check"></div>
         </div>
+        }
       </div>
     </div>
   </div>
 </div>
+}
 
 <!-- ===== DISPLAY ONLY HEADER ===== -->
-<div class="wc-card" *ngIf="weeklyData?.displayOnlyHeader" role="region" aria-label="Weekly Claps">
+@if (!isLoading && weeklyData?.displayOnlyHeader) {
+<div class="wc-card" role="region" aria-label="Weekly Claps">
   <div class="wc-badge" aria-hidden="true">{{ 'continueLearning.weeklyClaps' | translate }}</div>
   <div class="wc-clap-main">
     <div class="wc-clap-badge" aria-hidden="true">
       <img class="wc-clap-icon"
-        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_rewamp.svg' : 'assets/icons/home/clap_disable_icon.svg'"
+        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home-v2/clap_rewamp.svg' : 'assets/icons/home-v2/clap_disable_icon.svg'"
         alt="">
     </div>
     <div class="wc-right-section">
@@ -37,10 +42,11 @@
     </div>
   </div>
 </div>
+}
 
 <!-- ===== WEEKLY CLAPS CARD (FULL) ===== -->
-<div class="wc-card" *ngIf="insightsData && !isLoading && weeklyData?.enableCard && !weeklyData?.displayOnlyHeader"
-  role="region" aria-labelledby="wc-section-heading">
+@if (insightsData && !isLoading && weeklyData?.enableCard && !weeklyData?.displayOnlyHeader) {
+<div class="wc-card" role="region" aria-labelledby="wc-section-heading">
 
   <!-- Header badge -->
   <div class="wc-badge" id="wc-section-heading">{{ 'continueLearning.weeklyClaps' | translate }}</div>
@@ -56,7 +62,7 @@
   <div class="wc-clap-main">
     <div class="wc-clap-badge" aria-hidden="true">
       <img class="wc-clap-icon"
-        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_rewamp.svg' : 'assets/icons/home/clap_disable_icon.svg'"
+        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home-v2/clap_rewamp.svg' : 'assets/icons/home-v2/clap_disable_icon.svg'"
         alt="">
     </div>
     <div class="wc-right-section">
@@ -69,28 +75,30 @@
           ('continueLearning.weeks' | translate) }}</span>
       </div>
       <!-- W1–W4 grid -->
-      <ng-container *ngIf="insightsData?.weeklyClaps">
-        <div class="wc-weeks-row" role="list" aria-label="Weekly activity">
-          <div class="wc-week-col" role="listitem" *ngFor="let week of weeklyData?.weekList">
-            <span class="wc-week-label" [class.wc-week-label--active]="week.activeWeek" aria-hidden="true">{{ week.label
-              }}</span>
-            <img class="wc-week-icon"
-              [src]="week.activeWeek
-                ? (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home/check_icon.svg' : 'assets/icons/home/highlight.svg')
-                : (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home/check_icon.svg' : 'assets/icons/home/decline_icon.svg')"
-              width="24" height="24"
-              [attr.alt]="week.label + ': ' + (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'completed' : (week.activeWeek ? 'current week' : 'not completed'))">
-          </div>
+      @if (insightsData?.weeklyClaps) {
+      <div class="wc-weeks-row" role="list" aria-label="Weekly activity">
+        @for (week of weeklyData?.weekList ?? []; track week.key) {
+        <div class="wc-week-col" role="listitem">
+          <span class="wc-week-label" [class.wc-week-label--active]="week.activeWeek" aria-hidden="true">{{ week.label
+            }}</span>
+          <img class="wc-week-icon"
+            [src]="week.activeWeek
+                    ? (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home-v2/approved.svg' : 'assets/icons/home-v2/highlight.svg')
+                    : (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home-v2/approved.svg' : 'assets/icons/home-v2/decline_icon.svg')"
+            width="24" height="24"
+            [attr.alt]="week.label + ': ' + (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'completed' : (week.activeWeek ? 'current week' : 'not completed'))">
         </div>
-      </ng-container>
+        }
+      </div>
+      }
     </div>
   </div>
-
 </div>
+}
 
 <!-- ===== KNOW MORE POPUP ===== -->
-<div class="wc-popup-backdrop" *ngIf="showPopup" role="presentation" (click)="closePopup()"
-  (keydown.escape)="closePopup()">
+@if (showPopup) {
+<div class="wc-popup-backdrop" role="presentation" (click)="closePopup()" (keydown.escape)="closePopup()">
   <div class="wc-popup" role="dialog" aria-modal="true" aria-labelledby="wc-popup-title"
     (click)="$event.stopPropagation()">
     <!-- Close -->
@@ -98,7 +106,7 @@
 
     <!-- Header -->
     <div class="wc-popup-header">
-      <img class="wc-popup-header-img" src="assets/icons/home/clap_icon.svg" width="42" height="42" aria-hidden="true"
+      <img class="wc-popup-header-img" src="assets/icons/home-v2/clap_icon.svg" width="42" height="42" aria-hidden="true"
         alt="">
       <h2 class="wc-popup-title" id="wc-popup-title">{{ 'continueLearning.popupTitle' | translate }}</h2>
       <p class="wc-popup-intro">
@@ -109,7 +117,7 @@
     <!-- Q1 -->
     <div class="wc-popup-item">
       <div class="wc-popup-item-icon wc-popup-item-icon--green" aria-hidden="true">
-        <img src="assets/icons/home/clap_icon.svg" width="28" height="28" alt="">
+        <img src="assets/icons/home-v2/clap_icon.svg" width="28" height="28" alt="">
       </div>
       <div class="wc-popup-item-body">
         <p class="wc-popup-q">{{ 'continueLearning.maintainQ' | translate }}</p>
@@ -124,7 +132,7 @@
     <!-- Q2 -->
     <div class="wc-popup-item">
       <div class="wc-popup-item-icon wc-popup-item-icon--red" aria-hidden="true">
-        <img src="assets/icons/home/clap_disable_icon.svg" width="28" height="28" alt="">
+        <img src="assets/icons/home-v2/clap_disable_icon.svg" width="28" height="28" alt="">
       </div>
       <div class="wc-popup-item-body">
         <p class="wc-popup-q">{{ 'continueLearning.loseQ' | translate }}</p>
@@ -137,3 +145,4 @@
     </div>
   </div>
 </div>
+}

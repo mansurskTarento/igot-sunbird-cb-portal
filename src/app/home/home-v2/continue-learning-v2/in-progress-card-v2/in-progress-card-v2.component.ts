@@ -1,17 +1,22 @@
-import { Component, Input, OnChanges, Output, EventEmitter } from '@angular/core'
+import { Component, Input, OnChanges, Output, EventEmitter, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { TranslateModule } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-in-progress-card',
-  templateUrl: './in-progress-card.component.html',
-  styleUrls: ['./in-progress-card.component.scss'],
-  standalone: false,
+  selector: 'ws-in-progress-card-v2',
+  templateUrl: './in-progress-card-v2.component.html',
+  styleUrls: ['./in-progress-card-v2.component.scss'],
+  standalone: true,
+  imports: [TranslateModule],
 })
-export class InProgressCardComponent implements OnChanges {
+export class InProgressCardV2Component implements OnChanges {
   @Input() course: any = null
   @Input() isLoading = true
   @Output() resumed = new EventEmitter<void>()
+
+  private readonly router = inject(Router)
+  private readonly eventSvc = inject(EventService)
 
   readonly circumference = 2 * Math.PI * 30  // r=30 → ~188.5
 
@@ -20,8 +25,6 @@ export class InProgressCardComponent implements OnChanges {
   courseOrg = ''
   courseId = ''
   isRetired = false
-
-  constructor(private router: Router, private eventSvc: EventService) { }
 
   ngOnChanges() {
     if (this.course) {

@@ -1,5 +1,6 @@
 <!-- ===== LOADING SKELETON ===== -->
-<div class="ip-card" *ngIf="isLoading" aria-hidden="true">
+@if (isLoading) {
+<div class="ip-card" aria-hidden="true">
   <div class="ip-ring-wrap">
     <div class="ip-skeleton ip-sk-circle"></div>
   </div>
@@ -10,12 +11,15 @@
     <div class="ip-skeleton ip-sk-btn"></div>
   </div>
 </div>
+}
 
 <!-- ===== COURSE CARD ===== -->
-<div class="ip-card" *ngIf="!isLoading && course" role="article"
-  [attr.aria-label]="courseName + ', ' + progressPercent + '% complete, In Progress'">
+@if (!isLoading && course) {
+<div class="ip-card" role="article" [attr.aria-label]="courseName + ', ' + progressPercent + '% complete, In Progress'">
 
-  <span class="ip-retired-ribbon" *ngIf="isRetired" role="status">{{ 'continueLearning.retired' | translate }}</span>
+  @if (isRetired) {
+  <span class="ip-retired-ribbon" role="status">{{ 'continueLearning.retired' | translate }}</span>
+  }
 
   <!-- Circular SVG ring — decorative; percentage is announced via the span below -->
   <div class="ip-ring-wrap" aria-hidden="true">
@@ -32,9 +36,12 @@
   <div class="ip-details">
     <span class="ip-in-progress-badge" aria-hidden="true">{{ 'continueLearning.inProgress' | translate }}</span>
     <p class="ip-title">{{ courseName }}</p>
-    <p class="ip-org" *ngIf="courseOrg">{{ courseOrg }}</p>
+    @if (courseOrg) {
+    <p class="ip-org">{{ courseOrg }}</p>
+    }
     <button class="ip-resume-btn" [class.ip-resume-btn--disabled]="isRetired" [disabled]="isRetired"
       [attr.aria-label]="'Resume ' + courseName + ', ' + progressPercent + '% complete'" (click)="resume()">{{
       'continueLearning.resume' | translate }}</button>
   </div>
 </div>
+}

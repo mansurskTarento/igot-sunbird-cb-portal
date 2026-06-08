@@ -61,4 +61,11 @@
     <input #appUpdateBody type="hidden" i18n-value value="App has been updated. Do you want to load new version?" />
     <div #skipper tabindex="-1"></div>
   </div>
+
+  @if (showKarmaLeaderboard()) {
+  <div class="klb-popup-backdrop" [@fadeBackdrop] aria-hidden="true"></div>
+  <div class="klb-popup-panel" [@slidePanel] role="dialog" aria-modal="true" aria-label="Karma Leaderboard">
+    <ws-karma-leaderboard-v2 (close)="showKarmaLeaderboard.set(false)"></ws-karma-leaderboard-v2>
+  </div>
+  }
 </div>

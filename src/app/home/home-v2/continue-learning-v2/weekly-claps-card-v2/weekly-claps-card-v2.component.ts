@@ -1,19 +1,21 @@
-import { Component, Input } from '@angular/core'
+import { Component, Input, inject } from '@angular/core'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { TranslateModule } from '@ngx-translate/core'
 
 @Component({
-  selector: 'ws-weekly-claps-card',
-  templateUrl: './weekly-claps-card.component.html',
-  styleUrls: ['./weekly-claps-card.component.scss'],
-  standalone: false,
+  selector: 'ws-weekly-claps-card-v2',
+  templateUrl: './weekly-claps-card-v2.component.html',
+  styleUrls: ['./weekly-claps-card-v2.component.scss'],
+  standalone: true,
+  imports: [TranslateModule],
 })
-export class WeeklyClapsCardComponent {
+export class WeeklyClapsCardV2Component {
   @Input() insightsData: any = null
   @Input() weeklyData: any = null
   @Input() isLoading = true
   showPopup = false
 
-  constructor(private eventSvc: EventService) { }
+  private readonly eventSvc = inject(EventService)
 
   get weeklyClaps(): any {
     return this.insightsData && this.insightsData.weeklyClaps
@@ -60,10 +62,10 @@ export class WeeklyClapsCardComponent {
     const claps = this.weeklyClaps
     const timespent = claps && claps[week.key] && claps[week.key].timespent
     if (timespent > 60) {
-      return 'assets/icons/home/check_icon.svg'
+      return 'assets/icons/home-v2/approved.svg'
     }
     return week.activeWeek
-      ? 'assets/icons/home/highlight.svg'
-      : 'assets/icons/home/decline_icon.svg'
+      ? 'assets/icons/home-v2/highlight.svg'
+      : 'assets/icons/home-v2/decline_icon.svg'
   }
 }
