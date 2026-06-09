@@ -1,4 +1,200 @@
 $border-color: rgba($color: #000000, $alpha: 0.16);
+
+// Progressive field reveal animation
+@keyframes fadeInSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.field-animate-in {
+  animation: fadeInSlideDown 0.3s ease forwards;
+}
+::ng-deep .mat-dialog-container {
+  padding: 16px !important;
+  // max-height: 85vh;
+  // overflow-y: auto;
+}
+
+
+// Transfer Request Container Styling
+.transfer-request-container {
+  width: 90%;
+  min-width: 640px;
+  max-width: 960px;
+  margin: 0 auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: calc(85vh - 32px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 24px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+
+  // Scrollbar styling
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+    }
+  }
+}
+.txt-cursor {
+  cursor: pointer !important;
+}
+
+.transfer-request-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.current-org-field {
+  width: 100%;
+}
+
+.current-org-input {
+  width: 100%;
+  height: 48px;
+  padding: 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.87);
+  box-sizing: border-box;
+  font-size: 14px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+// Single line field styling
+.single-line-field {
+  .input-container {
+    width: 100%;
+  }
+}
+
+// Row container for group and designation - equal height fields
+.input-wrapper-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  flex-wrap: nowrap;
+  align-items: stretch;
+
+  .input-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+
+    &.flex-1 {
+      flex: 1;
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+// Ensure equal height for mat-select in input-wrapper-row
+.input-wrapper-row {
+  ::ng-deep .mat-form-field-flex {
+    min-height: 56px;
+    align-items: center;
+  }
+
+  ::ng-deep .mat-select-trigger {
+    min-height: 24px;
+  }
+}
+
+// Type wrapper for radio buttons
+.type-wrapper {
+  .radio-group-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    max-width: 340px;
+
+    ::ng-deep .mat-radio-button {
+      margin-right: 0;
+    }
+  }
+}
+
+// Button container styling
+.button-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+// Transfer button styling
+.transfer-button {
+  background-color: #0174b6;
+  color: white;
+  border: none;
+  padding: 12px 48px;
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    background-color: #015a99;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  &:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+}
+
+// Margin utility
+.margin-left-m {
+  margin-left: 16px;
+}
+
 .info-div {
     background-color: #EBEBEB;
     border: 1px solid #00000014;
@@ -6,19 +202,46 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     padding: 4px;
     font-size: 12px;
     line-height: 14px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
 
     .mat-icon {
         width: 14px;
         height: 14px;
         font-size: 14px;
         color: #212121;
+        flex-shrink: 0;
+        margin-top: 2px;
+    }
+
+    div {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        white-space: normal;
     }
 }
+
+@media (max-width: 480px) {
+  .info-div {
+    padding: 6px 8px;
+    font-size: 11px;
+    line-height: 13px;
+    gap: 6px;
+
+    .mat-icon {
+      width: 13px;
+      height: 13px;
+      font-size: 13px;
+      margin-top: 1px;
+    }
+  }
+}
 .mat-select-panel-wrap {
-    margin-top: 100px;
+    // margin-top removed to allow proper dropdown positioning
 }
 .mat-select-panel {
-    margin-top: 100px!important;
+    // margin-top removed to allow proper dropdown positioning
 }
 .mat-select-trigger {
     display: flex;
@@ -33,7 +256,7 @@ $border-color: rgba($color: #000000, $alpha: 0.16);
     margin-top: 8px;
  }
  .mat-autocomplete-panel {
-    width:  calc(100% - 36px)!important; 
+    width:  calc(100% - 36px)!important;
   }
 
 .profile-form-field {
@@ -110,6 +333,154 @@ required::after {
   font-size: 14px;
   box-sizing: border-box;
 }
+.common-modal {
+  width: 60% !important;
+}
+// Generic panel styling for all dropdowns
+::ng-deep .mat-select-panel {
+  &.search-panel,
+  &.search-panel-ministry,
+  &.search-panel-state,
+  &.search-panel-department,
+  &.search-panel-organisation {
+    padding: 0 !important;
+    max-height: 360px !important;
+    box-sizing: border-box !important;
+
+    .sticky-search-container {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: #fff;
+      padding: 8px 16px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+
+      .search-input-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        input {
+          padding: 8px 10px;
+          border: 1px solid rgba(0, 0, 0, 0.12);
+          border-radius: 4px;
+          font-size: 14px;
+          width: 100%;
+          box-sizing: border-box;
+
+          &:focus {
+            outline: none;
+            border-color: #F3962F;
+            box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
+          }
+        }
+
+        .clear-button {
+          background: none;
+          border: none;
+          cursor: pointer;
+          padding: 4px 8px;
+          font-size: 16px;
+          color: rgba(0, 0, 0, 0.54);
+          flex-shrink: 0;
+
+          &:hover {
+            color: rgba(0, 0, 0, 0.87);
+          }
+        }
+      }
+    }
+
+
+    .loading-indicator {
+      text-align: center;
+      padding: 12px;
+      color: rgba(0, 0, 0, 0.54);
+      font-size: 12px;
+    }
+
+    .mat-option {
+      padding: 8px 16px !important;
+      height: auto !important;
+      line-height: 1.5;
+    }
+  }
+}
+
+.input-wrapper {
+  // margin-bottom: 6px;
+
+  .input-container {
+    display: flex;
+    flex-direction: column;
+
+    .label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #222222;
+      margin-bottom: 8px;
+
+      &.required::after {
+        content: '*';
+        color: red;
+        margin-left: 4px;
+      }
+    }
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.transfer-request-form {
+  .input-container {
+    ::ng-deep .mat-form-field-wrapper {
+      padding-bottom: 1.2em;
+    }
+
+    // Keeps error text from overlapping the field border
+    ::ng-deep .mat-form-field-subscript-wrapper {
+      position: relative;
+      top: 0;
+      margin-top: 2px;
+    }
+
+    ::ng-deep .mat-form-field-flex {
+      min-height: 48px;
+      align-items: center;
+    }
+
+    ::ng-deep .mat-form-field-infix {
+      min-height: 20px;
+      padding-top: 0.45em;
+      padding-bottom: 0.45em;
+    }
+
+    ::ng-deep .mat-select-trigger {
+      min-height: 24px;
+      align-items: center;
+    }
+  }
+}
+
+.margin-top-m {
+  margin-top: 16px;
+}
+
+.margin-top-s {
+  margin-top: 8px;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.required-select {
+  mat-form-field {
+    width: 100%;
+  }
+}
 
 ::ng-deep .search-panel {
   .sticky-search-container {
@@ -131,5 +502,156 @@ required::after {
       border-color: #F3962F;
       box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
     }
+  }
+}
+
+// Radio button styling
+.mat-radio-button {
+  padding: 10px 10px;
+  border-radius: 5px;
+  border: 2px solid rgba(0, 0, 0, 0.16);
+  background: #fff;
+  margin-right: 12px;
+  // Equal width for Center and State buttons
+  flex: 1;
+  text-align: center;
+  min-width: 0;
+
+  ::ng-deep .mat-radio-label {
+    // justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &.mat-radio-checked {
+    border: 2px solid #0174b6;
+    background: #f2f8fb!important;
+  }
+
+  &.radio-select,
+  &.radio-unselect {
+    margin-left: 8px;
+  }
+}
+
+.txt-size {
+  font-size: 12px;
+}
+
+// Keep overlay content within viewport gutters on all screens.
+:host ::ng-deep .cdk-overlay-connected-position-bounding-box {
+  box-sizing: border-box;
+  padding: 0 8px;
+}
+
+// Overlay pane styling to ensure panels don't overflow
+:host ::ng-deep .cdk-overlay-pane {
+  max-width: calc(100vw - 16px) !important;
+
+  .mat-select-panel {
+    &.search-panel,
+    &.search-panel-ministry,
+    &.search-panel-state,
+    &.search-panel-department,
+    &.search-panel-organisation {
+      width: 100% !important;
+      min-width: 100% !important;
+      max-width: 100% !important;
+      overflow-x: hidden !important;
+      box-sizing: border-box !important;
+    }
+  }
+}
+
+@media (max-width: 1024px) {
+  .transfer-request-container {
+    width: 75%;
+    min-width: 0;
+  }
+
+  .input-wrapper-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  ::ng-deep .mat-select-panel {
+    &.search-panel,
+    &.search-panel-ministry,
+    &.search-panel-state,
+    &.search-panel-department,
+    &.search-panel-organisation {
+      box-sizing: border-box;
+    }
+  }
+
+  :host ::ng-deep .cdk-overlay-pane {
+    max-width: calc(100vw - 16px) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .transfer-request-container {
+    width: 95%;
+    padding: 16px;
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  ::ng-deep .mat-select-panel {
+    &.search-panel,
+    &.search-panel-ministry,
+    &.search-panel-state,
+    &.search-panel-department,
+    &.search-panel-organisation {
+      box-sizing: border-box;
+    }
+  }
+
+  .input-wrapper-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .flex.flex-row.justify-between.mt-2 {
+    gap: 10px;
+
+    .outline-button,
+    .save-button {
+      flex: 1;
+    }
+  }
+
+  :host ::ng-deep .cdk-overlay-pane {
+    max-width: calc(100vw - 12px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .type-wrapper .radio-group-inline {
+    max-width: 100%;
+
+    .mat-radio-button {
+      ::ng-deep .mat-radio-label-content {
+        max-width: 50px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  ::ng-deep .mat-select-panel {
+    &.search-panel,
+    &.search-panel-ministry,
+    &.search-panel-state,
+    &.search-panel-department,
+    &.search-panel-organisation {
+      box-sizing: border-box;
+    }
+  }
+
+  :host ::ng-deep .cdk-overlay-pane {
+    max-width: calc(100vw - 12px) !important;
   }
 }

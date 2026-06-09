@@ -600,6 +600,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   getTourGuide() {
     let showTour = false
     this.configSvc.updateTourGuide.subscribe((res: any) => {
+
       showTour = res
     })
     this.showTour = showTour

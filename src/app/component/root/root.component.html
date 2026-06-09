@@ -25,9 +25,10 @@
   'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
 }">
 
-  <div class="abc" [ngClass]="{'margin186': mobileTopHeaderVisibilityStatus && showHubs, 'mt-0': !mobileTopHeaderVisibilityStatus && showHubs, 'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter, 'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage }">
+  <div class="abc"
+    [ngClass]="{'margin186': mobileTopHeaderVisibilityStatus && showHubs, 'mt-0': !mobileTopHeaderVisibilityStatus && showHubs, 'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter, 'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage }">
     <router-outlet></router-outlet>
-  </div> 
+  </div>
 </div>
 
 <!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
@@ -35,8 +36,8 @@
 <ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [headerFooterConfigData]="headerFooterConfigData">
 </ws-app-footer>
 
-<ws-app-nav-bar class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav" *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter"
-  [mode]="'bottom'">
+<ws-app-nav-bar class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
+  *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
 </ws-app-nav-bar>
 
 <ng-container #previewContainer></ng-container>
