@@ -405,7 +405,6 @@ export class PlayerPdfComponent extends WidgetBaseComponent
         this.eventDispatcher(WsEvents.EnumTelemetrySubType.Loaded)
       }
     } catch (err) {
-      console.error('PDF load failed for URL:', url, err)
       this.logger.error('PDF load failed for URL:', url, err)
     }
   }
