@@ -62,7 +62,7 @@ export class BtnProfileComponent extends WidgetBaseComponent
     private translate: TranslateService,
     private events: EventService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc: DomainConfService
+    public domainConfSvc: DomainConfService
   ) {
     super()
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }

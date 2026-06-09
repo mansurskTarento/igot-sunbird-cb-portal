@@ -44,7 +44,7 @@
     </div>
   </section> -->
 
-  <section class="padding-s border-bottom">
+  <section class="padding-s border-bottom" *ngIf="domainConfSvc.isConfigEnabled('components.profileMenu', 'viewProfile')">
     <a role="link" routerLink="/app/person-profile/me" fragment="profileInfo" class="all-features" id="viewprofile"
       (click)="raiseTelemetry('view profile')">
       <div class="float-left">
@@ -84,42 +84,42 @@
   </section> -->
 
   <section class="padding-xs">
-    <a *ngIf="!hideMenu && !isKbPortal" mat-menu-item role="link" (click)="redirectToKBPortal()"
+    <a *ngIf="!hideMenu && !isKbPortal && domainConfSvc.isConfigEnabled('components.profileMenu', 'igotKarmayogi')" mat-menu-item role="link" (click)="redirectToKBPortal()"
       class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.igotKarmyogi' | translate }}</span>
     </a>
-    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToTourPage()" class="app-tour flex items-center">
+    <a *ngIf="!hideMenu && domainConfSvc.isConfigEnabled('components.profileMenu', 'getStarted')" mat-menu-item role="link" (click)="redirectToTourPage()" class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.getStarted' | translate }}</span>
     </a>
-    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToLearnersPage()"
+    <a *ngIf="!hideMenu && domainConfSvc.isConfigEnabled('components.profileMenu', 'tipsForLearners')" mat-menu-item role="link" (click)="redirectToLearnersPage()"
       class="app-tour flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.tipsLearners' | translate }}</span>
     </a>
-    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="redirectToMyLearning()"
+    <a *ngIf="!hideMenu && domainConfSvc.isConfigEnabled('components.profileMenu', 'myLearning')" mat-menu-item role="link" (click)="redirectToMyLearning()"
       class="app-features flex items-center">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.myLearning' | translate }}</span>
     </a>
-    <a *ngIf="!hideMenu" mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()"
+    <a *ngIf="!hideMenu && domainConfSvc.isConfigEnabled('components.profileMenu', 'learnerPassbook')" mat-menu-item role="link" (click)="handleRedirectToCompetencyPassbook()"
       class="app-features flex items-center">
       <div class="flex flex-middle justify-between gap-12">
         <span i18n>{{'NetworkV2Profile.learnerPassbook' | translate }}</span>
       </div>
     </a>
-    <a *ngIf="!hideMenu" mat-menu-item role="link" routerLink="/app/peer-validation"
+    <a *ngIf="!hideMenu && domainConfSvc.isConfigEnabled('components.profileMenu', 'peerValidation')" mat-menu-item role="link" routerLink="/app/peer-validation"
       class="app-features flex items-center">
       <span>Peer Validation</span>
     </a>
-    <a mat-menu-item role="link" routerLink="/app/profile/settings" class="all-features flex items-center"
+    <a *ngIf="domainConfSvc.isConfigEnabled('components.profileMenu', 'settings')" mat-menu-item role="link" routerLink="/app/profile/settings" class="all-features flex items-center"
       (click)="raiseTelemetry('Settings')">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.settings' | translate }}</span>
     </a>
 
-    <a mat-menu-item role="link" routerLink="/igot/help-centre" class="all-features flex items-center"
+    <a *ngIf="domainConfSvc.isConfigEnabled('components.profileMenu', 'helpCentre')" mat-menu-item role="link" routerLink="/igot/help-centre" class="all-features flex items-center"
       (click)="raiseTelemetry('HelpCenter')">
       <!-- <mat-icon>settings</mat-icon> -->
       <span>{{'profileDropdown.helpCenter' | translate }}</span>
@@ -131,7 +131,7 @@
       <span >Explore all features</span>
     </a> -->
 
-    <a href="javascript:void(0)" mat-menu-item role="link" (click)="logout()" class="log-o flex items-center">
+    <a *ngIf="domainConfSvc.isConfigEnabled('components.profileMenu', 'signOut')" href="javascript:void(0)" mat-menu-item role="link" (click)="logout()" class="log-o flex items-center">
       <!-- <mat-icon>power_settings_new</mat-icon>&nbsp; -->
       <span>{{'profileDropdown.signOut' | translate }}</span>
     </a>
