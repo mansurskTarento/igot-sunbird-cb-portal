@@ -244,13 +244,12 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         const category = changes.searchQuery.currentValue?.searchCategory || ''
         this.seeAllResults(category)
       } else {
-        await this.searchCourses()
-        await this.searchEvents()
-
-        await this.searchPeople()
-        await this.searchcommunities()
-        await this.searchResources()
-        await this.searchExternalContents()
+        if (this.isCategoryEnabled(SearchCategory.Courses)) { await this.searchCourses() }
+        if (this.isCategoryEnabled(SearchCategory.Events)) { await this.searchEvents() }
+        if (this.isCategoryEnabled(SearchCategory.People)) { await this.searchPeople() }
+        if (this.isCategoryEnabled(SearchCategory.Communities)) { await this.searchcommunities() }
+        if (this.isCategoryEnabled(SearchCategory.Resources)) { await this.searchResources() }
+        if (this.isCategoryEnabled(SearchCategory.ExternalContents)) { await this.searchExternalContents() }
 
         this.searchContentLoader = false
       }
@@ -1037,6 +1036,13 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       })
   }
 
+  isCategoryEnabled(categoryValue: string): boolean {
+    const searchConfig = this.configSvc.globalConfig?.searchCategories
+    if (!searchConfig) { return true }
+    const key = categoryValue || 'all'
+    return searchConfig[key] !== false
+  }
+
   async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {
     console.log('selectedFilters', selectedFilters)
 
@@ -1139,6 +1145,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
 
   async seeAllResults(category: string) {
+    if (!this.isCategoryEnabled(category)) {
+      this.searchContentLoader = false
+      return
+    }
     this.seeAllResult = category
     if (category === SearchCategory.Courses) {
       this.eventSearchTotalCount = 0

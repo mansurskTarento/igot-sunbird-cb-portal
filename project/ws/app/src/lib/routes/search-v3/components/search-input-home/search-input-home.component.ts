@@ -13,7 +13,7 @@ import {
 } from '@angular/core'
 import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { SearchServService } from '../../../search/services/search-serv.service'
 import { GbSearchService } from '../../services/gb-search.service'
@@ -97,6 +97,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;
+  searchCategoriesEnabled = true;
   openSearchTemplate = false;
   loaderSearching = false;
   responseNlpQuery = '';
@@ -117,7 +118,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     private eRef: ElementRef,
     private searchV3Service: GbSearchService,
     private contSvc: WidgetContentLibService,
-    private mobileAppsService: MobileAppsService
+    private mobileAppsService: MobileAppsService,
+    private domainConfSvc: DomainConfService,
   ) {
     this.queryControl = new UntypedFormControl(
       this.activated.snapshot.queryParams.q || ''
@@ -151,6 +153,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.filterCategoriesByConfig()
     if (!this.activated.snapshot.data.searchPageData) {
       this.searchServSvc
         .getSearchConfig()
@@ -173,6 +176,19 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
     }
 
+  }
+
+  filterCategoriesByConfig() {
+    this.searchCategoriesEnabled = this.domainConfSvc.isSearchCategoriesEnabled()
+    if (this.domainConfSvc.getSearchCategoriesConfig()) {
+      this.categories = this.categories.filter(cat => {
+        return this.domainConfSvc.isSearchCategoryEnabled(cat.value)
+      })
+    }
+  }
+
+  isCategoryEnabled(categoryValue: string): boolean {
+    return this.domainConfSvc.isSearchCategoryEnabled(categoryValue)
   }
 
   autoFilter() {
@@ -311,6 +327,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   goToSearchItem(query: any) {
     const category = query?.search_category && query?.search_category[0]
     const nlpSearchQuery = query?.nlp_search_query
+    if (!this.isCategoryEnabled(category)) { return }
     if (category && category === 'courses' && nlpSearchQuery) {
       const req = {
         "request": {
@@ -779,6 +796,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async selectSearchCategory(category: string) {
+    if (!this.isCategoryEnabled(category)) { return }
     if (this.queryControl.value) {
       this.selectedSearchCategory = category
       // this.searchFromQuery(this.queryControl.value);
@@ -787,6 +805,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async searchFromQuery(query: string) {
+    if (!this.isCategoryEnabled(this.selectedSearchCategory)) {
+      this.allSearchResults = []
+      return
+    }
     let courseSearchResult: any
     const searchRequest = new SearchV4Request([])
     searchRequest.request.query = query
