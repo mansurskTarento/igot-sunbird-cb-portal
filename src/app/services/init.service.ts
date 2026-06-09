@@ -5,9 +5,9 @@ import { Inject, Injectable } from '@angular/core'
 import { MatIconRegistry } from '@angular/material/icon'
 import { DomSanitizer } from '@angular/platform-browser'
 import {
-  hasPermissions,
+  // hasPermissions,
   hasUnitPermission,
-  NsWidgetResolver,
+  // NsWidgetResolver,
   WidgetResolverService,
 } from '@sunbird-cb/resolver'
 import {
@@ -27,14 +27,14 @@ import _ from 'lodash'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 // import { Subscription } from 'rxjs'
-import { NSProfileDataV3 } from '@ws/app'
+// import { NSProfileDataV3 } from '@ws/app'
 import { NPSGridService } from '@sunbird-cb/collection'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
-import { GlobalService } from './global.service'
+// import { GlobalService } from './global.service'
 import { CommonDataService } from './common-data.service'
 declare const smartech: any
 // import { of } from 'rxjs'
@@ -47,9 +47,9 @@ declare const smartech: any
 //   isActive: boolean
 // }
 
-interface IFeaturePermissionConfigs {
-  [id: string]: Omit<NsWidgetResolver.IPermissions, 'feature'>
-}
+// interface IFeaturePermissionConfigs {
+//   [id: string]: Omit<NsWidgetResolver.IPermissions, 'feature'>
+// }
 
 const PROXY_CREATE_V8 = '/apis/proxies/v8'
 
@@ -92,7 +92,7 @@ export class InitService {
     private enrollSvc: WidgetEnrollService,
     private netCoreService: NetCoreService,
     // private widgetContentSvc: WidgetContentService,
-    private globalService: GlobalService,
+    // private globalService: GlobalService,
     private commonDataSvc: CommonDataService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
@@ -229,9 +229,9 @@ export class InitService {
     })
     // this.logger.removeConsoleAccess()
     await this.fetchDefaultConfig()
-    await this.profileNudgeConfig()
-    await this.themeOverrideConfig()
-    await this.netCoreConfig()
+    // await this.profileNudgeConfig()
+    // await this.themeOverrideConfig()
+    // await this.netCoreConfig()
     await this.globalConfigData()
 
     // const authenticated = await this.authSvc.initAuth()
@@ -311,15 +311,12 @@ export class InitService {
     return true
   }
   async initFeatured() {
-    const appsConfigPromise = this.fetchAppsConfig()
-    const instanceConfigPromise = this.fetchInstanceConfig() // config: depends only on details
-    const widgetStatusPromise = this.fetchWidgetStatus() // widget: depends only on details & feature
-    await this.fetchFeaturesStatus() // feature: depends only on details
+    // const appsConfigPromise = this.fetchAppsConfig()
+    // const instanceConfigPromise = this.fetchInstanceConfig() // config: already loaded in fetchDefaultConfig
+    //await this.fetchFeaturesStatus() // feature: depends only on details
     /**
      * Wait for the widgets and get the list of restricted widgets
      */
-    const widgetConfig = await widgetStatusPromise
-    this.processWidgetStatus(widgetConfig)
     this.widgetResolverService.initialize(
       this.configSvc.restrictedWidgets,
       this.configSvc.userRoles,
@@ -335,18 +332,18 @@ export class InitService {
     /**
      * Wait for the instance config and after that
      */
-    await instanceConfigPromise
+    // await instanceConfigPromise
     this.updateTelemetryConfig()
     /*
      * Wait for the apps config and after that
      */
-    const appsConfig = await appsConfigPromise
-    this.configSvc.appsConfig = this.processAppsConfig(appsConfig)
-    if (this.configSvc.instanceConfig) {
-      this.configSvc.instanceConfig.featuredApps = this.configSvc.instanceConfig.featuredApps.filter(
-        id => appsConfig.features[id],
-      )
-    }
+    // const appsConfig = await appsConfigPromise
+    // this.configSvc.appsConfig = this.processAppsConfig(appsConfig)
+    // if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.featuredApps) {
+    //   this.configSvc.instanceConfig.featuredApps = this.configSvc.instanceConfig.featuredApps.filter(
+    //     id => appsConfig.features[id],
+    //   )
+    // }
 
     // Apply the settings using settingsService
     this.settingsSvc.initializePrefChanges(environment.production)
@@ -417,8 +414,11 @@ export class InitService {
 
   private async fetchDefaultConfig(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-      .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/host.config.json`)
+      .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/application.config.json`)
       .toPromise()
+    if (publicConfig.npsCategory) {
+      localStorage.setItem('npsCategory', publicConfig.npsCategory)
+    }
     this.configSvc.instanceConfig = publicConfig
     this.configSvc.rootOrg = publicConfig.rootOrg
     this.configSvc.org = publicConfig.org
@@ -427,47 +427,59 @@ export class InitService {
     this.configSvc.appSetup = publicConfig.appSetup
     this.configSvc.positions = publicConfig.positions
     this.configSvc.compentency = publicConfig.compentency
-    return publicConfig
-  }
-
-  private async profileNudgeConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-      .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
-      .toPromise()
+    this.configSvc.portalUrls = publicConfig.portalUrls
+    this.configSvc.completionSurvey = publicConfig.completionSurvey
+    this.updateAppIndexMeta()
+    this.updateTelemetryConfig()
+    this.configSvc.appsConfig = this.processAppsConfig(publicConfig)
+    this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
     this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
-    return publicConfig
-  }
-
-  private async globalConfigData(): Promise<NsInstanceConfig.IConfig> {
-    const payload = {
-      'request': {
-        'type': 'page',
-        'subType': 'globalConfig',
-        'action': 'page-configuration',
-        'component': 'portal', 'rootOrgId': '*',
-      },
-    }
-    const publicConfig: any = await this.globalService.globalConfigReadData(payload).toPromise()
-    this.configSvc.globalConfig = publicConfig.globalConfig
-    return publicConfig
-  }
-
-  private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
-    // const publicConfig: any = await this.http
-    //   .get<any>(`${this.baseUrl}/netcore.json`)
-    //   .toPromise()
-    const payload = {
-      'request': {
-        'type': 'page',
-        'subType': 'netcore',
-        'action': 'page-configuration',
-        'component': 'portal', 'rootOrgId': '*',
-      },
-    }
-    const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
+    this.configSvc['headerFooterConfigData'] = publicConfig.headerFooterConfigData
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
+    if (publicConfig && publicConfig?.iGOTAI && publicConfig?.iGOTAI?.web) {
+      this.configSvc.iGOTAIConfig = publicConfig.iGOTAI.web
+      //  console.log('this.configSvc', this.configSvc)
+    }
     return publicConfig
   }
+
+  // private async profileNudgeConfig(): Promise<NsInstanceConfig.IConfig> {
+  //   const publicConfig: NsInstanceConfig.IConfig | any = await this.http
+  //     .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
+  //     .toPromise()
+  //   this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
+  //   return publicConfig
+  // }
+
+  private async globalConfigData(): Promise<any> {
+    try {
+      const globalConfig: any = await this.http
+        .get<any>(`${this.baseUrl}/global-config.json`)
+        .toPromise()
+      this.configSvc.globalConfig = globalConfig
+    } catch (e) {
+      console.warn('InitService: Failed to load global-config.json, using defaults', e)
+      this.configSvc.globalConfig = {}
+    }
+    return this.configSvc.globalConfig
+  }
+
+  // private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
+  //   // const publicConfig: any = await this.http
+  //   //   .get<any>(`${this.baseUrl}/netcore.json`)
+  //   //   .toPromise()
+  //   const payload = {
+  //     'request': {
+  //       'type': 'page',
+  //       'subType': 'netcore',
+  //       'action': 'page-configuration',
+  //       'component': 'portal', 'rootOrgId': '*',
+  //     },
+  //   }
+  //   const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
+  //   this.configSvc.netcoreConfig = publicConfig.netcoreConfig
+  //   return publicConfig
+  // }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => {
@@ -545,13 +557,13 @@ export class InitService {
     return publicConfig
   }
 
-  private async themeOverrideConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-      .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/theme-override-config.json`)
-      .toPromise()
-    this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
-    return publicConfig
-  }
+  // private async themeOverrideConfig(): Promise<NsInstanceConfig.IConfig> {
+  //   const publicConfig: NsInstanceConfig.IConfig | any = await this.http
+  //     .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/theme-override-config.json`)
+  //     .toPromise()
+  //   this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
+  //   return publicConfig
+  // }
 
   get locale(): string {
     return this.baseHref && this.baseHref.replace(/\//g, '')
@@ -559,18 +571,18 @@ export class InitService {
       : 'en'
   }
 
-  private async fetchAppsConfig(): Promise<NsAppsConfig.IAppsConfig | any> {
-    const appsConfig = await this.http
-      .get<NsAppsConfig.IAppsConfig>(`${this.baseUrl}/feature/apps.json`)
-      .toPromise()
-    return appsConfig
-  }
-  private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
-    const welcomeConfig = await this.http
-      .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
-      .toPromise()
-    return welcomeConfig
-  }
+  // private async fetchAppsConfig(): Promise<NsAppsConfig.IAppsConfig | any> {
+  //   const appsConfig = await this.http
+  //     .get<NsAppsConfig.IAppsConfig>(`${this.baseUrl}/feature/apps.json`)
+  //     .toPromise()
+  //   return appsConfig
+  // }
+  // private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
+  //   const welcomeConfig = await this.http
+  //     .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
+  //     .toPromise()
+  //   return welcomeConfig
+  // }
   private setTelemetrySessionId() {
     if (localStorage.getItem('telemetrySessionId')) {
       localStorage.removeItem('telemetrySessionId')
@@ -590,7 +602,7 @@ export class InitService {
   private async fetchStartUpDetails(): Promise<any> {
     // const userRoles: string[] = []
     let apiResponse: any
-    if (this.configSvc.instanceConfig && !Boolean(this.configSvc.instanceConfig.disablePidCheck)) {
+    if (this.configSvc.instanceConfig) {
       let userPidProfile: any | null = null
       try {
         userPidProfile = await this.http
@@ -695,7 +707,7 @@ export class InitService {
         this.configSvc.userGroups = new Set(details.group)
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
-        this.configSvc.welcomeTabs = await this.fetchWelcomeConfig()
+        // this.configSvc.welcomeTabs = await this.fetchWelcomeConfig()
 
         // nps check
         if (localStorage.getItem('platformratingTime')) {
@@ -844,26 +856,25 @@ export class InitService {
 
   }
 
-  private async fetchInstanceConfig(): Promise<NsInstanceConfig.IConfig> {
-    // TODO: use the rootOrg and org to fetch the instance
-    const publicConfig: any = await this.http
-      .get<NsInstanceConfig.IConfig>(`${this.configSvc.sitePath}/site.config.json`)
-      .toPromise()
-    if (publicConfig.npsCategory) {
-      localStorage.setItem('npsCategory', publicConfig.npsCategory)
-    }
-
-    this.configSvc.instanceConfig = publicConfig
-    this.configSvc.rootOrg = publicConfig.rootOrg
-    this.configSvc.org = publicConfig.org
-    this.configSvc.portalUrls = publicConfig.portalUrls
-    this.configSvc.activeOrg = publicConfig.org[0]
-    this.configSvc.positions = publicConfig.positions
-    this.configSvc.completionSurvey = publicConfig.completionSurvey
-    this.updateAppIndexMeta()
-    this.updateTelemetryConfig()
-    return publicConfig
-  }
+  // private async fetchInstanceConfig(): Promise<NsInstanceConfig.IConfig> {
+  //   // TODO: use the rootOrg and org to fetch the instance
+  //   const publicConfig: any = await this.http
+  //     .get<NsInstanceConfig.IConfig>(`${this.configSvc.sitePath}/application.config.json`)
+  //     .toPromise()
+  //   if (publicConfig.npsCategory) {
+  //     localStorage.setItem('npsCategory', publicConfig.npsCategory)
+  //   }
+  //   this.configSvc.instanceConfig = publicConfig
+  //   this.configSvc.rootOrg = publicConfig.rootOrg
+  //   this.configSvc.org = publicConfig.org
+  //   this.configSvc.portalUrls = publicConfig.portalUrls
+  //   this.configSvc.activeOrg = publicConfig.org[0]
+  //   this.configSvc.positions = publicConfig.positions
+  //   this.configSvc.completionSurvey = publicConfig.completionSurvey
+  //   this.updateAppIndexMeta()
+  //   this.updateTelemetryConfig()
+  //   return publicConfig
+  // }
 
   // private async createUserInNodebb(): Promise<any> {
   //   if (this.configSvc.nodebbUserProfile) {
@@ -896,47 +907,26 @@ export class InitService {
   //   }
   // }
 
-  private async fetchFeaturesStatus(): Promise<Set<string>> {
-    // TODO: use the rootOrg and org to fetch the features
-    const featureConfigs: any = await this.http
-      .get<IFeaturePermissionConfigs>(`${this.baseUrl}/features.config.json`)
-      .toPromise()
-    this.configSvc.restrictedFeatures = new Set(
-      Object.entries((featureConfigs || {}) as Record<string, any>)
-        .filter(
-          ([_k, v]) => !hasPermissions(v, this.configSvc.userRoles, this.configSvc.userGroups),
-        )
-        .map(([k]) => k),
-    )
-    return this.configSvc.restrictedFeatures
-  }
-  private async fetchWidgetStatus(): Promise<NsWidgetResolver.IRegistrationsPermissionConfig[] | any> {
-    const widgetConfigs = await this.http
-      .get<NsWidgetResolver.IRegistrationsPermissionConfig[]>(`${this.baseUrl}/widgets.config.json`)
-      .toPromise()
-    return widgetConfigs
-  }
+  // private async fetchFeaturesStatus(): Promise<Set<string>> {
+  //   // TODO: use the rootOrg and org to fetch the features
+  //   const featureConfigs: any = await this.http
+  //     .get<IFeaturePermissionConfigs>(`${this.baseUrl}/features.config.json`)
+  //     .toPromise()
+  //   this.configSvc.restrictedFeatures = new Set(
+  //     Object.entries((featureConfigs || {}) as Record<string, any>)
+  //       .filter(
+  //         ([_k, v]) => !hasPermissions(v, this.configSvc.userRoles, this.configSvc.userGroups),
+  //       )
+  //       .map(([k]) => k),
+  //   )
+  //   return this.configSvc.restrictedFeatures
+  // }
 
-  private processWidgetStatus(widgetConfigs: NsWidgetResolver.IRegistrationsPermissionConfig[]) {
-    this.configSvc.restrictedWidgets = new Set(
-      widgetConfigs
-        .filter(u =>
-          hasPermissions(
-            u.widgetPermission,
-            this.configSvc.userRoles,
-            this.configSvc.userGroups,
-            this.configSvc.restrictedFeatures,
-          ),
-        )
-        .map(u => WidgetResolverService.getWidgetKey(u)),
-    )
-    return this.configSvc.restrictedWidgets
-  }
 
   private processAppsConfig(appsConfig: NsAppsConfig.IAppsConfig): NsAppsConfig.IAppsConfig {
-    const tourGuide = appsConfig.tourGuide
+    const tourGuide = appsConfig?.tourGuide
     const features: { [id: string]: NsAppsConfig.IFeature } = Object.values(
-      appsConfig.features,
+      appsConfig?.features || {}  ,
       // tslint:disable-next-line: no-shadowed-variable
     ).reduce((map: { [id: string]: NsAppsConfig.IFeature }, feature: NsAppsConfig.IFeature) => {
       if (hasUnitPermission(feature.permission, this.configSvc.restrictedFeatures, true)) {
@@ -956,10 +946,10 @@ export class InitService {
   private updateNavConfig() {
     if (this.configSvc.instanceConfig) {
       const background = this.configSvc.instanceConfig.backgrounds
-      if (background.primaryNavBar) {
+      if (background && background.primaryNavBar) {
         this.configSvc.primaryNavBar = background.primaryNavBar
       }
-      if (background.pageNavBar) {
+      if (background && background.pageNavBar) {
         this.configSvc.pageNavBar = background.pageNavBar
       }
       if (this.configSvc.instanceConfig.primaryNavBarConfig) {
@@ -980,7 +970,9 @@ export class InitService {
 
   private updateAppIndexMeta() {
     if (this.configSvc.instanceConfig) {
-      document.title = this.configSvc.instanceConfig.details.appName
+      if (this.configSvc.instanceConfig.details && this.configSvc.instanceConfig.details.appName) {
+        document.title = this.configSvc.instanceConfig.details.appName
+      }
       try {
         if (this.configSvc.instanceConfig.indexHtmlMeta.description) {
           const manifestElem = document.getElementById('id-app-description')

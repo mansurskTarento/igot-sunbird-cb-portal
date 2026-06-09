@@ -25,6 +25,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() mode: 'top' | 'bottom' = 'top'
   @Input() headerFooterConfigData: any
   hideKPOnNav = false
+  showBottomNav = true
   basicBtnAppsConfig: NsWidgetResolver.IRenderConfigWithTypedData<IBtnAppsConfig> = {
     widgetType: 'actionButton',
     widgetSubType: 'actionButtonApps',
@@ -46,7 +47,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   isHelpMenuRestricted = false
   isTourGuideAvailable = false
   isTourGuideClosed = false
-  showAppNavBar = false
+  showAppNavBar = true
   popupTour: any
   currentRoute = 'page/home'
   isPublicHomePage = window.location.href.includes('/public/home')
@@ -113,6 +114,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
+    this.showBottomNav = this.domainConfSvc.isConfigEnabled('components.bottomNav', 'enabled')
     if (this.configSvc) {
       this.jan26Data = this.configSvc.overrideThemeChanges
       this.logoDisplayTime = this.jan26Data?.desktop?.logoDisplayTime

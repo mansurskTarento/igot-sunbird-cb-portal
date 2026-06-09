@@ -8,7 +8,7 @@
           <span class="margin-auto ws-mat-default-text mat-subheading-2">EXPLORE</span>
         </a> -->
         <ng-container [@enterAnimation]="visible">
-          <div class="explore-more flex items-center">
+          <div class="explore-more flex items-center" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader', 'exploreContent')">
             <button mat-raised-button class="mat-btn-outline cursor-pointer explore-content-action"
             (click)="exploreContent()">
               <div class="flex items-center">
@@ -40,7 +40,7 @@
               </a>
             <!-- </ng-container> -->
           </div>
-          <a id="menuToggle2" [ngClass]="visible ? 'new-more-active': 'new-more'" class="flex cursor-pointer simple-hubs-link margin-left-xl" href="javascript:void(0)" role="menuitem"
+          <a *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'enabled')" id="menuToggle2" [ngClass]="visible ? 'new-more-active': 'new-more'" class="flex cursor-pointer simple-hubs-link margin-left-xl" href="javascript:void(0)" role="menuitem"
             accesskey="H" i18n-aria-label (click)="toggleVisibility()">
 
             <!-- <mat-icon class="margin-right-xs ws-mat-primary-text">more_horiz</mat-icon> -->
@@ -71,10 +71,10 @@
             </div>
           </div>
 
-          <div class="flex flex-1 margin-xs">
+          <div class="flex flex-1 margin-xs" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'doMore')">
             <h4 class="mat-h4 nav_sub_heading">{{ 'cardshublist.doMore' | translate }}</h4>
           </div>
-          <div class="flex flex-1">
+          <div class="flex flex-1" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'doMore')">
             <div class="grid grid-cols-1 margin-xs sm:grid-cols-2 md:grid-cols-3 md:grid-cols-4 col-gap-2">            
 
               <!-- <a  *ngIf="showDashboardIcon" class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
@@ -89,7 +89,7 @@
                 </div>
               </a> -->
 
-              <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
+              <a *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'settings')" class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
                 (click)="trackTelemetry('Settings')" [routerLink]="['/app/profile/settings']">
                 <div class="icon ws-mat-primary-tags">
                   <mat-icon class=" m-auto mat-icon notranslate material-icons mat-icon-no-color" role="img"
@@ -100,7 +100,7 @@
                   <div class="mat-caption cohorts-desc ws-mat-black60-text">{{ 'cardshublist.settingSubtitle' | translate }}</div>
                 </div>
               </a>
-              <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="handleClick()">
+              <a *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'discoverMentors')" class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="handleClick()">
                 <div class="icon ws-mat-primary-tags">
                   <mat-icon class=" m-auto mat-icon notranslate material-icons mat-icon-no-color" role="img"
                     aria-hidden="true">search</mat-icon>
@@ -123,10 +123,10 @@
             </div>
           </div>
 
-          <div class="flex flex-1 margin-xs" *ngIf="environment.portals.length">
+          <div class="flex flex-1 margin-xs" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'quickLinks') && environment.portals.length">
             <h4 class="mat-h4 margin-bottom-remove nav_sub_heading">{{ 'cardshublist.quickLinks' | translate }}</h4>
           </div>
-          <div class="flex flex-1">
+          <div class="flex flex-1" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'quickLinks')">
             <div class="grid grid-cols-1 margin-xs sm:grid-cols-2 md:grid-cols-3 md:grid-cols-4 col-gap-2 mobile-div">
               <ng-container *ngFor="let portal of environment.portals | orderBy: 'sr'">
                 <ng-container *ngIf="(portal.isPublic || isAllowed(portal.id)) && portal.name !== 'Frac Dictionary'">
@@ -190,12 +190,12 @@
           </div>
 
           <!--coming soon section-->
-          <div class="flex flex-1 margin-xs disable-div">
+          <div class="flex flex-1 margin-xs disable-div" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'comingSoon')">
             <h4 class="mat-h4 margin-bottom-remove nav_sub_heading">{{ 'cardshublist.comingSoon' | translate }}</h4>
           </div>
-          <div class="flex flex-1 disable-div">
+          <div class="flex flex-1 disable-div" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'comingSoon')">
             <div class="grid grid-cols-1 margin-xs sm:grid-cols-2 md:grid-cols-3 md:grid-cols-4 col-gap-2 mobile-div">
-              <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
+              <a *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'career')" class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()"
                 (click)="trackTelemetry('Career')" [routerLink]="['/app/careers/home']">
                 <div class="icon ws-mat-primary-tags">
                   <img class="m-auto mat-icon" src="/assets/icons/hubs/work.svg">
@@ -205,7 +205,7 @@
                   <div class="mat-caption cohorts-desc ws-mat-black60-text">{{ 'cardshublist.exploreOpportunities' | translate }}</div>
                 </div>
               </a>
-              <a class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()" [routerLink]="['/app/competencies']"
+              <a *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'competency')" class="flex flex-wrap mb-4 mobile" role="menuitem" (click)="toggleVisibility()" [routerLink]="['/app/competencies']"
                 (click)="trackTelemetry('Competency')">
                 <div class="icon ws-mat-primary-tags">
                   <img class="m-auto mat-icon" src="/assets/icons/hubs/extension.svg">

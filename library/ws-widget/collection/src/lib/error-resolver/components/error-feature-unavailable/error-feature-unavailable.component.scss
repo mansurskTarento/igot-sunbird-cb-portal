@@ -1,72 +1,84 @@
-@use '@sunbird-cb/design-system/src/styles/ws-common';
-@use '@sunbird-cb/design-system/src/styles/ws-vars';
-@use '@sunbird-cb/design-system/src/styles/ws-mixins' as *;
-
 :host {
   display: flex;
   min-height: 100%;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
-.error-message {
-  font-size: 1.8em;
-  line-height: 1.2;
+.error-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+  width: 100%;
+  padding: 2rem;
 }
 
-.error-logo {
-  width: 50%;
+.error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+  max-width: 480px;
 }
 
-.error-support {
-  width: 40%;
+.error-icon-wrapper {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #fff3e0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.5rem;
 }
 
-.support-message {
-  font-size: 1.5em;
-  line-height: 1.1;
-  margin-bottom: $size-s;
+.error-icon {
+  font-size: 56px;
+  width: 56px;
+  height: 56px;
+  color: #e65100;
 }
 
-li {
-  font-size: 1.2em;
-  line-height: 1.1;
-  margin-bottom: 10px;
+.error-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.75rem 0;
 }
 
-.error-not-found {
-  flex-direction: row;
-  justify-content: space-around;
+.error-description {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  margin: 0 0 2rem 0;
 }
 
-@media screen and (max-width: 900px) {
-  .flex-direction {
-    flex-direction: column;
+.home-btn {
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 500;
+  padding: 0 2rem;
+}
+
+@media screen and (max-width: 600px) {
+  .error-icon-wrapper {
+    width: 96px;
+    height: 96px;
   }
 
-  .error-message {
-    text-align: center;
+  .error-icon {
+    font-size: 44px;
+    width: 44px;
+    height: 44px;
   }
 
-  .error-logo {
-    width: 100%;
-    height: 40%;
-    text-align: center;
-    margin-bottom: $size-l;
+  .error-title {
+    font-size: 1.4rem;
   }
 
-  .error-support {
-    width: 100%;
-    height: 40%;
-    //  text-align: center;
-  }
-
-  .error-not-found {
-    padding: $size-m;
-  }
-
-  .support-message {
-    text-align: center;
+  .error-description {
+    font-size: 1rem;
   }
 }

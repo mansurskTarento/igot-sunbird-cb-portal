@@ -31,7 +31,7 @@
         [ngClass]="{'disabled-search-btn': !queryControl.value}">{{'gyaanKarmayogi.search' | translate}}</button>
     </form>
 
-    <div class="search-container" [hidden]="!openSearchTemplate">
+    <div class="search-container"  *ngIf="searchCategoriesEnabled" [hidden]="!openSearchTemplate">
       <div class="search-results">
         <div class="search-categories mb-4">
           <mat-chip-list class="mat-chip-list-content">

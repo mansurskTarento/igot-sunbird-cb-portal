@@ -13,6 +13,7 @@ import { ErrorServiceUnavailableComponent } from './components/error-service-una
 import { ErrorSomethingWrongComponent } from './components/error-something-wrong/error-something-wrong.component'
 
 import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
 
 @NgModule({
     declarations: [
@@ -26,6 +27,6 @@ import { MatButtonModule } from '@angular/material/button'
         ErrorServiceUnavailableComponent,
         ErrorSomethingWrongComponent,
     ],
-    imports: [CommonModule, MatButtonModule, RouterModule]
+    imports: [CommonModule, MatButtonModule, MatIconModule, RouterModule]
 })
 export class ErrorResolverModule { }
