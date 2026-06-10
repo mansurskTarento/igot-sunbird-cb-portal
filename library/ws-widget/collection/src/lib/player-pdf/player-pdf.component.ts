@@ -195,17 +195,13 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       e.preventDefault(),
     )
     if (this.widgetData && this.widgetData.pdfUrl) {
-      let publicUrl: string
-      try {
-        // Use path-only URL so requests route through the dev proxy and avoid CORS.
-        // In production the app is served from the same origin, so the path works there too.
-        publicUrl = /^https?:\/\//i.test(this.widgetData.pdfUrl)
-          ? new URL(this.widgetData.pdfUrl).pathname
-          : this.widgetData.pdfUrl
-      } catch {
-        publicUrl = this.widgetData.pdfUrl
-      }
-      this.loadDocument(publicUrl)
+      debugger
+      const publicUrl = this.viewerSvc.getCdnUrl(this.widgetData.pdfUrl)
+      console.log("Public Url URL", publicUrl)
+      console.log("widgetData PDF URL", this.widgetData.pdfUrl)
+      setTimeout(() => {
+        this.loadDocument(publicUrl)
+      }, 500)
       if (this.widgetData.identifier) {
         this.identifier = this.widgetData.identifier
       }
