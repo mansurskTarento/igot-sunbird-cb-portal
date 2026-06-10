@@ -72,6 +72,14 @@ export class PlayerVideoComponent extends WidgetBaseComponent
   previousSubtitleLanguage = 'en'
   playTranscriptionVideoSubscription: Subscription | null = null
   changeTranscriptionLanguageEventSubscription: Subscription | null = null
+  private textTrackChangeListenerAdded = false
+  private readonly SUBTITLE_LANGUAGE_KEY = 'selectedSubtitleLanguage'
+  private readonly SUBTITLE_PREFERENCE_KEY = 'subtitlePreference'
+  private readonly SUBTITLE_TEXT_SETTINGS_KEY = 'vjs-text-track-settings'
+  private readonly SUBTITLE_TEXT_SETTINGS_STYLE_ID = 'player-subtitle-text-settings-style'
+  private applyingStoredSubtitlePreference = false
+  private rebuildingSubtitleTracks = false
+  private subtitlePreferenceApplyTimer: any = null
   videoUrl = 'https://portal.uat.karmayogibharat.net/stream-store/content/do_114194996168163328192/artifact/manifest.m3u8'
   currentPlayerTrackLabel: any = ''
   currentPlayerTrackLangugage: any = ''
@@ -181,28 +189,31 @@ export class PlayerVideoComponent extends WidgetBaseComponent
                       track.mode = 'showing'
 
                     } else {
-                      track.mode = 'disabled' // prevent multiple from showing
+                      track.mode = 'hidden'  // prevent multiple from showing
                     }
 
 
 
-                    track.addEventListener('cuechange', () => {
-                      const activeCues = track.activeCues
+                    if (!(track as any)._cueAttached) {
+                      (track as any)._cueAttached = true
+                      track.addEventListener('cuechange', () => {
+                        const activeCues = track.activeCues
 
-                      if (activeCues && activeCues.length > 0) {
-                        for (let j = 0; j < activeCues.length; j++) {
-                          const cue: any = activeCues[j]
+                        if (activeCues && activeCues?.length > 0) {
+                          for (let j = 0; j < activeCues?.length; j++) {
+                            const cue: any = activeCues[j]
 
-                          this.appTocService.setTranscriptionData({
-                            start: cue.startTime,
-                            end: cue.endTime,
-                            text: cue?.text
-                          })
+                            this.appTocService.setTranscriptionData({
+                              start: cue?.startTime,
+                              end: cue?.endTime,
+                              text: cue?.text
+                            })
 
+                          }
+                          //console.log('cue', allCues)
                         }
-                        //console.log('cue', allCues)
-                      }
-                    })
+                      })
+                    }
                   }
                 }
               }
@@ -303,6 +314,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       this.dispose()
     }
     this.clearTimeInterval()
+    if (this.subtitlePreferenceApplyTimer) {
+      clearTimeout(this.subtitlePreferenceApplyTimer)
+    }
+    this.textTrackChangeListenerAdded = false
 
     if (this.changeTranscriptionLanguageEventSubscription) {
       this.changeTranscriptionLanguageEventSubscription.unsubscribe()
@@ -615,87 +630,483 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       .join(' ')
   }
 
-  replaceSubtitleTrack(newTrack: any) {
+  // replaceSubtitleTrack(newTrack: any) {
 
-    // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
-    // console.log('defaultTrack--', defaultTrackTemp)
-    // let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
-    //   return item?.label === defaultTrackTemp?.default_lang
-    // });
-
-
-    const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
-    const existingTracks = videoEl.querySelectorAll('track')
-    existingTracks.forEach((el: any) => el.remove())
-
-    const trackEl = document.createElement('track')
-    trackEl.kind = 'subtitles'
-    trackEl.src = newTrack.uri
-    trackEl.srclang = newTrack.label.toLowerCase()
-    trackEl.label = newTrack.language
-    trackEl.default = true
-    videoEl.appendChild(trackEl)
-    let tracks = videoEl.textTracks
+  //   // const defaultTrackTemp:any = this.transcriptionLangArr.find((t:any) => t.default_lang);
+  //   // console.log('defaultTrack--', defaultTrackTemp)
+  //   // let defaultTrack:any = this.transcriptionLangArr.filter((item: any) => {
+  //   //   return item?.label === defaultTrackTemp?.default_lang
+  //   // });
 
 
-    // setTimeout(() => {
+  //   const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
+  //   const existingTracks = videoEl.querySelectorAll('track')
+  //   existingTracks.forEach((el: any) => el.remove())
+
+  //   const trackEl = document.createElement('track')
+  //   trackEl.kind = 'subtitles'
+  //   trackEl.src = newTrack.uri
+  //   trackEl.srclang = newTrack.label.toLowerCase()
+  //   trackEl.label = newTrack.language
+  //   trackEl.default = true
+  //   videoEl.appendChild(trackEl)
+  //   let tracks = videoEl.textTracks
 
 
-    for (let i = 0; i < tracks.length; i++) {
-      const t = tracks[i]
-      if (t.kind === 'subtitles') {
-        // Toggle and force reflow if needed
-        if (t.mode === 'showing') {
-          t.mode = 'hidden'
-        } else {
-          // Workaround: re-set mode after short delay to force repaint
-          t.mode = 'hidden'
-          setTimeout(() => {
-            t.mode = 'showing'
-          }, 1000) // or 10–50ms if needed
-        }
+  //   // setTimeout(() => {
+
+
+  //   for (let i = 0; i < tracks.length; i++) {
+  //     const t = tracks[i]
+  //     if (t.kind === 'subtitles') {
+  //       // Toggle and force reflow if needed
+  //       if (t.mode === 'showing') {
+  //         t.mode = 'hidden'
+  private getStoredSubtitleTextSettings(): any {
+    const savedSettings = localStorage.getItem(this.SUBTITLE_TEXT_SETTINGS_KEY)
+
+    if (savedSettings) {
+      try {
+        const parsedSettings = JSON.parse(savedSettings)
+        // Return null for empty objects (VJS stores {} for default/reset settings)
+        return parsedSettings && typeof parsedSettings === 'object' && Object.keys(parsedSettings)?.length > 0
+          ? parsedSettings
+          : null
+      } catch (e) {
+        localStorage.removeItem(this.SUBTITLE_TEXT_SETTINGS_KEY)
       }
-
-    }
-    // }, 1000);
-
-    // Wait for the TextTrack to load
-    const waitForTrack = () => {
-      for (let i = 0; i < tracks.length; i++) {
-        const track = tracks[i]
-        if (
-          (track.kind === 'subtitles' || track.kind === 'metadata') &&
-          track.language.toLowerCase() === newTrack.label.toLowerCase() &&
-          track.cues && track.cues.length > 0
-        ) {
-          track.mode = 'showing'
-
-          // Now attach cuechange
-          track.addEventListener('cuechange', () => {
-            const activeCues = track.activeCues
-            if (activeCues && activeCues.length > 0) {
-              for (let j = 0; j < activeCues.length; j++) {
-                const cue: any = activeCues[j]
-                this.appTocService.setTranscriptionData({
-                  start: cue.startTime,
-                  end: cue.endTime,
-                  text: cue?.text
-                })
-              }
-            }
-          })
-
-          return // Done
-        } else {
-          // track.mode = 'hidden'
-        }
-      }
-
-      // Retry after short delay
-      setTimeout(waitForTrack, 0)
     }
 
-    waitForTrack()
+    return null
+  }
+
+  private getStoredSubtitlePreference(): any {
+    const savedPreference = localStorage.getItem(this.SUBTITLE_PREFERENCE_KEY)
+    const savedTextSettings = this.getStoredSubtitleTextSettings()
+
+    if (savedPreference) {
+      try {
+        const parsedPreference = JSON.parse(savedPreference)
+        return {
+          language: typeof parsedPreference?.language === 'string' ? parsedPreference?.language?.toLowerCase() : null,
+          label: typeof parsedPreference?.label === 'string' ? parsedPreference?.label : null,
+          enabled: parsedPreference?.enabled === true,
+          textSettings: parsedPreference?.textSettings && typeof parsedPreference?.textSettings === 'object'
+            ? parsedPreference?.textSettings
+            : savedTextSettings,
+        }
+      } catch (e) {
+        localStorage.removeItem(this.SUBTITLE_PREFERENCE_KEY)
+      }
+    }
+
+    const legacyLanguage = localStorage.getItem(this.SUBTITLE_LANGUAGE_KEY) || localStorage.getItem('currentPlayerTrackLangugage')
+    const legacyLabel = localStorage.getItem('currentPlayerTrackLabel')
+    const legacySubtitleOff = localStorage.getItem('currentPlayerSubtitleOff')
+
+    if (legacyLanguage || legacyLabel || legacySubtitleOff === 'true') {
+      const migratedPreference = {
+        language: legacyLanguage ? legacyLanguage?.toLowerCase() : null,
+        label: legacyLabel || null,
+        enabled: legacySubtitleOff === 'true' ? false : !!legacyLanguage,
+        textSettings: savedTextSettings,
+      }
+      this.setStoredSubtitlePreference(migratedPreference?.language, migratedPreference?.enabled, migratedPreference?.label)
+      return migratedPreference
+    }
+
+    return null
+  }
+
+  private setStoredSubtitlePreference(language: string | null, enabled: boolean, label?: string | null) {
+    const normalizedLanguage = language ? language?.toLowerCase() : null
+    let storedLabel = localStorage.getItem('currentPlayerTrackLabel')
+    let storedTextSettings = this.getStoredSubtitleTextSettings()
+    const savedPreference = localStorage.getItem(this.SUBTITLE_PREFERENCE_KEY)
+
+    if (savedPreference) {
+      try {
+        const parsedPreference = JSON.parse(savedPreference)
+        storedLabel = typeof parsedPreference?.label === 'string' ? parsedPreference?.label : storedLabel
+        storedTextSettings = parsedPreference?.textSettings && typeof parsedPreference?.textSettings === 'object'
+          ? parsedPreference?.textSettings
+          : storedTextSettings
+      } catch (e) {
+        storedLabel = localStorage.getItem('currentPlayerTrackLabel')
+      }
+    }
+
+    const normalizedLabel = typeof label === 'string' ? label : storedLabel || null
+
+    localStorage.setItem(
+      this.SUBTITLE_PREFERENCE_KEY,
+      JSON.stringify({
+        language: normalizedLanguage,
+        label: normalizedLabel,
+        enabled,
+        textSettings: storedTextSettings,
+      })
+    )
+
+    if (normalizedLanguage) {
+      localStorage.setItem(this.SUBTITLE_LANGUAGE_KEY, normalizedLanguage)
+      localStorage.setItem('currentPlayerTrackLangugage', normalizedLanguage)
+    }
+    if (normalizedLabel) {
+      localStorage.setItem('currentPlayerTrackLabel', normalizedLabel)
+    }
+
+    if (enabled) {
+      localStorage.removeItem('currentPlayerSubtitleOff')
+    } else {
+      localStorage.setItem('currentPlayerSubtitleOff', 'true')
+    }
+  }
+
+  private setStoredSubtitleTextSettings(textSettings: any) {
+    if (!textSettings || typeof textSettings !== 'object') {
+      return
+    }
+
+    localStorage.setItem(this.SUBTITLE_TEXT_SETTINGS_KEY, JSON.stringify(textSettings))
+
+    const preference = this.getStoredSubtitlePreference()
+    localStorage.setItem(
+      this.SUBTITLE_PREFERENCE_KEY,
+      JSON.stringify({
+        language: preference?.language || null,
+        label: preference?.label || null,
+        enabled: preference?.enabled === true,
+        textSettings,
+      })
+    )
+  }
+
+  private clearStoredSubtitleTextSettings() {
+    localStorage.removeItem(this.SUBTITLE_TEXT_SETTINGS_KEY)
+
+    const preference = this.getStoredSubtitlePreference()
+    localStorage.setItem(
+      this.SUBTITLE_PREFERENCE_KEY,
+      JSON.stringify({
+        language: preference?.language || null,
+        label: preference?.label || null,
+        enabled: preference?.enabled === true,
+        textSettings: null,
+      })
+    )
+
+    const styleEl = document.getElementById(this.SUBTITLE_TEXT_SETTINGS_STYLE_ID)
+    if (styleEl) {
+      styleEl?.remove()
+    }
+  }
+
+  private getSubtitleTextSettingsComponent(initObj: any): any {
+    // Try PascalCase first (VJS registers as 'TextTrackSettings'), then camelCase, then direct property
+    return initObj?.player?.getChild('TextTrackSettings') ||
+      initObj?.player?.getChild('textTrackSettings') ||
+      initObj?.player?.textTrackSettings
+  }
+
+  private applyStoredSubtitleTextSettings(initObj: any) {
+    const preference = this.getStoredSubtitlePreference()
+    const textSettings = preference?.textSettings || this.getStoredSubtitleTextSettings()
+
+    if (!textSettings) {
+      return
+    }
+
+    localStorage.setItem(this.SUBTITLE_TEXT_SETTINGS_KEY, JSON.stringify(textSettings))
+
+    const textTrackSettings = this.getSubtitleTextSettingsComponent(initObj)
+    if (textTrackSettings?.setValues) {
+      textTrackSettings.setValues(textSettings)
+    }
+    if (textTrackSettings?.updateDisplay) {
+      textTrackSettings.updateDisplay()
+    }
+    // Try PascalCase first (VJS registers as 'TextTrackDisplay'), then camelCase as fallback
+    const textTrackDisplay =
+      initObj?.player?.getChild('TextTrackDisplay') ||
+      initObj?.player?.getChild('textTrackDisplay')
+    if (textTrackDisplay?.updateDisplay) {
+      textTrackDisplay.updateDisplay()
+    }
+
+    this.applyNativeSubtitleTextSettings(textSettings)
+  }
+
+  private syncSubtitleTextSettingsFromPlayer(initObj: any) {
+    const textTrackSettings = this.getSubtitleTextSettingsComponent(initObj)
+    if (!textTrackSettings?.getValues) {
+      return
+    }
+
+    const textSettings = textTrackSettings?.getValues()
+    if (textSettings && Object?.keys(textSettings)?.length) {
+      this.setStoredSubtitleTextSettings(textSettings)
+      this.applyNativeSubtitleTextSettings(textSettings)
+    } else {
+      this.clearStoredSubtitleTextSettings()
+    }
+  }
+
+  private setupSubtitleTextSettingsPersistence(initObj: any, retryCount = 0) {
+    const textTrackSettings = this.getSubtitleTextSettingsComponent(initObj)
+    const textTrackSettingsEl = textTrackSettings?.el ? textTrackSettings?.el() : null
+
+    this.applyStoredSubtitleTextSettings(initObj)
+
+    if (!textTrackSettingsEl) {
+      // VJS settings panel DOM may not be ready yet; retry up to 3 times
+      if (retryCount < 3) {
+        setTimeout(() => this.setupSubtitleTextSettingsPersistence(initObj, retryCount + 1), 200)
+      }
+      return
+    }
+
+    if ((textTrackSettings as any)._subtitleTextSettingsListenerAttached) {
+      return
+    }
+
+    textTrackSettingsEl.addEventListener('change', () => this.syncSubtitleTextSettingsFromPlayer(initObj))
+
+    const doneButton = textTrackSettingsEl.querySelector('.vjs-done-button')
+    if (doneButton) {
+      doneButton.addEventListener('click', () => this.syncSubtitleTextSettingsFromPlayer(initObj))
+    }
+
+    const defaultButton = textTrackSettingsEl.querySelector('.vjs-default-button')
+    if (defaultButton) {
+      defaultButton.addEventListener('click', () => {
+        setTimeout(() => this.syncSubtitleTextSettingsFromPlayer(initObj), 0)
+      })
+    }
+
+    const textTrackSettingsAny = textTrackSettings as any
+    textTrackSettingsAny._subtitleTextSettingsListenerAttached = true
+  }
+
+  private getSubtitleColor(color: string, opacity?: string): string {
+    if (!color) {
+      return ''
+    }
+
+    if (color.indexOf('#') !== 0) {
+      return color
+    }
+
+    const normalizedColor = color.length === 4
+      ? color.replace(/^#(.)(.)(.)$/, '#$1$1$2$2$3$3')
+      : color
+    const red = parseInt(normalizedColor.substr(1, 2), 16)
+    const green = parseInt(normalizedColor.substr(3, 2), 16)
+    const blue = parseInt(normalizedColor.substr(5, 2), 16)
+    const alpha = opacity || '1'
+
+    return `rgba(${red}, ${green}, ${blue}, ${alpha})`
+  }
+
+  private applyNativeSubtitleTextSettings(textSettings: any) {
+    if (!textSettings || typeof textSettings !== 'object') {
+      return
+    }
+
+    const cueStyles: string[] = []
+    const textColor = this.getSubtitleColor(textSettings?.color, textSettings?.textOpacity)
+    const backgroundColor = this.getSubtitleColor(textSettings?.backgroundColor, textSettings?.backgroundOpacity)
+
+    if (textColor) {
+      cueStyles.push(`color: ${textColor}`)
+    }
+    if (backgroundColor) {
+      cueStyles.push(`background-color: ${backgroundColor}`)
+    }
+    if (textSettings?.fontPercent) {
+      cueStyles.push(`font-size: ${Number(textSettings.fontPercent) * 100}%`)
+    }
+    if (textSettings?.fontFamily) {
+      const fontFamilyMap: any = {
+        proportionalSansSerif: 'sans-serif',
+        monospaceSansSerif: 'monospace',
+        proportionalSerif: 'serif',
+        monospaceSerif: 'monospace',
+        casual: '"Comic Sans MS", cursive',
+        script: 'cursive',
+        'small-caps': 'sans-serif',
+      }
+      cueStyles.push(`font-family: ${fontFamilyMap[textSettings.fontFamily] || textSettings.fontFamily}`)
+      if (textSettings.fontFamily === 'small-caps') {
+        cueStyles.push('font-variant: small-caps')
+      }
+    }
+    if (textSettings.edgeStyle) {
+      const edgeStyleMap: any = {
+        raised: '1px 1px 0 #000',
+        depressed: '-1px -1px 0 #000',
+        uniform: '-1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+        dropshadow: '2px 2px 3px #000',
+      }
+      if (edgeStyleMap[textSettings.edgeStyle]) {
+        cueStyles.push(`text-shadow: ${edgeStyleMap[textSettings.edgeStyle]}`)
+      }
+    }
+
+    if (!cueStyles?.length) {
+      return
+    }
+
+    let styleEl = document.getElementById(this.SUBTITLE_TEXT_SETTINGS_STYLE_ID)
+    if (!styleEl) {
+      styleEl = document.createElement('style')
+      styleEl.id = this.SUBTITLE_TEXT_SETTINGS_STYLE_ID
+      document.head.appendChild(styleEl)
+    }
+
+    // ::cue targets native HTML5 text-track rendering (Safari HTML5 path and any native fallback)
+    // .vjs-text-track-cue > div is a CSS fallback for VJS custom rendering (Chrome/Firefox/Edge)
+    // VJS inline styles take priority over the class rule when VJS properly applies settings;
+    // the class rule kicks in when VJS has not applied inline styles (e.g. timing edge cases)
+    styleEl.textContent = [
+      `#realvideoTag::cue { ${cueStyles?.join('; ')}; }`,
+      `#videoTag::cue { ${cueStyles?.join('; ')}; }`,
+      `.vjs-text-track-display .vjs-text-track-cue > div { ${cueStyles?.join('; ')}; }`,
+    ].join(' ')
+  }
+
+  private applyStoredSubtitlePreference(initObj: any, retryCount = 0) {
+    const preference = this.getStoredSubtitlePreference()
+    const tracks = initObj?.player?.textTracks()
+    const subtitleTracks: any[] = []
+
+    for (let i = 0; i < tracks?.length; i++) {
+      const track = tracks[i]
+
+      if (track?.kind === 'subtitles' || track?.kind === 'captions') {
+        subtitleTracks.push(track)
+      }
+    }
+
+    if (
+      Array.isArray(this.transcriptionLangArr) &&
+      this.transcriptionLangArr?.length &&
+      subtitleTracks?.length < this.transcriptionLangArr?.length &&
+      retryCount < 8
+    ) {
+      this.subtitlePreferenceApplyTimer = setTimeout(() => {
+        this.applyStoredSubtitlePreference(initObj, retryCount + 1)
+      }, 250)
+      return
+    }
+
+    this.applyingStoredSubtitlePreference = true
+    this.applyStoredSubtitleTextSettings(initObj)
+
+    if (!preference) {
+      subtitleTracks.forEach((track: any) => {
+        track.mode = 'disabled'
+      })
+      this.currentPlayerTrackLabel = ''
+      this.currentPlayerTrackLangugage = ''
+      this.currentPlayerSubtitleOff = 'true'
+      this.activeTranscriptionLanguage = ''
+      this.updateSubtitleButtonIcon(false)
+      setTimeout(() => {
+        this.applyingStoredSubtitlePreference = false
+        this.rebuildingSubtitleTracks = false
+      }, 0)
+      return
+    }
+
+    let selectedTrack: any = null
+
+    subtitleTracks.forEach((track: any) => {
+      const isSelectedLanguage =
+        preference?.language &&
+        track?.language &&
+        track?.language?.toLowerCase() === preference?.language?.toLowerCase()
+      const isSelectedLabel =
+        preference?.label &&
+        track?.label &&
+        track?.label?.toLowerCase() === preference?.label?.toLowerCase()
+
+      if (preference?.enabled && (isSelectedLanguage || isSelectedLabel)) {
+        track.mode = 'showing'
+        selectedTrack = track
+      } else {
+        track.mode = 'disabled'
+      }
+    })
+
+    if (selectedTrack) {
+      this.currentPlayerTrackLabel = selectedTrack?.label
+      this.currentPlayerTrackLangugage = selectedTrack?.language
+      this.currentPlayerSubtitleOff = ''
+      this.previousSubtitleLanguage = selectedTrack?.language
+      this.activeTranscriptionLanguage = selectedTrack?.language
+      this.setStoredSubtitlePreference(selectedTrack?.language, preference?.enabled, selectedTrack?.label)
+      this.updateSubtitleButtonIcon(true)
+    } else {
+      this.currentPlayerSubtitleOff = 'true'
+      this.previousSubtitleLanguage = ''
+      this.activeTranscriptionLanguage = preference?.language || ''
+      this.updateSubtitleButtonIcon(false)
+    }
+
+    setTimeout(() => {
+      this.applyingStoredSubtitlePreference = false
+      this.rebuildingSubtitleTracks = false
+    }, 0)
+  }
+
+  private scheduleStoredSubtitlePreferenceApply(initObj: any) {
+    if (this.subtitlePreferenceApplyTimer) {
+      clearTimeout(this.subtitlePreferenceApplyTimer)
+    }
+
+    this.subtitlePreferenceApplyTimer = setTimeout(() => {
+      this.applyStoredSubtitlePreference(initObj)
+    }, 0)
+  }
+
+  private activateSubtitle(language: string) {
+    const tracks = this.playerInitObj?.player?.textTracks()
+    let selectedTrackLabel: string | null = null
+
+    for (let i = 0; i < tracks?.length; i++) {
+      const track = tracks[i]
+
+      if (
+        track?.kind === 'subtitles' ||
+        track?.kind === 'captions'
+      ) {
+        track.mode =
+          track.language?.toLowerCase() === language?.toLowerCase()
+            ? 'showing'
+            : 'disabled'
+        if (track.language?.toLowerCase() === language?.toLowerCase()) {
+          selectedTrackLabel = track?.label
+        }
+      }
+    }
+
+    // localStorage.setItem(
+    //   'currentPlayerTrackLangugage',
+    //   language
+    // )
+    localStorage.setItem(
+      this.SUBTITLE_LANGUAGE_KEY,
+      language?.toLowerCase()
+    )
+
+    localStorage.setItem(
+      'currentPlayerTrackLangugage',
+      language?.toLowerCase()
+    )
+
+    this.setStoredSubtitlePreference(language, true, selectedTrackLabel)
+    this.updateSubtitleButtonIcon(true)
   }
 
   updateSubtitleButtonIcon(subtitlesOn: boolean) {
@@ -706,7 +1117,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       subtitleImage.src = subtitlesOn ? "/assets/ai-tutor/subtitle-on.svg" : "/assets/ai-tutor/subtitle-off.svg"
     }
 
-    if (!subtitlesOn) {
+    if (!subtitlesOn && this.playerInitObj?.player) {
       const videoEl = this.playerInitObj.player.el().getElementsByTagName('video')[0]
       let tracks = videoEl.textTracks
       for (let i = 0; i < tracks.length; i++) {
@@ -714,7 +1125,7 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         if (t.kind === 'subtitles') {
           // Toggle and force reflow if needed
           if (t.mode === 'showing') {
-            t.mode = 'hidden'
+            t.mode = 'disabled'
           }
         }
 
@@ -731,6 +1142,10 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     }
 
     const videoElement = this.realvideoTag.nativeElement as HTMLVideoElement
+    const savedPreference = this.getStoredSubtitlePreference()
+    this.applyNativeSubtitleTextSettings(savedPreference?.textSettings || this.getStoredSubtitleTextSettings())
+
+    this.rebuildingSubtitleTracks = true
 
     // Remove existing tracks
     const existingTracks = videoElement.querySelectorAll('track')
@@ -745,7 +1160,13 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       trackElement.src = lang.uri
 
       // Set default track
-      if (lang.label.toLowerCase() === this.activeTranscriptionLanguage.toLowerCase()) {
+      if (
+        savedPreference?.enabled === true &&
+        (
+          (savedPreference?.language && lang?.label?.toLowerCase() === savedPreference.language?.toLowerCase()) ||
+          (savedPreference?.label && this.titleCase(lang?.language || lang?.label)?.toLowerCase() === savedPreference?.label?.toLowerCase())
+        )
+      ) {
         trackElement.default = true
       }
 
@@ -756,43 +1177,97 @@ export class PlayerVideoComponent extends WidgetBaseComponent
     // Listen for subtitle track changes
     setTimeout(() => {
       const videoTracks = videoElement.textTracks
+      let selectedTrack: any = null
 
       for (let i = 0; i < videoTracks.length; i++) {
         const track = videoTracks[i]
 
         // Set track mode based on active language
         if (track.kind === 'subtitles') {
-          if (track.language.toLowerCase() === this.activeTranscriptionLanguage.toLowerCase()) {
+          if (
+            savedPreference?.enabled === true &&
+            (
+              (savedPreference?.language && track?.language?.toLowerCase() === savedPreference?.language?.toLowerCase()) ||
+              (savedPreference?.label && track?.label?.toLowerCase() === savedPreference?.label?.toLowerCase())
+            )
+          ) {
             track.mode = 'showing'
+            selectedTrack = track
             console.log('DEBUG: Set track to showing:', track.label)
           } else {
-            track.mode = 'hidden'
+            track.mode = 'disabled'
           }
 
           // Listen for cue changes to emit transcription data
-          track.addEventListener('cuechange', () => {
-            const activeCues = track.activeCues
-            if (activeCues && activeCues.length > 0) {
-              for (let j = 0; j < activeCues.length; j++) {
-                const cue: any = activeCues[j]
-                this.appTocService.setTranscriptionData({
-                  start: cue.startTime,
-                  end: cue.endTime,
-                  text: cue?.text
-                })
+          if (!(track as any)._cueAttached) {
+            (track as any)._cueAttached = true
+            track.addEventListener('cuechange', () => {
+              const activeCues = track?.activeCues
+              if (activeCues && activeCues?.length > 0) {
+                for (let j = 0; j < activeCues?.length; j++) {
+                  const cue: any = activeCues[j]
+                  this.appTocService.setTranscriptionData({
+                    start: cue?.startTime,
+                    end: cue?.endTime,
+                    text: cue?.text
+                  })
+                }
               }
-            }
-          })
+            })
+          }
+
         }
       }
-    }, 500)
+      this.updateSubtitleButtonIcon(!!selectedTrack)
+      if (selectedTrack) {
+        this.setStoredSubtitlePreference(selectedTrack?.language, true, selectedTrack?.label)
+      }
 
-    // Update subtitle button
-    this.updateSubtitleButtonIcon(true)
+      const syncHTML5SubtitlePreference = () => {
+        if (this.rebuildingSubtitleTracks) {
+          return
+        }
+
+        let showingTrack: any = null
+
+        for (let i = 0; i < videoTracks?.length; i++) {
+          const track = videoTracks[i]
+          if (track?.kind === 'subtitles' && track?.mode === 'showing') {
+            showingTrack = track
+            break
+          }
+        }
+
+        if (showingTrack) {
+          this.currentPlayerTrackLabel = showingTrack?.label
+          this.currentPlayerTrackLangugage = showingTrack?.language
+          this.activeTranscriptionLanguage = showingTrack?.language
+          localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
+          this.setStoredSubtitlePreference(showingTrack?.language, true, showingTrack?.label)
+          this.updateSubtitleButtonIcon(true)
+        } else {
+          const preference = this.getStoredSubtitlePreference()
+          this.setStoredSubtitlePreference(preference?.language || this.currentPlayerTrackLangugage || null, false)
+          this.updateSubtitleButtonIcon(false)
+        }
+      }
+
+      const videoTracksAny = videoTracks as any
+      if (!videoTracksAny._subtitlePreferenceListenerAttached) {
+        if (typeof videoTracksAny?.addEventListener === 'function') {
+          videoTracksAny?.addEventListener('change', syncHTML5SubtitlePreference)
+        } else {
+          videoTracksAny.onchange = syncHTML5SubtitlePreference
+        }
+        videoTracksAny._subtitlePreferenceListenerAttached = true
+      }
+      this.rebuildingSubtitleTracks = false
+    }, 500)
   }
 
   loadPlayerForSafariAndOtherBrowser(initObj: any, startTime: any, endTime: any) {
     let tracks = initObj.player.textTracks()
+    this.setupSubtitleTextSettingsPersistence(initObj)
     setTimeout(() => {
       const ccButton = initObj.player.controlBar.getChild('SubsCapsButton') as any
       if (ccButton) {
@@ -939,37 +1414,53 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       if (this.currentPlayerSubtitleOff === 'true') {
         this.currentPlayerTrackLabel = ''
         this.currentPlayerTrackLangugage = ''
-        localStorage.removeItem('currentPlayerTrackLabel')
-        localStorage.removeItem('currentPlayerTrackLangugage')
       }
-      let activeLang = this.currentPlayerTrackLangugage !== '' ? this.currentPlayerTrackLangugage?.toLowerCase() : this.transcriptionSubscriptionData?.activeLang
-      const defaultTrackTemp: any = this.transcriptionLangArr.find((t: any) => t.label === activeLang)
+      // let activeLang = this.currentPlayerTrackLangugage !== '' ? this.currentPlayerTrackLangugage?.toLowerCase() : this.transcriptionSubscriptionData?.activeLang
+      const savedPreference = this.getStoredSubtitlePreference()
+      const savedTrackByLabel: any = savedPreference?.label
+        ? this.transcriptionLangArr.find((track: any) => {
+          return track?.language?.toLowerCase() === savedPreference?.label?.toLowerCase() ||
+            this.titleCase(track?.language || '')?.toLowerCase() === savedPreference?.label?.toLowerCase()
+        })
+        : null
 
-      let defaultTrack: any = this.transcriptionLangArr.filter((item: any) => {
-        return item?.label === defaultTrackTemp?.label
-      })
+      let activeLang = savedPreference?.language || savedTrackByLabel?.label || ''
 
-
-      const selectedLang = this.currentPlayerTrackLangugage?.toLowerCase()
+      const selectedLang = activeLang || this.currentPlayerTrackLangugage?.toLowerCase()
 
       const sortedTracks = [...this.transcriptionLangArr].sort((a: any, b: any) => {
         if (a.label.toLowerCase() === selectedLang) return -1
         if (b.label.toLowerCase() === selectedLang) return 1
         return 0
       })
+      this.rebuildingSubtitleTracks = true
+      // Remove any previously registered remote tracks to prevent duplicate subtitle rendering
+      const existingRemoteTracks: any = initObj?.player?.remoteTextTracks()
+      for (let j = existingRemoteTracks?.length - 1; j >= 0; j--) {
+        initObj?.player?.removeRemoteTextTrack(existingRemoteTracks[j])
+      }
       sortedTracks.forEach((track: any) => {
-        const isDefault =
-          track.label.toLowerCase() === this.currentPlayerTrackLangugage?.toLowerCase()
-        initObj.player.addRemoteTextTrack({
-          kind: 'subtitles',
-          src: (track?.label === defaultTrack[0]?.label) ? defaultTrack[0]?.uri : "",
-          srclang: this.titleCase(track.label),
-          label: this.titleCase(track.language),
-          default: isDefault
-        }, false)
-      })
+        initObj.player.addRemoteTextTrack(
+          {
+            kind: 'subtitles',
+            src: track?.uri,
+            srclang: track?.label?.toLowerCase(),
+            label: this.titleCase(track?.language),
+            default:
+              savedPreference?.enabled === true &&
+              track?.label?.toLowerCase() ===
+              activeLang?.toLowerCase()
+          },
+          false
+        )
 
-      if (this.currentPlayerTrackLangugage !== '') {
+      })
+      this.scheduleStoredSubtitlePreferenceApply(initObj)
+      initObj.player.one('loadedmetadata', () => this.scheduleStoredSubtitlePreferenceApply(initObj))
+      initObj.player.one('loadeddata', () => this.scheduleStoredSubtitlePreferenceApply(initObj))
+      initObj.player.one('canplay', () => this.scheduleStoredSubtitlePreferenceApply(initObj))
+
+      if (savedPreference?.enabled === true && this.currentPlayerTrackLangugage !== '') {
         this.updateSubtitleButtonIcon(true)
       } else {
         setTimeout(() => {
@@ -977,131 +1468,84 @@ export class PlayerVideoComponent extends WidgetBaseComponent
         }, 100)
 
       }
-      initObj.player.on('texttrackchange', () => {
-
-        for (let i = 0; i < tracks.length; i++) {
-          const track = tracks[i]
-          // console.log('track.mode', track.mode)
-
-          if (track.mode === 'showing') {
-            localStorage.removeItem('currentPlayerSubtitleOff')
-            let currentLang = track.language
-            if (this.currentPlayerTrackLangugage) {
-              if (currentLang !== this.currentPlayerTrackLangugage) {
-                this.currentPlayerTrackLabel = track.label
-                this.currentPlayerTrackLangugage = track.language
-                currentLang = track.language
-                localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
-                localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
-              } else {
-                currentLang = this.currentPlayerTrackLangugage
-              }
-            } else {
-              this.currentPlayerTrackLabel = track.label
-              this.currentPlayerTrackLangugage = track.language
-              currentLang = track.language
-              localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
-              localStorage.setItem('currentPlayerTrackLangugage', this.currentPlayerTrackLangugage)
-
-            }
-            // const currentLang = track.language
-
-
-            if (currentLang !== this.previousSubtitleLanguage) {
-              //console.log(`Subtitle language changed from ${this.previousSubtitleLanguage} to ${currentLang}`);
-
-              this.previousSubtitleLanguage = currentLang // Update for next comparison
-              this.activeTranscriptionLanguage = currentLang
-              //const remoteTracks:any = initObj.player.remoteTextTracks();
-              // for (let j = remoteTracks.length - 1; j >= 0; j--) {
-              //   initObj.player.removeRemoteTextTrack(remoteTracks[j]);
-              // }
-              const newTrack: any = this.transcriptionLangArr.find((t: any) => {
-                // console.log(t)
-                return t.label === currentLang.toLowerCase()
-
-              })
-              if (newTrack && (newTrack.label !== defaultTrack?.label) && currentLang && this.previousSubtitleLanguage) {
-                this.replaceSubtitleTrack(newTrack)
-              } else {
-                this.replaceSubtitleTrack(defaultTrack)
-              }
-              // if(newTrack) {
-              //   this.transcriptionLangArr.forEach((track:any) => {
-              //     // console.log(track?.label , defaultTrack?.label)
-              //     // console.log('track--', track)
-              //     initObj.player.addRemoteTextTrack({
-              //       kind: 'subtitles',
-              //       src: (track?.label === newTrack?.label) ? newTrack?.uri : "",
-              //       srclang: this.titleCase(track.label),
-              //       label: this.titleCase(track.language),
-              //       default: track.default_lang
-              //     }, false);
-              //   });
-
-              // }
-
-
-
-              // Optional: sync with a service or trigger UI update
-              // this.appTocService.setActiveSubtitleLanguage(currentLang);
-              // console.log('About to call next with:', currentLang);
-              this.appTocService.setActiveSubtitleLanguage(currentLang)
-
-              //console.log('Called next');
-            }
-
-            if (localStorage.getItem('currentPlayerTrackLangugage') !== '') {
-              localStorage.removeItem('currentPlayerSubtitleOff')
-              this.updateSubtitleButtonIcon(true)
-
-            } else {
-              this.updateSubtitleButtonIcon(false)
-            }
-            break // Only one track should be 'showing'
-          } else {
-            this.previousSubtitleLanguage = ''
-            localStorage.setItem('currentPlayerSubtitleOff', 'true')
-
-            this.updateSubtitleButtonIcon(false)
-          }
-        }
-      })
-      // console.log('initObj--', initObj.player.textTracks())
-
+      // Attach cuechange to current tracks on every call so newly added remote tracks
+      // always get listeners — this MUST run before the early-return guard below.
       //let allCues:any = []
-      for (let i = 0; i < tracks.length; i++) {
+      for (let i = 0; i < tracks?.length; i++) {
         const track = tracks[i]
         // console.log(tracks[i].label, tracks[i]);
 
-        if (track.kind === 'subtitles' || track.kind === 'metadata') {
-          //  track.mode = 'showing'; // or 'hidden' if you don't want it on screen
-          if (track.language === this.activeTranscriptionLanguage) {
-            track.mode = 'showing'
-          } else {
-            track.mode = 'disabled' // prevent multiple from showing
+        if (track?.kind === 'subtitles' || track?.kind === 'metadata') {
+          if (track?.kind === 'metadata') {
+            track.mode = track?.language === this.activeTranscriptionLanguage ? 'hidden' : 'disabled'
           }
+          if (!(track as any)?._cueAttached) {
+            ; (track as any)._cueAttached = true
+            track.addEventListener('cuechange', () => {
+              const activeCues = track?.activeCues
 
-          track.addEventListener('cuechange', () => {
-            const activeCues = track.activeCues
-
-            if (activeCues && activeCues.length > 0) {
-              for (let j = 0; j < activeCues.length; j++) {
-                const cue: any = activeCues[j]
+              if (activeCues && activeCues?.length > 0) {
+                for (let j = 0; j < activeCues?.length; j++) {
+                  const cue: any = activeCues[j]
 
 
-                this.appTocService.setTranscriptionData({
-                  start: cue.startTime,
-                  end: cue.endTime,
-                  text: cue?.text
-                })
+                  this.appTocService.setTranscriptionData({
+                    start: cue?.startTime,
+                    end: cue?.endTime,
+                    text: cue?.text
+                  })
 
+                }
               }
-              //console.log('cue', allCues)
-            }
-          })
+            })
+          }
         }
       }
+
+      if (this.textTrackChangeListenerAdded) {
+        return
+      }
+      this.textTrackChangeListenerAdded = true
+      initObj?.player?.on('texttrackchange', () => {
+        if (this.applyingStoredSubtitlePreference || this.rebuildingSubtitleTracks) {
+          return
+        }
+
+        const currentTracks = initObj?.player?.textTracks()
+        let showingTrack: any = null
+        for (let i = 0; i < currentTracks?.length; i++) {
+          const track = currentTracks[i]
+          if (
+            track &&
+            (track?.kind === 'subtitles' || track?.kind === 'captions') &&
+            track?.mode === 'showing'
+          ) {
+            showingTrack = track
+            break
+          }
+        }
+
+        if (showingTrack) {
+          const currentLang = showingTrack?.language
+          this.currentPlayerTrackLabel = showingTrack?.label
+          this.currentPlayerTrackLangugage = currentLang
+          localStorage.setItem('currentPlayerTrackLabel', this.currentPlayerTrackLabel)
+          this.activateSubtitle(currentLang)
+
+          if (currentLang !== this.previousSubtitleLanguage) {
+            this.previousSubtitleLanguage = currentLang
+            this.activeTranscriptionLanguage = currentLang
+            this.appTocService.setActiveSubtitleLanguage(currentLang)
+          }
+
+          this.updateSubtitleButtonIcon(true)
+        } else {
+          const preference = this.getStoredSubtitlePreference()
+          this.previousSubtitleLanguage = ''
+          this.setStoredSubtitlePreference(preference?.language || this.currentPlayerTrackLangugage || null, false)
+          this.updateSubtitleButtonIcon(false)
+        }
+      })
     }
   }
 }
