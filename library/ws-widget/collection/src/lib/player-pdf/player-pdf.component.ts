@@ -93,11 +93,8 @@ export class PlayerPdfComponent extends WidgetBaseComponent
 
   ngOnInit() {
     // In pdfjs-dist v4, SimpleLinkService extends PDFLinkService so no prototype patching needed.
-    // Set the worker source required by v4.
-    PDFJS.GlobalWorkerOptions.workerSrc = new URL(
-      'pdfjs-dist/build/pdf.worker.min.mjs',
-      import.meta.url,
-    ).toString()
+    // Serve the worker as an Angular asset so production deploys can fetch it reliably.
+    PDFJS.GlobalWorkerOptions.workerSrc = '/assets/pdfjs/pdf.worker.min.mjs'
 
     this.zoom.disable()
     this.currentPage.disable()
@@ -195,13 +192,8 @@ export class PlayerPdfComponent extends WidgetBaseComponent
       e.preventDefault(),
     )
     if (this.widgetData && this.widgetData.pdfUrl) {
-      debugger
       const publicUrl = this.viewerSvc.getCdnUrl(this.widgetData.pdfUrl)
-      console.log("Public Url URL", publicUrl)
-      console.log("widgetData PDF URL", this.widgetData.pdfUrl)
-      setTimeout(() => {
-        this.loadDocument(publicUrl)
-      }, 500)
+      this.loadDocument(publicUrl)
       if (this.widgetData.identifier) {
         this.identifier = this.widgetData.identifier
       }
