@@ -450,7 +450,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.completedCountOutput.emit(this.completedCount)
 
         const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
-        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionPercentage'] = Math.floor((completedItems.length / percentDenominator) * 100)
         this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
 
@@ -479,10 +479,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.completedCountOutput.emit(this.completedCount)
-
         // tslint:disable
         const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
-        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionPercentage'] = Math.floor((completedItems.length / percentDenominator) * 100)
         this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
       }
