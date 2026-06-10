@@ -45,6 +45,7 @@ export class LeftMenuItemComponent implements OnChanges {
     this.disableMenu = isNotMyUser && isIgotOrg
     if (this.disableMenu && _.get(this.item, 'name') === 'getStartedTour') {
       this.item['enabled'] = false
+      this.item['img'] = "fusion-assets/images/play_circle.svg"
     }
   }
 

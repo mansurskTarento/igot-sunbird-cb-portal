@@ -14,6 +14,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
+import { TextFieldModule } from '@angular/cdk/text-field'
 
 export function ContentRatingHttpLoaderFactory(http: HttpClient) {
     return new TranslateHttpLoader(http)
@@ -41,6 +42,7 @@ export function ContentRatingHttpLoaderFactory(http: HttpClient) {
                 deps: [HttpClient],
             },
         }),
+        TextFieldModule
     ],
     exports: [
         ContentRatingV2DialogComponent,
