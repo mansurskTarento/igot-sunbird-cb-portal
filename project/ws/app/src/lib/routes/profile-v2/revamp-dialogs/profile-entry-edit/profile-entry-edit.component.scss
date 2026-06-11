@@ -359,3 +359,27 @@
   height: 18px !important;
   width: 18px !important;
 }
+
+.datepicker-icon {
+  margin-top: -10px;
+}
+
+::ng-deep .textarea-container {
+  width: 100%;
+  min-height: 135px !important;
+
+  .mat-form-field-wrapper {
+    margin: 0px;
+  }
+
+  .mat-form-field-infix {
+    padding: 8px 0px;
+    border-top: 0px;
+
+    textarea {
+      min-height: 135px !important;
+      padding: 8px 0px;
+    }
+  }
+
+}
