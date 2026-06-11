@@ -2062,6 +2062,7 @@ ngx-guided-tour {
 }
 
 .custom-rounded {
+  min-height: 40px;
   height: auto !important;
 }
 
@@ -2118,7 +2119,7 @@ ngx-guided-tour {
 // }
 
 .mat-mdc-dialog-container {
-  background: #fff !important;
+  background: #fff;
 }
 
 .activeResource .text-active {
@@ -2170,4 +2171,74 @@ ngx-guided-tour {
 
 .final-assessment .mdc-dialog__surface {
   overflow: visible !important;
+}
+
+.mat-mdc-tooltip .mdc-tooltip__surface {
+  max-width: 300px !important;
+  min-width: auto;
+  white-space: pre-line !important;
+  word-break: break-word !important;
+}
+
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  line-height: 30px;
+  padding: 0 6px;
+  font: 400 14px / 21px Lato !important;
+}
+
+.mat-mdc-menu-panel {
+  max-width: 290px !important;
+  min-width: 14em !important;
+}
+
+.profile-verification-dialog-container .mat-mdc-dialog-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.profile-verification-dialog-container .mdc-dialog__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.all-notifications {
+
+  .mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs>.mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0;
+  }
+}
+
+.mat-mdc-simple-snack-bar {
+  .mat-mdc-snack-bar-label {
+    text-align: center;
+  }
+}
+
+.flag-selection-list {
+  gap: 0 !important;
+}
+
+.download-app-popup-new {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    overflow: visible !important;
+  }
+}
+
+.seeAll-home-container {
+  .mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs>.mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0;
+  }
+}
+
+.view-more {
+  padding-top: 10px;
+  height: auto;
+}
+
+.filter-pill {
+  .mat-mdc-icon-button {
+    vertical-align: middle;
+    margin-top: 10px;
+  }
 }
