@@ -88,7 +88,8 @@
                   </mat-icon>
                   <!-- <mat-label>Search</mat-label> -->
                   <input type="search" name="searchKey" #searchKey class="ml-2" i18-aria-label aria-label="Search"
-                    formControlName="searchKey" i18n-placeholder="search" [placeholder]="'allcompetencies.search' | translate" matInput />
+                    formControlName="searchKey" i18n-placeholder="search"
+                    [placeholder]="'allcompetencies.search' | translate" matInput />
                   <!-- (input)="updateQuery(searchKey.value)" -->
                 </mat-form-field>
               </div>
@@ -108,9 +109,12 @@
                 <div class="item">
 
                   <mat-form-field class="" appearance="outline">
-                    <mat-select #sortBySelect formControlName="sortByControl" i18n-placeholder placeholder="{{ 'allcompetencies.sortBy' | translate }}">
-                      <mat-option [value]="'Ascending'" slected>{{ 'allcompetencies.ascending' | translate }} ( A - Z )</mat-option>
-                      <mat-option [value]="'Descending'">{{ 'allcompetencies.descending' | translate }} ( Z - A )</mat-option>
+                    <mat-select class="white-select" #sortBySelect formControlName="sortByControl" i18n-placeholder
+                      placeholder="{{ 'allcompetencies.sortBy' | translate }}">
+                      <mat-option [value]="'Ascending'" slected>{{ 'allcompetencies.ascending' | translate }} ( A - Z
+                        )</mat-option>
+                      <mat-option [value]="'Descending'">{{ 'allcompetencies.descending' | translate }} ( Z - A
+                        )</mat-option>
                     </mat-select>
                   </mat-form-field>
 

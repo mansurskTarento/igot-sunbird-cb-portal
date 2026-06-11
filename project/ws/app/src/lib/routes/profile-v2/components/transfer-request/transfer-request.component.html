@@ -43,7 +43,8 @@
                         <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper">
                                 <input type="text" placeholder="Search ministry" formControlName="searchMinistry"
-                                    class="search-input-ministry" (keydown)="$event.stopPropagation()"
+                                    class="search-input-ministry search-input-warpper-20"
+                                    (keydown)="$event.stopPropagation()"
                                     (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
                                     (keyup)="ministrySearch($event)" autocomplete="off">
                                 <button *ngIf="searchMinistry?.value" type="button" class="clear-button"
