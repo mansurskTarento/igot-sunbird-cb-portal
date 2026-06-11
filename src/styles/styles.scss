@@ -2242,3 +2242,40 @@ ngx-guided-tour {
     margin-top: 10px;
   }
 }
+
+.community-action .un-join-btn {
+  // color: #1b4ca1;
+  //   background-color: #fff !important;
+  //   border: 1px solid #1B4CA1 !important;
+  font-weight: 600 !important;
+  font-size: 13px;
+}
+
+.mat-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+  font-family: Montserrat;
+  letter-spacing: normal;
+  margin: 0 0 16px;
+}
+
+.mat-subheading-2 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  font-family: Lato;
+  letter-spacing: normal;
+  margin: 0 0 16px;
+}
+
+.dialog_sidenav .mat-mdc-dialog-surface {
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+.language-select {
+  .mat-mdc-select-value-text {
+    font-size: 14px !important;
+  }
+}
