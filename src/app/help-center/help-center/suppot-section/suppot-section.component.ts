@@ -24,10 +24,10 @@ interface StateData {
 }
 
 @Component({
-    selector: 'app-suppot-section',
-    templateUrl: './suppot-section.component.html',
-    styleUrls: ['./suppot-section.component.scss'],
-    standalone: false
+  selector: 'app-suppot-section',
+  templateUrl: './suppot-section.component.html',
+  styleUrls: ['./suppot-section.component.scss'],
+  standalone: false
 })
 export class SuppotSectionComponent implements OnInit, OnChanges {
 
@@ -51,15 +51,28 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
   phoneNumbers: PhoneNumber[] = []
   supportHours = '8:00 AM – 8:00 PM IST'
 
-  features = [
-    { icon: 'shield', label: 'Dedicated Expert Team' },
-    { icon: 'headset_mic', label: 'Multi-Channel Support' },
-    { icon: 'bolt', label: 'Quick Resolution' },
-  ]
+  features: { icon: string; label: string }[] = [];
+
+  createTicket: { enableInNonLoggedInPage?: boolean; title?: string; description?: string } = {};
+
+  supportSectionConfig: {
+    badgeIcon?: string
+    badgeText?: string
+    heading?: string
+    headingAccent?: string
+    subText?: string
+    statePanelTitle?: string
+    statePanelSub?: string
+    searchPlaceholder?: string
+    nationalHelpDeskTitle?: string
+    nationalHelpDeskDesc?: string
+    secondaryHelpText?: string
+    secondaryHelpPhone?: string
+  } = {};
   zohoHtml: any
   zohoUrl: any = '/assets/static-data/support-html/zoho_karmayogi_form.html'
   constructor(private zohoFormService: ZohoFormService, private http: HttpClient,
-              private sanitizer: DomSanitizer, public dialog: MatDialog, private snackBar: MatSnackBar) {
+    private sanitizer: DomSanitizer, public dialog: MatDialog, private snackBar: MatSnackBar) {
 
   }
 
@@ -95,6 +108,23 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
         if (support.phoneNumbers) this.phoneNumbers = support.phoneNumbers
         if (support.supportHours) this.supportHours = support.supportHours
         if (support.features) this.features = support.features
+        this.supportSectionConfig = {
+          badgeIcon: support.badgeIcon || '',
+          badgeText: support.badgeText || '',
+          heading: support.heading || '',
+          headingAccent: support.headingAccent || '',
+          subText: support.subText || '',
+          statePanelTitle: support.statePanelTitle || '',
+          statePanelSub: support.statePanelSub || '',
+          searchPlaceholder: support.searchPlaceholder || '',
+          nationalHelpDeskTitle: support.nationalHelpDeskTitle || '',
+          nationalHelpDeskDesc: support.nationalHelpDeskDesc || '',
+          secondaryHelpText: support.secondaryHelpText || '',
+          secondaryHelpPhone: support.secondaryHelpPhone || '',
+        }
+      }
+      if (this.helpCenterData.createTicket) {
+        this.createTicket = this.helpCenterData.createTicket
       }
     }
 
@@ -141,7 +171,7 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
     })
     setTimeout(() => {
       this.initializeZohoForm()
-    },         300)
+    }, 300)
   }
 
   private initializeZohoForm(): void {

@@ -55,7 +55,8 @@
             </div>
 
             <!-- -------- VIDEO TUTORIALS -------- -->
-            <section class="section" *ngIf="isSectionEnabled('videoTutorials') && showVideos  && (!searchQuery || hasAnySearchResult)">
+            <section class="section"
+                *ngIf="isSectionEnabled('videoTutorials') && showVideos  && (!searchQuery || hasAnySearchResult)">
                 <div class="section__header" (click)="toggleSection('video')">
                     <div class="section__header-left">
                         <span class="material-icons section__icon section__icon--orange">play_circle_filled</span>
@@ -123,7 +124,8 @@
             </section>
 
             <!-- -------- HOW-TO GUIDES -------- -->
-            <section class="section" *ngIf="isSectionEnabled('howToGuides') && showGuides  && (!searchQuery || hasAnySearchResult)">
+            <section class="section"
+                *ngIf="isSectionEnabled('howToGuides') && showGuides  && (!searchQuery || hasAnySearchResult)">
                 <div class="section__header" (click)="toggleSection('guides')">
                     <div class="section__header-left">
                         <span class="material-icons section__icon section__icon--orange">menu_book</span>
@@ -157,14 +159,17 @@
                         </aside>
                         <div class="guides-grid" *ngIf="filteredGuides.length > 0; else noGuides">
                             <div class="guide-card" *ngFor="let guide of filteredGuides" (click)="openPDF(guide)">
-                                <div class="guide-card__preview" [ngClass]="{'guide-card__preview_p-0': guide.thumbnail}">
+                                <div class="guide-card__preview"
+                                    [ngClass]="{'guide-card__preview_p-0': guide.thumbnail}">
                                     <ng-container *ngIf="guide?.thumbnail; else guidePreviewFallback">
-                                        <img class="guide-card__thumbnail" [src]="guide?.thumbnail" [alt]="guide.title" />
+                                        <img class="guide-card__thumbnail" [src]="guide?.thumbnail"
+                                            [alt]="guide.title" />
                                     </ng-container>
                                     <ng-template #guidePreviewFallback>
                                         <div class="guide-card__preview-header">{{ guide.title }}</div>
                                         <div class="guide-card__preview-lines">
-                                            <div class="guide-card__line guide-card__line--title">{{ guide.title }}</div>
+                                            <div class="guide-card__line guide-card__line--title">{{ guide.title }}
+                                            </div>
                                             <div class="guide-card__line"></div>
                                             <div class="guide-card__line guide-card__line--short"></div>
                                             <div class="guide-card__line guide-card__line--medium"></div>
@@ -193,7 +198,8 @@
             </section>
 
             <!-- -------- FAQs -------- -->
-            <ng-container *ngIf="isSectionEnabled('faqs') && (activeRoleTab !== 'content-building');else noFaqForContent">
+            <ng-container
+                *ngIf="isSectionEnabled('faqs') && (activeRoleTab !== 'content-building');else noFaqForContent">
                 <section class="section" *ngIf="showFaqs  &&  (!searchQuery || hasAnySearchResult)">
 
                     <div class="section__header" (click)="toggleSection('faq')">
@@ -274,9 +280,10 @@
 
 
         <!-- ===================== SUPPORT SECTION ===================== -->
-         <ng-container *ngIf="helpCenterData && isSectionEnabled('supportSection')">
-            <app-suppot-section [enabledSections]="enabledSections" [helpCenterData]="helpCenterData"></app-suppot-section>
-         </ng-container>
+        <ng-container *ngIf="helpCenterData && isSectionEnabled('supportSectionLoggedIn')">
+            <app-suppot-section [enabledSections]="enabledSections"
+                [helpCenterData]="helpCenterData"></app-suppot-section>
+        </ng-container>
 
     </div>
 
