@@ -388,13 +388,13 @@
 
   .country-code {
     min-width: 60px;
-    height: 36px;
+    height: 32px;
     border: 1px solid rgba(0, 0, 0, 0.4);
     border-radius: 16px;
     display: flex !important;
     align-items: center;
     justify-content: center;
-    margin: 0;
+    margin-top: 4px;
     background: #fff;
   }
 
@@ -657,22 +657,37 @@
   justify-content: center;
 }
 
+
+
+
+
 .textarea-container {
   width: 100%;
+
   min-height: 150px !important;
+  height: 150px !important;
 
-  .mat-form-field-wrapper {
-    margin: 0px;
+  // .mat-mdc-text-field-wrapper {
+  //   height: 150px !important;
+  //   min-height: 150px;
+  // }
+
+  .mat-mdc-text-field-wrapper {
+    height: auto !important;
   }
 
-  .mat-form-field-infix {
-    padding: 8px 0px;
-    border-top: 0px;
-
-    textarea {
-      min-height: 150px !important;
-      padding: 8px 0px;
-    }
+  .mat-mdc-form-field-flex {
+    height: 150px !important;
   }
 
+  .mat-mdc-form-field-infix {
+    min-height: 150px !important;
+  }
+
+  textarea.mat-mdc-input-element {
+    min-height: 150px !important;
+    resize: vertical;
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
 }
