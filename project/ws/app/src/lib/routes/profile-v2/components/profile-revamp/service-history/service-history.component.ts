@@ -19,6 +19,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   @Input() currentDesignation = ''
   @Input() currentOrgName = ''
   @Input() isUpdated = false
+  @Input() editConfig: any = null
   @Output() openProfileEntryEditDialog = new EventEmitter()
 
   serviceHistoryList: any[] = []
@@ -40,6 +41,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
       this.isCurrentUser = data.isCurrentUser || false
       this.currentDesignation = data.currentDesignation || ''
       this.currentOrgName = data.currentOrgName || ''
+      this.editConfig = data.editConfig || null
     }
   }
 

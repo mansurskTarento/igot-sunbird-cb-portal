@@ -1,4 +1,4 @@
-import { Component } from '@angular/core'
+import { Component, Input } from '@angular/core'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:disable
@@ -15,6 +15,9 @@ import { ActivatedRoute } from '@angular/router'
   standalone: false
 })
 export class ViewCustomFieldsComponent {
+
+  @Input() organisationSpecificDetails: any
+  @Input() editConfig: any = null
 
   editCustomDetails = false
   customAttrList: any = []
@@ -135,12 +138,21 @@ export class ViewCustomFieldsComponent {
     return this.customAttrList.find((item: any) => item.attributeName === attributeName)?.name || attributeName
   }
 
+  isFieldEnabled(attributeName: string): boolean {
+    if (!this.organisationSpecificDetails || !this.organisationSpecificDetails.fields) {
+      return true
+    }
+    const field = this.organisationSpecificDetails.fields[attributeName]
+    return field ? field.enabled : true
+  }
+
   // Update handleEditCustomDetails to build the form and populate values
   handleEditCustomDetails() {
     const dialogRef = this.dialog.open(CustomFieldsComponent, {
       disableClose: true,
       panelClass: 'dialog_sidenav',
       autoFocus: false,
+      data: { editConfig: this.editConfig },
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {

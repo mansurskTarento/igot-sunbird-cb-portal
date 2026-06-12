@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
+import { DynamicEntryEditComponent } from '../../revamp-dialogs/dynamic-entry-edit/dynamic-entry-edit.component'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
@@ -89,16 +90,19 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       url: '',
       icon: 'person',
       id: 'about-me',
+      key: 'aboutMe',
     }, {
       name: 'NetworkV2Profile.basicDetails',
       url: './assets/icons/checklist.svg',
       icon: '',
       id: 'basic-details',
+      key: 'basicDetails'
     }, {
       name: 'NetworkV2Profile.serviceHistory',
       url: '',
       icon: 'history',
       id: 'service-history',
+      key: 'serviceHistory'
     }, {
       //   name: 'Competencies',
       //   url: '',
@@ -110,11 +114,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       url: '',
       icon: 'school',
       id: 'educational-qualifications',
+      key: 'educationalQualifications'
     }, {
       name: 'NetworkV2Profile.achievements',
       url: './assets/icons/trophy.svg',
       icon: '',
       id: 'achievements',
+      key: 'achievements'
     },
   ]
   activeRoutId: string = 'about-me'
@@ -212,6 +218,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   assessmentsData: any
   isNlw2026Certified = false
   nlwExperience: any = null
+  profileConfig: any = null
+  profileEditConfigs: any = null
   //#endregion
 
   connectionStatus = 'Connect'
@@ -364,12 +372,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getProfileDetailsFromRoutes() {
+    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
+    this.nlwExperience = this.pageData?.nlwExperience
+    this.profileConfig = this.pageData?.profileConfig
+    this.profileEditConfigs = this.pageData?.profileEditConfigs
+    this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => _.get(this.profileConfig, `${route.key}.enabled`, false))
     this.activatedRoute.data.subscribe(data => {
       this.userId = _.get(data, 'profile.userId', '')
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
-      if (!this.isNotMyUserAndIgotOrg) {
+      if (!this.isNotMyUserAndIgotOrg && _.get(this.profileConfig, 'rightSection.enabled') && _.get(this.profileConfig, 'rightSection.recommendedCommunities.enabled', false)) {
         // this.getRecommendedUsers()
         this.getRecommendedCommunitesList()
       }
@@ -391,8 +404,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.checkIsMentor()
     })
-    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
-    this.nlwExperience = this.pageData?.nlwExperience
+    if (_.get(this.profileConfig, 'userStats.enabled', false)) {
+      const userStatsConfig: any = this.profileConfig.userStats
+      this.userStats = this.userStats.filter((userStat: UserStats) => {
+        if (userStat.identifier && userStatsConfig[userStat.identifier].enabled) {
+          userStat['viewAllEnabled'] = userStatsConfig[userStat.identifier].viewAllEnabled
+          return true
+        }
+        return false
+      })
+    }
     this.commonSvc.getNlw2026CertifiedStatus()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((status: boolean) => {
@@ -517,6 +538,43 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       return true
     }
     return false
+  }
+
+  get shouldShowBlockProfileButton(): boolean {
+    return this.connectionStatus !== 'Blocked Incoming' &&
+      this.connectionStatus !== 'Blocked Outgoing' &&
+      this.connectionStatus !== 'Pending'
+  }
+
+  get shouldShowUserStatsDesktop(): boolean {
+    return this.isCurrentUser && !this.isMobile && _.get(this.profileConfig, 'userStats.enabled', false)
+  }
+
+  get shouldShowUserStatsMobile(): boolean {
+    return this.isCurrentUser && this.isMobile && _.get(this.profileConfig, 'userStats.enabled', false)
+  }
+
+  get shouldShowAboutMeSection(): boolean {
+    return (this.isCurrentUser || (_.get(this.aboutme, 'length', 0) > 0)) &&
+      _.get(this.profileConfig, 'aboutMe.enabled', false)
+  }
+
+  get shouldShowServiceHistorySection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.serviceHistoryDetails, 'serviceHistoryList.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'serviceHistory.enabled', false)
+  }
+
+  get shouldShowEducationalQualificationsSection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.educationalQualificationDetails, 'educationalQualifications.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'educationalQualifications.enabled', false)
+  }
+
+  get shouldShowAchievementsSection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.achievementsDetails, 'achievementsList.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'achievements.enabled', false)
   }
 
   getDateFromText(dateString: string): any {
@@ -958,6 +1016,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  getEditConfig(editObjectKey: string | undefined): any {
+    if (this.profileEditConfigs && editObjectKey) {
+      return this.profileEditConfigs[editObjectKey] || null
+    }
+    return null
+  }
+
   toTitleCase(str: string): string {
     return str
       .toLowerCase()
@@ -1008,6 +1073,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     const dialogDetails: any = {
       header,
       profileDetails: this.primaryDetails,
+      primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
+      otherDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
     }
     if (header === 'Profile') {
       dialogDetails.profileDetails = {
@@ -1034,6 +1101,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         enableWR: this.enableWR,
         isCurrentUser: this.isCurrentUser,
         primaryDetails: this.primaryDetails,
+        primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
+        otherDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
       }
     } else {
       dialogData = dialogDetails
@@ -1414,22 +1483,26 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     window.open(`${environment.contentHost}/mentorship`, '_blank')
   }
   openProfileEntryListDialog(header: string) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header,
       userId: this.userId,
       isCurrentUser: this.isCurrentUser || false,
+      editConfig: null,
     }
     switch (header) {
       case 'Service History':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.serviceHistory?.editObjectKey)
         this.openServiceHistoryListDialog(dialogDetails)
         break
       // case 'Competencies':
       //   this.openCompetenciesListDialog(dialogDetails)
       //   break;
       case 'Educational qualifications':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.educationalQualifications?.editObjectKey)
         this.openEducationalQualificationsListDialog(dialogDetails)
         break
       case 'Achievements':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.achievements?.editObjectKey)
         this.openAchievementsListDialog(dialogDetails)
         break
     }
@@ -1489,12 +1562,26 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (profile entry edit)
   async openProfileEntryEditDialog(header: string, entryDetails?: any) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header,
       entryDetails,
+      editConfig: null,
+    }
+    switch (header) {
+      case 'Service History':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.serviceHistory?.editObjectKey)
+        break
+      case 'Educational qualifications':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.educationalQualifications?.editObjectKey)
+        break
+      case 'Achievements':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.achievements?.editObjectKey)
+        break
     }
     const isNew = entryDetails ? false : true
-    const dialogRef = this.dialog.open(ProfileEntryEditComponent, {
+    const isDynamic = _.get(dialogDetails, 'editConfig.isDynamicDialog', false)
+    const dialogComponent: any = isDynamic ? DynamicEntryEditComponent : ProfileEntryEditComponent
+    const dialogRef = this.dialog.open(dialogComponent, {
       data: dialogDetails,
       disableClose: true,
       panelClass: 'dialog_sidenav',

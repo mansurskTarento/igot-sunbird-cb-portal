@@ -19,6 +19,7 @@ export class AchievementsComponent implements OnInit {
   //#region (global variables)
   @Input() achievementsList: achievement[] = []
   @Input() isCurrentUser = false
+  @Input() editConfig: any = null
   @Output() openProfileEntryEditDialog = new EventEmitter()
   @Output() openProfileEntryDeleteDialog = new EventEmitter()
 
@@ -38,6 +39,7 @@ export class AchievementsComponent implements OnInit {
       this.userId = data.userId
       this.isPopup = true
       this.isCurrentUser = data.isCurrentUser || false
+      this.editConfig = data.editConfig || null
     }
   }
 
