@@ -1,5 +1,5 @@
 <!-- Support Section — "Still facing an issue?" -->
-<section class="support-section" *ngIf="isSectionEnabled('supportSection') || isSectionEnabled('createTicket')">
+<section class="support-section" *ngIf="isSectionEnabled('supportSectionLoggedIn') || isSectionEnabled('createTicket')">
 
   <!-- Dot-grid background -->
   <div class="support-section__dots" aria-hidden="true"></div>
@@ -7,13 +7,13 @@
   <div class="support-section__inner">
 
     <!-- Top badge -->
-    <div class="support-section__badge" *ngIf="isSectionEnabled('supportSection')">
+    <div class="support-section__badge" *ngIf="isSectionEnabled('supportSectionLoggedIn')">
       <span class="material-icons support-section__badge-icon">{{ supportSectionConfig.badgeIcon}}</span>
       {{ supportSectionConfig.badgeText || 'Need Help?' }}
     </div>
 
     <!-- Headline -->
-    <h2 class="support-section__heading" *ngIf="isSectionEnabled('supportSection')">
+    <h2 class="support-section__heading" *ngIf="isSectionEnabled('supportSectionLoggedIn')">
       {{ supportSectionConfig.heading }}
       <span class="support-section__heading--accent">{{ supportSectionConfig.headingAccent }}</span>
     </h2>
@@ -171,7 +171,7 @@
 
 
     <!-- Feature Pills -->
-    <div class="support-section__features" *ngIf="isSectionEnabled('supportSection') && features.length > 0">
+    <div class="support-section__features" *ngIf="isSectionEnabled('supportSectionLoggedIn') && features.length > 0">
       <ng-container *ngFor="let f of features; let last = last">
         <div class="support-feature">
           <span class="material-icons support-feature__icon">{{ f.icon }}</span>
