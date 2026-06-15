@@ -17,25 +17,23 @@ import {
 } from '../models/search-v3.model'
 import { SEARCH_SORT_DROPDOWN } from '@ws/author'
 
-const API_END_POINTS = {
+const DEFAULT_API_ENDPOINTS = {
   SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
   SEARCH_V4: '/apis/proxies/v8/sunbirdigot/v4/search',
   SEARCH_EXT_CONTENT: '/apis/proxies/v8/cios/v1/search/content',
-  // SEARCH_PEOPLE: `/apis/protected/v8/connections/v2/connections/recommended`,
   SEARCH_PEOPLE: '/apis/proxies/v8/user/v5/public/search',
   SEARCH_COMMUNITY: '/apis/proxies/v8/community/v1/search',
   SEARCH_NLP: '/apis/proxies/v8/nlp/search',
-  RECENT_CREATE: 'apis/proxies/v8/search/v1/recent/create',
-  RECENT_READ: 'apis/proxies/v8/search/v1/recent/read',
-  RECENT_DELETE_BY_USERID: 'apis/proxies/v8/search/v1/recent/delete',
-  RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `apis/proxies/v8/search/v1/recent/delete/timestamp/${id}` },
+  RECENT_CREATE: '/apis/proxies/v8/search/v1/recent/create',
+  RECENT_READ: '/apis/proxies/v8/search/v1/recent/read',
+  RECENT_DELETE_BY_USERID: '/apis/proxies/v8/search/v1/recent/delete',
+  RECENT_DELETE_BY_TIMESTAMP: (id: string) => { return `/apis/proxies/v8/search/v1/recent/delete/timestamp/${id}` },
   ENROLLMENT_API(userId: string): string {
     return `/apis/proxies/v8/learner/course/v4/user/enrollment/list/${userId}`
   },
-
   EXPLORE_API: '/api/course/v1/explore',
-  MICRO_CREDENTIALS: 'apis/proxies/v8/promotionalcontent/v1/assignedto/users',
-  GetApplicationsById: 'apis/proxies/v8/forms/v2/bulkGetApplicationsById',
+  MICRO_CREDENTIALS: '/apis/proxies/v8/promotionalcontent/v1/assignedto/users',
+  GetApplicationsById: '/apis/proxies/v8/forms/v2/bulkGetApplicationsById',
 }
 
 @Injectable({
@@ -54,14 +52,25 @@ export class GbSearchService {
     private searchApi: SearchApiService
   ) { }
 
+  /**
+   * Generic method to resolve API URL from globalConfig.apis section.
+   * Falls back to the default URL if not configured.
+   */
+  private getApiUrl(service: string, apiKey: string, defaultUrl: string): string {
+    return this.configSrv.globalConfig?.apis?.[service]?.[apiKey] || defaultUrl
+  }
+
   fetchSearchData(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_V6, request)
+    const url = this.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    return this.http.post<any>(url, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_V4, request)
+    const url = this.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    return this.http.post<any>(url, request)
   }
   fetchSearchDataforCios(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_EXT_CONTENT, request)
+    const url = this.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
+    return this.http.post<any>(url, request)
   }
   public notifyOther(data: any) {
     if (data) {
@@ -87,55 +96,72 @@ export class GbSearchService {
     return Promise.resolve([])
   }
 
-  searchCoursesv4(params: SearchV4Request): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_V4, params).toPromise()
+  searchCoursesv4(params: SearchV4Request, apiUrl?: string): Promise<any> {
+    const url = apiUrl || this.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    return this.http.post(url, params).toPromise()
+  }
+
+  searchVolunteerCourses(params: SearchV4Request): Promise<any> {
+    const url = this.getApiUrl('search', 'volunteerSearch', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    return this.http.post(url, params).toPromise()
   }
 
   getApplicationsById(formBody: any) {
-    return this.http.post<any>(API_END_POINTS.GetApplicationsById, formBody)
+    const url = this.getApiUrl('content', 'applicationsById', DEFAULT_API_ENDPOINTS.GetApplicationsById)
+    return this.http.post<any>(url, formBody)
   }
 
   searchConnections(params: SearchPeoplesRequest): Promise<any> {
+    const url = this.getApiUrl('search', 'people', DEFAULT_API_ENDPOINTS.SEARCH_PEOPLE)
     return this.http
-      .post(API_END_POINTS.SEARCH_PEOPLE, { request: params })
+      .post(url, { request: params })
       .toPromise()
   }
 
   searchCommunity(params: SearchCommunitiesRequest): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_COMMUNITY, params).toPromise()
+    const url = this.getApiUrl('search', 'community', DEFAULT_API_ENDPOINTS.SEARCH_COMMUNITY)
+    return this.http.post(url, params).toPromise()
   }
 
   searchResource(params: SearchV4Request): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_V6, params).toPromise()
+    const url = this.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    return this.http.post(url, params).toPromise()
   }
 
   nlpSearch(params: SearchNLP): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_NLP, params).toPromise()
+    const url = this.getApiUrl('search', 'nlp', DEFAULT_API_ENDPOINTS.SEARCH_NLP)
+    return this.http.post(url, params).toPromise()
   }
   recentCreate(req: any): Promise<any> {
-    return this.http.post(API_END_POINTS.RECENT_CREATE, req).toPromise()
+    const url = this.getApiUrl('search', 'recentCreate', DEFAULT_API_ENDPOINTS.RECENT_CREATE)
+    return this.http.post(url, req).toPromise()
   }
   recentRead() {
-    return this.http.get(API_END_POINTS.RECENT_READ)
+    const url = this.getApiUrl('search', 'recentRead', DEFAULT_API_ENDPOINTS.RECENT_READ)
+    return this.http.get(url)
   }
 
   recentDeleteByUser() {
-    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_USERID)
+    const url = this.getApiUrl('search', 'recentDelete', DEFAULT_API_ENDPOINTS.RECENT_DELETE_BY_USERID)
+    return this.http.delete(url)
   }
   recentDeleteByTime(id: any) {
-    return this.http.delete(API_END_POINTS.RECENT_DELETE_BY_TIMESTAMP(id))
+    return this.http.delete(DEFAULT_API_ENDPOINTS.RECENT_DELETE_BY_TIMESTAMP(id))
   }
 
   enrollment(request: any, userId: string): any {
-    return this.http.post(API_END_POINTS.ENROLLMENT_API(userId), request)
+    const baseUrl = this.getApiUrl('user', 'enrollment', '/apis/proxies/v8/learner/course/v4/user/enrollment/list')
+    return this.http.post(`${baseUrl}/${userId}`, request)
   }
 
   searchExternalContent(params: SearchExternalRequest): Promise<any> {
-    return this.http.post(API_END_POINTS.SEARCH_EXT_CONTENT, params).toPromise()
+    const url = this.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
+    return this.http.post(url, params).toPromise()
   }
 
   exploreContent() {
-    return this.http.get(API_END_POINTS.EXPLORE_API)
+    const url = this.getApiUrl('content', 'explore', DEFAULT_API_ENDPOINTS.EXPLORE_API)
+    return this.http.get(url)
   }
 
   getFirstSortOption(isExploreContentTab: boolean): any {
@@ -152,7 +178,8 @@ export class GbSearchService {
   }
 
   microCredentialsSearch(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.MICRO_CREDENTIALS)
+    const url = this.getApiUrl('content', 'microCredentials', DEFAULT_API_ENDPOINTS.MICRO_CREDENTIALS)
+    return this.http.get<any>(url)
   }
 
 }

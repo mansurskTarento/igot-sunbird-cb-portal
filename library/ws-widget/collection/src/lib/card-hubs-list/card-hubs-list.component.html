@@ -8,7 +8,7 @@
           <span class="margin-auto ws-mat-default-text mat-subheading-2">EXPLORE</span>
         </a> -->
         <ng-container [@enterAnimation]="visible">
-          <div class="explore-more flex items-center" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader', 'exploreContent')">
+          <div [ngClass]="{'explore-more': domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'enabled')}" class=" flex items-center" *ngIf="domainConfSvc.isConfigEnabled('components.secondaryHeader', 'exploreContent')">
             <button mat-raised-button class="mat-btn-outline cursor-pointer explore-content-action"
               (click)="exploreContent()">
               <div class="flex items-center">

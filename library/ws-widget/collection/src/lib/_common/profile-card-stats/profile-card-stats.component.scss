@@ -327,6 +327,14 @@
 .progress-wrapper {
   position: relative;
 
+  &.no-progress {
+    .user-img {
+      position: relative;
+      top: 0;
+      left: 0;
+    }
+  }
+
   path {
     stroke-linecap: round;
     stroke-width: 6;

@@ -56,13 +56,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}
-  sliderData = {}
+  sliderData: any = []
   contentStripData: any = {}
   discussStripData = {}
   networkStripData = {}
   carrierStripData = {}
-  clientList: {} | undefined
+  clientList: any = []
   homeConfig: any = {}
+  homePageData: any = {}
   isNudgeOpen: any
   currentPosition: any
   mobileTopHeaderVisibilityStatus: any = true
@@ -137,6 +138,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     })
     if (this.activatedRoute.snapshot.data.pageData) {
       this.homeConfig = this.activatedRoute.snapshot.data.pageData.data.homeConfig
+      this.homePageData = this.activatedRoute.snapshot.data.pageData.data
     }
     // if (this.activatedRoute.snapshot.data.pageData) {
     //   this.newHomeStrips = this.activatedRoute.snapshot.data.pageData.data.newHomeStrip
@@ -160,7 +162,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       })
     }
 
-    this.clientList = this.activatedRoute.snapshot.data.pageData.data.clientList
+    this.clientList = this.activatedRoute.snapshot.data.pageData.data.clientList?.data
     this.widgetData = this.activatedRoute.snapshot.data.pageData.data.hubsData
     this.enableLazyLoadingFlag = this.activatedRoute.snapshot.data.pageData.data.enableLazyLoading
 
@@ -258,7 +260,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         ],
     }
 
-    this.sliderData = this.activatedRoute.snapshot.data.pageData.data.sliderData
+    this.sliderData = this.activatedRoute.snapshot.data.pageData.data.sliderData?.data
     this.sectionList.push({ section: 'slider', isVisible: false })
     this.sectionList.push({ section: 'discuss', isVisible: false })
     this.sectionList.push({ section: 'network', isVisible: false })
@@ -267,9 +269,11 @@ export class HomeComponent implements OnInit, AfterViewInit {
     // this.handleUpdateMobileNudge()
     this.handleDefaultFontSetting()
 
-    this.enrollInterval = setInterval(() => {
-      this.getEnrollmentData()
-    },                                1000)
+    if (this.homePageData?.karmaPointsPanel?.enabled) {
+      this.enrollInterval = setInterval(() => {
+        this.getEnrollmentData()
+      },                                1000)
+    }
 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')

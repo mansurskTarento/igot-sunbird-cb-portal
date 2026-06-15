@@ -68,6 +68,7 @@ import { SkeletonLoaderContentComponent } from './components/skeleton-loader-con
 import { SkeletonLoaderPeoplesComponent } from './components/skeleton-loader-peoples/skeleton-loader-peoples.component'
 import { MatRadioModule } from '@angular/material/radio'
 import { ShowAllComponent } from './routes/show-all/show-all.component'
+import { VolunteerSearchComponent } from './routes/volunteer-search/volunteer-search.component'
 @NgModule({
   declarations: [
     GlobalSearchComponent,
@@ -78,6 +79,7 @@ import { ShowAllComponent } from './routes/show-all/show-all.component'
     SearchEventCardComponent,
     PeopleConnectionCardComponent,
     CommunityContentCardComponent,
+    VolunteerSearchComponent,
     NumberShortenerPipe,
     PluralPipe,
     PaginationComponent,
