@@ -188,7 +188,9 @@ export class BtnProfileComponent extends WidgetBaseComponent
 
   logout() {
     this.raiseTelemetry('signout')
-    this.dialog.open<LogoutComponent>(LogoutComponent)
+    this.dialog.open<LogoutComponent>(LogoutComponent, {
+      panelClass: 'logout-dialog-panel',
+    })
   }
 
   setPinnedApps() {

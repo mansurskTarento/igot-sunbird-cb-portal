@@ -22,7 +22,7 @@ resolve(
     const requestData: any = {
       'request': {
           'type': 'page',
-          'subType': 'home',
+          'subType': 'home123',
           'action': 'page-configuration',
           'component': 'portal',
           'rootOrgId': '*',
