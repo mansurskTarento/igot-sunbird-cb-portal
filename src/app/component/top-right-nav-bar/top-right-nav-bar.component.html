@@ -23,7 +23,7 @@
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
                 *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview && domainConfSvc.isConfigEnabled('components.header', 'downloadApp')"
                 class="download-app-chip" (click)="openDialog()">
-                <span class="mat-body-2">{{ 'toprightnavbar.downloadApp' | translate }}</span>
+                <span class="mat-body-2 text-white">{{ 'toprightnavbar.downloadApp' | translate }}</span>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ translateLabels('font', 'toprightnavbar')}}"
                 *ngIf="item.type === 'fontButton' && rnc.section === 'font-setting' && rnc.active  && item?.forPreview">
