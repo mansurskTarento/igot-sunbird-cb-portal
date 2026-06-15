@@ -103,8 +103,8 @@ export class SuppotSectionComponent implements OnInit, OnChanges {
       if (this.helpCenterData.utStates) {
         this.utStates = new Set(this.helpCenterData.utStates)
       }
-      if (this.helpCenterData.supportSection) {
-        const support = this.helpCenterData.supportSection
+      if (this.helpCenterData.supportSectionLoggedIn) {
+        const support = this.helpCenterData.supportSectionLoggedIn
         if (support.phoneNumbers) this.phoneNumbers = support.phoneNumbers
         if (support.supportHours) this.supportHours = support.supportHours
         if (support.features) this.features = support.features
