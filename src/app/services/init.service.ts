@@ -20,6 +20,7 @@ import {
   // NsUser,
   UserPreferenceService,
   WidgetEnrollService,
+  DomainConfService,
 } from '@sunbird-cb/utils-v2'
 import { environment } from '../../environments/environment'
 /* tslint:disable */
@@ -39,28 +40,10 @@ import { CommonDataService } from './common-data.service'
 declare const smartech: any
 // import { of } from 'rxjs'
 /* tslint:enable */
-// interface IDetailsResponse {
-//   tncStatus: boolean
-//   roles: string[]
-//   group: string[]
-//   profileDetailsStatus: boolean
-//   isActive: boolean
-// }
 
 // interface IFeaturePermissionConfigs {
 //   [id: string]: Omit<NsWidgetResolver.IPermissions, 'feature'>
 // }
-
-const PROXY_CREATE_V8 = '/apis/proxies/v8'
-
-const endpoint = {
-  profilePid: '/apis/proxies/v8/api/user/v2/read',
-  fetchProfileById: (id: string) => `/apis/proxies/v8/api/user/v2/read/${id}`,
-  // profileV2: '/apis/protected/v8/user/profileRegistry/getUserRegistryById',
-  // details: `/apis/protected/v8/user/details?ts=${Date.now()}`,
-  CREATE_USER_API: `${PROXY_CREATE_V8}/discussion/user/v1/create`,
-  FIRST_LOGIN_API: '/apis/proxies/v8/login/entry',
-}
 
 @Injectable({
   providedIn: 'root',
@@ -81,6 +64,7 @@ export class InitService {
   constructor(
     private logger: LoggerService,
     private configSvc: ConfigurationsService,
+    private domainConfSvc: DomainConfService,
     // private authSvc: AuthKeycloakService,
     private widgetResolverService: WidgetResolverService,
     private sbUiResolverService: SbUiResolverService,
@@ -591,8 +575,13 @@ export class InitService {
   }
 
   private logFirstLogin() {
+    const firstLoginUrl = this.domainConfSvc.getApiUrl('user', 'firstLogin', '/apis/proxies/v8/login/entry')
+    if (!firstLoginUrl) {
+      console.warn('First login API is disabled')
+      return
+    }
     if (!localStorage.getItem('firsLogin')) {
-      this.http.get<any>(endpoint.FIRST_LOGIN_API).pipe(map((res: any) => {
+      this.http.get<any>(firstLoginUrl).pipe(map((res: any) => {
         if (res && res.result) {
           localStorage.setItem('firsLogin', 'true')
         }
@@ -604,9 +593,16 @@ export class InitService {
     let apiResponse: any
     if (this.configSvc.instanceConfig) {
       let userPidProfile: any | null = null
+      const profileUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
+      
+      if (!profileUrl) {
+        console.error('User profile API is disabled')
+        throw new Error('Profile API disabled')
+      }
+      
       try {
         userPidProfile = await this.http
-          .get<any>(endpoint.profilePid)
+          .get<any>(profileUrl)
           .pipe(map((res: any) => {
             // const roles = _.map(_.get(res, 'result.response.roles'), 'role')
             // _.set(res, 'result.response.roles', roles)
@@ -743,9 +739,17 @@ export class InitService {
   private async fetchUserDetails(): Promise<any> {
     if (this.configSvc.unMappedUser.id) {
       let userPidProfile: any | null = null
+      const profileBaseUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
+      
+      if (!profileBaseUrl) {
+        console.error('User profile API is disabled')
+        throw new Error('Profile API disabled')
+      }
+      
+      const profileByIdUrl = `${profileBaseUrl}/${this.configSvc.unMappedUser.id}`
       try {
         userPidProfile = await this.http
-          .get<any>(endpoint.fetchProfileById(this.configSvc.unMappedUser.id))
+          .get<any>(profileByIdUrl)
           .pipe(map((res: any) => {
             // const roles = _.map(_.get(res, 'result.response.roles'), 'role')
             // _.set(res, 'result.response.roles', roles)
@@ -1026,8 +1030,16 @@ export class InitService {
 
   // for NPS user feed check
   private checkUserFeed() {
+    const feedBaseUrl = this.domainConfSvc.getApiUrl('user', 'feedStatus', '/apis/proxies/v8/user/v1/feed')
+    
+    if (!feedBaseUrl) {
+      console.warn('Feed status API is disabled')
+      return
+    }
+    
     const feedId: any = []
-    this.npsSvc.getFeedStatus(this.configSvc.unMappedUser.id).subscribe((res: any) => {
+    const feedStatusUrl = `${feedBaseUrl}/${this.configSvc.unMappedUser.id}`
+    this.npsSvc.getFeedStatus(feedStatusUrl).subscribe((res: any) => {
       if (res.result.response.userFeed && res.result.response.userFeed.length > 0) {
         const feed = res.result.response.userFeed
         feed.forEach((item: any) => {
