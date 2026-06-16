@@ -5,6 +5,7 @@ export interface UserStats {
   vewAllUrl: string
   stateInfo?: string
   identifier?: string
+  viewAllEnabled?: boolean
 }
 
 export interface profileRoutes {
@@ -12,6 +13,7 @@ export interface profileRoutes {
   url: string
   icon: string
   id: string
+  key?: string
 }
 
 export interface educationalQualifications {

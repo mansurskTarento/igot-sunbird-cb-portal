@@ -1,4 +1,6 @@
-<div class="common-card-css" *ngIf="customAttrListIds && customAttrListIds.length" id="orgDetails">
+<div class="common-card-css"
+  *ngIf="customAttrListIds && customAttrListIds.length && organisationSpecificDetails?.enabled !== false"
+  id="orgDetails">
   <div class="flex flex-col gap-5">
     <div class="flex flex-row gap-4 items-center justify-between  mb-4">
       <div class="flex flex-row gap-2 title-div items-center">
@@ -23,27 +25,31 @@
       <div class="grid-container mt-2">
         <!-- Text fields - Each in its own grid cell -->
         <ng-container *ngFor="let item of customAttrList">
-          <div *ngIf="item?.type === 'text'" class="grid-item">
-            <div class="flex flex-col gap-2 pr-3 info-div">
-              <span class="label">{{item?.name}}</span>
-              <span class="value">{{getValue(item?.attributeName) || '-'}}</span>
+          <ng-container *ngIf="item?.type === 'text' && isFieldEnabled(item?.attributeName)">
+            <div class="grid-item">
+              <div class="flex flex-col gap-2 pr-3 info-div">
+                <span class="label">{{item?.name}}</span>
+                <span class="value">{{getValue(item?.attributeName) || '-'}}</span>
+              </div>
             </div>
-          </div>
+          </ng-container>
         </ng-container>
 
         <!-- MasterList fields - Each level gets its own grid cell -->
         <ng-container *ngFor="let item of customAttrList">
           <ng-container *ngIf="item?.type === 'masterList' && item?.originalCustomFieldData">
             <ng-container *ngFor="let filed of item?.originalCustomFieldData">
-              <div class="grid-item">
-                <div class="flex flex-col gap-2 pr-3 info-div">
-                  <span class="label">
-                    <!-- Show parent field name only for the first item -->
-                    {{filed?.name | titlecase}}
-                  </span>
-                  <span class="value">{{getListItemName(item, filed) || '-'}}</span>
+              <ng-container *ngIf="isFieldEnabled(filed?.attributeName)">
+                <div class="grid-item">
+                  <div class="flex flex-col gap-2 pr-3 info-div">
+                    <span class="label">
+                      <!-- Show parent field name only for the first item -->
+                      {{filed?.name | titlecase}}
+                    </span>
+                    <span class="value">{{getListItemName(item, filed) || '-'}}</span>
+                  </div>
                 </div>
-              </div>
+              </ng-container>
             </ng-container>
           </ng-container>
         </ng-container>

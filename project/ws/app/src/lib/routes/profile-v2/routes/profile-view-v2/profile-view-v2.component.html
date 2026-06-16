@@ -3,64 +3,71 @@
   <div class="flex flex-col gap-0 md:gap-4 items-center profileLeftSection">
     <div class="profile w-full">
       <!-- #region (cover photo ) -->
-      <div>
-        <ng-container *ngIf="profileBannerUrl; else defaultCoverPhoto">
-          <img class="cover-picture" [src]="profileBannerUrl" alt="cover">
-        </ng-container>
-        <ng-template #defaultCoverPhoto>
-          <img class="cover-picture" src="./assets/icons/profile_cover_pic.svg" alt="default cover">
-        </ng-template>
-        <ng-container *ngIf="isCurrentUser">
-          <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
-            <mat-icon class="cover-photo-menu-icon">more_vert</mat-icon>
-          </div>
-          <mat-menu #coverPhotoMenu="matMenu">
-            <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
-              <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
-            </button>
-          </mat-menu>
-        </ng-container>
-      </div>
+      <ng-container *ngIf="profileConfig?.banner?.enabled">
+        <div>
+          <ng-container *ngIf="profileBannerUrl; else defaultCoverPhoto">
+            <img class="cover-picture" [src]="profileBannerUrl" alt="cover">
+          </ng-container>
+          <ng-template #defaultCoverPhoto>
+            <img class="cover-picture" [src]="defaultCoverPhotoUrl" alt="default cover">
+          </ng-template>
+          <ng-container *ngIf="isCurrentUser && profileConfig?.banner?.editable">
+            <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
+              <mat-icon class="cover-photo-menu-icon">more_vert</mat-icon>
+            </div>
+            <mat-menu #coverPhotoMenu="matMenu">
+              <button mat-menu-item class="menu-item" (click)="openCoverPhotoDialog()">
+                <span>{{'NetworkV2Profile.editCoverPhoto' | translate}}</span>
+              </button>
+            </mat-menu>
+          </ng-container>
+        </div>
+      </ng-container>
       <!-- #endregion (cover photo ) -->
 
       <!-- #region (profile details ) -->
-      <div class="profile-details py-4 px-1 md:px-4 flex flex-col gap-4 md:flex-row md:gap-0 justify-between">
-        <div class="flex gap-1 md:gap-3 profile-info">
-          <div class="progress-wrapper">
-            <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg"
-              xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100"
-              height="100">
-              <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
-              <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
-            </svg>
-            <div class="user-img" [ngClass]="{'other-user-img': !isCurrentUser}">
-              <div class="image-container">
-                <ng-container *ngIf="profileImageUrl; else nameInitialsView">
-                  <img [src]="profileImageUrl" alt="Profile" class="profile-image">
+      <ng-container *ngIf="profileConfig?.userDetails?.enabled">
+        <div class="profile-details py-4 px-1 md:px-4 flex flex-col gap-4 md:flex-row md:gap-0 justify-between">
+          <div class="flex gap-1 md:gap-3 profile-info">
+            <ng-container *ngIf="profileConfig?.userDetails?.profileImage?.enabled">
+              <div class="progress-wrapper"
+                [ngClass]="{'no-progress-wrapper': !profileConfig?.userDetails?.progress?.enabled}">
+                <ng-container *ngIf="profileConfig?.userDetails?.progress?.enabled">
+                  <svg [ngClass]="{'hide-circle': !isCurrentUser}" xmlns="http://www.w3.org/2000/svg"
+                    xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 110 120" width="100"
+                    height="100">
+                    <path class="grey" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+                    <path class="progress-clr" d="M50,100 A55,55 0 1,1 135,100" style="fill:none;" />
+                  </svg>
                 </ng-container>
-                <ng-template #nameInitialsView>
-                  <div class="flex items-center justify-center profile-circle">
-                    {{ nameInitials }}
+                <div class="user-img" [ngClass]="{'other-user-img': !isCurrentUser}">
+                  <div class="image-container">
+                    <ng-container *ngIf="profileImageUrl; else nameInitialsView">
+                      <img [src]="profileImageUrl" alt="Profile" class="profile-image">
+                    </ng-container>
+                    <ng-template #nameInitialsView>
+                      <div class="flex items-center justify-center profile-circle">
+                        {{ nameInitials }}
+                      </div>
+                    </ng-template>
                   </div>
-                </ng-template>
+                  <ng-container *ngIf="isCurrentUser && profileConfig?.userDetails?.progress?.enabled">
+                    <span class="percentage-block">{{profileCompletionPercentage}}%</span>
+                  </ng-container>
+                </div>
               </div>
-              <ng-container *ngIf="isCurrentUser">
-                <span class="percentage-block">{{profileCompletionPercentage}}%</span>
-              </ng-container>
-            </div>
-          </div>
+            </ng-container>
 
-          <div class="flex flex-col profile-details">
-            <div class="flex gap-2 justify-between">
-              <div class="flex gap-2 items-start w-full">
-                <span class="profile-name">{{primaryDetails?.firstname}} </span>
-                <ng-container *ngIf="primaryDetails?.profileStatus === 'VERIFIED'">
-                  <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
-                </ng-container>
-                <!-- product team asked this to be removed from UI. -->
-                <!-- <span class="user-name">({{primaryDetails?.username}})</span> -->
-              </div>
-              <ng-container *ngIf="!isCurrentUser">
+            <div class="flex flex-col profile-details">
+              <div class="flex gap-2 justify-between">
+                <div class="flex gap-2 items-start w-full">
+                  <span class="profile-name">{{primaryDetails?.firstname}} </span>
+                  <ng-container *ngIf="primaryDetails?.profileStatus === 'VERIFIED'">
+                    <img class="staus-icon" src="./assets/icons/Accept_icon.png" alt="status">
+                  </ng-container>
+                  <!-- product team asked this to be removed from UI. -->
+                  <!-- <span class="user-name">({{primaryDetails?.username}})</span> -->
+                </div>
                 <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="not-my-user-menu menu"
                   [matMenuTriggerFor]="notMyUserMenu">more_vert</mat-icon>
                 <mat-menu #notMyUserMenu="matMenu">
@@ -69,8 +76,7 @@
                       <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                     </button>
                   </ng-container>
-                  <ng-container
-                    *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
+                  <ng-container *ngIf="shouldShowBlockProfileButton">
                     <button mat-menu-item (click)="openConformationDialog('Blocked')">
                       <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                     </button>
@@ -84,86 +90,96 @@
                     <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
                   </button>
                 </mat-menu>
+              </div>
+              <ng-container *ngIf="profileConfig?.userDetails?.designationOrganization?.enabled">
+                <div class="profile-details">
+                  {{primaryDetails?.designation}} | {{primaryDetails?.currentOrgName}}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="locationDetails?.state || locationDetails?.district">
+                <div class="profile-details">
+                  {{locationDetails?.district}} | {{locationDetails?.state}}
+                </div>
+              </ng-container>
+              <ng-container *ngIf="isMentor">
+                <button mat-button class="mentor-profile" i18n (click)="viewMentorProfile()">
+                  {{ 'NetworkV2Profile.viewMyMentorProfile' | translate }}</button>
               </ng-container>
             </div>
-            <div class="profile-details">
-              {{primaryDetails?.designation}} | {{primaryDetails?.currentOrgName}}
-            </div>
-            <ng-container *ngIf="locationDetails?.state || locationDetails?.district">
-              <div class="profile-details">
-                {{locationDetails?.district}} | {{locationDetails?.state}}
+          </div>
+          <ng-container *ngIf="profileConfig?.userDetails?.menuButtonsEnabled">
+            <ng-container *ngIf="isCurrentUser; else notCurrentUser">
+              <div class="flex flex-col justify-between items-end">
+                <div class="flex">
+                  <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
+                    [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
+                </div>
+                <mat-menu #profileMenu="matMenu">
+                  <ng-container *ngIf="profileConfig?.userDetails?.insideMenuButtons?.editProfile?.enabled">
+                    <button mat-menu-item (click)="openProfileEditDialog('Profile')">
+                      <span>{{ 'NetworkV2Profile.editProfile' | translate }}</span>
+                    </button>
+                  </ng-container>
+                  <ng-container *ngIf="profileConfig?.userDetails?.insideMenuButtons?.transferRequest?.enabled">
+                    <ng-container *ngIf="enableWTR; else transferRequest">
+                      <button mat-menu-item (click)="handleWithdrawTransferRequest()">
+                        <span>{{ 'NetworkV2Profile.withdrawTransferRequest' | translate }}</span>
+                      </button>
+                    </ng-container>
+                    <ng-template #transferRequest>
+                      <ng-container *ngIf="!enableWR">
+                        <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="right"
+                          matTooltip="{{ 'NetworkV2Profile.clickToTransferTooltip' | translate }}"
+                          #MTRTooltip="matTooltip">
+                          <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
+                        </button>
+                      </ng-container>
+                      <ng-container *ngIf="enableWR">
+                        <button mat-menu-item class="disable-button" matTooltipPosition="right"
+                          matTooltip="{{ 'NetworkV2Profile.makeTransferRequest' | translate }}"
+                          (click)="MTRTooltip.toggle()">
+                          <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
+                        </button>
+                      </ng-container>
+                    </ng-template>
+                  </ng-container>
+                  <ng-container *ngIf="profileConfig?.userDetails?.insideMenuButtons?.settings?.enabled">
+                    <button mat-menu-item [routerLink]="['/app/profile/settings']">
+                      <span>{{ 'NetworkV2Profile.settings' | translate }}</span>
+                    </button>
+                  </ng-container>
+
+                </mat-menu>
               </div>
             </ng-container>
-            <ng-container *ngIf="isMentor">
-              <button mat-button class="mentor-profile" i18n (click)="viewMentorProfile()">
-                {{ 'NetworkV2Profile.viewMyMentorProfile' | translate }}</button>
-            </ng-container>
-          </div>
-        </div>
-        <ng-container *ngIf="isCurrentUser; else notCurrentUser">
-          <div class="flex flex-col justify-between items-end">
-            <div class="flex">
-              <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
-                [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
-            </div>
-            <mat-menu #profileMenu="matMenu">
-              <button mat-menu-item (click)="openProfileEditDialog('Profile')">
-                <span>{{ 'NetworkV2Profile.editProfile' | translate }}</span>
-              </button>
-              <ng-container *ngIf="enableWTR; else transferRequest">
-                <button mat-menu-item (click)="handleWithdrawTransferRequest()">
-                  <span>{{ 'NetworkV2Profile.withdrawTransferRequest' | translate }}</span>
-                </button>
-              </ng-container>
-              <ng-template #transferRequest>
-                <ng-container *ngIf="!enableWR">
-                  <button mat-menu-item (click)="handleTransferRequest()" matTooltipPosition="right"
-                    matTooltip="{{ 'NetworkV2Profile.clickToTransferTooltip' | translate }}" #MTRTooltip="matTooltip">
-                    <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
-                  </button>
-                </ng-container>
-                <ng-container *ngIf="enableWR">
-                  <button mat-menu-item class="disable-button" matTooltipPosition="right"
-                    matTooltip="{{ 'NetworkV2Profile.makeTransferRequest' | translate }}" (click)="MTRTooltip.toggle()">
-                    <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
-                  </button>
-                </ng-container>
-              </ng-template>
-              <button mat-menu-item [routerLink]="['/app/profile/settings']">
-                <span>{{ 'NetworkV2Profile.settings' | translate }}</span>
-              </button>
-
-            </mat-menu>
-          </div>
-        </ng-container>
-        <ng-template #notCurrentUser>
-          <div class="flex flex-col justify-between items-end">
-            <div class="hidden md:flex">
-              <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
-                [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
-            </div>
-            <mat-menu #profileMenu="matMenu">
-              <!-- <ng-container *ngIf="connectionStatus === 'Pending'">
+            <ng-template #notCurrentUser>
+              <div class="flex flex-col justify-between items-end">
+                <div class="hidden md:flex">
+                  <mat-icon mat-icon-button i18n-aria-label aria-label="action items" class="menu"
+                    [matMenuTriggerFor]="profileMenu">more_vert</mat-icon>
+                </div>
+                <mat-menu #profileMenu="matMenu">
+                  <!-- <ng-container *ngIf="connectionStatus === 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Withdrawn')">
                   <span>{{ 'NetworkV2Profile.withdrawRequest' | translate }} </span>
                 </button>
               </ng-container> -->
-              <!-- <ng-container
+                  <!-- <ng-container
                 *ngIf="connectionStatus !== 'Blocked Incoming' && connectionStatus !== 'Blocked Outgoing' && connectionStatus !== 'Pending'">
                 <button mat-menu-item (click)="openConformationDialog('Blocked')">
                   <span>{{ 'NetworkV2Profile.blockThisProfile' | translate }} </span>
                 </button>
               </ng-container> -->
-              <!-- <ng-container *ngIf="connectionStatus === 'Approved'">
+                  <!-- <ng-container *ngIf="connectionStatus === 'Approved'">
                 <button mat-menu-item (click)="openConformationDialog('Removed')">
                   <span>{{ 'NetworkV2Profile.removeConnection' | translate }} </span>
                 </button>
               </ng-container> -->
-              <button mat-menu-item (click)="copyProfileLink()">
-                <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
-              </button>
-            </mat-menu>
-            <!-- <ng-container [ngSwitch]="connectionStatus">
+                  <button mat-menu-item (click)="copyProfileLink()">
+                    <span>{{ 'NetworkV2Profile.copyProfileLink' | translate }} </span>
+                  </button>
+                </mat-menu>
+                <!-- <ng-container [ngSwitch]="connectionStatus">
               <ng-container *ngSwitchCase="'Blocked Outgoing'">
                 <button mat-button class="connectButton " i18n (click)="updateProfileConnection('Unblocked')">
                   {{'NetworkV2Profile.unblock' | translate}}
@@ -189,11 +205,13 @@
 
               </ng-container>
             </ng-container> -->
-          </div>
-        </ng-template>
-      </div>
+              </div>
+            </ng-template>
+          </ng-container>
+        </div>
+      </ng-container>
       <!-- #region (not my user warning) -->
-      <ng-container *ngIf="isNotMyUserAndIgotOrg">
+      <ng-container *ngIf="isNotMyUserAndIgotOrg && profileConfig?.notMyUserWarning?.enabled">
         <div class="px-5">
           <div class="not-my-user-container mt-8">
             <div class="not-my-user-content">
@@ -235,7 +253,7 @@
         </div>
       </div>
     </ng-container>
-    <ng-container *ngIf="isCurrentUser && !isMobile">
+    <ng-container *ngIf="shouldShowUserStatsDesktop">
       <div>
         <ws-app-user-stats [userStats]="userStats" [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
       </div>
@@ -243,21 +261,24 @@
 
     <div class="flex md:gap-5 w-full">
       <!-- #region (left routing) -->
-      <div class="hidden md:flex flex-col gap-3 left-routing-card">
-        <ng-container *ngFor="let profileRoute of profileRoutes">
-          <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)"
-            (keyup)="selectRoute(profileRoute?.id)"
-            [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
-            <ng-container *ngIf="profileRoute?.url; else routeIcon">
-              <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
-            </ng-container>
-            <ng-template #routeIcon>
-              <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
-            </ng-template>
-            {{profileRoute?.name | translate}}
-          </div>
-        </ng-container>
-      </div>
+      <ng-container *ngIf="profileRoutes && profileRoutes?.length > 0">
+
+        <div class="hidden md:flex flex-col gap-3 left-routing-card">
+          <ng-container *ngFor="let profileRoute of profileRoutes">
+            <div class="flex items-center gap-3 route-card" (click)="selectRoute(profileRoute?.id)"
+              (keyup)="selectRoute(profileRoute?.id)"
+              [ngClass]="{'active-route-card': profileRoute?.id === activeRoutId}">
+              <ng-container *ngIf="profileRoute?.url; else routeIcon">
+                <img class="route-card-icon" [src]="profileRoute?.url" alt="route icon">
+              </ng-container>
+              <ng-template #routeIcon>
+                <mat-icon class="route-card-icon">{{profileRoute?.icon}}</mat-icon>
+              </ng-template>
+              {{profileRoute?.name | translate}}
+            </div>
+          </ng-container>
+        </div>
+      </ng-container>
       <!-- #endregion (left routing) -->
 
       <ng-container *ngIf="isMobile; else desktopTabs">
@@ -284,19 +305,19 @@
       <ng-template #profileSection>
         <ng-container *ngIf="showProfileSection; else blocked">
           <div class="flex flex-col gap-4">
-            <ng-container *ngIf="isCurrentUser && isMobile">
+            <ng-container *ngIf="shouldShowUserStatsMobile">
               <div>
                 <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"
                   [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
               </div>
             </ng-container>
 
-            <ng-container *ngIf="isCurrentUser || (aboutme && aboutme?.length > 0)">
+            <ng-container *ngIf="shouldShowAboutMeSection">
               <div id="about-me" class="user-details">
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{(isCurrentUser ? 'NetworkV2Profile.aboutMe' :
                     'NetworkV2Profile.rolesAndResponsibilities') | translate}} </div>
-                  <ng-container *ngIf="isCurrentUser">
+                  <ng-container *ngIf="isCurrentUser && profileConfig?.aboutMe?.editable">
                     <mat-icon class="edit-icon" (click)="openProfileEditDialog('About Me')"
                       (keyup)="openProfileEditDialog('About Me')">edit</mat-icon>
                   </ng-container>
@@ -317,30 +338,34 @@
               </div>
             </ng-container>
 
-            <div id="basic-details" class="user-details">
-              <ws-app-profile-primary-details [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj"
-                [rejectedFields]="rejectedFields" [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR"
-                [enableWR]="enableWR" [approvalPendingFields]="approvalPendingFields"
-                (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
-                (updateWithdrawalStatus)="updateWithdrawalStatus()"
-                (designationApprovedTimeChange)="designationApprovedTimeChange($event)"></ws-app-profile-primary-details>
-            </div>
-            <ng-container *ngIf="isCurrentUser">
-              <ws-app-view-custom-fields></ws-app-view-custom-fields>
+            <ng-container *ngIf="profileConfig?.basicDetails?.enabled">
+              <div id="basic-details" class="user-details">
+                <ws-app-profile-primary-details [primaryDetailsOtherDetailsConfig]="profileConfig?.basicDetails"
+                  [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj" [rejectedFields]="rejectedFields"
+                  [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR" [enableWR]="enableWR"
+                  [approvalPendingFields]="approvalPendingFields"
+                  (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
+                  (updateWithdrawalStatus)="updateWithdrawalStatus()"
+                  (designationApprovedTimeChange)="designationApprovedTimeChange($event)"></ws-app-profile-primary-details>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="isCurrentUser && profileConfig?.organisationSpecificDetails?.enabled">
+              <ws-app-view-custom-fields [organisationSpecificDetails]="profileConfig?.organisationSpecificDetails"
+                [editConfig]="getEditConfig(profileConfig?.organisationSpecificDetails?.editObjectKey)"></ws-app-view-custom-fields>
             </ng-container>
 
-            <ng-container
-              *ngIf="isCurrentUser || (serviceHistoryDetails && serviceHistoryDetails?.serviceHistoryList?.length > 0)">
+            <ng-container *ngIf="shouldShowServiceHistorySection">
               <div id="service-history" class="user-details">
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{'NetworkV2Profile.serviceHistory' | translate}}</div>
-                  <ng-container *ngIf="isCurrentUser">
+                  <ng-container *ngIf="isCurrentUser && profileConfig?.serviceHistory?.canAdd">
                     <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Service History')"
                       (keyup)="openProfileEntryEditDialog('Service History')">add</mat-icon>
                   </ng-container>
                 </div>
                 <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
                   [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
+                  [editConfig]="getEditConfig(profileConfig?.serviceHistory?.editObjectKey)"
                   (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
@@ -359,12 +384,11 @@
               </div>
             </ng-container> -->
 
-            <ng-container
-              *ngIf="isCurrentUser || (educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0)">
+            <ng-container *ngIf="shouldShowEducationalQualificationsSection">
               <div id="educational-qualifications" class="user-details">
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{'NetworkV2Profile.educationalQualifications' | translate}}</div>
-                  <ng-container *ngIf="isCurrentUser">
+                  <ng-container *ngIf="(isCurrentUser && profileConfig?.educationalQualifications?.canAdd)">
                     <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Educational qualifications')"
                       (keyup)="openProfileEntryEditDialog('Educational qualifications')">add</mat-icon>
                   </ng-container>
@@ -374,6 +398,7 @@
                   <ws-app-educational-qualifications
                     [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
                     [isCurrentUser]="isCurrentUser"
+                    [editConfig]="getEditConfig(profileConfig?.educationalQualifications?.editObjectKey)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
                   <ng-container *ngIf="educationalQualificationDetails?.count > 2">
                     <div class="flex flex-col justify-between items-center">
@@ -388,8 +413,7 @@
               </div>
             </ng-container>
 
-            <ng-container
-              *ngIf="isCurrentUser || (achievementsDetails && achievementsDetails?.achievementsList?.length > 0)">
+            <ng-container *ngIf="shouldShowAchievementsSection">
               <div id="achievements" class="user-details">
                 <div class="flex justify-between items-center mb-2">
                   <div class="section-header">{{'NetworkV2Profile.achievements' | translate}}</div>
@@ -398,7 +422,8 @@
                       <span class="link-to-passbook pr-1" (click)="handleRedirectToCompetencyPassbook()"
                         (keyup)="handleRedirectToCompetencyPassbook()">
                         {{'NetworkV2Profile.viewLearnerPassbook' | translate}}</span> |
-                      <mat-icon class="add-icon" (click)="openProfileEntryEditDialog('Achievements')"
+                      <mat-icon *ngIf="profileConfig?.achievements?.canAdd" class="add-icon"
+                        (click)="openProfileEntryEditDialog('Achievements')"
                         (keyup)="openProfileEntryEditDialog('Achievements')">add</mat-icon>
                     </div>
                   </ng-container>
@@ -407,6 +432,7 @@
                   *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
                   <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
                     [isCurrentUser]="isCurrentUser"
+                    [editConfig]="getEditConfig(profileConfig?.achievements?.editObjectKey)"
                     (openProfileEntryDeleteDialog)="openProfileEntryDeleteDialog('Achievements',$event)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>
                   <ng-container *ngIf="achievementsDetails?.count > 2">
@@ -524,10 +550,11 @@
   <!-- #endregion (left profile )-->
 
   <!-- #region (right profile connections )-->
-  <ng-container *ngIf="!isNotMyUserAndIgotOrg">
+  <ng-container *ngIf="!isNotMyUserAndIgotOrg && profileConfig?.rightSection?.enabled">
     <div class="hidden md:flex flex-col gap-4 profileRightSection">
       <ng-container *ngIf="!suggestionsLoading; else suggestionsLoader">
-        <ng-container *ngIf="peopleSuggestionsList?.length > 0">
+        <ng-container
+          *ngIf="peopleSuggestionsList?.length > 0 && profileConfig?.rightSection?.peopleSuggestions?.enabled">
           <div class="flex flex-col gap-3">
             <div class="people-you-may-know">
               {{ 'NetworkV2Profile.peopleYouMayKnow' | translate }}
@@ -540,30 +567,36 @@
         </ng-container>
       </ng-container>
 
-      <div class="flex flex-col gap-3">
-        <ng-container *ngIf="!communitySuggestionsLoading; else suggestionsLoader">
-          <ng-container *ngIf="communitySuggestionsList?.length > 0">
-            <div class="people-you-may-know">
-              {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
-            </div>
-            <div>
-              <ws-app-community-suggestions
-                [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
-            </div>
+      <ng-container *ngIf="profileConfig?.rightSection?.recommendedCommunities?.enabled">
+        <div class="flex flex-col gap-3">
+          <ng-container *ngIf="!communitySuggestionsLoading; else suggestionsLoader">
+            <ng-container *ngIf="communitySuggestionsList?.length > 0">
+              <div class="people-you-may-know">
+                {{ 'NetworkV2Profile.recommendedCommunities' | translate }}
+              </div>
+              <div>
+                <ws-app-community-suggestions
+                  [communitySuggestionsList]="communitySuggestionsList"></ws-app-community-suggestions>
+              </div>
+            </ng-container>
           </ng-container>
-        </ng-container>
-      </div>
-      <ng-template #suggestionsLoader>
-        <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'" [bindingClass]="'flex rounded margin-bottom-xs'">
-        </ws-widget-skeleton-loader>
+        </div>
+        <ng-template #suggestionsLoader>
+          <ws-widget-skeleton-loader [width]="'100%'" [height]="'40px'"
+            [bindingClass]="'flex rounded margin-bottom-xs'">
+          </ws-widget-skeleton-loader>
 
-        <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
-        </ws-widget-skeleton-loader>
-        <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
-        </ws-widget-skeleton-loader>
-        <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'" [bindingClass]="'flex rounded margin-bottom-xs'">
-        </ws-widget-skeleton-loader>
-      </ng-template>
+          <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+            [bindingClass]="'flex rounded margin-bottom-xs'">
+          </ws-widget-skeleton-loader>
+          <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+            [bindingClass]="'flex rounded margin-bottom-xs'">
+          </ws-widget-skeleton-loader>
+          <ws-widget-skeleton-loader [width]="'100%'" [height]="'147px'"
+            [bindingClass]="'flex rounded margin-bottom-xs'">
+          </ws-widget-skeleton-loader>
+        </ng-template>
+      </ng-container>
     </div>
   </ng-container>
   <!-- #endregion (right profile connections )-->

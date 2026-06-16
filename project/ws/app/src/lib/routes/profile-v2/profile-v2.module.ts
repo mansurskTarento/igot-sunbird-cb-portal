@@ -67,6 +67,7 @@ import { ImageCropperModule } from 'ngx-image-cropper'
 import { PrfileEditV2Component } from './revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfilePrimaryDetailsComponent } from './components/profile-revamp/profile-primary-details/profile-primary-details.component'
 import { ProfileEntryEditComponent } from './revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
+import { DynamicEntryEditComponent } from './revamp-dialogs/dynamic-entry-edit/dynamic-entry-edit.component'
 import { MatCheckboxModule } from '@angular/material/checkbox'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { CertificateViewPopupModule } from './components/profile-revamp/certificate-view-popup/certificate-view-popup.module'
@@ -107,6 +108,7 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         PrfileEditV2Component,
         ProfilePrimaryDetailsComponent,
         ProfileEntryEditComponent,
+        DynamicEntryEditComponent,
         DescriptionComponent,
         CustomFieldsComponent,
         ViewCustomFieldsComponent,

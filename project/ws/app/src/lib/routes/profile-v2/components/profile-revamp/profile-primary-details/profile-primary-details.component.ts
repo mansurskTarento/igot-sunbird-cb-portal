@@ -37,6 +37,7 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     designationRejectionTime: 0,
   }
   @Input() approvalPendingFields: any = []
+  @Input() primaryDetailsOtherDetailsConfig: any
 
   @Output() openProfileEditDialog = new EventEmitter()
   @Output() getApprovalStatus = new EventEmitter()
