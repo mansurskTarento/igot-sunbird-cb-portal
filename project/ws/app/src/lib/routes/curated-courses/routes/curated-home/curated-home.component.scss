@@ -1,19 +1,20 @@
 .container-balanced {
     max-width: 1202px;
-    margin-left: auto!important;
-    margin-right: auto!important;
+    margin-left: auto !important;
+    margin-right: auto !important;
     height: auto;
     min-height: 400px;
 
     @media (max-width:1024px) {
-        margin-left: 8px!important;
-        margin-right: 8px!important;
+        margin-left: 8px !important;
+        margin-right: 8px !important;
     }
 
 }
 
 .top_card_container {
     margin-top: 30px;
+
     .top_card_inner_box {
         align-items: center;
         // enable for flex box layout
@@ -66,7 +67,7 @@
                     max-width: 100%;
                 }
 
-                mat-form-field .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix{
+                mat-form-field .mat-form-field-wrapper .mat-form-field-flex .mat-form-field-infix {
                     border-top-width: 8px !important;
                     padding: 12px 10px 12px 12px;
 
@@ -90,6 +91,7 @@
             @media (max-width:768px) {
                 width: 49%;
             }
+
             .item {
                 .mat-form-field {
                     // background-color: #f0f3f4;
@@ -102,8 +104,9 @@
                         width: 100%;
                     }
                 }
+
                 .theme-igot.day-mode .mat-form-field-appearance-legacy .mat-form-field-underline {
-                    background-color:none;
+                    background-color: none;
                 }
 
             }
@@ -111,7 +114,7 @@
     }
 
     .provider_card_box {
-        width:100%;
+        width: 100%;
         align-items: center;
         // Enable if flex layout is needed
         // flex-direction: row;
@@ -132,9 +135,14 @@
     }
 
     a.load_more_link {
-        margin:35px auto 0 auto;
-        text-align:center;
+        margin: 35px auto 0 auto;
+        text-align: center;
         display: block;
     }
 }
 
+::ng-deep .search_box_main {
+    .mat-mdc-text-field-wrapper {
+        background-color: #fff;
+    }
+}
