@@ -1,6 +1,6 @@
 import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { FormBuilder, FormGroup, ValidatorFn, Validators } from '@angular/forms'
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
@@ -8,6 +8,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { generateYears, URL_PATRON } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
+import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -47,6 +48,42 @@ export interface ConditionalConfig {
   key: string
   value: any
   operator?: '===' | '!==' | 'includes'
+}
+
+// date must be less than given dependent date (e.g. startDate < endDate)
+export function dateDependencySmallerValidator(dependentControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(dependentControlName)?.value
+    const startDate = control?.value
+
+    if (!startDate) {
+      return null // Skip validation if startDate is not set
+    }
+
+    if (endDate && new Date(startDate) > new Date(endDate)) {
+      return { dateGreaterThanGivenDate: true }
+    }
+
+    return null // Valid
+  }
+}
+
+// date must be greater than given dependent date (e.g. endDate > startDate)
+export function dateDependencyGreaterValidator(dependentControlName: string): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const endDate = control?.parent?.get(dependentControlName)?.value
+    const startDate = control?.value
+
+    if (!startDate) {
+      return null // Skip validation if startDate is not set
+    }
+
+    if (endDate && new Date(startDate) < new Date(endDate)) {
+      return { dateLesserThanGivenDate: true }
+    }
+
+    return null // Valid
+  }
 }
 
 /**
@@ -143,6 +180,8 @@ export interface FieldConfig {
    * Example: '^[a-zA-Z0-9\\s.,\'-]*$'
    */
   pattern?: string
+  dateDependencySmallerValidator?: string
+  dateDependencyGreaterValidator?: string
   /**
    * disableDependency — keep this field visible but disable (and reset) it when the condition is met.
    * When the condition is no longer met the field is re-enabled.
@@ -181,7 +220,7 @@ export class DynamicEntryEditComponent implements OnInit {
 
   // ── Config — received once, never changes ───────────────────────────
   readonly header: string = _.get(this.data, 'header', '')
-  readonly entryDetails: any = _.cloneDeep(_.get(this.data, 'entryDetails', null))
+  readonly entryDetails: any = _.cloneDeep(_.get(this.data, 'entryDetails', _.get(this.data, 'profileDetails', null)))
   readonly editConfig: ReadonlyArray<FieldConfig> = _.get(this.data, 'editConfig.fields', [])
   readonly todayDate = new Date()
 
@@ -253,6 +292,8 @@ export class DynamicEntryEditComponent implements OnInit {
   private institutionScrollHandlers: Record<string, EventListener> = {}
   private activeInstitutionField: FieldConfig | null = null
   readonly institutionListLoadCount = 50
+  eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
+  eCategory = Object.keys(NsUserProfileDetails.ECategory)
 
   // ── Lifecycle ────────────────────────────────────────────────────────
   ngOnInit(): void {
@@ -370,6 +411,14 @@ export class DynamicEntryEditComponent implements OnInit {
     if (field.validators) {
       const fns = (field.validators as any[]).filter(fn => typeof fn === 'function')
       v.push(...(fns as ValidatorFn[]))
+    }
+    if (field.type === 'date') {
+      if (field.dateDependencyGreaterValidator) {
+        v.push(dateDependencyGreaterValidator(field.dateDependencyGreaterValidator))
+      }
+      if (field.dateDependencySmallerValidator) {
+        v.push(dateDependencySmallerValidator(field.dateDependencySmallerValidator))
+      }
     }
     return v
   }
@@ -872,8 +921,32 @@ export class DynamicEntryEditComponent implements OnInit {
   // ── optionsSource: states / districts ──────────────────────────────────────
 
   private initOptionSourceFields(): void {
-    const stateFields = (this.editConfig as FieldConfig[]).filter(f => f.optionsSource === 'states')
-    const districtFields = (this.editConfig as FieldConfig[]).filter(f => f.optionsSource === 'districts')
+    const stateFields: FieldConfig[] = []
+    const districtFields = [] as FieldConfig[]
+
+    (this.editConfig as FieldConfig[]).forEach((field: any) => {
+      switch (field.optionsSource) {
+        case 'states':
+          stateFields.push(field)
+          break
+
+        case 'districts':
+          districtFields.push(field)
+          break
+
+        case 'eUserGender':
+          this.dynamicOptions[field.key] = this.eUserGender.map(g => ({ label: g, value: g }))
+          break
+
+        case 'eCategory':
+          this.dynamicOptions[field.key] = this.eCategory.map(c => ({ label: c, value: c }))
+          break
+
+        default:
+          break
+      }
+    })
+
 
     stateFields.forEach(field => {
       this.dynamicOptions[field.key] = []
@@ -1188,49 +1261,75 @@ export class DynamicEntryEditComponent implements OnInit {
 
   private setupDependencyWatchers(): void {
     const dependentFields = (this.editConfig as FieldConfig[]).filter(
-      f => this.isDesignationField(f) && !!f.dependencyField
+      f => (this.isDesignationField(f) && !!f.dependencyField) || f.dateDependencySmallerValidator || f.dateDependencyGreaterValidator
     )
     if (!dependentFields.length) { return }
 
     dependentFields.forEach(field => {
-      const depCtrl = this.entryForm.get(field.dependencyField!)
-      const desigCtrl = this.entryForm.get(field.key)
-      if (!depCtrl || !desigCtrl) { return }
+      if (field.dependencyField) {
+        const depCtrl = this.entryForm.get(field.dependencyField!)
+        const desigCtrl = this.entryForm.get(field.key)
+        if (!depCtrl || !desigCtrl) { return }
 
-      const updateDesignationState = (): void => {
-        // Priority 1: If in edit mode and canUpdate is false, always disable
-        const isEditMode = !!this.entryDetails
-        if (isEditMode && field.canUpdate === false) {
-          desigCtrl.disable()
-          return
+        const updateDesignationState = (): void => {
+          // Priority 1: If in edit mode and canUpdate is false, always disable
+          const isEditMode = !!this.entryDetails
+          if (isEditMode && field.canUpdate === false) {
+            desigCtrl.disable()
+            return
+          }
+
+          // Priority 2: Check if this designation field has a disableDependency that's currently active
+          const hasActiveDisableDependency = field.disableDependency
+            ? this.isDisableDependencyActive(field.disableDependency)
+            : false
+
+          // If org has no value, always disable designation
+          if (!depCtrl.value) {
+            desigCtrl.disable()
+          }
+          // If org has value AND there's NO active disableDependency, enable designation
+          else if (!hasActiveDisableDependency) {
+            desigCtrl.enable()
+          }
+          // If org has value BUT there IS an active disableDependency, explicitly disable it
+          else {
+            desigCtrl.disable()
+          }
         }
 
-        // Priority 2: Check if this designation field has a disableDependency that's currently active
-        const hasActiveDisableDependency = field.disableDependency
-          ? this.isDisableDependencyActive(field.disableDependency)
-          : false
+        // Set initial disabled state
+        updateDesignationState()
 
-        // If org has no value, always disable designation
-        if (!depCtrl.value) {
-          desigCtrl.disable()
-        }
-        // If org has value AND there's NO active disableDependency, enable designation
-        else if (!hasActiveDisableDependency) {
-          desigCtrl.enable()
-        }
-        // If org has value BUT there IS an active disableDependency, explicitly disable it
-        else {
-          desigCtrl.disable()
-        }
+        // Watch for organisation changes
+        depCtrl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+          updateDesignationState()
+        })
+      }
+      if (field.dateDependencySmallerValidator) {
+        const depCtrl = this.entryForm.get(field.dateDependencySmallerValidator)
+        const dateCtrl = this.entryForm.get(field.key)
+        if (!depCtrl || !dateCtrl) { return }
+
+        depCtrl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: any) => {
+          if (value) {
+            field.maxDate = new Date(value)
+          }
+        })
+
       }
 
-      // Set initial disabled state
-      updateDesignationState()
+      if (field.dateDependencyGreaterValidator) {
+        const depCtrl = this.entryForm.get(field.dateDependencyGreaterValidator)
+        const dateCtrl = this.entryForm.get(field.key)
+        if (!depCtrl || !dateCtrl) { return }
 
-      // Watch for organisation changes
-      depCtrl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
-        updateDesignationState()
-      })
+        depCtrl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((value: any) => {
+          if (value) {
+            field.minDate = new Date(value)
+          }
+        })
+      }
     })
   }
 

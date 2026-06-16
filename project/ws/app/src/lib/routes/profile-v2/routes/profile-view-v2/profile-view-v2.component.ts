@@ -228,6 +228,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   blockedMessage = ''
   private initCallCount = 0
   private readonly INIT_CALL_TOTAL = 4
+  defaultCoverPhotoUrl = './assets/icons/profile_cover_pic.svg'
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>
   designationApprovedTime: number = 0
@@ -376,6 +377,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.nlwExperience = this.pageData?.nlwExperience
     this.profileConfig = this.pageData?.profileConfig
     this.profileEditConfigs = this.pageData?.profileEditConfigs
+    if (_.get(this.profileConfig, 'banner.defaultBannerUrl')) {
+      this.defaultCoverPhotoUrl = this.profileConfig.banner.defaultBannerUrl
+    }
     this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => _.get(this.profileConfig, `${route.key}.enabled`, false))
     this.activatedRoute.data.subscribe(data => {
       this.userId = _.get(data, 'profile.userId', '')
@@ -1074,7 +1078,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       header,
       profileDetails: this.primaryDetails,
       primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
-      otherDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
     }
     if (header === 'Profile') {
       dialogDetails.profileDetails = {
@@ -1087,6 +1090,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       dialogDetails['groupsList'] = this.groupsList
     } else if (header === 'mandatorySection') {
       dialogDetails['groupsList'] = this.groupsList
+    } else if (header === 'Other Details') {
+      dialogDetails['editConfig'] = this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey)
     }
 
     // For mandatorySection, wrap dialogDetails and include approval fields
@@ -1102,13 +1107,23 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         isCurrentUser: this.isCurrentUser,
         primaryDetails: this.primaryDetails,
         primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
-        otherDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
+        editConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
       }
     } else {
       dialogData = dialogDetails
     }
 
-    const dialogRef = this.dialog.open(PrfileEditV2Component, {
+    let dialogComponent: any = ProfileEntryEditComponent
+
+    if (
+      dialogData.header.toLowerCase() === 'other details'
+      && dialogData.editConfig
+      && dialogData.editConfig.isDynamicDialog
+    ) {
+      dialogComponent = DynamicEntryEditComponent
+    }
+
+    const dialogRef = this.dialog.open(dialogComponent, {
       data: dialogData,
       disableClose: true,
       panelClass: 'dialog_sidenav',

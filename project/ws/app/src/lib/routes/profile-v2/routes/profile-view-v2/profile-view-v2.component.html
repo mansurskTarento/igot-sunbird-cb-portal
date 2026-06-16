@@ -9,7 +9,7 @@
             <img class="cover-picture" [src]="profileBannerUrl" alt="cover">
           </ng-container>
           <ng-template #defaultCoverPhoto>
-            <img class="cover-picture" src="./assets/icons/profile_cover_pic.svg" alt="default cover">
+            <img class="cover-picture" [src]="defaultCoverPhotoUrl" alt="default cover">
           </ng-template>
           <ng-container *ngIf="isCurrentUser && profileConfig?.banner?.editable">
             <div class="edit-cover-picture flex justify-center items-center" [matMenuTriggerFor]="coverPhotoMenu">
