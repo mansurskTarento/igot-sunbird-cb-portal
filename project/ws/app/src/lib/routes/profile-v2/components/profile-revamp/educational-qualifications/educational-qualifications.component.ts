@@ -15,6 +15,7 @@ export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
   @Input() isCurrentUser = false
+  @Input() editConfig: any = null
   @Output() openProfileEntryEditDialog = new EventEmitter()
 
   userId: string = ''
@@ -31,6 +32,7 @@ export class EducationalQualificationsComponent implements OnInit {
       this.userId = data.userId
       this.isPopup = true
       this.isCurrentUser = data.isCurrentUser || false
+      this.editConfig = data.editConfig || null
     }
   }
 
