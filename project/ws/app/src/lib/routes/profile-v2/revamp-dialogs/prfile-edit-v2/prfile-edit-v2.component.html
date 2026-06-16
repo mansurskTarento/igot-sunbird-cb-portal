@@ -345,7 +345,7 @@
             <div class="country-code">
               +91
             </div>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" class="mt-1">
               <input matInput maxlength="10" (keyup)="handleEmpty('mobile')" formControlName="mobile">
               <mat-error class="text-xs" *ngIf="hasError('mobile', 'required') || hasError('mobile', 'pattern')">
                 {{ 'NetworkV2Profile.pleaseEnterValidMobileNumber' | translate }}
@@ -497,7 +497,7 @@
           {{'NetworkV2Profile.youCanWriteAboutYourYearsOfExperienceSkillsCurrentJobRoleAndResponsibilities' |
           translate}}
         </div>
-        <mat-form-field appearance="outline" class="full-width">
+        <mat-form-field appearance="outline" class="full-width textarea-container">
           <textarea matInput formControlName="aboutme" rows="6" maxlength="2000"
             placeholder="{{'NetworkV2Profile.typeHere' | translate}}"></textarea>
           <mat-error *ngIf="hasError('aboutme', 'pattern')">{{'NetworkV2Profile.specialCharNotAllowedExcept()-' |
@@ -559,7 +559,9 @@
           <div class="lable">{{'NetworkV2Profile.dob' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput [matDatepicker]="picker" formControlName="dob" [max]="currentDate">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker-toggle matSuffix [for]="picker">
+              <mat-icon matDatepickerToggleIcon>calendar_today</mat-icon>
+            </mat-datepicker-toggle>
             <mat-datepicker #picker></mat-datepicker>
           </mat-form-field>
         </div>
@@ -592,7 +594,7 @@
             <div class="country-code">
               +91
             </div>
-            <mat-form-field appearance="outline">
+            <mat-form-field appearance="outline" class="mt-1">
               <input matInput maxlength="10" (keyup)="handleEmpty('mobile')" formControlName="mobile">
               <mat-error class="text-xs" *ngIf="hasError('mobile', 'required') || hasError('mobile', 'pattern')">
                 {{ 'NetworkV2Profile.pleaseEnterValidMobileNumber' | translate }}

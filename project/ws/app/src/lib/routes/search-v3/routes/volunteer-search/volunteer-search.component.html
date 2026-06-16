@@ -1,0 +1,93 @@
+<div class="container-balanced margin-top-l margin-bottom-xl">
+  <div class="volunteer-search">
+    <mat-sidenav-container autosize class="search-nav-container" [hasBackdrop]="false">
+        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start"
+            class="custom-sidenav filter-container-search"
+            *ngIf="(combinedFacets.length > 0 || (courseSearchTotalCount > 0 && !searchContentLoader)) && !screenSizeIsLtMedium">
+            <ng-container>
+                <ws-app-search-filters [newfacets]="combinedFacets"
+                    (appliedFilter)="applySearchFilter($event)"
+                    (constructQueryParam)="onConstructQueryParam($event)"
+                    (applyFilterFromLearn)="applySearchFilter($event)"></ws-app-search-filters>
+            </ng-container>
+        </mat-sidenav>
+
+        <mat-sidenav-content #mainContainer class="custom-sidecontent">
+            <div class="ml-2 md:ml-4 md:mr-0 mr-2 content-wrapper">
+                <!-- Result meta -->
+                <div class="result-meta flex items-center justify-between flex-wrap mb-4"
+                    *ngIf="courseSearchTotalCount > 0 && !searchContentLoader">
+                    <div>
+                        <p class="contents-title-top text-dark mb-0">
+                            <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count:
+                                courseSearchTotalCount } }}</span>
+                            <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' | translate:{ count:
+                                courseSearchTotalCount } }}</span>
+                        </p>
+                    </div>
+                    <div class="sort-search ml-auto" *ngIf="!screenSizeIsLtMedium">
+                        <ws-app-search-sort-input [category]="'courses'" [isExploreContentTab]="true"
+                            (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
+                    </div>
+                </div>
+
+                <!-- Mobile filter/sort toggle -->
+                <div *ngIf="screenSizeIsLtMedium && courseSearchTotalCount > 0 && !searchContentLoader"
+                    class="flex justify-between mb-4">
+                    <button type="button" mat-icon-button (click)="sideNavBarOpened = !sideNavBarOpened">
+                        <mat-icon>menu</mat-icon>
+                    </button>
+                    <div class="sort-search ml-auto">
+                        <ws-app-search-sort-input [category]="'courses'" [isExploreContentTab]="true"
+                            (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
+                    </div>
+                </div>
+
+                <!-- Loading skeleton -->
+                <ng-container *ngIf="searchContentLoader">
+                    <ng-container *ngFor="let item of [1,2,3,4]">
+                        <div class="mt-2">
+                            <ws-app-skeleton-loader-content></ws-app-skeleton-loader-content>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+                <!-- Course results -->
+                <ng-container *ngIf="!searchContentLoader && courseSearchTotalCount > 0">
+                    <div class="search-content-card">
+                        <ng-container *ngFor="let course of courseSearchResults; let index = index">
+                            <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
+                                (telemetry)="applyTelemetry($event, index)"></ws-app-course-content-card>
+                        </ng-container>
+
+                        <ng-container *ngIf="courseSearchTotalCount > initialPaginationSize">
+                            <div [ngClass]="{'md:mt-72': courseSearchResults.length < 3}">
+                                <ws-app-pagination [defaultPaginationSize]="initialPaginationSize"
+                                    [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
+                                    [totalItemsCount]="courseSearchTotalCount"
+                                    [currentPage]="initialPaginationPage"
+                                    (pageChange)="onPageChange($event)"></ws-app-pagination>
+                            </div>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+                <!-- No results -->
+                <div class="ml-auto mr-auto mt-8 text-center max-w-330"
+                    *ngIf="courseSearchTotalCount === 0 && !searchContentLoader">
+                    <img src="/assets/icons/no-data.svg" wsUtilsImageResponsive alt="No results"
+                        class="margin-top-l margin-bottom-s">
+                    <div class="no-data-text font-bold text-sm my-4">
+                        {{ noResultMessage }}
+                    </div>
+                    <div class="action-search-btn flex gap-4 items-center mt-6 justify-center">
+                        <button mat-raised-button class="mat-btn-outline cursor-pointer py-1"
+                            (click)="navigateTo('page/home')">
+                            {{'learnsearch.btnBackToHomepage' | translate}}</button>
+                    </div>
+                </div>
+            </div>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+  </div>
+</div>

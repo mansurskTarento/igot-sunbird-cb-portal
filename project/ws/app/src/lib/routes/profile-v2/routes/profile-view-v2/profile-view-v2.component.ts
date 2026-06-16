@@ -1621,10 +1621,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             break
         }
         if (formBody) {
-          if (isNew) {
-            header === 'Achievements' ? this.addAchievementEntry(formBody) : this.addProfileEntry(formBody)
+          if (header === 'Achievements') {
+            isNew ? this.addAchievementEntry(formBody) : this.updateAchievementEntry(formBody)
           } else {
-            header === 'Achievements' ? this.updateAchievementEntry(formBody) : this.addProfileEntry(formBody)
+            isNew ? this.addProfileEntry(formBody) : this.updateProfileEntry(formBody)
           }
         }
       }

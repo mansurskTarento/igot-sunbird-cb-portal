@@ -41,8 +41,8 @@
       <div class="profile-details-wrapper" [ngClass]="!showrepublicBanner ? 'default-profile' : 'profile-details-wrapper-with-nudge' ">
         <div class="profile-user-details">
         <div class="flex flex-middle padding-12">
-            <div class="progress-wrapper">
-              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 120 100" width="64" height="64">
+            <div class="progress-wrapper" [ngClass]="{'no-progress': !profileData?.profilePercentage?.enabled}">
+              <svg *ngIf="profileData?.profilePercentage?.enabled" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="37 -5 120 100" width="64" height="64">
                 <path class="grey" d="M55,90 A55,55 0 1,1 140,90" style="fill:none;"/>
                 <path class="progress-clr" d="M55,90 A55,55 0 1,1 140,90" style="fill:none;" />
               </svg>
@@ -50,7 +50,7 @@
               <div class="user-img">
                 <ws-widget-avatar-photo [datalen]="1" [name]="userInfo.firstName" [datalen]="" [randomColor]="true" [photoUrl]="userInfo?.profileImageUrl" size="round-m">
                 </ws-widget-avatar-photo>
-                <span class="percentage-block ">{{userInfo.profileUpdateCompletion}}%</span>
+                <span class="percentage-block" *ngIf="profileData?.profilePercentage?.enabled">{{userInfo.profileUpdateCompletion}}%</span>
               </div>
             </div>
             <div class="user-name flex margin-left-m">
@@ -100,66 +100,68 @@
               </ng-container>
             </div>
         </div>
-        <hr class="divider">
-        <div class="profile-leader-board flex gap-1 items-center justify-center p-4">
-          <div class="text-center cursor-pointer" (click)="redirectToContent({key: 'karmaPoints'})">
-            <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
-              <div class="flex items-center">
-                <span>{{ 'appnavbar.karmaPoints' | translate }}</span>
-                <img class="margin-left-s cursor-pointer" [matTooltip]="'appnavbar.karmaPointsToolTip' | translate" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
-              </div>
-            </div>
-            <div class="stats-leader flex gap-2 items-center justify-center">
-              <div class="stats-leader mt-2 flex gap-2 items-center">
-                <img src="/assets/icons/home/karma-badge.svg" alt="icon" width="24" height="24"><span>{{countdata?.karmaPoints || '--'}}</span>
-              </div>
-            </div>
-          </div>
-          <div class="divider-horizontal"></div>
-          <div class="text-center" (click)="showMyActivities()">
-            <div class="flex items-center">
-              <div class="stats-title-leader"> {{ 'weeklyclaps.leaderboard' | translate }}</div>
-              <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.toolTip' | translate" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
-            </div>
-            <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
-              <img src="/assets/icons/leaderboard.svg" alt="icon" width="24" height="24"><span>{{currentUserRank?.rank ? (currentUserRank?.rank | pipeOrdinal) + ' ' + 'rank' : '--'}}</span>
-            </div>
-          </div>
-
-          <div class="divider-horizontal"></div>
-          <!-- <div class="text-center "
-          [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}" (click)="showWeeklyClapsSection()">
-            <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
-              <div class="flex items-center">
-                <span>{{ 'weeklyclaps.weeklyClapsTitle' | translate }}</span>
-                <img class="margin-left-s cursor-pointer" (click)="openInfo(myDialog)" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
-              </div>
-            </div>
-            <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
-                <img class="cursor-pointer" width="24" height="24" [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_icon.svg' : 'assets/icons/home/clap_disable_icon.svg'"/>
-                <span  *ngIf="insightsData?.weeklyClaps?.total_claps > 1 else elseWeeklyClaps">{{insightsData?.weeklyClaps?.total_claps}} {{ 'weeklyclaps.weeks' | translate }}</span>
-                <ng-template #elseWeeklyClaps>{{insightsData?.weeklyClaps?.total_claps || 0}} {{ 'weeklyclaps.weeks' | translate }}</ng-template>
-            </div> -->
-
-            <div class="text-center " [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}"
-              (click)="this.router.navigate(['/badges'])">
+        <ng-container *ngIf="profileData?.karmaPoints?.enabled || profileData?.leaderboardRank?.enabled || profileData?.badges?.enabled">
+          <hr class="divider">
+          <div class="profile-leader-board flex gap-1 items-center justify-center p-4">
+            <div class="text-center cursor-pointer" (click)="redirectToContent({key: 'karmaPoints'})" *ngIf="profileData?.karmaPoints?.enabled">
               <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
                 <div class="flex items-center">
-                  <span>My Badges</span>
-                  <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.badgetooltip' | translate" width="20px"
-                    height="20px"
-                    src="assets/icons/home/help_icon.svg">
+                  <span>{{ 'appnavbar.karmaPoints' | translate }}</span>
+                  <img class="margin-left-s cursor-pointer" [matTooltip]="'appnavbar.karmaPointsToolTip' | translate" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
+                </div>
+              </div>
+              <div class="stats-leader flex gap-2 items-center justify-center">
+                <div class="stats-leader mt-2 flex gap-2 items-center">
+                  <img src="/assets/icons/home/karma-badge.svg" alt="icon" width="24" height="24"><span>{{countdata?.karmaPoints || '--'}}</span>
+                </div>
+              </div>
+            </div>
+            <div class="divider-horizontal" *ngIf="profileData?.karmaPoints?.enabled && profileData?.leaderboardRank?.enabled"></div>
+            <div class="text-center" (click)="showMyActivities()" *ngIf="profileData?.leaderboardRank?.enabled">
+              <div class="flex items-center">
+                <div class="stats-title-leader"> {{ 'weeklyclaps.leaderboard' | translate }}</div>
+                <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.toolTip' | translate" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
+              </div>
+              <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
+                <img src="/assets/icons/leaderboard.svg" alt="icon" width="24" height="24"><span>{{currentUserRank?.rank ? (currentUserRank?.rank | pipeOrdinal) + ' ' + 'rank' : '--'}}</span>
+              </div>
+            </div>
+
+            <div class="divider-horizontal" *ngIf="profileData?.leaderboardRank?.enabled && profileData?.badges?.enabled"></div>
+            <!-- <div class="text-center "
+            [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}" (click)="showWeeklyClapsSection()">
+              <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
+                <div class="flex items-center">
+                  <span>{{ 'weeklyclaps.weeklyClapsTitle' | translate }}</span>
+                  <img class="margin-left-s cursor-pointer" (click)="openInfo(myDialog)" width="20px" height="20px" src="assets/icons/home/help_icon.svg" >
                 </div>
               </div>
               <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
-                <img class="cursor-pointer" width="24" height="24" src="assets/icons/badges/Medal.svg" />
-                <span>{{countdata?.badgeCount}}</span>
+                  <img class="cursor-pointer" width="24" height="24" [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home/clap_icon.svg' : 'assets/icons/home/clap_disable_icon.svg'"/>
+                  <span  *ngIf="insightsData?.weeklyClaps?.total_claps > 1 else elseWeeklyClaps">{{insightsData?.weeklyClaps?.total_claps}} {{ 'weeklyclaps.weeks' | translate }}</span>
+                  <ng-template #elseWeeklyClaps>{{insightsData?.weeklyClaps?.total_claps || 0}} {{ 'weeklyclaps.weeks' | translate }}</ng-template>
+              </div> -->
+
+              <div class="text-center " [ngClass]="{'cursor-pointer': insightsData?.weeklyClaps?.total_claps > 1}"
+                (click)="this.router.navigate(['/badges'])" *ngIf="profileData?.badges?.enabled">
+                <div class="flex-align-start stats-title-leader flex flex-middle margin-remove items-center">
+                  <div class="flex items-center">
+                    <span>My Badges</span>
+                    <img class="margin-left-s cursor-pointer" [matTooltip]="'learnerLeaderboard.badgetooltip' | translate" width="20px"
+                      height="20px"
+                      src="assets/icons/home/help_icon.svg">
+                  </div>
+                </div>
+                <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
+                  <img class="cursor-pointer" width="24" height="24" src="assets/icons/badges/Medal.svg" />
+                  <span>{{countdata?.badgeCount}}</span>
+              </div>
             </div>
           </div>
-        </div>
+        </ng-container>
 
       </div>
-      <div class="flex items-center justify-between my-activities-tab" *ngIf="!showrepublicBanner && !hideCollapsible">
+      <div class="flex items-center justify-between my-activities-tab" *ngIf="!showrepublicBanner && !hideCollapsible && profileData?.showMyActivities?.enabled">
         <div class="flex gap-2 items-center cursor-pointer" (click)="showMyActivities()">
           <mat-icon>bar_chart</mat-icon>{{'profileCardStats.ShowMyActivities' | translate}}
         </div>
@@ -174,7 +176,7 @@
 
 
 
-  <div class="stats-container block hidden"  *ngIf="!isLoading && !showrepublicBanner">
+  <div class="stats-container block hidden"  *ngIf="!isLoading && !showrepublicBanner && profileData?.showMyActivities?.enabled">
     <div class="flex flex-middle flex-between" (click)="myActivity()">
       <div class="flex flex-middle">
         <img class="stats-icon margin-right-s" width="20" height="20" src="/assets/icons/home/dashboard.svg">

@@ -1,4 +1,4 @@
-<div class="mat-body-2 karmapoints-panel" *ngIf="isKPPanelenabled">
+<div class="mat-body-2 karmapoints-panel" *ngIf="isKPPanelenabled && homePageData?.karmaPointsPanel?.enabled">
     <p class="margin-remove"> {{'appKarmapointsPanel.earn' |translate}}
         <img src="/assets/icons/home/karma-badge.svg" alt="KarmaPoints">
         <span class="font-bold"> {{'appKarmapointsPanel.fKarmaPoints' |translate}} </span>
@@ -39,7 +39,7 @@
                         </div>
                     </ng-container>
                     
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ng-container *ngFor="let sectionItem of sectionList">
                             <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -69,7 +69,7 @@
                         </ng-container>
                     </ng-container>
 
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                     </div>
 
@@ -104,7 +104,7 @@
                         </div>
                     </ng-container>
                     
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ng-container *ngFor="let sectionItem of sectionList">
                             <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -134,7 +134,7 @@
                         </ng-container>
                     </ng-container>
 
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active">
+                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                     </div>
 
@@ -156,10 +156,14 @@
     </ng-container>
 </div>
 
-<ws-client-slider [clientList]="clientList"></ws-client-slider>
-<div class="download-section">
-    <ws-download-app></ws-download-app>
-</div>
+<ng-container *ngIf="homePageData?.clientList?.enabled">
+    <ws-client-slider [clientList]="clientList"></ws-client-slider>
+</ng-container>
+<ng-container *ngIf="homePageData?.downloadApp?.enabled">
+    <div class="download-section">
+        <ws-download-app></ws-download-app>
+    </div>
+</ng-container>
 
 <div class="footer footer-update-mobile-number customindex" *ngIf="!isMDOMsgOpen && !canShowCustomAttrOpen">
     <!-- //NOSONAR -->

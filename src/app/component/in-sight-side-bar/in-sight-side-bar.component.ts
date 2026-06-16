@@ -110,6 +110,7 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   nlwExperience: any = null
   isNlw2026Certified = false
   private nlw2026Sub: Subscription | null = null
+  homeConfig: any = {}
   @Output() telemetryRaisedLibrary = new EventEmitter()
 
   constructor(
@@ -146,7 +147,8 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.userData = this.configSvc && this.configSvc.userProfile
     if (this.activatedRoute.snapshot.data.pageData && this.activatedRoute.snapshot.data.pageData.data) {
       this.homePageData = this.activatedRoute.snapshot.data.pageData.data
-      this.learnAdvisoryData = this.activatedRoute.snapshot.data.pageData.data.learnerAdvisory
+      this.homeConfig = this.activatedRoute.snapshot.data.pageData.data.homeConfig || {}
+      this.learnAdvisoryData = this.activatedRoute.snapshot.data.pageData.data.learnerAdvisory?.data
       this.surveyForm = this.activatedRoute.snapshot.data.pageData.data.surveyForm
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
       // Fetch National learning week configurations
@@ -196,8 +198,12 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     }
 
     // this.learnAdvisoryDataLength = this.learnAdvisoryData.length
-    this.getInsights()
-    this.getPendingRequestData()
+    if (this.homePageData?.profileCard?.enabled || this.homePageData?.weeklyClaps?.enabled) {
+      this.getInsights()
+    }
+    if (this.homePageData?.pendingRequests?.enabled) {
+      this.getPendingRequestData()
+    }
     this.noDataValue = noData
     // this.displayRandomlearnAdvisoryData()
 

@@ -58,12 +58,19 @@ export class ProfileCardStatsComponent implements OnInit {
         this.userFullName = `${this.userInfo.firstName.slice(0, 18)}...`
       }
     }
-    this.enrollInterval = setInterval(() => {
-      this.getCounts()
-    }, 1000)
+    const hasEnabledStats = this.profileData?.profileStats?.some((stat: any) => stat.enable) ||
+      this.profileData?.karmaPoints?.enabled || this.profileData?.badges?.enabled
+    if (hasEnabledStats) {
+      this.enrollInterval = setInterval(() => {
+        this.getCounts()
+      }, 1000)
+      this.fetchAndMergeData()
+    }
     // this.getCounts()
-    const progress = (247 - ((247 * this.userInfo.profileUpdateCompletion) / 100))
-    document.documentElement.style.setProperty('--i', String(progress))
+    if (this.profileData?.profilePercentage?.enabled) {
+      const progress = (247 - ((247 * this.userInfo.profileUpdateCompletion) / 100))
+      document.documentElement.style.setProperty('--i', String(progress))
+    }
     if (this.configSvc.profileTimelyNudges.enable) {
       this.profileDelay = this.configSvc.profileTimelyNudges.profileDelayInSec
     }
@@ -79,12 +86,13 @@ export class ProfileCardStatsComponent implements OnInit {
       this.showrepublicBanner = false
     }, ((1000 * timeInterval) + pDelayTime))
 
-    this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
-      if (res && res.result && res.result.result) {
-        this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
-      }
-    })
-    this.fetchAndMergeData()
+    if (this.profileData?.leaderboardRank?.enabled) {
+      this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+        if (res && res.result && res.result.result) {
+          this.currentUserRank = res.result.result.find((rankDetails: any) => rankDetails.userId === this.currentUserId)
+        }
+      })
+    }
   }
   getTimelyNudge() {
     if (this.configSvc.profileTimelyNudges.enable) {

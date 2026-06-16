@@ -1,0 +1,46 @@
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-vars';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
+
+.volunteer-search {
+  .custom-sidenav {
+    width: 22.5%;
+    box-shadow: none !important;
+    border: 1px solid #00000029 !important;
+    border-radius: #{$size-s};
+  }
+
+  .custom-sidecontent {
+    min-height: 94vh;
+    overflow: hidden;
+
+    &.full {
+      width: 100%;
+    }
+  }
+
+  .search-nav-container {
+    min-height: 90vh;
+  }
+
+  .contents-title-top {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .no-data-text {
+    color: #333;
+  }
+
+  .max-w-330 {
+    max-width: 330px;
+  }
+
+  .filter-container-search {
+    padding: 16px;
+  }
+
+  .content-wrapper {
+    min-height: 80vh;
+  }
+}

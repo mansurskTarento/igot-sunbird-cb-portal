@@ -4,7 +4,7 @@
   // font-size: 1em;
   display: flex;
   align-items: center;
-  height: 48px;
+  height: auto;
   overflow: hidden;
   font: inherit;
   justify-content: center;
@@ -47,8 +47,9 @@
 }
 
 ::ng-deep .pdf-nav-bar {
-  background: none !important; 
+  background: none !important;
 }
+
 .pdf-controls-toolbar {
-  background: whitesmoke;
+  // background: whitesmoke;
 }
