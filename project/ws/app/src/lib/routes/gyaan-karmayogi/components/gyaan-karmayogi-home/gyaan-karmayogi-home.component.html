@@ -73,7 +73,7 @@
             <!-- {{gyaanForm.value |json}} -->
             <ng-container *ngIf="gyaanForm">
                 <form [formGroup]="gyaanForm" (ngSubmit)="applyFilter(gyaanForm)">
-                    <div class="flex gap-2 items-center flex-col md:flex-row  justify-between">
+                    <div class="flex gap-2 items-center flex-col md:flex-row  justify-between gyaanform">
                         <div class="flex flex-col">
                             <label for="">{{'gyaanKarmayogi.sector'| translate}}</label>
                             <mat-form-field appearance="outline" class="filter-select">
