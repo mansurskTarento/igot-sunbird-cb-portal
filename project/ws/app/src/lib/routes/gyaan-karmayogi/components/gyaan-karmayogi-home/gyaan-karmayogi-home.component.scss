@@ -386,3 +386,9 @@
 
     }
 }
+
+::ng-deep .gyaanform {
+    .mat-mdc-text-field-wrapper {
+        background: #fff !important;
+    }
+}
