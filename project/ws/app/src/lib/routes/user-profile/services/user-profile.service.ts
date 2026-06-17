@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { TranslateService } from '@ngx-translate/core'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import {
   IUserProfileDetails,
   ILanguagesApiData,
@@ -13,6 +13,7 @@ import {
 import { map } from 'rxjs/operators'
 // tslint:disable
 import _ from 'lodash'
+import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
 // tslint:enable
 
 const API_ENDPOINTS = {
@@ -52,7 +53,8 @@ const API_ENDPOINTS = {
 export class UserProfileService {
   constructor(
     private http: HttpClient,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private commonMethodsService: CommonMethodsService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')
@@ -114,8 +116,16 @@ export class UserProfileService {
     return this.http.post<any>(API_ENDPOINTS.GET_ORGANIZATION_V1, request)
   }
 
-  readOrgData(request: any) {
-    return this.http.post<any>(API_ENDPOINTS.READ_ORG_DETAILS, request)
+  readOrgData(request: any, configDetails?: ConfigDetails) {
+    let url = API_ENDPOINTS.READ_ORG_DETAILS
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_ENDPOINTS.READ_ORG_DETAILS
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post<any>(url, request)
   }
 
   getAllDepartments() {

@@ -8,6 +8,7 @@ import { designation, generateYears, organisation, state, URL_PATRON } from '../
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 export function endDateValidator(startDateControlName: string): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
@@ -163,6 +164,7 @@ export class ProfileEntryEditComponent implements OnInit {
   viewMode: string = ''
   expand: boolean = false
   selectedAreaValue: string | null = null
+  apiConfig: any
 
   competencyAreaDescriptions: Record<string, string> = {
     behavioural: 'Behavioural competencies reflect interpersonal and self-management skills. For example, Effective communication involves the ability to convey ideas clearly and listen actively. Effective collaborators can build trust, delegate tasks, and work seamlessly towards shared goals.',
@@ -191,6 +193,7 @@ export class ProfileEntryEditComponent implements OnInit {
   ) {
     this.header = _.get(this.data, 'header', '')
     this.entryDetails = _.cloneDeep(_.get(this.data, 'entryDetails', ''))
+    this.apiConfig = _.get(this.data, 'apiConfig', null)
   }
   ngOnInit(): void {
     this.initForm()
@@ -629,7 +632,8 @@ export class ProfileEntryEditComponent implements OnInit {
   //#endregion (Designations)
 
   getStatesList() {
-    this.ProfileV2RevampService.getStatesList().subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListStates')
+    this.ProfileV2RevampService.getStatesList(configDetails).subscribe({
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[]
         if (this.entryForm) {
@@ -655,7 +659,8 @@ export class ProfileEntryEditComponent implements OnInit {
       if (orgDistrictControl) {
         orgDistrictControl.enable()
       }
-      this.ProfileV2RevampService.getDistrictsList(state).subscribe({
+      const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListDistricts')
+      this.ProfileV2RevampService.getDistrictsList(configDetails, state).subscribe({
         next: (res: any) => {
           this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[]
           const districtControl = this.entryForm ? this.entryForm.get('orgDistrict') : null
@@ -1692,6 +1697,14 @@ export class ProfileEntryEditComponent implements OnInit {
       return `${fileName.substring(0, 50)}...`
     }
     return fileName
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

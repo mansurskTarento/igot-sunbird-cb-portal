@@ -22,6 +22,7 @@ import { Notify } from '@ws/author'
 import { NOTIFICATION_TIME } from '@ws/author'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { TranslateService } from '@ngx-translate/core'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 // import { Router } from '@angular/router';
 
 @Component({
@@ -120,6 +121,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkingEmail = false
   checkingPhone = false
 
+  apiConfig: any
+
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<PrfileEditV2Component>,
@@ -143,6 +146,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.header = hasDialogDetails ? _.get(this.data, 'dialogDetails.header', '') : _.get(this.data, 'header', '')
     this.profileDetails = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileDetails', {}) : _.get(this.data, 'profileDetails', {})
     this.profileImage = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileImage', null) : _.get(this.data, 'profileImage', null)
+    this.apiConfig = _.get(this.data, 'apiConfig', {})
 
     // groupsList can come from either location
     this.groupsList = _.get(this.data, 'groupsList', [])
@@ -173,7 +177,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     let roleIdx = 0
 
     const fetchEmailByRole = (role: string) => {
-      this.profileV2RevampService.fetchNodalDetails(rootOrgId, role).subscribe(res => {
+      const configDetails: ConfigDetails = this.getConfigDetails('userV1Search')
+      this.profileV2RevampService.fetchNodalDetails(configDetails, rootOrgId, role).subscribe(res => {
         if (res?.result?.response?.content?.length) {
           const nodalPerson = res.result.response.content[0]
           this.nodalEmail = nodalPerson?.profileDetails?.personalDetails?.primaryEmail || this.nodalEmail
@@ -258,7 +263,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   getStatesList() {
-    this.profileV2RevampService.getStatesList().subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListStates')
+    this.profileV2RevampService.getStatesList(configDetails).subscribe({
       next: (res: any) => {
         this.statesList = _.get(res, 'result.statesList', []) as state[]
         if (_.get(this.profileDetails, 'state', '')) {
@@ -277,7 +283,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   getDistrictsList(state: string, isFirstTime: boolean = false) {
-    this.profileV2RevampService.getDistrictsList(state).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListDistricts')
+    this.profileV2RevampService.getDistrictsList(configDetails, state).subscribe({
       next: (res: any) => {
         this.districtsList = _.get(res, 'result.districtsList[0].districts', []) as string[]
         const districtControl = this.profileForm ? this.profileForm.get('district') : null
@@ -1548,7 +1555,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       serviceName: 'profile',
       applicationStatus: 'APPROVED',
     }
-    this.profileV2RevampService.fetchApprovalDetails(requesrtBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampService.fetchApprovalDetails(configDetails, requesrtBody)
       .subscribe((_res: any) => {
         if (_res && _res.result && _res.result.data && Array.isArray(_res.result.data)) {
           _res.result.data.filter((obj: any) => {
@@ -1800,7 +1808,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         updateFieldValues: [],
         comment: '',
       }
-      this.profileV2RevampService.withDrawRequest(payload)
+      const configDetails: ConfigDetails = this.getConfigDetails('workflowHandlerTransition')
+      this.profileV2RevampService.withDrawRequest(configDetails, payload)
         .subscribe((_res: any) => {
           // Clear pending and rejected fields data
           if (this.data.unVerifiedObj) {
@@ -2021,6 +2030,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
             this.verifyMobile = false
           }
         })
+    }
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
     }
   }
 

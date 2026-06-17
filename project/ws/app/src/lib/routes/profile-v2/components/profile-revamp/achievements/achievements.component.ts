@@ -6,7 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 import { CertificateViewPopupComponent } from '../certificate-view-popup/certificate-view-popup.component'
 import { PipeCertificateImageURL } from '@sunbird-cb/utils-v2'
-import { NlwCertificateDialogComponent } from '@sunbird-cb/consumption'
+import { ConfigDetails, NlwCertificateDialogComponent } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-achievements',
@@ -20,6 +20,7 @@ export class AchievementsComponent implements OnInit {
   @Input() achievementsList: achievement[] = []
   @Input() isCurrentUser = false
   @Input() editConfig: any = null
+  @Input() apiConfig: any
   @Output() openProfileEntryEditDialog = new EventEmitter()
   @Output() openProfileEntryDeleteDialog = new EventEmitter()
 
@@ -40,6 +41,7 @@ export class AchievementsComponent implements OnInit {
       this.isPopup = true
       this.isCurrentUser = data.isCurrentUser || false
       this.editConfig = data.editConfig || null
+      this.apiConfig = data.apiConfig || null
     }
   }
 
@@ -52,8 +54,13 @@ export class AchievementsComponent implements OnInit {
   }
 
   getAchievementsList(userId?: any): void {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'achievementList',
+      defaultUrl: ''
+    }
     if (this.userId || userId) {
-      this.profileV2RevampSvc.listAchievements(this.userId || userId).subscribe({
+      this.profileV2RevampSvc.listAchievements(configDetails, this.userId || userId).subscribe({
         next: (res: any) => {
           if (res) {
             this.achievementsList = _.get(res, 'result.search_results.data', [])

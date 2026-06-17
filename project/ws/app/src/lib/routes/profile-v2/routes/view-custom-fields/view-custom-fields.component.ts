@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { CustomFieldsComponent } from '../custom-fields/custom-fields.component'
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { ActivatedRoute } from '@angular/router'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-view-custom-fields',
@@ -18,6 +19,7 @@ export class ViewCustomFieldsComponent {
 
   @Input() organisationSpecificDetails: any
   @Input() editConfig: any = null
+  @Input() apiConfig: any = null
 
   editCustomDetails = false
   customAttrList: any = []
@@ -63,7 +65,6 @@ export class ViewCustomFieldsComponent {
 
   ngOnInit() {
     this.currentUser = this.configService && this.configService.userProfile
-    console.log('Current User', this.currentUser)
     this.userId = this.currentUser.userId || ''
     this.orgId = this.currentUser.rootOrgId || ''
     // this.orgId = "0140788510336040962"
@@ -75,7 +76,12 @@ export class ViewCustomFieldsComponent {
     const request = {
       request: { organisationId: this.orgId },
     }
-    this.userProfileService.readOrgData(request).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'userV1Groups',
+      defaultUrl: ''
+    }
+    this.userProfileService.readOrgData(request, configDetails).subscribe((res: any) => {
       this.customAttrListIds = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
       if (this.customAttrListIds && this.customAttrListIds.length) {
         this.getCustomAttributes()

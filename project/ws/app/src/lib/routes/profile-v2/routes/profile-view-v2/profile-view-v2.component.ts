@@ -14,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ServiceHistoryComponent } from '../../components/profile-revamp/service-history/service-history.component'
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component'
-import { forkJoin, Subject } from 'rxjs'
+import { forkJoin, of, Subject } from 'rxjs'
 import { mergeMap, takeUntil } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2'
@@ -23,7 +23,7 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
-import { ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
+import { ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../routes/services/common-data.service'
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 //#endregion
@@ -220,6 +220,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   nlwExperience: any = null
   profileConfig: any = null
   profileEditConfigs: any = null
+  apiConfig: any = null
   //#endregion
 
   connectionStatus = 'Connect'
@@ -321,7 +322,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       limit: 3,
     }
     this.communitySuggestionsLoading = true
-    this.profileV2RevampSvc.getCommunities(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('communityV1Popular')
+    this.profileV2RevampSvc.getCommunities(configDetails, formBody).subscribe({
       next: (response: any) => {
         this.communitySuggestionsLoading = false
         this.communitySuggestionsList = _.get(response, 'result.data', [])
@@ -334,7 +336,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getGroupData(): void {
-    this.profileV2RevampSvc.getGroups()
+    const configDetails: ConfigDetails = this.getConfigDetails('userV1Groups')
+    this.profileV2RevampSvc.getGroups(configDetails)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
@@ -360,7 +363,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getAchievements() {
-    this.profileV2RevampSvc.listAchievements(this.userId).subscribe((response: any) => {
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementList')
+    this.profileV2RevampSvc.listAchievements(configDetails, this.userId).subscribe((response: any) => {
       if (response) {
         const allAchievements = _.get(response, 'result.search_results.data', [])
         this.achievementsDetails.achievementsList = allAchievements.slice(0, 2)
@@ -377,6 +381,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.nlwExperience = this.pageData?.nlwExperience
     this.profileConfig = this.pageData?.profileConfig
     this.profileEditConfigs = this.pageData?.profileEditConfigs
+    this.apiConfig = this.pageData?.apiConfig
     if (_.get(this.profileConfig, 'banner.defaultBannerUrl')) {
       this.defaultCoverPhotoUrl = this.profileConfig.banner.defaultBannerUrl
     }
@@ -729,8 +734,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       const fileName = file.name.replace(/[^A-Za-z0-9.]/g, '')
       const formdata = new FormData()
       formdata.append('data', file, fileName)
-      this.profileV2RevampSvc.updateBannerPic(formdata).pipe(
+      const configDetails: ConfigDetails = this.getConfigDetails('profilePhotoUploadProfileBanner')
+      this.profileV2RevampSvc.updateBannerPic(configDetails, formdata).pipe(
         mergeMap((res: any) => {
+          if (!res || !_.get(res, 'result.url')) {
+            return of({})
+          }
           const createdUrl = _.get(res, 'result.url', '')
           const folderNameToSplit = '/profileBanner/'
           const urlSplice = createdUrl.split(folderNameToSplit)[1]
@@ -743,7 +752,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
               },
             },
           }
-          return this.profileV2RevampSvc.updateProfileDetails(formBody)
+          const configDetails: ConfigDetails = this.getConfigDetails('userV1ExtPatch')
+          return this.profileV2RevampSvc.updateProfileDetails(configDetails, formBody)
 
         })
       ).subscribe({
@@ -772,7 +782,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateProfileDetails(formBody: any) {
-    this.profileV2RevampSvc.updateProfileDetailsV3(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('userV3ExtPatch')
+    this.profileV2RevampSvc.updateProfileDetailsV3(configDetails, formBody).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileDetails()
@@ -1057,7 +1068,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   fetchProfileDetails() {
-    this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
+    const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Basic')
+    this.profileV2RevampSvc.fetchProfile(apiConfigDetails, this.userId).subscribe({
       next: (response: any) => {
         if (response) {
           this.profesionalDetails = _.get(response, 'result.response.profiledetails', _.get(response, 'result.response.profileDetails', _.get(response, 'result', {})))
@@ -1078,6 +1090,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       header,
       profileDetails: this.primaryDetails,
       primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
+      apiConfig: this.apiConfig
     }
     if (header === 'Profile') {
       dialogDetails.profileDetails = {
@@ -1113,7 +1126,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       dialogData = dialogDetails
     }
 
-    let dialogComponent: any = ProfileEntryEditComponent
+    let dialogComponent: any = PrfileEditV2Component
 
     if (
       dialogData.header.toLowerCase() === 'other details'
@@ -1376,7 +1389,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     }
-    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampSvc.fetchApprovalDetails(configDetails, formBody)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((responce: any) => {
         this.unVerifiedObj.groupRequestTime = 0
@@ -1426,7 +1440,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       serviceName: 'profile',
       applicationStatus: 'REJECTED',
     }
-    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampSvc.fetchApprovalDetails(configDetails, formBody)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res.result && res.result.data && Array.isArray(res.result.data)) {
@@ -1503,6 +1518,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       userId: this.userId,
       isCurrentUser: this.isCurrentUser || false,
       editConfig: null,
+      apiConfig: this.apiConfig,
     }
     switch (header) {
       case 'Service History':
@@ -1581,6 +1597,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       header,
       entryDetails,
       editConfig: null,
+      apiConfig: this.apiConfig,
     }
     switch (header) {
       case 'Service History':
@@ -1759,7 +1776,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateProfileEntry(formBody: any) {
-    this.profileV2RevampSvc.updateEntriesOfProfile(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('profileV1ExtendedUpdate')
+    this.profileV2RevampSvc.updateEntriesOfProfile(configDetails, formBody).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileEntries()
@@ -1776,7 +1794,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion (service history, achievements, educational qualifications will edit based on the request)
 
   fetchProfileEntries() {
-    this.profileV2RevampSvc.fetchProfileEntries(this.userId).subscribe({
+    const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
+    this.profileV2RevampSvc.fetchProfileEntries(apiConfigDetails, this.userId).subscribe({
       next: (response: any) => {
         if (response) {
           this.patchEntries(_.get(response, 'result.response', {}))
@@ -1979,7 +1998,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         },
       },
     }
-    this.profileV2RevampSvc.getInsightsData(request)
+    const configDetails: ConfigDetails = this.getConfigDetails('userInsights')
+    this.profileV2RevampSvc.getInsightsData(configDetails, request)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res.result.response) {
@@ -2158,6 +2178,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         enableWTR: this.enableWTR,
         isCurrentUser: this.isCurrentUser,
         primaryDetails: this.primaryDetails,
+        apiConfig: this.apiConfig,
       },
       disableClose: true,
       panelClass: 'dialog_sidenav',
@@ -2231,6 +2252,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       width: dialogWidth,
       autoFocus: false,
     })
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 
 }

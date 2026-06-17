@@ -343,7 +343,7 @@
                 <ws-app-profile-primary-details [primaryDetailsOtherDetailsConfig]="profileConfig?.basicDetails"
                   [primaryDetails]="primaryDetails" [unVerifiedObj]="unVerifiedObj" [rejectedFields]="rejectedFields"
                   [isCurrentUser]="isCurrentUser" [enableWTR]="enableWTR" [enableWR]="enableWR"
-                  [approvalPendingFields]="approvalPendingFields"
+                  [approvalPendingFields]="approvalPendingFields" [apiConfig]="apiConfig"
                   (openProfileEditDialog)="openProfileEditDialog($event)" (getApprovalStatus)="getSendApprovalStatus()"
                   (updateWithdrawalStatus)="updateWithdrawalStatus()"
                   (designationApprovedTimeChange)="designationApprovedTimeChange($event)"></ws-app-profile-primary-details>
@@ -351,6 +351,7 @@
             </ng-container>
             <ng-container *ngIf="isCurrentUser && profileConfig?.organisationSpecificDetails?.enabled">
               <ws-app-view-custom-fields [organisationSpecificDetails]="profileConfig?.organisationSpecificDetails"
+                [apiConfig]="apiConfig"
                 [editConfig]="getEditConfig(profileConfig?.organisationSpecificDetails?.editObjectKey)"></ws-app-view-custom-fields>
             </ng-container>
 
@@ -365,7 +366,7 @@
                 </div>
                 <ws-app-service-history [serviceHistoryDetails]="serviceHistoryDetails" [isCurrentUser]="isCurrentUser"
                   [currentDesignation]="primaryDetails?.designation" [currentOrgName]="primaryDetails?.currentOrgName"
-                  [editConfig]="getEditConfig(profileConfig?.serviceHistory?.editObjectKey)"
+                  [editConfig]="getEditConfig(profileConfig?.serviceHistory?.editObjectKey)" [apiConfig]="apiConfig"
                   (openProfileEntryEditDialog)="openProfileEntryEditDialog('Service History', $event)"></ws-app-service-history>
                 <ng-container *ngIf="serviceHistoryDetails?.count > 2">
                   <div class="flex flex-col justify-between items-center">
@@ -397,7 +398,7 @@
                   *ngIf="educationalQualificationDetails && educationalQualificationDetails?.educationalQualifications?.length > 0; else emptyGif">
                   <ws-app-educational-qualifications
                     [educationalQualificationsList]="educationalQualificationDetails?.educationalQualifications"
-                    [isCurrentUser]="isCurrentUser"
+                    [isCurrentUser]="isCurrentUser" [apiConfig]="apiConfig"
                     [editConfig]="getEditConfig(profileConfig?.educationalQualifications?.editObjectKey)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Educational qualifications', $event)"></ws-app-educational-qualifications>
                   <ng-container *ngIf="educationalQualificationDetails?.count > 2">
@@ -431,7 +432,7 @@
                 <ng-container
                   *ngIf="achievementsDetails && achievementsDetails?.achievementsList?.length > 0; else emptyGif">
                   <ws-app-achievements [achievementsList]="achievementsDetails?.achievementsList"
-                    [isCurrentUser]="isCurrentUser"
+                    [isCurrentUser]="isCurrentUser" [apiConfig]="apiConfig"
                     [editConfig]="getEditConfig(profileConfig?.achievements?.editObjectKey)"
                     (openProfileEntryDeleteDialog)="openProfileEntryDeleteDialog('Achievements',$event)"
                     (openProfileEntryEditDialog)="openProfileEntryEditDialog('Achievements', $event)"></ws-app-achievements>

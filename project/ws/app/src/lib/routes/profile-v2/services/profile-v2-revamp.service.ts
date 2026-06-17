@@ -1,34 +1,35 @@
 import { HttpClient } from '@angular/common/http'
 import { Injectable } from '@angular/core'
 import { NSProfileDataV2 } from '../models/profile-v2.model'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
 import { map, retry } from 'rxjs/operators'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
+import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
 
 const API_END_POINTS = {
-  GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic',
-  GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/',
-  UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch',
+  GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic', // done
+  GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/', // done
+  UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch', // done
   UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch',
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: 'apis/protected/v8/connections/v2/add/connection',
   BLOCK_CONNECTION: 'apis/proxies/v8/connections/block',
-  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular',
+  GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular', // done
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
-  UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner',
-  GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // old
-  APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // old
-  WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition', // old
+  UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner', // done
+  GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig',
+  APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // done
+  WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition',
   COURSE_BATCH_LIST: '/apis/proxies/v8/learner/course/v1/batch/list',
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
-  ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // old
-  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', // OLD
-  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search', // OLD
-  GET_GROUPS: '/api/user/v1/groups', // OLD
-  GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states',
-  GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts',
+  ORG_SEARCH: '/apis/proxies/v8/org/v1/search',
+  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search',
+  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search',
+  GET_GROUPS: '/api/user/v1/groups', // done
+  GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states', // done
+  GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts', // done
   GET_DEGREES_LIST: 'apis/proxies/v8/masterdata/list/degrees',
   GET_INSTITUTIONS_LIST: 'apis/proxies/v8/masterdata/list/institutions',
   UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree',
@@ -36,15 +37,15 @@ const API_END_POINTS = {
   GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
 
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
-  ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended',
-  UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update',
+  ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended', // done
+  UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update', // done
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', // old
 
   INSIGHTS: 'apis/proxies/v8/read/user/insights', // old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
-  SEARCH_USERS: '/apis/proxies/v8/user/v1/search',
+  SEARCH_USERS: '/apis/proxies/v8/user/v1/search', // done
 
   SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search',
   SEARCH_USER_PUBLIC: '/apis/proxies/v8/user/v5/public/search',
@@ -53,7 +54,7 @@ const API_END_POINTS = {
 
   ADD_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/create',
   UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update',
-  LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/list',
+  LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/list', // done
   DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete',
   COMPETENCY_V6: '/apis/proxies/v8/framework/v1/read/kcmfinal_fw',
 
@@ -67,10 +68,16 @@ export class ProfileV2RevampService {
   constructor(
     private http: HttpClient,
     private translateService: TranslateService,
-    private configSvc: ConfigurationsService
+    private configSvc: ConfigurationsService,
+    private commonMethodsService: CommonMethodsService
   ) { }
 
-  fetchProfile(userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile> {
+  fetchProfile(configDetails: ConfigDetails, userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile | string> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_USER_BASIC_DETAILS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
     return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
       .pipe(map(res => {
         if (!isNotCurrentUser) {
@@ -99,15 +106,25 @@ export class ProfileV2RevampService {
     }
   }
 
-  updateProfileDetails(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPDATE_PROFILE_DETAILS, requestBody)
+  updateProfileDetails(configDetails: ConfigDetails, requestBody: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_PROFILE_DETAILS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, requestBody)
       .pipe(map(res => {
         return res
       }))
   }
 
-  updateProfileDetailsV3(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPDATE_PROFILE_DETAILS_V3, requestBody)
+  updateProfileDetailsV3(configDetails: ConfigDetails, requestBody: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_PROFILE_DETAILS_V3
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, requestBody)
       .pipe(map(res => {
         return res
       }))
@@ -120,15 +137,25 @@ export class ProfileV2RevampService {
       }))
   }
 
-  updateBannerPic(formData: FormData): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPLOAD_BANNER_PIC, formData)
+  updateBannerPic(configDetails: ConfigDetails, formData: FormData): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPLOAD_BANNER_PIC
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, formData)
       .pipe(map(res => {
         return res
       }))
   }
 
-  fetchProfileEntries(userId: string, entryType: string = 'all'): Observable<NSProfileDataV2.IProfile> {
-    return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_ENTRIES}${entryType}/${userId}`)
+  fetchProfileEntries(configDetails: ConfigDetails, userId: string, entryType: string = 'all'): Observable<NSProfileDataV2.IProfile | string> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_USER_ENTRIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<NSProfileDataV2.IProfile>(`${url}${entryType}/${userId}`)
       .pipe(map(res => {
         return res
       }))
@@ -146,8 +173,13 @@ export class ProfileV2RevampService {
     return this.http.post(API_END_POINTS.BLOCK_CONNECTION, payload)
   }
 
-  getCommunities(formBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.GET_COMMUNITIES, formBody)
+  getCommunities(configDetails: ConfigDetails, formBody: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_COMMUNITIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, formBody)
   }
 
   fetchCourseBatches(req: any): Observable<any> {
@@ -184,7 +216,12 @@ export class ProfileV2RevampService {
     return this.http.post<any>(API_END_POINTS.GET_SUNBIRD_IGOT_SEARCH, _req)
   }
 
-  fetchNodalDetails(rootOrgId: any, roles: string) {
+  fetchNodalDetails(configDetails: ConfigDetails, rootOrgId: any, roles: string) {
+    configDetails['defaultUrl'] = API_END_POINTS.SEARCH_USERS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
     const reqBody = {
       'request': {
         'filters': {
@@ -195,22 +232,37 @@ export class ProfileV2RevampService {
         'limit': 1,
       },
     }
-    return this.http.post<any>(API_END_POINTS.SEARCH_USERS, reqBody)
+    return this.http.post<any>(url, reqBody)
   }
 
-  getGroups(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.GET_GROUPS)
+  getGroups(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_GROUPS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(url)
   }
 
-  getStatesList(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.GET_STATES_LIST)
+  getStatesList(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_STATES_LIST
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(url)
   }
 
-  getDistrictsList(state: string) {
+  getDistrictsList(configDetails: ConfigDetails, state: string): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_DISTRICTS_LIST
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
     const formBody = {
       contextName: state,
     }
-    return this.http.post<any>(`${API_END_POINTS.GET_DISTRICTS_LIST}`, formBody)
+    return this.http.post<any>(url, formBody)
   }
 
   getDegreesList(): Observable<any> {
@@ -237,8 +289,13 @@ export class ProfileV2RevampService {
     return this.http.post<any>(API_END_POINTS.ADD_ENTRIES, requestBody)
   }
 
-  updateEntriesOfProfile(requestBody: any): Observable<any> {
-    return this.http.put<any>(API_END_POINTS.UPDATE_ENTRIES, requestBody)
+  updateEntriesOfProfile(configDetails: ConfigDetails, requestBody: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_ENTRIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.put<any>(url, requestBody)
   }
 
   deleteEntriesOfProfile(requestBody: any): Observable<any> {
@@ -253,12 +310,19 @@ export class ProfileV2RevampService {
     return this.http.get<any>(API_END_POINTS.approvedDomains)
   }
 
-  fetchApprovalDetails(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.APPROVAL_DETAILS, requestBody)
+  fetchApprovalDetails(configDetails: ConfigDetails, requestBody: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.APPROVAL_DETAILS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    return this.http.post<any>(url, requestBody)
   }
 
-  withDrawRequest(payload: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.WITHDRAW_REQUEST, payload)
+  withDrawRequest(configDetails: ConfigDetails, payload: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.WITHDRAW_REQUEST
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, payload)
   }
 
   handleTranslateTo(menuName: string): string {
@@ -267,8 +331,13 @@ export class ProfileV2RevampService {
     return this.translateService.instant(translationKey)
   }
 
-  getInsightsData(payload: any) {
-    const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
+  getInsightsData(configDetails: ConfigDetails, payload: any) {
+    configDetails['defaultUrl'] = API_END_POINTS.INSIGHTS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    const result = this.http.post(url, payload)
     return result
   }
 
@@ -296,8 +365,13 @@ export class ProfileV2RevampService {
     return this.http.put<any>(API_END_POINTS.UPDATE_ACHIEVEMENT_ENTRY, payload)
   }
 
-  listAchievements(userId: any): Observable<any> {
-    return this.http.get<any>(`${API_END_POINTS.LIST_ACHIEVEMENTS}?id=${userId}`)
+  listAchievements(configDetails: ConfigDetails, userId: any): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.LIST_ACHIEVEMENTS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(`${url}?id=${userId}`)
   }
 
   deleteAchievementEntry(payload: any): Observable<any> {

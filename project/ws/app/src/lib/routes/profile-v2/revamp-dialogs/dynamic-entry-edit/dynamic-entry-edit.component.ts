@@ -9,6 +9,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { generateYears, URL_PATRON } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -222,6 +223,7 @@ export class DynamicEntryEditComponent implements OnInit {
   readonly header: string = _.get(this.data, 'header', '')
   readonly entryDetails: any = _.cloneDeep(_.get(this.data, 'entryDetails', _.get(this.data, 'profileDetails', null)))
   readonly editConfig: ReadonlyArray<FieldConfig> = _.get(this.data, 'editConfig.fields', [])
+  readonly apiConfig = _.get(this.data, 'editConfig.apiConfig', null)
   readonly todayDate = new Date()
 
   /** Rows computed once at construction — config never changes after open. */
@@ -950,7 +952,9 @@ export class DynamicEntryEditComponent implements OnInit {
 
     stateFields.forEach(field => {
       this.dynamicOptions[field.key] = []
-      this.profileV2RevampSvc.getStatesList().subscribe({
+
+      const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListStates')
+      this.profileV2RevampSvc.getStatesList(configDetails).subscribe({
         next: (res: any) => {
           const states = _.get(res, 'result.statesList', [])
           this.dynamicOptions[field.key] = states.map((s: any) => ({
@@ -1006,7 +1010,8 @@ export class DynamicEntryEditComponent implements OnInit {
   private loadDistrictsForField(field: FieldConfig, state: string, isFirstTime: boolean): void {
     const districtCtrl = this.entryForm.get(field.key)
     if (districtCtrl) { districtCtrl.enable() }
-    this.profileV2RevampSvc.getDistrictsList(state).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('extendedProfileListDistricts')
+    this.profileV2RevampSvc.getDistrictsList(configDetails, state).subscribe({
       next: (res: any) => {
         const districts: string[] = _.get(res, 'result.districtsList[0].districts', [])
         this.dynamicOptions[field.key] = districts.map((d: string) => ({ label: d, value: d }))
@@ -1630,6 +1635,14 @@ export class DynamicEntryEditComponent implements OnInit {
         Object.values((ctrl as FormGroup).controls).forEach(c => c.markAsTouched())
       }
     })
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 
   private openSnackbar(msg: string, duration = 5000): void {
