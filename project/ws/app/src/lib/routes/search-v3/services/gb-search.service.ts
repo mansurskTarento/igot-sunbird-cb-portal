@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject } from 'rxjs'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import {
   ISearchAutoComplete,
   ISearchQuery,
@@ -49,27 +49,20 @@ export class GbSearchService {
   constructor(
     private http: HttpClient,
     private configSrv: ConfigurationsService,
-    private searchApi: SearchApiService
+    private searchApi: SearchApiService,
+    private domainConfSvc: DomainConfService
   ) { }
 
-  /**
-   * Generic method to resolve API URL from globalConfig.apis section.
-   * Falls back to the default URL if not configured.
-   */
-  private getApiUrl(service: string, apiKey: string, defaultUrl: string): string {
-    return this.configSrv.globalConfig?.apis?.[service]?.[apiKey] || defaultUrl
-  }
-
   fetchSearchData(request: any): Observable<any> {
-    const url = this.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    const url = this.domainConfSvc.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
     return this.http.post<any>(url, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
-    const url = this.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    const url = this.domainConfSvc.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
     return this.http.post<any>(url, request)
   }
   fetchSearchDataforCios(request: any): Observable<any> {
-    const url = this.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
+    const url = this.domainConfSvc.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
     return this.http.post<any>(url, request)
   }
   public notifyOther(data: any) {
@@ -97,52 +90,52 @@ export class GbSearchService {
   }
 
   searchCoursesv4(params: SearchV4Request, apiUrl?: string): Promise<any> {
-    const url = apiUrl || this.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    const url = apiUrl || this.domainConfSvc.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
     return this.http.post(url, params).toPromise()
   }
 
   searchVolunteerCourses(params: SearchV4Request): Promise<any> {
-    const url = this.getApiUrl('search', 'volunteerSearch', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    const url = this.domainConfSvc.getApiUrl('search', 'volunteerSearch', DEFAULT_API_ENDPOINTS.SEARCH_V4)
     return this.http.post(url, params).toPromise()
   }
 
   getApplicationsById(formBody: any) {
-    const url = this.getApiUrl('content', 'applicationsById', DEFAULT_API_ENDPOINTS.GetApplicationsById)
+    const url = this.domainConfSvc.getApiUrl('content', 'applicationsById', DEFAULT_API_ENDPOINTS.GetApplicationsById)
     return this.http.post<any>(url, formBody)
   }
 
   searchConnections(params: SearchPeoplesRequest): Promise<any> {
-    const url = this.getApiUrl('search', 'people', DEFAULT_API_ENDPOINTS.SEARCH_PEOPLE)
+    const url = this.domainConfSvc.getApiUrl('search', 'people', DEFAULT_API_ENDPOINTS.SEARCH_PEOPLE)
     return this.http
       .post(url, { request: params })
       .toPromise()
   }
 
   searchCommunity(params: SearchCommunitiesRequest): Promise<any> {
-    const url = this.getApiUrl('search', 'community', DEFAULT_API_ENDPOINTS.SEARCH_COMMUNITY)
+    const url = this.domainConfSvc.getApiUrl('search', 'community', DEFAULT_API_ENDPOINTS.SEARCH_COMMUNITY)
     return this.http.post(url, params).toPromise()
   }
 
   searchResource(params: SearchV4Request): Promise<any> {
-    const url = this.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    const url = this.domainConfSvc.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
     return this.http.post(url, params).toPromise()
   }
 
   nlpSearch(params: SearchNLP): Promise<any> {
-    const url = this.getApiUrl('search', 'nlp', DEFAULT_API_ENDPOINTS.SEARCH_NLP)
+    const url = this.domainConfSvc.getApiUrl('search', 'nlp', DEFAULT_API_ENDPOINTS.SEARCH_NLP)
     return this.http.post(url, params).toPromise()
   }
   recentCreate(req: any): Promise<any> {
-    const url = this.getApiUrl('search', 'recentCreate', DEFAULT_API_ENDPOINTS.RECENT_CREATE)
+    const url = this.domainConfSvc.getApiUrl('search', 'recentCreate', DEFAULT_API_ENDPOINTS.RECENT_CREATE)
     return this.http.post(url, req).toPromise()
   }
   recentRead() {
-    const url = this.getApiUrl('search', 'recentRead', DEFAULT_API_ENDPOINTS.RECENT_READ)
+    const url = this.domainConfSvc.getApiUrl('search', 'recentRead', DEFAULT_API_ENDPOINTS.RECENT_READ)
     return this.http.get(url)
   }
 
   recentDeleteByUser() {
-    const url = this.getApiUrl('search', 'recentDelete', DEFAULT_API_ENDPOINTS.RECENT_DELETE_BY_USERID)
+    const url = this.domainConfSvc.getApiUrl('search', 'recentDelete', DEFAULT_API_ENDPOINTS.RECENT_DELETE_BY_USERID)
     return this.http.delete(url)
   }
   recentDeleteByTime(id: any) {
@@ -150,17 +143,17 @@ export class GbSearchService {
   }
 
   enrollment(request: any, userId: string): any {
-    const baseUrl = this.getApiUrl('user', 'enrollment', '/apis/proxies/v8/learner/course/v4/user/enrollment/list')
+    const baseUrl = this.domainConfSvc.getApiUrl('user', 'enrollment', '/apis/proxies/v8/learner/course/v4/user/enrollment/list')
     return this.http.post(`${baseUrl}/${userId}`, request)
   }
 
   searchExternalContent(params: SearchExternalRequest): Promise<any> {
-    const url = this.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
+    const url = this.domainConfSvc.getApiUrl('search', 'externalContent', DEFAULT_API_ENDPOINTS.SEARCH_EXT_CONTENT)
     return this.http.post(url, params).toPromise()
   }
 
   exploreContent() {
-    const url = this.getApiUrl('content', 'explore', DEFAULT_API_ENDPOINTS.EXPLORE_API)
+    const url = this.domainConfSvc.getApiUrl('content', 'explore', DEFAULT_API_ENDPOINTS.EXPLORE_API)
     return this.http.get(url)
   }
 
@@ -178,7 +171,7 @@ export class GbSearchService {
   }
 
   microCredentialsSearch(): Observable<any> {
-    const url = this.getApiUrl('content', 'microCredentials', DEFAULT_API_ENDPOINTS.MICRO_CREDENTIALS)
+    const url = this.domainConfSvc.getApiUrl('content', 'microCredentials', DEFAULT_API_ENDPOINTS.MICRO_CREDENTIALS)
     return this.http.get<any>(url)
   }
 
