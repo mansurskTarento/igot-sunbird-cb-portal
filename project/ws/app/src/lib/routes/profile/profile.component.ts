@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { ActivatedRoute, Router, NavigationStart, Event } from '@angular/router'
-import { ConfigurationsService, LogoutComponent, NsPage, ValueService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, LogoutComponent, NsPage, ValueService } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { map } from 'rxjs/operators'
 /* tslint:disable*/
@@ -35,10 +35,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
     private configSvc: ConfigurationsService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
+    private domainConfSvc: DomainConfService,
   ) { }
 
   ngOnInit() {
-    this.tabsData = _.get(this.activatedRoute, 'snapshot.data.pageData.data.settingSideMenu') || []
+    let tabsData =
+  _.get(this.activatedRoute, 'snapshot.data.pageData.data.settingSideMenu') || [];
+
+    
+    tabsData = _.filter(tabsData, (tab: any) =>
+      this.domainConfSvc.isConfigEnabled(
+        'components.settingsMenu',
+        tab.name
+      )
+    );
+    this.tabsData = tabsData
     this.sideNavBarOpened = true
     const tab = this.router.url.split('/')[3]
     if (tab === 'dashboard') {
