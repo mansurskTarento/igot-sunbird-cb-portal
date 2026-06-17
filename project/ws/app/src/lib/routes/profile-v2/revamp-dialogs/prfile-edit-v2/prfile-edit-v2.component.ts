@@ -469,7 +469,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
         facets: [],
       },
     }
-    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody, configDetails).subscribe({
       next: (res: any) => {
         const count = _.get(res, 'result.count', 0)
         this.orgHasDesignations = count > 0
@@ -530,7 +531,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (this.designationSearchText) {
       igotDesignationBody['request']['query'] = this.designationSearchText
     }
-    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody, configDetails).subscribe({
       next: (res: any) => {
         const igotData = _.get(res, 'result.Term', [])
         const data = igotData.map((item: any) => ({ designation: item.name, status: 'Active' }))
@@ -556,7 +558,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (this.designationSearchText) {
       requestBody['searchString'] = this.designationSearchText
     }
-    this.profileV2RevampService.searchDesignation(requestBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('v8DesignationSearch')
+    this.profileV2RevampService.searchDesignation(requestBody, configDetails).subscribe({
       next: (res: any) => {
         const data = _.get(res, 'result.result.data', [])
         const totalCount = _.get(res, 'result.result.totalCount', 0)
@@ -700,7 +703,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
 
     if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
-    this.profileV2RevampService.fetchCadre().subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('cadreConfig')
+    this.profileV2RevampService.fetchCadre(configDetails).subscribe({
       next: response => {
         this.civilServiceData = _.get(response, 'result.response.value.civilServiceType')
         this.civilServiceTypes = _.get(this.civilServiceData, 'civilServiceTypeList', []).map((service: any) => service.name)
@@ -716,7 +720,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     })
   }
   getMasterLanguage(): void {
-    this.profileV2RevampService.getMasterLanguages()
+    const configDetails: ConfigDetails = this.getConfigDetails('profileRegistryGetMasterLanguages')
+    this.profileV2RevampService.getMasterLanguages(configDetails)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.masterLanguages = res.languages
@@ -819,6 +824,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const primaryEmailControl = this.primaryEmailControl
     const mobileControl = this.mobileControl
     const domicileMediumControl = this.profileForm.get('domicileMedium')
+    const searchUserConfigDetails: ConfigDetails = this.getConfigDetails('userV5PublicSearch')
 
     if (primaryEmailControl) {
       primaryEmailControl.valueChanges
@@ -833,7 +839,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 this.verifyEmail = true
                 this.checkingEmail = true
                 return this.profileV2RevampService.searchUserByField(
-                  'email', value
+                  'email', value, searchUserConfigDetails
                 )
               }
               this.verifyEmail = false
@@ -866,7 +872,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 this.verifyMobile = true
                 this.checkingPhone = true
                 return this.profileV2RevampService.searchUserByField(
-                  'phone', value
+                  'phone', value, searchUserConfigDetails
                 )
               }
               this.verifyMobile = false
@@ -1032,12 +1038,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   handleGenerateEmailOTP(verifyType?: any): void {
-    this.profileV2RevampService.getWhiteListDomain().subscribe((response: any) => {
+    const configDetails: ConfigDetails = this.getConfigDetails('approvedDomains')
+    this.profileV2RevampService.getWhiteListDomain(configDetails).subscribe((response: any) => {
       if (_.get(response, 'result.domains').length > 0) {
         this.approvedDomainList = response.result.domains
         if (this.approvedDomainList && this.approvedDomainList.length > 0) {
           if (this.primaryEmailControl && this.isEmailAllowed(this.primaryEmailControl.value)) {
-            this.otpService.sendEmailOtp(this.primaryEmailControl.value)
+            const configDetails: ConfigDetails = this.getConfigDetails('otpV3Generate')
+            this.otpService.sendEmailOtp(this.primaryEmailControl.value, configDetails)
               .pipe(takeUntil(this.destroySubject$))
               .subscribe((_res: any) => {
                 this.openSnackbar(this.handleTranslateTo('otpSentEmail'))
@@ -1070,7 +1078,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   handleVerifyOTP(verifyType: string, _value?: string): void {
     const dialogRef = this.dialog.open(VerifyOtpComponent, {
-      data: { type: verifyType, value: _value },
+      data: { type: verifyType, value: _value, apiConfig: this.apiConfig },
       disableClose: true,
       panelClass: 'common-modal',
     })
@@ -1094,9 +1102,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   handleResendOTP(data: any): void {
     let otpValue$: any
     if (data.type === 'email') {
-      otpValue$ = this.otpService.sendEmailOtp(data.value)
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV3Generate')
+      otpValue$ = this.otpService.sendEmailOtp(data.value, configDetails)
     } else {
-      otpValue$ = this.otpService.resendOtp(data.value)
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV1Generate')
+      otpValue$ = this.otpService.resendOtp(data.value, configDetails)
     }
 
     otpValue$.pipe(takeUntil(this.destroySubject$))
@@ -1122,7 +1132,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   handleGenerateOTP(verifyType?: string): void {
     if (this.mobileControl) {
-      this.otpService.sendOtp(this.mobileControl.value)
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV1Generate')
+      this.otpService.sendOtp(this.mobileControl.value, configDetails)
         .pipe(takeUntil(this.destroySubject$))
         .subscribe((_res: any) => {
           this.openSnackbar(this.handleTranslateTo('otpSentMobile'))
@@ -1965,6 +1976,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     const primaryEmailControl = this.profileForm.get('primaryEmail')
     const mobileControl = this.profileForm.get('mobile')
     const primaryDetails = _.get(this.data, 'primaryDetails', this.profileDetails)
+    const searchUserConfigDetails: ConfigDetails = this.getConfigDetails('userV5PublicSearch')
+
 
     if (primaryEmailControl) {
       primaryEmailControl.valueChanges
@@ -1979,7 +1992,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 this.verifyEmail = true
                 this.checkingEmail = true
                 return this.profileV2RevampService.searchUserByField(
-                  'email', value
+                  'email', value, searchUserConfigDetails
                 )
               } else {
                 this.verifyEmail = false
@@ -2012,7 +2025,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
                 this.verifyMobile = true
                 this.checkingPhone = true
                 return this.profileV2RevampService.searchUserByField(
-                  'phone', value
+                  'phone', value, searchUserConfigDetails
                 )
               } else {
                 this.verifyMobile = false

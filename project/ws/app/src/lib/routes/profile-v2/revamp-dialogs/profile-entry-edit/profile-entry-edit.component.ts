@@ -364,7 +364,8 @@ export class ProfileEntryEditComponent implements OnInit {
     if (this.apiSubscriptions) {
       this.apiSubscriptions.unsubscribe()
     }
-    this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('orgV1Search')
+    this.apiSubscriptions = this.ProfileV2RevampService.getOrgSearch(formBody, configDetails).subscribe({
       next: (res: any) => {
         this.organisationsCount = _.get(res, 'result.response.count', 50)
         if (this.orgOffset === 0) {
@@ -462,7 +463,8 @@ export class ProfileEntryEditComponent implements OnInit {
           facets: [],
         },
       }
-      this.ProfileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+      const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+      this.ProfileV2RevampService.searchIgotDesignation(igotDesignationBody, configDetails).subscribe({
         next: (res: any) => {
           const count = _.get(res, 'result.count', 0)
           this.selectedOrgHasDesignations = count > 0
@@ -516,7 +518,8 @@ export class ProfileEntryEditComponent implements OnInit {
     if (this.designationSearchText) {
       requestBody['request']['query'] = this.designationSearchText
     }
-    this.ProfileV2RevampService.searchIgotDesignation(requestBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.ProfileV2RevampService.searchIgotDesignation(requestBody, configDetails).subscribe({
       next: (res: any) => {
         this.isLoadingMoreDesignations = false
         if (this.designationsOffset === 0) {
@@ -546,7 +549,8 @@ export class ProfileEntryEditComponent implements OnInit {
     if (this.designationSearchText) {
       requestBody['searchString'] = this.designationSearchText
     }
-    this.ProfileV2RevampService.searchDesignation(requestBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('v8DesignationSearch')
+    this.ProfileV2RevampService.searchDesignation(requestBody, configDetails).subscribe({
       next: (res: any) => {
         this.isLoadingMoreDesignations = false
         const content = _.get(res, 'result.result.data', []) as designation[]
@@ -904,7 +908,8 @@ export class ProfileEntryEditComponent implements OnInit {
       delete payload['request']['sortBy']
       delete payload['request']['orderBy']
     }
-    this.ProfileV2RevampService.getEducationsQualificationsSearch(payload).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('masterdataV1Search')
+    this.ProfileV2RevampService.getEducationsQualificationsSearch(payload, configDetails).subscribe({
       next: (response: any) => {
         if (type === 'degree') {
           const content = _.get(response, 'result.result', []) as any[]
@@ -1251,7 +1256,8 @@ export class ProfileEntryEditComponent implements OnInit {
   }
 
   loadCompetencyMaster() {
-    this.ProfileV2RevampService.fetchCompetencyV6().subscribe(response => {
+    const configDetails: ConfigDetails = this.getConfigDetails('frameworkV1ReadKcmfinalFw')
+    this.ProfileV2RevampService.fetchCompetencyV6(configDetails).subscribe(response => {
       if (response && response.params && response.params.status && response.params.status.toLowerCase() === 'successful') {
         this.allCompetencies = response.result.framework.categories.filter((v: any) => v.code === 'competencyarea')[0].terms
         this.allThemeData = response.result.framework.categories.filter((v: any) => v.code === 'theme')[0].terms
@@ -1567,7 +1573,8 @@ export class ProfileEntryEditComponent implements OnInit {
       const fileName = imagePath.name.replace(/[^A-Za-z0-9.]/g, '')
       const formdata = new FormData()
       formdata.append('data', imagePath, fileName)
-      this.ProfileV2RevampService.updateAchievementPic(formdata).subscribe({
+      const configDetails: ConfigDetails = this.getConfigDetails('profilePhotoUploadUserAchievements')
+      this.ProfileV2RevampService.updateAchievementPic(formdata, configDetails).subscribe({
         next: (res: any) => {
           if (res) {
             const createdUrl = _.get(res, 'result.url', '')

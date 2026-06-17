@@ -1476,6 +1476,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       data: {
         portalProfile,
         groupData: this.groupsList,
+        apiConfig: this.apiConfig,
       },
       disableClose: true,
       panelClass: 'common-modal',
@@ -1723,7 +1724,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (service history, achievements, educational qualifications will edit based on the request)
   addProfileEntry(formBody: any) {
-    this.profileV2RevampSvc.addEntriesToProfile(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
+    this.profileV2RevampSvc.addEntriesToProfile(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileEntries()
@@ -1739,7 +1741,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   addAchievementEntry(formBody: any) {
-    this.profileV2RevampSvc.createAchievementEntry(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementCreate')
+    this.profileV2RevampSvc.createAchievementEntry(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           setTimeout(() => {
@@ -1758,7 +1761,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateAchievementEntry(formBody: any) {
-    this.profileV2RevampSvc.updateAchievementEntry(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementUpdate')
+    this.profileV2RevampSvc.updateAchievementEntry(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           setTimeout(() => {
@@ -2105,6 +2109,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+
         header === 'Achievements' ? this.deleteAchievement(requestData) : this.deleteProfileEntryCall(requestData)
       }
     })
@@ -2129,7 +2134,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteAchievement(request: any): void {
-    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementDelete')
+    this.profileV2RevampSvc.deleteAchievementEntry(request, configDetails).subscribe({
       next: (res: any) => {
         if (res && res.result && res.responseCode === 'OK') {
           this.openSnackbar('Achievement deleted successfully', 2000)
@@ -2147,7 +2153,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteProfileEntryCall(request: any): void {
-    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementDelete')
+    this.profileV2RevampSvc.deleteAchievementEntry(request, configDetails).subscribe({
       next: (res: any) => {
         if (res && res.result && res.result.response) {
           this.openSnackbar('Achievement deleted successfully', 2000)

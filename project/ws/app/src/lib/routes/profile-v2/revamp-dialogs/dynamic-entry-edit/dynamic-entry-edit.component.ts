@@ -550,7 +550,8 @@ export class DynamicEntryEditComponent implements OnInit {
         sort_by: { lastUpdatedOn: 'desc', objectType: 'Term' }, facets: [],
       },
     }
-    this.profileV2RevampSvc.searchIgotDesignation(checkBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.profileV2RevampSvc.searchIgotDesignation(checkBody, configDetails).subscribe({
       next: (res: any) => {
         const hasDesig = _.get(res, 'result.count', 0) > 0
         this.orgDesignationFlagCache[orgId] = hasDesig
@@ -601,7 +602,8 @@ export class DynamicEntryEditComponent implements OnInit {
       },
     }
     if (this.designationSearchText[field.key]) { body.request.query = this.designationSearchText[field.key] }
-    this.profileV2RevampSvc.searchIgotDesignation(body).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.profileV2RevampSvc.searchIgotDesignation(body, configDetails).subscribe({
       next: (res: any) => {
         // Old profile-entry-edit returns result.Term with {name, status}
         const raw = _.get(res, 'result.Term', [])
@@ -623,7 +625,8 @@ export class DynamicEntryEditComponent implements OnInit {
       pageSize: this.designationListLoadCount,
     }
     if (this.designationSearchText[field.key]) { body.searchString = this.designationSearchText[field.key] }
-    this.profileV2RevampSvc.searchDesignation(body).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('v8DesignationSearch')
+    this.profileV2RevampSvc.searchDesignation(body, configDetails).subscribe({
       next: (res: any) => {
         const raw = _.get(res, 'result.result.data', [])
         const data = raw.map((item: any) => ({
@@ -823,8 +826,9 @@ export class DynamicEntryEditComponent implements OnInit {
     if (this.orgApiSubscriptions[field.key]) {
       this.orgApiSubscriptions[field.key].unsubscribe()
     }
+    const configDetails: ConfigDetails = this.getConfigDetails('orgV1Search')
     this.orgApiSubscriptions[field.key] = this.profileV2RevampSvc.getOrgSearch(
-      this.buildOrgRequest(offsetValue, searchText)
+      this.buildOrgRequest(offsetValue, searchText), configDetails
     ).subscribe({
       next: (res: any) => {
         const content = _.get(res, 'result.response.content', [])
@@ -1107,7 +1111,8 @@ export class DynamicEntryEditComponent implements OnInit {
       delete payload.request.sortBy
       delete payload.request.orderBy
     }
-    this.profileV2RevampSvc.getEducationsQualificationsSearch(payload).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('masterdataV1Search')
+    this.profileV2RevampSvc.getEducationsQualificationsSearch(payload, configDetails).subscribe({
       next: (res: any) => {
         const content = _.get(res, 'result.result', []) as any[]
         const total = _.get(res, 'result.count', 0)

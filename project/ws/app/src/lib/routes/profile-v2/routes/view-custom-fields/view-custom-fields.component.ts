@@ -106,7 +106,12 @@ export class ViewCustomFieldsComponent {
       orderBy: 'updatedOn',
       facets: [],
     }
-    this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'customFieldsV1Search',
+      defaultUrl: ''
+    }
+    this.userProfileService.fetchCustomFields(payload, configDetails).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
       if (this.customAttrList && this.customAttrList.length > 0) {
         this.readCustomattributeDetails()
@@ -118,7 +123,12 @@ export class ViewCustomFieldsComponent {
   }
 
   readCustomattributeDetails() {
-    this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'profileV1GetAdditionalFields',
+      defaultUrl: ''
+    }
+    this.userProfileService.readCustomattributeDetails(this.userId, this.orgId, configDetails).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       // this.commondataSvc.fetchMandatoryNotification()
     }, error => {
@@ -158,7 +168,7 @@ export class ViewCustomFieldsComponent {
       disableClose: true,
       panelClass: 'dialog_sidenav',
       autoFocus: false,
-      data: { editConfig: this.editConfig },
+      data: { editConfig: this.editConfig, apiConfig: this.apiConfig },
     })
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {

@@ -169,10 +169,18 @@ export class UserProfileService {
   }
 
   searchDesignation(_req: any): Observable<any> {
-    return this.http.post<any>(API_ENDPOINTS.GET_SEARCH_DESIGNATIONS, _req)
-  }
-  searchPublicDesignation(_req: any): Observable<any> {
     return this.http.post<any>(API_ENDPOINTS.GET_SEARCH_PUBLIC_DESIGNATIONS, _req)
+  }
+  searchPublicDesignation(_req: any, configDetails?: ConfigDetails): Observable<any> {
+    let url = API_ENDPOINTS.READ_ORG_DETAILS
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_ENDPOINTS.READ_ORG_DETAILS
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post<any>(url, _req)
   }
 
   searchIgotDesignation(_req: any): Observable<any> {
@@ -223,15 +231,39 @@ export class UserProfileService {
     return this.http.get<any>(API_ENDPOINTS.approvedDomains)
   }
 
-  fetchCustomFields(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_ENDPOINTS.ORG_CUSTOM_FIELDS, requestBody)
+  fetchCustomFields(requestBody: any, configDetails?: ConfigDetails): Observable<any> {
+    let url = API_ENDPOINTS.ORG_CUSTOM_FIELDS
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_ENDPOINTS.ORG_CUSTOM_FIELDS
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post<any>(url, requestBody)
   }
 
-  updateCustomFields(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_ENDPOINTS.UPDATE_CUSTOM_FIELDS, requestBody)
+  updateCustomFields(requestBody: any, configDetails?: ConfigDetails): Observable<any> {
+    let url = API_ENDPOINTS.UPDATE_CUSTOM_FIELDS
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_ENDPOINTS.UPDATE_CUSTOM_FIELDS
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post<any>(url, requestBody)
   }
 
-  readCustomattributeDetails(userId: string, orgId: string): Observable<any> {
-    return this.http.get<any>(`${API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES}/${userId}/${orgId}`)
+  readCustomattributeDetails(userId: string, orgId: string, configDetails?: ConfigDetails): Observable<any> {
+    let url = API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.get<any>(`${url}/${userId}/${orgId}`)
   }
 }

@@ -19,12 +19,12 @@ const API_END_POINTS = {
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular', // done
   UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner', // done
-  GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig',
+  GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // done
   APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // done
   WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition',
   COURSE_BATCH_LIST: '/apis/proxies/v8/learner/course/v1/batch/list',
-  GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages',
-  ORG_SEARCH: '/apis/proxies/v8/org/v1/search',
+  GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages', // done
+  ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // done
   GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search',
   GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search',
   GET_GROUPS: '/api/user/v1/groups', // done
@@ -36,27 +36,27 @@ const API_END_POINTS = {
   UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution',
   GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
 
-  UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements',
+  UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements', // done
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended', // done
   UPDATE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/update', // done
-  DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete',
-  approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', // old
+  DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete', // done
+  approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', // done
 
   INSIGHTS: 'apis/proxies/v8/read/user/insights', // old
   GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search', // done
 
-  SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search',
+  SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search', // done
   SEARCH_USER_PUBLIC: '/apis/proxies/v8/user/v5/public/search',
 
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
-  ADD_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/create',
-  UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update',
+  ADD_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/create', // done
+  UPDATE_ACHIEVEMENT_ENTRY: '/apis/proxies/v8/learner/achievement/update', // done
   LIST_ACHIEVEMENTS: '/apis/proxies/v8/learner/achievement/list', // done
-  DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete',
-  COMPETENCY_V6: '/apis/proxies/v8/framework/v1/read/kcmfinal_fw',
+  DELETE_ACHIEVEMENT: '/apis/proxies/v8/learner/achievement/delete', // done
+  COMPETENCY_V6: '/apis/proxies/v8/framework/v1/read/kcmfinal_fw', // done
 
 }
 
@@ -193,27 +193,52 @@ export class ProfileV2RevampService {
       )
   }
 
-  fetchCadre(): Observable<any> {
-    return this.http.get<any>(`${API_END_POINTS.GET_CADRE_DETAILS}`)
+  fetchCadre(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_CADRE_DETAILS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(url)
   }
 
-  getMasterLanguages(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.GET_MASTER_LANGUAGES)
+  getMasterLanguages(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_MASTER_LANGUAGES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(url)
   }
-  getOrgSearch(formBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.ORG_SEARCH, formBody)
+  getOrgSearch(formBody: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.ORG_SEARCH
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, formBody)
   }
 
   getMinistriesList(): Observable<any> {
     return this.http.get<any>(API_END_POINTS.GET_MINISTRY)
   }
 
-  searchDesignation(_req: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.GET_SEARCH_DESIGNATIONS, _req)
+  searchDesignation(_req: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_SEARCH_DESIGNATIONS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, _req)
   }
 
-  searchIgotDesignation(_req: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.GET_SUNBIRD_IGOT_SEARCH, _req)
+  searchIgotDesignation(_req: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_SUNBIRD_IGOT_SEARCH
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, _req)
   }
 
   fetchNodalDetails(configDetails: ConfigDetails, rootOrgId: any, roles: string) {
@@ -281,12 +306,22 @@ export class ProfileV2RevampService {
     return this.http.post<any>(API_END_POINTS.UPDATE_INSTITUTION, requestBody)
   }
 
-  updateAchievementPic(formData: FormData): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPLOAD_ACHIEVEMENT_PIC, formData)
+  updateAchievementPic(formData: FormData, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPLOAD_ACHIEVEMENT_PIC
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, formData)
   }
 
-  addEntriesToProfile(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.ADD_ENTRIES, requestBody)
+  addEntriesToProfile(requestBody: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.ADD_ENTRIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, requestBody)
   }
 
   updateEntriesOfProfile(configDetails: ConfigDetails, requestBody: any): Observable<any> {
@@ -298,16 +333,26 @@ export class ProfileV2RevampService {
     return this.http.put<any>(url, requestBody)
   }
 
-  deleteEntriesOfProfile(requestBody: any): Observable<any> {
-    return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, requestBody)
+  deleteEntriesOfProfile(requestBody: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.DELETE_ENTRIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.delete<any>(url, { body: requestBody })
   }
 
   updateConnectionRequest(formBody: any): Observable<any> {
     return this.http.post<any>(API_END_POINTS.UPDAT_CONNECTION_REQUEST, formBody)
   }
 
-  getWhiteListDomain(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.approvedDomains)
+  getWhiteListDomain(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.approvedDomains
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<any>(url)
   }
 
   fetchApprovalDetails(configDetails: ConfigDetails, requestBody: any): Observable<any> {
@@ -349,20 +394,40 @@ export class ProfileV2RevampService {
   //     return this.http.get(API_END_POINTS.ASSESSMENT_DATA)
   //   }
 
-  deleteAchievement(payload: any): Observable<any> {
-    return this.http.delete<any>(API_END_POINTS.DELETE_ENTRIES, { body: payload })
+  deleteAchievement(payload: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.DELETE_ENTRIES
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.delete<any>(url, { body: payload })
   }
 
-  getEducationsQualificationsSearch(payload: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_EDUCATIONAL_QUALIFICATIONS, payload)
+  getEducationsQualificationsSearch(payload: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.SEARCH_EDUCATIONAL_QUALIFICATIONS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, payload)
   }
 
-  createAchievementEntry(payload: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.ADD_ACHIEVEMENT_ENTRY, payload)
+  createAchievementEntry(payload: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.ADD_ACHIEVEMENT_ENTRY
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, payload)
   }
 
-  updateAchievementEntry(payload: any): Observable<any> {
-    return this.http.put<any>(API_END_POINTS.UPDATE_ACHIEVEMENT_ENTRY, payload)
+  updateAchievementEntry(payload: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_ACHIEVEMENT_ENTRY
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.put<any>(url, payload)
   }
 
   listAchievements(configDetails: ConfigDetails, userId: any): Observable<any> {
@@ -374,15 +439,25 @@ export class ProfileV2RevampService {
     return this.http.get<any>(`${url}?id=${userId}`)
   }
 
-  deleteAchievementEntry(payload: any): Observable<any> {
-    return this.http.delete<any>(API_END_POINTS.DELETE_ACHIEVEMENT, { body: payload })
+  deleteAchievementEntry(payload: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.DELETE_ACHIEVEMENT
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.delete<any>(url, { body: payload })
   }
   /**
    * Search if a user already exists by email or mobile.
    * @param filterField - The profile field path, e.g. 'profileDetails.personalDetails.primaryEmail'
    * @param value - The value to search for
    */
-  searchUserByField(filterField: string, value: string): Observable<any> {
+  searchUserByField(filterField: string, value: string, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.SEARCH_USER_PUBLIC
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
     if (filterField === 'email') {
       value = value.toLowerCase()
     }
@@ -395,11 +470,16 @@ export class ProfileV2RevampService {
         },
       },
     }
-    return this.http.post<any>(API_END_POINTS.SEARCH_USER_PUBLIC, payload)
+    return this.http.post<any>(url, payload)
   }
 
-  fetchCompetencyV6(): Observable<any> {
-    return this.http.get(API_END_POINTS.COMPETENCY_V6)
+  fetchCompetencyV6(configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.COMPETENCY_V6
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get(url)
   }
 
 }

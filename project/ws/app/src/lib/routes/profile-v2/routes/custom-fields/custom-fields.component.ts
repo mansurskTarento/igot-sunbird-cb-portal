@@ -1,10 +1,11 @@
-import { Component } from '@angular/core'
+import { Component, Inject } from '@angular/core'
 import { FormBuilder, Validators, FormGroup } from '@angular/forms'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import _ from 'lodash'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 @Component({
   selector: 'ws-app-custom-fields',
   templateUrl: './custom-fields.component.html',
@@ -29,13 +30,19 @@ export class CustomFieldsComponent {
   userId: string = ''
   orgId: string = ''
   currentUser: any = {}
+  editConfig: any = null
+  apiConfig: any
 
   constructor(private fb: FormBuilder,
     private userProfileService: UserProfileService,
     private configService: ConfigurationsService,
     private matSnackBar: MatSnackBar,
     private dialogRef: MatDialogRef<CustomFieldsComponent>,
-  ) { }
+    @Inject(MAT_DIALOG_DATA) public data: any,
+  ) {
+    this.editConfig = this.data.editConfig
+    this.apiConfig = this.data.apiConfig
+  }
 
   ngOnInit() {
     this.currentUser = this.configService && this.configService.userProfile
@@ -50,7 +57,12 @@ export class CustomFieldsComponent {
     const request = {
       request: { organisationId: this.orgId },
     }
-    this.userProfileService.readOrgData(request).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'orgV1Read',
+      defaultUrl: ''
+    }
+    this.userProfileService.readOrgData(request, configDetails).subscribe((res: any) => {
       this.customAttrListIds = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
       if (this.customAttrListIds && this.customAttrListIds.length) {
         this.getCustomAttributes()
@@ -75,7 +87,12 @@ export class CustomFieldsComponent {
       orderBy: 'updatedOn',
       facets: [],
     }
-    this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'customFieldsV1Search',
+      defaultUrl: ''
+    }
+    this.userProfileService.fetchCustomFields(payload, configDetails).subscribe((res: any) => {
       this.customAttrList = _.get(res, 'result.searchResults.data', [])
       if (this.customAttrList && this.customAttrList.length > 0) {
         this.readCustomattributeDetails()
@@ -91,7 +108,12 @@ export class CustomFieldsComponent {
   }
 
   readCustomattributeDetails() {
-    this.userProfileService.readCustomattributeDetails(this.userId, this.orgId).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'profileV1GetAdditionalFields',
+      defaultUrl: ''
+    }
+    this.userProfileService.readCustomattributeDetails(this.userId, this.orgId, configDetails).subscribe((res: any) => {
       this.customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       this.buildDynamicForm()
       this.editCustomDetails = true
@@ -758,7 +780,12 @@ export class CustomFieldsComponent {
       organisationId: this.orgId,
       customFieldValues: payload,
     }
-    this.userProfileService.updateCustomFields(requestPalyoud).subscribe((res: any) => {
+    const configDetails: ConfigDetails = {
+      apiConfig: this.apiConfig,
+      urlConfigPath: 'updateAdditionalFields',
+      defaultUrl: ''
+    }
+    this.userProfileService.updateCustomFields(requestPalyoud, configDetails).subscribe((res: any) => {
       if (res && res.result && res.result.response && res.result.response === 'success') {
         this.editCustomDetails = false
         this.customAttrForm.reset()

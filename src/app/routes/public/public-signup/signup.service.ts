@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core'
-import { BehaviorSubject, Observable } from 'rxjs'
+import { BehaviorSubject, Observable, of } from 'rxjs'
 import { HttpClient } from '@angular/common/http'
 import { map, tap } from 'rxjs/operators'
 // tslint:disable
 import _ from 'lodash'
+import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
+
 
 const API_END_POINTS = {
   // GET_DEPARTMENTS: `/api/user/registration/v1/getDeptDetails`,
@@ -36,7 +38,7 @@ export class SignupService {
   updateSignupDataObservable = this.signupData.asObservable()
   list = new Map<string, any>()
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private commonMethodsService: CommonMethodsService) { }
 
   // getDepartments(): Observable<any> {
   //   return this.http.get<any>(API_END_POINTS.GET_DEPARTMENTS)
@@ -220,15 +222,39 @@ export class SignupService {
     return this.http.post(API_END_POINTS.CHECK_REGISTRATION_LINK_STATUS, req)
   }
 
-  getStateOrMinistyForRegistration(req: any) {
-    return this.http.post(API_END_POINTS.STATE_MINISTRY_FOR_REGISTRATION, req)
+  getStateOrMinistyForRegistration(req: any, configDetails?: ConfigDetails) {
+    let url = API_END_POINTS.STATE_MINISTRY_FOR_REGISTRATION
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_END_POINTS.STATE_MINISTRY_FOR_REGISTRATION
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post(url, req)
   }
 
-  getMinistryForRegistration(req: any) {
-    return this.http.post(API_END_POINTS.MINISTRY_FOR_REGISTRATION, req)
+  getMinistryForRegistration(req: any, configDetails?: ConfigDetails) {
+    let url = API_END_POINTS.MINISTRY_FOR_REGISTRATION
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_END_POINTS.MINISTRY_FOR_REGISTRATION
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post(url, req)
   }
 
-  getStateForRegistration(req: any) {
-    return this.http.post(API_END_POINTS.STATE_FOR_REGISTRATION, req)
+  getStateForRegistration(req: any, configDetails?: ConfigDetails) {
+    let url = API_END_POINTS.STATE_FOR_REGISTRATION
+    if (configDetails) {
+      configDetails['defaultUrl'] = API_END_POINTS.STATE_FOR_REGISTRATION
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
+    }
+    return this.http.post(url, req)
   }
 }
