@@ -1030,16 +1030,15 @@ export class InitService {
 
   // for NPS user feed check
   private checkUserFeed() {
-    const feedBaseUrl = this.domainConfSvc.getApiUrl('user', 'feedStatus', '/apis/proxies/v8/user/v1/feed')
-    
-    if (!feedBaseUrl) {
+    // Check if the feed API is enabled
+    if (!this.domainConfSvc.isApiEnabled('user', 'feedStatus')) {
       console.warn('Feed status API is disabled')
       return
     }
     
     const feedId: any = []
-    const feedStatusUrl = `${feedBaseUrl}/${this.configSvc.unMappedUser.id}`
-    this.npsSvc.getFeedStatus(feedStatusUrl).subscribe((res: any) => {
+    // Pass only the user ID to getFeedStatus - the service constructs the full URL
+    this.npsSvc.getFeedStatus(this.configSvc.unMappedUser.id).subscribe((res: any) => {
       if (res.result.response.userFeed && res.result.response.userFeed.length > 0) {
         const feed = res.result.response.userFeed
         feed.forEach((item: any) => {

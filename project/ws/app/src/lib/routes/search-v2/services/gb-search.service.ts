@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { Observable, of, Subject } from 'rxjs'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { ISearchAutoComplete, ISearchQuery } from '../../search/models/search.model'
 import { SearchApiService } from '../../search/apis/search-api.service'
 
@@ -24,18 +24,22 @@ export class GbSearchService {
   constructor(
     private http: HttpClient,
     private configSrv: ConfigurationsService,
-    private searchApi: SearchApiService) {
+    private searchApi: SearchApiService,
+    private domainConfSvc: DomainConfService) {
 
   }
 
   fetchSearchData(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_V6, request)
+    const url = this.domainConfSvc.getApiUrl('search', 'searchV6', API_END_POINTS.SEARCH_V6)
+    return this.http.post<any>(url, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_V4, request)
+    const url = this.domainConfSvc.getApiUrl('search', 'searchV4', API_END_POINTS.SEARCH_V4)
+    return this.http.post<any>(url, request)
   }
   fetchSearchDataforCios(request: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.SEARCH_EXT_CONTENT, request)
+    const url = this.domainConfSvc.getApiUrl('search', 'externalContent', API_END_POINTS.SEARCH_EXT_CONTENT)
+    return this.http.post<any>(url, request)
   }
   public notifyOther(data: any) {
     if (data) {
