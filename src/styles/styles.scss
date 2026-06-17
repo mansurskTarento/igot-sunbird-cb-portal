@@ -2332,3 +2332,17 @@ ngx-guided-tour {
     color: #000 !important;
   }
 }
+
+.wrapper-saksham {
+  .card-wide-v2 {
+    display: flex !important;
+    flex-direction: row !important;
+    margin-top: 0 !important;
+    height: 166px;
+
+  }
+
+  .card-wide-v2 .mat-text-box {
+    padding: 12px 12px 11px !important;
+  }
+}
