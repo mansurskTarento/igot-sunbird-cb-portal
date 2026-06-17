@@ -691,9 +691,9 @@ export class ViewerSecondaryTopBarComponent implements OnInit, OnDestroy, AfterV
       collectionDataFromHashmap?.courseCategory,
       this.currentDataFromEnrollList?.content?.courseCategory,
     ]
-    const availableCourseCategories = courseCategories.filter(category => !!category)
+    const availableCourseCategories = courseCategories?.filter(category => !!category)
 
-    if (!availableCourseCategories.length) {
+    if (!availableCourseCategories?.length) {
       return true
     }
 
