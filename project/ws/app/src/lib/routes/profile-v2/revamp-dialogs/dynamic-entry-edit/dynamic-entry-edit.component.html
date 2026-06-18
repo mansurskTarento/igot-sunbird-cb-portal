@@ -29,7 +29,7 @@
                   <!-- ══ info-text ════════════════════════════════════════ -->
                   <ng-container *ngSwitchCase="'info-text'">
                     <div class="editor-description">
-                      <div>{{ field?.text | translate }} 32</div>
+                      <div>{{ field?.text | translate }}</div>
                     </div>
                   </ng-container>
 
@@ -37,7 +37,7 @@
                   <ng-container *ngSwitchCase="'text'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }} 40
+                        {{ field?.label }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
@@ -104,7 +104,7 @@
                   <ng-container *ngSwitchCase="'searchable-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }} 107
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
