@@ -4,12 +4,13 @@ import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn,
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { generateYears, URL_PATRON } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { ConfigDetails } from '@sunbird-cb/consumption'
+import { HttpErrorResponse } from '@angular/common/http'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -296,6 +297,8 @@ export class DynamicEntryEditComponent implements OnInit {
   readonly institutionListLoadCount = 50
   eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
+  masterLanguageBackup: any
+  isMatcompleteOpened: boolean = false
 
   // ── Lifecycle ────────────────────────────────────────────────────────
   ngOnInit(): void {
@@ -947,12 +950,32 @@ export class DynamicEntryEditComponent implements OnInit {
         case 'eCategory':
           this.dynamicOptions[field.key] = this.eCategory.map(c => ({ label: c, value: c }))
           break
+        case 'languages':
+          this.getMasterLanguage(field)
+          const domicileMediumControl = this.entryForm.get(field.key)
+          if (domicileMediumControl) {
+            domicileMediumControl.valueChanges
+              .pipe(
+                debounceTime(250),
+                distinctUntilChanged(),
+                startWith(''),
+              )
+              .subscribe(res => {
+                if (this.masterLanguageBackup) {
+                  if (res) {
+                    this.dynamicOptions[field.key] = this.masterLanguageBackup.filter((item: any) => item.label.toLowerCase().includes(res && res.toLowerCase()))
+                  } else {
+                    this.dynamicOptions[field.key] = this.masterLanguageBackup
+                  }
+                }
+              })
+          }
+          break
 
         default:
           break
       }
     })
-
 
     stateFields.forEach(field => {
       this.dynamicOptions[field.key] = []
@@ -1009,6 +1032,26 @@ export class DynamicEntryEditComponent implements OnInit {
         this.entryForm.get(field.key)?.disable()
       }
     })
+  }
+
+  getMasterLanguage(field: FieldConfig): void {
+    const configDetails: ConfigDetails = this.getConfigDetails('profileRegistryGetMasterLanguages')
+    this.profileV2RevampSvc.getMasterLanguages(configDetails)
+      // .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        const languages: any[] = _.get(res, 'languages', []).map((l: any) => ({ label: l.name, value: l.name }))
+        this.dynamicOptions[field.key] = languages
+        this.masterLanguageBackup = languages
+        const domicileMediumControl = this.entryForm.get(field.key)
+        if (domicileMediumControl) {
+          domicileMediumControl.patchValue(this.resolveValue(field))
+          domicileMediumControl.updateValueAndValidity()
+        }
+      }, (error: HttpErrorResponse) => {
+        if (!error.ok) {
+          this.openSnackbar(this.handleTranslateTo('unableFetchMasterLanguageData'))
+        }
+      })
   }
 
   private loadDistrictsForField(field: FieldConfig, state: string, isFirstTime: boolean): void {
@@ -1648,6 +1691,22 @@ export class DynamicEntryEditComponent implements OnInit {
       urlConfigPath: configKey,
       defaultUrl: '',
     }
+  }
+
+  handleTranslateTo(menuName: string): string {
+    return this.profileV2RevampSvc.handleTranslateTo(menuName)
+  }
+
+  onkeyDown(_event: any) {
+    return this.isMatcompleteOpened
+  }
+
+  onAutoCompleteOpened() {
+    this.isMatcompleteOpened = true
+  }
+
+  onAutoCompleteClosed() {
+    this.isMatcompleteOpened = false
   }
 
   private openSnackbar(msg: string, duration = 5000): void {

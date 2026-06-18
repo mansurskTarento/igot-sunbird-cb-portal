@@ -382,7 +382,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     if (file) {
       const formdata = new FormData()
       formdata.append('data', file, fileName)
-      this.profileV2RevampService.updateProfilePic(formdata).subscribe({
+      const configDetails: ConfigDetails = this.getConfigDetails('profilePhotoUploadProfileImage')
+      this.profileV2RevampService.updateProfilePic(formdata, configDetails).subscribe({
         next: (res: any) => {
           const createdUrl = _.get(res, 'result.url', '')
           const folderNameToSplit = '/profileImage/'

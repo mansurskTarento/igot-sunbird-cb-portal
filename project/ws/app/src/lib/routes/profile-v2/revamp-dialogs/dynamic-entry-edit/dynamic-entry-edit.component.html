@@ -29,7 +29,7 @@
                   <!-- ══ info-text ════════════════════════════════════════ -->
                   <ng-container *ngSwitchCase="'info-text'">
                     <div class="editor-description">
-                      <div>{{ field?.text }}</div>
+                      <div>{{ field?.text | translate }} 32</div>
                     </div>
                   </ng-container>
 
@@ -37,7 +37,7 @@
                   <ng-container *ngSwitchCase="'text'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label }} 40
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
@@ -75,7 +75,7 @@
                   <ng-container *ngSwitchCase="'select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label }} 78
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
@@ -104,11 +104,36 @@
                   <ng-container *ngSwitchCase="'searchable-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }} 107
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
-                      <mat-form-field appearance="outline" class="full-width">
+                      <mat-form-field appearance="outline">
+                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
+                          [matAutocomplete]="optionsAuto" (keydown)="onkeyDown($event)">
+                        <mat-icon matSuffix>arrow_drop_down</mat-icon>
+                      </mat-form-field>
+                      <mat-autocomplete #optionsAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
+                        (closed)="onAutoCompleteClosed()">
+                        <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
+                          <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                            {{ opt?.label }}
+                          </mat-option>
+                          <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
+                            No matches found
+                          </mat-option>
+                        </ng-container>
+                        <ng-template #staticSearchableOptions>
+                          <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
+                            [disabled]="opt?.disabled || false">
+                            {{ opt?.label }}
+                          </mat-option>
+                          <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
+                            No matches found
+                          </mat-option>
+                        </ng-template>
+                      </mat-autocomplete>
+                      <!-- <mat-form-field appearance="outline" class="full-width">
                         <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
                           panelClass="profile-control" (openedChange)="onSearchableSelectOpened(field, $event)"
                           (closed)="onSearchableSelectClosed(field)">
@@ -118,16 +143,26 @@
                               (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
                               autocomplete="off">
                           </div>
-                          <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
-                            [disabled]="opt?.disabled || false">
-                            {{ opt?.label }}
-                          </mat-option>
-                          <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
-                            No matches found
-                          </mat-option>
+                          <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
+                            <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                              {{ opt?.label }}
+                            </mat-option>
+                            <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
+                              No matches found
+                            </mat-option>
+                          </ng-container>
+                          <ng-template #staticSearchableOptions>
+                            <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
+                              [disabled]="opt?.disabled || false">
+                              {{ opt?.label }}
+                            </mat-option>
+                            <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
+                              No matches found
+                            </mat-option>
+                          </ng-template>
                         </mat-select>
                         <mat-error>{{ getFirstError(field) }}</mat-error>
-                      </mat-form-field>
+                      </mat-form-field> -->
                     </div>
                   </ng-container>
 

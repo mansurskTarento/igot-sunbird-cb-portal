@@ -431,7 +431,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getConnectionStatus() {
-    this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
+    const configDetails: ConfigDetails = this.getConfigDetails('connectionsV1ProfileRelationship')
+    this.profileV2RevampSvc.getConnectionStatus(this.userId, configDetails).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
       this.setProfileVisibilityStatus()
     })
@@ -1689,13 +1690,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         const degreeBody = {
           degreeName: _.get(educationalQualifications, 'otherDegree', ''),
         }
-        addApiCalls.push(this.profileV2RevampSvc.updateDegree(degreeBody))
+        const configDetails: ConfigDetails = this.getConfigDetails('updateDegree')
+        addApiCalls.push(this.profileV2RevampSvc.updateDegree(degreeBody, configDetails))
       }
       if (isOtherInstitute) {
         const instituteBody = {
           institutionName: _.get(educationalQualifications, 'otherInstituteName', ''),
         }
-        addApiCalls.push(this.profileV2RevampSvc.updateInstitution(instituteBody))
+        const configDetails: ConfigDetails = this.getConfigDetails('updateInstitution')
+        addApiCalls.push(this.profileV2RevampSvc.updateInstitution(instituteBody, configDetails))
       }
       if (addApiCalls.length > 0) {
         await forkJoin(addApiCalls).toPromise()

@@ -12,29 +12,29 @@ const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic', // done
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/', // done
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch', // done
-  UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch',
+  UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch', // done
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
   ADD_CONNECTION: 'apis/protected/v8/connections/v2/add/connection',
   BLOCK_CONNECTION: 'apis/proxies/v8/connections/block',
   GET_COMMUNITIES: '/apis/proxies/v8/community/v1/popular', // done
-  UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage',
+  UPLOAD_PROFILE_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileImage', // done
   UPLOAD_BANNER_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/profileBanner', // done
   GET_CADRE_DETAILS: '/apis/proxies/v8/data/v2/system/settings/get/cadreConfig', // done
   APPROVAL_DETAILS: '/apis/proxies/v8/workflow/v2/userWFApplicationFieldsSearch', // done
-  WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition',
-  COURSE_BATCH_LIST: '/apis/proxies/v8/learner/course/v1/batch/list',
+  WITHDRAW_REQUEST: '/apis/protected/v8/workflowhandler/transition', // done
+  COURSE_BATCH_LIST: '/apis/proxies/v8/learner/course/v1/batch/list', // not needed
   GET_MASTER_LANGUAGES: '/apis/protected/v8/user/profileRegistry/getMasterLanguages', // done
   ORG_SEARCH: '/apis/proxies/v8/org/v1/search', // done
-  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search',
-  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search',
+  GET_SEARCH_DESIGNATIONS: '/apis/proxies/v8/designation/search', // done
+  GET_SUNBIRD_IGOT_SEARCH: '/apis/proxies/v8/sunbirdigot/v4/search', // done
   GET_GROUPS: '/api/user/v1/groups', // done
   GET_STATES_LIST: '/apis/proxies/v8/extendedprofile/list/states', // done
   GET_DISTRICTS_LIST: 'apis/proxies/v8/extendedprofile/list/districts', // done
   GET_DEGREES_LIST: 'apis/proxies/v8/masterdata/list/degrees',
   GET_INSTITUTIONS_LIST: 'apis/proxies/v8/masterdata/list/institutions',
-  UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree',
-  UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution',
-  GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry',
+  UPDATE_DEGREE: 'apis/proxies/v8/masterdata/update/degree', // done
+  UPDATE_INSTITUTION: 'apis/proxies/v8/masterdata/update/institution', // done
+  GET_MINISTRY: '/apis/public/v8/org/v1/list/ministry', // not needed
 
   UPLOAD_ACHIEVEMENT_PIC: '/apis/proxies/v8/storage/profilePhotoUpload/userAchievements', // done
   ADD_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended', // done
@@ -42,13 +42,14 @@ const API_END_POINTS = {
   DELETE_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/delete', // done
   approvedDomains: 'apis/proxies/v8/user/v1/email/approvedDomains', // done
 
-  INSIGHTS: 'apis/proxies/v8/read/user/insights', // old
-  GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
+  INSIGHTS: 'apis/proxies/v8/read/user/insights', // done
+  GET_CONNECTION_STATUS: 'apis/proxies/v8/connections/v1/profile/relationship', // done
+  // GET_CONNECTION_STATUS: (userId: string) => `apis/proxies/v8/connections/v1/profile/relationship/${userId}`,
   UPDAT_CONNECTION_REQUEST: '/apis/protected/v8/connections/v2/update/connection',
   SEARCH_USERS: '/apis/proxies/v8/user/v1/search', // done
 
   SEARCH_EDUCATIONAL_QUALIFICATIONS: '/apis/proxies/v8/masterdata/v1/search', // done
-  SEARCH_USER_PUBLIC: '/apis/proxies/v8/user/v5/public/search',
+  SEARCH_USER_PUBLIC: '/apis/proxies/v8/user/v5/public/search', // done
 
   // ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`, //old
 
@@ -130,8 +131,13 @@ export class ProfileV2RevampService {
       }))
   }
 
-  updateProfilePic(formData: FormData): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPLOAD_PROFILE_PIC, formData)
+  updateProfilePic(formData: FormData, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPLOAD_PROFILE_PIC
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, formData)
       .pipe(map(res => {
         return res
       }))
@@ -298,12 +304,22 @@ export class ProfileV2RevampService {
     return this.http.get<any>(API_END_POINTS.GET_INSTITUTIONS_LIST)
   }
 
-  updateDegree(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPDATE_DEGREE, requestBody)
+  updateDegree(requestBody: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_DEGREE
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, requestBody)
   }
 
-  updateInstitution(requestBody: any): Observable<any> {
-    return this.http.post<any>(API_END_POINTS.UPDATE_INSTITUTION, requestBody)
+  updateInstitution(requestBody: any, configDetails: ConfigDetails): Observable<any> {
+    configDetails['defaultUrl'] = API_END_POINTS.UPDATE_INSTITUTION
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.post<any>(url, requestBody)
   }
 
   updateAchievementPic(formData: FormData, configDetails: ConfigDetails): Observable<any> {
@@ -386,8 +402,13 @@ export class ProfileV2RevampService {
     return result
   }
 
-  getConnectionStatus(userId: string) {
-    return this.http.get(`${API_END_POINTS.GET_CONNECTION_STATUS(userId)}`)
+  getConnectionStatus(userId: string, configDetails: ConfigDetails) {
+    configDetails['defaultUrl'] = API_END_POINTS.GET_CONNECTION_STATUS
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get(`${url}/${userId}`)
   }
 
   // getAssessmentinfo(): Observable<any> {
