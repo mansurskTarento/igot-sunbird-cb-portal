@@ -56,12 +56,13 @@ $color-thin-gray: #d8d8d8;
 }
 
 a[target=_blank] {
-  color: #000!important;
+  color: #000 !important;
 }
 
 h4.nav_sub_heading {
-  margin:0!important;
+  margin: 0 !important;
 }
+
 .next-b {
   width: $size-s;
   height: $size-m;
@@ -145,7 +146,7 @@ mat-grid-list {
   text-align: center;
 
   .mat-icon {
-    padding:18px 16px;
+    padding: 18px 16px;
   }
 }
 
@@ -174,9 +175,17 @@ a.disabled {
 
 .end-line-elipses {
   -ms-text-overflow: ellipsis;
-    -o-text-overflow: ellipsis;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100%;
+  -o-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  width: 100%;
+}
+
+.ws-mat-default-text-blue {
+  color: #1b4ca1 !important;
+}
+
+.ws-mat-black60-text {
+  color: #0009 !important;
 }

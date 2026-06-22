@@ -106,11 +106,17 @@
 }
 
 .dialog-close {
-    position: absolute;
+    position: fixed;
     top: 10px;
     right: 10px;
+    // z-index: 10001;
     cursor: pointer;
 }
+
+// .dialog-close img {
+//     width: 40px;
+//     height: 40px;
+// }
 
 @media (max-width : 1200px) {
     .right-side {

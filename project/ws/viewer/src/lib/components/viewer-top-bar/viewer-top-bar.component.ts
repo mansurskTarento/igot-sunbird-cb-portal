@@ -19,10 +19,10 @@ import _ from 'lodash'
 // import { ALLOWED_CATEGORY_FOR_DYNAMIC_GENERATION } from '../../../../../author/src/lib/constants/constant'
 
 @Component({
-    selector: 'viewer-viewer-top-bar',
-    templateUrl: './viewer-top-bar.component.html',
-    styleUrls: ['./viewer-top-bar.component.scss'],
-    standalone: false
+  selector: 'viewer-viewer-top-bar',
+  templateUrl: './viewer-top-bar.component.html',
+  styleUrls: ['./viewer-top-bar.component.scss'],
+  standalone: false
 })
 export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   @Input() frameReference: any
@@ -450,7 +450,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         this.completedCountOutput.emit(this.completedCount)
 
         const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
-        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionPercentage'] = Math.floor((completedItems.length / percentDenominator) * 100)
         this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
 
@@ -479,10 +479,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
         }
 
         this.completedCountOutput.emit(this.completedCount)
-
         // tslint:disable
         const percentDenominator = this.overallLeafNodes > 0 ? this.overallLeafNodes : 1
-        this.hierarchyMapData[identifier]['completionPercentage'] = Number(((completedItems.length / percentDenominator) * 100).toFixed())
+        this.hierarchyMapData[identifier]['completionPercentage'] = Math.floor((completedItems.length / percentDenominator) * 100)
         this.hierarchyMapData[identifier]['completionStatus'] = (this.hierarchyMapData[identifier].completionPercentage >= 100) ? 2 : 1
         this.overallProgress = this.hierarchyMapData[identifier]['completionPercentage']
       }

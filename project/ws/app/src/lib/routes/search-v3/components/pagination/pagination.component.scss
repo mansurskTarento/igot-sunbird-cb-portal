@@ -9,6 +9,8 @@
   background-color: $white;
   border-top: 1px solid $matCardBorderColor;
 
+
+
   .pagination-size-select span {
     /* stylelint-disable */
     font-family: Lato;
@@ -73,4 +75,12 @@ ul {
   pointer-events: none;
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.page-value {
+  margin-top: 5px;
+}
+
+::ng-deep .pagination-dropdown .mat-mdc-option .mat-pseudo-checkbox-minimal {
+  display: none !important;
 }
