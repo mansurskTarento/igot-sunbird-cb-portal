@@ -1,0 +1,199 @@
+@if (fullMenuDispaly()) {
+<!-- Top Navigation Bar -->
+@if (sShowAppNavBar() && !needToHide() && mode() === 'top' && isHubEnable()) {
+<mat-toolbar [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles"
+  class="mat-elevation-z3 custom mobile-height" [ngClass]="[
+    isHubEnable() ? 'mobile' : '',
+    leftNavBarOpen() ? 'top-nav-bar-on-menubar-open' : 'top-nav-bar-on-menubar-close'
+  ]">
+  @if (mode() === 'top') {
+  <div class="w-full flex justify-between items-center mx-10" id="root-tool-bar">
+    @if (!leftNavBarOpen()) {
+    <a [routerLink]="redirectPath" class="logo-dim items-center hidden md:flex" role="link" title="Home"
+      [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null" i18n-aria-title
+      i18n-aria-label>
+      @if (jan26Data && jan26Data.isEnabled) {
+      @if (janDataEnable()) {
+      <div class="logo-box flex items-center">
+        <img [src]="jan26Data.desktop.logoUrl" alt="Application Logo" class="app-logo-new" />
+        <span class="mat-subheading-2 ws-mat-default-text logo-text margin-left-xs"
+          [innerHTML]="jan26Data?.desktop?.logoText"></span>
+      </div>
+      } @else {
+      <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
+      }
+      } @else {
+      <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
+      }
+    </a>
+    }
+    @if (primaryNavbarConfig?.mediumScreen) {
+    <div>
+
+      <ws-top-right-nav-bar-v2 [item]="{type: 'widgetButton'}" [rightNavConfig]="headerFooterConfigData()" />
+
+      @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
+      <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
+        [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
+      }
+
+      @if (!isforPreview()) {
+      <ws-app-search-v4-input-home placeHolder="{{ 'appnavbar.searchforLearningContentsV2' | translate}}"
+        class="my-search flex-1" [ref]="'home'">
+      </ws-app-search-v4-input-home>
+      }
+    </div>
+    }
+    @if (!isforPreview()) {
+    <div ngClass="search-small-logo">
+      <ng-container [wsResolverWidget]="{
+                      'widgetType': 'actionButton',
+                      'widgetSubType': 'buttonFeature',
+                      'widgetData': {
+                        'toolTop': 'Search',
+                        'actionBtnId': 'feature_search',
+                        'config': {
+                          'type': 'mat-icon-button'
+                        }
+                      }
+                    }"></ng-container>
+    </div>
+    }
+
+    <div class="hidden md:block md:flex items-center">
+      @if (!isforPreview()) {
+      <!-- Karma badge placeholder -->
+      }
+      @for (item of primaryNavbarConfig?.mediumScreen?.right; track item) {
+      <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
+        [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
+      }
+      <!-- Theme Toggle Button -->
+      <ws-top-right-nav-bar-v2 [item]="{type: 'themeToggle'}" [rightNavConfig]="headerFooterConfigData()" />
+    </div>
+  </div>
+  }
+</mat-toolbar>
+}
+
+<!-- Bottom Navigation Bar (Mobile) -->
+@if (sShowAppNavBar() && !needToHide() && mode() === 'bottom') {
+<mat-toolbar [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles"
+  class="mat-elevation-z3 custom mobile-footer-fixed-nav">
+
+  @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
+  <ul class="mobile-footer-fixed-nav-list-item-container">
+    @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
+    @if (item?.type !== 'explorerButton') {
+    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+      (click)="redirectToPath(item?.config)">
+      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
+        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
+          title="{{item?.config?.label}}" />
+        <span>{{item?.config?.label | titlecase}}</span>
+      </div>
+    </li>
+    }
+
+    @if (item?.type === 'explorerButton') {
+    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+      (click)="openExploreMenu()">
+      <div class="icon-container">
+        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
+          title="{{item?.config?.label}}" />
+        <span>{{item?.config?.label | titlecase}}</span>
+      </div>
+    </li>
+    }
+    }
+  </ul>
+  }
+</mat-toolbar>
+}
+
+<!-- Fallback Toolbar (when navbar is hidden) -->
+@if (!sShowAppNavBar()) {
+<mat-toolbar>
+  <div class="fix-ww flex flex-row mt-3" id="root-tool-bar" title="toolbar" i18n-aria-label role="toolbar">
+    @if (mode() === 'top') {
+    <div class="flex flex-1">
+      @if (isThisSetUpPage()) {
+      <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label [routerLink]="redirectPath">
+        <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
+      </a>
+      }
+      @if (!isThisSetUpPage() && isforPreview()) {
+      <a class="logo-dim" role="link" title="Home" i18n-aria-title i18n-aria-label routerLink="/static-home">
+        <img [src]="appIcon" alt="Application Logo" class="app-logo object-contain w-full" />
+      </a>
+      }
+    </div>
+    }
+  </div>
+</mat-toolbar>
+}
+}
+
+<!-- Karma Badge Template -->
+<ng-template #karmaBadge>
+  <div class="flex flex-middle points-block" [class.hideForNav]="hideKPOnNav()">
+    <img (click)="viewKarmapoints()" src="/assets/icons/home/karma-badge.svg" width="32px" height="32px"
+      alt="Karma Badge" class="app-logo cursor-pointer" />
+    <div class="margin-left-xs">
+      <p class="karma-lbl flex">
+        {{ 'appnavbar.karmaPoints' | translate }}
+        <img #tooltip="matTooltip" [matTooltipClass]="['karma-tooltip','below']" width="13.33px" height="13.33px"
+          mat-raised-button matTooltip="{{ 'appnavbar.karmaPointsToolTip' | translate }}" [matTooltipPosition]="'below'"
+          (click)="tooltip.show()" [matTooltipHideDelay]="tooltipDelay" class="cursor-pointer margin-left-xs"
+          src="assets/icons/info.svg" alt="Info" />
+      </p>
+      <p class="karma-point">
+        @if (karmaPointLoading()) {
+        <ws-widget-skeleton-loader [width]="'34px'" [height]="'20px'"
+          [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
+        } @else {
+        {{ countdata() }}
+        }
+      </p>
+    </div>
+  </div>
+
+  <div class="flex items-center arrow-back" [class.hideForNav]="!hideKPOnNav()" (click)="handleNavigateBack()">
+    <mat-icon>arrow_back</mat-icon>
+  </div>
+</ng-template>
+
+<!-- Help Menu -->
+<mat-menu #helpMenu="matMenu">
+  <ws-widget-btn-feature-v2 [widgetData]="{
+    actionBtnId: 'feature_aboutUs',
+    config: {
+      type: 'mat-menu-item'
+    }
+  }"></ws-widget-btn-feature-v2>
+  <ws-widget-btn-feature-v2 [widgetData]="{
+    actionBtnId: 'channel_how_to',
+    config: {
+      type: 'mat-menu-item'
+    }
+  }"></ws-widget-btn-feature-v2>
+  <ws-widget-btn-feature-v2 [widgetData]="{
+    actionBtnId: 'feature_FAQs',
+    config: {
+      type: 'mat-menu-item'
+    }
+  }"></ws-widget-btn-feature-v2>
+  <ws-widget-btn-feature-v2 [widgetData]="{
+    actionBtnId: 'feature_quickTour',
+    config: {
+      type: 'mat-menu-item'
+    }
+  }"></ws-widget-btn-feature-v2>
+
+  @if (isTourGuideAvailable()) {
+  <div mat-menu-item (click)="startTour()">
+    <mat-icon>help</mat-icon>
+    <span class="ml-2">Tour Guide</span>
+  </div>
+  }
+</mat-menu>

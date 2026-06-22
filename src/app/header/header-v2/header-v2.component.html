@@ -1,0 +1,23 @@
+@if (mobileTopHeaderVisibilityStatus()) {
+<div
+  [ngClass]="mobileTopHeaderVisibilityStatus() ? 'mobile-download-app-top-header' : 'mobile-download-app-without-top-header'">
+  <div class="cross-mobile-download-app" (click)="hideMobileTopHeader()">
+    <span>X</span>
+  </div>
+  <div class="kb-symbol">
+    <img src="/assets/icons/top-nav/KB-Symbol_icon.svg" alt="">
+  </div>
+  <div class="mobile-download-app-desc">
+    <p class="mobile-download-app-desc-heading">iGot Karmayogi</p>
+    <p class="mobile-download-app-desc-sub-heading">Download the mobile app</p>
+  </div>
+  <div class="flex-1 flex justify-end pr-4">
+    <li class="download-app-chip-top-header" (click)="downloadApp()">
+      <span>Download App </span>
+    </li>
+  </div>
+</div>
+}
+<ws-app-nav-bar-v2 [ngClass]="mobileTopHeaderVisibilityStatus() ? 'top-nav-bar':'top-nav-bar-without-mobile-header'"
+  [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData"
+  [leftNavBarOpen]="leftNavBarOpen"></ws-app-nav-bar-v2>

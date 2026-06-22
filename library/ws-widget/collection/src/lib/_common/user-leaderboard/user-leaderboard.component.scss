@@ -365,3 +365,177 @@
   border-bottom-right-radius: 12px;
   border-bottom-left-radius: 12px;
 }
+
+// ── Skeleton shimmer ──────────────────────────────────────────
+@keyframes ulb-shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+%ulb-shimmer {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%);
+  background-size: 800px 100%;
+  animation: ulb-shimmer 1.4s infinite linear;
+  border-radius: 6px;
+}
+
+.ulb-skeleton {
+  overflow: hidden;
+  pointer-events: none;
+}
+
+// Blue header block matching .podium-content
+.ulb-sk-header {
+  background-color: #1B4CA1;
+  padding: 16px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.ulb-sk-title {
+  width: 60%;
+  height: 16px;
+  margin-bottom: 20px;
+  @extend %ulb-shimmer;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.15) 75%) !important;
+}
+
+// 3-column podium layout
+.ulb-sk-podium {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.ulb-sk-rank {
+  width: 30%;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 12px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  &--center {
+    padding-top: 6px; // taller via crown + less offset
+  }
+
+  &--side {
+    margin-top: 20px; // matches rank-left / rank-right offset
+  }
+}
+
+.ulb-sk-crown {
+  width: 24px;
+  height: 18px;
+  border-radius: 4px;
+  @extend %ulb-shimmer;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.15) 75%) !important;
+}
+
+.ulb-sk-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  @extend %ulb-shimmer;
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.15) 75%) !important;
+  flex-shrink: 0;
+
+  &--sm {
+    width: 32px;
+    height: 32px;
+    background-color: #d8d8d8 !important;
+    background-image: linear-gradient(90deg, #d0d0d0 25%, #e8e8e8 50%, #d0d0d0 75%) !important;
+  }
+}
+
+// Generic shimmer bar (for names, points)
+.ulb-sk-bar {
+  @extend %ulb-shimmer;
+  border-radius: 4px;
+}
+
+// inside podium cards (white-tinted)
+.ulb-sk-name {
+  width: 70%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.15) 75%) !important;
+}
+
+.ulb-sk-pts {
+  width: 45%;
+  height: 10px;
+  background-color: rgba(255, 255, 255, 0.25) !important;
+  background-image: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.15) 25%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.15) 75%) !important;
+}
+
+// Podium platform strip (replaces the podium.svg image area)
+.ulb-sk-platform {
+  width: 100%;
+  height: 28px;
+  @extend %ulb-shimmer;
+  border-radius: 0;
+  margin-top: 0;
+}
+
+// User list rows
+.ulb-sk-list {
+  padding: 0;
+}
+
+.ulb-sk-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+  }
+}
+
+.ulb-sk-rank-num {
+  width: 24px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.ulb-sk-uname {
+  flex: 1;
+  height: 12px;
+}
+
+.ulb-sk-upts {
+  width: 40px;
+  height: 12px;
+  flex-shrink: 0;
+}

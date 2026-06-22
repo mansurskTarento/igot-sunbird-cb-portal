@@ -41,10 +41,19 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
+                "src/styles",
+                "node_modules/@sunbird-cb/design-system/src/tokens"
               ]
             },
             "styles": [
+              {
+                "input": "node_modules/@sunbird-cb/design-system/src/tokens/foundations/_tokens.scss",
+                "bundleName": "design-tokens"
+              },
+              {
+                "input": "node_modules/@sunbird-cb/design-system/src/tokens/_index.scss",
+                "bundleName": "design-utilities"
+              },
               {
                 "input": "src/styles/libraries.scss",
                 "bundleName": "libraries"
