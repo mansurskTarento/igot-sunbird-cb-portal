@@ -1,5 +1,5 @@
 <ng-container *ngIf="insightsData">
-    <div class="weekly-wrapper" *ngIf="!isLoading && weeklyData?.enableCard && !weeklyData?.displayOnlyHeader" id="weekly-wrapper">
+    <div class="weekly-wrapper" *ngIf="!isLoading && weeklyData?.enabled && !weeklyData?.displayOnlyHeader" id="weekly-wrapper">
         <div>
             <ng-container [ngTemplateOutlet]="headder"></ng-container>
             <p class="period-count" *ngIf="insightsData?.weeklyClaps">{{insightsData?.weeklyClaps?.startDate | date: 'EE, d MMM'}}  - {{insightsData?.weeklyClaps?.endDate | date: 'EE, d MMM'}}</p>
@@ -29,7 +29,7 @@
     <ng-container [ngTemplateOutlet]="headder"></ng-container>
 </ng-container>
 
-<div class="weekly-wrapper" *ngIf="isLoading && weeklyData?.enableCard">
+<div class="weekly-wrapper" *ngIf="isLoading && weeklyData?.enabled">
     <div>
         <div class="flex flex-between">
             <p class="flex-align-start weekly-title flex flex-middle margin-remove">

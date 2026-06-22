@@ -205,7 +205,7 @@
     </div>
 </div>
 
-<div class="margin-top-m">
+<div class="margin-top-m" *ngIf="homePageData?.profileCard?.enabled">
     <ws-widget-profile-card-stats (expandCollapse)="expandCollapse($event)" (activity)="goToActivity($event)"
         [profileData]="homePageData.profileCard" [insightsData]="insightsData"
         [isLoading]="profileDataLoading"></ws-widget-profile-card-stats>
@@ -213,7 +213,8 @@
  
 <section class="hidden md:block" style="position: relative;" [ngClass]="{'':!collapsed, 'margin-bottom-m': collapsed}">
     <div class="assessment-box  collapsible" [@collapse]="collapsed"
-        [ngClass]="{'margin-bottom-remove margin-top-remove':collapsed}">
+        [ngClass]="{'margin-bottom-remove margin-top-remove':collapsed}"
+        *ngIf="assessmentStrip">
         <ng-container [ngTemplateOutlet]="loadNewStrips"></ng-container>
         <ng-template #loadNewStrips>
             <ng-container *ngFor="let newStrip of assessmentStrip">
@@ -229,18 +230,20 @@
         </ng-template>
     </div>
     <section class="collapsible" [@collapse]="collapsed"
-        [ngClass]="{'padding-top-m':(!collapsed && isLeaderboardExist)}">
+        [ngClass]="{'padding-top-m':(!collapsed && isLeaderboardExist)}"
+        *ngIf="homePageData?.leaderboard?.enabled">
         <ws-widget-user-leaderboard
             (isLeaderboardAvailable)="checkLeaderboardData($event)"></ws-widget-user-leaderboard>
     </section>
-    <div class="collapsible" [@collapseWeekly]="collapsed" [ngClass]="{'margin-bottom-m margin-top-m':!collapsed}">
+    <div class="collapsible" [@collapseWeekly]="collapsed" [ngClass]="{'margin-bottom-m margin-top-m':!collapsed}"
+        *ngIf="homePageData?.weeklyClaps?.enabled">
         <ws-widget-weekly-claps [insightsData]="insightsData" [weeklyData]="homePageData.weeklyClaps"
             [isLoading]="clapsDataLoading"></ws-widget-weekly-claps>
     </div>
 
    
 
-    <div class="collapsible" [@collapse]="collapsed" *ngIf="learnAdvisoryData">
+    <div class="collapsible" [@collapse]="collapsed" *ngIf="learnAdvisoryData && homePageData?.learnerAdvisory?.enabled">
         <ws-widget-tips-for-learner-card [learnAdvisoryData]="learnAdvisoryData"></ws-widget-tips-for-learner-card>
     </div>
 
@@ -318,7 +321,8 @@
             </ng-container>
         </div>
     </section> -->
-    <section class="collapsible" [@collapse]="collapsed" [ngClass]="{'padding-top-m margin-bottom-m':!collapsed}">
+    <section class="collapsible" [@collapse]="collapsed" [ngClass]="{'padding-top-m margin-bottom-m':!collapsed}"
+        *ngIf="homePageData?.pendingRequests?.enabled">
         <ws-widget-pending-request [pendingRequestData]="pendingRequestData"
             [isLoading]="pendingRequestSkeleton"></ws-widget-pending-request>
     </section>
@@ -327,12 +331,12 @@
 
         </div>
     </div>
-    <div class="flex flex-col">
+    <div class="flex flex-col" *ngIf="homePageData?.otherPortals?.enabled">
         <ws-home-other-portal></ws-home-other-portal>
     </div>
 </section>
 <section class="block md:hidden">
-    <div *ngIf="learnAdvisoryData">
+    <div *ngIf="learnAdvisoryData && homePageData?.learnerAdvisory?.enabled">
         <ws-widget-tips-for-learner-card [learnAdvisoryData]="learnAdvisoryData"></ws-widget-tips-for-learner-card>
     </div>
     

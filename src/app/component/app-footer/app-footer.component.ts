@@ -26,6 +26,9 @@ export class AppFooterComponent implements OnInit {
   logoSrc = '/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg'
   hubsList!: NsInstanceConfig.IHubs[]
   portalUrls!: NsInstanceConfig.IPortalUrls
+  showFooter = true
+  showLinks = true
+  showCopyright = true
   // copyrightYears = `${new Date().getFullYear()}-${new Date().getFullYear() + 1}`
   private baseUrl = this.configSvc.baseUrl
   constructor(
@@ -60,6 +63,9 @@ export class AppFooterComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.showFooter = this.domainConfSvc.isConfigEnabled('components.footer', 'enabled')
+    this.showLinks = this.domainConfSvc.isConfigEnabled('components.footer', 'showLinks')
+    this.showCopyright = this.domainConfSvc.isConfigEnabled('components.footer', 'showCopyright')
     const instanceConfig = this.configSvc.instanceConfig
     if (this.configSvc.portalUrls) {
       this.portalUrls = this.configSvc.portalUrls

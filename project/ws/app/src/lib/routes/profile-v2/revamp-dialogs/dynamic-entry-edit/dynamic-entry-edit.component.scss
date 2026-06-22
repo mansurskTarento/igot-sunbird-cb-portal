@@ -1,0 +1,329 @@
+/* dynamic-entry-edit.component.scss
+   Inherits the same visual language as profile-entry-edit.component.scss */
+
+.profile-editor-container {
+  padding: 24px;
+  max-width: 600px;
+  width: 600px;
+}
+
+.profile-editor-header {
+  .header-title {
+    color: #000000DE;
+    /* stylelint-disable */
+    font: 600 16px Montserrat;
+    /* stylelint-enable */
+  }
+
+  .close-button {
+    cursor: pointer;
+    pointer-events: all;
+
+    .close-icon {
+      width: 24px;
+      height: 24px;
+      font-size: 24px;
+      color: #666666;
+    }
+  }
+}
+
+.solid {
+  width: calc(100% + 46px);
+  margin-left: -24px;
+  border-top: 2px solid #00000014;
+}
+
+.editor-description {
+  color: rgba(0, 0, 0, 0.6);
+  margin-bottom: 16px;
+  /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
+}
+
+.profile-editor-form {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 245px);
+  overflow: auto;
+}
+
+/* ── Footer actions ───────────────────────────────────────────────────────── */
+
+.form-actions {
+
+  .cancel-btn {
+    border: 1px solid #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: #1B4CA1;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .save-btn {
+    background-color: #1B4CA1;
+    border-radius: 16px;
+    padding: 6px 16px;
+    color: white;
+    /* stylelint-disable */
+    font: 700 14px Lato;
+    /* stylelint-enable */
+  }
+
+  .disable-btn {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+}
+
+/* ── Common field styles ──────────────────────────────────────────────────── */
+
+.lable {
+  color: #212529;
+  /* stylelint-disable */
+  font: 700 14px Lato;
+  /* stylelint-enable */
+
+  &.required::after {
+    content: ' *';
+    color: #d32f2f;
+  }
+}
+
+.info-icon {
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+  margin-bottom: -2px;
+  color: #00000099;
+  margin-left: 4px;
+  cursor: pointer;
+}
+
+.field-error {
+  font-size: 12px;
+  color: #d32f2f;
+  margin-top: 4px;
+}
+
+/* ── Duration field ───────────────────────────────────────────────────────── */
+
+.duration-input {
+  .duration-field {
+    flex: 1;
+  }
+
+  .duration-separator {
+    font-size: 18px;
+    font-weight: bold;
+    color: #212529;
+    margin-bottom: 18px;
+  }
+}
+
+/* ── File upload ──────────────────────────────────────────────────────────── */
+
+.upload {
+  background: #1B4CA10A;
+  height: 40px;
+  overflow: hidden;
+  position: relative;
+  border-radius: 5px;
+  border: 1px dotted #1B4CA1;
+  cursor: pointer;
+
+  &:hover {
+    background: #1B4CA11A;
+  }
+}
+
+.dragFileText {
+  color: #1B4CA1;
+  /* stylelint-disable */
+  font: 700 12px Lato;
+  /* stylelint-enable */
+}
+
+.fileNameCard {
+  background-color: #1B4CA114;
+  height: 40px;
+  border-radius: 3px;
+
+  .iconName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .remove-file {
+    cursor: pointer;
+    color: #666666;
+    font-size: 18px;
+
+    &:hover {
+      color: #d32f2f;
+    }
+  }
+}
+
+/* ── Searchable-select panel ──────────────────────────────────────────────── */
+
+::ng-deep .profile-control {
+  .sticky-search-container {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: white;
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .search-input-wrapper {
+    width: 100%;
+  }
+
+  .search-input {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding-left: 10px;
+    width: 98%;
+    height: 30px;
+    border-radius: 17px;
+
+    &:focus {
+      outline: none;
+      border-color: #F3962F;
+      box-shadow: 0 0 0 1px rgba(243, 150, 47, 0.2);
+    }
+  }
+
+  .loading-indicator {
+    padding: 8px 16px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    font-style: italic;
+  }
+}
+
+/* ── Organisation search panel ────────────────────────────────────────────── */
+
+.search-org-input {
+  width: 100%;
+  height: 35px;
+  padding: 0 30px 0 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+
+  &:focus {
+    outline: none;
+    border-color: #F3962F;
+  }
+}
+
+::ng-deep .search-panel {
+  .sticky-search-container {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: white;
+    padding: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-org-input {
+    width: 100%;
+    height: 35px;
+    padding: 0 30px 0 12px;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    font-size: 14px;
+    box-sizing: border-box;
+
+    &:focus {
+      outline: none;
+      border-color: #F3962F;
+    }
+  }
+
+  .clear-button {
+    position: absolute;
+    right: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    padding: 0;
+    line-height: 1;
+
+    &:hover {
+      color: rgba(0, 0, 0, 0.87);
+    }
+  }
+
+  .loading-indicator {
+    padding: 8px 16px;
+    color: rgba(0, 0, 0, 0.54);
+    font-size: 14px;
+    font-style: italic;
+  }
+}
+
+::ng-deep .profile-control-date-field {
+  .mat-form-field-flex {
+    align-items: center !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-flex {
+    height: 35px;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-infix {
+    padding: 7px 0px 0px !important;
+  }
+
+  .mat-form-field-infix {
+    border-top: 0.7em !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-suffix {
+    top: 0px !important;
+  }
+
+  .mat-mdc-icon-button svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-end {
+    border-radius: 16px !important;
+    border-left-style: solid !important;
+  }
+
+  .mat-form-field-appearance-outline .mat-form-field-outline-start {
+    display: none !important;
+  }
+}
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+
+@media (max-width: 767px) {
+  .profile-editor-container {
+    width: 100%;
+    max-width: 100%;
+    padding: 16px;
+  }
+}

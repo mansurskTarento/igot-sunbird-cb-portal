@@ -15,6 +15,10 @@ export class FooterSectionComponent implements OnInit, OnChanges {
   @Input() hubsList: any
   @Input() headerFooterConfigData: any
   isKbPortal: boolean = true
+  showHostLogo = true
+  showSocialLinks = true
+  showDownloadApp = true
+  sectionLinksConfig: any = {}
   constructor(
     private configSvc: ConfigurationsService,
     private router: Router,
@@ -30,6 +34,7 @@ export class FooterSectionComponent implements OnInit, OnChanges {
       sectionHeading: 'Hubs',
       active: true,
       slug: 'hub',
+      configKey: 'hubs',
     },
     {
       id: 2,
@@ -37,6 +42,7 @@ export class FooterSectionComponent implements OnInit, OnChanges {
       sectionHeading: 'Related Links',
       active: true,
       slug: 'link',
+      configKey: 'relatedLinks',
     },
     {
       id: 3,
@@ -44,6 +50,7 @@ export class FooterSectionComponent implements OnInit, OnChanges {
       sectionHeading: 'Support',
       active: true,
       slug: 'support',
+      configKey: 'support',
     },
     {
       id: 4,
@@ -51,16 +58,22 @@ export class FooterSectionComponent implements OnInit, OnChanges {
       sectionHeading: 'About us',
       active: true,
       slug: 'about',
+      configKey: 'aboutUs',
     },
   ]
 
   ngOnInit() {
+    this.showHostLogo = this.domainConfSvc.isConfigEnabled('components.footer', 'showHostLogo')
+    this.showSocialLinks = this.domainConfSvc.isConfigEnabled('components.footer', 'socialLinks')
+    this.showDownloadApp = this.domainConfSvc.isConfigEnabled('components.footer', 'downloadApp')
     this.updateFooterConfig()
+    this.applyGlobalSectionsConfig()
   }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes['headerFooterConfigData'] && changes['headerFooterConfigData'].currentValue) {
       this.updateFooterConfig()
+      this.applyGlobalSectionsConfig()
     }
   }
 
@@ -84,6 +97,50 @@ export class FooterSectionComponent implements OnInit, OnChanges {
         }
       }
     }
+  }
+
+  private slugToConfigKeyMap: { [slug: string]: string } = {
+    hub: 'hubs',
+    link: 'relatedLinks',
+    support: 'support',
+    about: 'aboutUs',
+  }
+
+  private applyGlobalSectionsConfig() {
+    const globalConfig = this.domainConfSvc.getGlobalConfig()
+    const sectionsConfig = globalConfig?.components?.footer?.sections
+    if (!sectionsConfig) { return }
+
+    this.footerSectionConfig.forEach(section => {
+      const configKey = section.configKey || this.slugToConfigKeyMap[section.slug]
+      if (!configKey) { return }
+      const sectionVal = sectionsConfig[configKey]
+      if (sectionVal === false) {
+        section.active = false
+      } else if (typeof sectionVal === 'object' && sectionVal !== null) {
+        if (sectionVal.enabled === false) {
+          section.active = false
+        }
+      }
+    })
+
+    // Store links config for each section for use in template
+    this.sectionLinksConfig = sectionsConfig
+  }
+
+  isLinkEnabled(sectionKey: string, linkKey: string): boolean {
+    const sectionVal = this.sectionLinksConfig?.[sectionKey]
+    if (!sectionVal || typeof sectionVal !== 'object') { return true }
+    if (!sectionVal.links) { return true }
+    return sectionVal.links[linkKey] !== false
+  }
+
+  getHubConfigKey(hubname: string): string {
+    if (!hubname) { return '' }
+    return hubname
+      .split(' ')
+      .map((word, index) => index === 0 ? word.toLowerCase() : word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+      .join('')
   }
 
   navigate() {

@@ -15,6 +15,8 @@ export class EducationalQualificationsComponent implements OnInit {
   //#region (global variables)
   @Input() educationalQualificationsList: educationalQualifications[] = []
   @Input() isCurrentUser = false
+  @Input() editConfig: any = null
+  @Input() apiConfig: any
   @Output() openProfileEntryEditDialog = new EventEmitter()
 
   userId: string = ''
@@ -31,6 +33,7 @@ export class EducationalQualificationsComponent implements OnInit {
       this.userId = data.userId
       this.isPopup = true
       this.isCurrentUser = data.isCurrentUser || false
+      this.editConfig = data.editConfig || null
     }
   }
 
@@ -42,7 +45,12 @@ export class EducationalQualificationsComponent implements OnInit {
 
   getEducationalQualificationsList() {
     if (this.userId) {
-      this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'education').subscribe({
+      const configDetails = {
+        defaultUrl: '',
+        urlConfigPath: 'profileV1Extended',
+        apiConfig: this.apiConfig
+      }
+      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId).subscribe({
         next: (res: any) => {
           if (res) {
             this.educationalQualificationsList = _.get(res, 'result.response.educationalQualifications', [])

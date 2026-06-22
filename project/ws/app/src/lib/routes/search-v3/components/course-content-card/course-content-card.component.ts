@@ -11,6 +11,7 @@ import { NsContent } from '@sunbird-cb/collection'
 import { environment } from 'src/environments/environment'
 import {
   ConfigurationsService,
+  DomainConfService,
   EventService,
   WsEvents,
 } from '@sunbird-cb/utils-v2'
@@ -47,6 +48,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   CaCourseUnitIds = '[]'
   constructor(
     private configSvc: ConfigurationsService,
+    private domainConfSvc: DomainConfService,
     private dialog: MatDialog,
     private events: EventService,
     private certificateService: CertificateService,
@@ -54,6 +56,10 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private contSvc: WidgetContentLibService,
     private commonSvc: CommonMethodsService
   ) { }
+
+  isCardElementEnabled(key: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.cards', key)
+  }
 
   ngOnInit(): void {
     this.compentencyKey =

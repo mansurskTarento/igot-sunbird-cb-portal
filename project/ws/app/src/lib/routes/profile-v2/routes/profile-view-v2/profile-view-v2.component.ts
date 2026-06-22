@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
 import { PrfileEditV2Component } from '../../revamp-dialogs/prfile-edit-v2/prfile-edit-v2.component'
 import { ProfileEntryEditComponent } from '../../revamp-dialogs/profile-entry-edit/profile-entry-edit.component'
+import { DynamicEntryEditComponent } from '../../revamp-dialogs/dynamic-entry-edit/dynamic-entry-edit.component'
 import { ActivatedRoute, Router } from '@angular/router'
 import * as _ from 'lodash'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
@@ -13,7 +14,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import { ServiceHistoryComponent } from '../../components/profile-revamp/service-history/service-history.component'
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component'
-import { forkJoin, Subject } from 'rxjs'
+import { forkJoin, of, Subject } from 'rxjs'
 import { mergeMap, takeUntil } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2'
@@ -22,7 +23,7 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
-import { ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
+import { ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../routes/services/common-data.service'
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 //#endregion
@@ -89,16 +90,19 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       url: '',
       icon: 'person',
       id: 'about-me',
+      key: 'aboutMe',
     }, {
       name: 'NetworkV2Profile.basicDetails',
       url: './assets/icons/checklist.svg',
       icon: '',
       id: 'basic-details',
+      key: 'basicDetails'
     }, {
       name: 'NetworkV2Profile.serviceHistory',
       url: '',
       icon: 'history',
       id: 'service-history',
+      key: 'serviceHistory'
     }, {
       //   name: 'Competencies',
       //   url: '',
@@ -110,11 +114,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       url: '',
       icon: 'school',
       id: 'educational-qualifications',
+      key: 'educationalQualifications'
     }, {
       name: 'NetworkV2Profile.achievements',
       url: './assets/icons/trophy.svg',
       icon: '',
       id: 'achievements',
+      key: 'achievements'
     },
   ]
   activeRoutId: string = 'about-me'
@@ -212,6 +218,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   assessmentsData: any
   isNlw2026Certified = false
   nlwExperience: any = null
+  profileConfig: any = null
+  profileEditConfigs: any = null
+  apiConfig: any = null
   //#endregion
 
   connectionStatus = 'Connect'
@@ -220,6 +229,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   blockedMessage = ''
   private initCallCount = 0
   private readonly INIT_CALL_TOTAL = 4
+  defaultCoverPhotoUrl = './assets/icons/profile_cover_pic.svg'
 
   @ViewChild('progressCanvas') progressCanvas!: ElementRef<HTMLCanvasElement>
   designationApprovedTime: number = 0
@@ -312,7 +322,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       limit: 3,
     }
     this.communitySuggestionsLoading = true
-    this.profileV2RevampSvc.getCommunities(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('communityV1Popular')
+    this.profileV2RevampSvc.getCommunities(configDetails, formBody).subscribe({
       next: (response: any) => {
         this.communitySuggestionsLoading = false
         this.communitySuggestionsList = _.get(response, 'result.data', [])
@@ -325,7 +336,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getGroupData(): void {
-    this.profileV2RevampSvc.getGroups()
+    const configDetails: ConfigDetails = this.getConfigDetails('userV1Groups')
+    this.profileV2RevampSvc.getGroups(configDetails)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         this.groupsList = res.result && res.result.response.filter((ele: any) => ele !== 'Others')
@@ -351,7 +363,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getAchievements() {
-    this.profileV2RevampSvc.listAchievements(this.userId).subscribe((response: any) => {
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementList')
+    this.profileV2RevampSvc.listAchievements(configDetails, this.userId).subscribe((response: any) => {
       if (response) {
         const allAchievements = _.get(response, 'result.search_results.data', [])
         this.achievementsDetails.achievementsList = allAchievements.slice(0, 2)
@@ -364,12 +377,21 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getProfileDetailsFromRoutes() {
+    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
+    this.nlwExperience = this.pageData?.nlwExperience
+    this.profileConfig = this.pageData?.profileConfig
+    this.profileEditConfigs = this.pageData?.profileEditConfigs
+    this.apiConfig = this.pageData?.apiConfig
+    if (_.get(this.profileConfig, 'banner.defaultBannerUrl')) {
+      this.defaultCoverPhotoUrl = this.profileConfig.banner.defaultBannerUrl
+    }
+    this.profileRoutes = this.profileRoutes.filter((route: profileRoutes) => _.get(this.profileConfig, `${route.key}.enabled`, false))
     this.activatedRoute.data.subscribe(data => {
       this.userId = _.get(data, 'profile.userId', '')
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
-      if (!this.isNotMyUserAndIgotOrg) {
+      if (!this.isNotMyUserAndIgotOrg && _.get(this.profileConfig, 'rightSection.enabled') && _.get(this.profileConfig, 'rightSection.recommendedCommunities.enabled', false)) {
         // this.getRecommendedUsers()
         this.getRecommendedCommunitesList()
       }
@@ -391,8 +413,16 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.patchEntries(_.get(data, 'entries.data', {}))
       this.checkIsMentor()
     })
-    this.pageData = this.activatedRoute.parent && this.activatedRoute.parent.snapshot.data.pageData.data
-    this.nlwExperience = this.pageData?.nlwExperience
+    if (_.get(this.profileConfig, 'userStats.enabled', false)) {
+      const userStatsConfig: any = this.profileConfig.userStats
+      this.userStats = this.userStats.filter((userStat: UserStats) => {
+        if (userStat.identifier && userStatsConfig[userStat.identifier].enabled) {
+          userStat['viewAllEnabled'] = userStatsConfig[userStat.identifier].viewAllEnabled
+          return true
+        }
+        return false
+      })
+    }
     this.commonSvc.getNlw2026CertifiedStatus()
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((status: boolean) => {
@@ -401,7 +431,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getConnectionStatus() {
-    this.profileV2RevampSvc.getConnectionStatus(this.userId).subscribe((data: any) => {
+    const configDetails: ConfigDetails = this.getConfigDetails('connectionsV1ProfileRelationship')
+    this.profileV2RevampSvc.getConnectionStatus(this.userId, configDetails).subscribe((data: any) => {
       this.connectionStatus = _.get(data, 'result.response.status', 'Connect')
       this.setProfileVisibilityStatus()
     })
@@ -517,6 +548,43 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       return true
     }
     return false
+  }
+
+  get shouldShowBlockProfileButton(): boolean {
+    return this.connectionStatus !== 'Blocked Incoming' &&
+      this.connectionStatus !== 'Blocked Outgoing' &&
+      this.connectionStatus !== 'Pending'
+  }
+
+  get shouldShowUserStatsDesktop(): boolean {
+    return this.isCurrentUser && !this.isMobile && _.get(this.profileConfig, 'userStats.enabled', false)
+  }
+
+  get shouldShowUserStatsMobile(): boolean {
+    return this.isCurrentUser && this.isMobile && _.get(this.profileConfig, 'userStats.enabled', false)
+  }
+
+  get shouldShowAboutMeSection(): boolean {
+    return (this.isCurrentUser || (_.get(this.aboutme, 'length', 0) > 0)) &&
+      _.get(this.profileConfig, 'aboutMe.enabled', false)
+  }
+
+  get shouldShowServiceHistorySection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.serviceHistoryDetails, 'serviceHistoryList.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'serviceHistory.enabled', false)
+  }
+
+  get shouldShowEducationalQualificationsSection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.educationalQualificationDetails, 'educationalQualifications.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'educationalQualifications.enabled', false)
+  }
+
+  get shouldShowAchievementsSection(): boolean {
+    return (this.isCurrentUser ||
+      (_.get(this.achievementsDetails, 'achievementsList.length', 0) > 0)) &&
+      _.get(this.profileConfig, 'achievements.enabled', false)
   }
 
   getDateFromText(dateString: string): any {
@@ -667,8 +735,12 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       const fileName = file.name.replace(/[^A-Za-z0-9.]/g, '')
       const formdata = new FormData()
       formdata.append('data', file, fileName)
-      this.profileV2RevampSvc.updateBannerPic(formdata).pipe(
+      const configDetails: ConfigDetails = this.getConfigDetails('profilePhotoUploadProfileBanner')
+      this.profileV2RevampSvc.updateBannerPic(configDetails, formdata).pipe(
         mergeMap((res: any) => {
+          if (!res || !_.get(res, 'result.url')) {
+            return of({})
+          }
           const createdUrl = _.get(res, 'result.url', '')
           const folderNameToSplit = '/profileBanner/'
           const urlSplice = createdUrl.split(folderNameToSplit)[1]
@@ -681,7 +753,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
               },
             },
           }
-          return this.profileV2RevampSvc.updateProfileDetails(formBody)
+          const configDetails: ConfigDetails = this.getConfigDetails('userV1ExtPatch')
+          return this.profileV2RevampSvc.updateProfileDetails(configDetails, formBody)
 
         })
       ).subscribe({
@@ -710,7 +783,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateProfileDetails(formBody: any) {
-    this.profileV2RevampSvc.updateProfileDetailsV3(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('userV3ExtPatch')
+    this.profileV2RevampSvc.updateProfileDetailsV3(configDetails, formBody).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileDetails()
@@ -958,6 +1032,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     }
   }
 
+  getEditConfig(editObjectKey: string | undefined): any {
+    if (this.profileEditConfigs && editObjectKey) {
+      return this.profileEditConfigs[editObjectKey] || null
+    }
+    return null
+  }
+
   toTitleCase(str: string): string {
     return str
       .toLowerCase()
@@ -988,7 +1069,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   fetchProfileDetails() {
-    this.profileV2RevampSvc.fetchProfile(this.userId).subscribe({
+    const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Basic')
+    this.profileV2RevampSvc.fetchProfile(apiConfigDetails, this.userId).subscribe({
       next: (response: any) => {
         if (response) {
           this.profesionalDetails = _.get(response, 'result.response.profiledetails', _.get(response, 'result.response.profileDetails', _.get(response, 'result', {})))
@@ -1008,6 +1090,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     const dialogDetails: any = {
       header,
       profileDetails: this.primaryDetails,
+      primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
+      apiConfig: this.apiConfig
     }
     if (header === 'Profile') {
       dialogDetails.profileDetails = {
@@ -1020,6 +1104,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       dialogDetails['groupsList'] = this.groupsList
     } else if (header === 'mandatorySection') {
       dialogDetails['groupsList'] = this.groupsList
+    } else if (header === 'Other Details') {
+      dialogDetails['editConfig'] = this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey)
     }
 
     // For mandatorySection, wrap dialogDetails and include approval fields
@@ -1034,12 +1120,24 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         enableWR: this.enableWR,
         isCurrentUser: this.isCurrentUser,
         primaryDetails: this.primaryDetails,
+        primaryDetailsEditConfig: this.getEditConfig(this.profileConfig?.basicDetails?.primaryDetails?.editObjectKey),
+        editConfig: this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey),
       }
     } else {
       dialogData = dialogDetails
     }
 
-    const dialogRef = this.dialog.open(PrfileEditV2Component, {
+    let dialogComponent: any = PrfileEditV2Component
+
+    if (
+      dialogData.header.toLowerCase() === 'other details'
+      && dialogData.editConfig
+      && dialogData.editConfig.isDynamicDialog
+    ) {
+      dialogComponent = DynamicEntryEditComponent
+    }
+
+    const dialogRef = this.dialog.open(dialogComponent, {
       data: dialogData,
       disableClose: true,
       panelClass: 'dialog_sidenav',
@@ -1292,7 +1390,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     }
-    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampSvc.fetchApprovalDetails(configDetails, formBody)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((responce: any) => {
         this.unVerifiedObj.groupRequestTime = 0
@@ -1342,7 +1441,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       serviceName: 'profile',
       applicationStatus: 'REJECTED',
     }
-    this.profileV2RevampSvc.fetchApprovalDetails(formBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampSvc.fetchApprovalDetails(configDetails, formBody)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res.result && res.result.data && Array.isArray(res.result.data)) {
@@ -1377,6 +1477,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       data: {
         portalProfile,
         groupData: this.groupsList,
+        apiConfig: this.apiConfig,
       },
       disableClose: true,
       panelClass: 'common-modal',
@@ -1414,22 +1515,27 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     window.open(`${environment.contentHost}/mentorship`, '_blank')
   }
   openProfileEntryListDialog(header: string) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header,
       userId: this.userId,
       isCurrentUser: this.isCurrentUser || false,
+      editConfig: null,
+      apiConfig: this.apiConfig,
     }
     switch (header) {
       case 'Service History':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.serviceHistory?.editObjectKey)
         this.openServiceHistoryListDialog(dialogDetails)
         break
       // case 'Competencies':
       //   this.openCompetenciesListDialog(dialogDetails)
       //   break;
       case 'Educational qualifications':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.educationalQualifications?.editObjectKey)
         this.openEducationalQualificationsListDialog(dialogDetails)
         break
       case 'Achievements':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.achievements?.editObjectKey)
         this.openAchievementsListDialog(dialogDetails)
         break
     }
@@ -1489,12 +1595,27 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (profile entry edit)
   async openProfileEntryEditDialog(header: string, entryDetails?: any) {
-    const dialogDetails = {
+    const dialogDetails: any = {
       header,
       entryDetails,
+      editConfig: null,
+      apiConfig: this.apiConfig,
+    }
+    switch (header) {
+      case 'Service History':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.serviceHistory?.editObjectKey)
+        break
+      case 'Educational qualifications':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.educationalQualifications?.editObjectKey)
+        break
+      case 'Achievements':
+        dialogDetails.editConfig = this.getEditConfig(this.profileConfig?.achievements?.editObjectKey)
+        break
     }
     const isNew = entryDetails ? false : true
-    const dialogRef = this.dialog.open(ProfileEntryEditComponent, {
+    const isDynamic = _.get(dialogDetails, 'editConfig.isDynamicDialog', false)
+    const dialogComponent: any = isDynamic ? DynamicEntryEditComponent : ProfileEntryEditComponent
+    const dialogRef = this.dialog.open(dialogComponent, {
       data: dialogDetails,
       disableClose: true,
       panelClass: 'dialog_sidenav',
@@ -1569,13 +1690,15 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         const degreeBody = {
           degreeName: _.get(educationalQualifications, 'otherDegree', ''),
         }
-        addApiCalls.push(this.profileV2RevampSvc.updateDegree(degreeBody))
+        const configDetails: ConfigDetails = this.getConfigDetails('updateDegree')
+        addApiCalls.push(this.profileV2RevampSvc.updateDegree(degreeBody, configDetails))
       }
       if (isOtherInstitute) {
         const instituteBody = {
           institutionName: _.get(educationalQualifications, 'otherInstituteName', ''),
         }
-        addApiCalls.push(this.profileV2RevampSvc.updateInstitution(instituteBody))
+        const configDetails: ConfigDetails = this.getConfigDetails('updateInstitution')
+        addApiCalls.push(this.profileV2RevampSvc.updateInstitution(instituteBody, configDetails))
       }
       if (addApiCalls.length > 0) {
         await forkJoin(addApiCalls).toPromise()
@@ -1604,7 +1727,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (service history, achievements, educational qualifications will edit based on the request)
   addProfileEntry(formBody: any) {
-    this.profileV2RevampSvc.addEntriesToProfile(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
+    this.profileV2RevampSvc.addEntriesToProfile(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileEntries()
@@ -1620,7 +1744,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   addAchievementEntry(formBody: any) {
-    this.profileV2RevampSvc.createAchievementEntry(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementCreate')
+    this.profileV2RevampSvc.createAchievementEntry(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           setTimeout(() => {
@@ -1639,7 +1764,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateAchievementEntry(formBody: any) {
-    this.profileV2RevampSvc.updateAchievementEntry(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementUpdate')
+    this.profileV2RevampSvc.updateAchievementEntry(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           setTimeout(() => {
@@ -1657,7 +1783,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   updateProfileEntry(formBody: any) {
-    this.profileV2RevampSvc.updateEntriesOfProfile(formBody).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('profileV1ExtendedUpdate')
+    this.profileV2RevampSvc.updateEntriesOfProfile(configDetails, formBody).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileEntries()
@@ -1674,7 +1801,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   //#endregion (service history, achievements, educational qualifications will edit based on the request)
 
   fetchProfileEntries() {
-    this.profileV2RevampSvc.fetchProfileEntries(this.userId).subscribe({
+    const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
+    this.profileV2RevampSvc.fetchProfileEntries(apiConfigDetails, this.userId).subscribe({
       next: (response: any) => {
         if (response) {
           this.patchEntries(_.get(response, 'result.response', {}))
@@ -1877,7 +2005,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         },
       },
     }
-    this.profileV2RevampSvc.getInsightsData(request)
+    const configDetails: ConfigDetails = this.getConfigDetails('userInsights')
+    this.profileV2RevampSvc.getInsightsData(configDetails, request)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((res: any) => {
         if (res.result.response) {
@@ -1983,6 +2112,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+
         header === 'Achievements' ? this.deleteAchievement(requestData) : this.deleteProfileEntryCall(requestData)
       }
     })
@@ -2007,7 +2137,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteAchievement(request: any): void {
-    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementDelete')
+    this.profileV2RevampSvc.deleteAchievementEntry(request, configDetails).subscribe({
       next: (res: any) => {
         if (res && res.result && res.responseCode === 'OK') {
           this.openSnackbar('Achievement deleted successfully', 2000)
@@ -2025,7 +2156,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   deleteProfileEntryCall(request: any): void {
-    this.profileV2RevampSvc.deleteAchievementEntry(request).subscribe({
+    const configDetails: ConfigDetails = this.getConfigDetails('achievementDelete')
+    this.profileV2RevampSvc.deleteAchievementEntry(request, configDetails).subscribe({
       next: (res: any) => {
         if (res && res.result && res.result.response) {
           this.openSnackbar('Achievement deleted successfully', 2000)
@@ -2056,6 +2188,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         enableWTR: this.enableWTR,
         isCurrentUser: this.isCurrentUser,
         primaryDetails: this.primaryDetails,
+        apiConfig: this.apiConfig,
       },
       disableClose: true,
       panelClass: 'dialog_sidenav',
@@ -2129,6 +2262,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       width: dialogWidth,
       autoFocus: false,
     })
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 
 }

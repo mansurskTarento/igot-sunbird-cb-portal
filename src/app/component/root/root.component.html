@@ -10,8 +10,7 @@
 <!-- <ws-app-public-nav-bar *ngIf=""></ws-app-public-nav-bar> -->
 <!-- <ws-widget-sticky-header> -->
 <!-- <ws-app-nav-bar class="top-nav-bar" *ngIf="navBarRequired && (isXSmall$ | async) === false" [hidden]="!isShowNavbar" [mode]="'top'"></ws-app-nav-bar> -->
-<ws-header *ngIf="navBarRequired && !hideHeaderAndFooter" [hidden]="!isShowNavbar" [mode]="'top'"
-  [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
+<ws-header *ngIf="navBarRequired && !hideHeaderAndFooter && domainConfSvc.isConfigEnabled('components.header', 'enabled')" [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
 </ws-header>
 <!-- </ws-widget-sticky-header> -->
 <div class="height-adjust" [ngClass]="{
@@ -22,7 +21,14 @@
     (isXSmall$ | async) === false &&
     isShowNavbar &&
     navBarRequired &&
-    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop,
+    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
+    domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
+  'height-on-top-no-marquee':
+    (isXSmall$ | async) === false &&
+    isShowNavbar &&
+    navBarRequired &&
+    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
+    !domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
   'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
 }">
 
@@ -33,10 +39,8 @@
 </div>
 
 <!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
-<ws-app-chatbot *ngIf="!hideHeaderAndFooter" [iGOTAIConfigLoaded]="iGOTAIConfigLoaded"
-  [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
-<ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter"
-  [headerFooterConfigData]="headerFooterConfigData">
+<ws-app-chatbot *ngIf="!hideHeaderAndFooter && domainConfSvc.isConfigEnabled('featureFlags', 'chatbot')"  [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
+<ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [headerFooterConfigData]="headerFooterConfigData">
 </ws-app-footer>
 
 <ws-app-nav-bar class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"

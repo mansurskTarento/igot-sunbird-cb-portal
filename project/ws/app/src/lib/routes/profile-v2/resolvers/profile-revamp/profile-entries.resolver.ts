@@ -8,8 +8,7 @@ import { catchError, map } from 'rxjs/operators'
 import * as _ from 'lodash'
 
 @Injectable()
-export class profileEntriesResolver
-   {
+export class profileEntriesResolver {
   constructor(private profileSvc: ProfileV2RevampService, private configSvc: ConfigurationsService) { }
 
   resolve(
@@ -17,6 +16,7 @@ export class profileEntriesResolver
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<NSProfileDataV2.IProfile>> {
     const path = _route.routeConfig && _route.routeConfig.path
+    const apiConfig = _.get(_route, 'parent.data.pageData.data.apiConfig')
     let userId = ''
     if (path !== 'me') {
       userId = _route.params.userId
@@ -29,8 +29,13 @@ export class profileEntriesResolver
     } else {
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
-    return this.profileSvc.fetchProfileEntries(userId).pipe(
-      map(data =>  ({ data: _.get(data, 'result.response'), error: null })),
+    const configDetails = {
+      defaultUrl: '',
+      urlConfigPath: 'profileV1Extended',
+      apiConfig: apiConfig
+    }
+    return this.profileSvc.fetchProfileEntries(configDetails, userId).pipe(
+      map(data => ({ data: _.get(data, 'result.response'), error: null })),
       catchError(error => of({ error, data: null })),
     )
   }

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
 const API_ENDPOINTS = {
     sendOtp: '/apis/proxies/v8/otp/v1/generate',
     ReSendOtp: '/apis/proxies/v8/otp/v1/generate',
@@ -14,27 +15,44 @@ const API_ENDPOINTS = {
 export class OtpService {
     constructor(
         private http: HttpClient,
+        private commonMethodsService: CommonMethodsService
     ) {
     }
 
-    sendOtp(mob: number): Observable<any> {
+    sendOtp(mob: number, configDetails?: ConfigDetails): Observable<any> {
+        let url = API_ENDPOINTS.sendOtp
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.sendOtp
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 type: 'phone',
                 key: `${mob}`,
             },
         }
-        return this.http.post(API_ENDPOINTS.sendOtp, reqObj)
+        return this.http.post(url, reqObj)
     }
 
-    resendOtp(mob: number) {
+    resendOtp(mob: number, configDetails?: ConfigDetails) {
+        let url = API_ENDPOINTS.ReSendOtp
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.ReSendOtp
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 type: 'phone',
                 key: `${mob}`,
             },
         }
-        return this.http.post(API_ENDPOINTS.ReSendOtp, reqObj)
+        return this.http.post(url, reqObj)
 
     }
 
@@ -50,7 +68,15 @@ export class OtpService {
 
     }
 
-    sendEmailOtp(email: string): Observable<any> {
+    sendEmailOtp(email: string, configDetails?: ConfigDetails): Observable<any> {
+        let url = API_ENDPOINTS.sendEmailOtp
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.sendEmailOtp
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 type: 'email',
@@ -59,10 +85,18 @@ export class OtpService {
                 context: ['profileDetails.personalDetails.primaryEmail'],
             },
         }
-        return this.http.post(API_ENDPOINTS.sendEmailOtp, reqObj)
+        return this.http.post(url, reqObj)
     }
 
-    reSendEmailOtp(email: string): Observable<any> {
+    reSendEmailOtp(email: string, configDetails?: ConfigDetails): Observable<any> {
+        let url = API_ENDPOINTS.sendEmailOtp
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.sendEmailOtp
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 type: 'email',
@@ -71,7 +105,7 @@ export class OtpService {
                 context: ['profileDetails.personalDetails.primaryEmail'],
             },
         }
-        return this.http.post(API_ENDPOINTS.sendEmailOtp, reqObj)
+        return this.http.post(url, reqObj)
     }
 
     verifyEmailOTP(otp: any, email: number) {
@@ -85,7 +119,15 @@ export class OtpService {
         return this.http.post(API_ENDPOINTS.VerifyEmailOtp, reqObj)
     }
 
-    verifyEmailOTPV4(otp: any, email: number) {
+    verifyEmailOTPV4(otp: any, email: number, configDetails?: ConfigDetails) {
+        let url = API_ENDPOINTS.verifyOTPV4
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.verifyOTPV4
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 otp: otp.toString(),
@@ -93,10 +135,18 @@ export class OtpService {
                 key: `${email}`,
             },
         }
-        return this.http.post(API_ENDPOINTS.verifyOTPV4, reqObj)
+        return this.http.post(url, reqObj)
     }
 
-    verifyOTPV4(otp: any, mob: number) {
+    verifyOTPV4(otp: any, mob: number, configDetails?: ConfigDetails) {
+        let url = API_ENDPOINTS.verifyOTPV4
+        if (configDetails) {
+            configDetails['defaultUrl'] = API_ENDPOINTS.verifyOTPV4
+            url = this.commonMethodsService.getEnabledUrl(configDetails)
+        }
+        if (!url) {
+            return of('')
+        }
         const reqObj = {
             request: {
                 otp,
@@ -104,6 +154,6 @@ export class OtpService {
                 key: `${mob}`,
             },
         }
-        return this.http.post(API_ENDPOINTS.verifyOTPV4, reqObj)
+        return this.http.post(url, reqObj)
     }
 }

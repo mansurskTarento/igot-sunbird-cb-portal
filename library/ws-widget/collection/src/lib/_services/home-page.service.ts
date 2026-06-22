@@ -1,21 +1,8 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, Subject } from 'rxjs'
+import { EMPTY, Observable, Subject } from 'rxjs'
 import { shareReplay } from 'rxjs/operators'
-
-const API_END_POINTS = {
-  INSIGHTS: `apis/proxies/v8/read/user/insights`,
-  DISCUSSIONS: `apis/proxies/v8/discussion/user/`,
-  // NETWORK: `apis/protected/v8/connections/v2/connections/recommended`,
-  GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
-  ADD_CONNECTION: `apis/protected/v8/connections/v2/add/connection`,
-  UPDATE_CONNECTION: `apis/protected/v8/connections/v2/update/connection`,
-  CONN_REQUESTED: `apis/protected/v8/connections/v2/connections/requests/received`,
-  TRENDING_DISCUSSION: `apis/proxies/v8/discussion/popular`,
-  ASSESSMENT_DATA: `apis/proxies/v8/wheebox/read`,
-  LEADER_BOARD: `apis/proxies/v8/halloffame/learnerleaderboard`,
-  EVENT_ENROLL: `apis/proxies/v8/user/events/enroll/summary`
-}
+import { DomainConfService } from '@sunbird-cb/utils-v2'
 
 @Injectable({
   providedIn: 'root',
@@ -23,54 +10,110 @@ const API_END_POINTS = {
 
 export class HomePageService {
   closeDialogPop = new Subject()
-  constructor(private http: HttpClient) { }
   private leaderboardData$: Observable<any> | null = null
+
+  constructor(
+    private http: HttpClient,
+    private domainConfSvc: DomainConfService
+  ) { }
+
   getInsightsData(payload: any) {
-    const result = this.http.post(API_END_POINTS.INSIGHTS, payload)
-    return result
+    const url = this.domainConfSvc.getApiUrl('user', 'insights', '/apis/proxies/v8/read/user/insights')
+    if (!url) {
+      console.warn('Insights API is disabled')
+      return EMPTY
+    }
+    return this.http.post(url, payload)
   }
+
   geteventsHoursData(): Observable<any> {
-    return this.http.get(API_END_POINTS.EVENT_ENROLL)
+    const url = this.domainConfSvc.getApiUrl('user', 'eventEnroll', '/apis/proxies/v8/user/events/enroll/summary')
+    if (!url) {
+      console.warn('Event enroll API is disabled')
+      return EMPTY
+    }
+    return this.http.get(url)
   }
 
   getDiscussionsData(username: string): Observable<any> {
-    return this.http.get(API_END_POINTS.DISCUSSIONS + username)
+    const baseUrl = this.domainConfSvc.getApiUrl('discussion', 'userDiscussions', '/apis/proxies/v8/discussion/user')
+    if (!baseUrl) {
+      console.warn('User discussions API is disabled')
+      return EMPTY
+    }
+    return this.http.get(`${baseUrl}/${username}`)
   }
 
   getNetworkRecommendations(payload: any): Observable<any> {
-    // return this.http.post(API_END_POINTS.NETWORK, payload)
-    return this.http.post(API_END_POINTS.GET_RECOMMENDED_USERS, payload)
+    const url = this.domainConfSvc.getApiUrl('connections', 'recommendedUsers', '/apis/proxies/v8/connections/v3/connections/recommended')
+    if (!url) {
+      console.warn('Network recommendations API is disabled')
+      return EMPTY
+    }
+    return this.http.post(url, payload)
   }
 
   connectToNetwork(payload: any): Observable<any> {
-    return this.http.post(API_END_POINTS.ADD_CONNECTION, payload)
+    const url = this.domainConfSvc.getApiUrl('connections', 'addConnection', '/apis/protected/v8/connections/v2/add/connection')
+    if (!url) {
+      console.warn('Add connection API is disabled')
+      return EMPTY
+    }
+    return this.http.post(url, payload)
   }
 
   updateConnection(payload: any): Observable<any> {
-    return this.http.post(API_END_POINTS.UPDATE_CONNECTION, payload)
+    const url = this.domainConfSvc.getApiUrl('connections', 'updateConnection', '/apis/protected/v8/connections/v2/update/connection')
+    if (!url) {
+      console.warn('Update connection API is disabled')
+      return EMPTY
+    }
+    return this.http.post(url, payload)
   }
 
   getRecentRequests(): Observable<any> {
-    return this.http.get(API_END_POINTS.CONN_REQUESTED)
+    const url = this.domainConfSvc.getApiUrl('connections', 'requestsReceived', '/apis/protected/v8/connections/v2/connections/requests/received')
+    if (!url) {
+      console.warn('Connection requests API is disabled')
+      return EMPTY
+    }
+    return this.http.get(url)
   }
 
   getTrendingDiscussions(): Observable<any> {
-    return this.http.get(API_END_POINTS.TRENDING_DISCUSSION)
+    const url = this.domainConfSvc.getApiUrl('discussion', 'trending', '/apis/proxies/v8/discussion/popular')
+    if (!url) {
+      console.warn('Trending discussions API is disabled')
+      return EMPTY
+    }
+    return this.http.get(url)
   }
 
   getAssessmentinfo(): Observable<any> {
-    return this.http.get(API_END_POINTS.ASSESSMENT_DATA)
+    const url = this.domainConfSvc.getApiUrl('assessment', 'wheebox', '/apis/proxies/v8/wheebox/read')
+    if (!url) {
+      console.warn('Assessment API is disabled')
+      return EMPTY
+    }
+    return this.http.get(url)
   }
 
   getLearnerLeaderboard(): Observable<any> {
-    return this.http.get(API_END_POINTS.LEADER_BOARD)
+    const url = this.domainConfSvc.getApiUrl('leaderboard', 'learnerLeaderboard', '/apis/proxies/v8/halloffame/learnerleaderboard')
+    if (!url) {
+      console.warn('Learner leaderboard API is disabled')
+      return EMPTY
+    }
+    return this.http.get(url)
   }
+
   getLearnerLeaderboardCached(): Observable<any> {
     if (!this.leaderboardData$) {
       this.leaderboardData$ = this.getLearnerLeaderboard().pipe(shareReplay(1))
     }
     return this.leaderboardData$
   }
+
   getNwlConfigiration(url: any): Observable<any> {
     return this.http.get(`${url}/nlw.json`)
   }

@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
-import { ConfigurationsService, EventService, UtilityService, NsInstanceConfig, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, UtilityService, NsInstanceConfig, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { NsGoal } from '../btn-goals/btn-goals.model'
 import { NsPlaylist } from '../btn-playlist/btn-playlist.model'
@@ -52,6 +52,7 @@ export class CardContentV2Component extends WidgetBaseComponent
     private dialog: MatDialog,
     private events: EventService,
     private configSvc: ConfigurationsService,
+    private domainConfSvc: DomainConfService,
     private utilitySvc: UtilityService,
     private snackBar: MatSnackBar,
     private langtranslations: MultilingualTranslationsService,
@@ -71,6 +72,10 @@ export class CardContentV2Component extends WidgetBaseComponent
         this.translate.use(lang)
       }
     })
+  }
+
+  isCardElementEnabled(key: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.cards', key)
   }
 
   ngOnInit() {

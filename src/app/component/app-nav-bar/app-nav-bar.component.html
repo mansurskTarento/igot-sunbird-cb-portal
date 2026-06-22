@@ -70,7 +70,7 @@
 
   </mat-toolbar>
 
-  <mat-toolbar *ngIf="sShowAppNavBar && !needToHide && mode === 'bottom'" [color]="primaryNavbarBackground?.color"
+  <mat-toolbar *ngIf="sShowAppNavBar && !needToHide && mode === 'bottom' && showBottomNav" [color]="primaryNavbarBackground?.color"
     [ngStyle]="primaryNavbarBackground?.styles" class="mat-elevation-z3 custom mobile-footer-fixed-nav">
 
 

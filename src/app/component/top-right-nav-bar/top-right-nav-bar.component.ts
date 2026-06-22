@@ -4,7 +4,7 @@ import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { DomSanitizer } from '@angular/platform-browser'
 import { HttpClient } from '@angular/common/http'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
@@ -60,13 +60,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   roles: string[] = []
   enableSupportAI = false
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
-    private configSvc: ConfigurationsService,
-    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-    private http: HttpClient, private sanitizer: DomSanitizer,
-    private events: EventService, private snackBar: MatSnackBar,
-    private router: Router, private notificationsService: NotificationsService,
-    private rootService: RootService,
-    private matDialog: MatDialogNew) {
+              private configSvc: ConfigurationsService,
+              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+              private http: HttpClient, private sanitizer: DomSanitizer,
+              private events: EventService, private snackBar: MatSnackBar,
+              private router: Router, private notificationsService: NotificationsService,
+              private rootService: RootService,
+              private matDialog: MatDialogNew,
+              public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))

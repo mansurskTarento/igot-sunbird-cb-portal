@@ -416,7 +416,7 @@ const routes: Routes = [
     path: 'app/setup',
     loadChildren: () =>
       import('./routes/route-profile-v3.module').then(u => u.RouteProfileV3Module),
-    // canActivate: [GeneralGuard],
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'profile-v3',
@@ -612,6 +612,7 @@ const routes: Routes = [
     loadChildren: () =>
       // import('./routes/route-searchv2-app.module').then(u => u.RouteSearchV2AppModule),
       import('./routes/route-searchv3-app.module').then(u => u.RouteSearchV3AppModule),
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'globalsearch',
@@ -623,6 +624,7 @@ const routes: Routes = [
     path: 'app/seeAll',
     loadChildren: () =>
       import('./routes/route-see-all-app.module').then(u => u.RouteSeeAllAppModule),
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'seeAll',
