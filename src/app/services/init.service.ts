@@ -1,23 +1,17 @@
 import { APP_BASE_HREF } from '@angular/common'
-// import { retry } from 'rxjs/operators'
 import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Inject, Injectable } from '@angular/core'
 import { MatIconRegistry } from '@angular/material/icon'
 import { DomSanitizer } from '@angular/platform-browser'
 import {
-  // hasPermissions,
   hasUnitPermission,
-  // NsWidgetResolver,
   WidgetResolverService,
 } from '@sunbird-cb/resolver'
 import {
-  // AuthKeycloakService,
-  // AuthKeycloakService,
   ConfigurationsService,
   LoggerService,
   NsAppsConfig,
   NsInstanceConfig,
-  // NsUser,
   UserPreferenceService,
   WidgetEnrollService,
   DomainConfService,
@@ -27,23 +21,16 @@ import { environment } from '../../environments/environment'
 import _ from 'lodash'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
-// import { Subscription } from 'rxjs'
-// import { NSProfileDataV3 } from '@ws/app'
 import { NPSGridService } from '@sunbird-cb/collection'
+import { ContentDictionaryService } from '@sunbird-cb/consumption'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
-// import { GlobalService } from './global.service'
 import { CommonDataService } from './common-data.service'
 declare const smartech: any
-// import { of } from 'rxjs'
 /* tslint:enable */
-
-// interface IFeaturePermissionConfigs {
-//   [id: string]: Omit<NsWidgetResolver.IPermissions, 'feature'>
-// }
 
 @Injectable({
   providedIn: 'root',
@@ -65,7 +52,6 @@ export class InitService {
     private logger: LoggerService,
     private configSvc: ConfigurationsService,
     private domainConfSvc: DomainConfService,
-    // private authSvc: AuthKeycloakService,
     private widgetResolverService: WidgetResolverService,
     private sbUiResolverService: SbUiResolverService,
     private settingsSvc: BtnSettingsService,
@@ -75,12 +61,10 @@ export class InitService {
     private translate: TranslateService,
     private enrollSvc: WidgetEnrollService,
     private netCoreService: NetCoreService,
-    // private widgetContentSvc: WidgetContentService,
-    // private globalService: GlobalService,
     private commonDataSvc: CommonDataService,
+    private contentDictionarySvc: ContentDictionaryService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
-    // private router: Router,
     domSanitizer: DomSanitizer,
     iconRegistry: MatIconRegistry,
   ) {
@@ -176,23 +160,6 @@ export class InitService {
       'approved-icon',
       domSanitizer.bypassSecurityTrustResourceUrl('assets/icons/approved.svg'),
     )
-    ///
-    // iconRegistry.addSvgIcon(
-    //   'mdo',
-    //   domSanitizer.bypassSecurityTrustResourceUrl('fusion-assets/icons/hubs.svg'),
-    // )
-    // iconRegistry.addSvgIcon(
-    //   'spv',
-    //   domSanitizer.bypassSecurityTrustResourceUrl('fusion-assets/icons/hubs.svg'),
-    // )
-    // iconRegistry.addSvgIcon(
-    //   'cbc',
-    //   domSanitizer.bypassSecurityTrustResourceUrl('fusion-assets/icons/hubs.svg'),
-    // )
-    // iconRegistry.addSvgIcon(
-    //   'cbp',
-    //   domSanitizer.bypassSecurityTrustResourceUrl('fusion-assets/icons/hubs.svg'),
-    // )
   }
 
   get isAnonymousTelemetryRequired(): boolean {
@@ -211,20 +178,9 @@ export class InitService {
         await this.fetchUserDetails()
       }
     })
-    // this.logger.removeConsoleAccess()
     await this.fetchDefaultConfig()
-    // await this.profileNudgeConfig()
-    // await this.themeOverrideConfig()
-    // await this.netCoreConfig()
     await this.globalConfigData()
 
-    // const authenticated = await this.authSvc.initAuth()
-    // if (!authenticated) {
-    //   this.settingsSvc.initializePrefChanges(environment.production)
-    //   this.updateNavConfig()
-    //   this.logger.info('Not Authenticated')
-    //   return false
-    // }
     // Invalid User
     try {
       const path = window.location.pathname
@@ -234,6 +190,9 @@ export class InitService {
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
         await this.fetchUserEnrollDetails()
+        this.contentDictionarySvc.getDictionary().subscribe({
+          error: (err: any) => this.logger.warn('InitService: Failed to pre-load content dictionary', err),
+        })
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
@@ -248,24 +207,10 @@ export class InitService {
       this.updateTelemetryConfig()
       this.logger.info('Not Authenticated')
       await this.initFeatured()
-      // window.location.reload() // can do this
       return false
 
     }
     try {
-      // this.logger.info('User Authenticated', authenticated)
-      // const userPrefPromise = await this.userPreference.fetchUserPreference() // pref: depends on rootOrg
-      // this.configSvc.userPreference = userPrefPromise
-      // this.reloadAccordingToLocale()
-      // if (this.configSvc.userPreference.pinnedApps) {
-      //   const pinnedApps = this.configSvc.userPreference.pinnedApps.split(',')
-      //   this.configSvc.pinnedApps.next(new Set(pinnedApps))
-      // }
-      // if (this.configSvc.userPreference.profileSettings) {
-      //   this.configSvc.profileSettings = this.configSvc.userPreference.profileSettings
-      // }
-      // await this.fetchUserProfileV2()
-      // await this.createUserInNodebb()
       await this.initFeatured()
     } catch (e) {
       this.logger.warn(
@@ -275,12 +220,6 @@ export class InitService {
       this.settingsSvc.initializePrefChanges(environment.production)
     }
     this.updateNavConfig()
-    // await this.widgetContentSvc
-    //   .setS3ImageCookie()
-    //   .toPromise()
-    //   .catch(() => {
-    //     // throw new DataResponseError('COOKIE_SET_FAILURE')
-    //   })
     if (
       !(
         window.location.href.includes('/public/') ||
@@ -295,9 +234,6 @@ export class InitService {
     return true
   }
   async initFeatured() {
-    // const appsConfigPromise = this.fetchAppsConfig()
-    // const instanceConfigPromise = this.fetchInstanceConfig() // config: already loaded in fetchDefaultConfig
-    //await this.fetchFeaturesStatus() // feature: depends only on details
     /**
      * Wait for the widgets and get the list of restricted widgets
      */
@@ -316,18 +252,7 @@ export class InitService {
     /**
      * Wait for the instance config and after that
      */
-    // await instanceConfigPromise
     this.updateTelemetryConfig()
-    /*
-     * Wait for the apps config and after that
-     */
-    // const appsConfig = await appsConfigPromise
-    // this.configSvc.appsConfig = this.processAppsConfig(appsConfig)
-    // if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.featuredApps) {
-    //   this.configSvc.instanceConfig.featuredApps = this.configSvc.instanceConfig.featuredApps.filter(
-    //     id => appsConfig.features[id],
-    //   )
-    // }
 
     // Apply the settings using settingsService
     this.settingsSvc.initializePrefChanges(environment.production)
@@ -365,36 +290,6 @@ export class InitService {
       localStorage.setItem('websiteLanguage', 'en')
     }
   }
-  // private reloadAccordingToLocale() {
-  //   if (window.location.origin.indexOf('http://localhost:') > -1) {
-  //     return
-  //   }
-  //   let pathName = window.location.href.replace(window.location.origin, '')
-  //   const runningAppLang = this.locale
-  //   if (pathName.startsWith(`//${runningAppLang}//`)) {
-  //     pathName = pathName.replace(`//${runningAppLang}//`, '/')
-  //   }
-  //   const instanceLocales = this.configSvc.instanceConfig && this.configSvc.instanceConfig.locals
-  //   if (Array.isArray(instanceLocales) && instanceLocales.length) {
-  //     const foundInLocales = instanceLocales.some(locale => {
-  //       return locale.path !== runningAppLang
-  //     })
-  //     if (foundInLocales) {
-  //       if (
-  //         this.configSvc.userPreference &&
-  //         this.configSvc.userPreference.selectedLocale &&
-  //         runningAppLang !== this.configSvc.userPreference.selectedLocale
-  //       ) {
-  //         let languageToLoad = this.configSvc.userPreference.selectedLocale
-  //         languageToLoad = `\\${languageToLoad}`
-  //         if (this.configSvc.userPreference.selectedLocale === 'en') {
-  //           languageToLoad = ''
-  //         }
-  //         location.assign(`${location.origin}${languageToLoad}${pathName}`)
-  //       }
-  //     }
-  //   }
-  // }
 
   private async fetchDefaultConfig(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig | any = await this.http
@@ -422,18 +317,9 @@ export class InitService {
     this.configSvc.netcoreConfig = publicConfig.netcoreConfig
     if (publicConfig && publicConfig?.iGOTAI && publicConfig?.iGOTAI?.web) {
       this.configSvc.iGOTAIConfig = publicConfig.iGOTAI.web
-      //  console.log('this.configSvc', this.configSvc)
     }
     return publicConfig
   }
-
-  // private async profileNudgeConfig(): Promise<NsInstanceConfig.IConfig> {
-  //   const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-  //     .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/profile-nudge.json`)
-  //     .toPromise()
-  //   this.configSvc.profileTimelyNudges = publicConfig.profileTimelyNudges
-  //   return publicConfig
-  // }
 
   private async globalConfigData(): Promise<any> {
     try {
@@ -447,23 +333,6 @@ export class InitService {
     }
     return this.configSvc.globalConfig
   }
-
-  // private async netCoreConfig(): Promise<NsInstanceConfig.IConfig> {
-  //   // const publicConfig: any = await this.http
-  //   //   .get<any>(`${this.baseUrl}/netcore.json`)
-  //   //   .toPromise()
-  //   const payload = {
-  //     'request': {
-  //       'type': 'page',
-  //       'subType': 'netcore',
-  //       'action': 'page-configuration',
-  //       'component': 'portal', 'rootOrgId': '*',
-  //     },
-  //   }
-  //   const publicConfig: any = await this.netCoreService.netCoreConfigReadData(payload).toPromise()
-  //   this.configSvc.netcoreConfig = publicConfig.netcoreConfig
-  //   return publicConfig
-  // }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
     const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => {
@@ -484,7 +353,6 @@ export class InitService {
             && Object.keys(userExternalCourseEnrolmentInfo.addinfo).length > 0) {
             const addInfo = userExternalCourseEnrolmentInfo.addinfo
             userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] = userCourseEnrolmentInfo['addinfo']['claimedNonACBPCourseKarmaQuota'] + (addInfo['claimedNonACBPCourseKarmaQuota'] || 0)
-            // userCourseEnrolmentInfo['addinfo']['formattedMonth'] = userExternalCourseEnrolmentInfo['externalCourses']
           }
         }
         const enrolledCourseCount = userCourseEnrolmentInfo['coursesInProgress'] + userCourseEnrolmentInfo['certificatesIssued']
@@ -502,7 +370,6 @@ export class InitService {
         const userProfile = this.configSvc && this.configSvc.userProfile
         if (userProfile.rootOrgId) {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe(orgData => {
-            // console.log('orgData--', orgData)
             this.configSvc.orgReadData = orgData
             if (orgData && orgData['netcoreDisabled']) {
 
@@ -541,32 +408,11 @@ export class InitService {
     return publicConfig
   }
 
-  // private async themeOverrideConfig(): Promise<NsInstanceConfig.IConfig> {
-  //   const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-  //     .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/theme-override-config.json`)
-  //     .toPromise()
-  //   this.configSvc.overrideThemeChanges = publicConfig.overrideThemeChanges
-  //   return publicConfig
-  // }
-
   get locale(): string {
     return this.baseHref && this.baseHref.replace(/\//g, '')
       ? this.baseHref.replace(/\//g, '')
       : 'en'
   }
-
-  // private async fetchAppsConfig(): Promise<NsAppsConfig.IAppsConfig | any> {
-  //   const appsConfig = await this.http
-  //     .get<NsAppsConfig.IAppsConfig>(`${this.baseUrl}/feature/apps.json`)
-  //     .toPromise()
-  //   return appsConfig
-  // }
-  // private async fetchWelcomeConfig(): Promise<NSProfileDataV3.IProfileTab | any> {
-  //   const welcomeConfig = await this.http
-  //     .get<NSProfileDataV3.IProfileTab>(`${this.baseUrl}/feature/profile-v3.json`)
-  //     .toPromise()
-  //   return welcomeConfig
-  // }
   private setTelemetrySessionId() {
     if (localStorage.getItem('telemetrySessionId')) {
       localStorage.removeItem('telemetrySessionId')
@@ -589,36 +435,25 @@ export class InitService {
     }
   }
   private async fetchStartUpDetails(): Promise<any> {
-    // const userRoles: string[] = []
     let apiResponse: any
     if (this.configSvc.instanceConfig) {
       let userPidProfile: any | null = null
       const profileUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
-      
+
       if (!profileUrl) {
         console.error('User profile API is disabled')
         throw new Error('Profile API disabled')
       }
-      
+
       try {
         userPidProfile = await this.http
           .get<any>(profileUrl)
           .pipe(map((res: any) => {
-            // const roles = _.map(_.get(res, 'result.response.roles'), 'role')
-            // _.set(res, 'result.response.roles', roles)
             apiResponse = res
             return _.get(res, 'result.response')
           })).toPromise()
         if (userPidProfile && userPidProfile.roles && userPidProfile.roles.length > 0 &&
           this.hasRole(userPidProfile.roles)) {
-          // if (userPidProfile.result.response.organisations.length > 0) {
-          //   const organisationData = userPidProfile.result.response.organisations
-          //   userRoles = (organisationData[0].roles.length > 0) ? organisationData[0].roles : []
-          // }
-          // if (localStorage.getItem('telemetrySessionId')) {
-          //   localStorage.removeItem('telemetrySessionId')
-          // }
-          // localStorage.setItem('telemetrySessionId', uuid())
           this.setTelemetrySessionId()
           this.updateTelemetryConfig()
           this.configSvc.unMappedUser = userPidProfile
@@ -632,8 +467,6 @@ export class InitService {
             lastName: userPidProfile.lastName,
             rootOrgId: userPidProfile.rootOrgId,
             rootOrgName: userPidProfile.channel,
-            // tslint:disable-next-line: max-line-length
-            // userName: `${userPidProfile.firstName ? userPidProfile.firstName : ' '}${userPidProfile.lastName ? userPidProfile.lastName : ' '}`,
             userName: userPidProfile.userName,
             profileImage: userPidProfile.thumbnail,
             departmentName: userPidProfile.channel,
@@ -653,7 +486,6 @@ export class InitService {
             middleName: _.get(profileV2, 'personalDetails.middlename') || '',
             departmentName: _.get(profileV2, 'employmentDetails.departmentName') || userPidProfile.channel,
             givenName: _.get(userPidProfile, 'userName'),
-            // tslint:disable-next-line: max-line-length
             userName: `${_.get(profileV2, 'personalDetails.firstname') ? _.get(profileV2, 'personalDetails.firstname') : ''}${_.get(profileV2, 'personalDetails.surname') ? _.get(profileV2, 'personalDetails.surname') : ''}`,
             profileImage: _.get(profileV2, 'photo') || userPidProfile.thumbnail,
             profileImageUrl: _.get(userPidProfile, 'profileDetails.profileImageUrl') || '',
@@ -678,8 +510,6 @@ export class InitService {
           // NLW 2026 certification eligibility check
           this.commonDataSvc.checkAndCacheNlw2026Eligibility(userPidProfile)
         } else {
-          // this.authSvc.force_logout()
-          // await this.http.get('/apis/reset').toPromise()
           if (apiResponse && apiResponse.redirectUrl) {
             window.location.href = apiResponse.redirectUrl
           } else {
@@ -696,14 +526,9 @@ export class InitService {
         }
         this.configSvc.hasAcceptedTnc = details.tncStatus
         this.configSvc.profileDetailsStatus = details.profileDetailsStatus
-        // this.configSvc.userRoles = new Set((userRoles || []).map(v => v.toLowerCase()))
-        // const detailsV: IDetailsResponse = await this.http
-        // .get<IDetailsResponse>(endpoint.details).pipe(retry(3))
-        // .toPromise()
         this.configSvc.userGroups = new Set(details.group)
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
-        // this.configSvc.welcomeTabs = await this.fetchWelcomeConfig()
 
         // nps check
         if (localStorage.getItem('platformratingTime')) {
@@ -723,13 +548,6 @@ export class InitService {
       }
     } else {
       return { group: [], profileDetailsStatus: true, roles: new Set(['Public']), tncStatus: true, isActive: true }
-      // const details: IDetailsResponse = await this.http
-      //   .get<IDetailsResponse>(endpoint.details).pipe(retry(3))
-      //   .toPromise()
-      // this.configSvc.userGroups = new Set(details.group)
-      // this.configSvc.userRoles = new Set((details.roles || []).map(v => v.toLowerCase()))
-      // if (this.configSvc.userProfile && this.configSvc.userProfile.isManager) {
-      //   this.configSvc.userRoles.add('is_manager')
     }
   }
 
@@ -740,32 +558,22 @@ export class InitService {
     if (this.configSvc.unMappedUser.id) {
       let userPidProfile: any | null = null
       const profileBaseUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
-      
+
       if (!profileBaseUrl) {
         console.error('User profile API is disabled')
         throw new Error('Profile API disabled')
       }
-      
+
       const profileByIdUrl = `${profileBaseUrl}/${this.configSvc.unMappedUser.id}`
       try {
         userPidProfile = await this.http
           .get<any>(profileByIdUrl)
           .pipe(map((res: any) => {
-            // const roles = _.map(_.get(res, 'result.response.roles'), 'role')
-            // _.set(res, 'result.response.roles', roles)
             return _.get(res, 'result.response')
           })).toPromise()
 
         if (userPidProfile && userPidProfile.roles && userPidProfile.roles.length > 0 &&
           this.hasRole(userPidProfile.roles)) {
-          // if (userPidProfile.result.response.organisations.length > 0) {
-          //   const organisationData = userPidProfile.result.response.organisations
-          //   userRoles = (organisationData[0].roles.length > 0) ? organisationData[0].roles : []
-          // }
-          // if (localStorage.getItem('telemetrySessionId')) {
-          //   localStorage.removeItem('telemetrySessionId')
-          // }
-          // localStorage.setItem('telemetrySessionId', uuid())
           this.setTelemetrySessionId()
           // make the endpoint private for logged in user
           this.updateTelemetryConfig()
@@ -780,8 +588,6 @@ export class InitService {
             lastName: userPidProfile.lastName,
             rootOrgId: userPidProfile.rootOrgId,
             rootOrgName: userPidProfile.channel,
-            // tslint:disable-next-line: max-line-length
-            // userName: `${userPidProfile.firstName ? userPidProfile.firstName : ' '}${userPidProfile.lastName ? userPidProfile.lastName : ' '}`,
             userName: userPidProfile.userName,
             profileImage: userPidProfile.thumbnail,
             departmentName: userPidProfile.channel,
@@ -800,7 +606,6 @@ export class InitService {
             middleName: _.get(profileV2, 'personalDetails.middlename') || '',
             departmentName: _.get(profileV2, 'employmentDetails.departmentName') || userPidProfile.channel,
             givenName: _.get(userPidProfile, 'userName'),
-            // tslint:disable-next-line: max-line-length
             userName: `${_.get(profileV2, 'personalDetails.firstname') ? _.get(profileV2, 'personalDetails.firstname') : ''}${_.get(profileV2, 'personalDetails.surname') ? _.get(profileV2, 'personalDetails.surname') : ''}`,
             profileImage: _.get(profileV2, 'photo') || userPidProfile.thumbnail,
             dealerCode: null,
@@ -821,7 +626,6 @@ export class InitService {
           }
           localStorage.setItem('login', 'true')
         } else {
-          // this.authSvc.force_logout()
           window.location.href = `${this.defaultRedirectUrl}apis/reset`
           this.updateTelemetryConfig()
         }
@@ -834,10 +638,6 @@ export class InitService {
         }
         this.configSvc.hasAcceptedTnc = details.tncStatus
         this.configSvc.profileDetailsStatus = details.profileDetailsStatus
-        // this.configSvc.userRoles = new Set((userRoles || []).map(v => v.toLowerCase()))
-        // const detailsV: IDetailsResponse = await this.http
-        // .get<IDetailsResponse>(endpoint.details).pipe(retry(3))
-        // .toPromise()
         this.configSvc.userGroups = new Set(details.group)
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
@@ -849,88 +649,14 @@ export class InitService {
       }
     } else {
       return { group: [], profileDetailsStatus: true, roles: new Set(['Public']), tncStatus: true, isActive: true }
-      // const details: IDetailsResponse = await this.http
-      //   .get<IDetailsResponse>(endpoint.details).pipe(retry(3))
-      //   .toPromise()
-      // this.configSvc.userGroups = new Set(details.group)
-      // this.configSvc.userRoles = new Set((details.roles || []).map(v => v.toLowerCase()))
-      // if (this.configSvc.userProfile && this.configSvc.userProfile.isManager) {
-      //   this.configSvc.userRoles.add('is_manager')
     }
 
   }
 
-  // private async fetchInstanceConfig(): Promise<NsInstanceConfig.IConfig> {
-  //   // TODO: use the rootOrg and org to fetch the instance
-  //   const publicConfig: any = await this.http
-  //     .get<NsInstanceConfig.IConfig>(`${this.configSvc.sitePath}/application.config.json`)
-  //     .toPromise()
-  //   if (publicConfig.npsCategory) {
-  //     localStorage.setItem('npsCategory', publicConfig.npsCategory)
-  //   }
-  //   this.configSvc.instanceConfig = publicConfig
-  //   this.configSvc.rootOrg = publicConfig.rootOrg
-  //   this.configSvc.org = publicConfig.org
-  //   this.configSvc.portalUrls = publicConfig.portalUrls
-  //   this.configSvc.activeOrg = publicConfig.org[0]
-  //   this.configSvc.positions = publicConfig.positions
-  //   this.configSvc.completionSurvey = publicConfig.completionSurvey
-  //   this.updateAppIndexMeta()
-  //   this.updateTelemetryConfig()
-  //   return publicConfig
-  // }
-
-  // private async createUserInNodebb(): Promise<any> {
-  //   if (this.configSvc.nodebbUserProfile) {
-  //     return of()
-  //   }
-  //   const req = {
-  //     request: {
-  //       username: (this.configSvc.userProfile && this.configSvc.userProfile.userName) || '',
-  //       identifier: (this.configSvc.userProfile && this.configSvc.userProfile.userId) || '',
-  //       fullname: this.configSvc.userProfile ? `${this.configSvc.userProfile.firstName} ${this.configSvc.userProfile.lastName}` : '',
-  //     },
-  //   }
-  //   let createUserRes: null
-
-  //   try {
-  //     createUserRes = await this.http
-  //       .post<any>(endpoint.CREATE_USER_API, req)
-  //       .toPromise()
-  //   } catch (e) {
-  //     this.configSvc.nodebbUserProfile = null
-  //     throw new Error('Invalid user')
-  //   }
-
-  //   const nodebbUserData: any = _.get(createUserRes, 'result')
-  //   if (createUserRes) {
-  //     this.configSvc.nodebbUserProfile = {
-  //       username: nodebbUserData.userName,
-  //       email: 'null',
-  //     }
-  //   }
-  // }
-
-  // private async fetchFeaturesStatus(): Promise<Set<string>> {
-  //   // TODO: use the rootOrg and org to fetch the features
-  //   const featureConfigs: any = await this.http
-  //     .get<IFeaturePermissionConfigs>(`${this.baseUrl}/features.config.json`)
-  //     .toPromise()
-  //   this.configSvc.restrictedFeatures = new Set(
-  //     Object.entries((featureConfigs || {}) as Record<string, any>)
-  //       .filter(
-  //         ([_k, v]) => !hasPermissions(v, this.configSvc.userRoles, this.configSvc.userGroups),
-  //       )
-  //       .map(([k]) => k),
-  //   )
-  //   return this.configSvc.restrictedFeatures
-  // }
-
-
   private processAppsConfig(appsConfig: NsAppsConfig.IAppsConfig): NsAppsConfig.IAppsConfig {
     const tourGuide = appsConfig?.tourGuide
     const features: { [id: string]: NsAppsConfig.IFeature } = Object.values(
-      appsConfig?.features || {}  ,
+      appsConfig?.features || {},
       // tslint:disable-next-line: no-shadowed-variable
     ).reduce((map: { [id: string]: NsAppsConfig.IFeature }, feature: NsAppsConfig.IFeature) => {
       if (hasUnitPermission(feature.permission, this.configSvc.restrictedFeatures, true)) {
@@ -1035,7 +761,7 @@ export class InitService {
       console.warn('Feed status API is disabled')
       return
     }
-    
+
     const feedId: any = []
     // Pass only the user ID to getFeedStatus - the service constructs the full URL
     this.npsSvc.getFeedStatus(this.configSvc.unMappedUser.id).subscribe((res: any) => {
@@ -1044,14 +770,12 @@ export class InitService {
         feed.forEach((item: any) => {
           if (item.category === 'NPS' && item && item.data && item.data.actionData && item.data.actionData.formId) {
             feedId.push(item.id)
-            // console.log(feedId, "feed id items============")
             const currentTime = moment()
             localStorage.platformratingTime = currentTime
             localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
             localStorage.setItem('ratingfeedID', JSON.stringify(feedId))
           } else if (item.category === 'NPS2' && item && item.data && item.data.actionData && item.data.actionData.formId) {
             feedId.push(item.id)
-            // console.log(feedId, "feed id items============")
             const currentTime = moment()
             localStorage.platformratingTime = currentTime
             localStorage.setItem('ratingformID', JSON.stringify(item.data.actionData.formId))
@@ -1095,11 +819,6 @@ export class InitService {
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.identifier) {
       userInfoPayload['pk^userid'] = this.configSvc.unMappedUser.identifier.trim().toLowerCase()
     }
-    // if(userEnrollmentCount &&
-    //   userEnrollmentCount['userCourseEnrolmentInfo'] &&
-    //   userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']) {
-    //   userInfoPayload['NO_OF_KARMA_POINTS'] = userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints']
-    // }
     if (this.configSvc && this.configSvc.unMappedUser
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.personalDetails
@@ -1107,9 +826,6 @@ export class InitService {
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.firstname) {
         userInfoPayload['FULL_NAME'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim())
       }
-      // if (this.configSvc.unMappedUser.profileDetails.personalDetails.gender) {
-      //   userInfoPayload['GENDER'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim())
-      // }
 
       if (this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium) {
         userInfoPayload['MOTHER_TONGUE'] = this.toTitleCase(this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim())
@@ -1128,9 +844,6 @@ export class InitService {
       if (this.configSvc.unMappedUser.profileDetails.profileStatus) {
         userInfoPayload['PROFILE_STATUS'] = this.configSvc.unMappedUser.profileDetails.profileStatus.trim()
       }
-      // if (this.configSvc.unMappedUser.profileDetails.profileImageUrl) {
-      //   userInfoPayload['PROFILE_PHOTO'] = this.configSvc.unMappedUser.profileDetails.profileImageUrl.trim()
-      // }
     }
 
     if (this.configSvc && this.configSvc.unMappedUser
@@ -1163,22 +876,6 @@ export class InitService {
     ) {
       this.netCoreService.trackEvent('user_signin', this.configSvc.unMappedUser.identifier.trim().toLowerCase())
     }
-
-    // smartech('contact', '', {
-    //   'pk^userid': this.configSvc.unMappedUser.identifier.trim().toLowerCase(),
-    //   'FULL_NAME' : this.configSvc.unMappedUser.profileDetails.personalDetails.firstname.trim().toLowerCase(),
-    //   'GENDER': this.configSvc.unMappedUser.profileDetails.personalDetails.gender.trim().toLowerCase(),
-    //   'NO_OF_KARMA_POINTS': userEnrollmentCount['userCourseEnrolmentInfo']['karmaPoints'],
-    //   'PROFILE_STATUS' : this.configSvc.unMappedUser.profileDetails.personalDetails.profileStatus.trim().toLowerCase(),
-    //   'MOTHER_TONGUE': this.configSvc.unMappedUser.profileDetails.personalDetails.domicileMedium.trim().toLowerCase(),
-    //   'TOTAL_EXPERIENCE' : 'NA',
-    //   'PROFILE_DESIGNATION': this.configSvc.unMappedUser.profileDetails.professionalDetails.designation.trim().toLowerCase(),
-    //   'ORGANISATION': this.configSvc.unMappedUser.profileDetails.professionalDetails.organisationType.trim().toLowerCase(),
-    //   'PROFILE_PHOTO':this.configSvc.unMappedUser.profileDetails.personalDetails.profileImageUrl.trim().toLowerCase(),
-    //   'PROFILE_GROUP': this.configSvc.unMappedUser.profileDetails.professionalDetails.group.trim().toLowerCase(),
-    //   'EMAIL': this.configSvc.unMappedUser.profileDetails.personalDetails.primaryEmail.trim().toLowerCase(),
-    //   'MOBILE': this.configSvc.unMappedUser.profileDetails.personalDetails.mobile.toString().trim().toLowerCase(),
-    // })
   }
 
   toTitleCase(str: string): string {
