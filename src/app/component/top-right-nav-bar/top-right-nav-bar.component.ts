@@ -212,7 +212,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   viewAllClick(event: any) {
-    this.openSurveypopup(event)
     if (event.category === 'PEER_VALIDATION' || event.sub_type === 'PEER_VALIDATION') {
       this.raiseTelemetryEventForNotification(event)
       if (event.sub_category === 'PEER_REVIEW_ASSIGNED') {
