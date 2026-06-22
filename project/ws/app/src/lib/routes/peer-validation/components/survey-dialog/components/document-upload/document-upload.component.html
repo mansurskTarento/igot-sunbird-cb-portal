@@ -1,6 +1,11 @@
 <div class="document-upload">
   <div class="upload-header">
     <strong>Upload the supported documents</strong>
+    <mat-icon class="info-icon" [matTooltipPosition]="'right'" matTooltipClass="document-upload-tooltip"
+      #documentTooltip="matTooltip"
+      matTooltip="Upload evidence of how you applied the course learning and the impact achieved (e.g., documents, presentations, AI-assisted outputs, process improvements, data analyses, workflows, screenshots, or recognition).
+      Do not upload classified, confidential, sensitive, personal, or policy-restricted information. Remove or mask names, contact details, IDs, passwords, credentials, citizen data, and similar information."
+      (click)="documentTooltip.toggle()">info_outline</mat-icon>
     <p class="hint" *ngIf="!documents || documents.length === 0">These attachments will be visible to the peers that you
       select for validating your survey responses.
     </p>
