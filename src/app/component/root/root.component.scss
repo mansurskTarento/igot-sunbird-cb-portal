@@ -40,6 +40,12 @@ ws-app-nav-bar {
   padding-top: 160px;
 }
 
+// Used when marquee banner is disabled in global-config (components.marquee.enabled = false)
+// 160px (with marquee) minus ~48px marquee height = 112px
+.height-on-top-no-marquee {
+  padding-top: 104px;
+}
+
 .height-on-top-not-valid-user {
   padding-top: 66px;
 }

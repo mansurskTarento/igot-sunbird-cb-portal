@@ -1,8 +1,10 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { NSPractice } from './practice.model'
-import { BehaviorSubject, Observable, Subject, of, throwError } from 'rxjs'
-import { concatMap, delay, map, retryWhen } from 'rxjs/operators'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { CommonMethodsService } from '@sunbird-cb/consumption'
+import { BehaviorSubject, EMPTY, Observable, Subject, of, throwError } from 'rxjs'
+import { catchError, concatMap, delay, map, retryWhen, shareReplay, switchMap, take } from 'rxjs/operators'
 // tslint:disable-next-line
 import _ from 'lodash'
 
@@ -50,10 +52,27 @@ export class PracticeService {
   checkAlreadySubmitAssessment = new Subject()
   clearResponse = new Subject()
 
+  private playerConfig$: Observable<any> = this.http
+    .get<any>(`${this.configSvc.sitePath}/feature/toc.json`)
+    .pipe(catchError(() => of({})), shareReplay(1))
+
   constructor(
     private http: HttpClient,
+    private configSvc: ConfigurationsService,
+    private commonMethodsSvc: CommonMethodsService,
   ) {
 
+  }
+
+  private isApiEnabled(urlConfigPath: string, defaultUrl: string): Observable<boolean> {
+    return this.playerConfig$.pipe(
+      map((tocConfig: any) => !!this.commonMethodsSvc.getEnabledUrl({
+        apiConfig: tocConfig?.playerApiConfig,
+        urlConfigPath,
+        defaultUrl,
+      })),
+      take(1),
+    )
   }
 
   // handleError(error: ErrorEvent) {
@@ -92,70 +111,129 @@ export class PracticeService {
     this.questionAnswerHash.next(value)
   }
   submitQuizV2(req: NSPractice.IQuizSubmitRequest): Observable<NSPractice.IQuizSubmitResponse> {
-    return this.http.post<NSPractice.IQuizSubmitResponse>(API_END_POINTS.ASSESSMENT_SUBMIT_V2, req)
+    return this.isApiEnabled('assessmentSubmitV2', API_END_POINTS.ASSESSMENT_SUBMIT_V2).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<NSPractice.IQuizSubmitResponse>(API_END_POINTS.ASSESSMENT_SUBMIT_V2, req)
+        : EMPTY
+      ),
+    )
   }
   submitQuizV3(req: NSPractice.IQuizSubmit): Observable<NSPractice.IQuizSubmitResponseV2> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V3, req).pipe(map(response => {
-      return response.result
-    }))
+    return this.isApiEnabled('assessmentSubmitV3', API_END_POINTS.ASSESSMENT_SUBMIT_V3).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V3, req)
+            .pipe(map((response: { result: NSPractice.IQuizSubmitResponseV2 }) => response.result))
+        : EMPTY
+      ),
+    )
   }
   submitQuizV4(req: NSPractice.IQuizSubmit): Observable<any> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V4, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('assessmentSubmitV4', API_END_POINTS.ASSESSMENT_SUBMIT_V4).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V4, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   submitQuizV5(req: NSPractice.IQuizSubmit): Observable<any> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V5, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('assessmentSubmitV5', API_END_POINTS.ASSESSMENT_SUBMIT_V5).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V5, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   submitQuizV6(req: NSPractice.IQuizSubmit): Observable<any> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V6, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('assessmentSubmitV6', API_END_POINTS.ASSESSMENT_SUBMIT_V6).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V6, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   submitQuizV7(req: NSPractice.IQuizSubmit): Observable<any> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V7, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('assessmentSubmitV7', API_END_POINTS.ASSESSMENT_SUBMIT_V7).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.ASSESSMENT_SUBMIT_V7, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   publicV4Submit(req: NSPractice.IQuizSubmit): Observable<any> {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
-      API_END_POINTS.PUBLIC_ASSESSMENT_V4_SUBMIT, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('publicAssessmentV4Submit', API_END_POINTS.PUBLIC_ASSESSMENT_V4_SUBMIT).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
+          API_END_POINTS.PUBLIC_ASSESSMENT_V4_SUBMIT, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
   publicV5Submit(req: NSPractice.IQuizSubmit): Observable<any> {
-
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
-      API_END_POINTS.PUBLIC_ASSESSMENT_SUBMIT, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('publicAssessmentSubmit', API_END_POINTS.PUBLIC_ASSESSMENT_SUBMIT).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
+          API_END_POINTS.PUBLIC_ASSESSMENT_SUBMIT, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
   quizResult(req: any, forPreview?: any) {
-    const url = (forPreview && !forcreator) ? API_END_POINTS.PUBLIC_ASSESSMENT_V4_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V4
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
-      url, req).pipe(map(response => {
-      return response
-    }))
+    const isPublic = forPreview && !forcreator
+    const url = isPublic ? API_END_POINTS.PUBLIC_ASSESSMENT_V4_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V4
+    const configKey = isPublic ? 'publicAssessmentResult' : 'assessmentResultV4'
+    return this.isApiEnabled(configKey, url).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(
+          url, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   quizResultV5(req: any, forPreview?: any) {
-    const url = (forPreview && !forcreator) ? API_END_POINTS.PUBLIC_ASSESSMENT_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V5
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(url, req).pipe(map(response => {
-      return response
-    }))
+    const isPublic = forPreview && !forcreator
+    const url = isPublic ? API_END_POINTS.PUBLIC_ASSESSMENT_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V5
+    const configKey = isPublic ? 'publicAssessmentResult' : 'assessmentResultV5'
+    return this.isApiEnabled(configKey, url).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(url, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   quizResultV7(req: any, forPreview?: any) {
-    const url = (forPreview && !forcreator) ? API_END_POINTS.PUBLIC_ASSESSMENT_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V7
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(url, req).pipe(map(response => {
-      return response
-    }))
+    const isPublic = forPreview && !forcreator
+    const url = isPublic ? API_END_POINTS.PUBLIC_ASSESSMENT_RESULT : API_END_POINTS.ASSESSMENT_RESULT_V7
+    const configKey = isPublic ? 'publicAssessmentResult' : 'assessmentResultV7'
+    return this.isApiEnabled(configKey, url).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(url, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   createAssessmentSubmitRequest(
@@ -277,23 +355,26 @@ export class PracticeService {
       )
     )
 
-    if (forPreview && !forcreator) {
-      return this.http.post<NSPractice.ISectionResponse>(
-        API_END_POINTS.PUBLIC_QUESTION_READ,
-        postReqData
-      ).pipe(retryOnServerError)
-    }
-
-    if (forcreator) {
-      return this.http.get<NSPractice.ISectionResponse>(
-        `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`
-      ).pipe(retryOnServerError)
-    }
-
-    return this.http.get<NSPractice.ISectionResponse>(
-      `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`
-    ).pipe(retryOnServerError)
-}
+    return this.isApiEnabled('questionPaperSections', API_END_POINTS.QUESTION_PAPER_SECTIONS).pipe(
+      switchMap((enabled: boolean) => {
+        if (!enabled) { return EMPTY }
+        if (forPreview && !forcreator) {
+          return this.http.post<NSPractice.ISectionResponse>(
+            API_END_POINTS.PUBLIC_QUESTION_READ,
+            postReqData
+          ).pipe(retryOnServerError)
+        }
+        if (forcreator) {
+          return this.http.get<NSPractice.ISectionResponse>(
+            `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?editMode=true`
+          ).pipe(retryOnServerError)
+        }
+        return this.http.get<NSPractice.ISectionResponse>(
+          `${API_END_POINTS.QUESTION_PAPER_SECTIONS}/${sectionId}?parentContextId=${collectionId}`
+        ).pipe(retryOnServerError)
+      }),
+    )
+  }
 
   getQuestions(identifiers: string[], assessmentId: string,
                forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
@@ -305,27 +386,30 @@ export class PracticeService {
         },
       },
     }
-    if (forPreview && !forcreator) {
-      const forPreviewData = {
-        assessmentIdentifier: assessmentId,
-        contextId: collectionId,
-        request: {
-          search: {
-            identifier: identifiers,
-          },
-        },
-        ...userDetails,
-      }
-      return this.http.post<{ count: Number, questions: any[] }>(
-        API_END_POINTS.PUBLIC_QUESTION_LIST, forPreviewData)
-    }
-      if (forcreator) {
-        // tslint:disable-next-line: max-line-length
-        return this.http.post<{ count: Number, questions: any[] }>(`${API_END_POINTS.QUESTION_PAPER_QUESTIONS}?editMode=true`, data)
-      }
-
+    return this.isApiEnabled('questionPaperQuestions', API_END_POINTS.QUESTION_PAPER_QUESTIONS).pipe(
+      switchMap((enabled: boolean) => {
+        if (!enabled) { return EMPTY }
+        if (forPreview && !forcreator) {
+          const forPreviewData = {
+            assessmentIdentifier: assessmentId,
+            contextId: collectionId,
+            request: {
+              search: {
+                identifier: identifiers,
+              },
+            },
+            ...userDetails,
+          }
+          return this.http.post<{ count: Number, questions: any[] }>(
+            API_END_POINTS.PUBLIC_QUESTION_LIST, forPreviewData)
+        }
+        if (forcreator) {
+          // tslint:disable-next-line: max-line-length
+          return this.http.post<{ count: Number, questions: any[] }>(`${API_END_POINTS.QUESTION_PAPER_QUESTIONS}?editMode=true`, data)
+        }
         return this.http.post<{ count: Number, questions: any[] }>(API_END_POINTS.QUESTION_PAPER_QUESTIONS, data)
-
+      }),
+    )
   }
 
   getSectionV4(sectionId: string, forPreview?: any, postReqData?: any, collectionId?: any): Observable<any> {
@@ -340,16 +424,22 @@ export class PracticeService {
         })
       )
     )
-    if (forPreview && !forcreator) {
-      return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_READ, postReqData).pipe(retryOnServerError)
-    }
-    if (forcreator) {
-      // tslint:disable-next-line: max-line-length
-      return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?editMode=true`).pipe(retryOnServerError)
-    }
-    // tslint:disable-next-line: max-line-length
-    return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?parentContextId=${collectionId}`).pipe(retryOnServerError)
+    return this.isApiEnabled('questionPaperSectionsV4', API_END_POINTS.QUESTION_PAPER_SECTIONS_V4).pipe(
+      switchMap((enabled: boolean) => {
+        if (!enabled) { return EMPTY }
+        if (forPreview && !forcreator) {
+          return this.http.post<NSPractice.ISectionResponse>(API_END_POINTS.PUBLIC_QUESTION_V4_READ, postReqData).pipe(retryOnServerError)
+        }
+        if (forcreator) {
+          // tslint:disable-next-line: max-line-length
+          return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?editMode=true`).pipe(retryOnServerError)
+        }
+        // tslint:disable-next-line: max-line-length
+        return this.http.get<NSPractice.ISectionResponse>(`${API_END_POINTS.QUESTION_PAPER_SECTIONS_V4}/${sectionId}?parentContextId=${collectionId}`).pipe(retryOnServerError)
+      }),
+    )
   }
+
   getQuestionsV4(identifiers: string[], assessmentId: string,
                  forPreview?: any, userDetails?: any, collectionId?: any): Observable<{ count: Number, questions: any[] }> {
     const data = {
@@ -360,29 +450,33 @@ export class PracticeService {
         },
       },
     }
-
-    if (forPreview && !forcreator) {
-      const forPreviewData = {
-        assessmentIdentifier: assessmentId,
-        contextId: collectionId,
-        request: {
-          search: {
-            identifier: identifiers,
-          },
-        },
-        ...userDetails,
-      }
-      return this.http.post<{ count: Number, questions: any[] }>(
-        API_END_POINTS.PUBLIC_QUESTION_V4_LIST, forPreviewData)
-    }
-      if (forcreator) {
-        // tslint:disable-next-line: max-line-length
-        return this.http.post<{ count: Number, questions: any[] }>(`${API_END_POINTS.QUESTION_PAPER_QUESTIONS_V4}?editMode=true`, data)
-      }
+    return this.isApiEnabled('questionPaperQuestionsV4', API_END_POINTS.QUESTION_PAPER_QUESTIONS_V4).pipe(
+      switchMap((enabled: boolean) => {
+        if (!enabled) { return EMPTY }
+        if (forPreview && !forcreator) {
+          const forPreviewData = {
+            assessmentIdentifier: assessmentId,
+            contextId: collectionId,
+            request: {
+              search: {
+                identifier: identifiers,
+              },
+            },
+            ...userDetails,
+          }
+          return this.http.post<{ count: Number, questions: any[] }>(
+            API_END_POINTS.PUBLIC_QUESTION_V4_LIST, forPreviewData)
+        }
+        if (forcreator) {
+          // tslint:disable-next-line: max-line-length
+          return this.http.post<{ count: Number, questions: any[] }>(`${API_END_POINTS.QUESTION_PAPER_QUESTIONS_V4}?editMode=true`, data)
+        }
         // tslint:disable-next-line: max-line-length
         return this.http.post<{ count: Number, questions: any[] }>(API_END_POINTS.QUESTION_PAPER_QUESTIONS_V4, data)
-
+      }),
+    )
   }
+
   shuffle(array: any[] | (string | undefined)[]) {
     let currentIndex = array.length
     let temporaryValue
@@ -402,9 +496,15 @@ export class PracticeService {
 
     return array
   }
+
   canAttend(identifier: string): Observable<NSPractice.IRetakeAssessment> {
     if (identifier) {
-      return this.http.get<any>(API_END_POINTS.CAN_ATTEMPT(identifier)).pipe(map(r => r.result))
+      return this.isApiEnabled('canAttempt', API_END_POINTS.CAN_ATTEMPT(identifier)).pipe(
+        switchMap((enabled: boolean) => enabled
+          ? this.http.get<any>(API_END_POINTS.CAN_ATTEMPT(identifier)).pipe(map(r => r.result))
+          : of({ attemptsMade: 0, attemptsAllowed: 1 })
+        ),
+      )
     }
     return of({
       attemptsMade: 0,
@@ -414,7 +514,12 @@ export class PracticeService {
 
   canAttendV5(identifier: string): Observable<NSPractice.IRetakeAssessment> {
     if (identifier) {
-      return this.http.get<any>(API_END_POINTS.CAN_ATTEMPT_V5(identifier)).pipe(map(r => r.result))
+      return this.isApiEnabled('canAttemptV5', API_END_POINTS.CAN_ATTEMPT_V5(identifier)).pipe(
+        switchMap((enabled: boolean) => enabled
+          ? this.http.get<any>(API_END_POINTS.CAN_ATTEMPT_V5(identifier)).pipe(map(r => r.result))
+          : of({ attemptsMade: 0, attemptsAllowed: 1 })
+        ),
+      )
     }
     return of({
       attemptsMade: 0,
@@ -424,7 +529,12 @@ export class PracticeService {
 
   canAttendV7(identifier: string): Observable<NSPractice.IRetakeAssessment> {
     if (identifier) {
-      return this.http.get<any>(API_END_POINTS.CAN_ATTEMPT_V7(identifier)).pipe(map(r => r.result))
+      return this.isApiEnabled('canAttemptV7', API_END_POINTS.CAN_ATTEMPT_V7(identifier)).pipe(
+        switchMap((enabled: boolean) => enabled
+          ? this.http.get<any>(API_END_POINTS.CAN_ATTEMPT_V7(identifier)).pipe(map(r => r.result))
+          : of({ attemptsMade: 0, attemptsAllowed: 1 })
+        ),
+      )
     }
     return of({
       attemptsMade: 0,
@@ -433,9 +543,14 @@ export class PracticeService {
   }
 
   saveAndNextQuestion(req: NSPractice.IQuizSubmit) {
-    return this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.SAVE_AND_NEXT_QUESTION, req).pipe(map(response => {
-      return response
-    }))
+    return this.isApiEnabled('saveAndNextQuestion', API_END_POINTS.SAVE_AND_NEXT_QUESTION).pipe(
+      switchMap((enabled: boolean) => enabled
+        ? this.http.post<{ result: NSPractice.IQuizSubmitResponseV2 }>(API_END_POINTS.SAVE_AND_NEXT_QUESTION, req).pipe(map(response => {
+          return response
+        }))
+        : EMPTY
+      ),
+    )
   }
 
   shCorrectAnswer(val: boolean) {

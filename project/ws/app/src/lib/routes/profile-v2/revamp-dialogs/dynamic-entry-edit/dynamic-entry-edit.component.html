@@ -37,22 +37,29 @@
                   <ng-container *ngSwitchCase="'text'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+                          59f7158174c17203a9a61157af8325416212875b
+                          <mat-icon *ngIf="field?.infoText" class="info-icon"
+                            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          [maxlength]="field?.maxLength" [attr.readonly]="field?.readonly ? true : null">
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                        <mat-hint align="end" *ngIf="field?.maxLength && entryForm?.get(field.key)?.value">
-                          {{ getCharCount(field.key) }}/{{ field?.maxLength }}
-                        </mat-hint>
+                        <<<<<<< HEAD <input matInput [formControlName]="field.key"
+                          [placeholder]="field?.placeholder | translate" [maxlength]="field?.maxLength"
+                          [attr.readonly]="field?.readonly ? true : null">
+                          <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+                          =======
+                          <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
+                            [maxlength]="field?.maxLength || 9999" [attr.readonly]="field?.readonly ? true : null">
+                          <mat-error>{{ getFirstError(field) }}</mat-error>
+                          >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+                          <mat-hint align="end" *ngIf="field?.maxLength && entryForm?.get(field.key)?.value">
+                            {{ getCharCount(field.key) }}/{{ field?.maxLength }}
+                          </mat-hint>
                       </mat-form-field>
                     </div>
                   </ng-container>
 
-                  <ng-container *ngSwitchCase="'email'">
+                  <<<<<<< HEAD <ng-container *ngSwitchCase="'email'">
                     <div class="flex flex-col profile-control">
                       <div class="lable required">{{'NetworkV2Profile.email' | translate}}</div>
                       <mat-form-field appearance="outline">
@@ -73,453 +80,594 @@
                         </div>
                       </ng-container>
                     </div>
-                  </ng-container>
-
-                  <!-- ══ textarea ════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'textarea'">
-                    <div class="flex flex-col w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <textarea matInput [formControlName]="field.key" rows="4"
-                          [placeholder]="field?.placeholder | translate"
-                          [maxlength]="field?.maxLength || 9999"></textarea>
-                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
-                        <mat-hint align="end">
-                          {{ getCharCount(field.key) }}{{ field?.maxLength ? '/' + field?.maxLength : '' }}
-                        </mat-hint>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ select ══════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder  | translate">
-                          <!-- optionsSource: states/districts loaded via API -->
-                          <ng-container *ngIf="field?.optionsSource; else staticOptions">
-                            <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
-                              {{ opt?.label | translate }}
-                            </mat-option>
-                          </ng-container>
-                          <!-- static options from config -->
-                          <ng-template #staticOptions>
-                            <mat-option *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
-                              [disabled]="opt?.disabled || false">
-                              {{ opt?.label | translate }}
-                            </mat-option>
-                          </ng-template>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ searchable-select ════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'searchable-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          [matAutocomplete]="optionsAuto" (keydown)="onkeyDown($event)">
-                        <mat-icon matSuffix>arrow_drop_down</mat-icon>
-                      </mat-form-field>
-                      <mat-autocomplete #optionsAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
-                        (closed)="onAutoCompleteClosed()">
-                        <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
-                          <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
-                            {{ opt?.label | translate }}
-                          </mat-option>
-                          <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
-                            No matches found
-                          </mat-option>
-                        </ng-container>
-                        <ng-template #staticSearchableOptions>
-                          <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
-                            [disabled]="opt?.disabled || false">
-                            {{ opt?.label | translate }}
-                          </mat-option>
-                          <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
-                            No matches found
-                          </mat-option>
-                        </ng-template>
-                      </mat-autocomplete>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ designation-select ══════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'designation-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          panelClass="profile-control" (openedChange)="onDesignationDropdownOpened(field, $event)"
-                          (closed)="onDesignationDropdownClosed(field)">
-                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <div class="search-input-wrapper profile-control">
-                              <input type="text" [placeholder]="field?.searchPlaceholder | translate"
-                                [formControlName]="'_search_' + field.key" class="search-input"
-                                (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
-                                autocomplete="off">
-                            </div>
-                          </div>
-                          <mat-option *ngFor="let opt of (designationsMeta[field.key] || [])"
-                            [value]="opt?.designation">
-                            {{ opt?.designation }}
-                          </mat-option>
-                          <div *ngIf="isLoadingMoreDesignations[field.key]" class="loading-indicator">
-                            Loading more...
-                          </div>
-                          <mat-option
-                            *ngIf="!isLoadingMoreDesignations[field.key] && (designationsMeta[field.key] || []).length === 0"
-                            disabled>
-                            No matches found
-                          </mat-option>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ organisation-select ════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'organisation-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          panelClass="profile-control" (openedChange)="onOrgDropdownOpened(field, $event)"
-                          (closed)="onOrgDropdownClosed(field)">
-                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <div class="search-input-wrapper profile-control">
-                              <input type="text" [placeholder]="field?.searchPlaceholder || 'Search organization'"
-                                [formControlName]="'_search_' + field.key" class="search-input"
-                                (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
-                                autocomplete="off">
-                            </div>
-                          </div>
-                          <!-- Options list -->
-                          <mat-option *ngFor="let org of (orgSelectData[field.key] || []); trackBy: trackByOrgFn"
-                            [value]="org?.orgName" (onSelectionChange)="onOrgSelectionChange(field, org)">
-                            {{ org?.orgName }}
-                          </mat-option>
-                          <!-- Loading indicator -->
-                          <div *ngIf="isLoadingMoreOrg[field.key]" class="loading-indicator">
-                            Loading more...
-                          </div>
-                          <!-- No results -->
-                          <mat-option
-                            *ngIf="!isLoadingMoreOrg[field.key] && (orgSelectData[field.key] || []).length === 0"
-                            disabled>
-                            No matches found
-                          </mat-option>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ degree-select ═══════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'degree-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          panelClass="profile-control" (openedChange)="onDegreeDropdownOpened(field, $event)"
-                          (closed)="onDegreeDropdownClosed(field)">
-                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <input type="text" [placeholder]="field?.searchPlaceholder | translate"
-                              [formControlName]="'_search_' + field.key" class="search-input"
-                              (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
-                              autocomplete="off">
-                          </div>
-                          <mat-option *ngFor="let opt of (degreesMeta[field.key] || [])" [value]="opt?.name">
-                            {{ opt?.name }}
-                          </mat-option>
-                          <div *ngIf="isLoadingMoreDegrees[field.key]" class="loading-indicator">
-                            Loading more...
-                          </div>
-                          <mat-option
-                            *ngIf="!isLoadingMoreDegrees[field.key] && (degreesMeta[field.key] || []).length === 0"
-                            disabled>
-                            No matches found
-                          </mat-option>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ institution-select ══════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'institution-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
-                          panelClass="profile-control" (openedChange)="onInstitutionDropdownOpened(field, $event)"
-                          (closed)="onInstitutionDropdownClosed(field)">
-                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <input type="text" [placeholder]="field?.searchPlaceholder | translate"
-                              [formControlName]="'_search_' + field.key" class="search-input"
-                              (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
-                              autocomplete="off">
-                          </div>
-                          <mat-option *ngFor="let opt of (institutionsMeta[field.key] || [])" [value]="opt?.name">
-                            {{ opt?.name }}
-                          </mat-option>
-                          <div *ngIf="isLoadingMoreInstitutions[field.key]" class="loading-indicator">
-                            Loading more...
-                          </div>
-                          <mat-option
-                            *ngIf="!isLoadingMoreInstitutions[field.key] && (institutionsMeta[field.key] || []).length === 0"
-                            disabled>
-                            No matches found
-                          </mat-option>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ date ════════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'date'">
-                    <div class="flex flex-col profile-control-date-field w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [matDatepicker]="picker" [formControlName]="field.key"
-                          [placeholder]="field?.placeholder | translate" [min]="field?.minDate || null"
-                          [max]="field?.maxDate || null" [attr.readonly]="field?.readonly ? true : null">
-                        <mat-datepicker-toggle matSuffix [for]="picker">
-                        </mat-datepicker-toggle>
-                        <mat-datepicker #picker></mat-datepicker>
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ checkbox ════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'checkbox'">
-                    <div class="flex flex-col profile-control mb-4">
-                      <mat-checkbox class="lable" [formControlName]="field.key">
-                        {{ field?.label | translate }}
-                      </mat-checkbox>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ radio ═══════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'radio'">
-                    <div class="flex flex-col gap-1 round-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                      </div>
-                      <mat-radio-group [formControlName]="field.key" class="flex flex-row flex-wrap gap-4 margin-top-s">
-                        <mat-radio-button *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
-                          [disabled]="opt?.disabled || false" class="flex flex-row items-center">
-                          <span class="mat-body-2">{{ opt?.label | translate }}</span>
-                        </mat-radio-button>
-                      </mat-radio-group>
-                      <div class="field-error mat-error" *ngIf="getFirstError(field)">
-                        {{ getFirstError(field) }}
-                      </div>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ year-select ═════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'year-select'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
-                          <mat-option *ngFor="let year of getYearsForField(field)" [value]="year">
-                            {{ year }}
-                          </mat-option>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ duration ════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'duration'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <div class="duration-input flex items-center gap-1">
-                        <mat-form-field appearance="outline" class="duration-field profile-control">
-                          <input matInput type="number" min="0" max="100" [formControlName]="field.key + 'Hours'"
-                            placeholder="Hours(0-100)" (keydown)="preventNonNumericInput($event)">
-                          <mat-error>{{ getFirstError(field, 'Hours') | translate}}</mat-error>
-                        </mat-form-field>
-                        <span class="duration-separator">:</span>
-                        <mat-form-field appearance="outline" class="duration-field profile-control">
-                          <input matInput type="number" min="0" max="59" [formControlName]="field.key + 'Minutes'"
-                            placeholder="Minutes(0-59)" (keydown)="preventNonNumericInput($event)">
-                          <mat-error>{{ getFirstError(field, 'Minutes') | translate}}</mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ image / file upload ═════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'image'">
-                    <div class="w-full mb-5">
-                      <div class="lable mb-1" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-
-                      <!-- Uploaded file card -->
-                      <ng-container *ngIf="getFileName(field); else uploadZone">
-                        <div class="fileNameCard flex justify-between px-2 items-center">
-                          <div class="flex gap-2 items-center w-full">
-                            <ng-container *ngIf="isPdf(field); else imgIcon">
-                              <img src="assets/icons/PDF_alternate.svg" alt="pdf">
-                            </ng-container>
-                            <ng-template #imgIcon>
-                              <img src="/assets/icons/image.svg" alt="image">
-                            </ng-template>
-                            <span class="iconName" [title]="getFileName(field)">
-                              {{ getFileName(field) }}
-                            </span>
-                          </div>
-                          <mat-icon class="remove-file" (click)="removeFile(field)">close</mat-icon>
-                        </div>
-                      </ng-container>
-
-                      <!-- Upload drop zone -->
-                      <ng-template #uploadZone>
-                        <div class="upload flex justify-center items-center" (dragover)="preventDefaultCDK($event)"
-                          (dragenter)="preventDefaultCDK($event, 'enter')"
-                          (dragleave)="preventDefaultCDK($event, 'leave')" (drop)="onDrop(field, $event)"
-                          (click)="fileInput.click()">
-                          <input #fileInput type="file" class="hidden"
-                            [accept]="field?.accept || '.png,.jpg,.jpeg,.pdf'"
-                            (change)="onFileSelected(field, fileInput.files)">
-                          <div class="flex justify-center items-center gap-2">
-                            <img src="/assets/icons/upload-upward-arrow.svg" alt="upload">
-                            <span class="dragFileText">Drag file to upload</span>
-                          </div>
-                        </div>
-                      </ng-template>
-                      <!-- Validation error outside mat-form-field -->
-                      <div class="field-error mat-error" *ngIf="hasError(field.key, 'required')">
-                        {{ getErrorMessage(field, 'required') }}
-                      </div>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ url ═════════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'url'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
-                  <!-- ══ number ══════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'mobile'">
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label | translate }}
-                        <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
-                      </div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <input matInput maxlength="10" [formControlName]="field.key"
-                          [placeholder]="field?.placeholder | translate" (keydown)="preventNonNumericInput($event)">
-                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
-                      </mat-form-field>
-                    </div>
-                    <ng-container *ngIf="field?.addOTPverification">
-                      <div class="error-text" *ngIf="phoneExists"
-                        style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
-                        This mobile number already exists.
-                      </div>
-                      <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
-                        <span class="get-otp" (click)="handleGenerateOTP(field.valueChangeKey, field.key)">{{
-                          'NetworkV2Profile.getOTP' | translate}}
-                        </span>
-                      </div>
-                    </ng-container>
-                  </ng-container>
-
-                  <!-- ══ fallback (unknown type) ═════════════════════════ -->
-                  <ng-container *ngSwitchDefault>
-                    <div class="flex flex-col profile-control w-full">
-                      <div class="lable">{{ field?.label | translate }}</div>
-                      <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
-                      </mat-form-field>
-                    </div>
-                  </ng-container>
-
                 </ng-container>
-                <!-- /ngSwitch -->
-              </ng-container>
-              <!-- /isFieldVisible -->
-            </ng-container>
-            <!-- /field loop -->
 
+                =======
+                >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+                <!-- ══ textarea ════════════════════════════════════════ -->
+                <ng-container *ngSwitchCase="'textarea'">
+                  <div class="flex flex-col w-full">
+                    <div class="lable" [ngClass]="{'required': field?.required}">
+                      <<<<<<< HEAD {{ field?.label | translate }} <mat-icon *ngIf="field?.infoText" class="info-icon"
+                        [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
+                    </div>
+                    <mat-form-field appearance="outline" class="full-width">
+                      <textarea matInput [formControlName]="field.key" rows="4"
+                        [placeholder]="field?.placeholder | translate"
+                        [maxlength]="field?.maxLength || 9999"></textarea>
+                      <mat-error>{{ getFirstError(field) | translate }}</mat-error>
+                      =======
+                      {{ field?.label }}
+                      <mat-icon *ngIf="field?.infoText" class="info-icon"
+                        [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                  </div>
+                  <mat-form-field appearance="outline" class="full-width">
+                    <textarea matInput [formControlName]="field.key" rows="4" [placeholder]="field?.placeholder || ''"
+                      [maxlength]="field?.maxLength || 9999"></textarea>
+                    <mat-error>{{ getFirstError(field) }}</mat-error>
+                    >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+                    <mat-hint align="end">
+                      {{ getCharCount(field.key) }}{{ field?.maxLength ? '/' + field?.maxLength : '' }}
+                    </mat-hint>
+                  </mat-form-field>
           </div>
         </ng-container>
-        <!-- /row loop -->
 
+        <!-- ══ select ══════════════════════════════════════════ -->
+        <ng-container *ngSwitchCase="'select'">
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable" [ngClass]="{'required': field?.required}">
+              <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }} 78>>>>>>>
+                59f7158174c17203a9a61157af8325416212875b
+                <mat-icon *ngIf="field?.infoText" class="info-icon"
+                  [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <<<<<<< HEAD <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder  | translate">
+                <!-- optionsSource: states/districts loaded via API -->
+                <ng-container *ngIf="field?.optionsSource; else staticOptions">
+                  <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                    {{ opt?.label | translate }}
+                    =======
+                    <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || ''">
+                      <!-- optionsSource: states/districts loaded via API -->
+                      <ng-container *ngIf="field?.optionsSource; else staticOptions">
+                        <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                          {{ opt?.label }}
+                          >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+                        </mat-option>
+                      </ng-container>
+                      <!-- static options from config -->
+                      <ng-template #staticOptions>
+                        <mat-option *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
+                          [disabled]="opt?.disabled || false">
+                          <<<<<<< HEAD {{ opt?.label | translate }} </mat-option>
+                      </ng-template>
+                    </mat-select>
+                    <mat-error>{{ getFirstError(field) | translate }}</mat-error>
+                    =======
+                    {{ opt?.label }}
+                  </mat-option>
+                  </ng-template>
+                  </mat-select>
+                  <mat-error>{{ getFirstError(field) }}</mat-error>
+                  >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+            </mat-form-field>
+          </div>
+        </ng-container>
+
+        <!-- ══ searchable-select ════════════════════════════════ -->
+        <ng-container *ngSwitchCase="'searchable-select'">
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable" [ngClass]="{'required': field?.required}">
+              {{ field?.label | translate }}
+              <mat-icon *ngIf="field?.infoText" class="info-icon" <<<<<<< HEAD
+                [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
+            </div>
+            <mat-form-field appearance="outline">
+              <input matInput [formControlName]="field.key"
+                [placeholder]="field?.placeholder | translate"=======[matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+          </div>
+          <mat-form-field appearance="outline">
+            <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''">>>>>>>
+            59f7158174c17203a9a61157af8325416212875b
+            [matAutocomplete]="optionsAuto" (keydown)="onkeyDown($event)">
+            <mat-icon matSuffix>arrow_drop_down</mat-icon>
+          </mat-form-field>
+          <mat-autocomplete #optionsAuto="matAutocomplete" (opened)="onAutoCompleteOpened()"
+            (closed)="onAutoCompleteClosed()">
+            <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
+              <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                <<<<<<< HEAD {{ opt?.label | translate }}======={{ opt?.label }}>>>>>>>
+                  59f7158174c17203a9a61157af8325416212875b
+              </mat-option>
+              <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
+                No matches found
+              </mat-option>
+            </ng-container>
+            <ng-template #staticSearchableOptions>
+              <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
+                [disabled]="opt?.disabled || false">
+                <<<<<<< HEAD {{ opt?.label | translate }}======={{ opt?.label }}>>>>>>>
+                  59f7158174c17203a9a61157af8325416212875b
+              </mat-option>
+              <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
+                No matches found
+              </mat-option>
+            </ng-template>
+          </mat-autocomplete>
+          <<<<<<< HEAD=======<!-- <mat-form-field appearance="outline" class="full-width">
+            <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
+              panelClass="profile-control" (openedChange)="onSearchableSelectOpened(field, $event)"
+              (closed)="onSearchableSelectClosed(field)">
+              <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                <input type="text" [placeholder]="field?.searchPlaceholder || 'Search...'"
+                  [formControlName]="'_search_' + field.key" class="search-input" (keydown)="$event.stopPropagation()"
+                  (click)="$event.stopPropagation()" autocomplete="off">
+              </div>
+              <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
+                <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
+                  {{ opt?.label }}
+                </mat-option>
+                <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
+                  No matches found
+                </mat-option>
+              </ng-container>
+              <ng-template #staticSearchableOptions>
+                <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
+                  [disabled]="opt?.disabled || false">
+                  {{ opt?.label }}
+                </mat-option>
+                <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
+                  No matches found
+                </mat-option>
+              </ng-template>
+            </mat-select>
+            <mat-error>{{ getFirstError(field) }}</mat-error>
+            </mat-form-field> -->
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
       </div>
-    </form>
   </ng-container>
-  <!-- ── Footer ─────────────────────────────────────────────────────────── -->
-  <hr class="solid">
-  <div class="form-actions flex justify-end items-center gap-4">
-    <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">
-      Cancel
-    </button>
-    <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
-      [ngClass]="{'disable-btn': entryForm?.invalid}">
-      {{ entryDetails ? 'Update' : 'Add' }}
-    </button>
-  </div>
+
+  <!-- ══ designation-select ══════════════════════════════ -->
+  <ng-container *ngSwitchCase="'designation-select'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+          <mat-icon *ngIf="field?.infoText" class="info-icon"
+            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <<<<<<< HEAD <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+          panelClass="profile-control" (openedChange)="onDesignationDropdownOpened(field, $event)"
+          (closed)="onDesignationDropdownClosed(field)">
+          <div class="sticky-search-container" (click)="$event.stopPropagation()">
+            <div class="search-input-wrapper profile-control">
+              <input type="text" [placeholder]="field?.searchPlaceholder | translate"=======<mat-select
+                [formControlName]="field.key" [placeholder]="field?.placeholder || 'Choose a designation'"
+                panelClass="profile-control" (openedChange)="onDesignationDropdownOpened(field, $event)"
+                (closed)="onDesignationDropdownClosed(field)">
+              <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                <div class="search-input-wrapper profile-control">
+                  <input type="text" [placeholder]="field?.searchPlaceholder || 'Search designation'">>>>>>>
+                  59f7158174c17203a9a61157af8325416212875b
+                  [formControlName]="'_search_' + field.key" class="search-input"
+                  (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                  autocomplete="off">
+                </div>
+              </div>
+              <mat-option *ngFor="let opt of (designationsMeta[field.key] || [])" [value]="opt?.designation">
+                {{ opt?.designation }}
+              </mat-option>
+              <div *ngIf="isLoadingMoreDesignations[field.key]" class="loading-indicator">
+                Loading more...
+              </div>
+              <mat-option
+                *ngIf="!isLoadingMoreDesignations[field.key] && (designationsMeta[field.key] || []).length === 0"
+                disabled>
+                No matches found
+              </mat-option>
+              </mat-select>
+              <<<<<<< HEAD <mat-error>{{ getFirstError(field) | translate }}</mat-error>
+                =======
+                <mat-error>{{ getFirstError(field) }}</mat-error>
+                >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ organisation-select ════════════════════════════ -->
+  <ng-container *ngSwitchCase="'organisation-select'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+          <mat-icon *ngIf="field?.infoText" class="info-icon"
+            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <<<<<<< HEAD <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+          panelClass="profile-control" (openedChange)="onOrgDropdownOpened(field, $event)"
+          (closed)="onOrgDropdownClosed(field)">
+          =======
+          <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select organization'"
+            panelClass="profile-control" (openedChange)="onOrgDropdownOpened(field, $event)"
+            (closed)="onOrgDropdownClosed(field)">
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+            <div class="sticky-search-container" (click)="$event.stopPropagation()">
+              <div class="search-input-wrapper profile-control">
+                <input type="text" [placeholder]="field?.searchPlaceholder || 'Search organization'"
+                  [formControlName]="'_search_' + field.key" class="search-input" (keydown)="$event.stopPropagation()"
+                  (click)="$event.stopPropagation()" autocomplete="off">
+              </div>
+            </div>
+            <!-- Options list -->
+            <mat-option *ngFor="let org of (orgSelectData[field.key] || []); trackBy: trackByOrgFn"
+              [value]="org?.orgName" (onSelectionChange)="onOrgSelectionChange(field, org)">
+              {{ org?.orgName }}
+            </mat-option>
+            <!-- Loading indicator -->
+            <div *ngIf="isLoadingMoreOrg[field.key]" class="loading-indicator">
+              Loading more...
+            </div>
+            <!-- No results -->
+            <mat-option *ngIf="!isLoadingMoreOrg[field.key] && (orgSelectData[field.key] || []).length === 0" disabled>
+              No matches found
+            </mat-option>
+          </mat-select>
+          <<<<<<< HEAD <mat-error>{{ getFirstError(field) | translate }}</mat-error>
+            =======
+            <mat-error>{{ getFirstError(field) }}</mat-error>
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ degree-select ═══════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'degree-select'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }} <mat-icon *ngIf="field?.infoText" class="info-icon"
+          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+          panelClass="profile-control" (openedChange)="onDegreeDropdownOpened(field, $event)"
+          (closed)="onDegreeDropdownClosed(field)">
+          <div class="sticky-search-container" (click)="$event.stopPropagation()">
+            <input type="text" [placeholder]="field?.searchPlaceholder | translate"======={{ field?.label }} <mat-icon
+              *ngIf="field?.infoText" class="info-icon" [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select Degree'"
+              panelClass="profile-control" (openedChange)="onDegreeDropdownOpened(field, $event)"
+              (closed)="onDegreeDropdownClosed(field)">
+              <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                <input type="text" [placeholder]="field?.searchPlaceholder || 'Search degree'">>>>>>>
+                59f7158174c17203a9a61157af8325416212875b
+                [formControlName]="'_search_' + field.key" class="search-input"
+                (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                autocomplete="off">
+              </div>
+              <mat-option *ngFor="let opt of (degreesMeta[field.key] || [])" [value]="opt?.name">
+                {{ opt?.name }}
+              </mat-option>
+              <div *ngIf="isLoadingMoreDegrees[field.key]" class="loading-indicator">
+                Loading more...
+              </div>
+              <mat-option *ngIf="!isLoadingMoreDegrees[field.key] && (degreesMeta[field.key] || []).length === 0"
+                disabled>
+                No matches found
+              </mat-option>
+            </mat-select>
+            <<<<<<< HEAD <mat-error>{{ getFirstError(field) | translate }}</mat-error>
+              =======
+              <mat-error>{{ getFirstError(field) }}</mat-error>
+              >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+          </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ institution-select ══════════════════════════════ -->
+  <ng-container *ngSwitchCase="'institution-select'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }} <mat-icon *ngIf="field?.infoText" class="info-icon"
+          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+          panelClass="profile-control" (openedChange)="onInstitutionDropdownOpened(field, $event)"
+          (closed)="onInstitutionDropdownClosed(field)">
+          <div class="sticky-search-container" (click)="$event.stopPropagation()">
+            <input type="text" [placeholder]="field?.searchPlaceholder | translate"======={{ field?.label }} <mat-icon
+              *ngIf="field?.infoText" class="info-icon" [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+          </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select Institute'"
+              panelClass="profile-control" (openedChange)="onInstitutionDropdownOpened(field, $event)"
+              (closed)="onInstitutionDropdownClosed(field)">
+              <div class="sticky-search-container" (click)="$event.stopPropagation()">
+                <input type="text" [placeholder]="field?.searchPlaceholder || 'Search institute'">>>>>>>
+                59f7158174c17203a9a61157af8325416212875b
+                [formControlName]="'_search_' + field.key" class="search-input"
+                (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
+                autocomplete="off">
+              </div>
+              <mat-option *ngFor="let opt of (institutionsMeta[field.key] || [])" [value]="opt?.name">
+                {{ opt?.name }}
+              </mat-option>
+              <div *ngIf="isLoadingMoreInstitutions[field.key]" class="loading-indicator">
+                Loading more...
+              </div>
+              <mat-option
+                *ngIf="!isLoadingMoreInstitutions[field.key] && (institutionsMeta[field.key] || []).length === 0"
+                disabled>
+                No matches found
+              </mat-option>
+            </mat-select>
+            <<<<<<< HEAD <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+              =======
+              <mat-error>{{ getFirstError(field) }}</mat-error>
+              >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+          </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ date ════════════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'date'">
+    <div class="flex flex-col profile-control-date-field w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        {{ field?.label | translate }}
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <input matInput [matDatepicker]="picker" [formControlName]="field.key"
+          [placeholder]="field?.placeholder | translate" [min]="field?.minDate || null" [max]="field?.maxDate || null"
+          [attr.readonly]="field?.readonly ? true : null">
+        <mat-datepicker-toggle matSuffix [for]="picker">
+        </mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ checkbox ════════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'checkbox'">
+    <div class="flex flex-col profile-control mb-4">
+      <mat-checkbox class="lable" [formControlName]="field.key">
+        {{ field?.label | translate }}
+      </mat-checkbox>
+    </div>
+  </ng-container>
+
+  <!-- ══ radio ═══════════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'radio'">
+    <div class="flex flex-col gap-1 round-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+      </div>
+      <mat-radio-group [formControlName]="field.key" class="flex flex-row flex-wrap gap-4 margin-top-s">
+        <mat-radio-button *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
+          [disabled]="opt?.disabled || false" class="flex flex-row items-center">
+          <<<<<<< HEAD <span class="mat-body-2">{{ opt?.label | translate }}</span>
+            =======
+            <span class="mat-body-2">{{ opt?.label }}</span>
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+        </mat-radio-button>
+      </mat-radio-group>
+      <div class="field-error mat-error" *ngIf="getFirstError(field)">
+        {{ getFirstError(field) }}
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══ year-select ═════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'year-select'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }} </div>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
+              =======
+              {{ field?.label }}
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select Year'">
+          >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+          <mat-option *ngFor="let year of getYearsForField(field)" [value]="year">
+            {{ year }}
+          </mat-option>
+        </mat-select>
+        <<<<<<< HEAD <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+          =======
+          <mat-error>{{ getFirstError(field) }}</mat-error>
+          >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ duration ════════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'duration'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+          <mat-icon *ngIf="field?.infoText" class="info-icon"
+            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+      </div>
+      <div class="duration-input flex items-center gap-1">
+        <mat-form-field appearance="outline" class="duration-field profile-control">
+          <input matInput type="number" min="0" max="100" [formControlName]="field.key + 'Hours'"
+            placeholder="Hours(0-100)" (keydown)="preventNonNumericInput($event)">
+          <<<<<<< HEAD <mat-error>{{ getFirstError(field, 'Hours') | translate}}</mat-error>
+            =======
+            <mat-error>{{ getFirstError(field, 'Hours') }}</mat-error>
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+        </mat-form-field>
+        <span class="duration-separator">:</span>
+        <mat-form-field appearance="outline" class="duration-field profile-control">
+          <input matInput type="number" min="0" max="59" [formControlName]="field.key + 'Minutes'"
+            placeholder="Minutes(0-59)" (keydown)="preventNonNumericInput($event)">
+          <<<<<<< HEAD <mat-error>{{ getFirstError(field, 'Minutes') | translate}}</mat-error>
+            =======
+            <mat-error>{{ getFirstError(field, 'Minutes') }}</mat-error>
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+        </mat-form-field>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══ image / file upload ═════════════════════════════ -->
+  <ng-container *ngSwitchCase="'image'">
+    <div class="w-full mb-5">
+      <div class="lable mb-1" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+          <mat-icon *ngIf="field?.infoText" class="info-icon"
+            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+      </div>
+
+      <!-- Uploaded file card -->
+      <ng-container *ngIf="getFileName(field); else uploadZone">
+        <div class="fileNameCard flex justify-between px-2 items-center">
+          <div class="flex gap-2 items-center w-full">
+            <ng-container *ngIf="isPdf(field); else imgIcon">
+              <img src="assets/icons/PDF_alternate.svg" alt="pdf">
+            </ng-container>
+            <ng-template #imgIcon>
+              <img src="/assets/icons/image.svg" alt="image">
+            </ng-template>
+            <span class="iconName" [title]="getFileName(field)">
+              {{ getFileName(field) }}
+            </span>
+          </div>
+          <mat-icon class="remove-file" (click)="removeFile(field)">close</mat-icon>
+        </div>
+      </ng-container>
+
+      <!-- Upload drop zone -->
+      <ng-template #uploadZone>
+        <div class="upload flex justify-center items-center" (dragover)="preventDefaultCDK($event)"
+          (dragenter)="preventDefaultCDK($event, 'enter')" (dragleave)="preventDefaultCDK($event, 'leave')"
+          (drop)="onDrop(field, $event)" (click)="fileInput.click()">
+          <input #fileInput type="file" class="hidden" [accept]="field?.accept || '.png,.jpg,.jpeg,.pdf'"
+            (change)="onFileSelected(field, fileInput.files)">
+          <div class="flex justify-center items-center gap-2">
+            <img src="/assets/icons/upload-upward-arrow.svg" alt="upload">
+            <span class="dragFileText">Drag file to upload</span>
+          </div>
+        </div>
+      </ng-template>
+      <!-- Validation error outside mat-form-field -->
+      <div class="field-error mat-error" *ngIf="hasError(field.key, 'required')">
+        {{ getErrorMessage(field, 'required') }}
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══ url ═════════════════════════════════════════════ -->
+  <ng-container *ngSwitchCase="'url'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        <<<<<<< HEAD {{ field?.label | translate }}======={{ field?.label }}>>>>>>>
+          59f7158174c17203a9a61157af8325416212875b
+          <mat-icon *ngIf="field?.infoText" class="info-icon"
+            [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <<<<<<< HEAD <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
+          <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+          =======
+          <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || 'https://www.example.com'">
+          <mat-error>{{ getFirstError(field) }}</mat-error>
+          >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+      </mat-form-field>
+    </div>
+  </ng-container>
+
+  <!-- ══ number ══════════════════════════════════════════ -->
+  <<<<<<< HEAD <ng-container *ngSwitchCase="'mobile'">
+    <div class="flex flex-col profile-control w-full">
+      <div class="lable" [ngClass]="{'required': field?.required}">
+        {{ field?.label | translate }}
+        =======
+        <ng-container *ngSwitchCase="'number'">
+          <div class="flex flex-col profile-control w-full">
+            <div class="lable" [ngClass]="{'required': field?.required}">
+              {{ field?.label }}
+              >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+              <mat-icon *ngIf="field?.infoText" class="info-icon"
+                [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+            </div>
+            <mat-form-field appearance="outline" class="full-width">
+              <<<<<<< HEAD <input matInput maxlength="10" [formControlName]="field.key"
+                [placeholder]="field?.placeholder | translate" (keydown)="preventNonNumericInput($event)">
+                <mat-error>{{ getFirstError(field) | translate}}</mat-error>
+            </mat-form-field>
+          </div>
+          <ng-container *ngIf="field?.addOTPverification">
+            <div class="error-text" *ngIf="phoneExists"
+              style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+              This mobile number already exists.
+            </div>
+            <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
+              <span class="get-otp" (click)="handleGenerateOTP(field.valueChangeKey, field.key)">{{
+                'NetworkV2Profile.getOTP' | translate}}
+              </span>
+            </div>
+          </ng-container>
+          =======
+          <input matInput type="number" [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
+            (keydown)="preventNonNumericInput($event)">
+          <mat-error>{{ getFirstError(field) }}</mat-error>
+          </mat-form-field>
+      </div>
+      >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+      </ng-container>
+
+      <!-- ══ fallback (unknown type) ═════════════════════════ -->
+      <ng-container *ngSwitchDefault>
+        <div class="flex flex-col profile-control w-full">
+          <<<<<<< HEAD <div class="lable">{{ field?.label | translate }}
+        </div>
+        <mat-form-field appearance="outline" class="full-width">
+          <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
+          =======
+          <div class="lable">{{ field?.label }}</div>
+          <mat-form-field appearance="outline" class="full-width">
+            <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''">
+            >>>>>>> 59f7158174c17203a9a61157af8325416212875b
+          </mat-form-field>
+    </div>
+    </ng-container>
+
+    </ng-container>
+    <!-- /ngSwitch -->
+    </ng-container>
+    <!-- /isFieldVisible -->
+    </ng-container>
+    <!-- /field loop -->
+
+</div>
+</ng-container>
+<!-- /row loop -->
+
+</div>
+</form>
+</ng-container>
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<hr class="solid">
+<div class="form-actions flex justify-end items-center gap-4">
+  <button mat-button class="cancel-btn flex align-center justify-center px-2" (click)="handleCancel()">
+    Cancel
+  </button>
+  <button mat-button class="save-btn flex align-center justify-center px-2" (click)="handleSubmit()"
+    [ngClass]="{'disable-btn': entryForm?.invalid}">
+    {{ entryDetails ? 'Update' : 'Add' }}
+  </button>
+</div>
 
 </div>
