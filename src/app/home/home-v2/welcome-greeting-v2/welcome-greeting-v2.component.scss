@@ -1,0 +1,47 @@
+.wg-container {
+  padding: 12px 0;
+  // background: var(--surface-primary);
+}
+
+.wg-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-bandw-black-display);
+  letter-spacing: 0.01em;
+  cursor: default;
+}
+
+.wg-name {
+  font-weight: 700;
+  color: #1d1d1d;
+background: linear-gradient(90deg,
+      red,
+      orange,
+      yellow,
+      green,
+      cyan,
+      blue,
+      violet,
+      red);
+
+  background-size: 400%;
+
+  -webkit-background-clip: text;
+
+  -webkit-text-fill-color: transparent;
+
+  animation: rainbow-animation 10s linear infinite;
+
+}
+
+@keyframes rainbow-animation {
+
+  0% {
+    background-position: 0%;
+  }
+
+  100% {
+    background-position: 400%;
+  }
+
+}
