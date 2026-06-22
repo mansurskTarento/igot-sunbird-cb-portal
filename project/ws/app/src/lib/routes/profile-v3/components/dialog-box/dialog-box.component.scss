@@ -3,7 +3,7 @@ a.close_btn {
 }
 
 .cdk-overlay-backdrop.cdk-overlay-backdrop-showing {
-    display: none!important;
+    display: none !important;
 }
 
 .zoho-close-btn {
@@ -11,7 +11,23 @@ a.close_btn {
     top: 18px;
     right: 20px;
     z-index: 1;
+
     mat-icon {
         color: #fff;
+        margin-top: 15px;
+        margin-right: 10px;
+    }
+}
+
+::ng-deep .right-side-dialog {
+    .mat-mdc-dialog-container .mdc-dialog__surface {
+        display: block;
+        padding: 24px !important;
+        border-radius: 8px !important;
+        box-sizing: border-box;
+        /* remove scrollbars */
+        outline: 0;
+        overflow-y: auto !important;
+
     }
 }
