@@ -81,7 +81,7 @@
   .lang-img {
     position: absolute;
     left: 6%;
-    top: -8px;
+    top: -4px;
   }
 
   .mob-lang-img {
@@ -266,6 +266,10 @@
   .mob-lang-img {
     display: none !important;
   }
+}
+
+.text-white {
+  color: #fff !important;
 }
 
 .font-size-controls {

@@ -8,9 +8,10 @@
     // background-position: center;
     // background-repeat: no-repeat;
     // background-size: cover;
-    
+
     box-sizing: border-box;
     position: relative;
+
     .comp-name {
         height: 48px;
         overflow: hidden;
@@ -24,8 +25,9 @@
         background-size: cover;
         position: absolute;
         z-index: -1;
-    
+
     }
+
     .card_text_box {
         padding: 16px 16px;
         width: 100%;
@@ -33,4 +35,8 @@
         z-index: 9;
         box-sizing: border-box;
     }
+}
+
+.text-white {
+    color: #fff !important;
 }

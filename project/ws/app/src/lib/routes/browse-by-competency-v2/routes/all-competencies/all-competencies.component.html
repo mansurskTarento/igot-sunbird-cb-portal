@@ -82,13 +82,14 @@
           <div class="flex top_search_box">
             <div class="flex-1 search_box_inner">
               <div class="flex flex-1 flex-column margin-fix search search_box_main">
-                <mat-form-field appearance="outline" class="autocomplete-form search_form margin-right-s"
+                <mat-form-field appearance="outline" class="white-search autocomplete-form search_form margin-right-s"
                   color="primary">
                   <mat-icon matPrefix class="flex items-center justify-center mr-2">search
                   </mat-icon>
                   <!-- <mat-label>Search</mat-label> -->
                   <input type="search" name="searchKey" #searchKey class="ml-2" i18-aria-label aria-label="Search"
-                    formControlName="searchKey" i18n-placeholder="search" [placeholder]="'allcompetencies.search' | translate" matInput />
+                    formControlName="searchKey" i18n-placeholder="search"
+                    [placeholder]="'allcompetencies.search' | translate" matInput />
                   <!-- (input)="updateQuery(searchKey.value)" -->
                 </mat-form-field>
               </div>
@@ -107,10 +108,13 @@
               <div class="flex flex-1 flex-wrap section-input">
                 <div class="item">
 
-                  <mat-form-field class="" appearance="outline">
-                    <mat-select #sortBySelect formControlName="sortByControl" i18n-placeholder placeholder="{{ 'allcompetencies.sortBy' | translate }}">
-                      <mat-option [value]="'Ascending'" slected>{{ 'allcompetencies.ascending' | translate }} ( A - Z )</mat-option>
-                      <mat-option [value]="'Descending'">{{ 'allcompetencies.descending' | translate }} ( Z - A )</mat-option>
+                  <mat-form-field class="white-select sort-options" appearance="outline">
+                    <mat-select #sortBySelect formControlName="sortByControl" i18n-placeholder
+                      placeholder="{{ 'allcompetencies.sortBy' | translate }}">
+                      <mat-option [value]="'Ascending'" slected>{{ 'allcompetencies.ascending' | translate }} ( A - Z
+                        )</mat-option>
+                      <mat-option [value]="'Descending'">{{ 'allcompetencies.descending' | translate }} ( Z - A
+                        )</mat-option>
                     </mat-select>
                   </mat-form-field>
 

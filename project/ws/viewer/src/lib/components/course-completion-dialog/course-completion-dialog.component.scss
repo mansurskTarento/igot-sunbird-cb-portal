@@ -184,3 +184,10 @@
   font-weight: 400;
   line-height: normal;
 }
+
+::ng-deep .course-completion-dialog {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+}
