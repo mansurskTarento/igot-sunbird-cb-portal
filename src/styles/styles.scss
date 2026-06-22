@@ -2352,3 +2352,17 @@ ngx-guided-tour {
 
 
 }
+
+
+.enrol-profile-form-component {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    display: block;
+    padding: 24px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box;
+    /* remove scrollbars */
+    outline: 0;
+    overflow-y: auto;
+
+  }
+}
