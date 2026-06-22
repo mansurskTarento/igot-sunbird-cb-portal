@@ -37,14 +37,14 @@
                   <ng-container *ngSwitchCase="'text'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
-                          [maxlength]="field?.maxLength || 9999" [attr.readonly]="field?.readonly ? true : null">
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+                          [maxlength]="field?.maxLength" [attr.readonly]="field?.readonly ? true : null">
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                         <mat-hint align="end" *ngIf="field?.maxLength && entryForm?.get(field.key)?.value">
                           {{ getCharCount(field.key) }}/{{ field?.maxLength }}
                         </mat-hint>
@@ -52,18 +52,42 @@
                     </div>
                   </ng-container>
 
+                  <ng-container *ngSwitchCase="'email'">
+                    <div class="flex flex-col profile-control">
+                      <div class="lable required">{{'NetworkV2Profile.email' | translate}}</div>
+                      <mat-form-field appearance="outline">
+                        <input matInput type="email" [formControlName]="field.key" (keyup)="handleEmpty(field)">
+                        <mat-error *ngIf="getFirstError(field)">
+                          {{ getFirstError(field) | translate }}
+                        </mat-error>
+                      </mat-form-field>
+                      <ng-container *ngIf="field?.addOTPverification">
+                        <div class="error-text" *ngIf="emailExists"
+                          style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+                          This email ID already exists.
+                        </div>
+                        <div class="flex justify-end" *ngIf="verifyEmail && !emailExists">
+                          <span class="get-otp" (click)="handleGenerateEmailOTP('email', field.key)">{{
+                            'NetworkV2Profile.getOTP' |
+                            translate}}</span>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </ng-container>
+
                   <!-- ══ textarea ════════════════════════════════════════ -->
                   <ng-container *ngSwitchCase="'textarea'">
                     <div class="flex flex-col w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
                         <textarea matInput [formControlName]="field.key" rows="4"
-                          [placeholder]="field?.placeholder || ''" [maxlength]="field?.maxLength || 9999"></textarea>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                          [placeholder]="field?.placeholder | translate"
+                          [maxlength]="field?.maxLength || 9999"></textarea>
+                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
                         <mat-hint align="end">
                           {{ getCharCount(field.key) }}{{ field?.maxLength ? '/' + field?.maxLength : '' }}
                         </mat-hint>
@@ -75,27 +99,27 @@
                   <ng-container *ngSwitchCase="'select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }} 78
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || ''">
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder  | translate">
                           <!-- optionsSource: states/districts loaded via API -->
                           <ng-container *ngIf="field?.optionsSource; else staticOptions">
                             <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
-                              {{ opt?.label }}
+                              {{ opt?.label | translate }}
                             </mat-option>
                           </ng-container>
                           <!-- static options from config -->
                           <ng-template #staticOptions>
                             <mat-option *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
                               [disabled]="opt?.disabled || false">
-                              {{ opt?.label }}
+                              {{ opt?.label | translate }}
                             </mat-option>
                           </ng-template>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -106,10 +130,10 @@
                       <div class="lable" [ngClass]="{'required': field?.required}">
                         {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
+                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
                           [matAutocomplete]="optionsAuto" (keydown)="onkeyDown($event)">
                         <mat-icon matSuffix>arrow_drop_down</mat-icon>
                       </mat-form-field>
@@ -117,7 +141,7 @@
                         (closed)="onAutoCompleteClosed()">
                         <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
                           <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
-                            {{ opt?.label }}
+                            {{ opt?.label | translate }}
                           </mat-option>
                           <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
                             No matches found
@@ -126,43 +150,13 @@
                         <ng-template #staticSearchableOptions>
                           <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
                             [disabled]="opt?.disabled || false">
-                            {{ opt?.label }}
+                            {{ opt?.label | translate }}
                           </mat-option>
                           <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
                             No matches found
                           </mat-option>
                         </ng-template>
                       </mat-autocomplete>
-                      <!-- <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || ''"
-                          panelClass="profile-control" (openedChange)="onSearchableSelectOpened(field, $event)"
-                          (closed)="onSearchableSelectClosed(field)">
-                          <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <input type="text" [placeholder]="field?.searchPlaceholder || 'Search...'"
-                              [formControlName]="'_search_' + field.key" class="search-input"
-                              (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
-                              autocomplete="off">
-                          </div>
-                          <ng-container *ngIf="field?.optionsSource; else staticSearchableOptions">
-                            <mat-option *ngFor="let opt of (dynamicOptions[field.key] || [])" [value]="opt?.value">
-                              {{ opt?.label }}
-                            </mat-option>
-                            <mat-option *ngIf="(dynamicOptions[field.key] || []).length === 0" disabled>
-                              No matches found
-                            </mat-option>
-                          </ng-container>
-                          <ng-template #staticSearchableOptions>
-                            <mat-option *ngFor="let opt of (filteredOptions()[field.key] || [])" [value]="opt?.value"
-                              [disabled]="opt?.disabled || false">
-                              {{ opt?.label }}
-                            </mat-option>
-                            <mat-option *ngIf="(filteredOptions()[field.key] || []).length === 0" disabled>
-                              No matches found
-                            </mat-option>
-                          </ng-template>
-                        </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
-                      </mat-form-field> -->
                     </div>
                   </ng-container>
 
@@ -170,18 +164,17 @@
                   <ng-container *ngSwitchCase="'designation-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key"
-                          [placeholder]="field?.placeholder || 'Choose a designation'" panelClass="profile-control"
-                          (openedChange)="onDesignationDropdownOpened(field, $event)"
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+                          panelClass="profile-control" (openedChange)="onDesignationDropdownOpened(field, $event)"
                           (closed)="onDesignationDropdownClosed(field)">
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper profile-control">
-                              <input type="text" [placeholder]="field?.searchPlaceholder || 'Search designation'"
+                              <input type="text" [placeholder]="field?.searchPlaceholder | translate"
                                 [formControlName]="'_search_' + field.key" class="search-input"
                                 (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
                                 autocomplete="off">
@@ -200,7 +193,7 @@
                             No matches found
                           </mat-option>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -209,14 +202,14 @@
                   <ng-container *ngSwitchCase="'organisation-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key"
-                          [placeholder]="field?.placeholder || 'Select organization'" panelClass="profile-control"
-                          (openedChange)="onOrgDropdownOpened(field, $event)" (closed)="onOrgDropdownClosed(field)">
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+                          panelClass="profile-control" (openedChange)="onOrgDropdownOpened(field, $event)"
+                          (closed)="onOrgDropdownClosed(field)">
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
                             <div class="search-input-wrapper profile-control">
                               <input type="text" [placeholder]="field?.searchPlaceholder || 'Search organization'"
@@ -241,7 +234,7 @@
                             No matches found
                           </mat-option>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -250,16 +243,16 @@
                   <ng-container *ngSwitchCase="'degree-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select Degree'"
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
                           panelClass="profile-control" (openedChange)="onDegreeDropdownOpened(field, $event)"
                           (closed)="onDegreeDropdownClosed(field)">
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <input type="text" [placeholder]="field?.searchPlaceholder || 'Search degree'"
+                            <input type="text" [placeholder]="field?.searchPlaceholder | translate"
                               [formControlName]="'_search_' + field.key" class="search-input"
                               (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
                               autocomplete="off">
@@ -276,7 +269,7 @@
                             No matches found
                           </mat-option>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate }}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -285,17 +278,16 @@
                   <ng-container *ngSwitchCase="'institution-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
-                          [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
+                          [matTooltip]="field?.infoText | translate">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key"
-                          [placeholder]="field?.placeholder || 'Select Institute'" panelClass="profile-control"
-                          (openedChange)="onInstitutionDropdownOpened(field, $event)"
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate"
+                          panelClass="profile-control" (openedChange)="onInstitutionDropdownOpened(field, $event)"
                           (closed)="onInstitutionDropdownClosed(field)">
                           <div class="sticky-search-container" (click)="$event.stopPropagation()">
-                            <input type="text" [placeholder]="field?.searchPlaceholder || 'Search institute'"
+                            <input type="text" [placeholder]="field?.searchPlaceholder | translate"
                               [formControlName]="'_search_' + field.key" class="search-input"
                               (keydown)="$event.stopPropagation()" (click)="$event.stopPropagation()"
                               autocomplete="off">
@@ -312,7 +304,7 @@
                             No matches found
                           </mat-option>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -321,16 +313,16 @@
                   <ng-container *ngSwitchCase="'date'">
                     <div class="flex flex-col profile-control-date-field w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
                         <input matInput [matDatepicker]="picker" [formControlName]="field.key"
-                          [placeholder]="field?.placeholder" [min]="field?.minDate || null"
+                          [placeholder]="field?.placeholder | translate" [min]="field?.minDate || null"
                           [max]="field?.maxDate || null" [attr.readonly]="field?.readonly ? true : null">
                         <mat-datepicker-toggle matSuffix [for]="picker">
                         </mat-datepicker-toggle>
                         <mat-datepicker #picker></mat-datepicker>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -339,7 +331,7 @@
                   <ng-container *ngSwitchCase="'checkbox'">
                     <div class="flex flex-col profile-control mb-4">
                       <mat-checkbox class="lable" [formControlName]="field.key">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                       </mat-checkbox>
                     </div>
                   </ng-container>
@@ -348,12 +340,12 @@
                   <ng-container *ngSwitchCase="'radio'">
                     <div class="flex flex-col gap-1 round-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                       </div>
                       <mat-radio-group [formControlName]="field.key" class="flex flex-row flex-wrap gap-4 margin-top-s">
                         <mat-radio-button *ngFor="let opt of (field?.options || [])" [value]="opt?.value"
                           [disabled]="opt?.disabled || false" class="flex flex-row items-center">
-                          <span class="mat-body-2">{{ opt?.label }}</span>
+                          <span class="mat-body-2">{{ opt?.label | translate }}</span>
                         </mat-radio-button>
                       </mat-radio-group>
                       <div class="field-error mat-error" *ngIf="getFirstError(field)">
@@ -366,15 +358,15 @@
                   <ng-container *ngSwitchCase="'year-select'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder || 'Select Year'">
+                        <mat-select [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
                           <mat-option *ngFor="let year of getYearsForField(field)" [value]="year">
                             {{ year }}
                           </mat-option>
                         </mat-select>
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
@@ -383,7 +375,7 @@
                   <ng-container *ngSwitchCase="'duration'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
@@ -391,13 +383,13 @@
                         <mat-form-field appearance="outline" class="duration-field profile-control">
                           <input matInput type="number" min="0" max="100" [formControlName]="field.key + 'Hours'"
                             placeholder="Hours(0-100)" (keydown)="preventNonNumericInput($event)">
-                          <mat-error>{{ getFirstError(field, 'Hours') }}</mat-error>
+                          <mat-error>{{ getFirstError(field, 'Hours') | translate}}</mat-error>
                         </mat-form-field>
                         <span class="duration-separator">:</span>
                         <mat-form-field appearance="outline" class="duration-field profile-control">
                           <input matInput type="number" min="0" max="59" [formControlName]="field.key + 'Minutes'"
                             placeholder="Minutes(0-59)" (keydown)="preventNonNumericInput($event)">
-                          <mat-error>{{ getFirstError(field, 'Minutes') }}</mat-error>
+                          <mat-error>{{ getFirstError(field, 'Minutes') | translate}}</mat-error>
                         </mat-form-field>
                       </div>
                     </div>
@@ -407,7 +399,7 @@
                   <ng-container *ngSwitchCase="'image'">
                     <div class="w-full mb-5">
                       <div class="lable mb-1" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
@@ -456,40 +448,50 @@
                   <ng-container *ngSwitchCase="'url'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key"
-                          [placeholder]="field?.placeholder || 'https://www.example.com'">
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                       </mat-form-field>
                     </div>
                   </ng-container>
 
                   <!-- ══ number ══════════════════════════════════════════ -->
-                  <ng-container *ngSwitchCase="'number'">
+                  <ng-container *ngSwitchCase="'mobile'">
                     <div class="flex flex-col profile-control w-full">
                       <div class="lable" [ngClass]="{'required': field?.required}">
-                        {{ field?.label }}
+                        {{ field?.label | translate }}
                         <mat-icon *ngIf="field?.infoText" class="info-icon"
                           [matTooltip]="field?.infoText || ''">info_outline</mat-icon>
                       </div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <input matInput type="number" [formControlName]="field.key"
-                          [placeholder]="field?.placeholder || ''" (keydown)="preventNonNumericInput($event)">
-                        <mat-error>{{ getFirstError(field) }}</mat-error>
+                        <input matInput maxlength="10" [formControlName]="field.key"
+                          [placeholder]="field?.placeholder | translate" (keydown)="preventNonNumericInput($event)">
+                        <mat-error>{{ getFirstError(field) | translate}}</mat-error>
                       </mat-form-field>
                     </div>
+                    <ng-container *ngIf="field?.addOTPverification">
+                      <div class="error-text" *ngIf="phoneExists"
+                        style="color: #f44336; font-size: 12px; margin-top: -12px; margin-bottom: 8px;">
+                        This mobile number already exists.
+                      </div>
+                      <div class="flex justify-end" *ngIf="verifyMobile && !phoneExists">
+                        <span class="get-otp" (click)="handleGenerateOTP(field.valueChangeKey, field.key)">{{
+                          'NetworkV2Profile.getOTP' | translate}}
+                        </span>
+                      </div>
+                    </ng-container>
                   </ng-container>
 
                   <!-- ══ fallback (unknown type) ═════════════════════════ -->
                   <ng-container *ngSwitchDefault>
                     <div class="flex flex-col profile-control w-full">
-                      <div class="lable">{{ field?.label }}</div>
+                      <div class="lable">{{ field?.label | translate }}</div>
                       <mat-form-field appearance="outline" class="full-width">
-                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder || ''">
+                        <input matInput [formControlName]="field.key" [placeholder]="field?.placeholder | translate">
                       </mat-form-field>
                     </div>
                   </ng-container>

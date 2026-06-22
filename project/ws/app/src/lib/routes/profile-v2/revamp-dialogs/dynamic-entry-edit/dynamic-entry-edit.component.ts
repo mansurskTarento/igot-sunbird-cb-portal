@@ -1,16 +1,20 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core'
+import { Component, DestroyRef, inject, OnDestroy, OnInit, signal } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms'
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
-import { debounceTime, distinctUntilChanged, startWith } from 'rxjs/operators'
+import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { generateYears, URL_PATRON } from '../../models/profile-revamp.model'
+import { generateYears, MOBILE_PATTERN, URL_PATRON } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
 import { ConfigDetails } from '@sunbird-cb/consumption'
 import { HttpErrorResponse } from '@angular/common/http'
+import { Subject } from 'rxjs'
+import { VerifyOtpComponent } from '../../components/verify-otp/verify-otp.component'
+import { OtpService } from '../../../user-profile/services/otp.services'
+import { ConfirmDialogComponent } from '@sunbird-cb/collection'
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Types & Interfaces
@@ -30,6 +34,8 @@ export type FieldType =
   | 'url'
   | 'year-select'
   | 'number'
+  | 'mobile'
+  | 'email'
   | 'duration'
   | 'info-text'
   | 'degree-select'         // loads degrees via ProfileV2RevampService.getEducationsQualificationsSearch
@@ -122,6 +128,8 @@ export function dateDependencyGreaterValidator(dependentControlName: string): Va
  * text             (info-text): static text to display
  */
 export interface FieldConfig {
+  addValueChangeListener?: boolean
+  valueChangeKey?: string
   type: FieldType
   key: string
   label?: string
@@ -209,7 +217,7 @@ export interface FieldConfig {
   styleUrls: ['./dynamic-entry-edit.component.scss'],
   standalone: false,
 })
-export class DynamicEntryEditComponent implements OnInit {
+export class DynamicEntryEditComponent implements OnInit, OnDestroy {
 
   // ── Dependency Injection ────────────────────────────────────────
   private readonly fb = inject(FormBuilder)
@@ -219,6 +227,8 @@ export class DynamicEntryEditComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef)
   private readonly profileV2RevampSvc = inject(ProfileV2RevampService)
   private readonly configSvc = inject(ConfigurationsService)
+  private readonly dialog = inject(MatDialog)
+  private readonly otpService = inject(OtpService)
 
   // ── Config — received once, never changes ───────────────────────────
   readonly header: string = _.get(this.data, 'header', '')
@@ -299,6 +309,17 @@ export class DynamicEntryEditComponent implements OnInit {
   eCategory = Object.keys(NsUserProfileDetails.ECategory)
   masterLanguageBackup: any
   isMatcompleteOpened: boolean = false
+  emailExists: boolean = false
+  verifyEmail: boolean = false
+  destroySubject$ = new Subject()
+  approvedDomainList: any[] = []
+  contextToken: any
+  emailOtp: any
+  verifyMobile: boolean = false
+  phoneOtp: any
+  checkingEmail: boolean = false
+  phoneExists: boolean = false
+  checkingPhone: boolean = false
 
   // ── Lifecycle ────────────────────────────────────────────────────────
   ngOnInit(): void {
@@ -379,6 +400,7 @@ export class DynamicEntryEditComponent implements OnInit {
     }
 
     this.entryForm = this.fb.group(controls)
+    this.handleControlChange()
   }
 
   private wrapControlValue(value: any, shouldDisable: boolean): any {
@@ -426,6 +448,69 @@ export class DynamicEntryEditComponent implements OnInit {
       }
     }
     return v
+  }
+
+  private handleControlChange(): void {
+    const searchUserConfigDetails: ConfigDetails = this.getConfigDetails('userV5PublicSearch')
+    for (const field of this.editConfig) {
+      if (field.addValueChangeListener) {
+        const control = this.entryForm.get(field.key)
+        if (control) {
+          control.valueChanges.pipe(
+            debounceTime(300),
+            distinctUntilChanged(),
+            takeUntilDestroyed(this.destroyRef),
+          ).subscribe((value: any) => {
+            switch (field.valueChangeKey) {
+              case 'primaryEmail':
+                this.emailExists = false
+                if (value && value !== this.resolveValue(field)) {
+                  if (control.valid) {
+                    this.verifyEmail = true
+                    this.checkingEmail = true
+                    this.profileV2RevampSvc.searchUserByField(
+                      'email', value, searchUserConfigDetails
+                    ).subscribe((res => {
+                      this.checkingEmail = false
+                      if (res && _.get(res, 'result.response.count', 0) > 0) {
+                        this.emailExists = true
+                        this.verifyEmail = false
+                      }
+                    }))
+                  } else {
+                    this.verifyEmail = false
+                  }
+                } else {
+                  this.verifyEmail = false
+                }
+                break
+              case 'primaryMobile':
+                this.phoneExists = false
+                if (value && value !== this.resolveValue(field)) {
+                  if (MOBILE_PATTERN.test(value)) {
+                    this.verifyMobile = true
+                    this.checkingPhone = true
+                    this.profileV2RevampSvc.searchUserByField(
+                      'phone', value, searchUserConfigDetails
+                    ).subscribe((res => {
+                      this.checkingPhone = false
+                      if (res && _.get(res, 'result.response.count', 0) > 0) {
+                        this.phoneExists = true
+                        this.verifyMobile = false
+                      }
+                    }))
+                  }
+                  this.verifyMobile = false
+
+                } else {
+                  this.verifyMobile = false
+                }
+                break
+            }
+          })
+        }
+      }
+    }
   }
 
   // ── Field type helpers ─────────────────────────────────────────────────────
@@ -1616,11 +1701,144 @@ export class DynamicEntryEditComponent implements OnInit {
     return val ? String(val).length : 0
   }
 
+  getControl(key: string): AbstractControl | null {
+    return this.entryForm?.get(key) ?? null
+  }
+
   preventNonNumericInput(event: KeyboardEvent): void {
     const allowed = ['Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
       'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End']
     if (!allowed.includes(event.key) && !/^\d$/.test(event.key)) {
       event.preventDefault()
+    }
+  }
+
+  handleEmpty(field: FieldConfig): void {
+    const control = this.getControl(field.key)
+    const value = this.resolveValue(field)
+    if (field.type === 'mobile') {
+      if (value && control && !control.value) {
+        this.entryForm.setErrors({ valid: false })
+      }
+    }
+
+    if (field.type === 'email') {
+      if (!value && control && !control.value) {
+        this.entryForm.setErrors({ valid: false })
+      }
+    }
+  }
+
+  handleGenerateEmailOTP(verifyType: any, controlKey: string): void {
+    const configDetails: ConfigDetails = this.getConfigDetails('approvedDomains')
+    this.profileV2RevampSvc.getWhiteListDomain(configDetails).subscribe((response: any) => {
+      if (_.get(response, 'result.domains').length > 0) {
+        this.approvedDomainList = response.result.domains
+        if (this.approvedDomainList && this.approvedDomainList.length > 0) {
+          const primaryEmailControl = this.getControl(controlKey)
+          if (primaryEmailControl && this.isEmailAllowed(primaryEmailControl.value)) {
+            const configDetails: ConfigDetails = this.getConfigDetails('otpV3Generate')
+            this.otpService.sendEmailOtp(primaryEmailControl.value, configDetails)
+              .pipe(takeUntil(this.destroySubject$))
+              .subscribe((_res: any) => {
+                this.openSnackbar(this.handleTranslateTo('otpSentEmail'))
+                if (verifyType) {
+                  this.handleVerifyOTP(verifyType, primaryEmailControl.value)
+                }
+              }, (error: HttpErrorResponse) => {
+                if (!error.ok) {
+                  this.openSnackbar(this.handleTranslateTo('emailOTPSentFail'))
+                }
+              })
+          } else {
+            const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+              data: {
+                title: ' ',
+                from: 'approvedDomain',
+                acceptButton: 'OK',
+                width: '60%',
+              },
+            })
+            dialogRef.afterClosed().subscribe(result => {
+              if (result) {
+              }
+            })
+          }
+        }
+      }
+    })
+  }
+
+  handleVerifyOTP(verifyType: string, _value?: string): void {
+    const dialogRef = this.dialog.open(VerifyOtpComponent, {
+      data: { type: verifyType, value: _value, apiConfig: this.apiConfig },
+      disableClose: true,
+      panelClass: 'common-modal',
+    })
+
+    dialogRef.componentInstance.resendOTP.subscribe((data: any) => {
+      this.handleResendOTP(data)
+    })
+
+    dialogRef.componentInstance.otpVerified.subscribe((data: any) => {
+      this.contextToken = data.token
+      if (data.type === 'email') {
+        this.verifyEmail = false
+        this.emailOtp = data.otp || ''
+      } else {
+        this.verifyMobile = false
+        this.phoneOtp = data.otp || ''
+      }
+    })
+  }
+
+  handleResendOTP(data: any): void {
+    let otpValue$: any
+    if (data.type === 'email') {
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV3Generate')
+      otpValue$ = this.otpService.sendEmailOtp(data.value, configDetails)
+    } else {
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV1Generate')
+      otpValue$ = this.otpService.resendOtp(data.value, configDetails)
+    }
+
+    otpValue$.pipe(takeUntil(this.destroySubject$))
+      .subscribe((_res: any) => {
+        this.emailOtp = ''
+        this.phoneOtp = ''
+        if (data.type === 'email') {
+          this.openSnackbar(this.handleTranslateTo('otpSentEmail'))
+        } else {
+          this.openSnackbar(this.handleTranslateTo('otpSentMobile'))
+        }
+      }, (error: any) => {
+        if (!error.ok) {
+          this.openSnackbar(_.get(error, 'error.params.errmsg') || 'Unable to resend OTP, please try again later!')
+        }
+      })
+  }
+
+  isEmailAllowed(email: string): boolean {
+    const domain = email.split('@')[1]
+    return domain ? this.approvedDomainList.includes(domain) : false
+  }
+
+  handleGenerateOTP(verifyType: any, controlKey: string): void {
+    const mobileControl = this.entryForm.get(controlKey)
+    if (mobileControl) {
+      const configDetails: ConfigDetails = this.getConfigDetails('otpV1Generate')
+      this.otpService.sendOtp(mobileControl.value, configDetails)
+        .pipe(takeUntil(this.destroySubject$))
+        .subscribe((_res: any) => {
+          this.openSnackbar(this.handleTranslateTo('otpSentMobile'))
+          if (verifyType && mobileControl) {
+            this.handleVerifyOTP(verifyType, mobileControl.value)
+          }
+        }, (error: HttpErrorResponse) => {
+          if (!error.ok) {
+            this.openSnackbar(this.handleTranslateTo('mobileOTPSentFail'))
+          }
+        })
     }
   }
 
@@ -1711,5 +1929,9 @@ export class DynamicEntryEditComponent implements OnInit {
 
   private openSnackbar(msg: string, duration = 5000): void {
     this.snackBar.open(msg, 'X', { duration })
+  }
+
+  ngOnDestroy() {
+    this.destroySubject$.unsubscribe()
   }
 }

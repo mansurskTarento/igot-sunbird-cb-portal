@@ -134,7 +134,8 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
         this.groupApprovedTime < this.unVerifiedObj.groupRequestTime ||
         this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
         this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
-      this.isCurrentUser
+      this.isCurrentUser &&
+      _.get(this.primaryDetailsOtherDetailsConfig, 'primaryDetails.fields.approvalStatus.enabled', true)
     ) {
       return true
     }
