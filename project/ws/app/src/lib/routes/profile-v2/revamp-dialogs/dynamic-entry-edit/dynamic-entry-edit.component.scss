@@ -1,5 +1,5 @@
-/* dynamic-entry-edit.component.scss
-   Inherits the same visual language as profile-entry-edit.component.scss */
+@use '@sunbird-cb/design-system/src/styles/_ws-common';
+@use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .profile-editor-container {
   padding: 24px;
@@ -316,6 +316,13 @@
   .mat-form-field-appearance-outline .mat-form-field-outline-start {
     display: none !important;
   }
+}
+
+.get-otp {
+  color: $text-primary;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */

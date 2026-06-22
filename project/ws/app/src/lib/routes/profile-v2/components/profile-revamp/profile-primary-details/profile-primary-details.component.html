@@ -5,16 +5,18 @@
       <mat-icon class="info-icon" [matTooltipPosition]="'below'" #pTooltip="matTooltip"
         matTooltip="{{ 'NetworkV2Profile.pdTooltipMsg' | translate }}"
         (click)="pTooltip.toggle()">info_outline</mat-icon></span>
-    <ng-container *ngIf="showPrimaryDetailsEdit">
-      <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
+    <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.primaryDetails?.fields?.editTransferRequest?.enabled">
+      <ng-container *ngIf="showPrimaryDetailsEdit">
+        <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="disablePrimaryDetailsEdit">
+        <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'"
+          [matTooltip]="'NetworkV2Profile.pdTooltipWarnMsg' | translate">edit</mat-icon>
+      </ng-container>
+      <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">
+        {{'NetworkV2Profile.withdrawRequest' | translate }}
+      </div>
     </ng-container>
-    <ng-container *ngIf="disablePrimaryDetailsEdit">
-      <mat-icon class="edit-icon disable" [matTooltipPosition]="'below'"
-        [matTooltip]="'NetworkV2Profile.pdTooltipWarnMsg' | translate">edit</mat-icon>
-    </ng-container>
-    <div class="withdraw-text edit-button" *ngIf="showWithdrawRequestBtn" (click)="showWithdrawRequestPopup()">
-      {{'NetworkV2Profile.withdrawRequest' | translate }}
-    </div>
   </div>
   <div class="flex gap-10">
     <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.primaryDetails?.fields?.group?.enabled">

@@ -439,12 +439,12 @@ export class InitService {
     if (this.configSvc.instanceConfig) {
       let userPidProfile: any | null = null
       const profileUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
-      
+
       if (!profileUrl) {
         console.error('User profile API is disabled')
         throw new Error('Profile API disabled')
       }
-      
+
       try {
         userPidProfile = await this.http
           .get<any>(profileUrl)
@@ -558,12 +558,12 @@ export class InitService {
     if (this.configSvc.unMappedUser.id) {
       let userPidProfile: any | null = null
       const profileBaseUrl = this.domainConfSvc.getApiUrl('user', 'profile', '/apis/proxies/v8/api/user/v2/read')
-      
+
       if (!profileBaseUrl) {
         console.error('User profile API is disabled')
         throw new Error('Profile API disabled')
       }
-      
+
       const profileByIdUrl = `${profileBaseUrl}/${this.configSvc.unMappedUser.id}`
       try {
         userPidProfile = await this.http
@@ -656,7 +656,7 @@ export class InitService {
   private processAppsConfig(appsConfig: NsAppsConfig.IAppsConfig): NsAppsConfig.IAppsConfig {
     const tourGuide = appsConfig?.tourGuide
     const features: { [id: string]: NsAppsConfig.IFeature } = Object.values(
-      appsConfig?.features || {}  ,
+      appsConfig?.features || {},
       // tslint:disable-next-line: no-shadowed-variable
     ).reduce((map: { [id: string]: NsAppsConfig.IFeature }, feature: NsAppsConfig.IFeature) => {
       if (hasUnitPermission(feature.permission, this.configSvc.restrictedFeatures, true)) {
@@ -761,7 +761,7 @@ export class InitService {
       console.warn('Feed status API is disabled')
       return
     }
-    
+
     const feedId: any = []
     // Pass only the user ID to getFeedStatus - the service constructs the full URL
     this.npsSvc.getFeedStatus(this.configSvc.unMappedUser.id).subscribe((res: any) => {
