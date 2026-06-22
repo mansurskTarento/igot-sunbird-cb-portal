@@ -1,0 +1,124 @@
+<div class="bk-see-all">
+
+  <!-- Breadcrumb -->
+  <nav class="bk-see-all__breadcrumb">
+    <span class="bk-see-all__crumb bk-see-all__crumb--link" (click)="goHome()">Home</span>
+    <mat-icon class="bk-see-all__crumb-sep">chevron_right</mat-icon>
+    <span class="bk-see-all__crumb bk-see-all__crumb--link" (click)="goBharatKalp()">Bharat Kalp</span>
+    <mat-icon class="bk-see-all__crumb-sep">chevron_right</mat-icon>
+    <span class="bk-see-all__crumb">Explore all Bharat Kalp content</span>
+  </nav>
+
+  <!-- Heading -->
+  <h1 class="bk-see-all__heading">Explore all Bharat Kalp content</h1>
+
+  <!-- Search + Week filter row -->
+  <div class="bk-see-all__search-row">
+    <div class="bk-see-all__search-wrap">
+      <mat-icon class="bk-see-all__search-icon">search</mat-icon>
+      <input
+        class="bk-see-all__search-input"
+        type="text"
+        placeholder="Search Anything in Bharat Kalp..."
+        [(ngModel)]="searchText"
+        (ngModelChange)="onSearch()" />
+    </div>
+
+    <div class="bk-see-all__week-wrap">
+      <select class="bk-see-all__week-select"
+        [(ngModel)]="selectedWeek"
+        (ngModelChange)="onWeekChange($event)">
+        <option [ngValue]="ALL_WEEKS">All Weeks</option>
+        <option *ngFor="let w of weeks" [ngValue]="w">
+          Week {{ w }}{{ !isWeekStarted(w) ? ' 🔒' : '' }}
+        </option>
+      </select>
+      <mat-icon class="bk-see-all__week-arrow">keyboard_arrow_down</mat-icon>
+    </div>
+  </div>
+
+  <!-- Pill filters -->
+  <div class="bk-see-all__pills">
+    <button
+      *ngFor="let pill of pills"
+      class="bk-see-all__pill"
+      [class.bk-see-all__pill--active]="selectedTab === pill"
+      (click)="onPillSelect(pill)">
+      {{ pill }}
+    </button>
+  </div>
+
+  <!-- Cards grid -->
+  <div class="bk-see-all__grid" *ngIf="pagedCards.length; else noContent">
+    <div class="bk-see-all__card" *ngFor="let card of pagedCards"
+      (click)="navigateToCard(card)" role="button" tabindex="0">
+      <div class="bk-see-all__card-img-wrap">
+        <img *ngIf="card.posterImage" [src]="card.posterImage" [alt]="card.name" class="bk-see-all__card-img">
+        <div *ngIf="!card.posterImage" class="bk-see-all__card-img bk-see-all__card-img--ph"></div>
+        <div class="bk-see-all__card-dur" *ngIf="card.duration">
+          <mat-icon>access_time</mat-icon>{{ card.duration }}
+        </div>
+      </div>
+      <div class="bk-see-all__card-body">
+        <div class="bk-see-all__card-cat" *ngIf="card.category || card.type">
+          <mat-icon>video_library</mat-icon>
+          <span>{{ card.category || card.type }}</span>
+        </div>
+        <h4 class="bk-see-all__card-title">{{ card.name }}</h4>
+        <div class="bk-see-all__card-org" *ngIf="card.org">
+          <img *ngIf="card.orgLogo" [src]="card.orgLogo" [alt]="card.org" class="bk-see-all__card-org-logo">
+          <span>{{ card.org }}</span>
+        </div>
+        <div class="bk-see-all__card-rating" *ngIf="card.rating">
+          <span class="bk-see-all__card-star">★</span>{{ card.rating }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noContent>
+    <div class="bk-see-all__empty">
+      <mat-icon class="bk-see-all__empty-icon">info_outline</mat-icon>
+      <p *ngIf="selectedWeek !== ALL_WEEKS">
+        No content available for <strong>Week {{ selectedWeek }}</strong> yet.
+      </p>
+      <p *ngIf="selectedWeek === ALL_WEEKS">No content found.</p>
+    </div>
+  </ng-template>
+
+  <!-- Pagination -->
+  <div class="bk-see-all__pagination" *ngIf="filteredCards.length">
+    <!-- Left: items per page -->
+    <div class="bk-see-all__ipp">
+      <span class="bk-see-all__ipp-label">Number of results per page</span>
+      <div class="bk-see-all__ipp-select-wrap bk-see-all__week-wrap">
+        <select class="bk-see-all__ipp-select" [value]="itemsPerPage" (change)="onItemsPerPageChange($event)">
+          <option *ngFor="let opt of itemsPerPageOptions" [value]="opt">{{ opt }}</option>
+        </select>
+        <mat-icon class="bk-see-all__week-arrow">keyboard_arrow_down</mat-icon>
+      </div>
+    </div>
+
+    <!-- Right: page numbers -->
+    <div class="bk-see-all__pages">
+      <button class="bk-see-all__page-btn bk-see-all__page-btn--nav"
+        [disabled]="currentPage === 0" (click)="goToPage(currentPage - 1)">
+        <mat-icon>chevron_left</mat-icon>
+      </button>
+      <ng-container *ngFor="let p of pageNumbers">
+        <span *ngIf="p === '...'" class="bk-see-all__page-ellipsis">...</span>
+        <button *ngIf="p !== '...'"
+          class="bk-see-all__page-btn"
+          [class.bk-see-all__page-btn--active]="currentPage === p"
+          (click)="goToPage(p)">
+          {{ +p + 1 }}
+        </button>
+      </ng-container>
+      <button class="bk-see-all__page-btn bk-see-all__page-btn--nav"
+        [disabled]="currentPage === totalPages - 1" (click)="goToPage(currentPage + 1)">
+        <mat-icon>chevron_right</mat-icon>
+      </button>
+    </div>
+  </div>
+
+</div>

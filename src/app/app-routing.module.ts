@@ -294,6 +294,18 @@ const routes: Routes = [
     },
   },
   {
+    path: 'app/learn/kalp',
+    loadChildren: () =>
+      import('./routes/route-kalp.module').then(u => u.RouteKalpModule),
+    canActivate: [GeneralGuard],
+    data: {
+      module: 'Bharat Kalp',
+    },
+    resolve: {
+      pageData: PageResolve,
+    },
+  },
+  {
     path: 'app/learn/mdo-channels',
     loadChildren: () =>
       import('./routes/route-mdo-channels.module').then(u => u.RouteMdoChannelsModule),
