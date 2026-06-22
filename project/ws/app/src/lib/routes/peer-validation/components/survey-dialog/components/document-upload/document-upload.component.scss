@@ -12,6 +12,17 @@
       color: rgba(0, 0, 0, 0.87);
     }
 
+    .info-icon {
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      line-height: 16px;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+
     .hint {
       font-size: 13px;
       color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
@@ -156,4 +167,23 @@
 // Fallback: target deeper overlay structure if panelClass is not applied to container
 ::ng-deep .cdk-global-overlay-wrapper .cdk-overlay-pane .mat-snack-bar-container.center-snackbar {
   position: fixed !important;
+}
+
+// Keep the tooltip dimensions consistent across Material tooltip renderers.
+::ng-deep .document-upload-tooltip {
+  width: 408px !important;
+  max-width: calc(100vw - 32px) !important;
+  min-height: 114px;
+  box-sizing: border-box;
+  white-space: pre-line;
+}
+
+::ng-deep .document-upload-tooltip .mdc-tooltip__surface {
+  width: 100%;
+  max-width: none;
+  min-height: 114px;
+  box-sizing: border-box;
+  background-color: var(--mdc-plain-tooltip-container-color, rgba(97, 97, 97, 0.9));
+  color: var(--mdc-plain-tooltip-supporting-text-color, #FFFFFF);
+  white-space: pre-line;
 }
