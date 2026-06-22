@@ -74,6 +74,7 @@ import { AppTourComponent } from './component/app-tour/app-tour.component'
 import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
 import { NoConnectionV2Component } from './component/no-connection-v2/no-connection-v2.component'
+import { KarmaLeaderboardV2Module } from './home/home-v2/karma-leaderboard-v2/karma-leaderboard-v2.module'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -147,6 +148,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     DynamicSidebarComponent,
     HeaderV2Component,
     NoConnectionV2Component,
+    KarmaLeaderboardV2Module,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
     // HeaderModule,
     TranslateModule.forRoot({

@@ -19,7 +19,6 @@ import {
   NsPage,
   WsEvents
 } from '@sunbird-cb/utils-v2'
-import { BtnFeatureV2Component } from '@sunbird-cb/consumption'
 
 import * as _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
@@ -28,6 +27,7 @@ import { UrlService } from '../../shared/url.service'
 import { NotificationsService } from '../../services/notifications.service'
 import { HeaderModule } from '../../header/header.module'
 import { SearchInputHomeV4Component } from '../../../../project/ws/app/src/lib/routes/search-v3/components/search-input-home-v4/search-input-home-v4.component'
+import { BtnFeatureV2Component } from '../../../../library/ws-widget/collection/src/lib/btn-feature-v2/btn-feature-v2.component'
 import { TopRightNavBarV2Component } from '../top-right-nav-bar-v2/top-right-nav-bar-v2.component'
 
 @Component({

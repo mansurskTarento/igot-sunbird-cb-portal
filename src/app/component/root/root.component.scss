@@ -2,7 +2,7 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 ::ng-deep .mat-app-background {
-  background-color: rgb(239, 243, 249);
+  background-color: var(--surface-primary);
 }
 
 ::ng-deep .jan-bg-change {
@@ -19,6 +19,25 @@
 
 .root-container {
   background-color: var(--environment-application-backgrounds-system-background-1);
+}
+
+// ── Karma Leaderboard popup overlay ───────────────────────────────
+.klb-popup-backdrop {
+  position: fixed;
+  top: 0;
+  left: 330px;
+  right: 0;
+  bottom: 0;
+  background: var(--color-black-opacity-48);
+  z-index: 900;
+}
+
+.klb-popup-panel {
+  position: fixed;
+  top: 50%;
+  left: calc(330px + 24px);
+  transform: translateY(-50%);
+  z-index: 901;
 }
 
 ws-app-nav-bar {

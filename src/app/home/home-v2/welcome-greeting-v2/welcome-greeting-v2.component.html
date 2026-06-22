@@ -1,0 +1,15 @@
+@if (userName) {
+<div class="wg-container" role="region" aria-label="Welcome greeting">
+  @if (isFirstLogin) {
+  <span class="wg-text" aria-live="polite" [attr.aria-label]="'Welcome, ' + userName">
+    {{ 'welcomegreeting.welcome' | translate }} <strong class="wg-name bg-surface-primary" aria-hidden="true">{{
+      userName | titlecase }}</strong>
+  </span>
+  } @else {
+  <span class="wg-text" aria-live="polite" [attr.aria-label]="'Welcome Back, ' + userName">
+    {{ 'welcomegreeting.welcomeBack' | translate }} <strong class="wg-name" aria-hidden="true">{{ userName | titlecase
+      }}</strong>
+  </span>
+  }
+</div>
+}

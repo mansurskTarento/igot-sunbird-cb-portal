@@ -32,7 +32,6 @@ import { NetworkHubComponent } from './home/network-hub/network-hub.component'
 import { NotificationComponent } from './home/notification/notification.component'
 import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-form.component'
 
-import { HomePageService } from '../services/home-page.service'
 import { PendingRequestModule } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
@@ -42,11 +41,12 @@ import { SurveyFormModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
-import { CarouselBannerModule, CardsModule } from '@sunbird-cb/consumption'
-import { ContinueLearningModule } from './home/continue-learning/continue-learning.module'
-import { WelcomeGreetingModule } from './home/welcome-greeting/welcome-greeting.module'
-import { KarmaLeaderboardModule } from './home/karma-leaderboard/karma-leaderboard.module'
-import { InSpotlightModule } from './home/in-spotlight/in-spotlight.module'
+import { SbUicCarouselBannerV2Component, CardsModule, CardCourseV2Component } from '@sunbird-cb/consumption'
+import { ContinueLearningV2Module } from './home-v2/continue-learning-v2/continue-learning-v2.module'
+import { WelcomeGreetingV2Component } from './home-v2/welcome-greeting-v2/welcome-greeting-v2.component'
+import { KarmaLeaderboardV2Module } from './home-v2/karma-leaderboard-v2/karma-leaderboard-v2.module'
+import { InSpotlightV2Module } from './home-v2/in-spotlight-v2/in-spotlight-v2.module'
+import { HomeCarouselBannerV2Component } from './home-v2/home-carousel-banner-v2/home-carousel-banner-v2.component'
 @NgModule({
     declarations: [
         HomeComponent,
@@ -92,12 +92,14 @@ import { InSpotlightModule } from './home/in-spotlight/in-spotlight.module'
         InSightSideBarModule,
         HomeOtherPortalModule,
         ContetnSectionsComponent,
-        CarouselBannerModule,
-        ContinueLearningModule,
-        WelcomeGreetingModule,
+        SbUicCarouselBannerV2Component,
+        HomeCarouselBannerV2Component,
+        ContinueLearningV2Module,
+        WelcomeGreetingV2Component,
         CardsModule,
-        KarmaLeaderboardModule,
-        InSpotlightModule,
+        CardCourseV2Component,
+        KarmaLeaderboardV2Module,
+        InSpotlightV2Module,
     ],
     exports: [
         HeaderModule,
@@ -109,7 +111,6 @@ import { InSpotlightModule } from './home/in-spotlight/in-spotlight.module'
         HomeOtherPortalModule,
     ],
     providers: [
-        HomePageService,
         SignupService,
     ],
 })
