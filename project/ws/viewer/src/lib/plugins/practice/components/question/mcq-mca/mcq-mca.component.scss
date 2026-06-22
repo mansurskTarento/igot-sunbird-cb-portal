@@ -15,6 +15,16 @@
 
 }
 
+.mcq-options {
+  flex-wrap: wrap;
+  align-items: flex-start;
+  flex: 0 0 50% !important;
+  max-width: 50% !important;
+  box-sizing: border-box;
+  min-height: 56px;
+  height: auto !important;
+}
+
 
 .mat-list-base .mat-list-item,
 .mat-list-base .mat-list-option.mcq-options {
@@ -187,4 +197,16 @@
     width: 98% !important;
   }
 
+}
+
+.html-option {
+  white-space: normal !important;
+  word-break: break-all !important;
+  overflow-wrap: anywhere !important;
+}
+
+:host ::ng-deep .mcq-options .mdc-list-item__primary-text {
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: unset !important;
 }

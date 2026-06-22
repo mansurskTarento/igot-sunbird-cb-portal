@@ -40,10 +40,10 @@ import { NotificationsService } from '../../services/notifications.service'
 // ]
 
 @Component({
-    selector: 'ws-top-right-nav-bar',
-    templateUrl: './top-right-nav-bar.component.html',
-    styleUrls: ['./top-right-nav-bar.component.scss'],
-    standalone: false
+  selector: 'ws-top-right-nav-bar',
+  templateUrl: './top-right-nav-bar.component.html',
+  styleUrls: ['./top-right-nav-bar.component.scss'],
+  standalone: false
 })
 export class TopRightNavBarComponent implements OnInit, OnChanges {
   @Input() item: any
@@ -60,14 +60,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   roles: string[] = []
   enableSupportAI = false
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
-              private configSvc: ConfigurationsService,
-              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-              private http: HttpClient, private sanitizer: DomSanitizer,
-              private events: EventService, private snackBar: MatSnackBar,
-              private router: Router, private notificationsService: NotificationsService,
-              private rootService: RootService,
-              private matDialog: MatDialogNew,
-              public domainConfSvc: DomainConfService) {
+    private configSvc: ConfigurationsService,
+    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+    private http: HttpClient, private sanitizer: DomSanitizer,
+    private events: EventService, private snackBar: MatSnackBar,
+    private router: Router, private notificationsService: NotificationsService,
+    private rootService: RootService,
+    private matDialog: MatDialogNew,
+    public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -126,7 +126,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
         if (res.responseCode === 'OK') {
           this.notificationsCount = 0
         }
-      },                                                            error => {
+      }, error => {
         console.error('Error while fetching notifications count', error)
       })
     }
@@ -166,12 +166,13 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    },         0)
+    }, 0)
   }
 
   openDialog(): void {
     this.dialogRef = this.dialog.open(DialogBoxComponent, {
       width: '1000px',
+      panelClass: 'download-app-popup-new'
     })
 
     this.dialogRef.afterClosed().subscribe(() => {
@@ -212,6 +213,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   viewAllClick(event: any) {
+    this.openSurveypopup(event)
     if (event.category === 'PEER_VALIDATION' || event.sub_type === 'PEER_VALIDATION') {
       this.raiseTelemetryEventForNotification(event)
       if (event.sub_category === 'PEER_REVIEW_ASSIGNED') {

@@ -1,5 +1,6 @@
 <ng-container *ngIf="data && data?.from !== 'assessment' && data?.from !== 'approvedDomain' && data?.from !== 'openLanguageDialog' &&
 data?.from !== 'openConfirmDialoge'">
+
   <div mat-dialog-content>
     <ng-container *ngIf="data.title">
       <div class="dialog-header">
@@ -21,7 +22,7 @@ data?.from !== 'openConfirmDialoge'">
 </ng-container>
 
 <ng-container *ngIf="data?.from === 'assessment'">
-  <div mat-dialog-content class="confirmation-dialog-container">
+  <div mat-dialog-content class="confirmation-dialog-container confirmation-dialog-container-new">
     <div class="dialog-header">
       <h1 class="mr-2" mat-dialog-title></h1>
       <!-- <mat-icon class="mat-icon notranslate material-icons close-icon" matprefix="" role="img" aria-hidden="true" [mat-dialog-close]="false">close</mat-icon> -->

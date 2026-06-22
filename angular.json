@@ -32,6 +32,11 @@
               "src/favicon.png",
               "src/dashboard-assets/",
               "src/fusion-assets/",
+              {
+                "glob": "pdf.worker.min.mjs",
+                "input": "node_modules/pdfjs-dist/build",
+                "output": "/assets/pdfjs/"
+              },
               "src/manifest.json"
             ],
             "stylePreprocessorOptions": {
