@@ -2366,3 +2366,11 @@ ngx-guided-tour {
 
   }
 }
+
+.certificate-inner-dialog-panel {
+  .close-button {
+    position: absolute !important;
+    top: 0 !important;
+    right: 0 !important;
+  }
+}
