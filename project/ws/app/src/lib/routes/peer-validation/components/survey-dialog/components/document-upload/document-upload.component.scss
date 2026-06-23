@@ -169,21 +169,31 @@
   position: fixed !important;
 }
 
-// Keep the tooltip dimensions consistent across Material tooltip renderers.
-::ng-deep .document-upload-tooltip {
-  width: 408px !important;
-  max-width: calc(100vw - 32px) !important;
+// HTML tooltip content rendered through the CDK overlay.
+.document-upload-tooltip {
+  width: 412px;
+  max-width: calc(100vw - 32px);
   min-height: 114px;
   box-sizing: border-box;
-  white-space: pre-line;
-}
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: rgba(97, 97, 97, 0.9);
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 18px;
+  // text-align: justify;
 
-::ng-deep .document-upload-tooltip .mdc-tooltip__surface {
-  width: 100%;
-  max-width: none;
-  min-height: 114px;
-  box-sizing: border-box;
-  background-color: var(--mdc-plain-tooltip-container-color, rgba(97, 97, 97, 0.9));
-  color: var(--mdc-plain-tooltip-supporting-text-color, #FFFFFF);
-  white-space: pre-line;
+  p {
+    margin: 0;
+  }
+
+  .document-upload-tooltip-warning {
+    margin-top: 6px;
+  }
+
+  strong {
+    color: inherit;
+    font-size: inherit;
+    font-weight: 700;
+  }
 }

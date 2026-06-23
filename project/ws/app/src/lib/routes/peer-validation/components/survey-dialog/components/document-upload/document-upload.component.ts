@@ -5,6 +5,7 @@ import { PeerValidationService } from '../../../../services/peer-validation.serv
 import { MatDialog } from '@angular/material/dialog'
 import { VideoPreviewDialogComponent } from '../video-preview-dialog/video-preview-dialog.component'
 import { environment } from 'src/environments/environment'
+import { ConnectedPosition } from '@angular/cdk/overlay'
 
 @Component({
     selector: 'ws-app-document-upload',
@@ -19,12 +20,41 @@ export class DocumentUploadComponent {
 
   isUploading = false
   dragOver = false
+  isDocumentTooltipOpen = false
+  readonly documentTooltipPositions: ConnectedPosition[] = [
+    {
+      originX: 'end',
+      originY: 'center',
+      overlayX: 'start',
+      overlayY: 'center',
+      offsetX: 8,
+    },
+    {
+      originX: 'start',
+      originY: 'center',
+      overlayX: 'end',
+      overlayY: 'center',
+      offsetX: -8,
+    },
+  ]
 
   constructor(
     private peerValidationService: PeerValidationService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
   ) { }
+
+  showDocumentTooltip() {
+    this.isDocumentTooltipOpen = true
+  }
+
+  hideDocumentTooltip() {
+    this.isDocumentTooltipOpen = false
+  }
+
+  toggleDocumentTooltip() {
+    this.isDocumentTooltipOpen = !this.isDocumentTooltipOpen
+  }
 
   onDragOver(event: DragEvent) {
     event.preventDefault()
