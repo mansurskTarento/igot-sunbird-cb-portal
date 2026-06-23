@@ -1,56 +1,40 @@
 <form [formGroup]="form">
   <mat-form-field appearance="outline" class="w-full">
-    <mat-label >Title</mat-label>
-    <input
-      type="text"
-      matInput
-      i18n-placeholder
-      placeholder="Name"
-      formControlName="title"
-      #name
-      [value]="form.controls.title.value"
-    />
+    <mat-label>Title</mat-label>
+    <input type="text" matInput i18n-placeholder placeholder="Name" formControlName="title" #name
+      [value]="form.controls.title.value" />
   </mat-form-field>
-  <mat-label class="required" >Image </mat-label>
+  <mat-label class="required">Image </mat-label>
   <br />
   <button class="button-design" type="button" mat-stroked-button (click)="imageFile.click()">
-    <ng-container *ngIf="!form.controls.image.value" >Choose Image</ng-container>
-    <ng-container *ngIf="form.controls.image.value" >Change Image</ng-container>
-    <input
-      type="file"
-      (change)="upload($event.target.files[0]); imageFile.value = null"
-      class="hidden"
-      #imageFile
-      accept="image/*"
-    />
+    <ng-container *ngIf="!form.controls.image.value">Choose Image</ng-container>
+    <ng-container *ngIf="form.controls.image.value">Change Image</ng-container>
+    <input type="file" (change)="upload($event.target.files[0]); imageFile.value = null" class="hidden" #imageFile
+      accept="image/*" />
   </button>
 
   <br />
 
   <div class="row-wise" style="position: relative;">
-    <mat-radio-group
-      class="radio my-auto"
-      [(ngModel)]="requestType"
-      [ngModelOptions]="{ standalone: true }"
-      (ngModelChange)="onSelectionChange(true)"
-    >
-      <mat-radio-button class="radioButton" [value]="'KB'" >
+    <mat-radio-group class="radio my-auto" [(ngModel)]="requestType" [ngModelOptions]="{ standalone: true }"
+      (ngModelChange)="onSelectionChange(true)">
+      <mat-radio-button class="radioButton" [value]="'KB'">
         Knowledge Board
       </mat-radio-button>
-      <mat-radio-button class="radioButton" [value]="'Collections'" >
+      <mat-radio-button class="radioButton" [value]="'Collections'">
         Other Collection Types
       </mat-radio-button>
-      <mat-radio-button class="radioButton" [value]="'ids'" >
+      <mat-radio-button class="radioButton" [value]="'ids'">
         List of Contents
       </mat-radio-button>
       <ng-container *ngIf="editorMode === 'advanced'">
-        <mat-radio-button class="radioButton" [value]="'api'" >
+        <mat-radio-button class="radioButton" [value]="'api'">
           Search Api
         </mat-radio-button>
-        <mat-radio-button class="radioButton" [value]="'search'" >
+        <mat-radio-button class="radioButton" [value]="'search'">
           Search Body
         </mat-radio-button>
-        <mat-radio-button class="radioButton" [value]="'searchRegionRecommendation'" >
+        <mat-radio-button class="radioButton" [value]="'searchRegionRecommendation'">
           Search Recommendation
         </mat-radio-button>
       </ng-container>
@@ -70,21 +54,12 @@
         </ng-container>
         <ng-container *ngIf="editorMode === 'basic'">
           <mat-card>
-            <mat-label >* Type in content Id or use the search below to choose</mat-label>
-            <ws-auth-chips
-              [placeholderType]="'collection'"
-              (data)="onSearchV6Change({ checked: false })"
-              [type]="'array'"
-              [content]="collectionId"
-            >
+            <mat-label>* Type in content Id or use the search below to choose</mat-label>
+            <ws-auth-chips [placeholderType]="'collection'" (data)="onSearchV6Change({ checked: false })"
+              [type]="'array'" [content]="collectionId">
             </ws-auth-chips>
-            <ws-widget-picker-content
-              [selectionType]="'radio'"
-              [widgetData]="pickerContentData"
-              (change)="onSearchV6Change($event)"
-              [dataType]="'authoring'"
-              [selectedContentTypes]="['Knowledge Board']"
-            >
+            <ws-widget-picker-content [selectionType]="'radio'" [widgetData]="pickerContentData"
+              (change)="onSearchV6Change($event)" [dataType]="'authoring'" [selectedContentTypes]="['Knowledge Board']">
             </ws-widget-picker-content>
           </mat-card>
           <br />
@@ -102,21 +77,13 @@
         </ng-container>
         <ng-container *ngIf="editorMode === 'basic'">
           <mat-card>
-            <mat-label >* Type in content Id or use the search below to choose</mat-label>
-            <ws-auth-chips
-              [placeholderType]="'collection'"
-              (data)="onSearchV6Change({ checked: false })"
-              [type]="'array'"
-              [content]="collectionId"
-            >
+            <mat-label>* Type in content Id or use the search below to choose</mat-label>
+            <ws-auth-chips [placeholderType]="'collection'" (data)="onSearchV6Change({ checked: false })"
+              [type]="'array'" [content]="collectionId">
             </ws-auth-chips>
-            <ws-widget-picker-content
-              [selectionType]="'radio'"
-              [widgetData]="pickerContentData"
-              [selectedContentTypes]="['Collection', 'Learing Path', 'Course']"
-              (change)="onSearchV6Change($event)"
-              [dataType]="'auth-collections'"
-            >
+            <ws-widget-picker-content [selectionType]="'radio'" [widgetData]="pickerContentData"
+              [selectedContentTypes]="['Collection', 'Learing Path', 'Course']" (change)="onSearchV6Change($event)"
+              [dataType]="'auth-collections'">
             </ws-widget-picker-content>
           </mat-card>
           <br />
@@ -149,17 +116,10 @@
       </div>
       <div *ngSwitchCase="'ids'">
         <mat-card>
-          <ws-auth-chips
-            [placeholderType]="'collection'"
-            (data)="onIdChange($event)"
-            [type]="'array'"
-            [content]="identifier"
-          ></ws-auth-chips>
-          <ws-widget-picker-content
-            [widgetData]="pickerContentData"
-            (change)="onContentSelectionChanged($event)"
-            [dataType]="dataType"
-          >
+          <ws-auth-chips [placeholderType]="'collection'" (data)="onIdChange($event)" [type]="'array'"
+            [content]="identifier"></ws-auth-chips>
+          <ws-widget-picker-content [widgetData]="pickerContentData" (change)="onContentSelectionChanged($event)"
+            [dataType]="dataType">
           </ws-widget-picker-content>
         </mat-card>
       </div>
@@ -169,76 +129,52 @@
             <div class="row-wise right-design">
               <div class="row-wise">
                 <h2>
-                  <ng-container >Data</ng-container>
+                  <ng-container>Data</ng-container>
                   <ng-container> {{ i + 1 }}</ng-container>
                 </h2>
               </div>
-              <button
-                type="button"
-                class="margin-bottom-s"
-                mat-flat-button
-                (click)="removeButtonClick(i)"
-              >
+              <button type="button" class="margin-bottom-s" mat-flat-button (click)="removeButtonClick(i)">
                 <mat-icon>delete forever</mat-icon>
               </button>
             </div>
             <mat-divider></mat-divider>
             <div class="margin-top-s" [formGroupName]="i">
-              <mat-label class="required" >Title</mat-label>
+              <mat-label class="required">Title</mat-label>
               <mat-form-field class="w-full" appearance="outline">
-                <input
-                  matInput
-                  [value]="getFormPath(paths, i, 'title')"
-                  i18n-placeholder
-                  placeholder="Title"
-                  formControlName="title"
-                  #title
-                />
-                <mat-error *ngIf="!title.value" >
+                <input matInput [value]="getFormPath(paths, i, 'title')" i18n-placeholder placeholder="Title"
+                  formControlName="title" #title />
+                <mat-error *ngIf="!title.value">
                   The above field is required
                 </mat-error>
               </mat-form-field>
 
-              <mat-label class="required" >URL</mat-label>
+              <mat-label class="required">URL</mat-label>
               <mat-form-field class="w-full" appearance="outline">
-                <input
-                  matInput
-                  [value]="getFormPath(paths, i, 'url')"
-                  i18n-placeholder
-                  placeholder="URL"
-                  formControlName="url"
-                  #url
-                />
-                <mat-error *ngIf="!url.value" >
+                <input matInput [value]="getFormPath(paths, i, 'url')" i18n-placeholder placeholder="URL"
+                  formControlName="url" #url />
+                <mat-error *ngIf="!url.value">
                   The above field is required
                 </mat-error>
               </mat-form-field>
               <div class="row-wise space">
                 <div class="column-wise">
-                  <mat-label class="required" >Last Updated On</mat-label>
+                  <mat-label class="required">Last Updated On</mat-label>
                   <mat-form-field class="w-full" appearance="outline">
-                    <input
-                      matInput
-                      formControlName="lastUpdatedOn"
-                      [matDatepicker]="picker"
-                      i18n-placeholder
-                      placeholder="Choose Last Updated"
-                      #lastUpdatedOn
-                    />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <input matInput formControlName="lastUpdatedOn" [matDatepicker]="picker" i18n-placeholder
+                      placeholder="Choose Last Updated" #lastUpdatedOn />
+                    <mat-datepicker-toggle matSuffix [for]="picker">
+                      <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+                    </mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
                 </div>
                 <ng-container *ngIf="url.value">
                   <div class="column-wise">
-                    <mat-label class="required" >Target</mat-label>
+                    <mat-label class="required">Target</mat-label>
                     <mat-form-field>
-                      <mat-select
-                        [value]="getFormPath(paths, i, 'target')"
-                        formControlName="target"
-                      >
-                        <mat-option value="_blank" >Open in new tab</mat-option>
-                        <mat-option value="_self" >Open in same tab</mat-option>
+                      <mat-select [value]="getFormPath(paths, i, 'target')" formControlName="target">
+                        <mat-option value="_blank">Open in new tab</mat-option>
+                        <mat-option value="_self">Open in same tab</mat-option>
                       </mat-select>
                     </mat-form-field>
                   </div>
@@ -250,7 +186,7 @@
         </div>
         <button type="button" mat-raised-button (click)="addForm()" color="primary">
           <mat-icon>add box</mat-icon>
-          <ng-container >Add</ng-container>
+          <ng-container>Add</ng-container>
         </button>
       </div>
     </ng-container>
@@ -260,91 +196,63 @@
 
 <ng-template #collectionCommon>
   <mat-card>
-    <p class="no-margin" >Keywords</p>
-    <mat-form-field
-      class="keywords-chip-list margin-top-xs flex-grow80 w-full"
-      appearance="outline"
-    >
+    <p class="no-margin">Keywords</p>
+    <mat-form-field class="keywords-chip-list margin-top-xs flex-grow80 w-full" appearance="outline">
       <mat-chip-list #keywordsV aria-label="Keyword selection">
-        <mat-chip
-          *ngFor="let key of keywords"
-          [selectable]="'true'"
-          [removable]="'true'"
-          (removed)="removeKeyword(key)"
-        >
+        <mat-chip *ngFor="let key of keywords" [selectable]="'true'" [removable]="'true'"
+          (removed)="removeKeyword(key)">
           {{ key }}
           <mat-icon matChipRemove>cancel</mat-icon>
         </mat-chip>
-        <input
-          i18n-placeholder
-          [formControl]="keywordsCtrl"
-          [matAutocomplete]="auto"
-          placeholder="Keywords"
-          #keywordsView
-          [matChipInputFor]="keywordsV"
-          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-          [matChipInputAddOnBlur]="false"
-          (matChipInputTokenEnd)="addKeyword($event)"
-        />
+        <input i18n-placeholder [formControl]="keywordsCtrl" [matAutocomplete]="auto" placeholder="Keywords"
+          #keywordsView [matChipInputFor]="keywordsV" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matChipInputAddOnBlur]="false" (matChipInputTokenEnd)="addKeyword($event)" />
       </mat-chip-list>
     </mat-form-field>
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      autoActiveFirstOption
-      (optionSelected)="optionSelected($event.option.value); keywordsView.value = ''"
-    >
-      <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option"
-        >{{ option }}
+    <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption
+      (optionSelected)="optionSelected($event.option.value); keywordsView.value = ''">
+      <mat-option *ngFor="let option of filteredOptions$ | async" [value]="option">{{ option }}
       </mat-option>
     </mat-autocomplete>
   </mat-card>
   <br />
   <mat-card>
     <mat-form-field>
-      <mat-label >Sort by</mat-label>
-      <mat-select
-        [(ngModel)]="filterBy"
-        (ngModelChange)="onSearchV6Change()"
-        [ngModelOptions]="{ standalone: true }"
-        appearance="outline"
-      >
+      <mat-label>Sort by</mat-label>
+      <mat-select [(ngModel)]="filterBy" (ngModelChange)="onSearchV6Change()" [ngModelOptions]="{ standalone: true }"
+        appearance="outline">
         <mat-option [value]="'lastUpdatedOn'">Most Recent</mat-option>
         <mat-option [value]="'viewCount'">Most Viewed</mat-option>
         <mat-option [value]="'averageRating'">Most Rated</mat-option>
       </mat-select>
     </mat-form-field>
     <mat-form-field class="ml-20">
-      <mat-label >Language</mat-label>
-      <mat-select
-        [(ngModel)]="language"
-        (ngModelChange)="onSearchV6Change()"
-        appearance="outline"
-        multiple
-      >
-        <mat-option [value]="'ar'" >Arabic</mat-option>
-        <mat-option [value]="'br'" >Breton</mat-option>
-        <mat-option [value]="'zh'" >Chinese</mat-option>
-        <mat-option [value]="'hr'" >Croatian</mat-option>
-        <mat-option [value]="'da'" >Danish</mat-option>
-        <mat-option [value]="'nl'" >Dutch</mat-option>
-        <mat-option [value]="'en'" >English</mat-option>
-        <mat-option [value]="'fr'" >French</mat-option>
-        <mat-option [value]="'de'" >German</mat-option>
-        <mat-option [value]="'el'" >Greek</mat-option>
-        <mat-option [value]="'hu'" >Hungarian</mat-option>
-        <mat-option [value]="'id'" >Indonesian</mat-option>
-        <mat-option [value]="'it'" >Italian</mat-option>
-        <mat-option [value]="'ja'" >Japanese</mat-option>
-        <mat-option [value]="'ko'" >Korean</mat-option>
-        <mat-option [value]="'no'" >Norwegian</mat-option>
-        <mat-option [value]="'pl'" >Polish</mat-option>
-        <mat-option [value]="'pt'" >Portuguese</mat-option>
-        <mat-option [value]="'ru'" >Russian</mat-option>
-        <mat-option [value]="'sl'" >Slovenian</mat-option>
-        <mat-option [value]="'es'" >Spanish</mat-option>
-        <mat-option [value]="'sv'" >Swedish</mat-option>
-        <mat-option [value]="'th'" >Thai</mat-option>
-        <mat-option [value]="'tr'" >Turkish</mat-option>
+      <mat-label>Language</mat-label>
+      <mat-select [(ngModel)]="language" (ngModelChange)="onSearchV6Change()" appearance="outline" multiple>
+        <mat-option [value]="'ar'">Arabic</mat-option>
+        <mat-option [value]="'br'">Breton</mat-option>
+        <mat-option [value]="'zh'">Chinese</mat-option>
+        <mat-option [value]="'hr'">Croatian</mat-option>
+        <mat-option [value]="'da'">Danish</mat-option>
+        <mat-option [value]="'nl'">Dutch</mat-option>
+        <mat-option [value]="'en'">English</mat-option>
+        <mat-option [value]="'fr'">French</mat-option>
+        <mat-option [value]="'de'">German</mat-option>
+        <mat-option [value]="'el'">Greek</mat-option>
+        <mat-option [value]="'hu'">Hungarian</mat-option>
+        <mat-option [value]="'id'">Indonesian</mat-option>
+        <mat-option [value]="'it'">Italian</mat-option>
+        <mat-option [value]="'ja'">Japanese</mat-option>
+        <mat-option [value]="'ko'">Korean</mat-option>
+        <mat-option [value]="'no'">Norwegian</mat-option>
+        <mat-option [value]="'pl'">Polish</mat-option>
+        <mat-option [value]="'pt'">Portuguese</mat-option>
+        <mat-option [value]="'ru'">Russian</mat-option>
+        <mat-option [value]="'sl'">Slovenian</mat-option>
+        <mat-option [value]="'es'">Spanish</mat-option>
+        <mat-option [value]="'sv'">Swedish</mat-option>
+        <mat-option [value]="'th'">Thai</mat-option>
+        <mat-option [value]="'tr'">Turkish</mat-option>
       </mat-select>
     </mat-form-field>
   </mat-card>

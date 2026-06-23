@@ -52,7 +52,9 @@
                     <input matInput [matDatepicker]="eDate"
                       placeholder="{{translateLabels(eType?.placeHolderKey,'events')}}"
                       (dateChange)="onDateChange($event, eType, facet)" [(ngModel)]="endDate">
-                    <mat-datepicker-toggle matSuffix [for]="eDate"></mat-datepicker-toggle>
+                    <mat-datepicker-toggle matSuffix [for]="eDate">
+                      <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+                    </mat-datepicker-toggle>
                     <mat-datepicker #eDate></mat-datepicker>
                   </mat-form-field>
                 </div>
