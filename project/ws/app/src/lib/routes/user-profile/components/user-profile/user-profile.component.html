@@ -116,7 +116,9 @@
                             i18n-placeholder (focus)="picker.open()"
                             placeholder="{{'userProfile.DobPlaceholder' | translate }}" [min]="1/1/1900" [max]="today"
                             readonly>
-                          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                          <mat-datepicker-toggle matSuffix [for]="picker">
+                            <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+                          </mat-datepicker-toggle>
                           <mat-datepicker #picker (closed)="dob.blur()" i18n-aria-label aria-label="Date picker">
                           </mat-datepicker>
                           <mat-error [hidden]="false" i18n="Date of Birth Error|Explains name is required">
@@ -1063,7 +1065,9 @@
                         [matDatepicker]="otherDetailsDojPicker" i18n-placeholder
                         placeholder="{{'userProfile.dojPlaceholder' | translate }}"
                         (focus)="otherDetailsDojPicker.open()" [min]="" [max]="today">
-                      <mat-datepicker-toggle matSuffix [for]="otherDetailsDojPicker"></mat-datepicker-toggle>
+                      <mat-datepicker-toggle matSuffix [for]="otherDetailsDojPicker">
+                        <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+                      </mat-datepicker-toggle>
                       <mat-datepicker #otherDetailsDojPicker (closed)="otherDetailsDoj.blur()"></mat-datepicker>
                       <mat-error [hidden]="false" i18n="Date of Joining Error|Explains name is required">
                         {{'userProfile.dateOfJoiningMandatory' | translate }}
