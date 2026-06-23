@@ -1957,8 +1957,10 @@ ngx-guided-tour {
   border-right: none !important;
 }
 
-.mat-mdc-text-field-wrapper {
-  height: 32px !important;
+.profile-editor-container {
+  .mat-mdc-text-field-wrapper {
+    height: 32px;
+  }
 }
 
 
@@ -2062,6 +2064,7 @@ ngx-guided-tour {
 }
 
 .custom-rounded {
+  min-height: 40px;
   height: auto !important;
 }
 
@@ -2072,7 +2075,7 @@ ngx-guided-tour {
 .mat-typography {
   font: 400 14px / 21px Lato;
   letter-spacing: normal;
-  color: #000 !important
+  color: #000
 }
 
 .lang-chips {
@@ -2118,7 +2121,7 @@ ngx-guided-tour {
 // }
 
 .mat-mdc-dialog-container {
-  background: #fff !important;
+  background: #fff;
 }
 
 .activeResource .text-active {
@@ -2126,7 +2129,7 @@ ngx-guided-tour {
 }
 
 .text-active {
-  color: #1a4ca1 !important;
+  color: #1a4ca1;
 }
 
 .mat-mdc-tooltip {
@@ -2170,4 +2173,196 @@ ngx-guided-tour {
 
 .final-assessment .mdc-dialog__surface {
   overflow: visible !important;
+}
+
+.mat-mdc-tooltip .mdc-tooltip__surface {
+  max-width: 300px !important;
+  min-width: auto;
+  white-space: pre-line !important;
+  word-break: break-word !important;
+}
+
+.mat-mdc-menu-content,
+.mat-mdc-menu-content .mat-mdc-menu-item .mat-mdc-menu-item-text {
+  line-height: 30px;
+  padding: 0 6px;
+  font: 400 14px / 21px Lato !important;
+}
+
+.mat-mdc-menu-panel {
+  max-width: 290px !important;
+  min-width: 14em !important;
+}
+
+.profile-verification-dialog-container .mat-mdc-dialog-container {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.profile-verification-dialog-container .mdc-dialog__surface {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.all-notifications {
+
+  .mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs>.mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0;
+  }
+}
+
+.mat-mdc-simple-snack-bar {
+  .mat-mdc-snack-bar-label {
+    text-align: center;
+  }
+}
+
+.flag-selection-list {
+  gap: 0 !important;
+}
+
+.download-app-popup-new {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    overflow: visible !important;
+  }
+}
+
+.seeAll-home-container {
+  .mat-mdc-tab-group.mat-mdc-tab-group-stretch-tabs>.mat-mdc-tab-header .mat-mdc-tab {
+    flex-grow: 0;
+  }
+}
+
+.view-more {
+  padding-top: 10px;
+  height: auto;
+}
+
+.filter-pill {
+  .mat-mdc-icon-button {
+    vertical-align: middle;
+    margin-top: 10px;
+  }
+}
+
+.community-action .un-join-btn {
+  // color: #1b4ca1;
+  //   background-color: #fff !important;
+  //   border: 1px solid #1B4CA1 !important;
+  font-weight: 600 !important;
+  font-size: 13px;
+}
+
+.mat-title {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 30px;
+  font-family: Montserrat;
+  letter-spacing: normal;
+  margin: 0 0 16px;
+}
+
+.mat-subheading-2 {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 21px;
+  font-family: Lato;
+  letter-spacing: normal;
+  margin: 0 0 16px;
+}
+
+.dialog_sidenav .mat-mdc-dialog-surface {
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+}
+
+.language-select {
+  .mat-mdc-select-value-text {
+    font-size: 14px !important;
+  }
+}
+
+.certificate-img-box {
+  .close-button {
+    height: 30px !important;
+    width: 30px !important;
+  }
+}
+
+.ws-mat-default-text {
+  color: #1b4ca1 !important;
+}
+
+.mdc-text-field--no-label:not(.mdc-text-field--textarea) .mat-mdc-form-field-input-control.mdc-text-field__input,
+.mat-mdc-text-field-wrapper .mat-mdc-form-field-input-control {
+  font-size: 14px;
+}
+
+.mat-calendar-previous-button,
+.mat-calendar-next-button {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 8px !important;
+}
+
+.logout-dialog-panel {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    display: block;
+    padding: 8px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box;
+    /* remove scrollbars */
+    outline: 0;
+    overflow: hidden;
+
+  }
+
+  h1 {
+    font-size: 24px !important;
+    font-weight: 600 !important;
+    line-height: 36px;
+    font-family: Montserrat;
+    letter-spacing: normal;
+    margin: 16px 0 16px !important;
+  }
+
+  .text-base {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+    color: #000 !important;
+  }
+}
+
+.wrapper-saksham {
+  .card-wide-v2 {
+    display: flex !important;
+    flex-direction: row !important;
+    margin-top: 0 !important;
+    height: 166px;
+
+  }
+
+  .card-wide-v2 .mat-text-box {
+    padding: 12px 12px 11px !important;
+  }
+}
+
+.pagination-size-select {
+  width: 100%;
+
+
+}
+
+
+.enrol-profile-form-component {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    display: block;
+    padding: 24px !important;
+    border-radius: 8px !important;
+    box-sizing: border-box;
+    /* remove scrollbars */
+    outline: 0;
+    overflow-y: auto;
+
+  }
 }

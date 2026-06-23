@@ -23,7 +23,7 @@
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
                 *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview"
                 class="download-app-chip" (click)="openDialog()">
-                <span class="mat-body-2">{{ 'toprightnavbar.downloadApp' | translate }}</span>
+                <span class="mat-body-2 text-white">{{ 'toprightnavbar.downloadApp' | translate }}</span>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ translateLabels('font', 'toprightnavbar')}}"
                 *ngIf="item.type === 'fontButton' && rnc.section === 'font-setting' && rnc.active  && item?.forPreview">
@@ -32,7 +32,7 @@
             <li *ngIf="item.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled"
                 class="langdiv">
                 <img src="/assets/icons/top-nav/translate_icon.svg" alt="" [matMenuTriggerFor]="language"
-                    alt="Language image" class="mob-lang-img mx-2" />
+                    alt="Language image" class="mob-lang-img mx-2 icon-image" />
                 <mat-menu #language="matMenu" xPosition="before">
                     <ng-container *ngFor="let lang of multiLang">
                         <button mat-menu-item class="px-3" (click)="selectLanguage(lang.key)" *ngIf="lang.active">

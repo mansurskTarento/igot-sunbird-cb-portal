@@ -72,15 +72,15 @@
     <ng-container *ngIf="assessmentData?.assessmentType === 'optionalWeightage'">
         <div>
             <div class="flex flex-col align-center justify-center">
-                <img src="assets/icons/final-assessment/exam.svg">
+                <img class="vertical-middle" src="assets/icons/final-assessment/exam.svg">
                 <p class="thank-you mt-2">Thank you for taking the test</p>
                 <p class="text-center">Your detailed analysis will be shared with you soon.</p>
             </div>
             <div class="flex flex-col align-center justify-center">
                 <button mat-button class="flex justify-center items-center px-4 reAttempt gap-2"
                     (click)="closePopup('retake')">
-                    <img src="/assets/icons/final-assessment/reattempt.svg">
-                    <span> Reattempt Test</span>
+                    <img class="vertical-middle" src="/assets/icons/final-assessment/reattempt.svg">
+                    <span class="text-black"> Reattempt Test</span>
                 </button>
             </div>
         </div>
