@@ -1,6 +1,37 @@
-<sb-uic-bharat-kalp
-  [sectionList]="sectionList"
-  [configDetails]="configService"
-  [bkConfiguration]="bkConfig"
-  [individualSection]="individualSection">
+<sb-uic-bharat-kalp [sectionList]="sectionList" [configDetails]="configService" [bkConfiguration]="bkConfig"
+  [individualSection]="individualSection" [communityCardsTemplate]="communityTpl"
+  (communitiesLoaded)="onCommunitiesLoaded($event)">
 </sb-uic-bharat-kalp>
+
+<ng-template #communityTpl let-communities="communities" let-loading="loading">
+  <div class="bk-dv2-comm-wrapper">
+
+    <button class="bk-dv2-comm-arrow" [style.visibility]="!loading && canCommPrev ? 'visible' : 'hidden'"
+      (click)="commPrev(commTrackEl)">
+      <mat-icon>chevron_left</mat-icon>
+    </button>
+
+    <div class="bk-dv2-comm-track" #commTrackEl (scroll)="onCommScroll(commTrackEl)">
+
+      <ng-container *ngIf="loading">
+        <div class="bk-dv2-comm-item" *ngFor="let s of [1,2,3,4]">
+          <d-v2-community-card [isLoading]="true"></d-v2-community-card>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!loading">
+        <div class="bk-dv2-comm-item" *ngFor="let c of communities" (click)="openCommunity(c)">
+          <d-v2-community-card [community]="c" [orgDetails]="c?.additionalInfo || {}">
+          </d-v2-community-card>
+        </div>
+      </ng-container>
+
+    </div>
+
+    <button class="bk-dv2-comm-arrow" [style.visibility]="!loading && canCommNext ? 'visible' : 'hidden'"
+      (click)="commNext(commTrackEl)">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+
+  </div>
+</ng-template>

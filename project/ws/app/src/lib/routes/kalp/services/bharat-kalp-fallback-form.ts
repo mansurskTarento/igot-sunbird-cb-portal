@@ -1,10 +1,3 @@
-/**
- * Local fallback form data used when the backend has no bharat-kalp form config yet.
- * Replace/remove once the form config is loaded into the backend via the form read API
- * with: type="bharat-kalp", subType="microsite", action="page-configuration".
- *
- * Mirrors the shape returned by /apis/v1/form/read → result.form
- */
 export const BHARAT_KALP_FALLBACK_FORM = {
   result: {
     form: {
@@ -35,6 +28,29 @@ export const BHARAT_KALP_FALLBACK_FORM = {
                     'Blended learning: modules, live sessions & assessments',
                   ],
                   ctaButton: { text: 'Start Learning', link: '' },
+                },
+              },
+            ],
+          },
+          {
+            enabled: false,
+            key: 'sectionTopCarousel',
+            wrapperClass: '',
+            column: [
+              {
+                enabled: true,
+                key: 'topCarouselSection',
+                colspan: 12,
+                data: {
+                  display: true,
+                  size: 'md',           // xs | sm | md | lg | xl | xxl  (200px → 50vh)
+                  slides: [
+                    {
+                      imageUrl: 'https://www.shutterstock.com/image-vector/social-media-banner-frame-carousel-260nw-2644039599.jpg',
+                      redirectionUrl: '',
+                    },
+
+                  ],
                 },
               },
             ],
@@ -86,9 +102,9 @@ export const BHARAT_KALP_FALLBACK_FORM = {
                 colspan: 12,
                 data: {
                   containerClass: '',
-                  mobileKeys: ['weekProgress', 'mentorship', 'myprogress', 'events'],
+                  mobileKeys: ['weekProgress', 'recommended', 'mentorship', 'myprogress', 'events'],
                   deskTopKeys: {
-                    leftContent: { colspan: 8, data: ['weekProgress', 'mentorship'] },
+                    leftContent: { colspan: 8, data: ['weekProgress', 'recommended', 'mentorship'] },
                     rightContent: { colspan: 4, data: ['myprogress', 'events'] },
                   },
                 },
@@ -105,97 +121,81 @@ export const BHARAT_KALP_FALLBACK_FORM = {
             weeks: {
               week_1: {
                 title: 'Foundations of Governance',
-                topics: ['Constitutional Framework', 'Role of Civil Services', 'Ethics in Governance'],
-                doIds: ['do_11434925651100467212810', 'do_1143733191379271681429'],
+                doIds: ['do_11434925651100467212810'],
                 progress: 0,
               },
               week_2: {
                 title: 'Public Policy & Administration',
-                topics: ['Policy Formulation', 'Regulatory Frameworks', 'Stakeholder Management'],
                 doIds: ['do_1143776121456721921551'],
                 progress: 100,
               },
               week_3: {
                 title: 'Governance & Digital India',
-                topics: ['Governance Models', 'e-Governance Initiatives', 'Digital Infrastructure & Inclusion'],
                 doIds: ['do_1139966676160757761511', 'do_11395704427130060819'],
                 progress: 50,
               },
               week_4: {
                 title: 'Economic Planning & Development',
-                topics: ['Economic Survey', 'Budget Formulation', 'Development Schemes'],
                 doIds: ['do_11447060019087769614353'],
                 progress: 100,
               },
               week_5: {
                 title: 'Social Sector Management',
-                topics: ['Health & Education Policy', 'Social Welfare Programs', 'Inclusive Growth'],
                 doIds: ['do_11431117738852352011247', 'do_114505991944642560176'],
                 progress: 0,
               },
               week_6: {
                 title: 'Environmental Governance',
-                topics: ['Environmental Law', 'Climate Policy', 'Sustainable Development'],
                 doIds: ['do_114334456439726080195'],
                 progress: 0,
               },
               week_7: {
                 title: 'Law & Order Administration',
-                topics: ['Criminal Justice System', 'Disaster Management', 'Internal Security'],
                 doIds: ['do_11433306742269542412211', 'do_1143761040272670721391'],
                 progress: 0,
               },
               week_8: {
                 title: 'Financial Management',
-                topics: ['Public Finance', 'Audit & Accountability', 'GST & Tax Administration'],
                 doIds: ['do_1143403952027729921618'],
                 progress: 0,
               },
               week_9: {
                 title: 'Human Resource Management',
-                topics: ['Civil Service Reforms', 'Training & Capacity Building', 'Performance Appraisal'],
                 doIds: ['do_1145109596437299201470', 'do_114505610287136768115'],
                 progress: 0,
               },
               week_10: {
                 title: 'Infrastructure & Urban Development',
-                topics: ['Smart Cities', 'Urban Planning', 'PPP Models'],
                 doIds: ['do_11452074616911462411951'],
                 progress: 0,
               },
               week_11: {
                 title: 'Rural Development',
-                topics: ['Panchayati Raj', 'Rural Livelihoods', 'MGNREGS & PM Gram Sadak'],
                 doIds: ['do_1145285829888000001319', 'do_11452371515147878412754'],
                 progress: 0,
               },
               week_12: {
                 title: 'International Relations & Trade',
-                topics: ['Foreign Policy', 'Trade Agreements', 'Global Governance'],
                 doIds: ['do_11452016646302924811789'],
                 progress: 0,
               },
               week_13: {
                 title: 'Crisis Management',
-                topics: ['Disaster Response Protocols', 'Emergency Operations', 'Civil-Military Cooperation'],
                 doIds: ['do_11451875098095616011619', 'do_11451875162314342411630'],
                 progress: 0,
               },
               week_14: {
                 title: 'Technology in Governance',
-                topics: ['AI & ML in Administration', 'Cybersecurity Policy', 'Data Governance'],
                 doIds: ['do_11451928648119910411734'],
                 progress: 0,
               },
               week_15: {
                 title: 'Leadership & Change Management',
-                topics: ['Transformational Leadership', 'Organisational Change', 'Strategic Decision Making'],
                 doIds: ['do_11451875173250662411635', 'do_11451804513279180811501'],
                 progress: 0,
               },
               week_16: {
                 title: 'Capstone & Assessment',
-                topics: ['Integrated Case Studies', 'Policy Presentation', 'Programme Assessment'],
                 doIds: ['do_11451875173250662411635'],
                 progress: 0,
               },
@@ -241,41 +241,51 @@ export const BHARAT_KALP_FALLBACK_FORM = {
               },
             ],
           },
+          recommended: {
+            enabled: true,
+            containerClass: 'mb-6',
+            title: 'Recommended',
+            showAllUrl: '/app/learn/browse-by/competency',
+            apiConfig: {
+              url: '/apis/proxies/v8/sunbirdigot/search',
+              requestBody: {
+                locale: ['en'],
+                query: '',
+                request: {
+                  filters: {
+                    status: ['Live'],
+                    primaryCategory: ['Course'],
+                  },
+                  sort_by: { lastUpdatedOn: 'desc' },
+                  pageSize: 10,
+                },
+              },
+            },
+          },
           mentorship: {
             containerClass: 'mb-6',
             title: 'Mentorship',
             subtitle: 'Connect with fellow IAS officers across all programs',
-            viewAllUrl: '/app/community',
-            /* Community API called by BharatKalpComponent to populate the slider */
+            viewAllUrl: '/app/discussion-forum-v2',
+            showAllButton: false,   /* false → hides "Show all" button */
             communityApiConfig: {
-              url: '/apis/proxies/v8/community/v1/search',
-              pageSize: 12,
-              filterCriteriaMap: { status: 'active' },
+              url: '/apis/proxies/v8/community/v1/user/communities',
+              method: 'GET',
             },
           },
           myprogress: {
             containerClass: 'mt-2',
             data: {
-              hideEle: [],
-              title: "Your Week's Progress",
+              hideEle: ['rank', 'karma-points', 'badges'],
+              title: 'Overall Progress',
               description: 'This data is refreshed every 24 hours.',
               descriptionClass: 'text-xs',
               displayInfoIcon: true,
               infoText: 'During Bharat Kalp, stay informed about your learning journey.',
+              coursesLabel: 'Courses Completed',
+              hoursFormatted: true,
               profleDetails: {},
-              insights: {
-                data: {
-                  sliderData: {
-                    styleData: {
-                      borderRadius: '12px',
-                      customHeight: '83px',
-                      bannerMeta: 'visible',
-                      bannerMetaClass: 'cbp-card',
-                      responsive: { bannerMetaClass: 'cbp-card', customHeight: '83px' },
-                    },
-                  },
-                },
-              },
+              insights: { disable: true },
             },
           },
           events: {
@@ -286,6 +296,7 @@ export const BHARAT_KALP_FALLBACK_FORM = {
             navigation: true,
             key: 'sectionExploreEvents',
             /* Events/Webinars API called by sb-uic-events component to fetch live webinar cards */
+            /* startDate range is injected automatically from bkConfig.startDate/endDate */
             eventsApiConfig: {
               url: '/apis/proxies/v8/sunbirdigot/search',
               requestBody: {
@@ -297,26 +308,24 @@ export const BHARAT_KALP_FALLBACK_FORM = {
                     status: ['Live'],
                     contentType: 'Event',
                     category: 'Event',
+                    resourceType: ['bharat_kalp_talks'],
                   },
+                  facets: ['sourceName', 'resourceType'],
                   sort_by: { startDate: 'desc' },
+                  limit: 100,
+                  offset: 0,
                 },
               },
             },
             column: [
-              { active: true, enabled: true, key: 'exploreEventsContent', title: 'Explore Webinars', maxContent: 4, defaultImage: '' },
+              { active: true, enabled: true, key: 'exploreEventsContent', title: 'Explore Webinars', maxContent: 3, defaultImage: '' },
             ],
           },
         },
         bkConfig: {
-          enabled: true,
-          title: 'Bharat KALP',
-          subtitle: 'Knowledge, Action & Leadership Program',
-          description: 'A flagship initiative to build exceptional governance capabilities for IAS Officers across India.',
-          programId: '',
           totalWeeks: 16,
-          // Configure program start/end dates here — current week is auto-calculated from these
-          startDate: '2026-05-20',
-          endDate: '2026-10-30',
+          startDate: '20-05-2026',   /* DD-MM-YYYY — drives: week calculation + events dropdown */
+          endDate: '30-10-2026',     /* DD-MM-YYYY — drives: week calculation + events dropdown */
         },
       },
     },
