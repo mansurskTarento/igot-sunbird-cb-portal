@@ -815,9 +815,9 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     const selectedDepartment = (this.masterData?.departmentBackup || []).find((org: any) => org?.identifier === department)
 
     const isNAOrganisation = !organisation || organisation === '-1' || selectedOrganisation?.orgName === 'N/A'
-    const organisationName = selectedOrganisation?.orgName || organisation
-    const ministryName = selectedMinistry?.orgName || selectedMinistry?.identifier || ministry
-    const departmentName = selectedDepartment?.orgName || selectedDepartment?.identifier || department
+    const organisationName = selectedOrganisation?.channel || organisation
+    const ministryName = selectedMinistry?.channel || selectedMinistry?.identifier || ministry
+    const departmentName = selectedDepartment?.channel || selectedDepartment?.identifier || department
 
     // If organisation is NA/not selected, submit only ministry (center flow) or department (state flow).
     const resolvedDepartmentName = isNAOrganisation
@@ -1227,8 +1227,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
         const mapped = searchText?.length
           ? (content || []).slice()
           : (content || [])?.slice().sort((a: any, b: any) =>
-              (a?.orgName || '')?.localeCompare((b?.orgName || ''), undefined, { sensitivity: 'base' })
-            )
+            (a?.orgName || '')?.localeCompare((b?.orgName || ''), undefined, { sensitivity: 'base' })
+          )
         const total = _.get(res, 'result.response.count', 0)
         this.defaultSearchMinistryCount = total
 
