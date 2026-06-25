@@ -230,12 +230,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
               }
             }
           } else {
-            if (this.masterData && this.masterData.ministryBackup) {
-              this.masterData.ministry = this.masterData.ministryBackup.slice(0, this.ministryDefaultLoadCount)
-              this.ministryFilterEnable = false
-              this.checkCurrentMinistryPresent()
-              this.markMandatoryFieldTouched('ministry')
-            }
+            // Search cleared — reload fresh default data from API
+            this.ministryFilterEnable = false
+            this.ministryListLoadCount = this.ministryDefaultLoadCount
+            this.ministryOffset = 0
+            this.noMoreLegacyMinistrys = false
+            this.getMinistryData(undefined, 0)
           }
         })
     }
@@ -281,11 +281,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
                 item?.identifier?.toLowerCase()?.includes(txt?.toLowerCase()))
             }
           } else {
-            if (this.masterData && this.masterData?.departmentBackup) {
-              this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentDefaultLoadCount)
-              this.departmentFilterEnable = false
-              this.checkCurrentDepartmentPresent()
-            }
+            // Search cleared — reload fresh default data from API
+            this.departmentFilterEnable = false
+            this.departmentListLoadCount = this.departmentDefaultLoadCount
+            this.departmentOffset = 0
+            this.noMoreLegacyDepartments = false
+            this.getDepartmentData(undefined, 0)
           }
         })
     }
@@ -464,7 +465,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
     // Recalculate and nudge the pane inside viewport after async option rendering.
     const applyViewportBounds = () => {
-      const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
+      const panel = (document.querySelector('.mat-mdc-select-panel.search-panel') || document.querySelector('.mat-select-panel.search-panel')) as HTMLElement | null
       if (!panel) {
         return
       }
@@ -941,12 +942,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     // Check if click is on the mat-select trigger or its children
-    if (target.closest('mat-select') || target.closest('.mat-select-trigger')) {
+    if (target.closest('mat-select') || target.closest('.mat-mdc-select-trigger') || target.closest('.mat-select-trigger')) {
       return
     }
 
     // Check if click is inside any open mat-select-panel
-    if (target.closest('.mat-select-panel')) {
+    if (target.closest('.mat-mdc-select-panel') || target.closest('.mat-select-panel')) {
       return
     }
 
@@ -954,14 +955,14 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     if (target.closest('.cdk-overlay-pane')) {
       const pane = target.closest('.cdk-overlay-pane') as HTMLElement
       // Don't close if the pane contains a mat-select-panel
-      if (pane.querySelector('.mat-select-panel')) {
+      if (pane.querySelector('.mat-mdc-select-panel, .mat-select-panel')) {
         return
       }
     }
 
     // All open panels should close - use triggering through pressing Escape key
     // This is a cleaner approach that works with Angular Material's built-in close behavior
-    const openSelectTriggers = document.querySelectorAll('.mat-select.mat-focused')
+    const openSelectTriggers = document.querySelectorAll('.mat-mdc-select.mat-focused, .mat-select.mat-focused')
     openSelectTriggers.forEach((trigger: Element) => {
       const selectElement = trigger as HTMLElement
 
@@ -1084,7 +1085,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
       // Add scroll event listener to the panel
       setTimeout(() => {
-        const panel = document.querySelector('.mat-select-panel.search-panel')
+        const panel = document.querySelector('.mat-mdc-select-panel.search-panel') || document.querySelector('.mat-select-panel.search-panel')
         if (panel) {
           panel.addEventListener('scroll', this.onDesignationSelectScroll.bind(this), { passive: true })
         }
@@ -1222,9 +1223,12 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: (res: any) => {
         const content = _.get(res, 'result.response.content', [])
-        const mapped = (content || [])?.slice().sort((a: any, b: any) =>
-          (a?.orgName || '')?.localeCompare((b?.orgName || ''), undefined, { sensitivity: 'base' })
-        )
+        // Only sort alphabetically on default load; preserve API relevance order during search
+        const mapped = searchText?.length
+          ? (content || []).slice()
+          : (content || [])?.slice().sort((a: any, b: any) =>
+              (a?.orgName || '')?.localeCompare((b?.orgName || ''), undefined, { sensitivity: 'base' })
+            )
         const total = _.get(res, 'result.response.count', 0)
         this.defaultSearchMinistryCount = total
 
@@ -1281,7 +1285,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         // Add scroll event listener to the panel
         setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-ministry') as HTMLElement | null
+          const panel = (document.querySelector('.mat-mdc-select-panel.search-panel-ministry') || document.querySelector('.mat-select-panel.search-panel-ministry')) as HTMLElement | null
           if (panel) {
             const scrollHandler = this.onMinistrySelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
@@ -1366,12 +1370,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       if (!this.masterData?.ministry?.length) {
         this.markMandatoryFieldTouched('ministry')
       }
-    } else if (this.masterData && this.masterData?.ministryBackup) {
-      this.masterData.ministry = this.masterData?.ministryBackup.slice(0, this.ministryDefaultLoadCount)
+    } else {
+      // Search cleared — reload fresh default data from API so load-more works from scratch
       this.ministryFilterEnable = false
-      this.checkCurrentMinistryPresent()
-      this.clearInvalidSelectedValue('ministry', this.masterData?.ministry, 'identifier')
-      this.markMandatoryFieldTouched('ministry')
+      this.ministryListLoadCount = this.ministryDefaultLoadCount
+      this.ministryOffset = 0
+      this.noMoreLegacyMinistrys = false
+      this.getMinistryData(undefined, 0)
     }
   }
 
@@ -1511,7 +1516,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         // Add scroll event listener to the panel
         setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-state') as HTMLElement | null
+          const panel = (document.querySelector('.mat-mdc-select-panel.search-panel-state') || document.querySelector('.mat-select-panel.search-panel-state')) as HTMLElement | null
           if (panel) {
             const scrollHandler = this.onStateSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
@@ -1751,7 +1756,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         // Add scroll event listener to the panel
         setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-department') as HTMLElement | null
+          const panel = (document.querySelector('.mat-mdc-select-panel.search-panel-department') || document.querySelector('.mat-select-panel.search-panel-department')) as HTMLElement | null
           if (panel) {
             const scrollHandler = this.onDepartmentSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
@@ -1840,10 +1845,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       if (!this.masterData?.department?.length) {
         this.markMandatoryFieldTouched('department')
       }
-    } else if (this.masterData && this.masterData?.departmentBackup) {
-      this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentDefaultLoadCount)
+    } else {
+      // Search cleared — reload fresh default data from API so load-more works from scratch
       this.departmentFilterEnable = false
-      this.checkCurrentDepartmentPresent()
+      this.departmentListLoadCount = this.departmentDefaultLoadCount
+      this.departmentOffset = 0
+      this.noMoreLegacyDepartments = false
+      this.getDepartmentData(undefined, 0)
     }
   }
 
@@ -2059,7 +2067,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
 
         // Add scroll event listener to the panel
         setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-organisation') as HTMLElement | null
+          const panel = (document.querySelector('.mat-mdc-select-panel.search-panel-organisation') || document.querySelector('.mat-select-panel.search-panel-organisation')) as HTMLElement | null
           if (panel) {
             const scrollHandler = this.onOrganisationSelectScroll.bind(this)
             panel.addEventListener('scroll', scrollHandler, { passive: true })
@@ -2371,7 +2379,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       // Wait for the panel to be rendered in the DOM
       setTimeout(() => {
         // Find the panel element
-        const panel = document.querySelector('.mat-select-panel')
+        const panel = document.querySelector('.mat-mdc-select-panel') || document.querySelector('.mat-select-panel')
         if (panel) {
           // Add scroll event listener to the panel
           panel.addEventListener('scroll', this.onOrgSelectScroll.bind(this))
