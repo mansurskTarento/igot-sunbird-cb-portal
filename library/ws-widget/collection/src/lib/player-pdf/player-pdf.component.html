@@ -3,37 +3,37 @@
   <div>
     <div>
       <mat-toolbar class="pdf-nav-bar" color="" *ngIf="widgetData?.hideControls">
-        <div class="pdf-controls-toolbar">
-          <button mat-icon-button [disabled]="currentPage.value < 2" (click)="loadPageNum(currentPage.value - 1)" aria-label="previous page"
-            i18n-aria-label>
+        <div class="pdf-controls-toolbar pdf-controls-toolbar-buttons">
+          <button mat-icon-button [disabled]="currentPage.value < 2" (click)="loadPageNum(currentPage.value - 1)"
+            aria-label="previous page" i18n-aria-label>
             <mat-icon>chevron_left</mat-icon>
           </button>
           <mat-form-field class="auto-mat-form-field-input-infix">
             <span matPrefix *ngIf="!isSmallViewPort">{{ 'player.page' | translate }}</span>
-            <input label="PageNumber" aria-label="Page Number" i18n-aria-label class="pdf-page-num" type="number" min="1" [max]="totalPages"
-              [formControl]="currentPage" matInput />
+            <input label="PageNumber" aria-label="Page Number" i18n-aria-label class="pdf-page-num" type="number"
+              min="1" [max]="totalPages" [formControl]="currentPage" matInput />
             <span matSuffix style="margin-left: 12px;">{{ 'player.of' | translate }} {{ totalPages }}</span>
           </mat-form-field>
-          <button mat-icon-button [disabled]="currentPage.value >= totalPages" (click)="loadPageNum(currentPage.value + 1)" aria-label="next page"
-            i18n-aria-label>
+          <button mat-icon-button [disabled]="currentPage.value >= totalPages"
+            (click)="loadPageNum(currentPage.value + 1)" aria-label="next page" i18n-aria-label>
             <mat-icon>chevron_right</mat-icon>
           </button>
 
-        <button mat-icon-button [disabled]="zoom.value <= MIN_SCALE" (click)="changeScale('zoomout')" aria-label="zoom out"
-          i18n-aria-label>
-          <mat-icon>zoom_out</mat-icon>
-        </button>
-        <button mat-icon-button [disabled]="zoom.value >= MAX_SCALE" (click)="changeScale('zoomin')" aria-label="zoom in"
-          i18n-aria-label>
-          <mat-icon>zoom_in</mat-icon>
-        </button>
-        <button *ngIf="!isMobile" mat-icon-button (click)="refresh()" aria-label="refresh" i18n-aria-label>
-          <mat-icon>refresh</mat-icon>
-        </button>
-        <ws-widget-btn-fullscreen *ngIf="!isMobile" (fsState)="fullScreenState($event)" (click)="refresh()"
-          [widgetData]="{ fsContainer: fullScreenContainer }">
-        </ws-widget-btn-fullscreen>
-      </div>
+          <button mat-icon-button [disabled]="zoom.value <= MIN_SCALE" (click)="changeScale('zoomout')"
+            aria-label="zoom out" i18n-aria-label>
+            <mat-icon>zoom_out</mat-icon>
+          </button>
+          <button mat-icon-button [disabled]="zoom.value >= MAX_SCALE" (click)="changeScale('zoomin')"
+            aria-label="zoom in" i18n-aria-label>
+            <mat-icon>zoom_in</mat-icon>
+          </button>
+          <button *ngIf="!isMobile" mat-icon-button (click)="refresh()" aria-label="refresh" i18n-aria-label>
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <ws-widget-btn-fullscreen *ngIf="!isMobile" (fsState)="fullScreenState($event)" (click)="refresh()"
+            [widgetData]="{ fsContainer: fullScreenContainer }">
+          </ws-widget-btn-fullscreen>
+        </div>
         <!-- <button mat-icon-button [matMenuTriggerFor]="zoomMenu" *ngIf="isSmallViewPort">
           <mat-icon>zoom_in</mat-icon>
         </button>

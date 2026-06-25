@@ -12,7 +12,7 @@ import { PublicLogoutModule } from './public/public-logout/public-logout.module'
 import { PublicRequestModule } from './public/public-request/public-request.module'
 import { PublicWelcomeModule } from './public/welcome/public-welcome.module'
 import { PublicTocModule } from './public/public-toc/public-toc.module'
-import { PublicExtTocModule } from './public/public-ext-toc/public-ext-toc.module'
+
 import { MobileAppModule } from './public/mobile-app/mobile-app.module'
 
 // Components without their own modules (moved from AppModule declarations)
@@ -28,12 +28,12 @@ import { PublicLogoutComponent } from './public/public-logout/public-logout.comp
 import { PublicRequestComponent } from './public/public-request/public-request.component'
 import { PublicWelcomeComponent } from './public/welcome/public-welcome.component'
 import { PublicTocComponent } from './public/public-toc/public-toc.component'
-import { PublicExtTocComponent } from './public/public-ext-toc/public-ext-toc.component'
+
 import { MobileAppHomeComponent } from './public/mobile-app/components/mobile-app-home.component'
 
 // Resolvers
 import { PageResolve } from '@sunbird-cb/utils-v2'
-import { AppTocResolverService, AppTocExtPublicResolverService } from '@sunbird-cb/toc'
+import { AppTocResolverService } from '@sunbird-cb/toc'
 import { WelcomeUserResolverService } from '../services/welcome-user-resolver.service'
 import { AppPublicGroupResolverService } from './public/public-signup/group-resolver.service'
 
@@ -90,19 +90,6 @@ const routes: Routes = [
     resolve: {
       pageData: PageResolve,
       content: AppTocResolverService,
-    },
-  },
-  {
-    path: 'toc/ext/:partner/:id',
-    component: PublicExtTocComponent,
-    data: {
-      pageType: 'feature',
-      pageKey: 'toc',
-      pageId: 'public/toc/:id',
-      module: 'Learn',
-    },
-    resolve: {
-      extContent: AppTocExtPublicResolverService,
     },
   },
   {
@@ -180,7 +167,6 @@ const routes: Routes = [
     PublicRequestModule,
     PublicWelcomeModule,
     PublicTocModule,
-    PublicExtTocModule,
     MobileAppModule,
     RouterModule.forChild(routes),
   ],

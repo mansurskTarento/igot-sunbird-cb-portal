@@ -10,7 +10,7 @@
   <mat-sidenav class="padding-s width-300" position="end" [fixedInViewport]="true" [(opened)]="sideNavBarOpened">
     <h4 class="ws-mat-primary-text font-weight-bold margin-remove">
       <div class="flex flex-between flex-baseline">
-        <span class="mat-h2 font-weight-500 margin-left-s" >Filters</span>
+        <span class="mat-h2 font-weight-500 margin-left-s">Filters</span>
         <button mat-icon-button color="primary" class="text-middle close-button margin-bottom-s"
           (click)="sideNavBarOpened = false">
           <mat-icon class="">clear</mat-icon>
@@ -38,7 +38,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field class=" margin-left-m">
-        <mat-label >Select Role</mat-label>
+        <mat-label>Select Role</mat-label>
         <mat-select #selectedRole [ngModel]="selectedRole" (ngModelChange)="roleChanged(selectedRole)">
           <mat-option [value]="role" *ngFor="let role of rolesList">
             <a mat-line>
@@ -48,7 +48,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field class=" margin-left-m">
-        <mat-label >Select Region</mat-label>
+        <mat-label>Select Region</mat-label>
         <mat-select #selectedRegion [ngModel]="selectedRegion" (ngModelChange)="regionChanged(selectedRegion)">
           <mat-option [value]="region" *ngFor="let region of ['All','NTH', 'EST', 'STH', 'CEN', 'WST']">
             <a mat-line>
@@ -58,7 +58,7 @@
         </mat-select>
       </mat-form-field>
       <mat-form-field class=" margin-left-m">
-        <mat-label >Select Dealer Code</mat-label>
+        <mat-label>Select Dealer Code</mat-label>
         <mat-select #selectedDealer [ngModel]="selectedDealer" (ngModelChange)="dealerChanged(selectedDealer)">
           <mat-option [value]="dealer" *ngFor="let dealer of dealers">
             <a mat-line>
@@ -69,14 +69,18 @@
       </mat-form-field>
       <mat-form-field class=" margin-left-m">
         <input [max]="maxDate" matInput [matDatepicker]="picker1" placeholder="Start Date" [formControl]="startDate">
-        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matSuffix [for]="picker1">
+          <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+        </mat-datepicker-toggle>
         <mat-datepicker #picker1></mat-datepicker>
       </mat-form-field>
 
       <mat-form-field class=" margin-left-m">
         <input matInput [max]="maxDate" [matDatepicker]="picker2" placeholder="End Date" [min]="startDate.value"
           [formControl]="endDate">
-        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker-toggle matSuffix [for]="picker2">
+          <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+        </mat-datepicker-toggle>
         <mat-datepicker #picker2></mat-datepicker>
       </mat-form-field>
       <div class="margin-left-m margin-top-l margin-bottom-l">
@@ -94,14 +98,14 @@
           <button (click)="handleSearchQuery(query)" mat-icon-button matSuffix>
             <mat-icon>search</mat-icon>
           </button>
-          <mat-label >Search users</mat-label>
+          <mat-label>Search users</mat-label>
           <input matInput (keyup.enter)="handleSearchQuery(query)" [(ngModel)]="query" autocomplete="off"
             class="resize-none" />
         </mat-form-field>
       </div>
       <div class="dimensions">
         <h4 class="ws-mat-primary-text font-size-m font-weight-bold">
-          <span > Apply Filters</span>
+          <span> Apply Filters</span>
           <button mat-icon-button color="primary" class="text-middle" (click)="sideNavBarOpened = true">
             <mat-icon>filter_list</mat-icon>
           </button>
@@ -132,7 +136,7 @@
         <ng-container>
           <div class="flat-error-alert margin-m">
             <mat-icon class="large-icon">info</mat-icon>
-            <span class="font-weight-bold margin-left-s mat-h3 margin-remove-bottom" >There is no leaderboard data
+            <span class="font-weight-bold margin-left-s mat-h3 margin-remove-bottom">There is no leaderboard data
               available for this sprint.</span>
           </div>
 
@@ -156,7 +160,7 @@
         <ng-container>
           <div class="flat-error-alert margin-m">
             <mat-icon class="large-icon">info</mat-icon>
-            <span class="font-weight-bold margin-left-s mat-h3 margin-remove-bottom" >There is no leaderboard data
+            <span class="font-weight-bold margin-left-s mat-h3 margin-remove-bottom">There is no leaderboard data
               available for this sprint.</span>
           </div>
         </ng-container>

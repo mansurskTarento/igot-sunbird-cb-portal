@@ -352,7 +352,8 @@ required::after {
 }
 
 // Generic panel styling for all dropdowns
-::ng-deep .mat-select-panel {
+::ng-deep .mat-select-panel,
+::ng-deep .mat-mdc-select-panel {
 
   &.search-panel,
   &.search-panel-ministry,
@@ -501,7 +502,7 @@ required::after {
 ::ng-deep .search-panel {
   .sticky-search-container {
     position: sticky;
-    top: 0;
+    top: -8px;
     z-index: 2;
     background: white;
     padding: 8px;
@@ -511,8 +512,8 @@ required::after {
 
   .search-input {
     border: 1px solid rgba(0, 0, 0, 0.12);
-    padding-left: 10px;
-    width: calc(100% - 10px);
+    // padding-left: 10px;
+    width: calc(100% - 40px);
     ;
     height: 30px;
 
@@ -568,7 +569,8 @@ required::after {
 :host ::ng-deep .cdk-overlay-pane {
   max-width: calc(100vw - 16px) !important;
 
-  .mat-select-panel {
+  .mat-select-panel,
+  .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -595,7 +597,8 @@ required::after {
     gap: 12px;
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -619,7 +622,8 @@ required::after {
     overflow-y: auto;
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -663,7 +667,8 @@ required::after {
     }
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
