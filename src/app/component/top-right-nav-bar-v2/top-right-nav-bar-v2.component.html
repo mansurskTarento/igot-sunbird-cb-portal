@@ -91,9 +91,12 @@
   @if (item()?.type === 'themeToggle') {
   <li matTooltipClass="right-nav-tooltip"
     matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" class="theme-toggle-btn">
-    <button mat-icon-button (click)="themeSvc.toggleTheme()" aria-label="Toggle theme">
+    <!-- <button mat-icon-button (click)="themeSvc.toggleTheme()" aria-label="Toggle theme">
       <mat-icon>{{ themeSvc.isDark ? 'brightness_7' : 'brightness_4' }}</mat-icon>
-    </button>
+    </button> -->
+    <span class="icon-svg w-5 h-5" (click)="themeSvc.toggleTheme()"
+      [style.mask-image]="'url(/assets/icons/hubs-v2/dark_mode.svg)'"
+      [style.-webkit-mask-image]="'url(/assets/icons/hubs-v2/dark_mode.svg)'"></span>
   </li>
   }
   <!-- <li *ngIf="item.type === 'widgetButton'" class="font-size-controls">

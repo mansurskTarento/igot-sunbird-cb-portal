@@ -43,9 +43,9 @@
     <div class="search-container" [hidden]="!openSearchTemplate()">
       <div class="search-results">
         <div class="search-categories mb-4">
-          <mat-chip-listbox class="mat-chip-list-content">
+          <mat-chip-list class="mat-chip-list-content">
             @for (category of categories; track category.value) {
-            <mat-chip-option [removable]="false" [highlighted]="false" [disableRipple]="true"
+            <mat-chip [removable]="false" [highlighted]="false" [disableRipple]="true"
               [selected]="category.value === selectedSearchCategory()" (click)="selectSearchCategory(category.value)"
               class="category-chip"
               [ngClass]="{'selected-search-category active': category.value === selectedSearchCategory()}">
@@ -53,9 +53,9 @@
               <mat-icon [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
               }
               {{ category.label }}
-            </mat-chip-option>
+            </mat-chip>
             }
-          </mat-chip-listbox>
+          </mat-chip-list>
         </div>
 
         <!-- Recent Searches -->

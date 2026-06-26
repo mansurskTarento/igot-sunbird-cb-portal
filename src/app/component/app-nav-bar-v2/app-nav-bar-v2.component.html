@@ -28,10 +28,7 @@
     </a>
     }
     @if (primaryNavbarConfig?.mediumScreen) {
-    <div>
-
-      <ws-top-right-nav-bar-v2 [item]="{type: 'widgetButton'}" [rightNavConfig]="headerFooterConfigData()" />
-
+    <div class="md:flex md:flex-1 md:justify-center">
       @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
       <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
@@ -60,7 +57,7 @@
     </div>
     }
 
-    <div class="hidden md:block md:flex items-center">
+    <div class="hidden md:block md:flex items-center md:ml-auto">
       @if (!isforPreview()) {
       <!-- Karma badge placeholder -->
       }
@@ -165,30 +162,30 @@
 
 <!-- Help Menu -->
 <mat-menu #helpMenu="matMenu">
-  <ws-widget-btn-feature-v2 [widgetData]="{
+  <sb-uic-btn-feature-v2 [widgetData]="{
     actionBtnId: 'feature_aboutUs',
     config: {
       type: 'mat-menu-item'
     }
-  }"></ws-widget-btn-feature-v2>
-  <ws-widget-btn-feature-v2 [widgetData]="{
+  }"></sb-uic-btn-feature-v2>
+  <sb-uic-btn-feature-v2 [widgetData]="{
     actionBtnId: 'channel_how_to',
     config: {
       type: 'mat-menu-item'
     }
-  }"></ws-widget-btn-feature-v2>
-  <ws-widget-btn-feature-v2 [widgetData]="{
+  }"></sb-uic-btn-feature-v2>
+  <sb-uic-btn-feature-v2 [widgetData]="{
     actionBtnId: 'feature_FAQs',
     config: {
       type: 'mat-menu-item'
     }
-  }"></ws-widget-btn-feature-v2>
-  <ws-widget-btn-feature-v2 [widgetData]="{
+  }"></sb-uic-btn-feature-v2>
+  <sb-uic-btn-feature-v2 [widgetData]="{
     actionBtnId: 'feature_quickTour',
     config: {
       type: 'mat-menu-item'
     }
-  }"></ws-widget-btn-feature-v2>
+  }"></sb-uic-btn-feature-v2>
 
   @if (isTourGuideAvailable()) {
   <div mat-menu-item (click)="startTour()">

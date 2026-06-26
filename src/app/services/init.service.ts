@@ -496,7 +496,6 @@ export class InitService {
           enrolledCourseCount,
           userCourseEnrolmentInfo,
         }
-        console.log('userData', userData)
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
 

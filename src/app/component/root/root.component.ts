@@ -51,6 +51,8 @@ import { UrlService } from '../../shared/url.service'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { HomePageService } from '../../services/home-page.service'
 import { trigger, style, animate, transition } from '@angular/animations'
+import { DialogBoxComponent } from '../dialog-box/dialog-box.component'
+import * as _ from 'lodash'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -96,13 +98,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       {
         "cardType": "nav_list",
         "sectionTitle": "",
+        "sectionKey": "hubs",
         "sectionLoading": false,
         "disableTranslate": true,
         "collapsible": false,
-        "showViewAll": false,
+        "showViewAll": true,
         "viewAllLabel": "",
         "disableTranslateOnViewAll": true,
-        "maxItemsVisible": null,
+        "maxItemsVisible": 7,
+        "enabled": true,
         "items": [
           {
             "code": "home",
@@ -110,39 +114,49 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "iconUrl": "home",
             "label": "Home",
             "navUrl": "/page/home/v2",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           },
           {
-            "code": "explore_content",
+            "code": "explore",
             "iconName": "",
             "iconUrl": "school",
             "label": "Explore Content",
             "navUrl": "",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           },
           {
-            "code": "my_learning",
+            "code": "my-learning",
             "iconName": "",
             "iconUrl": "chatt_msg",
             "label": "My Learning",
             "navUrl": "/page/learn",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           },
           {
-            "code": "learner_passbook",
+            "code": "learner-passbook",
             "iconName": "",
             "iconUrl": "menu_book",
             "label": "Learner Passbook",
             "navUrl": "/passbook",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           },
           {
-            "code": "igot_community",
+            "code": "igot-community",
             "iconName": "",
             "iconUrl": "chatt_msg",
             "label": "iGOT Community",
             "navUrl": "/community",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           },
           {
             "code": "events",
@@ -150,13 +164,36 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "iconUrl": "calendar_month",
             "label": "Events",
             "navUrl": "/app/event-hub/home",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
+          },
+          {
+            "code": "peer-validation",
+            "iconName": "",
+            "iconUrl": "group_2",
+            "label": "Peer Validation",
+            "navUrl": "/app/event-hub/home",
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
+          },
+          {
+            "code": "peer-validation-2",
+            "iconName": "",
+            "iconUrl": "group_2",
+            "label": "Peer Validation 2",
+            "navUrl": "/app/event-hub/home",
+            "disableTranslate": true,
+            "enabled": true,
+            "subType": "PageMenu"
           }
         ]
       },
       {
         "cardType": "stat_cards",
         "sectionTitle": "My Achievements",
+        "sectionKey": "my_achievements",
         "sectionLoading": false,
         "disableTranslate": true,
         "collapsible": true,
@@ -165,6 +202,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         "viewAllKey": "view_all_achievements",
         "disableTranslateOnViewAll": true,
         "maxItemsVisible": 3,
+        "enabled": true,
         "items": [
           {
             "code": "rank",
@@ -173,16 +211,28 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "headerLabel": "You're now standing at",
             "value": "",
             "navUrl": "",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true
+          },
+          {
+            "code": "learning_hours",
+            "iconName": "",
+            "iconUrl": "badge",
+            "headerLabel": "Learning hours",
+            "value": "0 Learning Hours",
+            "navUrl": "",
+            "disableTranslate": true,
+            "enabled": false
           },
           {
             "code": "karma_points",
             "iconName": "",
             "iconUrl": "badge",
-            "headerLabel": "You Earned",
+            "headerLabel": "Karma Points",
             "value": "0 Karma Points",
-            "navUrl": "/karma",
-            "disableTranslate": true
+            "navUrl": "",
+            "disableTranslate": true,
+            "enabled": true
           },
           {
             "code": "badges",
@@ -190,14 +240,16 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "iconUrl": "trophi",
             "headerLabel": "Your Earned",
             "value": "0 Badges",
-            "navUrl": "/badges",
-            "disableTranslate": true
+            "navUrl": "",
+            "disableTranslate": true,
+            "enabled": true
           }
         ]
       },
       {
         "cardType": "info_cards",
         "sectionTitle": "Quick Actions",
+        "sectionKey": "quick_actions",
         "sectionLoading": false,
         "disableTranslate": true,
         "collapsible": true,
@@ -205,6 +257,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         "viewAllLabel": "",
         "disableTranslateOnViewAll": true,
         "maxItemsVisible": null,
+        "enabled": true,
         "items": [
           {
             "code": "help_centre",
@@ -214,7 +267,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
             "title": "Help Centre",
             "description": "Need help? You're in the right place.",
             "navUrl": "/help",
-            "disableTranslate": true
+            "disableTranslate": true,
+            "enabled": true
           },
           {
             "code": "other_portals",
@@ -233,7 +287,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                 "title": "MDO Portal",
                 "description": "Manage users, training and approvals.",
                 "navUrl": "https://mdo.qa.karmayogibharat.net/",
-                "disableTranslate": true
+                "disableTranslate": true,
+                "enabled": true
               },
               {
                 "code": "content_portal",
@@ -242,7 +297,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                 "title": "Content Portal",
                 "description": "Create, publish and manage content",
                 "navUrl": "https://cbp.qa.karmayogibharat.net/",
-                "disableTranslate": true
+                "disableTranslate": true,
+                "enabled": true
               },
               {
                 "code": "spv_portal",
@@ -251,11 +307,25 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                 "title": "SPV Portal",
                 "description": "Manage MDOs, users and competency",
                 "navUrl": "https://spv.qa.karmayogibharat.net/",
-                "disableTranslate": true
+                "disableTranslate": true,
+                "enabled": true
               }
             ]
           }
         ]
+      }
+    ],
+    "footerSections": [
+      {
+        "label": "downloadApp",
+        "disableTranslate": false,
+        "enabled": true,
+        "iconName": "",
+        "iconUrl": "download_2",
+        "infoIcon": "help_outline",
+        "infoText": "downloadApp",
+        "code": "download-app",
+        "subType": "PageMenu"
       }
     ]
   }
@@ -287,6 +357,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     // private dialogRef: MatDialogRef<any>,
   ) {
+
+    console.log('userEnrollmentCount - root component constructor')
 
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
@@ -428,6 +500,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   prevUrl = ''
   currUrl = ''
+  detailsChanged = signal(false)
   @HostListener('window:unload', ['$event'])
   unloadHandler(event: any) {
     if (event && event.type === 'unload') {
@@ -448,6 +521,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     // tslint: disable
   }
   ngOnInit() {
+    this.setAchivements()
     this.homePageSvc.showLeaderboardPanel.subscribe((show: boolean) => {
       this.showKarmaLeaderboard.set(show)
     })
@@ -671,6 +745,77 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   }
 
+  setAchivements() {
+    const menuBarDetails = this.menuBarDetails
+    const achievements = menuBarDetails.navSections.find((section: any) => section.sectionKey === 'my_achievements')
+    achievements.sectionLoading = true
+    this.sendDetailsChangedEvent(menuBarDetails)
+    if (achievements) {
+      try {
+        const raw = localStorage.getItem('userEnrollmentCount')
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          const learningHours = _.get(parsed, 'userCourseEnrolmentInfo.timeSpentOnCompletedCourses', 0)
+          const badges = _.get(parsed, 'userCourseEnrolmentInfo.badgeCount', 0)
+          const itemsList = achievements.items.filter((item: any) => item.enabled !== false)
+          if (itemsList && itemsList.length > 0) {
+            itemsList.forEach((item: any) => {
+              switch (item.code) {
+                case 'rank':
+                  break
+                case 'learning_hours':
+                  item.value = this.convertToHoursAndMinutes(learningHours)
+                  break
+                case 'badges':
+                  item.value = `${badges} Badges`
+                  break
+                case 'karma_points':
+                  const karmaPoints = _.get(parsed, 'userCourseEnrolmentInfo.karmaPoints', 0)
+                  item.value = `${karmaPoints} Karma Points`
+              }
+            })
+          }
+          achievements.items = itemsList
+        }
+        const currentUserId = this.configSvc?.unMappedUser?.id
+        const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
+        if (currentUserId && rankItem) {
+          this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+            const results = res?.result?.result
+            if (Array.isArray(results)) {
+              const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+              const rank = currentUserRank?.rank
+
+              if (rank != null) {
+                if (rankItem) {
+                  rankItem.value = `${this.toOrdinal(rank)} Rank`
+                }
+              }
+              achievements.sectionLoading = false
+              this.sendDetailsChangedEvent(menuBarDetails)
+            }
+          })
+        } else {
+          achievements.sectionLoading = false
+          this.sendDetailsChangedEvent(menuBarDetails)
+        }
+      } catch (_e) { /* ignore */ }
+    }
+  }
+
+  sendDetailsChangedEvent(menuBarDetails: any) {
+    this.menuBarDetails = menuBarDetails
+    this.detailsChanged.set(!this.detailsChanged())
+  }
+
+
+  convertToHoursAndMinutes(seconds: number): string {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+
+    return `${hours}h ${minutes}m`
+  }
+
   private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
     const payload = {
       'request': {
@@ -831,18 +976,21 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
-  onNavItemClicked(event: string) {
-    console.log('Nav item clicked:', event)
+  onNavItemClicked(event: any) {
+    this.raiseTelemetryExploreContent(event.code, event.subType)
     switch (event) {
-      case 'explore_content':
+      case 'explore':
         this.exploreContent()
-        this.menuBarDetails.activeItemCode = event
+        this.menuBarDetails.activeItemCode = event.code
         break
       case 'view_all_achievements':
         this.viewAllAchievements()
         break
+      case 'download_app':
+        this.openAppDownloadDialog()
+        break
       default:
-        this.menuBarDetails.activeItemCode = event
+        this.menuBarDetails.activeItemCode = event.code
     }
   }
 
@@ -852,7 +1000,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   exploreContent() {
     this.libNotificationsService.updateUnreadCount()
-    this.raiseTelemetryExploreContent()
+    this.raiseTelemetryExploreContent('explore_content')
     const queryParams = {
       q: '',
       search: null,
@@ -869,17 +1017,29 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.router.navigate(['/app/globalsearch'], navigationExtras)
   }
 
-  raiseTelemetryExploreContent() {
+  raiseTelemetryExploreContent(id: string, subType: string = '') {
+    const eData: any = {
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: id,
+    }
+    if (subType) {
+      const telemetrySubTypeKey = subType as keyof typeof WsEvents.EnumTelemetrySubType
+      if (WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]) {
+        eData.subType = WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]
+      }
+    }
     this.eventSvc.raiseInteractTelemetry(
-      {
-        type: WsEvents.EnumInteractTypes.CLICK,
-        id: 'explore-content',
-      },
+      eData,
       {},
       {
         module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
+  }
+
+  openAppDownloadDialog() {
+    const dialogRef = this.dialog.open(DialogBoxComponent, { width: '1000px' })
+    dialogRef.afterClosed().subscribe(() => { })
   }
 
   private loadMenuBarAchievements() {
