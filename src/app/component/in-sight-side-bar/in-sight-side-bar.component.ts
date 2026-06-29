@@ -110,6 +110,10 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
   nlwExperience: any = null
   isNlw2026Certified = false
   private nlw2026Sub: Subscription | null = null
+  notifications: any[] = []
+  activeNotifications: any[] = []
+  private notificationHandlerMap: Record<string, (n: any) => void> = {}
+  private notificationConditionMap: Record<string, (n: any) => boolean> = {}
   @Output() telemetryRaisedLibrary = new EventEmitter()
 
   constructor(
@@ -149,6 +153,9 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       this.learnAdvisoryData = this.activatedRoute.snapshot.data.pageData.data.learnerAdvisory
       this.surveyForm = this.activatedRoute.snapshot.data.pageData.data.surveyForm
       this.surveyPopup = this.activatedRoute.snapshot.data.pageData.data.surveyPopup
+      this.notifications = this.activatedRoute.snapshot.data.pageData.data.notification || []
+      this.initNotificationHandlers()
+      this.loadActiveNotifications()
       // Fetch National learning week configurations
       this.nwlConfiguration = this.activatedRoute.snapshot.data.pageData.data.nationalLearningWeek
       this.nlwExperience = this.activatedRoute.snapshot.data.pageData.data.nlwExperience
@@ -779,6 +786,118 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
     }
 
+    this.dialog.open(NlwCertificateDialogComponent, {
+      data: dialogData,
+      panelClass: 'nlw-experience-dialog-container',
+      maxWidth: '95vw',
+      width: dialogWidth,
+      autoFocus: false,
+    })
+  }
+
+  loadActiveNotifications(): void {
+    if (!this.notifications || !this.notifications.length) { return }
+    const now = moment()
+    this.activeNotifications = this.notifications.filter((n: any) => {
+      if (!n.enabled) { return false }
+      if (n.startDate && n.endDate) {
+        const start = moment(n.startDate, 'DD-MMYYYY')
+        const end = moment(n.endDate, 'DD-MMYYYY')
+        if (!now.isBetween(start, end, null, '[]')) { return false }
+      }
+      return true
+    })
+  }
+
+  private initNotificationHandlers(): void {
+    this.notificationHandlerMap = {
+
+      // ── Navigate WITH a fixed default route ──────────────────────────────
+      // routerLink in config overrides the default; key is the unique identifier
+      'sadhana-saptah': (n: any) => {
+        this.router.navigateByUrl(n.routerLink || 'app/learn/nlw/sadhana-saptah')
+      },
+
+      // ── Navigate driven purely by routerLink in the config ────────────────
+      // No hardcoded default; does nothing if routerLink is absent
+      'route-only': (n: any) => {
+        if (n.routerLink) {
+          this.router.navigateByUrl(n.routerLink)
+        }
+      },
+
+      // ── Dialog: PDF URL supplied directly in config ───────────────────────
+      'dialog-pdf': (n: any) => {
+        this.openNotificationDialog(n)
+      },
+
+      // ── Dialog: PDF URL resolved via API (no static pdfUrl needed) ────────
+      'dialog-api': (n: any) => {
+        this.openNotificationDialog({ ...n, pdfUrl: undefined })
+      },
+
+      // ── External URL opens in a new tab ───────────────────────────────────
+      'external-link': (n: any) => {
+        if (n.externalUrl) {
+          window.open(n.externalUrl, '_blank', 'noopener,noreferrer')
+        }
+      },
+
+      // ── No action (banner is display-only) ───────────────────────────────
+      'display-only': (_n: any) => { /* intentionally no-op */ },
+
+      // ── Bharat Kalp: navigate, visible only to isBharatKalpMember users ──
+      'bharat-kalp': (n: any) => {
+        this.router.navigateByUrl(n.routerLink || 'app/learn/nlw/sadhana-saptah')
+      },
+
+      // ─────────────────────────────────────────────────────────────────────
+      // Add more key-based handlers below as new notification types are needed
+      // 'new-feature': (n: any) => { ... }
+    }
+
+    this.notificationConditionMap = {
+      // ── Bharat Kalp: only show card when user is a BharatKalp member ─────
+      'bharat-kalp': (_n: any) => {
+        return _.get(
+          this.configSvc,
+          'unMappedUser.profileDetails.additionalProperties.isBharatKalpMember'
+        ) === true
+      },
+
+      // ─────────────────────────────────────────────────────────────────────
+      // Add per-key visibility conditions here when a card needs extra guards
+      // 'some-key': (n: any) => { return <boolean condition> }
+    }
+  }
+
+  onNotificationClick(notification: any): void {
+    const condition = this.notificationConditionMap[notification.key]
+    if (condition && !condition(notification)) { return }
+    const handler = this.notificationHandlerMap[notification.key]
+    if (handler) {
+      handler(notification)
+      return
+    }
+    // Fallback when no key match: honour clickOption from config
+    if (notification.clickOption === 'navigate' && notification.routerLink) {
+      this.router.navigateByUrl(notification.routerLink)
+    } else if (notification.clickOption === 'dialog') {
+      this.openNotificationDialog(notification)
+    } else if (notification.clickOption === 'external' && notification.externalUrl) {
+      window.open(notification.externalUrl, '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  private openNotificationDialog(notification: any): void {
+    const dialogData: NlwCertificateDialogData = {
+      pdfZoom: notification.pdfZoom || 'FitH',
+      action: 'OPEN_POPUP',
+      type: 'PDF',
+      url: notification.pdfUrl,
+      api: notification.api,
+    }
+    const dialogWidth = window.innerWidth <= 768 ? '90vw' : '80vw'
     this.dialog.open(NlwCertificateDialogComponent, {
       data: dialogData,
       panelClass: 'nlw-experience-dialog-container',
