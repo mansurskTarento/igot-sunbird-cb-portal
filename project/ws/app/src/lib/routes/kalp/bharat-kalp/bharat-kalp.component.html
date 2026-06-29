@@ -19,12 +19,17 @@
         </div>
       </ng-container>
 
-      <ng-container *ngIf="!loading">
+      <ng-container *ngIf="!loading && communities.length">
         <div class="bk-dv2-comm-item" *ngFor="let c of communities" (click)="openCommunity(c)">
           <d-v2-community-card [community]="c" [orgDetails]="c?.additionalInfo || {}">
           </d-v2-community-card>
         </div>
       </ng-container>
+
+      <div class="bk-comm-empty" *ngIf="!loading && !communities.length">
+        <img src="/assets/common/error-pages/empty_search.svg" alt="No communities" class="bk-comm-empty__img">
+        <p class="bk-comm-empty__text">No communities available</p>
+      </div>
 
     </div>
 

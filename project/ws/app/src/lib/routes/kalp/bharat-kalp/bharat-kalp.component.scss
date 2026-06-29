@@ -18,6 +18,7 @@
   overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
 
   &::-webkit-scrollbar {
     display: none;
@@ -28,7 +29,7 @@
     min-width: 0;
 
     ::ng-deep .community-card {
-      width: 100%;
+      width: 100% !important;
       height: 100%;
       box-sizing: border-box;
     }
@@ -68,6 +69,72 @@
 
   &:hover {
     opacity: 0.8;
+  }
+}
+
+/* Tablet: show ~2.5 cards */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .bk-dv2-comm-track .bk-dv2-comm-item {
+    flex: 0 0 calc((100% - 32px) / 2.5);
+  }
+}
+
+/* Mobile: show ~1.2 cards for swipe hint */
+@media (max-width: 768px) {
+  .bk-dv2-comm-wrapper {
+    gap: 4px;
+  }
+
+  .bk-dv2-comm-track {
+    gap: 12px;
+    padding: 0 4px;
+
+    .bk-dv2-comm-item {
+      flex: 0 0 78%;
+
+      ::ng-deep .community-card {
+        width: 100% !important;
+      }
+
+      ::ng-deep .card-img-block {
+        height: 90px;
+      }
+    }
+  }
+
+  .bk-dv2-comm-arrow {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+}
+
+/* ─── Community empty state ─── */
+.bk-comm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+  gap: 12px;
+
+  &__img {
+    width: 80px;
+    height: 80px;
+    opacity: 0.55;
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #9E9E9E;
+    text-align: center;
+    margin: 0;
   }
 }
 

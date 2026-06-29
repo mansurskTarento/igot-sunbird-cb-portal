@@ -2,31 +2,31 @@ import { NgModule } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 import { BharatKalpPageComponent } from './bharat-kalp/bharat-kalp.component'
 import { BharatKalpSeeAllComponent } from './bharat-kalp-see-all/bharat-kalp-see-all.component'
-import { KalpFormService } from './services/kalp-form.service'
+import { BharatKalpFormService } from './bharat-kalp-form.service'
 
 const routes: Routes = [
   {
-    path: 'bharat-kalp',
+    path: '',
     component: BharatKalpPageComponent,
     data: {
       module: 'Bharat Kalp',
-      pageId: 'app/learn/kalp/bharat-kalp',
+      pageId: 'app/learn/bharat-kalp',
       pageKey: 'bharat-kalp',
     },
     resolve: {
-      formData: KalpFormService,
+      formData: BharatKalpFormService,
     },
   },
   {
-    path: 'bharat-kalp/see-all',
+    path: 'see-all',
     component: BharatKalpSeeAllComponent,
     data: {
       module: 'Bharat Kalp',
-      pageId: 'app/learn/kalp/bharat-kalp/see-all',
+      pageId: 'app/learn/bharat-kalp/see-all',
       pageKey: 'bharat-kalp',
     },
     resolve: {
-      formData: KalpFormService,
+      formData: BharatKalpFormService,
     },
   },
 ]

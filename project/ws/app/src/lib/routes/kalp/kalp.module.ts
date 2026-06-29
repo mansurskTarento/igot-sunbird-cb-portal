@@ -10,7 +10,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatTabsModule } from '@angular/material/tabs'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { CommunityCardModule } from '@sunbird-cb/discussion-v2'
-import { BharatKalpModule } from '@sunbird-cb/consumption'
+import { BharatKalpModule, CardsModule } from '@sunbird-cb/consumption'
 import { KalpRoutingModule } from './kalp-routing.module'
 import { BharatKalpPageComponent } from './bharat-kalp/bharat-kalp.component'
 import { BharatKalpSeeAllComponent } from './bharat-kalp-see-all/bharat-kalp-see-all.component'
@@ -33,6 +33,7 @@ export function KalpHttpLoaderFactory(http: HttpClient) {
     MatSnackBarModule,
     CommunityCardModule,
     BharatKalpModule,
+    CardsModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

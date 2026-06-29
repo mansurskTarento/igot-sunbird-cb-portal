@@ -294,7 +294,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'app/learn/kalp',
+    path: 'app/learn/bharat-kalp',
     loadChildren: () =>
       import('./routes/route-kalp.module').then(u => u.RouteKalpModule),
     canActivate: [GeneralGuard],
