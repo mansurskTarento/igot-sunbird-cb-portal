@@ -103,6 +103,16 @@
 </div>
 </ng-container>
 
+<!-- NOTIFICATIONS -->
+<ng-container *ngFor="let notif of activeNotifications">
+  <div class="margin-top-m notification-item cursor-pointer" (click)="onNotificationClick(notif)">
+    <img *ngIf="notif.bannerUrl" [src]="notif.bannerUrl" [alt]="notif.title" class="notification-banner-img" />
+    <div *ngIf="!notif.bannerUrl" class="notification-text-card">
+      <span class="notification-title">{{ notif.title }}</span>
+    </div>
+  </div>
+</ng-container>
+
 <div class="margin-top-m" *ngIf="nwlConfiguration?.enabled && canShowNlwCard">
     <div class="nlw-slider">
         <!-- Config-driven slides -->

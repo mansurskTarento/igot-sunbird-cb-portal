@@ -12,6 +12,17 @@
       color: rgba(0, 0, 0, 0.87);
     }
 
+    .info-icon {
+      width: 16px;
+      height: 16px;
+      margin-left: 4px;
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 16px;
+      line-height: 16px;
+      vertical-align: middle;
+      cursor: pointer;
+    }
+
     .hint {
       font-size: 13px;
       color: #999999; // Figma: AccessibilityShades/KB-Greys-Black-40%
@@ -156,4 +167,33 @@
 // Fallback: target deeper overlay structure if panelClass is not applied to container
 ::ng-deep .cdk-global-overlay-wrapper .cdk-overlay-pane .mat-snack-bar-container.center-snackbar {
   position: fixed !important;
+}
+
+// HTML tooltip content rendered through the CDK overlay.
+.document-upload-tooltip {
+  width: 412px;
+  max-width: calc(100vw - 32px);
+  min-height: 114px;
+  box-sizing: border-box;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background-color: rgba(97, 97, 97, 0.9);
+  color: #FFFFFF;
+  font-size: 14px;
+  line-height: 18px;
+  // text-align: justify;
+
+  p {
+    margin: 0;
+  }
+
+  .document-upload-tooltip-warning {
+    margin-top: 6px;
+  }
+
+  strong {
+    color: inherit;
+    font-size: inherit;
+    font-weight: 700;
+  }
 }

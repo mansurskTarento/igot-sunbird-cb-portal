@@ -1,13 +1,24 @@
 .pdf-nav-bar {
-  // position: relative;
-  // height: 40px;
-  // font-size: 1em;
   display: flex;
   align-items: center;
-  height: auto;
-  overflow: hidden;
-  font: inherit;
   justify-content: center;
+  min-height: 48px !important;
+  height: 48px !important;
+  padding: 0 16px !important;
+}
+
+.pdf-controls-toolbar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #f3f3f3;
+  border-radius: 4px;
+  padding: 6px 12px;
+  width: fit-content;
+}
+
+.pdf-nav-bar .pdf-controls-toolbar {
+  flex: 0 0 auto;
 }
 
 .pdf-page-container {
@@ -52,4 +63,109 @@
 
 .pdf-controls-toolbar {
   // background: whitesmoke;
+}
+
+.pdf-controls-toolbar-buttons button {
+  margin: 0 2px !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field {
+  width: auto;
+  margin: 0 8px;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field {
+  width: 140px !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-infix {
+  min-height: 32px !important;
+  min-width: 40px !important;
+  width: 40px !important;
+  padding: 0 !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field {
+  width: 180px !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-infix {
+  min-height: 32px !important;
+  padding: 0 !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-text-field-wrapper {
+  height: 36px !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-text-field-wrapper {
+  background: transparent !important;
+}
+
+::ng-deep .pdf-nav-bar .mdc-text-field {
+  background: transparent !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-flex {
+  height: 36px !important;
+  align-items: center;
+}
+
+::ng-deep .pdf-controls-toolbar-buttons .mat-mdc-icon-button {
+  width: 36px !important;
+  height: 36px !important;
+  padding: 6px !important;
+}
+
+.pdf-controls-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field {
+  width: auto !important;
+  min-width: 170px !important;
+}
+
+::ng-deep .pdf-nav-bar .mdc-line-ripple,
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-focus-overlay,
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-subscript-wrapper {
+  display: none !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-text-field-wrapper {
+  height: 36px !important;
+  padding: 0 !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-flex {
+  height: 36px !important;
+  align-items: center !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-infix {
+  min-height: 36px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 0 !important;
+}
+
+::ng-deep .pdf-nav-bar input.mat-mdc-input-element {
+  text-align: center;
+  line-height: 36px !important;
+  height: 36px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 14px !important;
+}
+
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-infix,
+::ng-deep .pdf-nav-bar input.mat-mdc-input-element,
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-text-suffix,
+::ng-deep .pdf-nav-bar .mat-mdc-form-field-text-prefix {
+  font-size: 14px !important;
+  font-weight: 400 !important;
 }

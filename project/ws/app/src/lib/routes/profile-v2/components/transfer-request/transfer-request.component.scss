@@ -352,7 +352,8 @@ required::after {
 }
 
 // Generic panel styling for all dropdowns
-::ng-deep .mat-select-panel {
+::ng-deep .mat-select-panel,
+::ng-deep .mat-mdc-select-panel {
 
   &.search-panel,
   &.search-panel-ministry,
@@ -419,6 +420,26 @@ required::after {
       padding: 8px 16px !important;
       height: auto !important;
       line-height: 1.5;
+    }
+
+    .mat-mdc-option.no-result-option.mdc-list-item--disabled {
+      pointer-events: auto;
+      cursor: default;
+
+      .mdc-list-item__primary-text {
+        width: 100%;
+        opacity: 1 !important;
+      }
+
+      .txt-size {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.4 !important;
+      }
+
+      .text-cls {
+        pointer-events: auto;
+      }
     }
   }
 }
@@ -501,7 +522,7 @@ required::after {
 ::ng-deep .search-panel {
   .sticky-search-container {
     position: sticky;
-    top: 0;
+    top: -8px;
     z-index: 2;
     background: white;
     padding: 8px;
@@ -511,8 +532,8 @@ required::after {
 
   .search-input {
     border: 1px solid rgba(0, 0, 0, 0.12);
-    padding-left: 10px;
-    width: calc(100% - 10px);
+    // padding-left: 10px;
+    width: calc(100% - 40px);
     ;
     height: 30px;
 
@@ -568,7 +589,8 @@ required::after {
 :host ::ng-deep .cdk-overlay-pane {
   max-width: calc(100vw - 16px) !important;
 
-  .mat-select-panel {
+  .mat-select-panel,
+  .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -595,7 +617,8 @@ required::after {
     gap: 12px;
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -619,7 +642,8 @@ required::after {
     overflow-y: auto;
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -663,7 +687,8 @@ required::after {
     }
   }
 
-  ::ng-deep .mat-select-panel {
+  ::ng-deep .mat-select-panel,
+  ::ng-deep .mat-mdc-select-panel {
 
     &.search-panel,
     &.search-panel-ministry,
@@ -684,4 +709,18 @@ required::after {
   margin: 0 10px;
   padding: 10px;
   font-size: 15px;
+}
+
+.error-clr {
+  margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    color: #f44336;
+}
+
+.text-cls {
+  color: rgb(27, 76, 161);
+  cursor: pointer;
+  font-weight: 700;
 }

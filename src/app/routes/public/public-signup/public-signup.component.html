@@ -111,10 +111,10 @@
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.ministry )?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.ministry )?.length === 0" class="no-results-option" disabled>
                         <!-- No matches found -->
-                        <div class="mat-error txt-size">{{ 'publicsignup.ministryNotFound' | translate }} <a
-                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                        <div class="mat-error txt-size"><span class="error-clr">{{ 'publicsignup.ministryNotFound' | translate }} </span> <a
+                            class="txt-cursor txt-lint-clr" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
                             translate }}</a>.</div>
                       </mat-option>
                     </mat-select>
@@ -160,10 +160,10 @@
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.state )?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.state )?.length === 0" class="no-results-option" disabled>
                         <!-- No matches found -->
-                        <div class="mat-error txt-size">{{ 'publicsignup.stateNotFound' | translate }} <a
-                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                        <div class="mat-error txt-size"><span class="error-clr">{{ 'publicsignup.stateNotFound' | translate }} </span> <a
+                            class="txt-cursor txt-lint-clr" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
                             translate }}</a>.</div>
                       </mat-option>
                     </mat-select>
@@ -193,7 +193,7 @@
                           <input type="text" placeholder="Search department" formControlName="searchDepartment"
                             class="search-input-department" (keydown)="$event.stopPropagation()"
                             (keydown.enter)="$event.preventDefault(); $event.stopPropagation()"
-                            (keyup)="departmentSearch($event)" autocomplete="off">
+                            autocomplete="off">
                           <button *ngIf="searchDepartment?.value" type="button" class="clear-button"
                             (click)="searchDepartment?.setValue('')">
                             ✕
@@ -209,10 +209,10 @@
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.department)?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.department)?.length === 0" class="no-results-option" disabled>
                         <!-- No matches found -->
-                        <div class="mat-error txt-size">{{ 'publicsignup.departmentNotFound' | translate }} <a
-                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                        <div class="mat-error txt-size"><span class="error-clr">{{ 'publicsignup.departmentNotFound' | translate }} </span> <a
+                            class="txt-cursor txt-lint-clr" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
                             translate }}</a>.</div>
                       </mat-option>
                     </mat-select>
@@ -261,10 +261,10 @@
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.organisation )?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.organisation )?.length === 0" class="no-results-option" disabled>
                         <!-- No matches found -->
-                        <div class="mat-error txt-size">{{ 'publicsignup.organisationNotFound' | translate }} <a
-                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                        <div class="mat-error txt-size"><span class="error-clr">{{ 'publicsignup.organisationNotFound' | translate }} </span> <a
+                            class="txt-cursor txt-lint-clr" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
                             translate }}</a>.</div>
                       </mat-option>
                     </mat-select>
@@ -291,7 +291,7 @@
                 <div class="input-container">
                   <div class="label required">{{ 'publicsignup.designation' | translate }}</div>
                   <mat-form-field appearance="outline" class="margin-top-s w-full required-select">
-                    <mat-select #position formControlName="position" placeholder="Select designation"
+                    <mat-select #designation formControlName="position" placeholder="Select designation"
                       (closed)="onDesignationDropdownClosed()" panelClass="search-panel"
                       (openedChange)="setupScrollListener($event)">
 
@@ -317,10 +317,10 @@
                         {{ 'publicsignup.loadMore' | translate }}
                       </div>
                       <!-- No results message -->
-                      <mat-option *ngIf="(masterData?.designation )?.length === 0" disabled>
+                      <mat-option *ngIf="(masterData?.designation )?.length === 0" class="no-results-option" disabled>
                         <!-- No matches found -->
-                        <div class="mat-error txt-size">{{ 'publicsignup.designationNotFound' | translate }} <a
-                            class="txt-cursor" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
+                        <div class="mat-error txt-size"><span class="error-clr">{{ 'publicsignup.designationNotFound' | translate }} </span> <a
+                            class="txt-cursor txt-lint-clr" (click)="mdoRedirect()" target="_blank">{{ 'publicsignup.here' |
                             translate }}</a>.</div>
                       </mat-option>
                     </mat-select>

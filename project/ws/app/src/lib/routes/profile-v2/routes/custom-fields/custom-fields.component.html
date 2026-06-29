@@ -26,11 +26,11 @@
                 <mat-form-field class="profile-form-field w-full">
                   <input type="text" class="input-text w-full" matInput [formControlName]="field?.attributeName"
                     [maxlength]="field?.attributeMaxLength" />
-                  <mat-error class="text-xs mt-6"
+                  <mat-error class="text-xs"
                     *ngIf="customAttrForm.get(field?.attributeName)?.touched && customAttrForm.get(field?.attributeName)?.hasError('required') && !customAttrForm.get(field.attributeName)?.hasError('pattern')">
                     {{field?.name }} is required
                   </mat-error>
-                  <mat-error class="text-xs mt-6"
+                  <mat-error class="text-xs"
                     *ngIf="customAttrForm.get(field?.attributeName)?.touched && !customAttrForm.get(field?.attributeName)?.hasError('required') && customAttrForm.get(field.attributeName)?.hasError('pattern')">
                     Invalid input.
                   </mat-error>
