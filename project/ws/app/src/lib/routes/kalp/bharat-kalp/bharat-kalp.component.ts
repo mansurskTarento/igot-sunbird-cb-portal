@@ -13,8 +13,14 @@ export class BharatKalpPageComponent implements OnInit {
   bkConfig: any = {}
   individualSection: any = {}
 
-  canCommPrev = false
-  canCommNext = false
+  canCommPrev  = false
+  canCommNext  = false
+  commDotIndex = 0
+  commDotCount = 0
+
+  get communityDots(): number[] {
+    return Array.from({ length: this.commDotCount }, (_, i) => i)
+  }
 
   constructor(
     private route: ActivatedRoute,
@@ -32,20 +38,36 @@ export class BharatKalpPageComponent implements OnInit {
   }
 
   onCommunitiesLoaded(data: any[]): void {
-    this.canCommNext = (data || []).length > 4
+    const count = (data || []).length
+    this.canCommNext = count > 4
+    this.commDotCount = Math.ceil(count / 4)
   }
 
   private _commScrollAmount(el: HTMLElement): number {
     return 4 * ((el.offsetWidth - 60) / 4 + 16)
   }
 
-  commPrev(el: HTMLElement): void { el?.scrollBy({ left: -this._commScrollAmount(el), behavior: 'smooth' }) }
-  commNext(el: HTMLElement): void { el?.scrollBy({ left: this._commScrollAmount(el), behavior: 'smooth' }) }
+  commPrev(el: HTMLElement): void {
+    el?.scrollBy({ left: -this._commScrollAmount(el), behavior: 'smooth' })
+    this.commDotIndex = Math.max(0, this.commDotIndex - 1)
+  }
+
+  commNext(el: HTMLElement): void {
+    el?.scrollBy({ left: this._commScrollAmount(el), behavior: 'smooth' })
+    this.commDotIndex = Math.min(this.commDotCount - 1, this.commDotIndex + 1)
+  }
+
+  goToCommDot(index: number, el: HTMLElement): void {
+    el?.scrollTo({ left: index * this._commScrollAmount(el), behavior: 'smooth' })
+    this.commDotIndex = index
+  }
 
   onCommScroll(el: HTMLElement): void {
     if (!el) return
     this.canCommPrev = el.scrollLeft > 0.5
     this.canCommNext = Math.ceil(el.scrollLeft) < el.scrollWidth - el.offsetWidth
+    const pageWidth = this._commScrollAmount(el)
+    if (pageWidth > 0) this.commDotIndex = Math.round(el.scrollLeft / pageWidth)
   }
 
   openCommunity(community: any): void {
