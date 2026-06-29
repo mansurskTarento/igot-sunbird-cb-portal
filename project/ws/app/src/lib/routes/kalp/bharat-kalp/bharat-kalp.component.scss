@@ -1,0 +1,74 @@
+:host {
+  display: block;
+}
+
+.bk-dv2-comm-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  overflow: hidden;
+}
+
+.bk-dv2-comm-track {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .bk-dv2-comm-item {
+    flex: 0 0 calc((100% - 48px) / 4);
+    min-width: 0;
+
+    ::ng-deep .community-card {
+      width: 100%;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    ::ng-deep .card-img-block {
+      height: 110px;
+      overflow: hidden;
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+  }
+}
+
+.bk-dv2-comm-arrow {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: #1a1a1a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  mat-icon {
+    color: #fff;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+/* No default scroll — scroll only activates via events-card-wrapper--expanded class */
