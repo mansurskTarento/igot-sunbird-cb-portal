@@ -39,4 +39,14 @@
     </button>
 
   </div>
+
+  <!-- Dots -->
+  <div class="bk-dv2-comm-dots" *ngIf="!loading && commDotCount > 1">
+    <span *ngFor="let d of communityDots; let i = index"
+      class="bk-dv2-comm-dot"
+      [class.bk-dv2-comm-dot--active]="i === commDotIndex"
+      (click)="goToCommDot(i, commTrackEl)">
+    </span>
+  </div>
+
 </ng-template>

@@ -115,6 +115,30 @@
   }
 }
 
+/* ─── Community dots ─── */
+.bk-dv2-comm-dots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0 4px;
+}
+
+.bk-dv2-comm-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #D0D5DD;
+  cursor: pointer;
+  transition: background 0.2s, width 0.2s, border-radius 0.2s;
+
+  &--active {
+    background: #F37400;
+    width: 22px;
+    border-radius: 4px;
+  }
+}
+
 /* ─── Community empty state ─── */
 .bk-comm-empty {
   display: flex;
