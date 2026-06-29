@@ -134,10 +134,12 @@ export class BharatKalpSeeAllComponent implements OnInit {
     const key = typeMap[typeKey] || 'course'
 
     if (this.selectedWeek === ALL_WEEKS) {
-      /* All weeks — aggregate all IDs for the content type */
+      /* All weeks — only include started weeks (week number ≤ currentWeek) */
       const ids: string[] = []
       this.weeksData.forEach((wd: any) => {
-        ; ((wd?.content_ids?.[key]) || []).forEach((id: string) => {
+        const weekNum = parseInt((wd?.id || '').replace('week_', ''), 10)
+        if (isNaN(weekNum) || weekNum > this.currentWeek) return   /* skip locked weeks */
+        ;((wd?.content_ids?.[key]) || []).forEach((id: string) => {
           if (id && !ids.includes(id)) ids.push(id)
         })
       })
