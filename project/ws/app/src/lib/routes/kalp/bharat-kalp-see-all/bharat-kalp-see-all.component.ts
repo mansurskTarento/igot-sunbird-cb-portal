@@ -29,7 +29,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
   selectedStatus = 'All'
 
   /* Content type tabs */
-  readonly contentTypeTabs = ['Courses', 'Programs', 'Events', 'Assessment']
+  readonly contentTypeTabs = ['Courses', 'Programs', 'Events']
   selectedContentType = 'Courses'
   activeTabIndex = 0
 
@@ -129,7 +129,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
   private _getContentIds(): string[] {
     const typeKey = this.selectedContentType.toLowerCase()
     const typeMap: { [k: string]: string } = {
-      courses: 'course', programs: 'program', events: 'event', assessment: 'assessment'
+      courses: 'course', programs: 'program', events: 'event'
     }
     const key = typeMap[typeKey] || 'course'
 
