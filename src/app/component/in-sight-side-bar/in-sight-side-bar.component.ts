@@ -801,10 +801,12 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.activeNotifications = this.notifications.filter((n: any) => {
       if (!n.enabled) { return false }
       if (n.startDate && n.endDate) {
-        const start = moment(n.startDate, 'DD-MMYYYY')
-        const end = moment(n.endDate, 'DD-MMYYYY')
+        const start = moment(n.startDate, 'DD-MM-YYYY').startOf('day')
+        const end = moment(n.endDate, 'DD-MM-YYYY').endOf('day')
         if (!now.isBetween(start, end, null, '[]')) { return false }
       }
+      const condition = this.notificationConditionMap[n.key]
+      if (condition && !condition(n)) { return false }
       return true
     })
   }
@@ -846,9 +848,9 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
       // ── No action (banner is display-only) ───────────────────────────────
       'display-only': (_n: any) => { /* intentionally no-op */ },
 
-      // ── Bharat Kalp: navigate, visible only to isBharatKalpMember users ──
+      // ── Bharat Kalp: navigate to the Bharat Kalp route ──────────────────
       'bharat-kalp': (n: any) => {
-        this.router.navigateByUrl(n.routerLink || 'app/learn/nlw/sadhana-saptah')
+        this.router.navigateByUrl(n.routerLink || 'app/learn/bharat-kalp')
       },
 
       // ─────────────────────────────────────────────────────────────────────
@@ -859,10 +861,11 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     this.notificationConditionMap = {
       // ── Bharat Kalp: only show card when user is a BharatKalp member ─────
       'bharat-kalp': (_n: any) => {
-        return _.get(
+        const val = _.get(
           this.configSvc,
           'unMappedUser.profileDetails.additionalProperties.isBharatKalpMember'
-        ) === true
+        )
+        return val === true || val === 'true'
       },
 
       // ─────────────────────────────────────────────────────────────────────
@@ -873,7 +876,10 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
 
   onNotificationClick(notification: any): void {
     const condition = this.notificationConditionMap[notification.key]
-    if (condition && !condition(notification)) { return }
+    if (condition && !condition(notification)) {
+      this.router.navigateByUrl('/page-not-found')
+      return
+    }
     const handler = this.notificationHandlerMap[notification.key]
     if (handler) {
       handler(notification)

@@ -6,6 +6,7 @@ import { LearningGuard } from '@ws/app'
 import { ETopBar } from './constants/topBar.constants'
 // import { EmptyRouteGuard } from './guards/empty-route.guard'
 import { ExternalUrlResolverService } from './guards/external-url-resolver.service'
+import { BharatKalpGuard } from './guards/bharat-kalp.guard'
 import { GeneralGuard } from './guards/general.guard'
 import { LoginGuard } from './guards/login.guard'
 import { RedirectGuard } from './guards/redirect.guard'
@@ -297,7 +298,7 @@ const routes: Routes = [
     path: 'app/learn/bharat-kalp',
     loadChildren: () =>
       import('./routes/route-kalp.module').then(u => u.RouteKalpModule),
-    canActivate: [GeneralGuard],
+    canActivate: [GeneralGuard, BharatKalpGuard],
     data: {
       module: 'Bharat Kalp',
     },
