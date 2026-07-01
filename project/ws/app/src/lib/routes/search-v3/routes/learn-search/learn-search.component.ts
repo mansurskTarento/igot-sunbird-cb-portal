@@ -45,10 +45,10 @@ import { NetworkV2Service } from '../../../network-v2/services/network-v2.servic
 import moment from 'moment'
 
 @Component({
-    selector: 'ws-app-learn-search',
-    templateUrl: './learn-search.component.html',
-    styleUrls: ['./learn-search.component.scss'],
-    standalone: false
+  selector: 'ws-app-learn-search',
+  templateUrl: './learn-search.component.html',
+  styleUrls: ['./learn-search.component.scss'],
+  standalone: false
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() searchQuery!: { query: string; nlp: string; searchCategory: string }
@@ -117,6 +117,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   compentencyKey!: NsContent.ICompentencyKeys
   enrollmentDetails: any = [];
   cbpPlanList: any = [];
+  unenrolledCourses: any = [];
   igotSpecializationPrograms: any = []
 
   competencyAreaNameKey!: string
@@ -1484,6 +1485,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         { request: { ...request.request, status: 'Completed' } },
         userId
       ),
+      unenrolled: this.searchV3Service.enrollment(
+        { request: { ...request.request, status: 'Un-Enrolled' } },
+        userId
+      ),
       cbpPlan: this.userService.fetchCbpPlanList(),
     }).subscribe((responses) => {
       const inProgressCourses =
@@ -1492,7 +1497,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         (responses.completed as any)?.result?.courses || []
 
       this.enrollmentDetails = [...inProgressCourses, ...completedCourses]
+      console.log('Enrollment Details:', this.enrollmentDetails)
       this.cbpPlanList = responses.cbpPlan || []
+      this.unenrolledCourses = (responses.unenrolled as any)?.result?.courses || []
     })
   }
 
