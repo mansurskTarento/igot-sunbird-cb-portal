@@ -347,10 +347,19 @@ mat-list-item {
 }
 
 .recent-search-list {
+  display: flex !important;
+  align-items: center !important;
   width: 100% !important;
 
   .mdc-list-item__content {
+    display: flex;
+    align-items: center;
     padding: 0 16px !important;
+  }
+
+  .mat-mdc-list-item-meta {
+    align-self: center;
+    margin: 0;
   }
 }
 
