@@ -1,7 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { HttpClient } from '@angular/common/http'
-import { MatSnackBar } from '@angular/material/snack-bar'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { catchError } from 'rxjs/operators'
 import { of } from 'rxjs'
@@ -22,9 +21,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
   currentWeek = 1
   selectedWeek: number = ALL_WEEKS
   weekDropdownOpen = false
-  private _prevWeek = ALL_WEEKS
-
-  /* Status pills */
+/* Status pills */
   readonly statusPills = ['All', 'In Progress', 'Completed', 'Not Started']
   selectedStatus = 'All'
 
@@ -53,7 +50,6 @@ export class BharatKalpSeeAllComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private http: HttpClient,
-    private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
   ) { }
 
@@ -101,11 +97,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
 
     const qWeek = this.route.snapshot.queryParams?.['week']
     const requestedWeek = qWeek ? +qWeek : ALL_WEEKS
-    /* Validate: if requested week hasn't started, fall back to ALL_WEEKS */
-    this.selectedWeek = (requestedWeek !== ALL_WEEKS && !this.isWeekStarted(requestedWeek))
-      ? ALL_WEEKS : requestedWeek
-    this._prevWeek = this.selectedWeek
-
+    this.selectedWeek = requestedWeek
     this._fetchContent()
   }
 
@@ -123,7 +115,6 @@ export class BharatKalpSeeAllComponent implements OnInit {
     return Math.min(Math.floor(diff / 7) + 1, this.weeks.length)
   }
 
-  isWeekStarted(week: number): boolean { return week <= this.currentWeek }
 
   /* Get content_ids for current week + content type */
   private _getContentIds(): string[] {
@@ -134,11 +125,8 @@ export class BharatKalpSeeAllComponent implements OnInit {
     const key = typeMap[typeKey] || 'course'
 
     if (this.selectedWeek === ALL_WEEKS) {
-      /* All weeks — only include started weeks (week number ≤ currentWeek) */
       const ids: string[] = []
       this.weeksData.forEach((wd: any) => {
-        const weekNum = parseInt((wd?.id || '').replace('week_', ''), 10)
-        if (isNaN(weekNum) || weekNum > this.currentWeek) return   /* skip locked weeks */
         ;((wd?.content_ids?.[key]) || []).forEach((id: string) => {
           if (id && !ids.includes(id)) ids.push(id)
         })
@@ -152,16 +140,6 @@ export class BharatKalpSeeAllComponent implements OnInit {
   }
 
   _fetchContent(): void {
-    /* Hard guard — never load content for a week that hasn't started */
-    if (this.selectedWeek !== ALL_WEEKS && !this.isWeekStarted(this.selectedWeek)) {
-      this.selectedWeek = this._prevWeek
-      this.snackBar.open('This week not started', 'Dismiss', {
-        duration: 3000,
-        panelClass: ['wp-snack'],
-      })
-      return
-    }
-
     this.currentPage = 0
     this.allCards = []
     const ids = this._getContentIds()
@@ -190,28 +168,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
   }
 
   onWeekChange(event: Event): void {
-    const selectEl = event.target as HTMLSelectElement
-    const week = +selectEl.value
-
-    if (week !== ALL_WEEKS && !this.isWeekStarted(week)) {
-      const prev = this._prevWeek
-      /* Revert native DOM immediately */
-      selectEl.value = String(prev)
-      /* Revert again after Angular's change detection cycle to be safe */
-      setTimeout(() => {
-        selectEl.value = String(prev)
-        this.selectedWeek = prev
-      }, 0)
-
-      this.snackBar.open('This week not started', 'Dismiss', {
-        duration: 3000,
-        panelClass: ['wp-snack'],
-      })
-      return
-    }
-
-    this._prevWeek = week
-    this.selectedWeek = week
+    this.selectedWeek = +(event.target as HTMLSelectElement).value
     this._fetchContent()
   }
 
@@ -293,11 +250,6 @@ export class BharatKalpSeeAllComponent implements OnInit {
   toggleWeekDropdown(): void { this.weekDropdownOpen = !this.weekDropdownOpen }
 
   selectWeekOption(week: number): void {
-    if (week !== ALL_WEEKS && !this.isWeekStarted(week)) {
-      this.snackBar.open('This week not started', 'Dismiss', { duration: 3000, panelClass: ['wp-snack'] })
-      return
-    }
-    this._prevWeek = week
     this.selectedWeek = week
     this.weekDropdownOpen = false
     this._fetchContent()

@@ -32,10 +32,8 @@
             <span>All Weeks</span>
           </div>
           <div *ngFor="let w of weeks" class="bk-week-dd__option"
-            [class.bk-week-dd__option--active]="selectedWeek === w"
-            [class.bk-week-dd__option--locked]="!isWeekStarted(w)" (click)="selectWeekOption(w)">
+            [class.bk-week-dd__option--active]="selectedWeek === w" (click)="selectWeekOption(w)">
             <span>Week {{ w }}</span>
-            <mat-icon *ngIf="!isWeekStarted(w)" class="bk-week-dd__lock">lock</mat-icon>
           </div>
         </div>
       </div>
