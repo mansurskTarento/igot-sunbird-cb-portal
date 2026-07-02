@@ -1497,6 +1497,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       if (!item?.name) {
         return of(item)
       }
+
+      const configDetails: ConfigDetails = this.getConfigDetails('orgV1Search')
       return this.profileV2RevampSvc.getOrgSearch({
         request: {
           filters: { status: 1, channel: item?.name },
@@ -1504,7 +1506,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           limit: 1,
           offset: 0,
         },
-      }).pipe(
+      }, configDetails).pipe(
         map((res: any) => ({ ...item, displayName: res?.result?.response?.content?.[0]?.orgName || item?.name })),
         catchError(() => of({ ...item, displayName: item?.name }))
       )
