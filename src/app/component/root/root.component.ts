@@ -258,6 +258,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   prevUrl = ''
   currUrl = ''
   detailsChanged = signal(false)
+  otherDetailsChanged = signal(false)
   @HostListener('window:unload', ['$event'])
   unloadHandler(event: any) {
     if (event && event.type === 'unload') {
@@ -502,6 +503,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.menuBarDetails = pageData.data
       if (this.menuBarDetails) {
         this.setAchivements()
+        this.setOtherPortals()
       }
     }
     return pageData
@@ -527,10 +529,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   setAchivements() {
-    const menuBarDetails = this.menuBarDetails
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
     achievements.sectionLoading = true
-    this.sendDetailsChangedEvent(menuBarDetails)
+    this.sendDetailsChangedEvent(achievements)
     if (achievements) {
       try {
         const raw = localStorage.getItem('userEnrollmentCount')
@@ -573,20 +575,73 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                 }
               }
               achievements.sectionLoading = false
-              this.sendDetailsChangedEvent(menuBarDetails)
+              this.sendDetailsChangedEvent(achievements)
             }
           })
         } else {
           achievements.sectionLoading = false
-          this.sendDetailsChangedEvent(menuBarDetails)
+          this.sendDetailsChangedEvent(achievements)
         }
       } catch (_e) { /* ignore */ }
     }
   }
 
-  sendDetailsChangedEvent(menuBarDetails: any) {
-    this.menuBarDetails = menuBarDetails
+  setOtherPortals() {
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    const quickActionSection = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'quick_actions' && section.enabled !== false)
+    if (quickActionSection && quickActionSection?.items && quickActionSection.items.length > 0) {
+      const otherPortalsSection = quickActionSection?.items?.filter((item: any) => item.code === 'other_portals' && item.enabled !== false)
+      if (otherPortalsSection && otherPortalsSection.length > 0) {
+        const otherPortalChildren = otherPortalsSection?.[0]?.children || []
+        const otherPortalsFilteredChildren: any[] = []
+        if (otherPortalChildren && otherPortalChildren.length > 0) {
+          // normalize user roles once to lowercase set for O(1) lookup
+          const userRolesSet = new Set(Array.from(this.configSvc.userRoles || []).map((r: any) => (r || '').toString().toLowerCase()))
+          otherPortalChildren.forEach((child: any) => {
+            if (child.enabled === false) { return }
+
+            // normalize child roles to array of strings
+            let childRoles: string[] = []
+            if (Array.isArray(child.rolesCanAccess)) {
+              childRoles = child.rolesCanAccess
+            } else if (typeof child.rolesCanAccess === 'string') {
+              childRoles = child.rolesCanAccess.split(',').map((s: string) => s.trim()).filter(Boolean)
+            }
+
+            // check if any child role exists in user's roles (short-circuits on first match)
+            const hasAccess = childRoles.some((cr: string) => userRolesSet.has((cr || '').toLowerCase()))
+            if (hasAccess) {
+              otherPortalsFilteredChildren.push(child)
+            }
+          })
+          otherPortalsSection[0].children = otherPortalsFilteredChildren
+          this.sendOtherDetailsChangedEvent(quickActionSection)
+        }
+      }
+    }
+
+  }
+
+  sendDetailsChangedEvent(newAchievements: any) {
+    const existingDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    existingDetails?.navSections?.forEach((section: any, index: number) => {
+      if (section.sectionKey === 'my_achievements') {
+        existingDetails.navSections[index] = newAchievements
+      }
+    })
+    this.menuBarDetails = JSON.parse(JSON.stringify(existingDetails))
     this.detailsChanged.set(!this.detailsChanged())
+  }
+
+  sendOtherDetailsChangedEvent(quickActionSection: any) {
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    menuBarDetails?.navSections?.forEach((section: any, index: number) => {
+      if (section.sectionKey === 'quick_actions') {
+        menuBarDetails.navSections[index] = quickActionSection
+      }
+    })
+    this.menuBarDetails = JSON.parse(JSON.stringify(menuBarDetails))
+    this.otherDetailsChanged.set(!this.otherDetailsChanged())
   }
 
 
