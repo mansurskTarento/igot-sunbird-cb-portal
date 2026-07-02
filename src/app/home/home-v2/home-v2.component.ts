@@ -150,14 +150,14 @@ export class HomeV2Component implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private initializePageData(): void {
-    const pageData = this.activatedRoute.snapshot.data.pageData
+    const pageData = _.get(this.activatedRoute.snapshot.data, 'home.data')
 
     if (pageData) {
-      this.homePageSections = pageData.data.homeSection
+      this.homePageSections = pageData.homeSection
     }
 
     if (pageData?.data) {
-      let stripData = pageData.data.newHomeStrip || []
+      let stripData = pageData.newHomeStrip || []
       stripData = [...stripData].sort((a: any, b: any) => a.order - b.order)
       this.contentStripData.set(stripData)
 
@@ -171,10 +171,10 @@ export class HomeV2Component implements OnInit, AfterViewInit, OnDestroy {
         })
       })
 
-      // this.clientList.set(pageData.data.clientList)
-      // this.widgetData.set(pageData.data.hubsData)
-      // this.enableLazyLoadingFlag.set(pageData.data.enableLazyLoading)
-      // this.sliderData.set(pageData.data.sliderData)
+      // this.clientList.set(pageData.clientList)
+      // this.widgetData.set(pageData.hubsData)
+      // this.enableLazyLoadingFlag.set(pageData.enableLazyLoading)
+      // this.sliderData.set(pageData.sliderData)
 
       sections.push({ section: 'slider', isVisible: false })
       sections.push({ section: 'discuss', isVisible: false })
