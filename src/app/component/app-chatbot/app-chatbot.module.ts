@@ -13,14 +13,13 @@ import { MarkdownModule } from 'ngx-markdown'
 import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection'
-import { SupportAIComponent } from './../support-ai/support-ai.component'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { ItsmChatModule } from '@sunbird-cb/itsm-chatbot'
 @NgModule({
   declarations: [
     ClickOutsideDirective,
     AppChatbotComponent,
     IGotSarthiComponent,
-    SupportAIComponent,
   ],
   imports: [
     FormsModule,
@@ -34,6 +33,7 @@ import { MatTooltipModule } from '@angular/material/tooltip'
     DragDropModule,
     NonReleventFeedbackDialogModule,
     MatTooltipModule,
+    ItsmChatModule,
   ],
   exports: [AppChatbotComponent, MarkdownModule, NonReleventFeedbackDialogModule],
   providers: [ChatbotService],

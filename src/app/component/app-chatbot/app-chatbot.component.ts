@@ -64,7 +64,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   isHubEnable!: boolean
   chatIconOutside = false
   chatId = ''
-  enableSupportAI = false
+  enableSupportAI = true
   enableInformationTab = false
   enableIssuesTab = false
   zohoHtml: any
@@ -86,6 +86,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     private router: Router) { }
 
   ngOnInit() {
+    console.log("enableSupportAI", this.enableSupportAI)
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         //certificate link check
@@ -215,7 +216,12 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
       this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
     })
   }
-
+  scrollSupportContainerToBottom() {
+    let chatbotContent = document.getElementById('chatbot-content')
+    if (chatbotContent) {
+      chatbotContent.scrollTo({ top: chatbotContent.scrollHeight, behavior: 'smooth' })
+    }
+  }
   ngOnChanges() {
     if (this.rootOrgId && this.iGOTAIConfigLoaded) {
       // console.log('this.configSvc.iGOTAIConfig--', this.configSvc.iGOTAIConfig)

@@ -167,7 +167,8 @@
               (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-igot-sarthi>
           </ng-container>
           <ng-container *ngIf="!displayLoader && currentFilter === 'support-ai'" #scroll>
-            <ws-app-support-ai [fullScreenChatFlag]="fullScreenChatFlag" [activeLaguage]="selectedLaguage"
+            <ws-app-support-ai (scrollToBottomEvent)="scrollSupportContainerToBottom()" [fullScreenChatFlag]="fullScreenChatFlag"
+              [activeLaguage]="selectedLaguage"
               [from]="'chatbot'" [chatId]="chatId" [userId]="configSvc?.unMappedUser?.userId"
               [userJourney]="userJourney" (scrollToBottomEvent)="scrollToBottomEvent($event)"></ws-app-support-ai>
           </ng-container>
