@@ -35,10 +35,10 @@ function isStripActive(strip: any): boolean {
 const INITIAL_VISIBLE_STRIPS = 5
 
 @Component({
-    selector: 'ws-home',
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.scss'],
-    standalone: false
+  selector: 'ws-home',
+  templateUrl: './home.component.html',
+  styleUrls: ['./home.component.scss'],
+  standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
 
@@ -123,7 +123,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     if (this.configSvc) {
       this.jan26Change = this.configSvc.overrideThemeChanges
-      if (this.configSvc.unMappedUser.profileDetails && this.configSvc.unMappedUser.profileDetails.additionalProperties) {
+      if (this.configSvc?.unMappedUser?.profileDetails && this.configSvc.unMappedUser.profileDetails.additionalProperties) {
         if (this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed !== undefined) {
           this.isMDOMsgOpen = this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed
           if (!this.isMDOMsgOpen) {
@@ -272,7 +272,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     if (this.homePageData?.karmaPointsPanel?.enabled) {
       this.enrollInterval = setInterval(() => {
         this.getEnrollmentData()
-      },                                1000)
+      }, 1000)
     }
 
     if (localStorage.getItem('websiteLanguage')) {
@@ -328,7 +328,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
           this.handleUpdateMobileNudge()
         }
 
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open('Unable to fetch pending approval list')
         }
@@ -442,7 +442,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (res) {
         this.isMDOMsgOpen = true
       }
-    },                                                               (error: HttpErrorResponse) => {
+    }, (error: HttpErrorResponse) => {
       if (!error.ok) {
         this.matSnackBar.open(error.error.text)
       }
@@ -471,7 +471,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.approvedStatus = false
           }
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
@@ -500,7 +500,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
             this.rejectedStatus = false
           }
         }
-      },         (error: HttpErrorResponse) => {
+      }, (error: HttpErrorResponse) => {
         if (!error.ok) {
           this.matSnackBar.open(error.error.text)
         }
