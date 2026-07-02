@@ -19,6 +19,7 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner'
 import { MatSnackBarModule } from '@angular/material/snack-bar'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { OverlayModule } from '@angular/cdk/overlay'
 // Routing
 import { PeerValidationRoutingModule } from './peer-validation-routing.module'
 
@@ -75,6 +76,7 @@ import { UserSearchTableComponent } from './components/survey-dialog/components/
     MatProgressSpinnerModule,
     MatSnackBarModule,
     MatTooltipModule,
+    OverlayModule,
   ],
   providers: [
     PeerValidationService,

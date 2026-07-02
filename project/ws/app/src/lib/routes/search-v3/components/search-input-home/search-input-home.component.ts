@@ -36,12 +36,12 @@ import { MobileAppsService } from './../../../services/mobile-apps.service'
 
 
 @Component({
-    selector: 'ws-app-search-v3-input-home',
-    templateUrl: './search-input-home.component.html',
-    styleUrls: ['./search-input-home.component.scss'],
-    // tslint:disable-next-line
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  selector: 'ws-app-search-v3-input-home',
+  templateUrl: './search-input-home.component.html',
+  styleUrls: ['./search-input-home.component.scss'],
+  // tslint:disable-next-line
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class SearchInputHomeComponent implements OnInit, OnChanges {
   @Input() placeHolder = '';
@@ -276,52 +276,52 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateRecentSearchQuery(_query: any) {
+  async updateRecentSearchQuery(query: any) {
 
     // AFTER NLW NEED TO ENABLE
-    // if (query) {
-    //   const reqBody = {
-    //     nlpSearchQuery: query.nlp_search_query,
-    //     searchQuery:query.search_query,
-    //     searchCategory: query.search_category[0]
-    //   }
-    //   await this.searchV3Service.recentCreate(reqBody).then(() => {
-    //     this.processRecentSearchText(query);
-    //   }).catch(() => {
-    //     this.processRecentSearchText(query);
-    //   });
-    // } else {
-    //   this.processRecentSearchText(query);
-    // }
+    if (query) {
+      const reqBody = {
+        nlpSearchQuery: query?.nlp_search_query,
+        searchQuery: query?.search_query,
+        searchCategory: query?.search_category[0]
+      }
+      await this.searchV3Service.recentCreate(reqBody).then(() => {
+        this.processRecentSearchText(query)
+      }).catch(() => {
+        this.processRecentSearchText(query)
+      })
+    } else {
+      this.processRecentSearchText(query)
+    }
   }
 
-  async createRecent(_data: any) {
+  async createRecent(data: any) {
 
     // AFTER NLW NEED TO ENABLE
-    // const reqBody = {
-    //   nlpSearchQuery: data,
-    //   searchQuery: this.queryControl.value,
-    //   searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
-    // }
+    const reqBody = {
+      nlpSearchQuery: data,
+      searchQuery: this.queryControl?.value,
+      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+    }
 
-    // await this.searchV3Service.recentCreate(
-    //   reqBody
-    // ).catch();
+    await this.searchV3Service.recentCreate(
+      reqBody
+    ).catch()
 
   }
 
   readRecent() {
     // AFTER NLW NEED TO ENABLE
-    // return this.searchV3Service.recentRead().subscribe((res: any) => {
-    //   if (res) {
-    //     // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
-    //     if( res.result.searchQueries &&  res.result.searchQueries) {
-    //       this.recentSearches = res?.result?.searchQueries
-    //     } else {
-    //       this.recentSearches = ''
-    //     }
-    //   }
-    // })
+    return this.searchV3Service.recentRead().subscribe((res: any) => {
+      if (res) {
+        // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
+        if (res?.result?.searchQueries && res?.result?.searchQueries) {
+          this.recentSearches = res?.result?.searchQueries
+        } else {
+          this.recentSearches = ''
+        }
+      }
+    })
   }
 
   goToSearchItem(query: any) {

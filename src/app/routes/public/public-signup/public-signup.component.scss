@@ -1197,6 +1197,17 @@ a.help-icon:hover .tooltiptext {
 .txt-cursor {
   cursor: pointer !important;
 }
+.txt-lint-clr {
+  color: #1b4ca1;
+  font-weight: 700;
+}
+.error-clr {
+  margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1.4 !important;
+    color: #f44336;
+}
 
 .text-cls {
   color: rgb(27, 76, 161);
@@ -1664,4 +1675,117 @@ a.help-icon:hover .tooltiptext {
 /* Align disabled no-result message to the option padding and remove extra margins */
 ::ng-deep .mat-select-panel.search-panel-organisation mat-option[disabled] {
   padding: 8px 16px !important;
+}
+
+/*
+ * Angular Material 20 renders mat-select overlays with .mat-mdc-select-panel.
+ * Keep every signup search box sized to its own select overlay.
+ */
+::ng-deep .mat-mdc-select-panel {
+
+  &.search-panel,
+  &.search-panel-ministry,
+  &.search-panel-state,
+  &.search-panel-department,
+  &.search-panel-organisation {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    max-height: 360px !important;
+    padding: 0 !important;
+    overflow-x: hidden;
+    overscroll-behavior: contain;
+    box-sizing: border-box;
+
+    .sticky-search-container {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin: 0;
+      padding: 8px 16px;
+      background: #fff;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      box-sizing: border-box;
+    }
+
+    .search-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .search-input-wrapper input {
+      flex: 1 1 0;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      padding: 8px 10px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      border-radius: 4px;
+      color: #333;
+      font-size: 14px;
+      outline: none;
+      box-sizing: border-box;
+
+      &:focus {
+        border-color: #0074b6;
+        box-shadow: 0 0 0 3px rgba(0, 116, 182, 0.06);
+      }
+    }
+
+    .clear-button {
+      flex: 0 0 auto;
+      padding: 6px;
+      border: none;
+      background: transparent;
+      color: #666;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+    }
+
+    .mat-mdc-option.no-results-option.mdc-list-item--disabled {
+      pointer-events: auto;
+      cursor: default;
+
+      .mdc-list-item__primary-text {
+        width: 100%;
+        opacity: 1 !important;
+      }
+
+      .mat-error {
+        margin: 0 !important;
+        padding: 0 !important;
+        line-height: 1.4 !important;
+      }
+
+      .txt-lint-clr {
+        pointer-events: auto;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  ::ng-deep .mat-mdc-select-panel {
+
+    &.search-panel,
+    &.search-panel-ministry,
+    &.search-panel-state,
+    &.search-panel-department,
+    &.search-panel-organisation {
+
+      .sticky-search-container {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+    }
+  }
 }

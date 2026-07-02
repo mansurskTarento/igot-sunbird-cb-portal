@@ -810,6 +810,10 @@ const routes: Routes = [
     resolve: { tnc: TncPublicResolverService },
   },
   {
+    path: 'public/toc/ext/:partner/:id',
+    loadChildren: () => import('./routes/route-public-ext-toc.module').then(m => m.RoutePublicExtTocModule),
+  },
+  {
     path: 'public',
     loadChildren: () => import('./routes/route-public.module').then(m => m.RoutePublicModule),
   },

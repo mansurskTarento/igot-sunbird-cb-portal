@@ -61,7 +61,7 @@
                 <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">
                 <span> {{ query?.search_query }} </span>
               </a>
-              <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
+              <button mat-icon-button matListItemMeta (click)="recentDeleteByTimeStamp(query.timestamp)">
                 <mat-icon>close</mat-icon>
               </button>
             </mat-list-item>

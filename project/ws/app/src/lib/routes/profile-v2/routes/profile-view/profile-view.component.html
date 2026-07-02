@@ -154,7 +154,7 @@
                       </div>
                     </div>
                   </ng-container>
-                  
+
                   <ng-container *ngIf="(enableWTR || enableWR) && unVerifiedObj.designation">
                     <div class="flex flex-row gap-2 items-center info-value">
                       <div class="flex">{{ unVerifiedObj.designation }}</div>
@@ -179,7 +179,7 @@
                   <div class="flex flex-col designation">
                     <!-- <mat-form-field class="profile-form-field" appearance="none">
                     <div class="flex flex-row auto-complete-row">
-                        <input type="text" class="input-text" matInput formControlName="designation" 
+                        <input type="text" class="input-text" matInput formControlName="designation"
                         (keydown)="onkeyDown($event)" placeholder="{{ 'profileInfo.chooseADesignation' | translate }}" [matAutocomplete]="designationAuto">
                         <mat-icon>arrow_drop_down</mat-icon>
                     </div>
@@ -468,7 +468,9 @@
                   <mat-form-field class="profile-form-field">
                     <input matInput class="input-text icon-include-input" [max]="currentDate" [matDatepicker]="picker"
                       [value]="userDate" formControlName="dob" />
-                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker-toggle matSuffix [for]="picker">
+                      <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+                    </mat-datepicker-toggle>
                     <mat-datepicker #picker></mat-datepicker>
                   </mat-form-field>
                 </div>
@@ -602,16 +604,16 @@
                 </div>
               </div>
 
-              <!-- ((!showBatchForNoCadre) && otherDetailsForm.get('serviceType').value && 
-                                                                      otherDetailsForm.get('isCadre').value 
-                                                                      && otherDetailsForm.get('typeOfCivilService').value) 
+              <!-- ((!showBatchForNoCadre) && otherDetailsForm.get('serviceType').value &&
+                                                                      otherDetailsForm.get('isCadre').value
+                                                                      && otherDetailsForm.get('typeOfCivilService').value)
                                                                       || (!editDetails && !showBatchForNoCadre)-->
-              <div class="info-div" *ngIf="otherDetailsForm.get('serviceType').value && 
-              otherDetailsForm.get('isCadre').value 
+              <div class="info-div" *ngIf="otherDetailsForm.get('serviceType').value &&
+              otherDetailsForm.get('isCadre').value
               && otherDetailsForm.get('typeOfCivilService').value && (
-                otherDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
-                otherDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
-                otherDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
+                otherDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' ||
+                otherDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' ||
+                otherDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)'
               )">
                 <ng-container *ngIf="isCadreStatus">
                   <div class="label">{{ 'profileInfo.cadre' | translate }}<span class="asterisk" style="color: red;">
@@ -629,17 +631,17 @@
                 </div>
               </div>
               <!-- showBatchForNoCadre && otherDetailsForm.get('serviceType').value  || otherDetailsForm.get('cadre').value && otherDetailsForm.get('isCadre').value && otherDetailsForm.get('serviceType').value && otherDetailsForm.get('typeOfCivilService').value|| !editDetails && this.cadreStatus -->
-              <div class="info-div" *ngIf="(otherDetailsForm.get('serviceType').value && 
+              <div class="info-div" *ngIf="(otherDetailsForm.get('serviceType').value &&
               otherDetailsForm.get('isCadre').value && otherDetailsForm.get('typeOfCivilService').value && (
-                otherDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' || 
-                otherDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' || 
-                otherDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)' 
-              ) && otherDetailsForm.get('cadre').value)  ? true : ((otherDetailsForm.get('serviceType').value && 
-              otherDetailsForm.get('isCadre').value 
+                otherDetailsForm.get('serviceType').value === 'Indian Administrative Service (IAS)' ||
+                otherDetailsForm.get('serviceType').value === 'Indian Police Service (IPS)' ||
+                otherDetailsForm.get('serviceType').value === 'Indian Forest Service (IFoS)'
+              ) && otherDetailsForm.get('cadre').value)  ? true : ((otherDetailsForm.get('serviceType').value &&
+              otherDetailsForm.get('isCadre').value
               && otherDetailsForm.get('typeOfCivilService').value && (
-                otherDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' && 
-                otherDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' && 
-                otherDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)' 
+                otherDetailsForm.get('serviceType').value !== 'Indian Administrative Service (IAS)' &&
+                otherDetailsForm.get('serviceType').value !== 'Indian Police Service (IPS)' &&
+                otherDetailsForm.get('serviceType').value !== 'Indian Forest Service (IFoS)'
               ))) ? true : false">
                 <ng-container *ngIf="isCadreStatus">
                   <div class="label">{{ 'profileInfo.batch' | translate }}<span class="asterisk" style="color: red;">
@@ -862,7 +864,7 @@
           </div>
         </div>
 
-        <!-- <div class="flex flex-row gap-4 items-center" *ngIf="!editName"> 
+        <!-- <div class="flex flex-row gap-4 items-center" *ngIf="!editName">
           <div class="name">{{ portalProfile?.personalDetails?.firstname | titlecase}}</div>
           <mat-icon class="profile-verified-check" *ngIf="portalProfile?.profileStatus === 'VERIFIED'">check_circle</mat-icon>
           <mat-icon class="cursor-pointer" *ngIf="isCurrentUser" (click)="editName = !editName">edit</mat-icon>

@@ -4,12 +4,12 @@
       <div *ngIf="timeSpentData?.lastUpdatedDate!= '01 Jan 1970 00:00 UTC'"
         class="mat-caption justify-end flex flex-middle">
         <ng-container>
-          <span >Last Updated on :</span>
+          <span>Last Updated on :</span>
           <span class="ml-2"> {{ timeSpentData?.lastUpdatedDate | date: 'MMM d, y' }}</span>
         </ng-container>
       </div>
       <div class="flex flex-middle">
-        <h2 *ngIf="chartsList?.dimensionsChart" >User avg Compared to Org</h2>
+        <h2 *ngIf="chartsList?.dimensionsChart">User avg Compared to Org</h2>
         <h1 *ngIf="!chartsList?.dimensionsChart" (click)="showInfo('learningTimePerDay')">
           Learning Time</h1>
         <!-- <button type="button" mat-icon-button (click)="showInfo('learningTimePerDay')"
@@ -17,10 +17,10 @@
           <mat-icon>info</mat-icon>
         </button>-->
       </div>
-      <ng-container *ngIf="learningTimePerDay" >This chart shows Time that you are viewing learning content on a
+      <ng-container *ngIf="learningTimePerDay">This chart shows Time that you are viewing learning content on a
         particular day compared to the org.-wide average.</ng-container>
       <div class="text-center">
-        <mat-checkbox [checked]="showDateRange"  (change)="changeRangeDisplay()">Date Range
+        <mat-checkbox [checked]="showDateRange" (change)="changeRangeDisplay()">Date Range
         </mat-checkbox>
       </div>
 
@@ -37,18 +37,22 @@
         <mat-form-field class="card-section filter-holder" *ngIf="pickerValue1">
           <input matInput [min]="firstDate" [max]="maxDate" [matDatepicker]="picker1" [ngModel]="pickerValue1"
             (ngModelChange)="dateChanged($event, pickerValue2)" i18n-placeholder placeholder="Start Date" />
-          <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix [for]="picker1">
+            <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+          </mat-datepicker-toggle>
           <mat-datepicker #picker1></mat-datepicker>
         </mat-form-field>
         <mat-form-field class="card-section filter-holder" *ngIf="pickerValue2">
           <input matInput [min]="minDate" [max]="today" [matDatepicker]="picker2" [ngModel]="pickerValue2"
             (ngModelChange)="dateChanged(pickerValue1, $event)" i18n-placeholder placeholder="End Date" />
-          <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+          <mat-datepicker-toggle matSuffix [for]="picker2">
+            <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+          </mat-datepicker-toggle>
           <mat-datepicker #picker2></mat-datepicker>
         </mat-form-field>
       </div>
       <p class="text-center">
-        <ng-container >Your Average : </ng-container>
+        <ng-container>Your Average : </ng-container>
         <ng-container>{{ userAvg }}</ng-container>
         <ng-container i18n="minutes per day"> Minutes/Day</ng-container>
       </p>
@@ -91,15 +95,15 @@
               <mat-icon (click)="onClose()">close</mat-icon>
             </div>
             <p>
-              <ng-container >Time Spent on</ng-container>
+              <ng-container>Time Spent on</ng-container>
               {{ timeEvent | date: 'd MMM, y' }}
-              <ng-container >is</ng-container>
+              <ng-container>is</ng-container>
               <span *ngIf="timeSpent > 0" class="font-bold ws-mat-primary-text">
                 {{ timeSpent | pipeDurationTransform: 'hms' }}
               </span>
               <span *ngIf="timeSpent === 0" class="font-bold ws-mat-primary-text">
                 {{ timeSpent }}
-                <ng-container >mins</ng-container>
+                <ng-container>mins</ng-container>
               </span>
             </p>
           </div>

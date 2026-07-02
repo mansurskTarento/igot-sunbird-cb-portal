@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, ElementRef, DOCUMENT } from '@angular/core'
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID, ViewChild, DOCUMENT } from '@angular/core'
 import { Subscription, Observable, interval, Subject } from 'rxjs'
 import { UntypedFormGroup, UntypedFormControl, Validators, AbstractControl, ValidatorFn } from '@angular/forms'
 import { SignupService } from './signup.service'
@@ -18,7 +18,10 @@ import { DomSanitizer } from '@angular/platform-browser'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { MatSelect } from '@angular/material/select'
 import { UserProfileService } from '@ws/app'
+
+type SignupSelectKey = 'designation' | 'ministry' | 'state' | 'department' | 'organisation'
 
 // export function forbiddenNamesValidator(optionsArray: any): ValidatorFn {
 //   return (control: AbstractControl): { [key: string]: any } | null => {
@@ -89,18 +92,18 @@ export function forbiddenNamesValidatorNonEmpty(optionsArray: any): ValidatorFn 
 // }
 
 @Component({
-    selector: 'ws-public-signup',
-    templateUrl: './public-signup.component.html',
-    styleUrls: ['./public-signup.component.scss'],
-    standalone: false
+  selector: 'ws-public-signup',
+  templateUrl: './public-signup.component.html',
+  styleUrls: ['./public-signup.component.scss'],
+  standalone: false
 })
 
 export class PublicSignupComponent implements OnInit, OnDestroy {
-  @ViewChild('designation', { read: ElementRef }) designationRef?: ElementRef
-  @ViewChild('ministry', { read: ElementRef }) ministryRef?: ElementRef
-  @ViewChild('state', { read: ElementRef }) stateRef?: ElementRef
-  @ViewChild('department', { read: ElementRef }) departmentRef?: ElementRef
-  @ViewChild('organisation', { read: ElementRef }) organisationRef?: ElementRef
+  @ViewChild('designation') designationSelect?: MatSelect
+  @ViewChild('ministry') ministrySelect?: MatSelect
+  @ViewChild('state') stateSelect?: MatSelect
+  @ViewChild('department') departmentSelect?: MatSelect
+  @ViewChild('organisation') organisationSelect?: MatSelect
   registrationFormStepOne!: UntypedFormGroup
   registrationFormStepTwo!: UntypedFormGroup
   // namePatern = `^[a-zA-Z']{1,32}$`
@@ -208,6 +211,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   noMoreLegacyDepartments = false
   departmentSearchText = ''
   departmentInitInProgress = false
+  private departmentRequestId = 0
 
   /* Department variables */
 
@@ -222,6 +226,10 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   organisationInitInProgress = false
   private organisationSearchSubject = new Subject<any>()
   private destroy$ = new Subject<void>()
+  private selectScrollListeners: Partial<Record<SignupSelectKey, {
+    panel: HTMLElement
+    listener: EventListener
+  }>> = {}
 
   currentMinistry: any = {}
 
@@ -412,26 +420,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       // tslint:disable-next-line
       this.registrationFormStepOne.get('searchDepartment')!.valueChanges
         .pipe(
-          debounceTime(100),
+          map(res => res?.toString()?.trim() ?? ''),
+          debounceTime(500),
           distinctUntilChanged(),
-          startWith(''),
+          takeUntil(this.destroy$),
         )
-        .subscribe(res => {
-          const txt = res?.toString()?.trim() ?? ''
-          if (txt?.length) {
-            this.departmentFilterEnable = true
-            // If org has IGOT department, call the IGOT API; otherwise filter from local backup
-            if (this.masterData && this.masterData.departmentBackup) {
-              this.masterData.department = this.masterData.departmentBackup.filter((item: any) =>
-                item.identifier.toLowerCase().includes(txt.toLowerCase()))
-            }
-          } else {
-            if (this.masterData && this.masterData.departmentBackup) {
-              this.masterData.department = this.masterData.departmentBackup.slice(0, this.departmentDefaultLoadCount)
-              this.departmentFilterEnable = false
-              this.checkCurrentDepartmentPresent()
-            }
-          }
+        .subscribe((searchText: string) => {
+          this.performDepartmentSearch(searchText)
         })
     }
     if (this.registrationFormStepOne.get('searchOrganisation')) {
@@ -660,7 +655,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           designationControl.setValue(currentDesignation)
         }
       }
-    },         100)
+    }, 100)
   }
 
   designationSearch(evt: any) {
@@ -679,6 +674,47 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.checkCurrentDesignationPresent()
     }
   }
+
+  private attachSelectScrollListener(
+    key: SignupSelectKey,
+    select: MatSelect | undefined,
+    searchInputSelector: string,
+    scrollHandler: (event: Event) => void
+  ): void {
+    setTimeout(() => {
+      if (!select?.panelOpen) {
+        return
+      }
+
+      const panel = select.panel?.nativeElement as HTMLElement | undefined
+      if (!panel) {
+        return
+      }
+
+      this.detachSelectScrollListener(key)
+
+      const listener: EventListener = event => scrollHandler(event)
+      panel?.addEventListener('scroll', listener, { passive: true })
+      this.selectScrollListeners[key] = { panel, listener }
+
+      const searchInput = panel?.querySelector<HTMLInputElement>(searchInputSelector)
+      searchInput?.focus()
+    })
+  }
+
+  private detachSelectScrollListener(key: SignupSelectKey): void {
+    const scrollListener = this.selectScrollListeners[key]
+    if (scrollListener) {
+      scrollListener.panel?.removeEventListener('scroll', scrollListener?.listener)
+      delete this.selectScrollListeners[key]
+    }
+  }
+
+  private detachAllSelectScrollListeners(): void {
+    (Object.keys(this.selectScrollListeners) as SignupSelectKey[])
+      .forEach(key => this.detachSelectScrollListener(key))
+  }
+
   setupScrollListener(opened: boolean): void {
     if (opened) {
       if (!this.scrollListenerAttached) {
@@ -696,41 +732,17 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           this.registrationFormStepOne.get('searchDesignation')!.setValue('')
         }
 
-        setTimeout(() => {
-          const searchInput = document.querySelector('.search-input') as HTMLInputElement
-          if (searchInput) {
-            searchInput.focus()
-          }
-        },         100)
-
-        // Attach scroll listener safely
-        setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel') as HTMLElement | null
-          if (panel) {
-            // align panel width to trigger
-            try {
-              const triggerEl = this.designationRef && this.designationRef.nativeElement as HTMLElement
-              if (triggerEl) {
-                const rect = triggerEl.getBoundingClientRect()
-                // set width and left so panel aligns exactly below the trigger
-                panel.style.width = `${Math.round(rect.width)}px`
-                // leave left to overlay positioning but nudge if necessary
-                // compute left relative to viewport and apply to panel
-                const overlayLeft = rect.left
-                panel.style.left = `${Math.round(overlayLeft)}px`
-              }
-            } catch (e) {
-              // ignore DOM errors in SSR or unexpected cases
-            }
-
-            const scrollHandler = this.onDesignationSelectScroll.bind(this)
-            panel.addEventListener('scroll', scrollHandler, { passive: true })
-          }
-        },         150)
+        this.attachSelectScrollListener(
+          'designation',
+          this.designationSelect,
+          '.search-input',
+          event => this.onDesignationSelectScroll(event)
+        )
       }
     } else {
       // Dropdown closed — reset scroll flag so it can reattach next time
       this.scrollListenerAttached = false
+      this.detachSelectScrollListener('designation')
     }
   }
 
@@ -751,7 +763,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.designation = this.masterData?.designationBackup?.slice(0, this.designationListLoadCount)
               this.checkCurrentDesignationPresent()
               this.isLoadingMoreDesignations = false
-            },         500) // Small timeout to simulate loading and prevent multiple triggers
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.designationBackup || []).length
@@ -850,7 +862,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.filteredOrgList = res.result.response.filter((org: any) => {
         return org.orgName.toLowerCase().indexOf(filterValue) >= 0
       })
-    },                                                                      (err: any) => {
+    }, (err: any) => {
       this.searching = false
       this.loggerSvc.error('Error in fetching organisations >', err)
       if (err.error && err.error.params && err.error.params.errmsg) {
@@ -1310,6 +1322,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.detachAllSelectScrollListeners()
     if (this.subscriptionContact) {
       this.subscriptionContact.unsubscribe()
     }
@@ -1372,7 +1385,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     })
     setTimeout(() => {
       this.callXMLRequest()
-    },         0)
+    }, 0)
   }
 
   callXMLRequest() {
@@ -1432,7 +1445,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           module: 'User Registration',
         })
 
-    },         2000)
+    }, 2000)
 
   }
 
@@ -1562,58 +1575,27 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   setupScrollListenerForMinistry(opened: boolean): void {
-    let scrollListenerAttached = false
     if (opened) {
-      if (!scrollListenerAttached) {
-        scrollListenerAttached = true
+      this.ministryFilterEnable = false
+      this.ministryListLoadCount = this.ministryDefaultLoadCount
+      this.ministryOffset = 0
 
-        this.ministryFilterEnable = false
-        this.ministryListLoadCount = this.ministryDefaultLoadCount
-        this.ministryOffset = 0
+      this.isLoadingMoreMinistrys = true
+      this.getMinistryData(undefined, 0)
 
-        this.isLoadingMoreMinistrys = true
-        this.getMinistryData(undefined, 0)
-
-        // Clear search box once
-        if (this.registrationFormStepOne.get('searchMinistry')) {
-          this.registrationFormStepOne.get('searchMinistry')!.setValue('')
-        }
-
-        setTimeout(() => {
-          const searchInput = document.querySelector('.search-input-ministry') as HTMLInputElement
-          if (searchInput) {
-            searchInput.focus()
-          }
-        },         100)
-
-        // Attach scroll listener safely
-        setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-ministry') as HTMLElement | null
-          if (panel) {
-            // align panel width to trigger
-            try {
-              const triggerEl = this.ministryRef && this.ministryRef.nativeElement as HTMLElement
-              if (triggerEl) {
-                const rect = triggerEl.getBoundingClientRect()
-                // set width and left so panel aligns exactly below the trigger
-                panel.style.width = `${Math.round(rect.width)}px`
-                // leave left to overlay positioning but nudge if necessary
-                // compute left relative to viewport and apply to panel
-                const overlayLeft = rect.left
-                panel.style.left = `${Math.round(overlayLeft)}px`
-              }
-            } catch (e) {
-              // ignore DOM errors in SSR or unexpected cases
-            }
-
-            const scrollHandler = this.onMinistrySelectScroll.bind(this)
-            panel.addEventListener('scroll', scrollHandler, { passive: true })
-          }
-        },         150)
+      // Clear search box once
+      if (this.registrationFormStepOne.get('searchMinistry')) {
+        this.registrationFormStepOne.get('searchMinistry')!.setValue('')
       }
+
+      this.attachSelectScrollListener(
+        'ministry',
+        this.ministrySelect,
+        '.search-input-ministry',
+        event => this.onMinistrySelectScroll(event)
+      )
     } else {
-      // Dropdown closed — reset scroll flag so it can reattach next time
-      scrollListenerAttached = false
+      this.detachSelectScrollListener('ministry')
     }
   }
 
@@ -1634,7 +1616,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.ministry = this.masterData?.ministryBackup?.slice(0, this.ministryListLoadCount)
               this.checkCurrentMinistryPresent()
               this.isLoadingMoreMinistrys = false
-            },         500) // Small timeout to simulate loading and prevent multiple triggers
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.ministryBackup || []).length
@@ -1652,29 +1634,32 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   checkCurrentMinistryPresent() {
-    // Get the current designation value
     const currentMinistry = this.registrationFormStepOne.get('ministry')!.value
-    // Check if current designation exists in the list
-    if (currentMinistry) {
-      const ministryExists = this.masterData?.ministry.some(
-        (ministry: any) => ministry?.identifier.toLowerCase() === currentMinistry.toLowerCase()
-      )
+    if (!currentMinistry) {
+      return
+    }
 
-      // If designation doesn't exist in the list, add it
-      if (!ministryExists) {
-        // Create a new designation object to match the structure of other items
-        const newMinistry = {
-          identifier: currentMinistry,
+    const ministryList = this.masterData?.ministry || []
+    const ministryExists = ministryList.some(
+      (ministry: any) => ministry?.identifier === currentMinistry
+    )
 
-        }
-        // Make sure the custom designation appears in the filtered list
-        if (this.masterData?.ministry?.length >= this.ministryListLoadCount) {
-          // Replace the last item with the new one to maintain the same number of items
-          this.masterData?.ministry.pop()
-        }
-        this.masterData?.ministry?.unshift(newMinistry)
-        this.isLoadingMoreMinistrys = false
+    if (!ministryExists) {
+      const selectedMinistry = this.currentMinistry?.identifier === currentMinistry
+        ? this.currentMinistry
+        : _.find(this.masterData?.ministryBackup || [], { identifier: currentMinistry })
+
+      // Never add an identifier-only option because it renders as a blank selection.
+      if (!selectedMinistry?.orgName) {
+        return
       }
+
+      if (ministryList?.length >= this.ministryListLoadCount) {
+        ministryList?.pop()
+      }
+      ministryList?.unshift(selectedMinistry)
+      this.masterData.ministry = ministryList
+      this.isLoadingMoreMinistrys = false
     }
   }
 
@@ -1809,58 +1794,27 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   setupScrollListenerForState(opened: boolean): void {
-    let scrollListenerAttached = false
     if (opened) {
-      if (!scrollListenerAttached) {
-        scrollListenerAttached = true
+      this.stateFilterEnable = false
+      this.stateListLoadCount = this.stateDefaultLoadCount
+      this.stateOffset = 0
 
-        this.stateFilterEnable = false
-        this.stateListLoadCount = this.stateDefaultLoadCount
-        this.stateOffset = 0
+      this.isLoadingMoreStates = true
+      this.getStateData(undefined, 0)
 
-        this.isLoadingMoreStates = true
-        this.getStateData(undefined, 0)
-
-        // Clear search box once
-        if (this.registrationFormStepTwo.get('searchState')) {
-          this.registrationFormStepTwo.get('searchState')!.setValue('')
-        }
-
-        setTimeout(() => {
-          const searchInput = document.querySelector('.search-input-state') as HTMLInputElement
-          if (searchInput) {
-            searchInput.focus()
-          }
-        },         100)
-
-        // Attach scroll listener safely
-        setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-state') as HTMLElement | null
-          if (panel) {
-            // align panel width to trigger
-            try {
-              const triggerEl = this.stateRef && this.stateRef.nativeElement as HTMLElement
-              if (triggerEl) {
-                const rect = triggerEl.getBoundingClientRect()
-                // set width and left so panel aligns exactly below the trigger
-                panel.style.width = `${Math.round(rect.width)}px`
-                // leave left to overlay positioning but nudge if necessary
-                // compute left relative to viewport and apply to panel
-                const overlayLeft = rect.left
-                panel.style.left = `${Math.round(overlayLeft)}px`
-              }
-            } catch (e) {
-              // ignore DOM errors in SSR or unexpected cases
-            }
-
-            const scrollHandler = this.onStateSelectScroll.bind(this)
-            panel.addEventListener('scroll', scrollHandler, { passive: true })
-          }
-        },         150)
+      // Clear search box once
+      if (this.registrationFormStepOne.get('searchState')) {
+        this.registrationFormStepOne.get('searchState')!.setValue('')
       }
+
+      this.attachSelectScrollListener(
+        'state',
+        this.stateSelect,
+        '.search-input-state',
+        event => this.onStateSelectScroll(event)
+      )
     } else {
-      // Dropdown closed — reset scroll flag so it can reattach next time
-      scrollListenerAttached = false
+      this.detachSelectScrollListener('state')
     }
   }
 
@@ -1881,7 +1835,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.state = this.masterData?.stateBackup?.slice(0, this.stateListLoadCount)
               this.checkCurrentStatePresent()
               this.isLoadingMoreStates = false
-            },         500) // Small timeout to simulate loading and prevent multiple triggers
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.stateBackup || []).length
@@ -1957,6 +1911,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
 
     const reqOffset = (typeof offset === 'number') ? offset : this.departmentOffset
+    const requestId = ++this.departmentRequestId
     const reqLimit = this.departmentDefaultLoadCount
     const pageIndex = reqLimit > 0 ? Math.floor(reqOffset / reqLimit) : 0
     // if we're requesting from first page, clear the no-more-data guard
@@ -1995,18 +1950,18 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     this.isLoadingMoreDepartments = true
 
     this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(finalize(() => {
-      this.isLoadingMoreStates = false
-      this.stateInitInProgress = false
+      if (requestId === this.departmentRequestId) {
+        this.isLoadingMoreDepartments = false
+        this.departmentInitInProgress = false
+      }
     }))
       .subscribe({
         next: (res: any) => {
-          // const content = _.get(res, 'result.response.content', [])
-          const mapped = _.get(res, 'result.response.content', [])
-          // const mapped = content.filter(
-          //   (item: any) => item && item.sbOrgType === 'state'
-          // );
+          if (requestId !== this.departmentRequestId) {
+            return
+          }
 
-          this.masterData['departmentBackup'] = this.masterData['departmentBackup'].filter((item: any) => item.orgName !== 'N/A')
+          const mapped = _.get(res, 'result.response.content', [])
 
           // total count may be present in different keys depending on API version.
           // Prefer 'result.result.totalcount' (legacy lower-case) then data.totalCount, then totalCount
@@ -2014,17 +1969,8 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           this.defaultSearchDepartmentCount = total
 
           // If offset is zero (first page) replace backup, otherwise append + dedupe
-          // if (!this.masterData['ministry'] || reqOffset === 0) {
-          //   this.masterData['ministry'] = mapped
-          // } else {
-          //   const combined = (this.masterData['ministry'] || []).concat(mapped)
-          //   this.masterData['ministry'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
-          // }
-
-          if (!this.masterData['departmentBackup'] || reqOffset === 0) {
-            // this.masterData['departmentBackup'] = mapped
-            const combined = (this.masterData['departmentBackup'] || []).concat(mapped)
-            this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
+          if (reqOffset === 0) {
+            this.masterData['departmentBackup'] = _.uniqBy(mapped, (it: any) => (it?.identifier || '').toLowerCase())
           } else {
             const combined = (this.masterData['departmentBackup'] || []).concat(mapped)
             this.masterData['departmentBackup'] = _.uniqBy(combined, (it: any) => (it?.identifier || '').toLowerCase())
@@ -2040,11 +1986,15 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
           }
           // Ensure visible list matches the requested display count
           this.masterData['department'] = (this.masterData['departmentBackup'] || []).slice(0, this.departmentListLoadCount)
-          // loading flag cleared in finalize()
-          this.isLoadingMoreDepartments = false
-          this.checkCurrentDepartmentPresent()
+          if (!searchText?.length) {
+            this.checkCurrentDepartmentPresent()
+          }
         },
         error: () => {
+          if (requestId !== this.departmentRequestId) {
+            return
+          }
+
           // Stop further automatic calls on repeated errors to avoid tight loops
           // loading flag cleared in finalize()
           this.noMoreLegacyDepartments = true
@@ -2054,58 +2004,27 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   setupScrollListenerForDepartment(opened: boolean): void {
-    let scrollListenerAttached = false
     if (opened) {
-      if (!scrollListenerAttached) {
-        scrollListenerAttached = true
+      this.departmentFilterEnable = false
+      this.departmentListLoadCount = this.departmentDefaultLoadCount
+      this.departmentOffset = 0
 
-        this.departmentFilterEnable = false
-        this.departmentListLoadCount = this.departmentDefaultLoadCount
-        this.departmentOffset = 0
+      this.isLoadingMoreDepartments = true
+      this.getDepartmentData(undefined, 0)
 
-        this.isLoadingMoreDepartments = true
-        this.getDepartmentData(undefined, 0)
-
-        // Clear search box once
-        if (this.registrationFormStepOne.get('searchDepartment')) {
-          this.registrationFormStepOne.get('searchDepartment')!.setValue('')
-        }
-
-        setTimeout(() => {
-          const searchInput = document.querySelector('.search-input-deaprtment') as HTMLInputElement
-          if (searchInput) {
-            searchInput.focus()
-          }
-        },         100)
-
-        // Attach scroll listener safely
-        setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-department') as HTMLElement | null
-          if (panel) {
-            // align panel width to trigger
-            try {
-              const triggerEl = this.departmentRef && this.departmentRef.nativeElement as HTMLElement
-              if (triggerEl) {
-                const rect = triggerEl.getBoundingClientRect()
-                // set width and left so panel aligns exactly below the trigger
-                panel.style.width = `${Math.round(rect.width)}px`
-                // leave left to overlay positioning but nudge if necessary
-                // compute left relative to viewport and apply to panel
-                const overlayLeft = rect.left
-                panel.style.left = `${Math.round(overlayLeft)}px`
-              }
-            } catch (e) {
-              // ignore DOM errors in SSR or unexpected cases
-            }
-
-            const scrollHandler = this.onDepartmentSelectScroll.bind(this)
-            panel.addEventListener('scroll', scrollHandler, { passive: true })
-          }
-        },         150)
+      // Clear search box once
+      if (this.registrationFormStepOne.get('searchDepartment')) {
+        this.registrationFormStepOne.get('searchDepartment')!.setValue('', { emitEvent: false })
       }
+
+      this.attachSelectScrollListener(
+        'department',
+        this.departmentSelect,
+        '.search-input-department',
+        event => this.onDepartmentSelectScroll(event)
+      )
     } else {
-      // Dropdown closed — reset scroll flag so it can reattach next time
-      scrollListenerAttached = false
+      this.detachSelectScrollListener('department')
     }
   }
 
@@ -2126,7 +2045,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.department = this.masterData?.departmentBackup?.slice(0, this.departmentListLoadCount)
               this.checkCurrentDepartmentPresent()
               this.isLoadingMoreDepartments = false
-            },         500) // Small timeout to simulate loading and prevent multiple triggers
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.departmentBackup || []).length
@@ -2162,7 +2081,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
         // Make sure the custom designation appears in the filtered list
         if (this.masterData?.department?.length >= this.departmentListLoadCount) {
           // Replace the last item with the new one to maintain the same number of items
-          this.masterData?.deaprtment.pop()
+          this.masterData?.department?.pop()
         }
         this.masterData?.department?.unshift(newDepartment)
         this.isLoadingMoreDepartments = false
@@ -2170,27 +2089,13 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     }
   }
 
-  departmentSearch(evt: any) {
-    const searchText = evt?.target?.value
-    const txt = (searchText || '').toString().trim()
-    if (this.isLoadingMoreDepartments) return
-
+  private performDepartmentSearch(searchText: string): void {
+    const txt = (searchText || '')?.toString()?.trim()
     this.departmentSearchText = txt
-    if (txt.length === 0) {
-      this.departmentFilterEnable = true
-      this.isLoadingMoreDepartments = true
-      this.getDepartmentData(txt, 0)
-    }
-    else if (txt?.length) {
-      this.departmentFilterEnable = true
-      this.isLoadingMoreDepartments = true
-      this.getDepartmentData(txt, 0)
-    } else if (this.masterData && this.masterData?.departmentBackup) {
-      this.masterData.department = this.masterData?.departmentBackup.slice(0, this.departmentDefaultLoadCount)
-      this.departmentFilterEnable = false
-      this.checkCurrentDepartmentPresent()
-    }
-
+    this.departmentFilterEnable = txt?.length > 0
+    this.departmentListLoadCount = this.departmentDefaultLoadCount
+    this.departmentOffset = 0
+    this.getDepartmentData(txt, 0)
   }
 
   /** Organisation Data */
@@ -2356,58 +2261,27 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
   }
 
   setupScrollListenerForOrganisation(opened: boolean): void {
-    let scrollListenerAttached = false
     if (opened) {
-      if (!scrollListenerAttached) {
-        scrollListenerAttached = true
+      this.organisationFilterEnable = false
+      this.organisationListLoadCount = this.organisationDefaultLoadCount
+      this.organisationOffset = 0
 
-        this.organisationFilterEnable = false
-        this.organisationListLoadCount = this.organisationDefaultLoadCount
-        this.organisationOffset = 0
+      this.isLoadingMoreOrganisations = true
+      this.getOrganisationData(undefined, 0)
 
-        this.isLoadingMoreOrganisations = true
-        this.getOrganisationData(undefined, 0)
-
-        // Clear search box once
-        if (this.registrationFormStepOne.get('searchDepartment')) {
-          this.registrationFormStepOne.get('searchDepartment')!.setValue('')
-        }
-
-        setTimeout(() => {
-          const searchInput = document.querySelector('.search-input-organisation') as HTMLInputElement
-          if (searchInput) {
-            searchInput.focus()
-          }
-        },         100)
-
-        // Attach scroll listener safely
-        setTimeout(() => {
-          const panel = document.querySelector('.mat-select-panel.search-panel-organisation') as HTMLElement | null
-          if (panel) {
-            // align panel width to trigger
-            try {
-              const triggerEl = this.organisationRef && this.organisationRef.nativeElement as HTMLElement
-              if (triggerEl) {
-                const rect = triggerEl.getBoundingClientRect()
-                // set width and left so panel aligns exactly below the trigger
-                panel.style.width = `${Math.round(rect.width)}px`
-                // leave left to overlay positioning but nudge if necessary
-                // compute left relative to viewport and apply to panel
-                const overlayLeft = rect.left
-                panel.style.left = `${Math.round(overlayLeft)}px`
-              }
-            } catch (e) {
-              // ignore DOM errors in SSR or unexpected cases
-            }
-
-            const scrollHandler = this.onOrganisationSelectScroll.bind(this)
-            panel.addEventListener('scroll', scrollHandler, { passive: true })
-          }
-        },         150)
+      // Clear search box once
+      if (this.registrationFormStepOne.get('searchOrganisation')) {
+        this.registrationFormStepOne.get('searchOrganisation')!.setValue('')
       }
+
+      this.attachSelectScrollListener(
+        'organisation',
+        this.organisationSelect,
+        '.search-input-organisation',
+        event => this.onOrganisationSelectScroll(event)
+      )
     } else {
-      // Dropdown closed — reset scroll flag so it can reattach next time
-      scrollListenerAttached = false
+      this.detachSelectScrollListener('organisation')
     }
   }
 
@@ -2428,7 +2302,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
               this.masterData.organisation = this.masterData?.organisationBackup?.slice(0, this.organisationListLoadCount)
               this.checkCurrentOrganisationPresent()
               this.isLoadingMoreOrganisations = false
-            },         500) // Small timeout to simulate loading and prevent multiple triggers
+            }, 500) // Small timeout to simulate loading and prevent multiple triggers
           } else {
             // Legacy (server) pagination: request next page if total not reached
             const loadedLegacy = (this.masterData?.organisationBackup || []).length
@@ -2542,8 +2416,12 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
 
   onMinistryChange(event: any) {
     if (event && event.value) {
-      if (this.masterData['ministryBackup'] && this.masterData['ministryBackup'].length) {
-        this.currentMinistry = _.find(this.masterData.ministryBackup, { identifier: event.value })
+      const selectedMinistry =
+        _.find(this.masterData?.ministry || [], { identifier: event?.value }) ||
+        _.find(this.masterData?.ministryBackup || [], { identifier: event?.value })
+
+      if (selectedMinistry) {
+        this.currentMinistry = selectedMinistry
       }
     }
     if (this.registrationFormStepOne.get('organisation')) {

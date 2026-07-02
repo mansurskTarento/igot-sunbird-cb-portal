@@ -15,7 +15,7 @@ import { ServiceHistoryComponent } from '../../components/profile-revamp/service
 import { EducationalQualificationsComponent } from '../../components/profile-revamp/educational-qualifications/educational-qualifications.component'
 import { AchievementsComponent } from '../../components/profile-revamp/achievements/achievements.component'
 import { forkJoin, of, Subject } from 'rxjs'
-import { mergeMap, takeUntil } from 'rxjs/operators'
+import { catchError, map, mergeMap, takeUntil } from 'rxjs/operators'
 import { environment } from 'src/environments/environment'
 import { ConfigurationsService, EventService, MultilingualTranslationsService, PipeCertificateImageURL, WsEvents } from '@sunbird-cb/utils-v2'
 import { TransferRequestComponent } from '../../components/transfer-request/transfer-request.component'
@@ -1493,21 +1493,40 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   handleWithdrawTransferRequest(): void {
-    const dialogRef = this.dialog.open(WithdrawRequestComponent, {
-      data: {
-        approvalPendingFields: this.approvalPendingFields,
-        withDrawType: 'department',
-      },
-      disableClose: true,
-      panelClass: 'common-modal',
+    const requests = (this.approvalPendingFields || []).map((item: any) => {
+      if (!item?.name) {
+        return of(item)
+      }
+      return this.profileV2RevampSvc.getOrgSearch({
+        request: {
+          filters: { status: 1, channel: item?.name },
+          fields: ['orgName', 'channel'],
+          limit: 1,
+          offset: 0,
+        },
+      }).pipe(
+        map((res: any) => ({ ...item, displayName: res?.result?.response?.content?.[0]?.orgName || item?.name })),
+        catchError(() => of({ ...item, displayName: item?.name }))
+      )
     })
 
-    dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
-      if (value) {
-        this.enableWTR = false
-        this.unVerifiedObj.group = ''
-        this.unVerifiedObj.designation = ''
-      }
+    forkJoin(requests).pipe(takeUntil(this.destroySubject$)).subscribe((approvalPendingFields: any) => {
+      const dialogRef = this.dialog.open(WithdrawRequestComponent, {
+        data: {
+          approvalPendingFields,
+          withDrawType: 'department',
+        },
+        disableClose: true,
+        panelClass: 'common-modal',
+      })
+
+      dialogRef.componentInstance.enableMakeTransfer.subscribe((value: boolean) => {
+        if (value) {
+          this.enableWTR = false
+          this.unVerifiedObj.group = ''
+          this.unVerifiedObj.designation = ''
+        }
+      })
     })
   }
 
