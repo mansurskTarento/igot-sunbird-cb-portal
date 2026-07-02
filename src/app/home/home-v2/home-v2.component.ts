@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy, inject, signal, computed, DestroyRef } from '@angular/core'
+import { Component, OnInit, AfterViewInit, OnDestroy, inject, signal, DestroyRef } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -59,317 +59,14 @@ export class HomeV2Component implements OnInit, AfterViewInit, OnDestroy {
   // Data signals
   readonly contentStripData = signal<any[]>([])
   readonly sectionList = signal<any[]>([])
-  readonly widgetData = signal<any>({})
-  readonly sliderData = signal<any>({})
-  readonly homeConfig = signal<any>({})
-  readonly clientList = signal<any>(undefined)
+  // readonly widgetData = signal<any>({})
+  // readonly sliderData = signal<any>({})
+  // readonly homeConfig = signal<any>({})
+  // readonly clientList = signal<any>(undefined)
   readonly pendingApprovalList = signal<any>(null)
   readonly enrollData = signal<any>(null)
 
-  // Computed signals
-  readonly activeSections = computed(() =>
-    this.sectionList().filter((item: any) => item.isVisible && item.isActive)
-  )
-
-  // Static data
-  readonly discussStripData = {
-    strips: [
-      {
-        key: 'discuss',
-        logo: 'forum',
-        title: 'discuss',
-        stripBackground: 'assets/instances/eagle/background/discuss.svg',
-        titleDescription: 'Trending Discussions',
-        stripConfig: { cardSubType: 'cardHomeDiscuss' },
-        viewMoreUrl: {
-          path: '/app/discuss/home',
-          viewMoreText: 'Discuss',
-          queryParams: {},
-        },
-        filters: [],
-        request: {
-          api: {
-            path: '/apis/proxies/v8/discussion/recent',
-            queryParams: {},
-          },
-        },
-      },
-    ],
-  }
-
-  readonly networkStripData = {
-    strips: [
-      {
-        key: 'network',
-        logo: 'group',
-        title: 'network',
-        stripBackground: 'assets/instances/eagle/background/network.svg',
-        titleDescription: 'Connect with people you may know',
-        stripConfig: { cardSubType: 'cardHomeNetwork' },
-        viewMoreUrl: {
-          path: '/app/network-v2',
-          viewMoreText: 'Network',
-          queryParams: {},
-        },
-        filters: [],
-        request: {
-          api: {
-            path: '/apis/protected/v8/connections/v2/connections/recommended/userDepartment',
-            queryParams: '',
-          },
-        },
-      },
-    ],
-  }
-
-  readonly carrierStripData = {
-    widgets: [
-      {
-        dimensions: {},
-        className: '',
-        widget: {
-          widgetType: 'carrierStrip',
-          widgetSubType: 'CarrierStripMultiple',
-          widgetData: {
-            strips: [
-              {
-                key: 'Career',
-                logo: 'work',
-                title: 'Careers',
-                stripBackground: 'assets/instances/eagle/background/careers.svg',
-                titleDescription: 'Latest openings',
-                stripConfig: { cardSubType: 'cardHomeCarrier' },
-                viewMoreUrl: {
-                  path: '/app/careers/home',
-                  viewMoreText: 'Career',
-                  queryParams: {},
-                },
-                filters: [],
-                request: {
-                  api: {
-                    path: '/apis/protected/v8/discussionHub/categories/1',
-                    queryParams: {},
-                  },
-                },
-              },
-            ],
-          },
-        },
-      },
-    ],
-  }
-
-  readonly homePageSections = [
-    {
-      sectionKey: 'aparCourses',
-      header: 'APAR Courses',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'pills',
-      defaultPillKey: 'apar',
-      pills: [
-        {
-          pillKey: 'apar',
-          pillLabel: 'APAR',
-          pillDescription: ['Annual Performance', 'Appraisal Report'],
-          pillImageUrl: '/assets/icons/home/apar.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar',
-            showViewAll: true,
-          },
-        },
-        {
-          pillKey: 'caProgram',
-          pillLabel: 'C.A. Program',
-          pillDescription: ['Chartered Accountant Program courses'],
-          pillImageUrl: '/assets/icons/home/ca-program.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparCaProgramApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar/ca-program',
-            showViewAll: true,
-          },
-        },
-        {
-          pillKey: 'learningPath',
-          pillLabel: 'Learning Path',
-          pillDescription: ['Structured learning paths'],
-          pillImageUrl: '/assets/icons/home/learning-path.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparLearningPathApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar/learning-path',
-            showViewAll: true,
-          },
-        },
-        {
-          pillKey: 'standaloneAssessment',
-          pillLabel: 'Standalone Assessment',
-          pillDescription: ['Individual assessment modules'],
-          pillImageUrl: '/assets/icons/home/assessment.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparStandaloneApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar/standalone-assessment',
-            showViewAll: true,
-          },
-        },
-        {
-          pillKey: 'moderatedContent',
-          pillLabel: 'Moderated Content',
-          pillDescription: ['Curated and reviewed content'],
-          pillImageUrl: '/assets/icons/home/moderated-content.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparModeratedApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar/moderated-content',
-            showViewAll: true,
-          },
-        },
-        {
-          pillKey: 'exploreMore',
-          pillLabel: 'Explore more...',
-          pillDescription: ['Discover more content'],
-          pillImageUrl: '/assets/icons/home/explore-more.svg',
-          translateLabel: true,
-          visibilityMode: 'visible',
-          contentConfig: {
-            apiDetailsKey: 'aparExploreMoreApi',
-            cardType: 'courseCard',
-            maxCardsToShow: 4,
-            cardClickUrl: '/app/course/:identifier',
-            viewAllUrl: '/app/apar/explore',
-            showViewAll: true,
-          },
-        },
-      ],
-    },
-    {
-      sectionKey: 'spotlight',
-      header: 'In Spotlight',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      contentConfig: {
-        apiDetailsKey: 'spotlightApi',
-        cardType: 'spotlightCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/spotlight/:identifier',
-        viewAllUrl: null,
-        showViewAll: false,
-      },
-    },
-    {
-      sectionKey: 'popularOnIgot',
-      header: 'Popular on iGOT',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      isCollapsible: true,
-      contentConfig: {
-        apiDetailsKey: 'popularOnIgotApi',
-        cardType: 'courseCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/course/:identifier',
-        viewAllUrl: '/app/popular',
-        showViewAll: true,
-      },
-    },
-    {
-      sectionKey: 'trendingCourses',
-      header: 'Trending on iGOT',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      isCollapsible: true,
-      contentConfig: {
-        apiDetailsKey: 'trendingAllApi',
-        cardType: 'courseCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/course/:identifier',
-        viewAllUrl: '/app/trending',
-        showViewAll: true,
-      },
-    },
-    {
-      sectionKey: 'featuredAiCourses',
-      header: 'Featured AI Courses',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      isCollapsible: true,
-      badge: {
-        label: 'AI - powered',
-        type: 'highlight',
-      },
-      contentConfig: {
-        apiDetailsKey: 'featuredAiCoursesApi',
-        cardType: 'courseCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/course/:identifier',
-        viewAllUrl: '/app/featured-ai',
-        showViewAll: true,
-      },
-    },
-    {
-      sectionKey: 'thirtyMinutesOrLess',
-      header: '30 Minutes or Less',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      isCollapsible: true,
-      contentConfig: {
-        apiDetailsKey: 'thirtyMinutesOrLessApi',
-        cardType: 'courseCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/course/:identifier',
-        viewAllUrl: '/app/30-minutes',
-        showViewAll: true,
-      },
-    },
-    {
-      sectionKey: 'newReleases',
-      header: 'New Releases',
-      translateHeader: true,
-      visibilityMode: 'visible',
-      displayType: 'cards',
-      isCollapsible: true,
-      badge: {
-        label: 'New',
-        type: 'new',
-      },
-      contentConfig: {
-        apiDetailsKey: 'newReleasesApi',
-        cardType: 'courseCard',
-        maxCardsToShow: 4,
-        cardClickUrl: '/app/course/:identifier',
-        viewAllUrl: '/app/new-releases',
-        showViewAll: true,
-      },
-    },
-  ]
+  homePageSections: any
 
   private readonly initialVisibleStrips = INITIAL_VISIBLE_STRIPS
   private enrollInterval: ReturnType<typeof setInterval> | null = null
@@ -456,7 +153,7 @@ export class HomeV2Component implements OnInit, AfterViewInit, OnDestroy {
     const pageData = this.activatedRoute.snapshot.data.pageData
 
     if (pageData) {
-      this.homeConfig.set(pageData.data.homeConfig)
+      this.homePageSections = pageData.data.homeSection
     }
 
     if (pageData?.data) {
@@ -474,10 +171,10 @@ export class HomeV2Component implements OnInit, AfterViewInit, OnDestroy {
         })
       })
 
-      this.clientList.set(pageData.data.clientList)
-      this.widgetData.set(pageData.data.hubsData)
-      this.enableLazyLoadingFlag.set(pageData.data.enableLazyLoading)
-      this.sliderData.set(pageData.data.sliderData)
+      // this.clientList.set(pageData.data.clientList)
+      // this.widgetData.set(pageData.data.hubsData)
+      // this.enableLazyLoadingFlag.set(pageData.data.enableLazyLoading)
+      // this.sliderData.set(pageData.data.sliderData)
 
       sections.push({ section: 'slider', isVisible: false })
       sections.push({ section: 'discuss', isVisible: false })

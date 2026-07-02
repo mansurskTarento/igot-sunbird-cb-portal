@@ -10,24 +10,23 @@ import {
   signal,
   ViewChild,
   ViewEncapsulation,
-} from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatListModule } from '@angular/material/list';
-import { MatDividerModule } from '@angular/material/divider';
-import { TranslateModule } from '@ngx-translate/core';
+} from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { FormControl, ReactiveFormsModule } from '@angular/forms'
+import { ActivatedRoute, Router, RouterModule } from '@angular/router'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { MatMenuModule } from '@angular/material/menu'
+import { MatChipsModule } from '@angular/material/chips'
+import { MatDividerModule } from '@angular/material/divider'
+import { TranslateModule } from '@ngx-translate/core'
 
-import { ConfigurationsService } from '@sunbird-cb/utils-v2';
-import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
-import { SearchServService } from '../../../search/services/search-serv.service';
-import { GbSearchService } from '../../services/gb-search.service';
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs'
+import { SearchServService } from '../../../search/services/search-serv.service'
+import { GbSearchService } from '../../services/gb-search.service'
 import {
   FacetType,
   SearchCategory,
@@ -40,14 +39,15 @@ import {
   SearchResourceFacets,
   SearchResourceMimeType,
   SearchV4Request,
-} from '../../models/search-v3.model';
-import { WidgetContentLibService } from '@sunbird-cb/consumption';
-import { MobileAppsService } from './../../../services/mobile-apps.service';
+} from '../../models/search-v3.model'
+import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { MobileAppsService } from './../../../services/mobile-apps.service'
+import { MatAutocompleteModule } from '@angular/material/autocomplete'
 
 interface SearchCategoryItem {
-  label: string;
-  value: SearchCategory;
-  icon: string;
+  label: string
+  value: SearchCategory
+  icon: string
 }
 
 @Component({
@@ -59,11 +59,11 @@ interface SearchCategoryItem {
     TranslateModule,
     MatFormFieldModule,
     MatInputModule,
+    MatAutocompleteModule,
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatChipsModule,
-    MatListModule,
     MatDividerModule,
   ],
   templateUrl: './search-input-home-v4.component.html',
@@ -79,7 +79,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   closed = output<boolean>();
 
   // State signals
-  queryControl: FormControl<string | null>;
+  queryControl: FormControl<string | null>
   languageSearch = signal<string[]>([]);
   disableMenu = signal(false);
   recentSearches = signal<any[]>([]);
@@ -120,10 +120,10 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     { label: 'All', value: SearchCategory.All, icon: '' },
   ];
 
-  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>;
+  @ViewChild('searchInput') searchInput!: ElementRef<HTMLInputElement>
 
-  private searchSubscription?: Subscription;
-  private querySubscription?: Subscription;
+  private searchSubscription?: Subscription
+  private querySubscription?: Subscription
   private activated = inject(ActivatedRoute);
   private router = inject(Router);
   private searchServSvc = inject(SearchServService);
@@ -136,31 +136,31 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
     if (!this.eRef.nativeElement.contains(event.target)) {
-      this.openSearchTemplate.set(false);
+      this.openSearchTemplate.set(false)
     }
   }
 
   constructor() {
     this.queryControl = new FormControl(
       this.activated.snapshot.queryParams.q || ''
-    );
+    )
 
     this.searchSubscription = this.mobileAppsService.clearGlobalSearchForHomePage.subscribe((value: any) => {
       if (value) {
-        this.clearSearchTextElement();
+        this.clearSearchTextElement()
       }
-    });
+    })
 
     this.querySubscription = this.queryControl.valueChanges
       .pipe(debounceTime(500), distinctUntilChanged())
       .subscribe(async (value) => {
         if (value && value.length > 0) {
-          await this.searchFromQuery(value);
-          this.loaderSearching.set(false);
+          await this.searchFromQuery(value)
+          this.loaderSearching.set(false)
         } else {
-          this.loaderSearching.set(false);
+          this.loaderSearching.set(false)
         }
-      });
+      })
   }
 
   ngOnInit() {
@@ -170,85 +170,85 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         .then((data) => {
           this.activated.snapshot.data = {
             searchPageData: { data },
-          };
+          }
         })
         .then(() => {
-          this.initialize();
-        });
+          this.initialize()
+        })
     } else {
-      this.initialize();
+      this.initialize()
     }
   }
 
   clearSearchTextElement() {
-    this.queryControl.setValue('');
+    this.queryControl.setValue('')
     if (this.searchInput) {
-      this.searchInput.nativeElement.value = '';
+      this.searchInput.nativeElement.value = ''
     }
   }
 
   autoFilter() {
     if (this.activated.snapshot.data.searchPageData) {
       const isAutoCompleteAllowed =
-        this.activated.snapshot.data.searchPageData.data.search.isAutoCompleteAllowed;
+        this.activated.snapshot.data.searchPageData.data.search.isAutoCompleteAllowed
       if (typeof isAutoCompleteAllowed === 'boolean' && isAutoCompleteAllowed) {
         this.queryControl.valueChanges
           .pipe(debounceTime(200), distinctUntilChanged())
           .subscribe((q) => {
             if (q) {
-              this.searchFromQuery(q);
+              this.searchFromQuery(q)
             }
-          });
+          })
       }
     }
   }
 
   initialize() {
-    let isNotMyUser = false;
-    let isIgotOrg = false;
+    let isNotMyUser = false
+    let isIgotOrg = false
 
     if (this.configSvc?.unMappedUser?.profileDetails?.profileStatus) {
-      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user';
+      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user'
     }
 
     if (this.configSvc?.unMappedUser?.profileDetails?.employmentDetails?.departmentName) {
-      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot';
+      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot'
     }
 
-    this.disableMenu.set(isNotMyUser && isIgotOrg);
+    this.disableMenu.set(isNotMyUser && isIgotOrg)
 
     this.activated.queryParamMap.subscribe((queryParam) => {
       if (queryParam.has('q')) {
-        this.queryControl.setValue(queryParam.get('q') || '');
+        this.queryControl.setValue(queryParam.get('q') || '')
       }
       if (queryParam.has('category')) {
-        this.selectedSearchCategory.set(queryParam.get('category') || SearchCategory.Courses);
+        this.selectedSearchCategory.set(queryParam.get('category') || SearchCategory.Courses)
       } else {
-        this.selectedSearchCategory.set(SearchCategory.Courses);
+        this.selectedSearchCategory.set(SearchCategory.Courses)
       }
 
       const isAutoCompleteAllowed = this.activated.snapshot.data.searchPageData
         ? this.activated.snapshot.data.searchPageData.data.search.isAutoCompleteAllowed
-        : false;
+        : false
 
       if (typeof isAutoCompleteAllowed === 'undefined' ||
-         (typeof isAutoCompleteAllowed === 'boolean' && isAutoCompleteAllowed)) {
+        (typeof isAutoCompleteAllowed === 'boolean' && isAutoCompleteAllowed)) {
         // Auto-complete is allowed
       }
-    });
+    })
   }
 
   async updateQuery(query: string) {
     if (query && query.length) {
       await this.searchInNLP(query)
         .then(() => {
-          this.processSearchText(query);
+          this.processSearchText(query)
         })
         .catch(() => {
-          this.processSearchText(query);
-        });
+          this.processSearchText(query)
+        })
     } else {
-      this.processSearchText(query);
+      this.processSearchText(query)
     }
   }
 
@@ -265,34 +265,34 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   }
 
   goToSearchItem(query: any) {
-    const category = query?.search_category && query?.search_category[0];
-    const nlpSearchQuery = query?.nlp_search_query;
+    const category = query?.search_category && query?.search_category[0]
+    const nlpSearchQuery = query?.nlp_search_query
 
     if (category && nlpSearchQuery) {
-      this.processSearchByCategory(category, nlpSearchQuery, query);
+      this.processSearchByCategory(category, nlpSearchQuery, query)
     }
   }
 
   private processSearchByCategory(category: string, nlpSearchQuery: string, query: any) {
     switch (category) {
       case 'courses':
-        this.searchCourses(nlpSearchQuery, query);
-        break;
+        this.searchCourses(nlpSearchQuery, query)
+        break
       case 'events':
-        this.searchEvents(nlpSearchQuery, query);
-        break;
+        this.searchEvents(nlpSearchQuery, query)
+        break
       case 'peoples':
-        this.searchPeoples(nlpSearchQuery, query);
-        break;
+        this.searchPeoples(nlpSearchQuery, query)
+        break
       case 'resources':
-        this.searchResources(nlpSearchQuery, query);
-        break;
+        this.searchResources(nlpSearchQuery, query)
+        break
       case 'communities':
-        this.searchCommunities(nlpSearchQuery, query);
-        break;
+        this.searchCommunities(nlpSearchQuery, query)
+        break
       case 'all':
-        this.searchAll(nlpSearchQuery, query);
-        break;
+        this.searchAll(nlpSearchQuery, query)
+        break
     }
   }
 
@@ -321,12 +321,12 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         offset: 0,
         sort_by: {},
       },
-    };
+    }
     this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
       if (res) {
-        this.updateRecentSearchQuery(query);
+        this.updateRecentSearchQuery(query)
       }
-    });
+    })
   }
 
   private searchEvents(nlpSearchQuery: string, query: any) {
@@ -351,12 +351,12 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         offset: 0,
         sort_by: {},
       },
-    };
+    }
     this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
       if (res) {
-        this.updateRecentSearchQuery(query);
+        this.updateRecentSearchQuery(query)
       }
-    });
+    })
   }
 
   private searchPeoples(nlpSearchQuery: string, query: any) {
@@ -368,14 +368,14 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       offset: 0,
       sort_by: {},
       query: nlpSearchQuery,
-    };
+    }
     this.searchV3Service.searchConnections(req)
       .then(() => {
-        this.updateRecentSearchQuery(query);
+        this.updateRecentSearchQuery(query)
       })
       .catch(error => {
-        console.error('Error searching people:', error);
-      });
+        console.error('Error searching people:', error)
+      })
   }
 
   private searchResources(nlpSearchQuery: string, query: any) {
@@ -401,12 +401,12 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         sort_by: {},
         exists: ['sectorDetails_v1.sectorName', 'resourceCategory'],
       },
-    };
+    }
     this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
       if (res) {
-        this.updateRecentSearchQuery(query);
+        this.updateRecentSearchQuery(query)
       }
-    });
+    })
   }
 
   private searchCommunities(nlpSearchQuery: string, query: any) {
@@ -422,40 +422,40 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         'competencies_v6.competencyThemeName', 'competencies_v6.competencySubThemeName',
       ],
       searchString: nlpSearchQuery,
-    };
+    }
     this.searchV3Service.fetchSearchDataByCategory(req).subscribe((res: any) => {
       if (res) {
-        this.updateRecentSearchQuery(query);
+        this.updateRecentSearchQuery(query)
       }
-    });
+    })
   }
 
   private searchAll(nlpSearchQuery: string, query: any) {
-    this.searchCourses(nlpSearchQuery, query);
-    this.searchEvents(nlpSearchQuery, query);
-    this.searchPeoples(nlpSearchQuery, query);
-    this.searchResources(nlpSearchQuery, query);
-    this.searchCommunities(nlpSearchQuery, query);
+    this.searchCourses(nlpSearchQuery, query)
+    this.searchEvents(nlpSearchQuery, query)
+    this.searchPeoples(nlpSearchQuery, query)
+    this.searchResources(nlpSearchQuery, query)
+    this.searchCommunities(nlpSearchQuery, query)
   }
 
   recentDeleteByUserId() {
     return this.searchV3Service.recentDeleteByUser().subscribe((result: any) => {
       if (result && result.responseCode === 'OK') {
-        this.readRecent();
+        this.readRecent()
       }
-    });
+    })
   }
 
   recentDeleteByTimeStamp(id: any) {
     return this.searchV3Service.recentDeleteByTime(id).subscribe((result: any) => {
       if (result) {
-        this.readRecent();
+        this.readRecent()
       }
-    });
+    })
   }
 
   processRecentSearchText(query: any) {
-    document.getElementById('global-search-input')?.blur();
+    document.getElementById('global-search-input')?.blur()
     const queryParams = {
       q: query?.nlp_search_query ? query?.nlp_search_query?.trim() : '',
       category: query?.search_category[0] || null,
@@ -463,25 +463,25 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       f: null,
       tab: null,
       filtersPanel: 'show',
-    };
+    }
     const navigationExtras = {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
-    };
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch';
+    }
+    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
 
     if (this.ref() === 'home') {
-      this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams });
+      this.closed.emit(false)
+      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
-      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
+      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
-    localStorage.removeItem('activeRoute');
-    this.openSearchTemplate.set(false);
+    localStorage.removeItem('activeRoute')
+    this.openSearchTemplate.set(false)
   }
 
   processSearchText(query: any) {
-    document.getElementById('global-search-input')?.blur();
+    document.getElementById('global-search-input')?.blur()
     const queryParams = {
       q: query ? query?.trim() : '',
       search: query && this.responseNlpQuery() ? this.responseNlpQuery() : null,
@@ -490,122 +490,122 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       f: null,
       tab: null,
       filtersPanel: 'show',
-    };
+    }
     const navigationExtras = {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
-    };
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch';
+    }
+    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
 
     if (this.ref() === 'home') {
-      this.closed.emit(false);
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams });
+      this.closed.emit(false)
+      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
-      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent });
+      this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
-    localStorage.removeItem('activeRoute');
-    this.openSearchTemplate.set(false);
+    localStorage.removeItem('activeRoute')
+    this.openSearchTemplate.set(false)
   }
 
   clearSearchText() {
     setTimeout(() => {
-      this.openSearchTemplate.set(true);
-    }, 0);
-    this.queryControl.reset();
-    this.updateQuery('');
+      this.openSearchTemplate.set(true)
+    }, 0)
+    this.queryControl.reset()
+    this.updateQuery('')
   }
 
   async selectSearchCategory(category: string) {
     if (this.queryControl.value) {
-      this.selectedSearchCategory.set(category);
-      this.updateQuery(this.queryControl.value);
+      this.selectedSearchCategory.set(category)
+      this.updateQuery(this.queryControl.value)
     }
   }
 
   async searchFromQuery(query: string) {
-    let courseSearchResult: any;
-    const searchRequest = new SearchV4Request([]);
-    searchRequest.request.query = query;
+    let courseSearchResult: any
+    const searchRequest = new SearchV4Request([])
+    searchRequest.request.query = query
 
     switch (this.selectedSearchCategory()) {
       case SearchCategory.Courses:
-        searchRequest.request.filters.courseCategory = 'course';
-        break;
+        searchRequest.request.filters.courseCategory = 'course'
+        break
       case SearchCategory.All:
-        searchRequest.request.filters.courseCategory = [];
-        searchRequest.request.filters.contentType = ['Course', 'Event'];
-        break;
+        searchRequest.request.filters.courseCategory = []
+        searchRequest.request.filters.contentType = ['Course', 'Event']
+        break
       case SearchCategory.Programs:
-        searchRequest.request.filters.courseCategory = 'blended program';
-        break;
+        searchRequest.request.filters.courseCategory = 'blended program'
+        break
       case SearchCategory.Events:
-        searchRequest.request.filters.contentType = 'Event';
-        searchRequest.request.fields = SearchEventFields;
-        searchRequest.request.facets = SearchEventfacet;
-        delete searchRequest.request.filters?.courseCategory;
-        delete searchRequest.request.sort_by?.createdOn;
-        break;
+        searchRequest.request.filters.contentType = 'Event'
+        searchRequest.request.fields = SearchEventFields
+        searchRequest.request.facets = SearchEventfacet
+        delete searchRequest.request.filters?.courseCategory
+        delete searchRequest.request.sort_by?.createdOn
+        break
       case SearchCategory.CaseStudy:
-        searchRequest.request.filters.courseCategory = 'case study';
-        break;
+        searchRequest.request.filters.courseCategory = 'case study'
+        break
       case SearchCategory.Resources:
-        searchRequest.request.filters.contentType = 'Resource';
-        searchRequest.request.facets = SearchResourceFacets;
-        searchRequest.request.filters.mimeType = SearchResourceMimeType;
-        searchRequest.request.exists = [FacetType.sectorNames_v1, FacetType.resourceCategory];
-        searchRequest.request.fields = [];
-        delete searchRequest.request.filters?.courseCategory;
-        delete searchRequest.request.sort_by?.createdOn;
-        break;
+        searchRequest.request.filters.contentType = 'Resource'
+        searchRequest.request.facets = SearchResourceFacets
+        searchRequest.request.filters.mimeType = SearchResourceMimeType
+        searchRequest.request.exists = [FacetType.sectorNames_v1, FacetType.resourceCategory]
+        searchRequest.request.fields = []
+        delete searchRequest.request.filters?.courseCategory
+        delete searchRequest.request.sort_by?.createdOn
+        break
     }
 
-    courseSearchResult = await this.searchV3Service.searchCoursesv4(searchRequest).catch();
+    courseSearchResult = await this.searchV3Service.searchCoursesv4(searchRequest).catch()
 
     if (this.selectedSearchCategory() === SearchCategory.People) {
-      const searchRequest = new SearchPeoplesRequest();
-      searchRequest.query = query;
+      const searchRequest = new SearchPeoplesRequest()
+      searchRequest.query = query
       const result = await this.searchV3Service.searchConnections(searchRequest)
         .catch(() => {
-          this.allSearchResults.set([]);
-        });
+          this.allSearchResults.set([])
+        })
 
       if (result?.result && result.result?.response?.content.length) {
-        this.allSearchResults.set(result.result?.response?.content || []);
+        this.allSearchResults.set(result.result?.response?.content || [])
       } else {
-        this.allSearchResults.set([]);
+        this.allSearchResults.set([])
       }
-      return;
+      return
     } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
-      const searchRequestCommunities = new SearchCommunitiesRequest([]);
-      searchRequestCommunities.searchString = query;
+      const searchRequestCommunities = new SearchCommunitiesRequest([])
+      searchRequestCommunities.searchString = query
       const result = await this.searchV3Service
         .searchCommunity(searchRequestCommunities)
         .catch(() => {
-          this.allSearchResults.set([]);
-        });
+          this.allSearchResults.set([])
+        })
 
       if (result?.result && Object.keys(result.result).length > 0 &&
-          result.result?.search_results?.data && result.result?.search_results?.data.length) {
-        this.allSearchResults.set(result.result?.search_results?.data);
+        result.result?.search_results?.data && result.result?.search_results?.data.length) {
+        this.allSearchResults.set(result.result?.search_results?.data)
       } else {
-        this.allSearchResults.set([]);
+        this.allSearchResults.set([])
       }
-      return;
+      return
     } else if (this.selectedSearchCategory() === SearchCategory.ExternalContents) {
-      const searchRequestExternal = new SearchExternalRequest([]);
-      searchRequestExternal.searchString = query || '';
+      const searchRequestExternal = new SearchExternalRequest([])
+      searchRequestExternal.searchString = query || ''
       const result = await this.searchV3Service
         .searchExternalContent(searchRequestExternal)
         .catch(() => {
-          this.allSearchResults.set([]);
-        });
+          this.allSearchResults.set([])
+        })
 
       if (result?.data && result?.data.length) {
-        this.allSearchResults.set(result?.data);
+        this.allSearchResults.set(result?.data)
       } else {
-        this.allSearchResults.set([]);
+        this.allSearchResults.set([])
       }
-      return;
+      return
     }
 
     const validKeys = Object.keys(courseSearchResult?.result || {}).filter(
@@ -613,36 +613,36 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         (key === 'Event' || key === 'content') &&
         Array.isArray(courseSearchResult.result[key]) &&
         courseSearchResult.result[key].length > 0
-    );
+    )
 
     this.allSearchResults.set(
       validKeys.length ? courseSearchResult.result[validKeys[0]] : []
-    );
+    )
   }
 
   getResultName(result: any): string {
     if (!result) {
-      return '';
+      return ''
     }
 
     if (this.selectedSearchCategory() === SearchCategory.People) {
-      return result.personalDetails?.firstname ?? result.firstName ?? '';
+      return result.personalDetails?.firstname ?? result.firstName ?? ''
     } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
-      return result.communityName ?? '';
+      return result.communityName ?? ''
     } else {
-      return result.name ?? '';
+      return result.name ?? ''
     }
   }
 
   redirectToContent(result: any) {
-    this.openSearchTemplate.set(false);
+    this.openSearchTemplate.set(false)
 
     if (this.selectedSearchCategory() === SearchCategory.People) {
-      this.goToUserProfile(result);
+      this.goToUserProfile(result)
     } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
       // TODO: Route community
     } else {
-      this.getRedirectUrlData(result);
+      this.getRedirectUrlData(result)
     }
   }
 
@@ -650,43 +650,43 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.router.navigate(
       ['/app/person-profile', user.userId || user.id || user.wid],
       { fragment: 'profileInfo' }
-    );
+    )
   }
 
   async getRedirectUrlData(content: any) {
     if (content && content.objectType === 'Event' && content.identifier) {
-      this.router.navigate([`app/event-hub/home/${content.identifier}`]);
+      this.router.navigate([`app/event-hub/home/${content.identifier}`])
     } else {
-      const urlData = await this.contSvc.getResourseLink(content);
+      const urlData = await this.contSvc.getResourseLink(content)
       this.router.navigate([urlData.url], {
         queryParams: urlData.queryParams,
-      });
+      })
     }
   }
 
   async searchInNLP(query: string) {
-    const searchRequest = new SearchNLP();
-    searchRequest.query = query;
+    const searchRequest = new SearchNLP()
+    searchRequest.query = query
     await this.searchV3Service
       .nlpSearch(searchRequest)
       .then(async (response) => {
         if (response?.data && response?.data?.keywords) {
           if (response?.data?.keywords.length > 0) {
-            this.responseNlpQuery.set(response?.data?.keywords[0]?.keyword);
-            this.createRecent(this.responseNlpQuery());
-            this.readRecent();
+            this.responseNlpQuery.set(response?.data?.keywords[0]?.keyword)
+            this.createRecent(this.responseNlpQuery())
+            this.readRecent()
           }
         } else {
-          this.responseNlpQuery.set('');
+          this.responseNlpQuery.set('')
         }
       })
-      .catch();
+      .catch()
   }
 
   openSearchTemplateF() {
-    this.openSearchTemplate.set(true);
+    this.openSearchTemplate.set(true)
     if (!this.hasReadRecentBeenCalled) {
-      this.hasReadRecentBeenCalled = false;
+      this.hasReadRecentBeenCalled = false
     }
 
     if (!this.selectedSearchCategory()) {
@@ -695,16 +695,16 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   }
 
   searchLanguage(lang: string) {
-    this.searchLocale.set(lang);
+    this.searchLocale.set(lang)
     // Additional language search logic can be implemented here
   }
 
   ngOnDestroy(): void {
     if (this.searchSubscription) {
-      this.searchSubscription.unsubscribe();
+      this.searchSubscription.unsubscribe()
     }
     if (this.querySubscription) {
-      this.querySubscription.unsubscribe();
+      this.querySubscription.unsubscribe()
     }
   }
 }

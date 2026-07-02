@@ -58,15 +58,10 @@
     }
 
     <div class="hidden md:block md:flex items-center md:ml-auto">
-      @if (!isforPreview()) {
-      <!-- Karma badge placeholder -->
-      }
-      @for (item of primaryNavbarConfig?.mediumScreen?.right; track item) {
+      @for (item of filteredPrimaryNavbarConfig?.mediumScreen?.right; track item) {
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
       }
-      <!-- Theme Toggle Button -->
-      <ws-top-right-nav-bar-v2 [item]="{type: 'themeToggle'}" [rightNavConfig]="headerFooterConfigData()" />
     </div>
   </div>
   }

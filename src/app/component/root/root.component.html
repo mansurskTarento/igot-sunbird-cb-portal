@@ -1,9 +1,11 @@
 <div class="flex gap-0 root-container">
   @if ((isXSmall$ | async) === false) {
   <div class="w-fit">
+    @if (menuBarDetails) {
     <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
       (sidebarStateChange)="sidebarStateChanged($event)"
       (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
+    }
   </div>
   }
   <div

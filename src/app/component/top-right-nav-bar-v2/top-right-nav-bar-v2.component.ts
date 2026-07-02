@@ -28,6 +28,7 @@ import { ThemeService } from '@sunbird-cb/design-system'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { environment } from '../../../environments/environment'
 import { NotificationDropdownModule } from '@sunbird-cb/notification'
+import { WidgetResolverModule } from '@sunbird-cb/resolver'
 
 @Component({
   selector: 'ws-top-right-nav-bar-v2',
@@ -42,7 +43,8 @@ import { NotificationDropdownModule } from '@sunbird-cb/notification'
     MatSelectModule,
     MatFormFieldModule,
     TranslateModule,
-    NotificationDropdownModule
+    NotificationDropdownModule,
+    WidgetResolverModule
   ],
   templateUrl: './top-right-nav-bar-v2.component.html',
   styleUrls: ['./top-right-nav-bar-v2.component.scss'],
@@ -104,7 +106,6 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
       this.selectedLanguage.set(storedLang)
       this.translate.use(storedLang)
     }
-
     this.subs.push(
       this.langtranslations.languageSelectedObservable.subscribe(() => {
         const lang = localStorage.getItem('websiteLanguage')

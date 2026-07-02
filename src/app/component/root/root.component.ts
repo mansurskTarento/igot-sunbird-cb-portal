@@ -89,246 +89,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   isHomePage = false
-  menuBarDetails: any = {
-    "logoUrl": "/assets/instances/eagle/app_logos/KarmayogiBharat_Logo_Horizontal.svg",
-    "headerText": "",
-    "defaultOpen": true,
-    "activeItemCode": "",
-    "navSections": [
-      {
-        "cardType": "nav_list",
-        "sectionTitle": "",
-        "sectionKey": "hubs",
-        "sectionLoading": false,
-        "disableTranslate": true,
-        "collapsible": false,
-        "showViewAll": true,
-        "viewAllLabel": "",
-        "disableTranslateOnViewAll": true,
-        "maxItemsVisible": 7,
-        "enabled": true,
-        "items": [
-          {
-            "code": "home",
-            "iconName": "",
-            "iconUrl": "home",
-            "label": "Home",
-            "navUrl": "/page/home/v2",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "explore",
-            "iconName": "",
-            "iconUrl": "school",
-            "label": "Explore Content",
-            "navUrl": "",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "my-learning",
-            "iconName": "",
-            "iconUrl": "chatt_msg",
-            "label": "My Learning",
-            "navUrl": "/page/learn",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "learner-passbook",
-            "iconName": "",
-            "iconUrl": "menu_book",
-            "label": "Learner Passbook",
-            "navUrl": "/passbook",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "igot-community",
-            "iconName": "",
-            "iconUrl": "chatt_msg",
-            "label": "iGOT Community",
-            "navUrl": "/community",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "events",
-            "iconName": "",
-            "iconUrl": "calendar_month",
-            "label": "Events",
-            "navUrl": "/app/event-hub/home",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "peer-validation",
-            "iconName": "",
-            "iconUrl": "group_2",
-            "label": "Peer Validation",
-            "navUrl": "/app/event-hub/home",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          },
-          {
-            "code": "peer-validation-2",
-            "iconName": "",
-            "iconUrl": "group_2",
-            "label": "Peer Validation 2",
-            "navUrl": "/app/event-hub/home",
-            "disableTranslate": true,
-            "enabled": true,
-            "subType": "PageMenu"
-          }
-        ]
-      },
-      {
-        "cardType": "stat_cards",
-        "sectionTitle": "My Achievements",
-        "sectionKey": "my_achievements",
-        "sectionLoading": false,
-        "disableTranslate": true,
-        "collapsible": true,
-        "showViewAll": true,
-        "viewAllLabel": "View all achievements",
-        "viewAllKey": "view_all_achievements",
-        "disableTranslateOnViewAll": true,
-        "maxItemsVisible": 3,
-        "enabled": true,
-        "items": [
-          {
-            "code": "rank",
-            "iconName": "",
-            "iconUrl": "trophi",
-            "headerLabel": "You're now standing at",
-            "value": "",
-            "navUrl": "",
-            "disableTranslate": true,
-            "enabled": true
-          },
-          {
-            "code": "learning_hours",
-            "iconName": "",
-            "iconUrl": "badge",
-            "headerLabel": "Learning hours",
-            "value": "0 Learning Hours",
-            "navUrl": "",
-            "disableTranslate": true,
-            "enabled": false
-          },
-          {
-            "code": "karma_points",
-            "iconName": "",
-            "iconUrl": "badge",
-            "headerLabel": "Karma Points",
-            "value": "0 Karma Points",
-            "navUrl": "",
-            "disableTranslate": true,
-            "enabled": true
-          },
-          {
-            "code": "badges",
-            "iconName": "",
-            "iconUrl": "trophi",
-            "headerLabel": "Your Earned",
-            "value": "0 Badges",
-            "navUrl": "",
-            "disableTranslate": true,
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "cardType": "info_cards",
-        "sectionTitle": "Quick Actions",
-        "sectionKey": "quick_actions",
-        "sectionLoading": false,
-        "disableTranslate": true,
-        "collapsible": true,
-        "showViewAll": false,
-        "viewAllLabel": "",
-        "disableTranslateOnViewAll": true,
-        "maxItemsVisible": null,
-        "enabled": true,
-        "items": [
-          {
-            "code": "help_centre",
-            "hasChildren": false,
-            "iconName": "",
-            "iconUrl": "unknown_document",
-            "title": "Help Centre",
-            "description": "Need help? You're in the right place.",
-            "navUrl": "/help",
-            "disableTranslate": true,
-            "enabled": true
-          },
-          {
-            "code": "other_portals",
-            "hasChildren": true,
-            "iconName": "",
-            "iconUrl": "",
-            "title": "Other Portals",
-            "description": "",
-            "navUrl": "",
-            "disableTranslate": true,
-            "children": [
-              {
-                "code": "mdo_portal",
-                "iconName": "groups_2",
-                "iconUrl": "",
-                "title": "MDO Portal",
-                "description": "Manage users, training and approvals.",
-                "navUrl": "https://mdo.qa.karmayogibharat.net/",
-                "disableTranslate": true,
-                "enabled": true
-              },
-              {
-                "code": "content_portal",
-                "iconName": "",
-                "iconUrl": "video",
-                "title": "Content Portal",
-                "description": "Create, publish and manage content",
-                "navUrl": "https://cbp.qa.karmayogibharat.net/",
-                "disableTranslate": true,
-                "enabled": true
-              },
-              {
-                "code": "spv_portal",
-                "iconName": "settings_account_box",
-                "iconUrl": "",
-                "title": "SPV Portal",
-                "description": "Manage MDOs, users and competency",
-                "navUrl": "https://spv.qa.karmayogibharat.net/",
-                "disableTranslate": true,
-                "enabled": true
-              }
-            ]
-          }
-        ]
-      }
-    ],
-    "footerSections": [
-      {
-        "label": "downloadApp",
-        "disableTranslate": false,
-        "enabled": true,
-        "iconName": "",
-        "iconUrl": "download_2",
-        "infoIcon": "help_outline",
-        "infoText": "downloadApp",
-        "code": "download-app",
-        "subType": "PageMenu"
-      }
-    ]
-  }
+  menuBarDetails: any
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   constructor(
@@ -357,15 +118,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     // private dialogRef: MatDialogRef<any>,
   ) {
-
-    console.log('userEnrollmentCount - root component constructor')
-
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
     }
 
     this.getHeaderFooterConfiguration().subscribe((sectionData: any) => {
-      // console.log('headerFooterConfigData',sectionData)
       if (sectionData && sectionData.data) {
         this.headerFooterConfigData = sectionData.data
         this.showFooter = true
@@ -521,10 +278,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     // tslint: disable
   }
   ngOnInit() {
-    this.setAchivements()
-    this.homePageSvc.showLeaderboardPanel.subscribe((show: boolean) => {
-      this.showKarmaLeaderboard.set(show)
-    })
     // let showTour = localStorage.getItem('tourGuide')? JSON.parse(localStorage.getItem('tourGuide')||''): {}
     // this.showTour = showTour && showTour.disable ? showTour.disable : false
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
@@ -585,6 +338,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
+        this.setLeftNavBarData()
 
         if (event.url.includes('/setup/')) {
           this.isSetupPage = true
@@ -678,12 +432,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       }
 
       if (event instanceof NavigationEnd) {
-        // let snapshot = this.router.routerState.firstChild(this.activatedRoute).snapshot
-        // console.log('this.route.snapshot :: ', this.route.snapshot)
-        const snapshot = this.route.snapshot
-        // console.log('root.snapshot.root.firstChild ', snapshot.root.firstChild)
-        // console.log('firstChild ', snapshot.firstChild)
-        const firstChild = snapshot.root.firstChild
+
+        const snapshot = this.router.routerState.snapshot.root
+        const firstChild = snapshot.firstChild
         this.getChildRouteData(snapshot, firstChild)
         // tslint:disable-next-line: no-console
         // console.log('Final currentDataRoute', this.currentRouteData)
@@ -717,7 +468,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.showNavbar = display
     })
 
-    this.loadMenuBarAchievements()
+    // this.loadMenuBarAchievements()
 
     let isNotMyUser = false
     let isIgotOrg = false
@@ -745,9 +496,39 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   }
 
+  setLeftNavBarData(): any {
+    const pageData = this.getResolvedDataFromRoute(this.router.routerState.snapshot.root, 'pageData')
+    if (pageData) {
+      this.menuBarDetails = pageData.data
+      if (this.menuBarDetails) {
+        this.setAchivements()
+      }
+    }
+    return pageData
+  }
+
+  private getResolvedDataFromRoute(snapshot: ActivatedRouteSnapshot | null, key: string): any {
+    if (!snapshot) {
+      return null
+    }
+
+    if (snapshot.data && snapshot.data[key]) {
+      return snapshot.data[key]
+    }
+
+    for (const child of snapshot.children) {
+      const childData = this.getResolvedDataFromRoute(child, key)
+      if (childData) {
+        return childData
+      }
+    }
+
+    return null
+  }
+
   setAchivements() {
     const menuBarDetails = this.menuBarDetails
-    const achievements = menuBarDetails.navSections.find((section: any) => section.sectionKey === 'my_achievements')
+    const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
     achievements.sectionLoading = true
     this.sendDetailsChangedEvent(menuBarDetails)
     if (achievements) {
@@ -972,13 +753,13 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   sidebarStateChanged(event: any) {
     if (event) {
       this.leftNavBarIsOpen.set(event.isOpen)
-      this.homePageSvc.showLeaderboardPanel.next(false)
+      this.showKarmaLeaderboard.set(false)
     }
   }
 
   onNavItemClicked(event: any) {
     this.raiseTelemetryExploreContent(event.code, event.subType)
-    switch (event) {
+    switch (event.code) {
       case 'explore':
         this.exploreContent()
         this.menuBarDetails.activeItemCode = event.code
@@ -986,7 +767,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       case 'view_all_achievements':
         this.viewAllAchievements()
         break
-      case 'download_app':
+      case 'download-app':
         this.openAppDownloadDialog()
         break
       default:
@@ -995,7 +776,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   viewAllAchievements() {
-    this.homePageSvc.showLeaderboardPanel.next(true)
+    this.showKarmaLeaderboard.set(true)
   }
 
   exploreContent() {
@@ -1042,56 +823,56 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     dialogRef.afterClosed().subscribe(() => { })
   }
 
-  private loadMenuBarAchievements() {
-    // Fetch karma points and badge count from localStorage (same source as profile-card-stats)
-    const achievementsSection = this.menuBarDetails.navSections
-      .find((section: any) => section.cardType === 'stat_cards')
-    achievementsSection.sectionLoading = true
-    const enrollListRaw = localStorage.getItem('userEnrollmentCount')
-    if (enrollListRaw) {
-      try {
-        const enrollList = JSON.parse(enrollListRaw)
-        const karmaPoints = enrollList?.userCourseEnrolmentInfo?.karmaPoints ?? 0
-        const badgeCount = enrollList?.userCourseEnrolmentInfo?.badgeCount ?? 0
+  // private loadMenuBarAchievements() {
+  //   // Fetch karma points and badge count from localStorage (same source as profile-card-stats)
+  //   const achievementsSection = this.menuBarDetails.navSections
+  //     .find((section: any) => section.cardType === 'stat_cards')
+  //   achievementsSection.sectionLoading = true
+  //   const enrollListRaw = localStorage.getItem('userEnrollmentCount')
+  //   if (enrollListRaw) {
+  //     try {
+  //       const enrollList = JSON.parse(enrollListRaw)
+  //       const karmaPoints = enrollList?.userCourseEnrolmentInfo?.karmaPoints ?? 0
+  //       const badgeCount = enrollList?.userCourseEnrolmentInfo?.badgeCount ?? 0
 
-        if (achievementsSection?.items) {
-          const karmaItem = achievementsSection.items.find((item: any) => item.code === 'karma_points')
-          if (karmaItem) {
-            karmaItem.value = `${karmaPoints} Karma Points`
-          }
+  //       if (achievementsSection?.items) {
+  //         const karmaItem = achievementsSection.items.find((item: any) => item.code === 'karma_points')
+  //         if (karmaItem) {
+  //           karmaItem.value = `${karmaPoints} Karma Points`
+  //         }
 
-          const badgeItem = achievementsSection.items.find((item: any) => item.code === 'badges')
-          if (badgeItem) {
-            badgeItem.value = `${badgeCount} Badges`
-          }
-        }
-      } catch (_e) {
-        // Invalid JSON in localStorage, keep defaults
-      }
-    }
+  //         const badgeItem = achievementsSection.items.find((item: any) => item.code === 'badges')
+  //         if (badgeItem) {
+  //           badgeItem.value = `${badgeCount} Badges`
+  //         }
+  //       }
+  //     } catch (_e) {
+  //       // Invalid JSON in localStorage, keep defaults
+  //     }
+  //   }
 
-    // Fetch leaderboard rank (same source as profile-card-stats)
-    const currentUserId = this.configSvc?.unMappedUser?.id
-    if (currentUserId) {
-      this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
-        const results = res?.result?.result
-        if (Array.isArray(results)) {
-          const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
-          const rank = currentUserRank?.rank
+  //   // Fetch leaderboard rank (same source as profile-card-stats)
+  //   const currentUserId = this.configSvc?.unMappedUser?.id
+  //   if (currentUserId) {
+  //     this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+  //       const results = res?.result?.result
+  //       if (Array.isArray(results)) {
+  //         const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+  //         const rank = currentUserRank?.rank
 
-          if (rank != null) {
-            const achievementsSection = this.menuBarDetails.navSections
-              .find((section: any) => section.cardType === 'stat_cards')
-            const rankItem = achievementsSection?.items?.find((item: any) => item.code === 'rank')
-            if (rankItem) {
-              rankItem.value = `${this.toOrdinal(rank)} Rank`
-            }
-          }
-        }
-      })
-    }
-    achievementsSection.sectionLoading = false
-  }
+  //         if (rank != null) {
+  //           const achievementsSection = this.menuBarDetails.navSections
+  //             .find((section: any) => section.cardType === 'stat_cards')
+  //           const rankItem = achievementsSection?.items?.find((item: any) => item.code === 'rank')
+  //           if (rankItem) {
+  //             rankItem.value = `${this.toOrdinal(rank)} Rank`
+  //           }
+  //         }
+  //       }
+  //     })
+  //   }
+  //   achievementsSection.sectionLoading = false
+  // }
 
   private toOrdinal(n: number): string {
     const s = ['th', 'st', 'nd', 'rd']
