@@ -43,11 +43,11 @@
   <!-- Content type line tabs -->
   <mat-tab-group class="bk-see-all__tabs" animationDuration="0ms" [selectedIndex]="activeTabIndex"
     (selectedIndexChange)="onTabChange($event)">
-    <mat-tab *ngFor="let tab of contentTypeTabs" [label]="tab"></mat-tab>
+    <mat-tab *ngFor="let tab of contentTypeTabs; trackBy: trackTabKey" [label]="tab.label"></mat-tab>
   </mat-tab-group>
 
-  <!-- Status filter pills — inside tabs area -->
-  <div class="bk-see-all__status-pills">
+  <!-- Status filter pills — inside tabs area (resources aren't enrollable/trackable, so no status filter) -->
+  <div class="bk-see-all__status-pills" *ngIf="!isActiveTabResources">
     <button *ngFor="let s of statusPills" class="bk-see-all__status-pill"
       [class.bk-see-all__status-pill--active]="selectedStatus === s" (click)="onStatusSelect(s)">
       {{ s }}

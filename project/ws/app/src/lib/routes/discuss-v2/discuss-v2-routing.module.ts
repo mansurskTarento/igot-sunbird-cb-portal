@@ -17,6 +17,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'my-communities',
+    component: DiscussV2HomeComponent,
+    data: {
+      pageId: 'discussion-forum',
+      module: 'Discuss',
+      initialTab: 'my_communities',
+    },
+  },
+  {
     path: 'post/:discussionId',
     // loadChildren: () => import('./wrapper/wrapper.module').then(u => u.WrapperModule),
     component: PostDetailsComponent,
