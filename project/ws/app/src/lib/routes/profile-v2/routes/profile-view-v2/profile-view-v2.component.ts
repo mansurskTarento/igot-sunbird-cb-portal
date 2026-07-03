@@ -310,6 +310,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     const formBody = {
       field: 'countOfPeopleJoined',
       limit: 3,
+
+      filterCriteriaMap: {
+        communityAccessLevel: "public"
+      }
     }
     this.communitySuggestionsLoading = true
     this.profileV2RevampSvc.getCommunities(formBody).subscribe({
