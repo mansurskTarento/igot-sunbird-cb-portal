@@ -104,12 +104,10 @@
                                     </div>
                                 </ng-container>
                                 <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
-                                    <ng-container *ngIf="isUnenrolled(courseEnrollment?.courseId); else inProgress">
-                                        <div class="un-enrolled-course font-stats rounded">Un-Enrolled</div>
-                                    </ng-container>
-                                    <ng-template #inProgress>
-                                        <div class="inprogress-course font-stats rounded">In - Progress</div>
-                                    </ng-template>
+                                    <div class="inprogress-course font-stats rounded">In - Progress</div>
+                                </ng-container>
+                                <ng-container *ngIf="isUnenrolled()">
+                                    <div class="un-enrolled-course font-stats rounded">Un-Enrolled</div>
                                 </ng-container>
                                 <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
                                     <div class="inprogress-course font-stats rounded">Completed</div>

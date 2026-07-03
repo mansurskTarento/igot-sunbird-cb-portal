@@ -194,9 +194,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     return ''
   }
 
-  isUnenrolled(courseId: string): boolean {
+  isUnenrolled(): boolean {
     if (this.unenrolledCourses.length) {
-      return this.unenrolledCourses.some((ele: any) => ele.courseId === courseId)
+      return this.unenrolledCourses.some((ele: any) => ele.courseId === this.content?.identifier)
     }
     return false
   }

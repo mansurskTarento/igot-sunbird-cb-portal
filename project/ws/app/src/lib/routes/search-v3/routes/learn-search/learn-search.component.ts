@@ -1486,7 +1486,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         userId
       ),
       unenrolled: this.searchV3Service.enrollment(
-        { request: { ...request.request, status: 'Un-Enrolled' } },
+        { request: { ...request.request, status: 'Unenrolled' } },
         userId
       ),
       cbpPlan: this.userService.fetchCbpPlanList(),
