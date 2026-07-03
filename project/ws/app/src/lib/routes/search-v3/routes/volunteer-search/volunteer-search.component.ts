@@ -21,6 +21,7 @@ import {
   SortType,
 } from '../../models/search-v3.model'
 import { NsContent } from '@sunbird-cb/collection'
+import { ContentDictionaryService } from '@sunbird-cb/consumption'
 import { environment } from '../../../../../../../../../src/environments/environment'
 
 @Component({
@@ -71,6 +72,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     private valueSvc: ValueService,
     private translate: TranslateService,
     private router: Router,
+    private contentDictionarySvc: ContentDictionaryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -126,6 +128,8 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
       this.competencySubThemeKey,
     ])
     this.searchRequestCourse.request.limit = this.initialPaginationSize
+    this.searchRequestCourse.request.filters.courseCategory = ['course']
+    // Default sort for composite API: recently added maps to lastUpdatedOn desc
     this.searchRequestCourse.request.sort_by.createdOn = 'desc'
     this.courseSearchResults = []
     this.courseSearchTotalCount = 0
@@ -140,45 +144,84 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     this.searchContentLoader = false
   }
 
-  async searchCourses() {
-    if (
-      this.searchRequestCourse &&
-      this.searchRequestCourse['request'] &&
-      Object.keys(this.searchRequestCourse['request']['filters'])
-    ) {
-      if (
-        this.searchRequestCourse['request']['filters']['courseCategory']
-          ?.length === 0
-      ) {
-        this.searchRequestCourse['request']['filters']['courseCategory'] = {
-          '!=': ['pre enrolment assessment'],
-        }
-      }
-      if (
-        this.searchRequestCourse['request']['facets'] &&
-        this.searchRequestCourse['request']['facets'].length
-      ) {
-        this.searchRequestCourse['request']['facets'] = _.uniq(
-          this.searchRequestCourse['request']['facets']
-        )
-      }
+  /**
+   * Builds the request body for /composite/v5/search.
+   * Maps sort_by.createdOn → lastUpdatedOn since composite API uses lastUpdatedOn.
+   * Strips contentType (not used by composite) and ensures courseCategory defaults to ['course'].
+   */
+  private buildCompositeRequest(): any {
+    const src = this.searchRequestCourse.request
+    const filters: any = { status: 'Live' }
+
+    if (src.filters.courseCategory?.length > 0) {
+      filters.courseCategory = src.filters.courseCategory
+    } else {
+      filters.courseCategory = ['course']
     }
-    this.searchRequestCourse.request.query = this.searchQuery
 
-    const result = await this.searchV3Service.searchVolunteerCourses(
-      this.searchRequestCourse
-    )
+    // Copy selective filters; skip contentType (irrelevant for composite endpoint)
+    const filterKeys = [
+      'language', 'organisation', 'avgRating',
+      'sectorId', 'subSectorId',
+      FacetType.sectorNames_v1, FacetType.subSectorNames_v1,
+      this.competencyAreaNameKey,
+      this.competencyThemeKey,
+      this.competencySubThemeKey,
+    ]
+    filterKeys.forEach(key => {
+      const val = src.filters[key]
+      if (val === undefined || val === null) { return }
+      if (Array.isArray(val) && val.length === 0) { return }
+      if (!Array.isArray(val) && typeof val === 'object' && Object.keys(val).length === 0) { return }
+      filters[key] = val
+    })
 
-    if (result.result && result.result.content) {
-      this.courseSearchResults = result.result.content
-      this.courseSearchTotalCount = result.result?.count
-      this.coursesFacets = result.result?.facets || []
+    // Map sort_by: createdOn → lastUpdatedOn for composite API
+    const sortBy: any = {}
+    if (src.sort_by.createdOn) {
+      sortBy.lastUpdatedOn = src.sort_by.createdOn
+    } else if (src.sort_by.avgRating) {
+      sortBy.avgRating = src.sort_by.avgRating
+    } else if (src.sort_by.name) {
+      sortBy.name = src.sort_by.name
+    } else {
+      sortBy.lastUpdatedOn = 'desc'
+    }
+
+    return {
+      request: {
+        filters,
+        query: this.searchQuery,
+        sort_by: sortBy,
+        limit: src.limit,
+        offset: src.offset,
+        facets: _.uniq(src.facets),
+      },
+    }
+  }
+
+  async searchCourses() {
+    const compositeRequest = this.buildCompositeRequest()
+    const result = await this.searchV3Service.searchVolunteerCoursesComposite(compositeRequest)
+
+    if (result?.result?.content?.length > 0) {
+      const identifiers: string[] = result.result.content
+        .map((c: any) => c.identifier)
+        .filter(Boolean)
+
+      const enriched = identifiers.length
+        ? await forkJoin(identifiers.map((id: string) => this.contentDictionarySvc.getContent(id))).toPromise()
+        : []
+
+      this.courseSearchResults = (enriched || []).filter(Boolean)
+      this.courseSearchTotalCount = result.result.count || this.courseSearchResults.length
+      this.coursesFacets = result.result.facets || []
       this.combinedFacets = [this.coursesFacets]
     } else {
       this.courseSearchResults = []
       this.courseSearchTotalCount = 0
       this.coursesFacets = result?.result?.facets || []
-      this.combinedFacets = []
+      this.combinedFacets = this.coursesFacets.length ? [this.coursesFacets] : []
     }
   }
 
@@ -192,6 +235,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize
     this.searchRequestCourse.request.filters.courseCategory = []
     this.searchRequestCourse.request.filters.avgRating = {}
+    this.initialPaginationPage = 1
 
     if (this.searchSortFilter === SortType.RecentlyAdded) {
       this.searchRequestCourse.request.sort_by.createdOn = 'desc'
@@ -203,8 +247,6 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
       this.searchRequestCourse.request.sort_by.name = SortType.Descending
     }
 
-    this.initialPaginationPage = 1
-
     Object.keys(selectedFilters).forEach((key) => {
       if (selectedFilters[key] && Array.isArray(selectedFilters[key])) {
         if (
@@ -215,13 +257,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
           key === SearchCategory.Resources ||
           key === SearchCategory.ExternalContents
         ) {
-          // Category type selectors - skip, volunteer search only shows courses
-        } else if (key === 'contentType') {
-          if (selectedFilters[key].length > 0) {
-            this.searchRequestCourse.request.filters.courseCategory!.push(
-              ...selectedFilters[key]
-            )
-          }
+          // Category-type keys not applicable to volunteer search
         } else if (key === FacetType.AvgRating) {
           const ratings = selectedFilters[key]
             .map((val: string) => parseFloat(val.split(' ')[0]))
@@ -232,29 +268,23 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
             }
           }
         } else if (key === FacetType.Language) {
-          this.searchRequestCourse.request.filters.language =
-            selectedFilters[key]
+          this.searchRequestCourse.request.filters.language = selectedFilters[key]
         } else if (key === FacetType.Organization) {
-          this.searchRequestCourse.request.filters.organisation =
-            selectedFilters[key]
+          this.searchRequestCourse.request.filters.organisation = selectedFilters[key]
         } else if (key === this.competencyAreaNameKey) {
-          this.searchRequestCourse.request.filters[
-            this.competencyAreaNameKey
-          ] = selectedFilters[key]
+          this.searchRequestCourse.request.filters[this.competencyAreaNameKey] = selectedFilters[key]
         } else if (key === this.competencyThemeKey) {
-          this.searchRequestCourse.request.filters[this.competencyThemeKey] =
-            selectedFilters[key]
+          this.searchRequestCourse.request.filters[this.competencyThemeKey] = selectedFilters[key]
         } else if (key === this.competencySubThemeKey) {
-          this.searchRequestCourse.request.filters[
-            this.competencySubThemeKey
-          ] = selectedFilters[key]
+          this.searchRequestCourse.request.filters[this.competencySubThemeKey] = selectedFilters[key]
         } else if (key === FacetType.sectorNames_v1) {
-          this.searchRequestCourse.request.filters[FacetType.sectorNames_v1] =
-            selectedFilters[key]
+          this.searchRequestCourse.request.filters[FacetType.sectorNames_v1] = selectedFilters[key]
         } else if (key === FacetType.subSectorNames_v1) {
-          this.searchRequestCourse.request.filters[
-            FacetType.subSectorNames_v1
-          ] = selectedFilters[key]
+          this.searchRequestCourse.request.filters[FacetType.subSectorNames_v1] = selectedFilters[key]
+        } else if (key === FacetType.courseCategory) {
+          if (selectedFilters[key].length > 0) {
+            this.searchRequestCourse.request.filters.courseCategory = selectedFilters[key]
+          }
         } else {
           this.searchRequestCourse.request.filters.courseCategory!.push(
             ...selectedFilters[key]
@@ -282,11 +312,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
         }
       })
     }
-    removeEmpty(
-      courseFilters,
-      [FacetType.Language, FacetType.Organization],
-      false
-    )
+    removeEmpty(courseFilters, [FacetType.Language, FacetType.Organization], false)
     removeEmpty(courseFilters, [FacetType.AvgRating], true)
     removeEmpty(
       courseFilters,
@@ -304,9 +330,10 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
   async onPageChange(event: PageChangeEmitter) {
     this.searchContentLoader = true
     this.scrollToTop()
+    this.initialPaginationSize = event.limit
+    this.initialPaginationPage = event.currentPage
     this.searchRequestCourse.request.limit = event.limit
-    this.searchRequestCourse.request.offset =
-      (event.currentPage - 1) * event.limit
+    this.searchRequestCourse.request.offset = (event.currentPage - 1) * event.limit
     await this.searchCourses()
     this.searchContentLoader = false
   }
@@ -314,10 +341,10 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
   async onChangeSortSearch(event: string) {
     this.searchContentLoader = true
     this.searchSortFilter = event
-    this.initialPaginationPage = 1
     this.searchRequestCourse.request.sort_by = {}
     this.searchRequestCourse.request.offset = 0
     this.searchRequestCourse.request.limit = this.initialPaginationSize
+    this.initialPaginationPage = 1
 
     if (event === SortType.RecentlyAdded) {
       this.searchRequestCourse.request.sort_by.createdOn = 'desc'
@@ -328,6 +355,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     } else if (event === SortType.ZtoA) {
       this.searchRequestCourse.request.sort_by.name = SortType.Descending
     }
+    // MostRelevent: empty sort_by — composite API uses its own relevance ranking
 
     await this.searchCourses()
     this.searchContentLoader = false
@@ -366,7 +394,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
   }
 
   onConstructQueryParam(_category: string) {
-    // Volunteer search only has courses - no category switching needed
+    // Volunteer search only shows courses — no category switching needed
   }
 
   private scrollToTop() {

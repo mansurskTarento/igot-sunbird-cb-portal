@@ -1,3 +1,12 @@
+<div *ngIf="configSvc.globalConfigLoadFailed" class="global-config-error-screen">
+  <div class="global-config-error-box">
+    <div class="global-config-error-icon">⚠</div>
+    <h1 class="global-config-error-title">Application Error</h1>
+    <p class="global-config-error-message">Something went wrong while loading the application. Please try again.</p>
+    <button class="global-config-error-btn" (click)="reloadPage()">Refresh Page</button>
+  </div>
+</div>
+<ng-container *ngIf="!configSvc.globalConfigLoadFailed">
 <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop"></app-tour>
 <app-no-connection></app-no-connection>
 <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
@@ -55,3 +64,4 @@
 <input #appUpdateTitle type="hidden" i18n-value value="App Update" />
 <input #appUpdateBody type="hidden" i18n-value value="App has been updated. Do you want to load new version?" />
 <div #skipper tabindex="-1"></div>
+</ng-container>

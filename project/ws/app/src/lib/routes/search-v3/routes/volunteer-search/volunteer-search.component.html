@@ -1,6 +1,5 @@
-<div class="container-balanced margin-top-l margin-bottom-xl">
-  <div class="volunteer-search">
-    <mat-sidenav-container autosize class="search-nav-container" [hasBackdrop]="false">
+<div class="volunteer-search margin-top-l margin-bottom-xl">
+    <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
         <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start"
             class="custom-sidenav filter-container-search"
             *ngIf="(combinedFacets.length > 0 || (courseSearchTotalCount > 0 && !searchContentLoader)) && !screenSizeIsLtMedium">
@@ -89,5 +88,4 @@
             </div>
         </mat-sidenav-content>
     </mat-sidenav-container>
-  </div>
 </div>

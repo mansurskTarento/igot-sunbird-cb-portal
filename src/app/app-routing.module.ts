@@ -20,6 +20,7 @@ import { AppGyaanKarmayogiService } from './services/app-gyaan-karmayogi.service
 import { AppEventPageResolverService } from './services/app-event-page-resolver.service'
 import { HomeResolverService } from './home/home/home-resolver.service'
 import { FormDataResolverService } from './services/form-data-resolver.service'
+import { FormConfigResolverService } from './services/form-config-resolver.service'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
@@ -586,9 +587,10 @@ const routes: Routes = [
       pageKey: 'profile-v2',
       pageId: 'app/person-profile',
       module: 'Profile',
+      pageSubtype: 'profile'
     },
     resolve: {
-      pageData: FormDataResolverService,
+      pageData: FormConfigResolverService,
     },
   },
   {

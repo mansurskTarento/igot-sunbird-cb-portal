@@ -240,6 +240,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
   }
 
+  reloadPage() {
+    window.location.reload()
+  }
+
   openIntro() {
     // if (!(this.rootSvc.getCookie('intro') && !!(this.rootSvc.getCookie('intro')))) {
     //   if (this.router.url === '/page/home') {

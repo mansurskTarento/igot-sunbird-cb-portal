@@ -2,6 +2,12 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-vars';
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
+.container-balanced {
+  @extend %page-center;
+  height: auto;
+  min-height: 400px;
+}
+
 .volunteer-search {
   .custom-sidenav {
     width: 22.5%;

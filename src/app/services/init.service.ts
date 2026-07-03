@@ -19,6 +19,7 @@ import {
 import { environment } from '../../environments/environment'
 /* tslint:disable */
 import _ from 'lodash'
+import { firstValueFrom } from 'rxjs'
 import { map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 import { NPSGridService } from '@sunbird-cb/collection'
@@ -29,6 +30,7 @@ import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
+import { FormExtService } from './form-ext.service'
 declare const smartech: any
 /* tslint:enable */
 
@@ -63,6 +65,7 @@ export class InitService {
     private netCoreService: NetCoreService,
     private commonDataSvc: CommonDataService,
     private contentDictionarySvc: ContentDictionaryService,
+    private formSvc: FormExtService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,
@@ -323,19 +326,31 @@ export class InitService {
 
   private async globalConfigData(): Promise<any> {
     try {
-      const globalConfig: any = await this.http
-        .get<any>(`${this.baseUrl}/global-config.json`)
-        .toPromise()
-      this.configSvc.globalConfig = globalConfig
+      const request = {
+        request: {
+          subType: 'global-web',
+          type: 'page',
+          portal: 'portal',
+          clientVersion: 1.0,
+        },
+      }
+      const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
+      this.configSvc.globalConfig = response.result.data
     } catch (e) {
-      console.warn('InitService: Failed to load global-config.json, using defaults', e)
+      console.error('InitService: Failed to load global config', e)
       this.configSvc.globalConfig = {}
+      this.configSvc.globalConfigLoadFailed = true
     }
     return this.configSvc.globalConfig
   }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig = await this.enrollSvc.fetchEnrollStats(this.configSvc.userProfile?.userId).toPromise().then((res: any) => {
+    const enrollmentSummaryConfig = this.configSvc.globalConfig?.apis?.user?.userEnrollmentSummary
+    if (!enrollmentSummaryConfig?.enabled) {
+      return {} as NsInstanceConfig.IConfig
+    }
+    const userId = this.configSvc.userProfile?.userId
+    const publicConfig: NsInstanceConfig.IConfig = await firstValueFrom(this.enrollSvc.fetchEnrollStats(userId, enrollmentSummaryConfig.url)).then((res: any) => {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
@@ -365,7 +380,6 @@ export class InitService {
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
 
       }
-
       if (this.configSvc.userProfile) {
         const userProfile = this.configSvc && this.configSvc.userProfile
         if (userProfile.rootOrgId) {
