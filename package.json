@@ -55,7 +55,7 @@
     "@project-sunbird/telemetry-sdk": "0.0.26",
     "@sunbird-cb/consumption": "0.0.9-ang-17-20-bharat-kalp",
     "@sunbird-cb/design-system": "0.0.10",
-    "@sunbird-cb/discussion-v2": "0.0.2-ang-17-20-bharat-kalp",
+    "@sunbird-cb/discussion-v2": "0.0.3-ang-17-20-bharat-kalp",
     "@sunbird-cb/micro-surveys": "0.0.1-ang-17-20",
     "@sunbird-cb/notification": "0.0.3-ang-17-20",
     "@sunbird-cb/rain-dashboards": "0.0.1-ang-17-20",
