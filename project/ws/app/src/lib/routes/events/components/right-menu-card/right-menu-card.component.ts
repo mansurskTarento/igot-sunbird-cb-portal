@@ -258,10 +258,19 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     return false
   }
 
+  isMeetingLink(url: string): boolean {
+    if (!url) {
+      return false
+    }
+    return /(meet\.google\.com|zoom\.(us|com)|teams\.(microsoft|live)\.com)/i.test(url)
+  }
+
   navigateToPLayer() {
     if (this.isenrollFlow) {
       const url = this.findUrl()
-      if (url.includes('youtube.com')) {
+      if (this.isMeetingLink(url)) {
+        window.open(url, '_blank')
+      } else if (url.includes('youtube.com')) {
         const videoId = url.split('/').pop()
         const youtubeId = videoId?.split('?')[0] || videoId
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
