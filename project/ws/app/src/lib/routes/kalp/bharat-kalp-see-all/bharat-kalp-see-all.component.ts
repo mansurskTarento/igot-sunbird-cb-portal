@@ -92,8 +92,7 @@ export class BharatKalpSeeAllComponent implements OnInit {
       this.weeksData = this.weekProgress?.weeks?.tabs || []
     }
 
-    const totalWeeks = this.weekProgress?.totalWeeks || 16
-    this.weeks = Array.from({ length: totalWeeks }, (_, i) => i + 1)
+    this.weeks = Array.from({ length: this._computeTotalWeeks() }, (_, i) => i + 1)
     this.currentWeek = this._computeCurrentWeek()
 
     const qWeek = this.route.snapshot.queryParams?.['week']
@@ -102,15 +101,33 @@ export class BharatKalpSeeAllComponent implements OnInit {
     this._fetchContent()
   }
 
+  private _parseBkDate(dateStr: string): Date {
+    const parts = dateStr.split('-')
+    /* Detect DD-MM-YYYY: third segment is 4-digit year */
+    return parts.length === 3 && parts[2].length === 4
+      ? new Date(`${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`)  /* DD-MM-YYYY → YYYY-MM-DD */
+      : new Date(dateStr)
+  }
+
+  /** Week count derived from bkConfig startDate/endDate; falls back to configured totalWeeks */
+  private _computeTotalWeeks(): number {
+    const { startDate, endDate } = this.bkConfig || {}
+    if (startDate && endDate) {
+      const start = this._parseBkDate(startDate)
+      const end = this._parseBkDate(endDate)
+      if (!isNaN(start.getTime()) && !isNaN(end.getTime()) && end >= start) {
+        const diffDays = Math.floor((end.getTime() - start.getTime()) / 86_400_000)
+        return Math.ceil((diffDays + 1) / 7)
+      }
+    }
+    return this.bkConfig?.totalWeeks || this.weekProgress?.totalWeeks || 16
+  }
+
   private _computeCurrentWeek(): number {
     const startDate = this.bkConfig?.startDate
     if (!startDate) return 1
     const now = new Date()
-    const parts = startDate.split('-')
-    /* Detect DD-MM-YYYY: third segment is 4-digit year */
-    const start = parts.length === 3 && parts[2].length === 4
-      ? new Date(`${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`)  /* DD-MM-YYYY → YYYY-MM-DD */
-      : new Date(startDate)
+    const start = this._parseBkDate(startDate)
     if (now < start) return 1
     const diff = Math.floor((now.getTime() - start.getTime()) / 86_400_000)
     return Math.min(Math.floor(diff / 7) + 1, this.weeks.length)
