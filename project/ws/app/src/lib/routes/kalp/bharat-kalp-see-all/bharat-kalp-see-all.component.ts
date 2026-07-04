@@ -312,9 +312,15 @@ export class BharatKalpSeeAllComponent implements OnInit {
     this._fetchContent()
   }
 
+  /** Display label for a week — configured `name` from week data (e.g. "Week 0"), falls back to "Week N" */
+  weekLabel(week: number): string {
+    const wd = this.weeksData.find((w: any) => w.id === `week_${week}`)
+    return wd?.name || `Week ${week}`
+  }
+
   get selectedWeekLabel(): string {
     if (this.selectedWeek === ALL_WEEKS) return 'All Weeks'
-    return 'Week ' + this.selectedWeek
+    return this.weekLabel(this.selectedWeek)
   }
 
   @HostListener('document:click', ['$event'])

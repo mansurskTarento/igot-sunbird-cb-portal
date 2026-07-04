@@ -33,7 +33,7 @@
           </div>
           <div *ngFor="let w of weeks" class="bk-week-dd__option"
             [class.bk-week-dd__option--active]="selectedWeek === w" (click)="selectWeekOption(w)">
-            <span>Week {{ w }}</span>
+            <span>{{ weekLabel(w) }}</span>
           </div>
         </div>
       </div>

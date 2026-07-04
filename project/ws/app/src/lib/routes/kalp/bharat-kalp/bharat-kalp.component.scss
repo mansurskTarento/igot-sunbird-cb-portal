@@ -50,6 +50,14 @@
   }
 }
 
+/* Large phones / small tablets: 78% over-stretches a single card,
+   show ~2 per view instead (after the 768 block so it wins) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .bk-dv2-comm-item {
+    flex: 0 0 calc((100% - 12px) / 2.1);
+  }
+}
+
 /* ─── Community empty state ─── */
 .bk-comm-empty {
   display: flex;
