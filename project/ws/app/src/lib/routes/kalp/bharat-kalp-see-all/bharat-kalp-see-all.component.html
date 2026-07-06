@@ -33,7 +33,7 @@
           </div>
           <div *ngFor="let w of weeks" class="bk-week-dd__option"
             [class.bk-week-dd__option--active]="selectedWeek === w" (click)="selectWeekOption(w)">
-            <span>Week {{ w }}</span>
+            <span>{{ weekLabel(w) }}</span>
           </div>
         </div>
       </div>
@@ -42,7 +42,7 @@
 
   <!-- Content type line tabs -->
   <mat-tab-group class="bk-see-all__tabs" animationDuration="0ms" [selectedIndex]="activeTabIndex"
-    [mat-stretch-tabs]="contentTypeTabs.length > 1" (selectedIndexChange)="onTabChange($event)">
+    [mat-stretch-tabs]="false" (selectedIndexChange)="onTabChange($event)">
     <mat-tab *ngFor="let tab of contentTypeTabs; trackBy: trackTabKey" [label]="tab.label"></mat-tab>
   </mat-tab-group>
 
