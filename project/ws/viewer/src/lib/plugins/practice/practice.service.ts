@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
 import { NSPractice } from './practice.model'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { TocConfigService } from '@sunbird-cb/toc'
 import { CommonMethodsService } from '@sunbird-cb/consumption'
 import { BehaviorSubject, EMPTY, Observable, Subject, of, throwError } from 'rxjs'
-import { catchError, concatMap, delay, map, retryWhen, shareReplay, switchMap, take } from 'rxjs/operators'
+import { concatMap, delay, map, retryWhen, switchMap, take } from 'rxjs/operators'
 // tslint:disable-next-line
 import _ from 'lodash'
 
@@ -52,14 +52,12 @@ export class PracticeService {
   checkAlreadySubmitAssessment = new Subject()
   clearResponse = new Subject()
 
-  private playerConfig$: Observable<any> = this.http
-    .get<any>(`${this.configSvc.sitePath}/feature/toc.json`)
-    .pipe(catchError(() => of({})), shareReplay(1))
+  private playerConfig$: Observable<any> = this.tocConfigSvc.getTocConfig()
 
   constructor(
     private http: HttpClient,
-    private configSvc: ConfigurationsService,
     private commonMethodsSvc: CommonMethodsService,
+    private tocConfigSvc: TocConfigService,
   ) {
 
   }

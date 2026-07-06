@@ -1,52 +1,31 @@
 <sb-uic-bharat-kalp [sectionList]="sectionList" [configDetails]="configService" [bkConfiguration]="bkConfig"
-  [individualSection]="individualSection" [communityCardsTemplate]="communityTpl"
-  (communitiesLoaded)="onCommunitiesLoaded($event)">
+  [individualSection]="individualSection" [communityCardsTemplate]="communityTpl">
 </sb-uic-bharat-kalp>
 
 <ng-template #communityTpl let-communities="communities" let-loading="loading">
-  <div class="bk-dv2-comm-wrapper">
 
-    <button class="bk-dv2-comm-arrow" [style.visibility]="!loading && canCommPrev ? 'visible' : 'hidden'"
-      (click)="commPrev(commTrackEl)">
-      <mat-icon>chevron_left</mat-icon>
-    </button>
-
-    <div class="bk-dv2-comm-track" #commTrackEl (scroll)="onCommScroll(commTrackEl)">
-
-      <ng-container *ngIf="loading">
-        <div class="bk-dv2-comm-item" *ngFor="let s of [1,2,3,4]">
-          <d-v2-community-card [isLoading]="true"></d-v2-community-card>
-        </div>
-      </ng-container>
-
-      <ng-container *ngIf="!loading && communities.length">
-        <div class="bk-dv2-comm-item" *ngFor="let c of communities" (click)="openCommunity(c)">
-          <d-v2-community-card [community]="c" [orgDetails]="c?.additionalInfo || {}">
-          </d-v2-community-card>
-        </div>
-      </ng-container>
-
-      <div class="bk-comm-empty" *ngIf="!loading && !communities.length">
-        <img src="/assets/common/error-pages/empty_search.svg" alt="No communities" class="bk-comm-empty__img">
-        <p class="bk-comm-empty__text">No communities available</p>
-      </div>
-
+  <!-- Skeleton while loading -->
+  <sb-uic-horizontal-scroller-v2 *ngIf="loading" [id]="'bk-communities-skeleton'" [loadStatus]="'fetching'"
+    [widgetsLength]="4" [sliderConfig]="{ showNavs: false, showDots: false }">
+    <div class="bk-dv2-comm-item" *ngFor="let s of [1,2,3,4]">
+      <d-v2-community-card [isLoading]="true"></d-v2-community-card>
     </div>
+  </sb-uic-horizontal-scroller-v2>
 
-    <button class="bk-dv2-comm-arrow" [style.visibility]="!loading && canCommNext ? 'visible' : 'hidden'"
-      (click)="commNext(commTrackEl)">
-      <mat-icon>chevron_right</mat-icon>
-    </button>
+  <!-- Real cards -->
+  <sb-uic-horizontal-scroller-v2 *ngIf="!loading && communities.length" [id]="'bk-communities'"
+    [loadStatus]="'done'" [widgetsLength]="communities.length" [defaultMaxWidgets]="communities.length"
+    [sliderConfig]="{ showNavs: true, showDots: true, dotsAlign: 'center', showNavsSpacing: true }">
+    <div class="bk-dv2-comm-item" *ngFor="let c of communities" (click)="openCommunity(c)">
+      <d-v2-community-card [community]="c" [orgDetails]="c?.additionalInfo || {}">
+      </d-v2-community-card>
+    </div>
+  </sb-uic-horizontal-scroller-v2>
 
-  </div>
-
-  <!-- Dots -->
-  <div class="bk-dv2-comm-dots" *ngIf="!loading && commDotCount > 1">
-    <span *ngFor="let d of communityDots; let i = index"
-      class="bk-dv2-comm-dot"
-      [class.bk-dv2-comm-dot--active]="i === commDotIndex"
-      (click)="goToCommDot(i, commTrackEl)">
-    </span>
+  <!-- Empty state -->
+  <div class="bk-comm-empty" *ngIf="!loading && !communities.length">
+    <img src="/assets/common/error-pages/empty_search.svg" alt="No communities" class="bk-comm-empty__img">
+    <p class="bk-comm-empty__text">No communities available</p>
   </div>
 
 </ng-template>

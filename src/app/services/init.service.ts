@@ -181,8 +181,8 @@ export class InitService {
         await this.fetchUserDetails()
       }
     })
-    await this.fetchDefaultConfig()
     await this.globalConfigData()
+    await this.fetchDefaultConfig()
 
     // Invalid User
     try {
@@ -295,9 +295,26 @@ export class InitService {
   }
 
   private async fetchDefaultConfig(): Promise<NsInstanceConfig.IConfig> {
-    const publicConfig: NsInstanceConfig.IConfig | any = await this.http
-      .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/application.config.json`)
-      .toPromise()
+    let publicConfig: NsInstanceConfig.IConfig | any
+    try {
+      const request = {
+        request: {
+          type: 'page',
+          subType: 'application-config-web',
+          portal: 'portal',
+          clientVersion: this.configSvc?.globalConfig?.formClentVersion['application-config-web'] || 1.0,
+        },
+      }
+      const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
+      publicConfig = response?.result?.data || response?.result?.form?.data
+      if (!publicConfig) {
+        throw new Error('InitService: Empty application config received from form API')
+      }
+    } catch (e) {
+      console.error('InitService: Failed to load application config from form API, falling back to static file', e)
+      publicConfig = await firstValueFrom(this.http
+        .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/application.config.json`))
+    }
     if (publicConfig.npsCategory) {
       localStorage.setItem('npsCategory', publicConfig.npsCategory)
     }

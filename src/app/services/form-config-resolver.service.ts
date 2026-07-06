@@ -32,11 +32,9 @@ resolve(
           'clientVersion': 1
       },
     }
-    debugger
     return this.formSvc.formConfigReadData(requestData).pipe(
         map((rData: any) => {
-          debugger
-          const finalData = rData && rData.result.form.data
+          const finalData = rData && rData.result?.form?.data || rData.result?.data
           return ({ data: finalData, error: null })
         }),
         catchError((_error: any) => {

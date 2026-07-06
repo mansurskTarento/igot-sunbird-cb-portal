@@ -11,7 +11,7 @@ import { MobileAppsService } from './services/mobile-apps.service'
 import { ViewerHeaderSideBarToggleService } from './viewer-header-side-bar-toggle.service'
 import { PdfScormDataService } from './pdf-scorm-data-service'
 import { TranslateService } from '@ngx-translate/core'
-import { AppTocService, AppTocV2Service, ViewerUtilService, WidgetContentService, TStatus, ViewerDataService } from '@sunbird-cb/toc'
+import { AppTocService, AppTocV2Service, TocConfigService, ViewerUtilService, WidgetContentService, TStatus, ViewerDataService } from '@sunbird-cb/toc'
 
 export enum ErrorType {
   accessForbidden = 'accessForbidden',
@@ -104,6 +104,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     public tocSvc: AppTocService,
     private tocV2Svc: AppTocV2Service,
     private viewerUtilSvc: ViewerUtilService,
+    private tocConfigSvc: TocConfigService,
   ) {
     this.rootSvc.showNavbarDisplay$.next(false)
     this.abc.mobileTopHeaderVisibilityStatus.next(false)
@@ -803,8 +804,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
   }
 
   getTocConfig() {
-    const url = `${this.configSvc.sitePath}/feature/toc.json`
-    this.widgetServ.fetchConfig(url).subscribe(data => {
+    this.tocConfigSvc.getTocConfig().subscribe(data => {
       this.tocConfig = data
       this.widgetServ.updateTocConfig(data)
     })
