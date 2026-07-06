@@ -735,6 +735,14 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     })
   }
 
+  private getGlobalSearchRoute(): string {
+    const userRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = Array.isArray(userRoles) && userRoles.some(
+      (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+    )
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
   processRecentSearchText(query: any) {
     document.getElementById('global-search-input')?.blur()
     const queryParams = {
@@ -750,10 +758,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
+    const searchRoute = this.getGlobalSearchRoute()
+    const mergeQueryParams = window.location.pathname === searchRoute
     if (this.ref === 'home') {
       this.closed.emit(false)
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
+      this.router.navigate([searchRoute], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
@@ -776,10 +785,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
+    const searchRoute = this.getGlobalSearchRoute()
+    const mergeQueryParams = window.location.pathname === searchRoute
     if (this.ref === 'home') {
       this.closed.emit(false)
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
+      this.router.navigate([searchRoute], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
