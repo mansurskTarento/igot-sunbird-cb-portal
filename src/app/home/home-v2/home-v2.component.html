@@ -1,7 +1,9 @@
-<div class="m-20">
+<div class="home-content m-5">
     <ws-home-carousel-banner-v2></ws-home-carousel-banner-v2>
     <ws-welcome-greeting-v2></ws-welcome-greeting-v2>
     <ws-continue-learning-v2></ws-continue-learning-v2>
-    <ws-in-spotlight-v2></ws-in-spotlight-v2>
-    <sb-uic-content-sections [sections]="homePageSections"></sb-uic-content-sections>
+    @if (homePageSections) {
+    <sb-uic-contetn-sections [sections]="homePageSections"
+        (cardClicked)="cardClicked($event)"></sb-uic-contetn-sections>
+    }
 </div>

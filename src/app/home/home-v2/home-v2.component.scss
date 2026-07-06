@@ -2,6 +2,11 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-common';
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
+.home-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .font-semibold {
   font-weight: 600 !important;
 }

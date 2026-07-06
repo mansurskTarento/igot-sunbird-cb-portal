@@ -21,7 +21,6 @@ const API_END_POINTS = {
 
 export class HomePageService {
   closeDialogPop = new Subject()
-  showLeaderboardPanel = new Subject<boolean>()
   constructor(private http: HttpClient) { }
   private leaderboardData$: Observable<any> | null = null
   getInsightsData(payload: any) {

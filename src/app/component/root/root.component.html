@@ -1,8 +1,11 @@
 <div class="flex gap-0 root-container">
   @if ((isXSmall$ | async) === false) {
   <div class="w-fit">
-    <app-dynamic-sidebar [menuBarDetails]="menuBarDetails" (sidebarStateChange)="sidebarStateChanged($event)"
-      (navItemClicked)="onNavItemClicked($event)"></app-dynamic-sidebar>
+    @if (menuBarDetails) {
+    <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
+      [otherDetailsChanged]="otherDetailsChanged()" (sidebarStateChange)="sidebarStateChanged($event)"
+      (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
+    }
   </div>
   }
   <div
@@ -52,9 +55,9 @@
       [headerFooterConfigData]="headerFooterConfigData">
     </ws-app-footer>
 
-    <ws-app-nav-bar class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
+    <ws-app-nav-bar-v2 class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
       *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
-    </ws-app-nav-bar>
+    </ws-app-nav-bar-v2>
 
     <ng-container #previewContainer></ng-container>
     <input #appUpdateTitle type="hidden" i18n-value value="App Update" />

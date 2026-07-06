@@ -1,6 +1,10 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-vars';
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
+:host ::ng-deep .mat-toolbar {
+  background-color: var(--surface-primary) !important;
+}
+
 .top-nav-bar-on-menubar-open {
   width: calc(100% - 328px);
 }
@@ -44,6 +48,21 @@
 .mobile {
   border-bottom: 1px solid #ccc;
   box-shadow: none !important;
+}
+
+@include breakpoint-xs {
+
+  .mobile,
+  .mobile-height {
+    width: 100% !important;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .top-nav-bar-on-menubar-open,
+  .top-nav-bar-on-menubar-close {
+    width: 100% !important;
+  }
 }
 
 .logo-dim {

@@ -1,6 +1,8 @@
+import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Router } from '@angular/router'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
+import { Observable, map, catchError, of } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -8,8 +10,11 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 export class HomeV2ResolverService {
   private readonly configSvc = inject(ConfigurationsService)
   private readonly router = inject(Router)
+  private readonly http = inject(HttpClient)
 
-  resolve(): boolean {
+  constructor() { }
+
+  resolve(): Observable<IResolveResponse<any>> {
     const profileDetails = this.configSvc?.unMappedUser?.profileDetails
 
     const isNotMyUser = profileDetails?.profileStatus?.toLowerCase() === 'not-my-user'
@@ -18,7 +23,10 @@ export class HomeV2ResolverService {
     if (isNotMyUser && isIgotOrg) {
       this.router.navigateByUrl('app/person-profile/me#profileInfo')
     }
-
-    return true
+    const baseUrl = this.configSvc.sitePath
+    return this.http.get(`${baseUrl}/page/home-v2.json`).pipe(
+      map(data => ({ data, error: null })),
+      catchError(err => of({ data: null, error: err })),
+    )
   }
 }

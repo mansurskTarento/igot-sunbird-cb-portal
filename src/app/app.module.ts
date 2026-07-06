@@ -75,6 +75,7 @@ import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
 import { NoConnectionV2Component } from './component/no-connection-v2/no-connection-v2.component'
 import { KarmaLeaderboardV2Module } from './home/home-v2/karma-leaderboard-v2/karma-leaderboard-v2.module'
+import { AppNavBarV2Component } from './component/app-nav-bar-v2/app-nav-bar-v2.component'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -158,7 +159,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
-    GuidedTourModule
+    GuidedTourModule,
+    AppNavBarV2Component
 
   ],
   exports: [

@@ -6,6 +6,19 @@
   vertical-align: middle;
 }
 
+.icon-svg {
+  display: block;
+  background-color: var(--text-bandw-black-body);
+  mask-size: contain;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
 .langdiv {
   .mat-mdc-form-field.mat-focused:not(.mat-form-field-invalid) {
 
@@ -70,6 +83,27 @@
     position: absolute;
     width: 70%;
   }
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+}
+
+.counter {
+  position: absolute;
+  top: 0;
+  left: 13px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(209, 57, 36, 1);
+  color: white;
+  text-align: center;
+  font-size: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: Lato;
 }
 
 .active {

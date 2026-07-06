@@ -3,7 +3,7 @@
   @for (rnc of rightNavConfig(); track rnc.section) {
   <!-- Notification Bell -->
   @if (item()?.type === 'notificationBell' && rnc.section === 'notification' && rnc.active) {
-  <li class="notification-icon inline-block cursor-pointer">
+  <li class="notification-icon inline-block mt-2 cursor-pointer">
     <div #notificationTrigger [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()" title="Notifications"
       (keydown.enter)="$event.preventDefault(); notificationTrigger.click(); onBellClick();" tabindex="0"
       (keydown.escape)="$event.preventDefault(); notificationTrigger.click();">
@@ -26,16 +26,6 @@
     </mat-menu>
   </li>
   }
-
-  <!-- Download App -->
-  @if (rnc.section === 'download' && rnc.active && item()?.type === 'downloadButton' && item()?.forPreview) {
-  <li matTooltipClass="right-nav-tooltip" [matTooltip]="'toprightnavbar.downloadApp' | translate"
-    class="download-app-chip inline-block cursor-pointer rounded-full bg-[#F3962F] text-white min-w-[99px] text-center text-sm h-8 max-w-[124px] whitespace-nowrap overflow-hidden text-ellipsis hover:bg-[#C37024]"
-    (click)="openDialog()">
-    <span class="mat-body-2 px-4 py-2">{{ 'toprightnavbar.downloadApp' | translate }}</span>
-  </li>
-  }
-
   <!-- Font Setting -->
   @if (item()?.type === 'fontButton' && rnc.section === 'font-setting' && rnc.active && item()?.forPreview) {
   <li matTooltipClass="right-nav-tooltip" [matTooltip]="translateLabels('font', 'toprightnavbar')"
@@ -46,7 +36,7 @@
 
   <!-- Language Select -->
   @if (item()?.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled()) {
-  <li class="langdiv inline-block cursor-pointer">
+  <li class="langdiv inline-block cursor-pointer flex items-center">
     <img src="/assets/icons/top-nav/translate_icon.svg" alt="Language" [matMenuTriggerFor]="language"
       class="mob-lang-img flex items-center mx-2 mt-[10px]" />
     <mat-menu #language="matMenu" xPosition="before">
@@ -90,21 +80,13 @@
   }
   @if (item()?.type === 'themeToggle') {
   <li matTooltipClass="right-nav-tooltip"
-    matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" class="theme-toggle-btn">
-    <button mat-icon-button (click)="themeSvc.toggleTheme()" aria-label="Toggle theme">
+    matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" class="theme-toggle-btn mt-2">
+    <!-- <button mat-icon-button (click)="themeSvc.toggleTheme()" aria-label="Toggle theme">
       <mat-icon>{{ themeSvc.isDark ? 'brightness_7' : 'brightness_4' }}</mat-icon>
-    </button>
+    </button> -->
+    <span class="icon-svg w-5 h-5" (click)="themeSvc.toggleTheme()"
+      [style.mask-image]="'url(/assets/icons/hubs-v2/dark_mode.svg)'"
+      [style.-webkit-mask-image]="'url(/assets/icons/hubs-v2/dark_mode.svg)'"></span>
   </li>
   }
-  <!-- <li *ngIf="item.type === 'widgetButton'" class="font-size-controls">
-    <button mat-icon-button (click)="decreaseFontSize()" [disabled]="fontSizeLevel === 0"
-      aria-label="Decrease font size" matTooltip="Decrease font size">
-      <mat-icon>remove</mat-icon>
-    </button>
-    <span class="font-size-label">{{ fontLabel }}</span>
-    <button mat-icon-button (click)="increaseFontSize()" [disabled]="fontSizeLevel === 4"
-      aria-label="Increase font size" matTooltip="Increase font size">
-      <mat-icon>add</mat-icon>
-    </button>
-  </li> -->
 </ul>

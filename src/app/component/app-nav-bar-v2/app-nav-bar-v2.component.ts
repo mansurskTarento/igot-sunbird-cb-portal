@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { IBtnAppsConfig, CustomTourService, WidgetUserService } from '@sunbird-cb/collection'
+import { IBtnAppsConfig, CustomTourService, WidgetUserService, BtnProfileModule } from '@sunbird-cb/collection'
 import { NsWidgetResolver, WidgetResolverModule } from '@sunbird-cb/resolver'
 import {
   ConfigurationsService,
@@ -27,8 +27,9 @@ import { UrlService } from '../../shared/url.service'
 import { NotificationsService } from '../../services/notifications.service'
 import { HeaderModule } from '../../header/header.module'
 import { SearchInputHomeV4Component } from '../../../../project/ws/app/src/lib/routes/search-v3/components/search-input-home-v4/search-input-home-v4.component'
-import { BtnFeatureV2Component } from '../../../../library/ws-widget/collection/src/lib/btn-feature-v2/btn-feature-v2.component'
 import { TopRightNavBarV2Component } from '../top-right-nav-bar-v2/top-right-nav-bar-v2.component'
+import { BtnFeatureV2Component } from '@sunbird-cb/consumption'
+import { ThemeService } from '@sunbird-cb/design-system'
 
 @Component({
   selector: 'ws-app-nav-bar-v2',
@@ -44,7 +45,8 @@ import { TopRightNavBarV2Component } from '../top-right-nav-bar-v2/top-right-nav
     HeaderModule,
     SearchInputHomeV4Component,
     BtnFeatureV2Component,
-    TopRightNavBarV2Component
+    TopRightNavBarV2Component,
+    BtnProfileModule
   ],
   templateUrl: './app-nav-bar-v2.component.html',
   styleUrl: './app-nav-bar-v2.component.scss'
@@ -116,6 +118,8 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   appBottomIcon?: SafeUrl
   primaryNavbarBackground: Partial<NsPage.INavBackground> | null = null;
   primaryNavbarConfig: NsInstanceConfig.IPrimaryNavbarConfig | null = null;
+  filteredPrimaryNavbarConfig: NsInstanceConfig.IPrimaryNavbarConfig | null = null;
+  // primaryNavbarConfig: any
   pageNavbar: Partial<NsPage.INavBackground> | null = null;
   featureApps: string[] = [];
   isHelpMenuRestricted = false;
@@ -141,7 +145,8 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     private userSvc: WidgetUserService,
     private notificationsService: NotificationsService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc: DomainConfService
+    private domainConfSvc: DomainConfService,
+    private themeSvc: ThemeService
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
 
@@ -198,6 +203,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    // this.setPrimaryConfig()
     if (this.configSvc) {
       this.jan26Data = this.configSvc.overrideThemeChanges
       this.logoDisplayTime = this.jan26Data?.desktop?.logoDisplayTime
@@ -223,6 +229,9 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
       }
 
       if (event.url.includes('/page/home')) {
+        this.filteredPrimaryNavbarConfig = this.primaryNavbarConfig
+        const themeMode = this.themeSvc.currentTheme
+        this.themeSvc.setTheme(themeMode)
         this.activeRoute.set('home')
       } else if (event.url.includes('/page/explore')) {
         this.activeRoute.set('explorer')
@@ -232,6 +241,10 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
         this.activeRoute.set('Career')
       } else if (event.url.includes('app/seeAll?key=continueLearning')) {
         this.activeRoute.set('my learnings')
+      }
+      if (!event.url.includes('/page/home')) {
+        this.filteredPrimaryNavbarConfig = this.removeThemeToggleFromConfig(this.primaryNavbarConfig)
+        this.themeSvc.applyTheme('light')
       }
     })
 
@@ -310,6 +323,171 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     }
   }
 
+  // setPrimaryConfig() {
+  //   this.primaryNavbarConfig = {
+  //     "mediumScreen": {
+  //       "left": [],
+  //       "right": [
+  //         {
+  //           "type": "langSelect",
+  //           "config": {
+  //             "actionBtnId": "feature_langselect",
+  //             "toolTip": "Language",
+  //             "className": "fixtopMargin",
+  //             "config": {
+  //               "actionBtnId": "feature_langselect",
+  //               "type": "card-mini",
+  //               "hideTitle": true
+  //             }
+  //           }
+  //         },
+  //         {
+  //           type: 'themeToggle'
+  //         },
+  //         {
+  //           "type": "fontButton",
+  //           "config": {
+  //             "actionBtnId": "feature_mydashboard",
+  //             "toolTip": "My Dashboard",
+  //             "className": "fixtopMargin",
+  //             "config": {
+  //               "actionBtnId": "feature_mydashboard",
+  //               "type": "card-mini",
+  //               "hideTitle": true
+  //             }
+  //           }
+  //         },
+  //         {
+  //           "type": "notificationBell",
+  //           "config": {
+  //             "actionBtnId": "feature_notification",
+  //             "toolTip": "Notification",
+  //             "className": "fixtopMargin",
+  //             "config": {
+  //               "actionBtnId": "feature_notification",
+  //               "type": "card-mini",
+  //               "hideTitle": true
+  //             }
+  //           }
+  //         },
+  //         {
+  //           "type": "widgetButton",
+  //           "config": {
+  //             "widgetType": "actionButton",
+  //             "widgetSubType": "actionButtonProfile",
+  //             "widgetData": {
+  //               "disableViewProfile": true,
+  //               "disableAllFeatures": true,
+  //               "disableSettings": true,
+  //               "removeClass": true
+  //             }
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     "smallScreen": {
+  //       "left": [
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_catalog",
+  //             "config": {
+  //               "type": "card-mini"
+  //             }
+  //           }
+  //         },
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_profile",
+  //             "config": {
+  //               "type": "card-mini"
+  //             }
+  //           }
+  //         }
+  //       ],
+  //       "right": [
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_search",
+  //             "config": {
+  //               "type": "card-mini"
+  //             }
+  //           }
+  //         }
+  //       ],
+  //       "all": [
+  //         {
+  //           "type": "iconButton",
+  //           "config": {
+  //             "icon": "home",
+  //             "path": "/page/home",
+  //             "label": "home"
+  //           }
+  //         },
+  //         {
+  //           "type": "explorerButton",
+  //           "config": {
+  //             "icon": "explorer",
+  //             "path": "/page/learn",
+  //             "label": "explore"
+  //           }
+  //         },
+  //         {
+  //           "type": "iconButton",
+  //           "config": {
+  //             "icon": "search",
+  //             "path": "/app/search/home",
+  //             "label": "search"
+  //           }
+  //         },
+  //         {
+  //           "type": "iconButton",
+  //           "config": {
+  //             "key": "continueLearning",
+  //             "icon": "learn",
+  //             "path": "/app/seeAll",
+  //             "label": "my learnings"
+  //           }
+  //         }
+  //       ]
+  //     },
+  //     "secondary": {
+  //       "left": [
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_home",
+  //             "config": {
+  //               "type": "mat-button"
+  //             }
+  //           }
+  //         },
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_goals",
+  //             "config": {
+  //               "type": "mat-button"
+  //             }
+  //           }
+  //         },
+  //         {
+  //           "type": "featureButton",
+  //           "config": {
+  //             "actionBtnId": "feature_account",
+  //             "config": {
+  //               "type": "mat-button"
+  //             }
+  //           }
+  //         }
+  //       ],
+  //       "right": []
+  //     }
+  //   }
+  // }
+
   getMyCount() {
     this.notificationsService.getNotificationsData().subscribe(
       (res: any) => {
@@ -371,6 +549,16 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
 
   translateLabels(label: string, type: any): string {
     return this.langtranslations.translateLabelWithoutspace(label, type, '')
+  }
+
+  removeThemeToggleFromConfig(config: NsInstanceConfig.IPrimaryNavbarConfig | null): NsInstanceConfig.IPrimaryNavbarConfig | null {
+    if (!config || !config.mediumScreen || !config.mediumScreen.right) {
+      return config
+    }
+
+    const filteredConfig = JSON.parse(JSON.stringify(config))
+    filteredConfig.mediumScreen.right = filteredConfig.mediumScreen.right.filter((item: any) => item.type !== 'themeToggle')
+    return filteredConfig
   }
 
   redirectToPath(pathConfig: any) {
