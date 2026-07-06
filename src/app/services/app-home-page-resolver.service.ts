@@ -23,14 +23,13 @@ resolve(
       'request': {
           'type': 'page',
           'subType': 'home',
-          'action': 'page-configuration',
-          'component': 'portal',
-          'rootOrgId': '*',
+          'portal': 'portal',
+          'clientVersion': 1
       },
     }
-    return this.formSvc.formReadData(requestData).pipe(
+    return this.formSvc.formConfigReadData(requestData).pipe(
         map((rData: any) => {
-          const finalData = rData && rData.result.form.data
+          const finalData = rData && rData?.result?.data
           return ({ data: finalData, error: null })
         }),
         catchError((_error: any) => {

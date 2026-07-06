@@ -13,7 +13,7 @@ import {
 } from '@angular/core'
 import { UntypedFormControl } from '@angular/forms'
 import { ActivatedRoute, Router } from '@angular/router'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { SearchServService } from '../../../search/services/search-serv.service'
 import { GbSearchService } from '../../services/gb-search.service'
@@ -36,12 +36,12 @@ import { MobileAppsService } from './../../../services/mobile-apps.service'
 
 
 @Component({
-    selector: 'ws-app-search-v3-input-home',
-    templateUrl: './search-input-home.component.html',
-    styleUrls: ['./search-input-home.component.scss'],
-    // tslint:disable-next-line
-    encapsulation: ViewEncapsulation.None,
-    standalone: false
+  selector: 'ws-app-search-v3-input-home',
+  templateUrl: './search-input-home.component.html',
+  styleUrls: ['./search-input-home.component.scss'],
+  // tslint:disable-next-line
+  encapsulation: ViewEncapsulation.None,
+  standalone: false
 })
 export class SearchInputHomeComponent implements OnInit, OnChanges {
   @Input() placeHolder = '';
@@ -97,6 +97,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   ];
 
   selectedSearchCategory: string = SearchCategory.Courses;
+  searchCategoriesEnabled = true;
   openSearchTemplate = false;
   loaderSearching = false;
   responseNlpQuery = '';
@@ -117,7 +118,8 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     private eRef: ElementRef,
     private searchV3Service: GbSearchService,
     private contSvc: WidgetContentLibService,
-    private mobileAppsService: MobileAppsService
+    private mobileAppsService: MobileAppsService,
+    private domainConfSvc: DomainConfService,
   ) {
     this.queryControl = new UntypedFormControl(
       this.activated.snapshot.queryParams.q || ''
@@ -151,6 +153,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.filterCategoriesByConfig()
     if (!this.activated.snapshot.data.searchPageData) {
       this.searchServSvc
         .getSearchConfig()
@@ -173,6 +176,19 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       }
     }
 
+  }
+
+  filterCategoriesByConfig() {
+    this.searchCategoriesEnabled = this.domainConfSvc.isSearchCategoriesEnabled()
+    if (this.domainConfSvc.getSearchCategoriesConfig()) {
+      this.categories = this.categories.filter(cat => {
+        return this.domainConfSvc.isSearchCategoryEnabled(cat.value)
+      })
+    }
+  }
+
+  isCategoryEnabled(categoryValue: string): boolean {
+    return this.domainConfSvc.isSearchCategoryEnabled(categoryValue)
   }
 
   autoFilter() {
@@ -260,57 +276,58 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     }
   }
 
-  async updateRecentSearchQuery(_query: any) {
+  async updateRecentSearchQuery(query: any) {
 
     // AFTER NLW NEED TO ENABLE
-    // if (query) {
-    //   const reqBody = {
-    //     nlpSearchQuery: query.nlp_search_query,
-    //     searchQuery:query.search_query,
-    //     searchCategory: query.search_category[0]
-    //   }
-    //   await this.searchV3Service.recentCreate(reqBody).then(() => {
-    //     this.processRecentSearchText(query);
-    //   }).catch(() => {
-    //     this.processRecentSearchText(query);
-    //   });
-    // } else {
-    //   this.processRecentSearchText(query);
-    // }
+    if (query) {
+      const reqBody = {
+        nlpSearchQuery: query?.nlp_search_query,
+        searchQuery: query?.search_query,
+        searchCategory: query?.search_category[0]
+      }
+      await this.searchV3Service.recentCreate(reqBody).then(() => {
+        this.processRecentSearchText(query)
+      }).catch(() => {
+        this.processRecentSearchText(query)
+      })
+    } else {
+      this.processRecentSearchText(query)
+    }
   }
 
-  async createRecent(_data: any) {
+  async createRecent(data: any) {
 
     // AFTER NLW NEED TO ENABLE
-    // const reqBody = {
-    //   nlpSearchQuery: data,
-    //   searchQuery: this.queryControl.value,
-    //   searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
-    // }
+    const reqBody = {
+      nlpSearchQuery: data,
+      searchQuery: this.queryControl?.value,
+      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+    }
 
-    // await this.searchV3Service.recentCreate(
-    //   reqBody
-    // ).catch();
+    await this.searchV3Service.recentCreate(
+      reqBody
+    ).catch()
 
   }
 
   readRecent() {
     // AFTER NLW NEED TO ENABLE
-    // return this.searchV3Service.recentRead().subscribe((res: any) => {
-    //   if (res) {
-    //     // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
-    //     if( res.result.searchQueries &&  res.result.searchQueries) {
-    //       this.recentSearches = res?.result?.searchQueries
-    //     } else {
-    //       this.recentSearches = ''
-    //     }
-    //   }
-    // })
+    return this.searchV3Service.recentRead().subscribe((res: any) => {
+      if (res) {
+        // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
+        if (res?.result?.searchQueries && res?.result?.searchQueries) {
+          this.recentSearches = res?.result?.searchQueries
+        } else {
+          this.recentSearches = ''
+        }
+      }
+    })
   }
 
   goToSearchItem(query: any) {
     const category = query?.search_category && query?.search_category[0]
     const nlpSearchQuery = query?.nlp_search_query
+    if (!this.isCategoryEnabled(category)) { return }
     if (category && category === 'courses' && nlpSearchQuery) {
       const req = {
         "request": {
@@ -718,6 +735,14 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     })
   }
 
+  private getGlobalSearchRoute(): string {
+    const userRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = Array.isArray(userRoles) && userRoles.some(
+      (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+    )
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
   processRecentSearchText(query: any) {
     document.getElementById('global-search-input')?.blur()
     const queryParams = {
@@ -733,10 +758,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
+    const searchRoute = this.getGlobalSearchRoute()
+    const mergeQueryParams = window.location.pathname === searchRoute
     if (this.ref === 'home') {
       this.closed.emit(false)
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
+      this.router.navigate([searchRoute], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
@@ -759,10 +785,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
+    const searchRoute = this.getGlobalSearchRoute()
+    const mergeQueryParams = window.location.pathname === searchRoute
     if (this.ref === 'home') {
       this.closed.emit(false)
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
+      this.router.navigate([searchRoute], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }
@@ -779,6 +806,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async selectSearchCategory(category: string) {
+    if (!this.isCategoryEnabled(category)) { return }
     if (this.queryControl.value) {
       this.selectedSearchCategory = category
       // this.searchFromQuery(this.queryControl.value);
@@ -787,6 +815,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async searchFromQuery(query: string) {
+    if (!this.isCategoryEnabled(this.selectedSearchCategory)) {
+      this.allSearchResults = []
+      return
+    }
     let courseSearchResult: any
     const searchRequest = new SearchV4Request([])
     searchRequest.request.query = query

@@ -10,12 +10,13 @@ import * as _ from 'lodash'
 
 import { OtpService } from '../../../user-profile/services/otp.services'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Component({
-    selector: 'ws-verify-otp',
-    templateUrl: './verify-otp.component.html',
-    styleUrls: ['./verify-otp.component.scss'],
-    standalone: false
+  selector: 'ws-verify-otp',
+  templateUrl: './verify-otp.component.html',
+  styleUrls: ['./verify-otp.component.scss'],
+  standalone: false
 })
 
 export class VerifyOtpComponent implements OnInit, OnDestroy {
@@ -28,13 +29,16 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
   interval: any
   showResendOTP = false
   otpEntered = ''
+  apiConfig: any
   constructor(
     public dialogRef: MatDialogRef<VerifyOtpComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
     private otpService: OtpService,
     private matSnackbar: MatSnackBar,
     private userProfileService: UserProfileService
-  ) { }
+  ) {
+    this.apiConfig = this.data.apiConfig
+  }
 
   ngOnInit() {
     this.startTimer()
@@ -61,7 +65,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
   }
 
   verifyEmailOTP(): void {
-    this.otpService.verifyEmailOTPV4(this.otpEntered, this.data.value)
+    const configDetails: ConfigDetails = this.getConfigDetails('otpV3Verify')
+    this.otpService.verifyEmailOTPV4(this.otpEntered, this.data.value, configDetails)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
         this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
@@ -76,7 +81,8 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
   }
 
   verifyMobileOTP(): void {
-    this.otpService.verifyOTPV4(this.otpEntered, this.data.value)
+    const configDetails: ConfigDetails = this.getConfigDetails('otpV3Verify')
+    this.otpService.verifyOTPV4(this.otpEntered, this.data.value, configDetails)
       .pipe(takeUntil(this.destroySubject$))
       .subscribe((_res: any) => {
         this.matSnackbar.open(this.handleTranslateTo('OTPSentSuccess'))
@@ -103,6 +109,14 @@ export class VerifyOtpComponent implements OnInit, OnDestroy {
 
   handleTranslateTo(menuName: string): string {
     return this.userProfileService.handleTranslateTo(menuName)
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 
   ngOnDestroy(): void {

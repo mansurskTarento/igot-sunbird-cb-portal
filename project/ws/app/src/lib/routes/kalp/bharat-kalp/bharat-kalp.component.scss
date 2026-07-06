@@ -1,0 +1,83 @@
+:host {
+  display: block;
+}
+
+/* Community card item inside sb-uic-horizontal-scroller-v2 — ~4 cards per view */
+.bk-dv2-comm-item {
+  flex: 0 0 calc((100% - 48px) / 4);
+  min-width: 0;
+  margin-right: 16px;
+  cursor: pointer;
+
+  &:last-child {
+    margin-right: 0;
+  }
+
+  ::ng-deep .community-card {
+    width: 100% !important;
+    height: 100%;
+    box-sizing: border-box;
+  }
+
+  ::ng-deep .card-img-block {
+    height: 110px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+}
+
+/* Tablet: show ~2.5 cards */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .bk-dv2-comm-item {
+    flex: 0 0 calc((100% - 32px) / 2.5);
+  }
+}
+
+/* Mobile: show ~1.2 cards for swipe hint */
+@media (max-width: 768px) {
+  .bk-dv2-comm-item {
+    flex: 0 0 78%;
+    margin-right: 12px;
+
+    ::ng-deep .card-img-block {
+      height: 90px;
+    }
+  }
+}
+
+/* Large phones / small tablets: 78% over-stretches a single card,
+   show ~2 per view instead (after the 768 block so it wins) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .bk-dv2-comm-item {
+    flex: 0 0 calc((100% - 12px) / 2.1);
+  }
+}
+
+/* ─── Community empty state ─── */
+.bk-comm-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 40px 16px;
+  gap: 12px;
+
+  &__img {
+    width: 80px;
+    height: 80px;
+    opacity: 0.55;
+  }
+
+  &__text {
+    font-size: 14px;
+    color: #9E9E9E;
+    text-align: center;
+    margin: 0;
+  }
+}

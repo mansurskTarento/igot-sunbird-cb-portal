@@ -47,6 +47,7 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
   rootOrgId: any
   showEnrolledCount: boolean = true
   totalUsersEnrolled: any = 0
+  resumeEventStatus = 0
   // completedPercent!: number
   // badgesSubscription: any
   // portalProfile!: NSProfileDataV2.IProfile
@@ -258,10 +259,19 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
     return false
   }
 
+  isMeetingLink(url: string): boolean {
+    if (!url) {
+      return false
+    }
+    return /(meet\.google\.com|zoom\.(us|com)|teams\.(microsoft|live)\.com)/i.test(url)
+  }
+
   navigateToPLayer() {
     if (this.isenrollFlow) {
       const url = this.findUrl()
-      if (url.includes('youtube.com')) {
+      if (this.isMeetingLink(url)) {
+        window.open(url, '_blank')
+      } else if (url.includes('youtube.com')) {
         const videoId = url.split('/').pop()
         const youtubeId = videoId?.split('?')[0] || videoId
         this.router.navigate([`app/event-hub/player/${this.eventData.identifier}/youtube/${youtubeId}`])
@@ -315,6 +325,11 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           if (this.eventData?.typeofEvent === 'live') {
             this.getEnrolledUserCount()
           }
+          if (this.pageConfig && Array.isArray(this.pageConfig.issueCertAfterEnroll)
+            && this.pageConfig.issueCertAfterEnroll.includes(this.eventData.resourceType)) {
+            const lastTimeAccessed = new Date().toISOString().replace('T', ' ').replace('Z', '').split('.')[0] + ':00+0000'
+            this.updateProgress(this.eventData.duration, this.eventData.duration * 60, lastTimeAccessed, true)
+          }
         }
         if (this.batchId) {
           // this.navigateToPlayerPage(batchId)
@@ -329,6 +344,42 @@ export class RightMenuCardComponent implements OnInit, OnDestroy, OnChanges {
           this.openSnackBar(err.error.params.errmsg || 'Something went wrong! please try again later.')
         }
       )
+    }
+  }
+
+  updateProgress(progress: any, timeSpent: any, lastTimeAccessed: any, normalUpdate?: boolean) {
+    let userId = ''
+    const batchId = this.batchId
+    if (this.configSvc.userProfile) {
+      userId = this.configSvc.userProfile.userId || ''
+    }
+    if (this.eventData) {
+      const req = {
+        'request': {
+          'userId': userId,
+          'events': [
+            {
+              'eventId': this.eventData.identifier,
+              'batchId': batchId,
+              'status': 2,
+              'lastAccessTime': lastTimeAccessed, // data.dateAccessed
+              'progressdetails': {
+                'max_size': this.eventData.duration * 60, // complete video duration
+                'current': [ // current state
+                  progress,
+                ],
+                'duration': normalUpdate ? this.eventData.duration * 60 : timeSpent, // watch time
+                'mimeType': 'application/html',
+                'stateMetaData': timeSpent, // last state
+              },
+              'completionPercentage': Number(parseFloat('100.00').toFixed(2)),
+            },
+          ],
+        },
+      }
+      this.eventSvc.saveEventProgressUpdate(req).subscribe((_res: any) => {
+        this.resumeEventStatus = 2
+      })
     }
   }
 

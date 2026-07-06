@@ -1,10 +1,10 @@
 <section *ngIf="isNotEmbed && !isPreAssessment" id="viewer-conatiner-backdrop">
   <ng-container *ngIf="!isMobile">
     <viewer-viewer-top-bar  [contentReadData]="contentReadData" [content]="hierarchyData || content" [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
-      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData">
+      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData" [tocConfig]="tocConfig">
     </viewer-viewer-top-bar>
   </ng-container>
-  
+
   <mat-sidenav-container autosize class="viewer-sidenav-container">
     <mat-sidenav id="side-nav-drawer-state" *ngIf="isTypeOfCollection" [ngClass]="isTypeOfCollection?'viewer-sidenav':'viewer-sidenav-standalone'" position="end"
       [opened]="sideNavBarOpened" [mode]="mode">
@@ -119,7 +119,7 @@
         <div class="mobile-top-bar-container" *ngIf="!(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <ng-container>
             <viewer-viewer-top-bar  [contentReadData]="contentReadData" [content]="hierarchyData || content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
-              (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [baseContentReadData]="baseContentReadData">
+              (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [baseContentReadData]="baseContentReadData" [tocConfig]="tocConfig">
             </viewer-viewer-top-bar>
             <!-- <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
               (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount">
@@ -152,7 +152,7 @@
 <section *ngIf="isPreAssessment" id="viewer-conatiner-backdrop">
   <ng-container *ngIf="!isMobile">
     <viewer-viewer-top-bar  [content]="hierarchyData || content" [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
-      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData">
+      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData" [baseContentReadData]="baseContentReadData" [tocConfig]="tocConfig">
     </viewer-viewer-top-bar>
   </ng-container>
   
@@ -270,7 +270,7 @@
         <div class="mobile-top-bar-container" *ngIf="!(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <ng-container>
             <viewer-viewer-top-bar  [content]="hierarchyData || content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
-              (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [baseContentReadData]="baseContentReadData">
+              (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [baseContentReadData]="baseContentReadData" [tocConfig]="tocConfig">
             </viewer-viewer-top-bar>
             <!-- <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"
               (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount">

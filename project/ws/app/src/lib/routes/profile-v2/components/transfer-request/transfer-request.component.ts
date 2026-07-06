@@ -15,6 +15,7 @@ import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service
 import { SignupService } from 'src/app/routes/public/public-signup/signup.service'
 import * as _ from 'lodash'
 import { environment } from 'src/environments/environment'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-transfer-request',
@@ -142,6 +143,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   showGroupField = false          // after org is selected or no org options available
   showDesignationField = false    // after group is selected
 
+  apiConfig: any
+
   constructor(
     public dialogRef: MatDialogRef<TransferRequestComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -152,6 +155,7 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     private signupSvc: SignupService,
     @Inject(PLATFORM_ID) private _platformId: any
   ) {
+    this.apiConfig = _.get(this.data, 'apiConfig')
     if (this.data.portalProfile.professionalDetails && this.data.portalProfile.professionalDetails.length) {
       this.transferRequestForm.controls.designation.setValue(this.data.portalProfile.professionalDetails[0].designation || '')
     }
@@ -339,7 +343,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
           facets: [],
         },
       }
-      this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).subscribe({
+      const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+      this.profileV2RevampService.searchIgotDesignation(igotDesignationBody, configDetails).subscribe({
         next: (res: any) => {
           const count = _.get(res, 'result.count', 0)
           this.selectedOrgHasDesignations = count > 0
@@ -390,7 +395,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     if (this.designationSearchText) {
       igotDesignationBody['request']['query'] = this.designationSearchText
     }
-    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('sunbirdigotV4Search')
+    this.profileV2RevampService.searchIgotDesignation(igotDesignationBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreDesignations = false
       })
@@ -420,7 +426,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
       requestBody['searchString'] = this.designationSearchText
     }
     this.isLoadingMoreDesignations = true
-    this.profileV2RevampService.searchDesignation(requestBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('v8DesignationSearch')
+    this.profileV2RevampService.searchDesignation(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreDesignations = false
       })
@@ -1215,7 +1222,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingMoreMinistrys = true
-    this.signupSvc.getMinistryForRegistration(requestBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('hierarchyMinistrySearch')
+    this.signupSvc.getMinistryForRegistration(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreMinistrys = false
         this.ministryInitInProgress = false
@@ -1448,7 +1456,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingMoreStates = true
-    this.signupSvc.getStateForRegistration(requestBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('hierarchyStateSearch')
+    this.signupSvc.getStateForRegistration(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreStates = false
         this.stateInitInProgress = false
@@ -1677,7 +1686,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingMoreDepartments = true
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('hierarchySearch')
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreDepartments = false
       })
@@ -1968,7 +1978,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingMoreOrganisations = true
-    this.signupSvc.getStateOrMinistyForRegistration(requestBody).pipe(
+    const configDetails: ConfigDetails = this.getConfigDetails('hierarchySearch')
+    this.signupSvc.getStateOrMinistyForRegistration(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreOrganisations = false
         this.organisationInitInProgress = false
@@ -2255,7 +2266,8 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
     }
 
     this.isLoadingMoreDesignations = true
-    this.userProfileService.searchPublicDesignation(requestBody).pipe(
+    const configDetails = this.getConfigDetails('orgV1Read')
+    this.userProfileService.searchPublicDesignation(requestBody, configDetails).pipe(
       finalize(() => {
         this.isLoadingMoreDesignations = false
         this.designationInitInProgress = false
@@ -2413,5 +2425,13 @@ export class TransferRequestComponent implements OnInit, OnDestroy {
   }
   trackByFn(_index: number, item: any): number {
     return item.channel
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 }

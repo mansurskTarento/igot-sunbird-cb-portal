@@ -3,7 +3,7 @@
         <ng-container *ngFor="let rnc of rightNavConfig">
             <!-- //NOSONAR -->
             <li class="notification-icon"
-                *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active">
+                *ngIf="item.type === 'notificationBell' && rnc.section === 'notification' && rnc.active && domainConfSvc.isConfigEnabled('components.header', 'notification')">
                 <div #notificationTrigger [matMenuTriggerFor]="menu" class="relative" (click)="onBellClick()"
                     title="Notifications"
                     (keydown.enter)="$event.preventDefault(); notificationTrigger.click(); onBellClick();" tabindex="0"
@@ -21,7 +21,7 @@
                 </mat-menu>
             </li>
             <li matTooltipClass="right-nav-tooltip" matTooltip="{{ 'toprightnavbar.downloadApp' | translate }}"
-                *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview"
+                *ngIf="rnc.section === 'download' && rnc.active && item.type === 'downloadButton' && item?.forPreview && domainConfSvc.isConfigEnabled('components.header', 'downloadApp')"
                 class="download-app-chip" (click)="openDialog()">
                 <span class="mat-body-2 text-white">{{ 'toprightnavbar.downloadApp' | translate }}</span>
             </li>
@@ -29,7 +29,7 @@
                 *ngIf="item.type === 'fontButton' && rnc.section === 'font-setting' && rnc.active  && item?.forPreview">
                 <ws-font-setting></ws-font-setting>
             </li>
-            <li *ngIf="item.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled"
+            <li *ngIf="item.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled && domainConfSvc.isConfigEnabled('components.header', 'language')"
                 class="langdiv">
                 <img src="/assets/icons/top-nav/translate_icon.svg" alt="" [matMenuTriggerFor]="language"
                     alt="Language image" class="mob-lang-img mx-2 icon-image" />

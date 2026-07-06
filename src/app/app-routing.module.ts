@@ -6,6 +6,7 @@ import { LearningGuard } from '@ws/app'
 import { ETopBar } from './constants/topBar.constants'
 // import { EmptyRouteGuard } from './guards/empty-route.guard'
 import { ExternalUrlResolverService } from './guards/external-url-resolver.service'
+import { BharatKalpGuard } from './guards/bharat-kalp.guard'
 import { GeneralGuard } from './guards/general.guard'
 import { LoginGuard } from './guards/login.guard'
 import { RedirectGuard } from './guards/redirect.guard'
@@ -19,6 +20,7 @@ import { AppGyaanKarmayogiService } from './services/app-gyaan-karmayogi.service
 import { AppEventPageResolverService } from './services/app-event-page-resolver.service'
 import { HomeResolverService } from './home/home/home-resolver.service'
 import { FormDataResolverService } from './services/form-data-resolver.service'
+import { FormConfigResolverService } from './services/form-config-resolver.service'
 import { AppPreAssessmentContentResolverService } from './services/app-pre-assessment-content-read-resolver.service'
 // 💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥💥
 // Please declare routes in alphabetical order
@@ -294,6 +296,18 @@ const routes: Routes = [
     },
   },
   {
+    path: 'app/learn/bharat-kalp',
+    loadChildren: () =>
+      import('./routes/route-kalp.module').then(u => u.RouteKalpModule),
+    canActivate: [GeneralGuard, BharatKalpGuard],
+    data: {
+      module: 'Bharat Kalp',
+    },
+    resolve: {
+      pageData: PageResolve,
+    },
+  },
+  {
     path: 'app/learn/mdo-channels',
     loadChildren: () =>
       import('./routes/route-mdo-channels.module').then(u => u.RouteMdoChannelsModule),
@@ -416,7 +430,7 @@ const routes: Routes = [
     path: 'app/setup',
     loadChildren: () =>
       import('./routes/route-profile-v3.module').then(u => u.RouteProfileV3Module),
-    // canActivate: [GeneralGuard],
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'profile-v3',
@@ -573,9 +587,10 @@ const routes: Routes = [
       pageKey: 'profile-v2',
       pageId: 'app/person-profile',
       module: 'Profile',
+      pageSubtype: 'profile'
     },
     resolve: {
-      pageData: FormDataResolverService,
+      pageData: FormConfigResolverService,
     },
   },
   {
@@ -612,6 +627,7 @@ const routes: Routes = [
     loadChildren: () =>
       // import('./routes/route-searchv2-app.module').then(u => u.RouteSearchV2AppModule),
       import('./routes/route-searchv3-app.module').then(u => u.RouteSearchV3AppModule),
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'globalsearch',
@@ -623,6 +639,7 @@ const routes: Routes = [
     path: 'app/seeAll',
     loadChildren: () =>
       import('./routes/route-see-all-app.module').then(u => u.RouteSeeAllAppModule),
+    canActivate: [GeneralGuard],
     data: {
       pageType: 'feature',
       pageKey: 'seeAll',

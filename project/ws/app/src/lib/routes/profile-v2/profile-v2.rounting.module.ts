@@ -24,19 +24,6 @@ const routes: Routes = [
         pathMatch: 'full',
         redirectTo: 'me',
       },
-      // {
-      //   path: 'me',
-      //   component: ProfileViewComponent,
-      //   data: {
-      //     pageId: 'me',
-      //     module: 'Profile',
-      //   },
-      //   resolve: {
-      //     profile: Profilev2Resolve,
-      //     badges: Profilev2BadgesResolve,
-      //     certificates: Profilev2CerficatesResolve,
-      //   },
-      // },
       {
         path: 'me',
         component: ProfileViewV2Component,
@@ -62,19 +49,6 @@ const routes: Routes = [
           // profileData: ProfileResolverService,
         },
       },
-      // {
-      //   path: ':userId',
-      //   component: ProfileViewComponent,
-      //   data: {
-      //     pageId: ':userId',
-      //     module: 'Network',
-      //   },
-      //   resolve: {
-      //     profile: Profilev2Resolve,
-      //     badges: Profilev2BadgesResolve,
-      //     // profileData: ProfileResolverService,
-      //   },
-      // },
       {
         path: ':userId',
         component: ProfileViewV2Component,

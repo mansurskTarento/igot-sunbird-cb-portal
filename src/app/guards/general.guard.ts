@@ -25,6 +25,16 @@ export class GeneralGuard {
   ): Promise<boolean | UrlTree> {
     const requiredFeatures = (next.data && next.data.requiredFeatures) || []
     const requiredRoles = (next.data && next.data.requiredRoles) || []
+    const pageKey = next.data && next.data.pageKey
+
+    // Check if this route is disabled in globalConfig.routes
+    if (pageKey) {
+      const routes = this.configSvc.globalConfig?.routes
+      if (routes && routes[pageKey] === false) {
+        return this.router.parseUrl('/error-feature-unavailable')
+      }
+    }
+
     return await this.shouldAllow<boolean | UrlTree>(_state, requiredFeatures, requiredRoles)
   }
 

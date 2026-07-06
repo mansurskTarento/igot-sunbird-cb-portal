@@ -27,12 +27,13 @@ import {
   // AuthKeycloakService,
   ConfigurationsService,
   // LoggerService,
+  DomainConfService,
   TelemetryService,
   ValueService,
   UtilityService,
   EventService,
   WsEvents,
-  NsInstanceConfig,
+  // NsInstanceConfig,
 } from '@sunbird-cb/utils-v2'
 import { delay, first, catchError, map, filter } from 'rxjs/operators'
 import { MobileAppsService } from '../../services/mobile-apps.service'
@@ -44,7 +45,7 @@ import { environment } from '../../../environments/environment'
 import { MatDialog } from '@angular/material/dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
 import { concat, interval, timer, of } from 'rxjs'
-import { iGOTAIService } from './../../services/igot-ai.service'
+// import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
 import { UrlService } from '../../shared/url.service'
 @Component({
@@ -58,7 +59,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   hideHeaderAndFooter = false
   disableHeightOnTop = false
-  iGOTAIConfigLoaded = false
+  // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   isHomePage = false
   constructor(
@@ -80,8 +81,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private changeDetector: ChangeDetectorRef,
     private utilitySvc: UtilityService,
     private urlService: UrlService,
-    private iGOTAIService: iGOTAIService,
+    // private iGOTAIService: iGOTAIService,
     private commonDataSvc: CommonDataService,
+    public domainConfSvc: DomainConfService,
 
     // private dialogRef: MatDialogRef<any>,
   ) {
@@ -89,16 +91,21 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
     }
+    if(this.configSvc.headerFooterConfigData ) {
+      this.headerFooterConfigData = this.configSvc.headerFooterConfigData
+      this.showFooter = true
+    }
 
-    this.getHeaderFooterConfiguration().subscribe((sectionData: any) => {
+    // this.getHeaderFooterConfiguration().subscribe((_sectionData: any) => {
       // console.log('headerFooterConfigData',sectionData)
-      if (sectionData && sectionData.data) {
-        this.headerFooterConfigData = sectionData.data
-        this.showFooter = true
-        // Manually trigger change detection to ensure footer updates
-        this.changeDetector.detectChanges()
-      }
-    })
+      // if (sectionData && sectionData.data) {
+      //   debugger
+      //   this.headerFooterConfigData = sectionData.data
+      //   this.showFooter = true
+      //   // Manually trigger change detection to ensure footer updates
+      //   this.changeDetector.detectChanges()
+      // }
+    // })
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
       || window.location.pathname.includes('/viewer/')
@@ -231,6 +238,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (event && event.type === 'unload') {
       // this.authSvc.logout()
     }
+  }
+
+  reloadPage() {
+    window.location.reload()
   }
 
   openIntro() {
@@ -440,9 +451,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     let isNotMyUser = false
     let isIgotOrg = false
-    if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
-      this.iGOTAIConfig()
-    }
+    // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
+    //   this.iGOTAIConfig()
+    // }
     if (this.configSvc && this.configSvc.unMappedUser
       && this.configSvc.unMappedUser.profileDetails
       && this.configSvc.unMappedUser.profileDetails.profileStatus) {
@@ -464,36 +475,36 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   }
 
-  private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
-    const payload = {
-      'request': {
-        'type': 'page',
-        'subType': 'iGOTAI',
-        'action': 'page-configuration',
-        'component': 'portal',
-        'rootOrgId': this.configSvc.unMappedUser.rootOrgId,
-      },
-    }
-    const publicConfig: any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
-    // console.log('publicConfig', publicConfig)
-    if (publicConfig && publicConfig && publicConfig.web) {
-      this.configSvc.iGOTAIConfig = publicConfig.web
-      //  console.log('this.configSvc', this.configSvc)
-    }
+  // private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
+  //   const payload = {
+  //     'request': {
+  //       'type': 'page',
+  //       'subType': 'iGOTAI',
+  //       'action': 'page-configuration',
+  //       'component': 'portal',
+  //       'rootOrgId': this.configSvc.unMappedUser.rootOrgId,
+  //     },
+  //   }
+  //   const publicConfig: any = await this.iGOTAIService.iGOTAIConfigReadData(payload).toPromise()
+  //   // console.log('publicConfig', publicConfig)
+  //   if (publicConfig && publicConfig && publicConfig.web) {
+  //     this.configSvc.iGOTAIConfig = publicConfig.web
+  //     //  console.log('this.configSvc', this.configSvc)
+  //   }
 
-    // this.configSvc.iGOTAIConfig = {
-    //   "aiTutor": true,
-    //   "iGOTAI": true,
-    //   "subTitles": true,
-    //   "transcription": true
-    // }
-    if (publicConfig && publicConfig.error && publicConfig.error.status === 404) {
-      this.iGOTAIConfigLoaded = false
-    } else {
-      this.iGOTAIConfigLoaded = true
-    }
-    return publicConfig
-  }
+  //   // this.configSvc.iGOTAIConfig = {
+  //   //   "aiTutor": true,
+  //   //   "iGOTAI": true,
+  //   //   "subTitles": true,
+  //   //   "transcription": true
+  //   // }
+  //   if (publicConfig && publicConfig.error && publicConfig.error.status === 404) {
+  //     this.iGOTAIConfigLoaded = false
+  //   } else {
+  //     this.iGOTAIConfigLoaded = true
+  //   }
+  //   return publicConfig
+  // }
 
   changeBg26Jan() {
     this.backGroundTheme = this.configSvc.overrideThemeChanges

@@ -3,11 +3,11 @@
         <div class="card-container p-4 flex relative">
             <!-- Left side - Image -->
             <div class="course-image-container relative overflow-hidden">
-                <ng-container *ngIf="content?.posterImage">
+                <ng-container *ngIf="isCardElementEnabled('posterImage') && content?.posterImage">
                     <img [src]="content?.posterImage | pipePublicURL" alt="Course thumbnail" class="w-full h-full rounded-xl"
                         [wsUtilsDefaultThumbnail]="defaultThumbnail">
                 </ng-container>
-                <ng-container *ngIf="!content?.posterImage">
+                <ng-container *ngIf="!isCardElementEnabled('posterImage') || !content?.posterImage">
                     <ng-container *ngIf="content?.appIcon; else defaultImg">
                         <img [src]="content?.appIcon | pipePublicURL" alt="Course thumbnail" class="w-full h-full rounded-xl"
                             [wsUtilsDefaultThumbnail]="defaultThumbnail">
@@ -18,29 +18,30 @@
                 </ng-container>
 
                 <div class="course-badges flex items-center gap-2">
-                    <span class="badge language-badge font-normal" *ngIf="igotSpecializationProgram">
+                    <span class="badge language-badge font-normal" *ngIf="isCardElementEnabled('igotSpecialization') && igotSpecializationProgram">
                         <img class="approved-icon mr-1" src="./assets/icons/approved.svg" alt="approved">
                         {{'learnsearch.iGOTSpecializationProgram' | translate}}
                     </span>
-                    <span class="badge language-badge font-normal" *ngIf="content?.language">{{content?.language}}</span>
+                    <span class="badge language-badge font-normal"
+                        *ngIf="isCardElementEnabled('language') && content?.language">{{content?.language}}</span>
                     <span class="badge duration-badge font-normal"
-                        *ngIf="content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
+                        *ngIf="isCardElementEnabled('duration') && content?.duration && content?.duration !== '0' && content?.primaryCategory !== 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{checkForCiosDuration(content) | pipeDurationTransform: 'hms'}}
                     </span>
                     <span class="badge duration-badge font-normal"
-                        *ngIf="content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
+                        *ngIf="isCardElementEnabled('duration') && content?.programDuration > 0 && content?.primaryCategory === 'Blended Program'">
                         <mat-icon>schedule</mat-icon>
                         {{content?.programDuration}} {{content?.programDuration === 1 ? 'day' : 'days'}}
                     </span>
 
                 </div>
-                <ng-container *ngIf="CaCourseUnitIds?.includes(content?.identifier)">
+                <ng-container *ngIf="isCardElementEnabled('ca') && CaCourseUnitIds?.includes(content?.identifier)">
                     <div class="cbp-mark right-0 rounded-bottom">
                         <p class="cbp-primary apar-flag">CA</p>
                     </div>
                 </ng-container>
-                <div class="course-badges-new" *ngIf="checkIfContentIsNew(content?.createdOn)">
+                <div class="course-badges-new" *ngIf="isCardElementEnabled('newBadge') && checkIfContentIsNew(content?.createdOn)">
                     <span class="badge new-badge font-normal">New</span>
                 </div>
             </div>
@@ -48,7 +49,7 @@
             <!-- Right side - Content -->
             <div class="course-content pl-0 md:pl-4">
                 <ng-container
-                    *ngIf="content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event' || content?.topic">
+                    *ngIf="isCardElementEnabled('contentType') && (content?.contentType === 'Resource' || content?.contentType === 'Course' || content?.contentType === 'Module' || content?.contentType === 'Event' || content?.topic)">
                     <div class="flex justify-between items-center">
                         <div class="course-type font-normal">
                             <mat-icon class="document-icon"
@@ -87,7 +88,7 @@
                             [ngClass]="{'right-section-row': content?.difficultyLevel || content?.knowledgeLevel, 'right-section-column': !content?.difficultyLevel || content?.knowledgeLevel}">
                             <div class="flex items-center gap-3 bookmark-section">
                                 <ng-container
-                                    *ngIf="courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
+                                    *ngIf="isCardElementEnabled('downloadCertificate') && courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                     <div matRipple (click)="downloadCertificate(courseEnrollment)"
                                         class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
                                         [ngClass]="{'lock-download-certificate-course': lockSurvey}">
@@ -103,17 +104,20 @@
                                         <span>Download Certificate</span>
                                     </div>
                                 </ng-container>
-                                <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage < 100">
+                                <ng-container
+                                    *ngIf="isCardElementEnabled('inProgress') && courseEnrollment && courseEnrollment?.completionPercentage < 100">
                                     <div class="inprogress-course font-stats rounded">In - Progress</div>
                                 </ng-container>
-                                <ng-container *ngIf="isUnenrolled()">
+                                <ng-container *ngIf="isCardElementEnabled('unenrolled') && isUnenrolled">
                                     <div class="un-enrolled-course font-stats rounded">Un-Enrolled</div>
                                 </ng-container>
-                                <ng-container *ngIf="courseEnrollment && courseEnrollment?.completionPercentage === 100">
+                                <ng-container
+                                    *ngIf="isCardElementEnabled('completed') && courseEnrollment && courseEnrollment?.completionPercentage === 100">
                                     <div class="inprogress-course font-stats rounded">Completed</div>
                                 </ng-container>
                             </div>
-                            <div *ngIf="content?.difficultyLevel || content?.knowledgeLevel" class="knowledge-level-container">
+                            <div *ngIf="isCardElementEnabled('difficultyLevel') && (content?.difficultyLevel || content?.knowledgeLevel)"
+                                class="knowledge-level-container">
                                 <span
                                     *ngIf="content?.difficultyLevel?.toLowerCase() === 'beginner' || content?.knowledgeLevel?.toLowerCase() === 'beginner'"
                                     class="level-badge beginner">
@@ -183,25 +187,26 @@
                 </div> -->
 
                 <div class="course-author mb-3 flex items-center gap-2">
-                    <div class="author-avatar flex items-center justify-center">
+                    <div class="author-avatar flex items-center justify-center" *ngIf="isCardElementEnabled('creatorLogo')">
                         <img class="source-icon" alt="ong" [src]="content?.creatorLogo || content?.contentPartner?.link| pipePublicURL" width="16"
                             [wsUtilsDefaultThumbnail]="defaultSLogo">
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
                         {{content?.creator}}</span> -->
-                    <span class="organization-name" *ngIf="content?.organisation?.length">{{'learnsearch.by' |
+                    <span class="organization-name" *ngIf="isCardElementEnabled('organisation') && content?.organisation?.length">{{'learnsearch.by' |
                         translate}}
                         {{content?.organisation[0]}}</span>
-                    <span class="organization-name" *ngIf="content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
+                    <span class="organization-name"
+                        *ngIf="isCardElementEnabled('organisation') && content?.contentPartner?.contentPartnerName">{{'learnsearch.by' | translate}}
                         {{content?.contentPartner?.contentPartnerName}}</span>
                 </div>
 
-                <div class="mt-2">
+                <div class="mt-2" *ngIf="isCardElementEnabled('multiLingual')">
                     <sb-uic-available-languages [content]="content"></sb-uic-available-languages>
                 </div>
 
                 <div class="course-stats flex items-center gap-4 flex-wrap">
-                    <div class="rating" *ngIf="content?.avgRating">
+                    <div class="rating" *ngIf="isCardElementEnabled('rating') && content?.avgRating">
                         <mat-icon class="star-icon">star</mat-icon>
                         <span class="font-normal text-xs">{{content?.avgRating | number:'1.1-1'}}</span>
                     </div>
@@ -211,12 +216,13 @@
                         <span class="font-normal text-xs">2,123 enrolled</span>
                     </div> -->
 
-                    <div class="most-enrolled-tag" *ngIf="content?.additionalTags && content?.additionalTags.includes('mostEnrolled')">
+                    <div class="most-enrolled-tag"
+                        *ngIf="isCardElementEnabled('mostEnrolled') && content?.additionalTags && content?.additionalTags.includes('mostEnrolled')">
                         <mat-icon class="star-icon">whatshot</mat-icon>
                         <span class="font-normal text-xs">Most Enrolled</span>
                     </div>
 
-                    <div class="karmayogi-verified" *ngIf="isIgot">
+                    <div class="karmayogi-verified" *ngIf="isCardElementEnabled('igotBadge') && isIgot">
                         <img class="source-icon" alt="ong" src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
                         <span class="font-normal text-xs">iGOT</span>
                     </div>

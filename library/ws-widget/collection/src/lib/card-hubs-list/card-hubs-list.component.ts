@@ -2,7 +2,7 @@ import { trigger, transition, style, animate } from '@angular/animations'
 import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core'
 import { Router, NavigationEnd } from '@angular/router'
 import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
-import { ConfigurationsService, MultilingualTranslationsService, NsInstanceConfig, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, MultilingualTranslationsService, NsInstanceConfig, ValueService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { Subscription } from 'rxjs'
 import { environment } from 'src/environments/environment'
 // tslint:disable
@@ -64,7 +64,8 @@ export class CardHubsListComponent extends WidgetBaseComponent
     private valueSvc: ValueService,
     private langtranslations: MultilingualTranslationsService,
     private events: EventService,
-    private libNotificationsService: LibNotificationsService
+    private libNotificationsService: LibNotificationsService,
+    public domainConfSvc: DomainConfService
     // private accessService: AccessControlService
   ) {
     super()
@@ -155,7 +156,9 @@ export class CardHubsListComponent extends WidgetBaseComponent
     if (instanceConfig) {
       this.hubsList = (instanceConfig.hubs || []).sort((a, b) => a.order - b.order)
       this.inactiveHubList = (instanceConfig.hubs || []).filter(i => !(i.active))
+      this.filterByMenuConfig()
     }
+
     this.defaultMenuSubscribe = this.isLtMedium$.subscribe((isLtMedium: boolean) => {
       this.isMobile = isLtMedium
     })
@@ -174,6 +177,18 @@ export class CardHubsListComponent extends WidgetBaseComponent
     if (this.defaultMenuSubscribe) {
       this.defaultMenuSubscribe.unsubscribe()
     }
+  }
+
+  private filterByMenuConfig() {
+    const globalConfig = this.domainConfSvc.getGlobalConfig()
+    const menus = globalConfig?.components?.secondaryHeader?.menus
+    if (!menus || typeof menus !== 'object') { return }
+    this.hubsList = this.hubsList.filter(hub => {
+      if (!hub.active) { return false }
+      const hubKey = hub.hubname?.toLowerCase().replace(/[^a-z0-9]/g, '') || ''
+      const match = Object.keys(menus).find(key => key.toLowerCase().replace(/[^a-z0-9]/g, '') === hubKey)
+      return match ? menus[match] !== false : true
+    })
   }
 
   navigate(): any {

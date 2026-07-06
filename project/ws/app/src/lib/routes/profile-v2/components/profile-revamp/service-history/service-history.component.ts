@@ -4,6 +4,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 import { ProfileV2RevampService } from '../../../services/profile-v2-revamp.service'
 import * as _ from 'lodash'
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-service-history',
@@ -19,6 +20,8 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
   @Input() currentDesignation = ''
   @Input() currentOrgName = ''
   @Input() isUpdated = false
+  @Input() editConfig: any = null
+  @Input() apiConfig: any = null
   @Output() openProfileEntryEditDialog = new EventEmitter()
 
   serviceHistoryList: any[] = []
@@ -40,6 +43,8 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
       this.isCurrentUser = data.isCurrentUser || false
       this.currentDesignation = data.currentDesignation || ''
       this.currentOrgName = data.currentOrgName || ''
+      this.editConfig = data.editConfig || null
+      this.apiConfig = data.apiConfig || null
     }
   }
 
@@ -51,7 +56,12 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
 
   getServiceHistoryList() {
     if (this.userId) {
-      this.profileV2RevampSvc.fetchProfileEntries(this.userId, 'serviceHistory').subscribe((res: any) => {
+      const configDetails: ConfigDetails = {
+        defaultUrl: '',
+        urlConfigPath: 'profileV1Extended',
+        apiConfig: this.apiConfig
+      }
+      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'serviceHistory').subscribe((res: any) => {
         if (res) {
           this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', [])
           this.serviceHistoryDetails = _.get(res, 'result.response', [])

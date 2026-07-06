@@ -6,7 +6,8 @@ import { environment } from '../../../environments/environment'
 import { NonReleventFeedbackDialogComponent } from '@sunbird-cb/collection'
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar as MatSnackbarNew } from '@angular/material/snack-bar'
-import cloneDeep from 'lodash/cloneDeep'
+// import cloneDeep from 'lodash/cloneDeep'
+import { SupportAiService } from './support-ai.service'
 
 
 @Component({
@@ -99,6 +100,14 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   isHubEnable!: boolean
   @ViewChild('autoResizeTextarea') textArea!: ElementRef<HTMLTextAreaElement>
   containerHeight = 36;
+  sessionId = '';
+
+  chatActivities: any[] = [];
+
+  loadingSupportAI = false;
+
+  conversationEnded = false;
+  isInputEnabled = false;
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
@@ -106,6 +115,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     private chatbotService: RootService,
     private dialog: MatDialog,
     private matSnackBarNew: MatSnackbarNew,
+    private supportAiService: SupportAiService,
     private router: Router) { }
 
   ngOnInit() {
@@ -130,9 +140,145 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
 
-
+    this.initializeSupportAI()
 
   }
+  initializeSupportAI() {
+    this.loadingSupportAI = true
+
+    this.supportAiService.listSessions().subscribe({
+      next: (res: any) => {
+        this.initiateSupportNewChat = true
+        if (res?.session_id) {
+          this.sessionId = res.session_id
+          this.loadHistory()
+        } else {
+          this.createSession()
+        }
+      },
+      error: () => {
+        this.createSession()
+      }
+    })
+  }
+  createSession() {
+
+    this.supportAiService
+      .createSession()
+      .subscribe((res: any) => {
+
+        this.sessionId = res.session_id
+
+        this.chatActivities = []
+
+        this.renderActivities(
+          res.activities
+        )
+
+        this.loadingSupportAI = false
+      })
+  }
+  renderActivities(activities: any[]) {
+
+    activities.forEach(activity => {
+
+      this.chatActivities.push({
+        sender: 'bot',
+        activity
+      })
+
+      if (activity.disable_input !== undefined) {
+        this.isInputEnabled = !activity.disable_input
+      }
+    })
+  }
+
+  sendTurn(payload: any) {
+
+    this.loadingSupportAI = true
+
+    this.supportAiService.sendTurn(this.sessionId, payload)
+      .subscribe({
+        next: (res: any) => {
+
+          this.renderActivities(res.activities)
+
+          if (res.activities?.some((a: any) => a.type === 'end')) {
+            this.conversationEnded = true
+          }
+
+          this.loadingSupportAI = false
+        },
+        error: () => {
+          this.loadingSupportAI = false
+        }
+      })
+  }
+  selectChoice(choice: any) {
+
+    this.chatActivities.push({
+      sender: 'user',
+      text: choice.label
+    })
+
+    this.sendTurn({
+      action: 'select_choice',
+      choice_id: choice.id
+    })
+  }
+
+  startNewConversation() {
+    this.chatActivities = []
+    this.sessionId = ''
+    this.isInputEnabled = false
+    this.createSession()
+  }
+  loadHistory() {
+
+    this.supportAiService
+      .getHistory(this.sessionId)
+      .subscribe((res: any) => {
+
+        this.chatActivities = []
+        console.log('res', res)
+        // if (res?.messages?.length === 0) {
+        //   this.createSession()
+        // }
+        if (res?.messages?.length) {
+
+          res.messages.forEach((msg: any) => {
+
+            if (msg.role === 'bot') {
+
+              msg.activities.forEach(
+                (activity: any) => {
+
+                  this.chatActivities.push({
+                    sender: 'bot',
+                    activity
+                  })
+                }
+              )
+            }
+
+            if (msg.role === 'user') {
+
+              this.chatActivities.push({
+                sender: 'user',
+                text: msg.text
+              })
+            }
+          })
+        }
+
+        this.loadingSupportAI = false
+      })
+  }
+
+
+  // APIS called till history Eighth change: Add sendTurn left
+
+
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['chatId']) {
@@ -142,7 +288,7 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
       if (prev !== current) {
         console.log(`'chatId' changed from '${prev}' to '${current}'`)
         this.startNewChat = true
-        this.startNewSupportAISearch()
+        // this.startNewSupportAISearch()
       }
     }
 
@@ -538,188 +684,173 @@ export class SupportAIComponent implements OnInit, OnChanges, AfterViewInit, Aft
   }
 
   submitSearchQuery(textArea: HTMLTextAreaElement, event: any) {
-    if (!this.initiateSupportNewChat) {
-      return false
-    }
-    if (!this.searchQuery.trim()) {
-      event.preventDefault() // Prevents Enter key from adding a new line
-    }
-    this.searchQuery = this.searchQuery.trim()
-    // console.log('this.aiSearchResultArr--->', this.aiSearchResultArr)
-    this.aiSearchResultArr.map((item: any, index: any) => {
-      if (item && (item.newMessage === '')) {
-        // delete this.aiSearchResultArr[index]
-        this.aiSearchResultArr.splice(index, 1)
-      }
-    })
-    this.resultFetch = false
-    //  console.log(this.searchQuery)
-    this.cloneSearchQuery = ''
-    // this.searchQuery = 'Basics of National Income Accounting'
-    let sendMsgObj = {
-      type: 'sendMsg',
-      tab: 'support-ai',
-      question: this.searchQuery
-    }
-    this.cloneSearchQuery = cloneDeep(this.searchQuery)
-    this.aiSearchResultArr.push(sendMsgObj)
-    this.aiSearchResultArr.push({ type: 'incoming', tab: 'support-ai', answer: '', newMessage: '', showBot: true })
 
-    if (this.aiSearchResultArr.length > 2) {
-      setTimeout(() => {
-        this.scrollToBottomEvent.emit()
-      }, 0)
+    if (!this.isInputEnabled) {
+      return
     }
+
+    if (!this.searchQuery?.trim()) {
+      event.preventDefault()
+      return
+    }
+
+    const message = this.searchQuery.trim()
+
+    // Show user message
+    this.chatActivities.push({
+      sender: 'user',
+      text: message
+    })
+
+    // Send to chatbot
+    this.sendTurn({
+      action: 'send_message', // Verify this with backend if needed
+      text: message
+    })
+
     this.searchQuery = ''
     this.resetTextAreaHeight(textArea)
-    this.supportAISearch()
-    // setTimeout(()=>{
-    //   this.searchQuery = ''
-    // },1000)
-
-    //  this.getAiTutorMessage()
-    // this.sendAITutorMessage()
   }
 
-  startNewSupportAISearch() {
-    this.iGOTAISearchResultArr = []
-    let requestBody: any = {
-      "channel_id": "web",
-      // "session_id": this.chatId,
-      "text": this.cloneSearchQuery,
-      "audio": "",
-      "language": this.activeLaguage
-    }
-    console.log('requestBody--', requestBody)
-    if (this.startNewChat) {
-      this.chatbotService.aiStartChathForSupport(requestBody, this.userId).subscribe((data) => {
-        console.log('data---', data)
-        this.resultFetch = true
-        if (data && data.message) {
-          this.initiateSupportNewChat = true
-          this.aiSearchResultArr.push(
-            { type: 'incoming', tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true },
-            { type: 'incoming', tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false },
-            { type: 'incoming', tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false }
-          )
-        } else {
-          this.initiateSupportNewChat = false
-        }
+  // startNewSupportAISearch() {
+  //   this.iGOTAISearchResultArr = []
+  //   let requestBody: any = {
+  //     "channel_id": "web",
+  //     // "session_id": this.chatId,
+  //     "text": this.cloneSearchQuery,
+  //     "audio": "",
+  //     "language": this.activeLaguage
+  //   }
+  //   console.log('requestBody--', requestBody)
+  //   if (this.startNewChat) {
+  //     this.chatbotService.aiStartChathForSupport(requestBody, this.userId).subscribe((data) => {
+  //       console.log('data---', data)
+  //       this.resultFetch = true
+  //       if (data && data.message) {
+  //         this.initiateSupportNewChat = true
+  //         this.aiSearchResultArr.push(
+  //           { type: 'incoming', tab: 'support-ai', answer: `Hi ${this.userInfo?.firstName}! 👋`, newMessage: 'Hi Manasvi! 👋', showBot: true },
+  //           { type: 'incoming', tab: 'support-ai', answer: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", newMessage: "I'm your iGOT Support Assistant 🤖 — here to guide you with anything related to the iGOT platform.", showBot: false },
+  //           { type: 'incoming', tab: 'support-ai', answer: "How can I assist you today?", newMessage: 'How can I assist you today?', showBot: false }
+  //         )
+  //       } else {
+  //         this.initiateSupportNewChat = false
+  //       }
 
 
 
-      })
+  //     })
 
-      const event = {
-        eventType: WsEvents.WsEventType.Telemetry,
-        eventLogLevel: WsEvents.WsEventLogLevel.Info,
-        data: {
-          edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
-          object: {},
-          state: WsEvents.EnumTelemetrySubType.Interact,
-          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-          mode: 'view',
-        },
-        pageContext: { pageId: '/page/home', module: 'Home' },
-        from: '',
-        to: 'Telemetry',
-      }
-      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
-    }
-  }
-
-
-
-
-  supportAISearch() {
-    console.log('this.initiateSupportNewChat--', this.initiateSupportNewChat)
-    if (this.initiateSupportNewChat) {
-      let requestBody: any = {
-        "channel_id": "web",
-        // "session_id": this.chatId,
-        "text": this.cloneSearchQuery,
-        "audio": "",
-        "language": this.activeLaguage
-      }
-      this.chatbotService.aiSendChathForSupport(requestBody, this.userId).subscribe((data) => {
-        this.resultFetch = true
-        this.aiSearchResult = data
-
-        //let arr:any = []
-        // this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
-        //   let startTime = 0
-        //   let endTime = 0
-        //   let pageNumber:any = 1
-        //   if(item && item?.contentStart) {
-        //     startTime = item?.contentStart
-        //     pageNumber= item?.contentStart
-        //   }
-        //   if(item && item?.ContentEnd) {
-        //     endTime = item?.ContentEnd
-        //     pageNumber= item?.ContentEnd
-        //   }
-        //   pageNumber = pageNumber !== " " ? pageNumber : 1
-
-        //   let resultObj = {
-        //     message: item.Name,
-        //     recommendedQues: '',
-        //     selectedValue: '',
-        //     title: item.Name,
-        //     content: item,
-        //     mimeType: item.mimeType,
-        //     contentType: item.ContentType,
-        //     artifactUrl: item.ArtifactURL,
-        //     description: item.Description,
-        //     identifier: item.Identifier,
-        //     contentStart: startTime,
-        //     contentEnd: endTime,
-        //     pageNumber:   pageNumber,
-        //     query: this.aiSearchResult.query,
-        //     query_id: this.aiSearchResult.query_id,
-        //     feedback: '',
-        //     resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
-        //   }
-
-        //   // arr.push(resultObj)
-        //   this.iGOTAISearchResultArr.push(resultObj)
-
-        // })
-        let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
-        let shortAnswer = this.splitParagraphByWords(answer)
-        this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAISearchResultArr, type: 'incoming', tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false })
-        this.aiSearchResultArr.map((item: any, index: any) => {
-          if (item && (item.newMessage === '')) {
-            // delete this.aiSearchResultArr[index]
-            this.aiSearchResultArr.splice(index, 1)
-          }
-        })
-        // setTimeout(()=>{
-        //   this.scrollToBottomEvent.emit()
-        // },0)
-
-      })
-
-      const event = {
-        eventType: WsEvents.WsEventType.Telemetry,
-        eventLogLevel: WsEvents.WsEventLogLevel.Info,
-        data: {
-          edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
-          object: {},
-          state: WsEvents.EnumTelemetrySubType.Interact,
-          eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
-          mode: 'view',
-        },
-        pageContext: { pageId: '/page/home', module: 'Home' },
-        from: '',
-        to: 'Telemetry',
-      }
-      this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
-    }
+  //     const event = {
+  //       eventType: WsEvents.WsEventType.Telemetry,
+  //       eventLogLevel: WsEvents.WsEventLogLevel.Info,
+  //       data: {
+  //         edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
+  //         object: {},
+  //         state: WsEvents.EnumTelemetrySubType.Interact,
+  //         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+  //         mode: 'view',
+  //       },
+  //       pageContext: { pageId: '/page/home', module: 'Home' },
+  //       from: '',
+  //       to: 'Telemetry',
+  //     }
+  //     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  //   }
+  // }
 
 
 
 
-  }
+  // supportAISearch() {
+  //   console.log('this.initiateSupportNewChat--', this.initiateSupportNewChat)
+  //   if (this.initiateSupportNewChat) {
+  //     let requestBody: any = {
+  //       "channel_id": "web",
+  //       // "session_id": this.chatId,
+  //       "text": this.cloneSearchQuery,
+  //       "audio": "",
+  //       "language": this.activeLaguage
+  //     }
+  //     this.chatbotService.aiSendChathForSupport(requestBody, this.userId).subscribe((data) => {
+  //       this.resultFetch = true
+  //       this.aiSearchResult = data
+
+  //       //let arr:any = []
+  //       // this.aiSearchResult.RetrievedChunks && this.aiSearchResult.RetrievedChunks.map((item:any)=>{
+  //       //   let startTime = 0
+  //       //   let endTime = 0
+  //       //   let pageNumber:any = 1
+  //       //   if(item && item?.contentStart) {
+  //       //     startTime = item?.contentStart
+  //       //     pageNumber= item?.contentStart
+  //       //   }
+  //       //   if(item && item?.ContentEnd) {
+  //       //     endTime = item?.ContentEnd
+  //       //     pageNumber= item?.ContentEnd
+  //       //   }
+  //       //   pageNumber = pageNumber !== " " ? pageNumber : 1
+
+  //       //   let resultObj = {
+  //       //     message: item.Name,
+  //       //     recommendedQues: '',
+  //       //     selectedValue: '',
+  //       //     title: item.Name,
+  //       //     content: item,
+  //       //     mimeType: item.mimeType,
+  //       //     contentType: item.ContentType,
+  //       //     artifactUrl: item.ArtifactURL,
+  //       //     description: item.Description,
+  //       //     identifier: item.Identifier,
+  //       //     contentStart: startTime,
+  //       //     contentEnd: endTime,
+  //       //     pageNumber:   pageNumber,
+  //       //     query: this.aiSearchResult.query,
+  //       //     query_id: this.aiSearchResult.query_id,
+  //       //     feedback: '',
+  //       //     resourceLink : item.mimeType === 'application/pdf'? `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/pdf/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&pn=${pageNumber}`: `https://portal.igotkarmayogi.gov.in/app/amrit-gyaan-kosh/player/video/${item.Identifier}?primaryCategory=Learning Resource&from=globalSearch&playerPreview=true&st=${startTime}&et=${endTime}`
+  //       //   }
+
+  //       //   // arr.push(resultObj)
+  //       //   this.iGOTAISearchResultArr.push(resultObj)
+
+  //       // })
+  //       let answer = this.aiSearchResult.text ? this.aiSearchResult.text.trim().replace(/\n/g, '<br>') : ""
+  //       let shortAnswer = this.splitParagraphByWords(answer)
+  //       this.aiSearchResultArr.push({ showBot: true, wordsCount: answer.trim().split(/\s+/).length, showLess: answer.trim().split(/\s+/).length > 30 ? true : false, answer: answer, shortAnswer: shortAnswer, result: this.iGOTAISearchResultArr, type: 'incoming', tab: 'support-ai', reterivedChunks: this.aiSearchResult.RetrievedChunks, showFromInternet: (!(this.aiSearchResult.answer) && !(this.aiSearchResult.RetrievedChunks)) ? true : false })
+  //       this.aiSearchResultArr.map((item: any, index: any) => {
+  //         if (item && (item.newMessage === '')) {
+  //           // delete this.aiSearchResultArr[index]
+  //           this.aiSearchResultArr.splice(index, 1)
+  //         }
+  //       })
+  //       // setTimeout(()=>{
+  //       //   this.scrollToBottomEvent.emit()
+  //       // },0)
+
+  //     })
+
+  //     const event = {
+  //       eventType: WsEvents.WsEventType.Telemetry,
+  //       eventLogLevel: WsEvents.WsEventLogLevel.Info,
+  //       data: {
+  //         edata: { type: 'click', "id": "support-ai-global-search", "pageid": "/page/home" },
+  //         object: {},
+  //         state: WsEvents.EnumTelemetrySubType.Interact,
+  //         eventSubType: WsEvents.EnumTelemetrySubType.Chatbot,
+  //         mode: 'view',
+  //       },
+  //       pageContext: { pageId: '/page/home', module: 'Home' },
+  //       from: '',
+  //       to: 'Telemetry',
+  //     }
+  //     this.eventSvc.dispatchChatbotEvent<WsEvents.IWsEventTelemetryInteract>(event)
+  //   }
+
+
+
+
+  // }
 
   sharePositiveContentRating(item: any, index: any, cindex: any) {
     let requestBody: any = {

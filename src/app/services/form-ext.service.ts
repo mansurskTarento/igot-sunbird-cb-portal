@@ -6,6 +6,7 @@ import { catchError, map } from 'rxjs/operators'
 
 const API_END_POINTS = {
   FORM_READ: '/apis/v1/form/read',
+  FORM_CONFIG_READ: `/apis/proxies/v8/formsConfig/v1/read`
 }
 @Injectable({
   providedIn: 'root',
@@ -38,5 +39,10 @@ export class FormExtService {
       }
       ),
       )
+  }
+
+
+  formConfigReadData(request: any): Observable<any> {
+    return this.http.post<any>(API_END_POINTS.FORM_CONFIG_READ, request)
   }
 }

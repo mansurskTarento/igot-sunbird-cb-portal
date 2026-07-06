@@ -6,16 +6,18 @@ import { NSProfileDataV2 } from '../../models/profile-v2.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { catchError, map } from 'rxjs/operators'
 import * as _ from 'lodash'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Injectable()
-export class profileResolver
-   {
-  constructor(private profileSvc: ProfileV2RevampService, private configSvc: ConfigurationsService) { }
+export class profileResolver {
+  constructor(
+    private profileSvc: ProfileV2RevampService, private configSvc: ConfigurationsService) { }
 
   resolve(
     _route: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Observable<IResolveResponse<NSProfileDataV2.IProfile>> {
+    const apiConfig = _.get(_route, 'parent.data.pageData.data.apiConfig')
     const path = _route.routeConfig && _route.routeConfig.path
     let userId = ''
     if (path !== 'me') {
@@ -30,14 +32,19 @@ export class profileResolver
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
     const isNotCurrentUser = userId !== _.get(this.configSvc, 'userProfile.userId')
-    return this.profileSvc.fetchProfile(userId, isNotCurrentUser).pipe(
-      map(data =>  ({
-         data: _.merge(_.get(data, 'result.response') || {}, {
-           professionalDetails: this.configSvc.userProfile?.professionalDetails,
-         }),
-         error: null,
-         userId,
-        })),
+    const configDetails: ConfigDetails = {
+      defaultUrl: '',
+      urlConfigPath: 'profileV1Basic',
+      apiConfig: apiConfig,
+    }
+    return this.profileSvc.fetchProfile(configDetails, userId, isNotCurrentUser).pipe(
+      map(data => ({
+        data: _.merge(_.get(data, 'result.response') || {}, {
+          professionalDetails: this.configSvc.userProfile?.professionalDetails,
+        }),
+        error: null,
+        userId,
+      })),
       catchError(error => of({ error, data: null })),
     )
   }

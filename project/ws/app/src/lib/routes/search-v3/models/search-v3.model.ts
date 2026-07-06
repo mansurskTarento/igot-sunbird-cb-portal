@@ -183,7 +183,8 @@ export class SearchCommunitiesRequest {
     status: string
     orgName?: string[]
     competencyArea?: string[]
-    topicName?: string[];
+    topicName?: string[]
+    communityAccessLevel: string;
     [key: string]: any
   }
   requestedFields: any[]
@@ -197,6 +198,7 @@ export class SearchCommunitiesRequest {
   constructor(competenciesKey: any) {
     this.filterCriteriaMap = {
       status: 'active',
+      communityAccessLevel: 'public',
     }
     this.requestedFields = []
     this.pageNumber = 0

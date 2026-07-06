@@ -11,6 +11,7 @@ import { NsContent } from '@sunbird-cb/collection'
 import { environment } from 'src/environments/environment'
 import {
   ConfigurationsService,
+  DomainConfService,
   EventService,
   WsEvents,
 } from '@sunbird-cb/utils-v2'
@@ -46,8 +47,10 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   isIgot = false
   igotSpecializationProgram: any
   CaCourseUnitIds = '[]'
+  isUnenrolled = false
   constructor(
     private configSvc: ConfigurationsService,
+    private domainConfSvc: DomainConfService,
     private dialog: MatDialog,
     private events: EventService,
     private certificateService: CertificateService,
@@ -56,10 +59,15 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     private commonSvc: CommonMethodsService
   ) { }
 
+  isCardElementEnabled(key: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.cards', key)
+  }
+
   ngOnInit(): void {
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey]
     this.CaCourseUnitIds = this.commonSvc.getCourseUnitIds()
+    this.findIsUnenrolled()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -194,10 +202,9 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     return ''
   }
 
-  isUnenrolled(): boolean {
+  findIsUnenrolled(): void {
     if (this.unenrolledCourses.length) {
-      return this.unenrolledCourses.some((ele: any) => ele.courseId === this.content?.identifier)
+      this.isUnenrolled = this.unenrolledCourses.some((ele: any) => ele.courseId === this.content?.identifier)
     }
-    return false
   }
 }

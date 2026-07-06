@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog'
 import { WithdrawRequestComponent } from '../../withdraw-request/withdraw-request.component'
 import { RejectionReasonPopupComponent } from '../../rejection-reason-popup/rejection-reason-popup.component'
 import { ActivatedRoute, Router } from '@angular/router'
+import { ConfigDetails } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-profile-primary-details',
@@ -37,6 +38,8 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     designationRejectionTime: 0,
   }
   @Input() approvalPendingFields: any = []
+  @Input() primaryDetailsOtherDetailsConfig: any
+  @Input() apiConfig: any
 
   @Output() openProfileEditDialog = new EventEmitter()
   @Output() getApprovalStatus = new EventEmitter()
@@ -77,7 +80,8 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
       serviceName: 'profile',
       applicationStatus: 'APPROVED',
     }
-    this.profileV2RevampSvc.fetchApprovalDetails(requesrtBody)
+    const configDetails: ConfigDetails = this.getConfigDetails('userWFApplicationFieldsSearch')
+    this.profileV2RevampSvc.fetchApprovalDetails(configDetails, requesrtBody)
       .subscribe((_res: any) => {
         if (_res && _res.result && _res.result.data && Array.isArray(_res.result.data)) {
           _res.result.data.filter((obj: any) => {
@@ -130,7 +134,8 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
         this.groupApprovedTime < this.unVerifiedObj.groupRequestTime ||
         this.designationApprovedTime < this.rejectedFields.designationRejectionTime ||
         this.designationApprovedTime < this.unVerifiedObj.designationRequestTime) &&
-      this.isCurrentUser
+      this.isCurrentUser &&
+      _.get(this.primaryDetailsOtherDetailsConfig, 'primaryDetails.fields.approvalStatus.enabled', true)
     ) {
       return true
     }
@@ -239,7 +244,8 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
         updateFieldValues: [],
         comment: '',
       }
-      this.profileV2RevampSvc.withDrawRequest(payload)
+      const configDetails: ConfigDetails = this.getConfigDetails('workflowHandlerTransition')
+      this.profileV2RevampSvc.withDrawRequest(configDetails, payload)
         .subscribe((_res: any) => {
           this.getApprovalStatus.emit('withdraw')
           this.unVerifiedObj.group = ''
@@ -284,5 +290,13 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     this.matSnackBar.open(primaryMsg, 'X', {
       duration,
     })
+  }
+
+  getConfigDetails(configKey: string): ConfigDetails {
+    return {
+      apiConfig: this.apiConfig,
+      urlConfigPath: configKey,
+      defaultUrl: '',
+    }
   }
 }

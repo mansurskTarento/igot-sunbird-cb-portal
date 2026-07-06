@@ -3,6 +3,7 @@ import { delay } from 'rxjs/operators'
 import { HeaderService } from './header.service'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import {
+  DomainConfService,
   ValueService,
 } from '@sunbird-cb/utils-v2'
 import { MatDialog } from '@angular/material/dialog'
@@ -32,7 +33,8 @@ export class HeaderComponent implements OnInit {
     public headerService: HeaderService,
     public mobileAppsService: MobileAppsService,
     public dialog: MatDialog,
-    public router: Router
+    public router: Router,
+    public domainConfSvc: DomainConfService
 
     // private http: HttpClient,
     // private sanitizer: DomSanitizer,
