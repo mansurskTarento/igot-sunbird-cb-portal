@@ -5,7 +5,6 @@ import { ExploreDetailResolve, PageResolve, PageNameResolve, ModuleNameResolve }
 import { GeneralGuard } from '../guards/general.guard'
 import { AppTocResolverService } from '@sunbird-cb/toc'
 import { AppHomePageResolverService } from '../services/app-home-page-resolver.service'
-import { AppHomeV2Resolver } from '../services/app-home-v2-resolver.service'
 import { HomeResolverService } from '../home/home/home-resolver.service'
 import { FormMicroSiteDataService } from '../services/form-micro-site-data.service'
 
@@ -41,21 +40,6 @@ const routes: Routes = [
       module: 'CUSTOM_HOME',
     },
     resolve: {
-    },
-    canActivate: [GeneralGuard],
-  },
-  {
-    path: 'home-v2',
-    loadChildren: () => import('../home/home.module').then(m => m.HomeModule),
-    data: {
-      pageType: 'page',
-      pageKey: 'home',
-      pageId: 'page/home',
-      module: 'Home',
-    },
-    resolve: {
-      microSiteData: FormMicroSiteDataService,
-      pageData: AppHomeV2Resolver,
     },
     canActivate: [GeneralGuard],
   },

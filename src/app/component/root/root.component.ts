@@ -121,6 +121,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
     }
+    this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
+      this.menuBarDetails = sectionData?.data
+      if (this.menuBarDetails) {
+        this.setAchivements()
+        this.setOtherPortals()
+      }
+      console.log('sectionData', sectionData)
+    })
 
     this.getHeaderFooterConfiguration().subscribe((sectionData: any) => {
       if (sectionData && sectionData.data) {
@@ -339,7 +347,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
-        this.setLeftNavBarData()
 
         if (event.url.includes('/setup/')) {
           this.isSetupPage = true
@@ -497,36 +504,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   }
 
-  setLeftNavBarData(): any {
-    const pageData = this.getResolvedDataFromRoute(this.router.routerState.snapshot.root, 'pageData')
-    if (pageData) {
-      this.menuBarDetails = pageData.data
-      if (this.menuBarDetails) {
-        this.setAchivements()
-        this.setOtherPortals()
-      }
-    }
-    return pageData
-  }
-
-  private getResolvedDataFromRoute(snapshot: ActivatedRouteSnapshot | null, key: string): any {
-    if (!snapshot) {
-      return null
-    }
-
-    if (snapshot.data && snapshot.data[key]) {
-      return snapshot.data[key]
-    }
-
-    for (const child of snapshot.children) {
-      const childData = this.getResolvedDataFromRoute(child, key)
-      if (childData) {
-        return childData
-      }
-    }
-
-    return null
-  }
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
@@ -792,6 +769,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     const baseUrl = this.configSvc.sitePath
     // tslint:disable-next-line: prefer-template
     return this.http.get(baseUrl + '/page/right-nav-config.json').pipe(
+      map(data => ({ data, error: null })),
+      catchError(err => of({ data: null, error: err })),
+    )
+  }
+
+  getLeftNavBarConfiguration() {
+    const baseUrl = this.configSvc.sitePath
+    return this.http.get(`${baseUrl}/page/left-nav.json`).pipe(
       map(data => ({ data, error: null })),
       catchError(err => of({ data: null, error: err })),
     )

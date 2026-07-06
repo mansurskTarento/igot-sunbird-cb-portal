@@ -1,8 +1,7 @@
 @if (fullMenuDispaly()) {
 <!-- Top Navigation Bar -->
 @if (sShowAppNavBar() && !needToHide() && mode() === 'top' && isHubEnable()) {
-<mat-toolbar [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles"
-  class="mat-elevation-z3 custom mobile-height w-full px-3 md:px-0" [ngClass]="[
+<mat-toolbar class="custom mobile-height w-full nav-v2-content px-3 md:px-0" [ngClass]="[
     isHubEnable() ? 'mobile' : '',
     leftNavBarOpen() ? 'top-nav-bar-on-menubar-open' : 'top-nav-bar-on-menubar-close'
   ]">
