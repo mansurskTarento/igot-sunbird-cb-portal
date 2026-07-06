@@ -3,6 +3,7 @@
     <ws-welcome-greeting-v2></ws-welcome-greeting-v2>
     <ws-continue-learning-v2></ws-continue-learning-v2>
     @if (homePageSections) {
-    <sb-uic-contetn-sections [sections]="homePageSections"></sb-uic-contetn-sections>
+    <sb-uic-contetn-sections [sections]="homePageSections"
+        (cardClicked)="cardClicked($event)"></sb-uic-contetn-sections>
     }
 </div>
