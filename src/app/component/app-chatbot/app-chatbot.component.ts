@@ -75,6 +75,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   footerClassName = 'cb-footer'
   fromTopNavHelp = false
   userDesignation = ''
+  isSupportInputEnabled = false;
   constructor(
     private configSvc: ConfigurationsService,
     private eventSvc: EventService,
