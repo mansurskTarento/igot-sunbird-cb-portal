@@ -1,0 +1,146 @@
+@if (!disableMenu()) {
+<div class="flex items-center border search-v3 search-border w-full" id="app-search-bar">
+  @if (languageSearch()?.length) {
+  <div [ngClass]="{'border-right': languageSearch()?.length}" class="flex items-center">
+    @if (languageSearch()?.length && languageSearch()?.length > 1) {
+    <button class="lang-btn margin-right-s" mat-button [matMenuTriggerFor]="sortLang">
+      <span class="uppercase">
+        {{ searchLocale().split(',').length === 1 ? searchLocale() : 'pref' || 'en' }}
+      </span>
+      <mat-icon>arrow_drop_down</mat-icon>
+    </button>
+    }
+  </div>
+  }
+
+  <div class="w-full search relative">
+    <form (submit)="updateQuery(queryControl.value || '')" class="mat-full-radius flex items-center">
+      <mat-form-field class="autocomplete-form w-full" color="primary" appearance="outline">
+        @if (loaderSearching()) {
+        <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-home">
+        } @else {
+        <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
+        }
+
+        <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
+          [attr.title]="placeHolder()" id="global-search-input" i18n-placeholder="search content"
+          [placeholder]="placeHolder()" i18-aria-label aria-label="search content" (focus)="openSearchTemplateF()"
+          [formControl]="queryControl" maxlength="100" (input)="loaderSearching.set(true)" autocomplete="off" />
+
+        @if (queryControl.value && !loaderSearching()) {
+        <mat-icon matSuffix (click)="clearSearchText();" class="cursor-pointer search-close-icon">
+          close
+        </mat-icon>
+        }
+      </mat-form-field>
+
+      <button mat-flat-button type="submit" class="mat-btn-flat global-search" [disabled]="!queryControl.value"
+        [ngClass]="{'disabled-search-btn': !queryControl.value}">
+        {{'gyaanKarmayogi.search' | translate}}
+      </button>
+    </form>
+
+    <div class="search-container" [hidden]="!openSearchTemplate()">
+      <div class="search-results">
+        <div class="search-categories mb-4">
+          <mat-chip-list class="mat-chip-list-content">
+            @for (category of categories; track category.value) {
+            <mat-chip [removable]="false" [highlighted]="false" [disableRipple]="true"
+              [selected]="category.value === selectedSearchCategory()" (click)="selectSearchCategory(category.value)"
+              class="category-chip"
+              [ngClass]="{'selected-search-category active': category.value === selectedSearchCategory()}">
+              @if (category.icon) {
+              <mat-icon [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
+              }
+              {{ category.label }}
+            </mat-chip>
+            }
+          </mat-chip-list>
+        </div>
+
+        <!-- Recent Searches -->
+        @if (recentSearches().length) {
+        <mat-list>
+          <div mat-subheader class="flex justify-between">
+            <span class="text-sm recent-search-title font-normal">Recent Searches</span>
+            <a class="text-sm clear-all font-normal cursor-pointer" (click)="recentDeleteByUserId()">
+              Clear All
+            </a>
+          </div>
+          @for (query of recentSearches(); track query.timestamp) {
+          <mat-list-item class="recent-search-list">
+            <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center"
+              (click)="goToSearchItem(query)">
+              <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home-icon mr-1">
+              <span>{{ query?.search_query }}</span>
+            </a>
+            <button mat-icon-button (click)="recentDeleteByTimeStamp(query.timestamp)">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-list-item>
+          }
+        </mat-list>
+        }
+
+        <!-- All Search Results -->
+        @if (allSearchResults().length > 0) {
+        <mat-list>
+          <div mat-subheader class="flex justify-between mt-4 mb-1">
+            <span class="text-sm recent-search-title font-normal">All Search Results</span>
+          </div>
+          @for (result of allSearchResults(); track result.identifier || result.id) {
+          <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
+            <div matLine class="py-1 flex">
+              <mat-icon class="mr-3">search</mat-icon>
+              <span class="text-xs font-normal recent-search-text text-ellipse">
+                {{ getResultName(result) }}
+              </span>
+            </div>
+          </mat-list-item>
+          } @empty {
+          <mat-list-item class="flex justify-between items-center py-2">
+            <div matLine class="text-xs font-normal py-1 recent-search-text">No results found</div>
+          </mat-list-item>
+          }
+        </mat-list>
+        }
+
+        @if (allSearchResults().length > 0 && queryControl.value) {
+        <div class="see-all-results">
+          <a mat-button (click)="updateQuery(queryControl.value || '')">See all the results...</a>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<mat-menu #sortLang="matMenu">
+  <ng-template matMenuContent>
+    @for (lang of languageSearch(); track lang; let i = $index) {
+    <button mat-menu-item (click)="searchLanguage(lang)">
+      <span class="flex items-center w-full">
+        <span class="mr-2 flex items-center">
+          @if (lang.split(',').length > 1) {
+          <img [ngStyle]="{ height: '17px' ,width :'17px'}" src="/assets/common/flags/pref.png" />
+          }
+          @if (lang.split(',').length === 1) {
+          <img [ngStyle]="{
+                  height: lang === 'all' ? '17px': '14px',
+                  width: lang === 'all' ? '17px': '20px'
+                }" src="/assets/common/flags/{{lang}}.png" />
+          }
+        </span>
+        <span>{{ lang }}</span>
+        @if (lang === searchLocale()) {
+        <mat-icon class="ml-2">check</mat-icon>
+        }
+      </span>
+    </button>
+    @if ((preferredLanguages().split(',')?.length > 1 ? i === 1 : i === 0) && languageSearch().includes('all')) {
+    <mat-divider></mat-divider>
+    }
+    }
+  </ng-template>
+</mat-menu>

@@ -17,7 +17,8 @@
             <ng-container *ngIf="jan26Change && jan26Change.isEnabled">
                 <div class="mob-logo items-center justify-center">
                     <img [src]="jan26Change?.mWeb?.logoUrl" alt="Application Logo" class="app-logo" />
-                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text" [innerHTML]="jan26Change?.mWeb?.logoText"></span>
+                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text"
+                        [innerHTML]="jan26Change?.mWeb?.logoText"></span>
                 </div>
             </ng-container>
             <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar>
@@ -32,14 +33,14 @@
                     <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
                         <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                             <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                                <ws-feed-list [widgetData]="sectionItem.stripData" 
-                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                <ws-feed-list [widgetData]="sectionItem.stripData"
+                                    (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                                 </ws-feed-list>
                             </ng-container>
                         </div>
                     </ng-container>
-                    
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ng-container *ngFor="let sectionItem of sectionList">
                             <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -47,7 +48,7 @@
                         </ng-container>
                     </div>
 
-                  
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -69,11 +70,12 @@
                         </ng-container>
                     </ng-container>
 
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                     </div>
 
-                  
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -97,14 +99,15 @@
                     <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
                         <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                             <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
-                                <ws-feed-list [widgetData]="sectionItem.stripData" 
-                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                <ws-feed-list [widgetData]="sectionItem.stripData"
+                                    (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                                 </ws-feed-list>
                             </ng-container>
                         </div>
                     </ng-container>
-                    
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ng-container *ngFor="let sectionItem of sectionList">
                             <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
                                 <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
@@ -112,7 +115,7 @@
                         </ng-container>
                     </div>
 
-                    
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -134,7 +137,8 @@
                         </ng-container>
                     </ng-container>
 
-                    <div class="slider" *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                         <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                     </div>
 

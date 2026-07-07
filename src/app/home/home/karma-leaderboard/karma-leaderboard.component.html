@@ -1,0 +1,257 @@
+<!-- Loading skeleton -->
+<div class="klb-card klb-loading-card" *ngIf="loading" role="status" aria-busy="true"
+  aria-label="Loading Karma Leaderboard">
+  <!-- skeleton children are visual only -->
+  <div aria-hidden="true">
+    <div class="klb-sk-pad">
+      <div class="klb-skeleton klb-sk-h1"></div>
+      <div class="klb-skeleton klb-sk-line klb-sk-line-full" style="margin-top:8px"></div>
+      <div class="klb-skeleton klb-sk-line klb-sk-line-75" style="margin-top:4px"></div>
+    </div>
+
+    <!-- ② You've earned row -->
+    <div class="klb-sk-earned-row">
+      <div class="klb-sk-left">
+        <div class="klb-skeleton klb-sk-circle"></div>
+        <div class="klb-sk-text-col">
+          <div class="klb-skeleton klb-sk-line klb-sk-line-50"></div>
+          <div class="klb-skeleton klb-sk-line klb-sk-line-65" style="margin-top:4px"></div>
+        </div>
+      </div>
+      <div class="klb-skeleton klb-sk-btn"></div>
+    </div>
+
+    <div class="klb-sk-divider"></div>
+
+    <!-- ③ Section heading -->
+    <div class="klb-sk-pad">
+      <div class="klb-skeleton klb-sk-line klb-sk-line-85"></div>
+      <div class="klb-skeleton klb-sk-line klb-sk-line-full" style="margin-top:6px"></div>
+      <div class="klb-skeleton klb-sk-line klb-sk-line-60" style="margin-top:4px"></div>
+    </div>
+
+    <!-- ④ Pyramid -->
+    <div class="klb-skeleton klb-sk-pyramid"></div>
+
+    <!-- ⑤ My Rank footer -->
+    <div class="klb-sk-pad">
+      <div class="klb-sk-row-between">
+        <div class="klb-skeleton klb-sk-line klb-sk-line-30"></div>
+        <div class="klb-skeleton klb-sk-line klb-sk-line-30"></div>
+      </div>
+      <div class="klb-sk-myrank-row" style="margin-top:10px">
+        <div class="klb-skeleton klb-sk-rank-num"></div>
+        <div class="klb-skeleton klb-sk-circle-sm"></div>
+        <div class="klb-skeleton klb-sk-line klb-sk-line-40"></div>
+        <div class="klb-skeleton klb-sk-pts"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Leaderboard card -->
+<div class="klb-card" *ngIf="!loading && rank1" role="region" aria-labelledby="klb-card-title">
+  <!-- ── Celebration overlay (auto-dismisses after 5 s; click to dismiss early) ── -->
+  <div class="klb-overlay" *ngIf="showOverlay" role="dialog" aria-modal="true" aria-labelledby="klb-overlay-title"
+    aria-describedby="klb-overlay-body" (click)="dismissOverlay()" (keydown.escape)="dismissOverlay()" tabindex="-1">
+    <div class="klb-overlay-content">
+      <img src="/assets/icons/leaderboard_animation.gif" alt="" class="klb-overlay-gif" aria-hidden="true">
+      <img src="/assets/icons/leaderboard.svg" alt="" class="klb-overlay-logo" aria-hidden="true">
+      <p id="klb-overlay-title" class="klb-overlay-heading">{{ 'karmaLeaderboard.overlayHeading' | translate }}</p>
+      <p id="klb-overlay-body" class="klb-overlay-body">{{ overLayText }}</p>
+      <span class="klb-overlay-hint">{{ 'karmaLeaderboard.overlayHint' | translate }}</span>
+    </div>
+  </div>
+  <!-- ── Karma Points top heading ────────────────────────────── -->
+  <div class="klb-top-section">
+    <div class="klb-top-section-header">
+      <div id="klb-card-title" class="klb-top-title" role="heading" aria-level="2">{{ 'karmaLeaderboard.karmaPoints' |
+        translate }}</div>
+      <button class="klb-close-btn" aria-label="Close Karma Leaderboard">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <p class="klb-top-desc">{{ 'karmaLeaderboard.topDesc' | translate }}
+    </p>
+  </div>
+
+  <!-- ── Header: earned karma points ───────────────────────────── -->
+  <div class="klb-header">
+    <div class="klb-header-left">
+      <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-earned-icon" aria-hidden="true">
+      <div class="klb-earned-text">
+        <span class="klb-earned-label">{{ 'karmaLeaderboard.youveEarned' | translate }}</span>
+        <span class="klb-earned-val">{{ myKarmaPoints }} {{ 'karmaLeaderboard.karmaPoints' | translate }}</span>
+      </div>
+    </div>
+    <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-points']"
+      (click)="onNavBtnClick()" aria-label="View your karma points profile">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="klb-divider"></div>
+
+  <!-- ── Section heading ──────────────────────────────────────── -->
+  <div class="klb-section-head" role="region" aria-label="Leaderboard period">
+    <div class="klb-heading-row">
+      <span class="klb-heading" role="heading" aria-level="3">{{ 'karmaLeaderboard.sectionHeading' | translate }}</span>
+      <span class="klb-month">&nbsp;{{ monthName }} {{ year }}</span>
+    </div>
+    <p class="klb-desc">{{ 'karmaLeaderboard.tooltipText' | translate }}</p>
+  </div>
+
+  <!-- ── Pyramid ──────────────────────────────────────────────── -->
+  <!--
+    SVG natural sizes (viewBox):
+      blue-step  : 262 × 78   (ratio 3.36 : 1)
+      red-step   : 248 × 123  (ratio 2.02 : 1)
+      orange-step: 159 × 119  (ratio 1.34 : 1)
+      cup        :  48 × 50
+    Container: 310 px tall, 100 % wide (max-width: 380 px)
+    Widths chosen so each SVG renders near its natural aspect ratio:
+      blue   100 % → ~111 px tall
+      red     75 % → ~141 px tall
+      orange  50 % → ~142 px tall
+  -->
+  <div class="klb-pyramid" role="list" aria-label="Top 3 Karmayogis for {{ monthName }} {{ year }}">
+
+    <!-- Shape layers (back → front) -->
+    <img src="assets/images/karma-points/blue-step.svg" class="klb-shape klb-blue" alt="" aria-hidden="true">
+    <img src="assets/images/karma-points/red-step.svg" class="klb-shape klb-red" alt="" aria-hidden="true">
+    <img src="assets/images/karma-points/orange-step.svg" class="klb-shape klb-orange" alt="" aria-hidden="true">
+
+    <!-- Trophy cup (anchored above orange apex) -->
+    <img src="assets/images/karma-points/cup.svg" class="klb-cup" alt="" aria-hidden="true">
+
+    <!-- ── Rank 1 – centre, on orange (vertical stack) ── -->
+    <div class="klb-user klb-user-1" role="listitem"
+      aria-label="Rank 1: {{ rank1?.fullname | titlecase }}, {{ rank1?.total_points || 0 }} karma points">
+      <span class="klb-rank-num" aria-hidden="true">1</span>
+      <ws-widget-avatar-photo [name]="rank1?.fullname" [photoUrl]="rank1?.profile_image" size="l-xs">
+      </ws-widget-avatar-photo>
+      <div #rank1Name class="klb-rank-name klb-rank-name-w" [matTooltip]="rank1?.fullname | titlecase"
+        [matTooltipDisabled]="rank1Name.scrollHeight <= rank1Name.clientHeight">{{ rank1?.fullname | titlecase }}</div>
+    </div>
+    <!-- karma pill floats right of rank-1 -->
+    <div class="klb-pts-pill klb-pill-1" aria-hidden="true">
+      <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-pill-ico" aria-hidden="true">
+      <span class="klb-pill-num">{{ rank1?.total_points || 0 }}</span>
+    </div>
+
+    <!-- ── Rank 2 – horizontal row on red ── -->
+    <div class="klb-user klb-user-2" *ngIf="rank2" role="listitem"
+      aria-label="Rank 2: {{ rank2?.fullname | titlecase }}, {{ rank2?.total_points || 0 }} karma points">
+      <span class="klb-rank-num" aria-hidden="true">2</span>
+      <ws-widget-avatar-photo [name]="rank2?.fullname" [photoUrl]="rank2?.profile_image" size="l-xs">
+      </ws-widget-avatar-photo>
+      <div #rank2Name class="klb-rank-name klb-rank-name-w" [matTooltip]="rank2?.fullname | titlecase"
+        [matTooltipDisabled]="rank2Name.scrollHeight <= rank2Name.clientHeight">{{ rank2?.fullname | titlecase }}</div>
+    </div>
+    <!-- karma pill floats right of rank-2 -->
+    <div class="klb-pts-pill klb-pill-2" *ngIf="rank2" aria-hidden="true">
+      <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-pill-ico" aria-hidden="true">
+      <span class="klb-pill-num">{{ rank2?.total_points || 0 }}</span>
+    </div>
+
+    <!-- ── Rank 3 – horizontal row on blue ── -->
+    <div class="klb-user klb-user-3" *ngIf="rank3" role="listitem"
+      aria-label="Rank 3: {{ rank3?.fullname | titlecase }}, {{ rank3?.total_points || 0 }} karma points">
+      <span #rank3Name class="klb-rank-name klb-rank-name-w" aria-hidden="true"
+        [matTooltip]="rank3?.fullname | titlecase"
+        [matTooltipDisabled]="rank3Name.scrollHeight <= rank3Name.clientHeight">{{ rank3?.fullname | titlecase }}</span>
+      <ws-widget-avatar-photo [name]="rank3?.fullname" [photoUrl]="rank3?.profile_image" size="l-xs">
+      </ws-widget-avatar-photo>
+      <span class="klb-rank-num" aria-hidden="true">3</span>
+    </div>
+    <!-- karma pill floats right of rank-3 -->
+    <div class="klb-pts-pill klb-pill-3" *ngIf="rank3" aria-hidden="true">
+      <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-pill-ico" aria-hidden="true">
+      <span class="klb-pill-num">{{ rank3?.total_points || 0 }}</span>
+    </div>
+
+  </div><!-- /klb-pyramid -->
+
+  <!-- ── Other users list (4th–6th) ───────────────────────────── -->
+  <div class="klb-other-list" *ngIf="otherUsers && otherUsers.length && !isCurrentUserInTop3">
+
+    <!-- Header: Rank | Month Year -->
+    <div class="klb-other-header">
+      <span class="klb-other-header-label">Rank</span>
+      <span class="klb-other-header-period">{{ monthName }} {{ year }}</span>
+    </div>
+
+    <!-- User rows -->
+    <div class="klb-other-item" *ngFor="let user of otherUsers; let last = last"
+      [class.klb-other-item--me]="user?.userId === currentUserId" [class.klb-other-item--last]="last">
+
+      <!-- Main row -->
+      <div class="klb-other-item-row">
+        <span class="klb-other-rank">#{{ user?.rank }}</span>
+        <ws-widget-avatar-photo [name]="user?.fullname" [photoUrl]="user?.profile_image" size="l-xs">
+        </ws-widget-avatar-photo>
+        <span class="klb-other-name">{{ user?.fullname | titlecase }}</span>
+        <div class="klb-other-pts">
+          <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-pt-ico" aria-hidden="true">
+          <span>{{ user?.total_points || 0 }}</span>
+        </div>
+      </div>
+
+      <!-- Rank-change sub-row (current user whose rank improved) -->
+      <div class="klb-other-rank-change" aria-live="polite"
+        *ngIf="user?.userId === currentUserId && user?.previous_rank && user?.rank < user?.previous_rank">
+        <div class="klb-arrow-circle" aria-hidden="true"><mat-icon>arrow_upward</mat-icon></div>
+        <div class="klb-change-text">
+          <span class="klb-change-bold">{{ 'karmaLeaderboard.upByRank' | translate: { count: user?.previous_rank -
+            user?.rank } }}</span>
+          <span class="klb-change-prev">{{ 'karmaLeaderboard.prevRankText' | translate: { position:
+            ordinal(user?.previous_rank) } }}</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── My Rank footer (shown only when user is NOT in top-3 or 4–6 list) ── -->
+  <div class="klb-myrank" *ngIf="currentUserRank && !isCurrentUserInTop3 && !isCurrentUserInOtherList" role="region"
+    aria-label="Your rank for {{ monthName }} {{ year }}">
+
+    <!-- Row 1: Your Rank ... Month Year -->
+    <div class="klb-myrank-header">
+      <span class="klb-myrank-label" role="heading" aria-level="3">{{ 'karmaLeaderboard.yourRank' | translate }}</span>
+      <span class="klb-myrank-label">{{ monthName }} {{ year }}</span>
+    </div>
+
+    <!-- Row 2: #N avatar Name ... ⊕ pts -->
+    <div class="klb-myrank-details">
+      <div class="klb-myrank-user-row"
+        aria-label="Your current rank is number {{ currentUserRank?.rank }}, {{ currentUserRank?.fullname | titlecase }}, {{ currentUserRank?.total_points || 0 }} karma points">
+        <span class="klb-myrank-num">#{{ currentUserRank?.rank }}</span>
+        <ws-widget-avatar-photo [name]="currentUserRank?.fullname" [photoUrl]="currentUserRank?.profile_image"
+          size="l-xs">
+        </ws-widget-avatar-photo>
+        <span class="klb-myrank-uname">{{ currentUserRank?.fullname | titlecase }}</span>
+      </div>
+      <div class="klb-myrank-pts" aria-hidden="true">
+        <img src="/assets/icons/home/karma-badge.svg" alt="" class="klb-pt-ico" aria-hidden="true">
+        <span class="klb-points-num">{{ currentUserRank?.total_points || 0 }}</span>
+      </div>
+    </div>
+
+    <!-- Rank-change row (conditional) -->
+    <div class="klb-myrank-change" aria-live="polite" aria-atomic="true"
+      *ngIf="currentUserRank?.previous_rank && currentUserRank?.rank < currentUserRank?.previous_rank">
+      <div class="klb-arrow-circle" aria-hidden="true">
+        <mat-icon>arrow_upward</mat-icon>
+      </div>
+      <div class="klb-change-text">
+        <span class="klb-change-bold">{{ 'karmaLeaderboard.upByRank' | translate: { count:
+          currentUserRank?.previous_rank - currentUserRank?.rank } }}</span>
+        <span class="klb-change-prev">{{ 'karmaLeaderboard.prevRankText' | translate: { position:
+          ordinal(currentUserRank?.previous_rank) } }}</span>
+      </div>
+    </div>
+
+  </div><!-- /klb-myrank -->
+
+</div><!-- /klb-card -->

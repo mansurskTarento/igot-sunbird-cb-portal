@@ -16,6 +16,8 @@ import { SurveyPopupComponent } from '@ws/app'
 import { VerificationRequestDialogComponent } from '@ws/app'
 import { RootService } from '../root/root.service'
 import { NotificationsService } from '../../services/notifications.service'
+import { ThemeService } from '@sunbird-cb/design-system'
+import { BtnSettingsService } from '@sunbird-cb/collection'
 // const rightNavConfig = [
 //   {
 //     id: 1,
@@ -59,15 +61,21 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   showDropdown: boolean = false
   roles: string[] = []
   enableSupportAI = false
-  constructor(public dialog: MatDialog, public homePageService: HomePageService,
-              private configSvc: ConfigurationsService,
-              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-              private http: HttpClient, private sanitizer: DomSanitizer,
-              private events: EventService, private snackBar: MatSnackBar,
-              private router: Router, private notificationsService: NotificationsService,
-              private rootService: RootService,
-              private matDialog: MatDialogNew,
-              public domainConfSvc: DomainConfService) {
+  fontSizeLevel = 2 // 0=x-small, 1=small, 2=normal, 3=large, 4=x-large
+  private readonly fontClasses = ['x-small-typography', 'small-typography', 'normal-typography', 'large-typography', 'x-large-typography']
+  private readonly fontLabels = ['XS', 'S', 'M', 'L', 'XL']
+  constructor(
+    public dialog: MatDialog, public homePageService: HomePageService,
+    private configSvc: ConfigurationsService,
+    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+    private http: HttpClient, private sanitizer: DomSanitizer,
+    private events: EventService, private snackBar: MatSnackBar,
+    private router: Router, private notificationsService: NotificationsService,
+    private rootService: RootService,
+    private matDialog: MatDialogNew,
+    public domainConfSvc: DomainConfService,
+    public themeSvc: ThemeService,
+    private btnSettingsSvc: BtnSettingsService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -91,6 +99,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
+    this.initFontLevel()
     const instanceConfig = this.configSvc.instanceConfig
     if (instanceConfig) {
       this.multiLang = instanceConfig.websitelanguages
@@ -376,6 +385,36 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     } else {
       this.getZohoForm()
     }
+  }
+
+  get fontLabel(): string {
+    return this.fontLabels[this.fontSizeLevel]
+  }
+
+  initFontLevel(): void {
+    const stored = localStorage.getItem('setting')
+    const idx = this.fontClasses.indexOf(stored || 'normal-typography')
+    this.fontSizeLevel = idx >= 0 ? idx : 2
+  }
+
+  increaseFontSize(): void {
+    if (this.fontSizeLevel < 4) {
+      this.fontSizeLevel++
+      this.applyFontSize()
+    }
+  }
+
+  decreaseFontSize(): void {
+    if (this.fontSizeLevel > 0) {
+      this.fontSizeLevel--
+      this.applyFontSize()
+    }
+  }
+
+  private applyFontSize(): void {
+    const fontClass = this.fontClasses[this.fontSizeLevel]
+    localStorage.setItem('setting', fontClass)
+    this.btnSettingsSvc.changeFont(fontClass)
   }
 
 }
