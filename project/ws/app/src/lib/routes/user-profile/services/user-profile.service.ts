@@ -255,7 +255,7 @@ export class UserProfileService {
     return this.http.post<any>(url, requestBody)
   }
 
-  readCustomattributeDetails(userId: string, orgId: string, configDetails?: ConfigDetails): Observable<any> {
+  readCustomattributeDetails(_userId: string, _orgId: string, configDetails?: ConfigDetails): Observable<any> {
     let url = API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES
     if (configDetails) {
       configDetails['defaultUrl'] = API_ENDPOINTS.READ_CUSTOM_FIELDS_VALUES
@@ -264,6 +264,6 @@ export class UserProfileService {
         return of('')
       }
     }
-    return this.http.get<any>(`${url}/${userId}/${orgId}`)
+    return this.http.get<any>(`${url}`)
   }
 }

@@ -302,7 +302,7 @@ export class InitService {
           type: 'page',
           subType: 'application-config-web',
           portal: 'portal',
-          clientVersion: this.configSvc?.globalConfig?.formClentVersion['application-config-web'] || 1.0,
+          clientVersion: this.configSvc?.globalConfig?.formClentVersion?.['application-config-web'] || 1.0,
         },
       }
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
@@ -529,7 +529,6 @@ export class InitService {
             userRoles: _.get(profileV2, 'userRoles') || [],
             webPortalLang: _.get(profileV2, 'additionalProperties.webPortalLang') || '',
           }
-
           if (!this.configSvc.nodebbUserProfile) {
             this.configSvc.nodebbUserProfile = {
               username: userPidProfile.userName,

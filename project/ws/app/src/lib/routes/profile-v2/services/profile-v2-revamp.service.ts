@@ -73,13 +73,13 @@ export class ProfileV2RevampService {
     private commonMethodsService: CommonMethodsService
   ) { }
 
-  fetchProfile(configDetails: ConfigDetails, userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile | string> {
+  fetchProfile(configDetails: ConfigDetails, _userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile | string> {
     configDetails['defaultUrl'] = API_END_POINTS.GET_USER_BASIC_DETAILS
     const url = this.commonMethodsService.getEnabledUrl(configDetails)
     if (!url) {
       return of('')
     }
-    return this.http.get<NSProfileDataV2.IProfile>(`${API_END_POINTS.GET_USER_BASIC_DETAILS}/${userId}`)
+    return this.http.get<NSProfileDataV2.IProfile>(`${url}`)
       .pipe(map(res => {
         if (!isNotCurrentUser) {
           this.configulreProfileDetails(res)
@@ -155,13 +155,13 @@ export class ProfileV2RevampService {
       }))
   }
 
-  fetchProfileEntries(configDetails: ConfigDetails, userId: string, entryType: string = 'all'): Observable<NSProfileDataV2.IProfile | string> {
+  fetchProfileEntries(configDetails: ConfigDetails, _userId: string, entryType: string = 'all'): Observable<NSProfileDataV2.IProfile | string> {
     configDetails['defaultUrl'] = API_END_POINTS.GET_USER_ENTRIES
     const url = this.commonMethodsService.getEnabledUrl(configDetails)
     if (!url) {
       return of('')
     }
-    return this.http.get<NSProfileDataV2.IProfile>(`${url}${entryType}/${userId}`)
+    return this.http.get<NSProfileDataV2.IProfile>(`${url}${entryType}`)
       .pipe(map(res => {
         return res
       }))
