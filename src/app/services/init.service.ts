@@ -657,6 +657,7 @@ export class InitService {
             desiredTopics: _.get(profileV2, 'desiredTopics') || [],
             userRoles: _.get(profileV2, 'userRoles') || [],
             webPortalLang: _.get(profileV2, 'additionalProperties.webPortalLang') || '',
+            profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
           }
 
           if (!this.configSvc.nodebbUserProfile) {
