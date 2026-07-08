@@ -4,17 +4,16 @@
             <!-- Left side - Image -->
             <div class="course-image-container relative overflow-hidden">
                 <ng-container *ngIf="isCardElementEnabled('posterImage') && content?.posterImage">
-                    <img [src]="content?.posterImage | pipePublicURL" alt="Course thumbnail"
-                        class="w-full h-full rounded-xl" [wsUtilsDefaultThumbnail]="defaultThumbnail">
+                    <img [src]="content?.posterImage | pipePublicURL" alt="Course thumbnail" class="w-full h-full rounded-xl"
+                        [wsUtilsDefaultThumbnail]="defaultThumbnail">
                 </ng-container>
                 <ng-container *ngIf="!isCardElementEnabled('posterImage') || !content?.posterImage">
                     <ng-container *ngIf="content?.appIcon; else defaultImg">
-                        <img [src]="content?.appIcon | pipePublicURL" alt="Course thumbnail"
-                            class="w-full h-full rounded-xl" [wsUtilsDefaultThumbnail]="defaultThumbnail">
+                        <img [src]="content?.appIcon | pipePublicURL" alt="Course thumbnail" class="w-full h-full rounded-xl"
+                            [wsUtilsDefaultThumbnail]="defaultThumbnail">
                     </ng-container>
                     <ng-template #defaultImg>
-                        <img alt="Course thumbnail" class="w-full h-full rounded-xl"
-                            src="/assets/instances/eagle/app_logos/default.png" />
+                        <img alt="Course thumbnail" class="w-full h-full rounded-xl" src="/assets/instances/eagle/app_logos/default.png" />
                     </ng-template>
                 </ng-container>
 
@@ -56,31 +55,26 @@
                             <mat-icon class="document-icon"
                                 *ngIf="content?.mimeType === 'application/json' || content?.mimeType === 'application/quiz'">
                                 assessment</mat-icon>
-                            <mat-icon class="document-icon"
-                                *ngIf="content?.mimeType === 'application/pdf'">picture_as_pdf</mat-icon>
+                            <mat-icon class="document-icon" *ngIf="content?.mimeType === 'application/pdf'">picture_as_pdf</mat-icon>
                             <mat-icon class="document-icon"
                                 *ngIf="content?.mimeType === 'video/mp4' || content?.mimeType === 'video/x-youtube' || content?.mimeType === 'application/x-mpegURL'">
                                 videocam</mat-icon>
-                            <mat-icon class="document-icon"
-                                *ngIf="content?.mimeType === 'application/vnd.ekstep.content-collection'">video_library
+                            <mat-icon class="document-icon" *ngIf="content?.mimeType === 'application/vnd.ekstep.content-collection'">video_library
                             </mat-icon>
                             <mat-icon class="document-icon"
                                 *ngIf="content?.mimeType === 'application/vnd.ekstep.html-archive' || content?.mimeType === 'application/vnd.ekstep.ecml-archive' || content?.mimeType === 'text/x-url'">
                                 attachment</mat-icon>
 
-                            <mat-icon class="document-icon"
-                                *ngIf="content?.mimeType === 'image/jpeg' || content?.mimeType === 'image/png'">image
+                            <mat-icon class="document-icon" *ngIf="content?.mimeType === 'image/jpeg' || content?.mimeType === 'image/png'">image
                             </mat-icon>
                             <mat-icon class="document-icon"
                                 *ngIf="content?.mimeType === 'application/html' && content?.contentType === 'Event'">video_library
                             </mat-icon>
 
-                            <ng-container
-                                *ngIf="content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
+                            <ng-container *ngIf="content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.courseCategory}}
                             </ng-container>
-                            <ng-container
-                                *ngIf="!content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
+                            <ng-container *ngIf="!content?.courseCategory && content?.primaryCategory !== 'Learning Resource'">
                                 {{content?.primaryCategory}}
                             </ng-container>
                             <ng-container *ngIf="content?.primaryCategory == 'Learning Resource'">
@@ -99,11 +93,9 @@
                                         class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
                                         [ngClass]="{'lock-download-certificate-course': lockSurvey}">
                                         <ng-container *ngIf="!lockSurvey; else lockedSurvey">
-                                            <mat-icon [svgIcon]="'download'" class="mb-1"
-                                                *ngIf="!downloadCertificateLoading"></mat-icon>
+                                            <mat-icon [svgIcon]="'download'" class="mb-1" *ngIf="!downloadCertificateLoading"></mat-icon>
                                             <div class="flex items-center mb-1" *ngIf="downloadCertificateLoading">
-                                                <mat-spinner strokeWidth="2" stroke="'red'"
-                                                    [diameter]="16"></mat-spinner>
+                                                <mat-spinner strokeWidth="2" stroke="'red'" [diameter]="16"></mat-spinner>
                                             </div>
                                         </ng-container>
                                         <ng-template #lockedSurvey>
@@ -112,8 +104,12 @@
                                         <span>Download Certificate</span>
                                     </div>
                                 </ng-container>
-                                <ng-container *ngIf="isCardElementEnabled('inProgress') && courseEnrollment && courseEnrollment?.completionPercentage < 100">
+                                <ng-container
+                                    *ngIf="isCardElementEnabled('inProgress') && courseEnrollment && courseEnrollment?.completionPercentage < 100">
                                     <div class="inprogress-course font-stats rounded">In - Progress</div>
+                                </ng-container>
+                                <ng-container *ngIf="isCardElementEnabled('unenrolled') && isUnenrolled">
+                                    <div class="un-enrolled-course font-stats rounded">Un-Enrolled</div>
                                 </ng-container>
                                 <ng-container
                                     *ngIf="isCardElementEnabled('completed') && courseEnrollment && courseEnrollment?.completionPercentage === 100">
@@ -180,8 +176,7 @@
                     {{content?.name}}
                 </h2>
 
-                <div class="course-tags mb-3 font-normal text-ellipse"
-                    *ngIf="content?.primaryCategory == 'Learning Resource'">
+                <div class="course-tags mb-3 font-normal text-ellipse" *ngIf="content?.primaryCategory == 'Learning Resource'">
                     {{content?.description}}
                 </div>
                 <!-- <div class="course-tags mb-3 font-normal text-ellipse"
@@ -193,8 +188,7 @@
 
                 <div class="course-author mb-3 flex items-center gap-2">
                     <div class="author-avatar flex items-center justify-center" *ngIf="isCardElementEnabled('creatorLogo')">
-                        <img class="source-icon" alt="ong"
-                            [src]="content?.creatorLogo || content?.contentPartner?.link| pipePublicURL" width="16"
+                        <img class="source-icon" alt="ong" [src]="content?.creatorLogo || content?.contentPartner?.link| pipePublicURL" width="16"
                             [wsUtilsDefaultThumbnail]="defaultSLogo">
                     </div>
                     <!-- <span class="organization-name" *ngIf="content?.creator">{{'learnsearch.by' | translate}}
@@ -229,8 +223,7 @@
                     </div>
 
                     <div class="karmayogi-verified" *ngIf="isCardElementEnabled('igotBadge') && isIgot">
-                        <img class="source-icon" alt="ong"
-                            src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
+                        <img class="source-icon" alt="ong" src="/assets/instances/eagle/app_logos/igot-katmayogi-logo.svg" width="18">
                         <span class="font-normal text-xs">iGOT</span>
                     </div>
                 </div>
