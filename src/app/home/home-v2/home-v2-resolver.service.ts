@@ -25,7 +25,7 @@ export class HomeV2ResolverService {
     }
     const baseUrl = this.configSvc.sitePath
     const homeConfig = this.http.get<any>(`${baseUrl}/page/home-v2.json`)
-    const sectionRecordsCount = this.http.get<any>(`/apis/proxies/v8/content/user/info`).pipe(
+    const sectionRecordsCount = this.http.get<any>(`/apis/proxies/v8/user/content/info`).pipe(
       catchError(() => of(null)),
     )
 
@@ -34,13 +34,18 @@ export class HomeV2ResolverService {
         if (homeConfigRes && homeConfigRes.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
           const pillsSection = homeConfigRes.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
           if (pillsSection && Array.isArray(pillsSection.pills)) {
+            let visablePillsCount = 0
             pillsSection.pills.forEach((pill: any) => {
               if (pill.pillInfoCountKey && sectionRecordsCountRes.result[pill.pillInfoCountKey]) {
                 pill.visibilityMode = 'visible'
+                visablePillsCount = visablePillsCount + 1
               } else {
                 pill.visibilityMode = 'hidden'
               }
             })
+            if (visablePillsCount === 0) {
+              pillsSection.visibilityMode = 'hidden'
+            }
           }
         }
         return { data: homeConfigRes, error: null }
