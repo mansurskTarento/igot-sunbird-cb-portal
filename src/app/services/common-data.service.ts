@@ -119,14 +119,15 @@ export class CommonDataService {
   }
 
   getOrgDetails(isPlayer: boolean) {
+    this.rootOrgId = this.rootOrgId || this.configSvc?.userProfile?.rootOrgId ||''
     const request = {
       request: { organisationId: this.rootOrgId },
     }
     if (Object.keys(this.configSvc && this.configSvc.orgReadData || {}).length > 0) {
       const res: any = this.configSvc.orgReadData
-      const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
-      const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
-      const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
+      const isPopupEnabled = _.get(res, 'customfieldsdata?.isPopupEnabled') ? true : false
+      const customFieldsCount = _.get(res, 'customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
+      const customFieldsLength = _.get(res, 'customfieldsdata?.customFieldIds', [])
       if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
         return this.readCustomattributeDetails(isPlayer)
       }
@@ -136,6 +137,7 @@ export class CommonDataService {
 
     }
       this.userProfileService.readOrgData(request).subscribe((res: any) => {
+        this.configSvc.orgReadData = res?.result?.response
         const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
         const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
         const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])

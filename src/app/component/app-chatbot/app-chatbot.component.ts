@@ -6,8 +6,7 @@ import { environment } from 'src/environments/environment'
 import { NavigationEnd, Router } from '@angular/router'
 import { CdkDragEnd } from '@angular/cdk/drag-drop'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
-import { HttpClient } from '@angular/common/http'
-import { DomSanitizer } from '@angular/platform-browser'
+import { ZohoSupportService } from '../../services/zoho-support.service'
 import { MatDialog } from '@angular/material/dialog'
 @Component({
     selector: 'ws-app-chatbot',
@@ -68,7 +67,6 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
   enableInformationTab = false
   enableIssuesTab = false
   zohoHtml: any
-  zohoUrl: any = '/assets/static-data/zoho-code.html'
   maximizeChatFlag = true
   fullScreenChatFlag = false
   faqChatBotDisable = true
@@ -81,8 +79,7 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     private eventSvc: EventService,
     private renderer: Renderer2,
     private chatbotService: RootService,
-    public http: HttpClient,
-    private sanitizer: DomSanitizer,
+    private zohoSupportSvc: ZohoSupportService,
     public dialog: MatDialog,
     private router: Router) { }
 
@@ -213,8 +210,8 @@ export class AppChatbotComponent implements OnInit, AfterViewChecked, OnChanges 
     const email = environment.supportEmail || 'mission.karmayogi@gov.in'
     this.callText = `<a class='hint-text' target='_blank' href='https://bit.ly/44MJlo4'>Teams Call</a>&nbsp;`
     this.emailText = `<a class='hint-text' target='_blank' href='mailto:${email}'>${email}.</a>`
-    this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe((res: any) => {
-      this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
+    this.zohoSupportSvc.getZohoHtml().subscribe((res: any) => {
+      this.zohoHtml = res
     })
   }
   scrollSupportContainerToBottom() {

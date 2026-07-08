@@ -402,9 +402,7 @@ export class InitService {
         if (userProfile.rootOrgId) {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe(orgData => {
             this.configSvc.orgReadData = orgData
-            if (orgData && orgData['netcoreDisabled']) {
-
-            } else {
+            if (!(orgData && orgData['netcoreDisabled'])) {
               smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', 'tin')
               smartech('register', 'b632681d782c843e187fd5447c97ed4d')
               smartech('identify', '')
