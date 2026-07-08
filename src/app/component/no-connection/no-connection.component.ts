@@ -23,7 +23,6 @@ export class NoConnectionComponent {
     public networkStatus() {
         this.online$.subscribe(value => {
             this.display = true
-            debugger
             this.isOnline = value
             this.updateUnlineStatus()
         })

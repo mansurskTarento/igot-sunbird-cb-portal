@@ -135,16 +135,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       }
     })
 
-    // this.getHeaderFooterConfiguration().subscribe((_sectionData: any) => {
-    // console.log('headerFooterConfigData',sectionData)
-    // if (sectionData && sectionData.data) {
-    //   debugger
-    //   this.headerFooterConfigData = sectionData.data
-    //   this.showFooter = true
-    //   // Manually trigger change detection to ensure footer updates
-    //   this.changeDetector.detectChanges()
-    // }
-    // })
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
       || window.location.pathname.includes('/viewer/')
