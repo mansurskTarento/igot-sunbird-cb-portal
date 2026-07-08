@@ -215,11 +215,17 @@ export class NotificationsService {
           }
         }
       )
+    } else if (notification.sub_category === 'CONTENT_UN_ENROLLED') {
+      this.redirectToTOC(notification)
     } else {
-      this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
-        this.router.navigate([`/app/toc/${notification.message.data.id}`])
-      })
+      this.redirectToTOC(notification)
     }
+  }
+
+  redirectToTOC(notification: any): void {
+    this.router.navigateByUrl('/app/toc', { skipLocationChange: true }).then(() => {
+      this.router.navigate([`/app/toc/${notification.message.data.id}`])
+    })
   }
 
   handleRedirection(notification: any, environment: any, roles: any[], snackBar: any): void {
