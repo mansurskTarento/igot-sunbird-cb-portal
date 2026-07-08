@@ -24,10 +24,10 @@ export enum ErrorType {
 }
 
 @Component({
-    selector: 'viewer-container',
-    templateUrl: './viewer.component.html',
-    styleUrls: ['./viewer.component.scss'],
-    standalone: false
+  selector: 'viewer-container',
+  templateUrl: './viewer.component.html',
+  styleUrls: ['./viewer.component.scss'],
+  standalone: false
 })
 
 export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
@@ -155,7 +155,7 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
           }
         }
       })
-    },         100)
+    }, 100)
   }
 
   checkMultilingual() {
@@ -189,9 +189,12 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
 
       if (this.content) {
         const hashMap = this.tocSvc.hashmap
-        // console.log('hasMap', hashMap)
-        // console.log(hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']])
-        if (!hashMap[this.activatedRoute.snapshot.data['preAssessmentRead']['data']['result']['content']['identifier']]) {
+        // Only build entries when the pre-enrolment resource do_ids are not in the
+        // hashmap yet (first load). createPreAssessmentHirarchyProgressHashmap rebuilds
+        // every entry from the static content read, which zeroes live progress — and the
+        // old guard checked the program id, so whether it ran depended on unrelated code.
+        const preResources = this.activatedRoute.snapshot.data['contentRead']['data']['result']['content']['preEnrolmentResources'] || []
+        if (preResources.length && preResources.every((item: any) => !hashMap[item.identifier])) {
           this.tocSvc.createPreAssessmentHirarchyProgressHashmap(this.activatedRoute.snapshot.data['contentRead']['data']['result']['content'])
         }
       }
@@ -314,8 +317,15 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         this.hierarchyData = contentData.result.content
         this.leafNodesCount = contentData.result.content.leafNodesCount
 
-        // CRITICAL: For regular courses, call manipulateHierarchyData which does the mapping
-        await this.manipulateHierarchyData()
+        // In the pre-assessment (pre-enrollment) flow the hashmap is built from
+        // preEnrolmentResources in getContentData(). manipulateHierarchyData ->
+        // mapCompletionPercentageProgram ends with callHirarchyProgressHashmap,
+        // which clears the hashmap and rebuilds it from children only — wiping
+        // the pre-enrolment entries after their progress was fetched. Skip it.
+        if (!this.isPreAssessment) {
+          // CRITICAL: For regular courses, call manipulateHierarchyData which does the mapping
+          await this.manipulateHierarchyData()
+        }
 
         // manipulateHierarchyData created the hashmap, but we need to add the root entry
         // and get completion data from enrollment list (like TOC does)
@@ -977,6 +987,26 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
     const identifierArr: any = []
     this.hierarchyData.map((item: any) => {
       identifierArr.push(item.identifier)
+      // Seed hashmap entries for every pre-enrolment resource do_id so progress
+      // always has a target — the state-read API only returns consumed contents
+      // and createPreAssessmentHirarchyProgressHashmap may have been skipped
+      if (!this.tocSvc.hashmap[item.identifier]) {
+        this.tocSvc.hashmap[item.identifier] = {
+          parent: item.parent,
+          identifier: item.identifier,
+          leafNodesCount: item.leafNodesCount || null,
+          leafNodes: item.leafNodes || [],
+          completionPercentage: item.completionPercentage || item.progress || 0,
+          completionStatus: Number(item.completionStatus) || 0,
+          status: Number(item.status || item.completionStatus) || 0,
+          progress: item.progress,
+          primaryCategory: item.primaryCategory,
+          courseCategory: item.courseCategory || item.primaryCategory || '',
+          mimeType: item.mimeType,
+          name: item.name || '',
+          isPreAssessment: item.isPreAssessment || false,
+        }
+      }
     })
     if (identifierArr && identifierArr.length) {
       const req = {
@@ -992,13 +1022,52 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
         // console.log('read resources progress data', data)
         if (data && data.result && data.result.contentList) {
           for (let i = 0; i < data.result.contentList.length; i++) {
-            if (Object.keys(this.tocSvc.hashmap) && Object.keys(this.tocSvc.hashmap).length && this.tocSvc.hashmap[data.result.contentList[i]['contentId']]) {
-              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionPercentage'] = data.result.contentList[i]['completionPercentage']
-              this.tocSvc.hashmap[data.result.contentList[i]['contentId']]['completionStatus'] = Number(data.result.contentList[i]['status']) || 0
+            const contentId = data.result.contentList[i]['contentId']
+            const apiPercentage = Number(data.result.contentList[i]['completionPercentage']) || 0
+            const apiStatus = Number(data.result.contentList[i]['status']) || 0
+            const existing = this.tocSvc.hashmap[contentId]
+            if (existing) {
+              // Merge monotonically — the state-read can lag behind a just-submitted
+              // pre-assessment, and a stale response must not reset local completion
+              const mergedStatus = Math.max(Number(existing['completionStatus']) || 0, apiStatus)
+              existing['completionPercentage'] = Math.max(Number(existing['completionPercentage']) || 0, apiPercentage)
+              existing['completionStatus'] = mergedStatus
+              existing['status'] = mergedStatus
+            } else {
+              this.tocSvc.hashmap[contentId] = {
+                identifier: contentId,
+                completionPercentage: apiPercentage,
+                completionStatus: apiStatus,
+                status: apiStatus,
+              }
             }
           }
         }
+        // The TOC card recomputes collection rows (e.g. the pre-enrolment assessment)
+        // from their leafNodes, so completion must be propagated down to the leaf
+        // entries or the card resets the collection back to 0
+        this.hierarchyData.forEach((item: any) => {
+          const entry = this.tocSvc.hashmap[item.identifier]
+          const leafNodes = (entry && entry.leafNodes) || item.leafNodes
+          if (entry && Number(entry['completionStatus']) === 2 && Array.isArray(leafNodes)) {
+            leafNodes.forEach((leafId: string) => {
+              const leaf = this.tocSvc.hashmap[leafId] || { identifier: leafId, parent: item.identifier }
+              leaf['completionPercentage'] = 100
+              leaf['completionStatus'] = 2
+              leaf['status'] = 2
+              this.tocSvc.hashmap[leafId] = leaf
+            })
+          }
+        })
+        // Reassign and emit so viewer/TOC subscribers pick up the progress (checkmarks)
+        this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+        console.log('🔄 [VIEWER] Pre-enrollment resource progress state-read completed, hashmap updated', this.tocSvc.hashmap)
+        this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
       })
+      // Publish the seeded entries immediately so the TOC renders all do_ids
+      // even before the state-read response arrives
+      this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+      this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
     }
 
   }
