@@ -56,7 +56,7 @@
     "@sunbird-cb/consumption": "0.0.4-ang-17-20-role-based",
     "@sunbird-cb/design-system": "0.0.10",
     "@sunbird-cb/discussion-v2": "0.0.1-ang-17-20-role-based",
-    "@sunbird-cb/itsm-chatbot": "^0.0.4-ang-17-20",
+    "@sunbird-cb/itsm-chatbot": "^0.0.5-ang-17-20",
     "@sunbird-cb/micro-surveys": "0.0.1-ang-17-20",
     "@sunbird-cb/notification": "0.0.3-ang-17-20",
     "@sunbird-cb/rain-dashboards": "0.0.1-ang-17-20",
