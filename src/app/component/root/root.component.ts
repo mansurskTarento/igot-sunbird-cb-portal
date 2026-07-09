@@ -539,7 +539,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
               achievements.sectionLoading = false
               this.sendDetailsChangedEvent(achievements)
             }
-          })
+          }, (_error: any) => {
+            achievements.sectionLoading = false
+            this.sendDetailsChangedEvent(achievements)
+          }
+          )
         } else {
           achievements.sectionLoading = false
           this.sendDetailsChangedEvent(achievements)

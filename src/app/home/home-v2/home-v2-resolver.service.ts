@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
-import { Observable, map, catchError, of } from 'rxjs'
+import { Observable, forkJoin, map, catchError, of } from 'rxjs'
 
 @Injectable({
   providedIn: 'root',
@@ -24,8 +24,32 @@ export class HomeV2ResolverService {
       this.router.navigateByUrl('app/person-profile/me#profileInfo')
     }
     const baseUrl = this.configSvc.sitePath
-    return this.http.get(`${baseUrl}/page/home-v2.json`).pipe(
-      map(data => ({ data, error: null })),
+    const homeConfig = this.http.get<any>(`${baseUrl}/page/home-v2.json`)
+    const sectionRecordsCount = this.http.get<any>(`/apis/proxies/v8/user/content/info`).pipe(
+      catchError(() => of(null)),
+    )
+
+    return forkJoin([homeConfig, sectionRecordsCount]).pipe(
+      map(([homeConfigRes, sectionRecordsCountRes]) => {
+        if (homeConfigRes && homeConfigRes.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
+          const pillsSection = homeConfigRes.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
+          if (pillsSection && Array.isArray(pillsSection.pills)) {
+            let visablePillsCount = 0
+            pillsSection.pills.forEach((pill: any) => {
+              if (pill.pillInfoCountKey && sectionRecordsCountRes.result[pill.pillInfoCountKey]) {
+                pill.visibilityMode = 'visible'
+                visablePillsCount = visablePillsCount + 1
+              } else {
+                pill.visibilityMode = 'hidden'
+              }
+            })
+            if (visablePillsCount === 0) {
+              pillsSection.visibilityMode = 'hidden'
+            }
+          }
+        }
+        return { data: homeConfigRes, error: null }
+      }),
       catchError(err => of({ data: null, error: err })),
     )
   }

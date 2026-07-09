@@ -3,6 +3,7 @@
 @use '@sunbird-cb/design-system/src/styles/_ws-mixins' as *;
 
 .container-balanced {
+  max-width: 100%;
   @extend %page-center;
   height: auto;
   min-height: 400px;
