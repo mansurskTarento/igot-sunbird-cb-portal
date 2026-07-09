@@ -484,10 +484,21 @@ export class PlayerVideoComponent extends WidgetBaseComponent
       }
     }
     const fireRProgress: fireRealTimeProgressFunction = (identifier, data) => {
-      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.batchId, identifier)
-      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-      const batchId = (resData && resData.batchId) ? resData.batchId : ''
+      const qpCollectionId = this.activatedRoute.snapshot.queryParams.collectionId || ''
+      const qpBatchId = this.activatedRoute.snapshot.queryParams.batchId || ''
+      // Resolve the actual course/batch (handles programs with sub-courses). If resolution fails
+      // or returns empty (e.g. blended program enrollment lookup), fall back to the route params
+      // so progress is still recorded - matching the HTML5 player behaviour.
+      let collectionId = qpCollectionId
+      let batchId = qpBatchId
+      try {
+        const resData = this.viewerSvc.getBatchIdAndCourseId(qpCollectionId, qpBatchId, identifier)
+        collectionId = (resData && resData.courseId) ? resData.courseId : qpCollectionId
+        batchId = (resData && resData.batchId) ? resData.batchId : qpBatchId
+      } catch (e) {
+        collectionId = qpCollectionId
+        batchId = qpBatchId
+      }
       const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
       if (isPreAssessment) {
         if (this.widgetData.identifier && identifier && data) {
