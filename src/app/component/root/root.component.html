@@ -7,7 +7,7 @@
   </div>
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
-<app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop"></app-tour>
+<app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
 <app-no-connection></app-no-connection>
 <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
 </mat-progress-bar>
@@ -40,6 +40,12 @@
     navBarRequired &&
     !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
     !domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
+  'height-no-secondary':
+    (isXSmall$ | async) === false &&
+    isShowNavbar &&
+    navBarRequired &&
+    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
+    !domainConfSvc.isConfigEnabled('components.secondaryHeader', 'enabled'),
   'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
 }">
 

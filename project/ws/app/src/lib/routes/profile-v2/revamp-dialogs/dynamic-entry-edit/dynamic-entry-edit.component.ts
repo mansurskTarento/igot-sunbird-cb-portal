@@ -6,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar'
 import * as _ from 'lodash'
 import { debounceTime, distinctUntilChanged, startWith, takeUntil } from 'rxjs/operators'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { TranslateService } from '@ngx-translate/core'
 import { generateYears, MOBILE_PATTERN, URL_PATRON } from '../../models/profile-revamp.model'
 import { ProfileV2RevampService } from '../../services/profile-v2-revamp.service'
 import { NsUserProfileDetails } from '../../../user-profile/models/NsUserProfile'
@@ -229,6 +230,7 @@ export class DynamicEntryEditComponent implements OnInit, OnDestroy {
   private readonly configSvc = inject(ConfigurationsService)
   private readonly dialog = inject(MatDialog)
   private readonly otpService = inject(OtpService)
+  private readonly translate = inject(TranslateService)
 
   // ── Config — received once, never changes ───────────────────────────
   readonly header: string = _.get(this.data, 'header', '')
@@ -1683,9 +1685,11 @@ export class DynamicEntryEditComponent implements OnInit, OnDestroy {
   }
 
   getErrorMessage(field: FieldConfig, errorKey: string): string {
-    if (field.errorMessages?.[errorKey]) { return field.errorMessages[errorKey] }
+    // config-provided messages are i18n keys (e.g. NetworkV2Profile.pleaseEnterTitle);
+    // instant() returns the input unchanged when it is not a known key
+    if (field.errorMessages?.[errorKey]) { return this.translate.instant(field.errorMessages[errorKey]) }
     const defaults: Record<string, string> = {
-      required: `${field.label ?? 'This field'} is required.`,
+      required: `${field.label ? this.translate.instant(field.label) : 'This field'} is required.`,
       maxlength: `Maximum ${field.maxLength} characters allowed.`,
       minlength: `Minimum ${field.minLength} characters required.`,
       pattern: 'Invalid format.',

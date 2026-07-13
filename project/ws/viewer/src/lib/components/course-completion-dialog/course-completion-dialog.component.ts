@@ -1,6 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core'
+import { ActivatedRoute } from '@angular/router'
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog'
-import { AppTocService } from '@sunbird-cb/toc'
+import { AppTocService, TocConfigService } from '@sunbird-cb/toc'
 import { LoggerService, MultilingualTranslationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 
@@ -18,9 +19,12 @@ export class CourseCompletionDialogComponent implements OnInit {
   isEditMode = false
   badge: any = null
   collectionId = ''
+  showStarRating = true
   constructor(
     private ratingSvc: RatingService,
     private tocSvc: AppTocService,
+    private tocConfigSvc: TocConfigService,
+    private activatedRoute: ActivatedRoute,
     private loggerSvc: LoggerService,
     private translate: TranslateService,
     public dialogRef: MatDialogRef<CourseCompletionDialogComponent>,
@@ -61,7 +65,37 @@ export class CourseCompletionDialogComponent implements OnInit {
     }
     // In case of multilingual course, redirection should happen to base collectionID
     this.collectionId = this.data.collectionId
+    this.resolveStarRatingVisibility()
     this.getUserRating()
+  }
+
+  // uiVisibility.rightPanel.starRating from the toc page form config decides
+  // whether the stars are shown; when false an Okay button (navigates to TOC
+  // via mat-dialog-close) is shown instead.
+  // Source priority:
+  //  1. the role-based toc form the TOC page stashed in AppTocService — the
+  //     viewer routes (e.g. video/:resourceId) do not resolve pageData, and
+  //     TocConfigService's global form is not role-aware
+  //  2. the active route's resolved pageData (when a viewer route has one)
+  //  3. the cached global toc form as last resort
+  private resolveStarRatingVisibility() {
+    const stashedTocConfig = (this.tocSvc as any).tocPageConfig
+    if (stashedTocConfig?.uiVisibility?.rightPanel) {
+      this.showStarRating = stashedTocConfig.uiVisibility.rightPanel.starRating !== false
+      return
+    }
+    let route = this.activatedRoute.snapshot
+    while (route.firstChild) {
+      route = route.firstChild
+    }
+    const routeTocConfig = route.data && route.data.pageData && route.data.pageData.data
+    if (routeTocConfig?.uiVisibility?.rightPanel) {
+      this.showStarRating = routeTocConfig.uiVisibility.rightPanel.starRating !== false
+      return
+    }
+    this.tocConfigSvc.getTocConfig().subscribe((config: any) => {
+      this.showStarRating = config?.uiVisibility?.rightPanel?.starRating !== false
+    })
   }
 
   // openRatingDialog() {

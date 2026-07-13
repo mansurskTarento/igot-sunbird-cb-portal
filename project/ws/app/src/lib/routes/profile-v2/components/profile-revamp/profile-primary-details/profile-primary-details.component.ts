@@ -105,6 +105,40 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     // Logic to edit primary details
   }
 
+  get isUserVolunteer(): boolean {
+    const designation = (_.get(this.primaryDetails, 'designation') || '').toString().toLowerCase()
+    return designation === 'volunteer'
+      || (this.isCurrentUser && !!this.configService.userRoles && this.configService.userRoles.has('volunteer'))
+  }
+
+  // volunteers get their designation assigned by the system, so it is always
+  // treated as verified — no "Not verified" chip for them
+  get isDesignationVerified(): boolean {
+    if (this.isUserVolunteer) {
+      return true
+    }
+    return _.get(this.primaryDetails, 'profileDesignationStatus') === 'VERIFIED'
+  }
+
+  // the edit/withdraw block renders only when the field flag allows it, the
+  // section is not marked read-only (editable: false), and the user is not a
+  // volunteer — volunteers cannot edit their system-assigned primary details
+  get showEditTransferRequestSection(): boolean {
+    if (_.get(this.primaryDetailsOtherDetailsConfig, 'primaryDetails.editable') === false) {
+      return false
+    }
+    if (this.isUserVolunteer) {
+      return false
+    }
+    return !!_.get(this.primaryDetailsOtherDetailsConfig, 'primaryDetails.fields.editTransferRequest.enabled')
+  }
+
+  // the section-header info tooltip renders only when the config explicitly
+  // enables it; a missing config entry keeps it hidden
+  get showPrimaryDetailsTooltip(): boolean {
+    return _.get(this.primaryDetailsOtherDetailsConfig, 'primaryDetails.fields.tooltip.enabled', false) === true
+  }
+
   get showPrimaryDetailsEdit(): boolean {
     const canEdit = false
     if (!this.enableWTR && !this.enableWR && this.isCurrentUser && !(this.isNotMyUser || this.isIgotOrg)) {

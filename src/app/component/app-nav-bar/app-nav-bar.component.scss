@@ -201,6 +201,9 @@
     margin-right: auto;
     max-width: 100%;
     display: flex;
+    // children (ws-top-right-nav-bar hosts) default to stretch, which
+    // top-anchors their content; center them on the row instead
+    align-items: center;
     flex: 1;
     height: 52px;
     position: relative;
@@ -260,7 +263,14 @@
     list-style: none;
   }
 
+  // fixed to the viewport itself so the bar never scrolls away, even when
+  // the host's .bottom-nav-bar rule (root.component.scss) is not applied
   .mobile-footer-fixed-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
     height: 64px;
     margin: 0;
     padding: 0;

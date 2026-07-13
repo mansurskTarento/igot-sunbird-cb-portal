@@ -76,7 +76,7 @@
 
     <ng-container *ngIf="primaryNavbarConfig?.smallScreen && isLoggedIn">
       <ul class="mobile-footer-fixed-nav-list-item-container">
-        <ng-container *ngFor="let item of primaryNavbarConfig?.smallScreen?.all">
+        <ng-container *ngFor="let item of bottomNavItems">
           <!-- item?.config?.path -->
           <!-- //NOSONAR -->
           <li *ngIf="item?.type !== 'explorerButton'"

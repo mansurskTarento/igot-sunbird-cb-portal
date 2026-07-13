@@ -1852,6 +1852,13 @@ ngx-guided-tour {
   flex-shrink: 0;
 }
 
+ws-widget-btn-page-back-nav .mat-mdc-icon-button {
+  /* With border-box and the 24px box above, the 12px padding collapses the
+     content box to 0 and flex-shrinks the ligature mat-icon to zero width,
+     hiding the back arrow. !important beats .mat-mdc-button-base padding. */
+  padding: 0 !important;
+}
+
 .mat-mdc-button,
 .mat-mdc-raised-button,
 .mat-mdc-icon-button,

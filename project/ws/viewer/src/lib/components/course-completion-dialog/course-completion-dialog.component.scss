@@ -87,6 +87,15 @@
   margin: 0 8px !important;
 }
 
+// shown in place of the stars when uiVisibility.rightPanel.starRating is false
+.okay-button {
+  min-width: 120px;
+  margin-top: 16px;
+  font-family: 'Lato';
+  font-weight: 700;
+  letter-spacing: 0.25px;
+}
+
 #app-bg {
   filter: blur(10px)
 }

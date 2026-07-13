@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { DomSanitizer } from '@angular/platform-browser'
-import { HttpClient } from '@angular/common/http'
+import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
+import { LibNotificationsService } from '@sunbird-cb/notification'
+import { Subscription } from 'rxjs'
+import { ZohoSupportService } from '../../services/zoho-support.service'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -45,7 +46,7 @@ import { NotificationsService } from '../../services/notifications.service'
   styleUrls: ['./top-right-nav-bar.component.scss'],
   standalone: false
 })
-export class TopRightNavBarComponent implements OnInit, OnChanges {
+export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() item: any
   @Input() rightNavConfig: any
   @Input() showLangDropdown = true
@@ -54,19 +55,20 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   selectedLanguage = 'en'
   multiLang: any = []
   zohoHtml: any
-  zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
   roles: string[] = []
   enableSupportAI = false
+  private subscriptions = new Subscription()
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
               private configSvc: ConfigurationsService,
               private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-              private http: HttpClient, private sanitizer: DomSanitizer,
+              private zohoSupportSvc: ZohoSupportService,
               private events: EventService, private snackBar: MatSnackBar,
               private router: Router, private notificationsService: NotificationsService,
               private rootService: RootService,
               private matDialog: MatDialogNew,
+              private libNotificationsService: LibNotificationsService,
               public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -76,14 +78,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.translate.use(lang)
     }
 
-    this.langtranslations.languageSelectedObservable.subscribe(() => {
+    this.subscriptions.add(this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
         this.selectedLanguage = lang
       }
-    })
+    }))
 
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
       this.roles = this.configSvc.unMappedUser.roles
@@ -97,19 +99,23 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.isMultiLangEnabled = instanceConfig.isMultilingualEnabled
     }
     this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
-    this.homePageService.closeDialogPop.subscribe((data: any) => {
+    this.subscriptions.add(this.homePageService.closeDialogPop.subscribe((data: any) => {
       if (data) {
         this.dialogRef.close()
       }
-    })
+    }))
 
-    this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe(res => {
-      this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
-    })
+    this.subscriptions.add(this.zohoSupportSvc.getZohoHtml().subscribe(res => {
+      this.zohoHtml = res
+    }))
   }
 
   ngOnChanges() {
     this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig?.topRightNavConfig : this.rightNavConfig
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe()
   }
   // ngOnChanges() {}
   // openDialog(): void {
@@ -360,6 +366,47 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       {},
       {
         module: 'Home',
+      }
+    )
+  }
+
+  exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
+    this.raiseTelemetryExploreContent()
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    }
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    }
+    this.router.navigate([this.getGlobalSearchRoute()], navigationExtras)
+  }
+
+  private getGlobalSearchRoute(): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
+  raiseTelemetryExploreContent() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'explore-content',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
   }

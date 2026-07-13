@@ -7,15 +7,14 @@ import { forkJoin, Observable, of, throwError } from 'rxjs'
 import { catchError, map, mergeMap, switchMap } from 'rxjs/operators'
 
 const PROXIES_V8 = '/apis/proxies/v8'
-const  ENROLL_CONTENT_DATA = `${PROXIES_V8}/learner/course/v4/user/enrollment/details`
+const ENROLL_CONTENT_DATA = `${PROXIES_V8}/learner/course/v4/user/enrollment/details`
 @Injectable()
-export class AppEnrollmentResolverService
-     {
+export class AppEnrollmentResolverService {
     constructor(private configSvc: ConfigurationsService,
-                private http: HttpClient,
-                private dataTransfer: DataTransferService,
-                private widgetContentSvc: WidgetContentService,
-        ) {}
+        private http: HttpClient,
+        private dataTransfer: DataTransferService,
+        private widgetContentSvc: WidgetContentService,
+    ) { }
 
     private reEnrollInactiveCourses(courses: any[], parentCourseId: string): Observable<any[]> {
         if (!courses || !courses.length) {
@@ -61,7 +60,7 @@ export class AppEnrollmentResolverService
     ): Observable<IResolveResponse<any>> {
         let userId
         if (this.configSvc.userProfile) {
-          userId = this.configSvc.userProfile.userId || ''
+            userId = this.configSvc.userProfile.userId || ''
         }
 
         if (window.location.href.includes('/public/') || window.location.href.includes('&preview=true')) {
@@ -82,14 +81,14 @@ export class AppEnrollmentResolverService
                     return of({ error, data: null })
                 }),
             )
-        }  {
+        } {
             const request: any = {
                 'request': {
                     'retiredCoursesEnabled': true,
                     'courseId': [parentCourseId],
                 },
-              }
-            return  this.http.post(`${ENROLL_CONTENT_DATA}/${userId}`, request).pipe(
+            }
+            return this.http.post(`${ENROLL_CONTENT_DATA}/${userId}`, request).pipe(
                 switchMap((rData: any) => {
                     if (!(rData.result && rData.result.courses && rData.result.courses.length)) {
                         return of({ data: rData.result, error: null })
@@ -105,7 +104,7 @@ export class AppEnrollmentResolverService
                     console.error('AppEnrollmentResolverService: re-enroll failed (fresh-fetch path)', error)
                     return of({ error, data: null })
                 }),
-                )
+            )
         }
     }
 }

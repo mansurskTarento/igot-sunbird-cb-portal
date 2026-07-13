@@ -12,6 +12,7 @@ import { TopRightNavBarComponent } from './../component/top-right-nav-bar/top-ri
 import { FormsModule } from '@angular/forms'
 import { TranslateModule } from '@ngx-translate/core'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection'
+import { MatButtonModule } from '@angular/material/button'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatIconModule } from '@angular/material/icon'
@@ -29,6 +30,7 @@ import { ConfirmDialogModule } from '@sunbird-cb/collection'
   imports: [
     CommonModule,
     MatToolbarModule,
+    MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatSliderModule,

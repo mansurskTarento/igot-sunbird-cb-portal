@@ -170,5 +170,11 @@ const routes: Routes = [
     MobileAppModule,
     RouterModule.forChild(routes),
   ],
+  providers: [
+    // Provide locally so it is constructed in this lazy injector, where
+    // AppTocLibModule (via PublicTocModule) provides PipeContentRoutePipe.
+    // The root-provided instance cannot resolve that pipe and crashes with NG0201.
+    AppTocResolverService,
+  ],
 })
 export class RoutePublicModule { }
