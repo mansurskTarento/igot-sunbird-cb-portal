@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { Router } from '@angular/router'
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { ProfileVerificationDialogComponent } from '../profile-verification-dialog/profile-verification-dialog.component'
 import { UserProfileService } from '@ws/app'
 import { MatDialog } from '@angular/material/dialog'
@@ -44,7 +44,8 @@ export class CommonDataService {
     private dialog: MatDialog,
     private matSnackBar: MatSnackBar,
     private mandatoryNotificationsService: MandatoryNotificationsService,
-    private http: HttpClient
+    private http: HttpClient,
+    private domainConfSvc: DomainConfService
   ) {
 
     if (this.configSvc && this.configSvc.unMappedUser) {
@@ -55,7 +56,20 @@ export class CommonDataService {
   redirectToCustomProfile() {
     this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
   }
+
+  // dialog/popup visibility from global-config -> components.dialogs
+  isDialogEnabled(dialogKey: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+      && this.domainConfSvc.isConfigEnabled('components.dialogs', dialogKey)
+  }
+
   mandatoryDetails(isPlayer: boolean) {
+    if (!this.isDialogEnabled('profileVerification')) {
+      // skip the verification dialog but keep the downstream org/custom-field
+      // checks and mandatory-notification flow running
+      this.getOrgDetails(isPlayer)
+      return
+    }
     const unMappedUser = this.configSvc.unMappedUser
     const userProfileUpdateDate = unMappedUser && unMappedUser.profileDetails && unMappedUser.profileDetails.personalDetails && unMappedUser.profileDetails.personalDetails?.lastProfileVerificationPromptDate ? Number(unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate) : null
     // Difference in milliseconds
@@ -173,6 +187,10 @@ export class CommonDataService {
   }
 
   fetchMandatoryNotification() {
+    if (!this.isDialogEnabled('mandatoryNotification')) {
+      this.showMandatoryNotification = false
+      return
+    }
     this.mandatoryNotificationsService.getMandatoryNotification().subscribe((notification: any) => {
       if (notification && !notification.error && Object.keys(notification).length > 0 && !notification?.read) {
         this.mandatoryNotificationData = notification
@@ -188,7 +206,8 @@ export class CommonDataService {
   }
 
   openMandatoryNotificationModal() {
-    if (this.isMandatoryModalOpen || !this.showMandatoryNotification || this.isPlayer) {
+    if (this.isMandatoryModalOpen || !this.showMandatoryNotification || this.isPlayer
+      || !this.isDialogEnabled('mandatoryNotification')) {
       return
     }
     this.isMandatoryModalOpen = true

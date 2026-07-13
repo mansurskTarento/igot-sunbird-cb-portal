@@ -50,8 +50,8 @@ export class ProfileCardStatsComponent implements OnInit {
     private dialog: MatDialog) { }
 
   ngOnInit() {
-    this.userInfo = this.configSvc && this.configSvc.userProfile
-    this.currentUserId = this.configSvc.unMappedUser.id
+    this.userInfo = this.configSvc && this.configSvc?.userProfile
+    this.currentUserId = this.configSvc?.unMappedUser?.id
     if (this.userInfo) {
       this.userFullName = this.userInfo.firstName
       if (this.userFullName && this.userFullName.length > 18) {
