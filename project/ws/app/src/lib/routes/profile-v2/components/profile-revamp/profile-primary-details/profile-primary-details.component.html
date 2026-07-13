@@ -2,10 +2,10 @@
   <!-- # region Primary Details -->
   <div class="section-header mb-4 flex justify-between items-center">
     <span class="flex items-center">{{ 'NetworkV2Profile.primaryDetails' | translate}}
-      <mat-icon class="info-icon" [matTooltipPosition]="'below'" #pTooltip="matTooltip"
-        matTooltip="{{ 'NetworkV2Profile.pdTooltipMsg' | translate }}"
+      <mat-icon *ngIf="showPrimaryDetailsTooltip" class="info-icon" [matTooltipPosition]="'below'"
+        #pTooltip="matTooltip" matTooltip="{{ 'NetworkV2Profile.pdTooltipMsg' | translate }}"
         (click)="pTooltip.toggle()">info_outline</mat-icon></span>
-    <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.primaryDetails?.fields?.editTransferRequest?.enabled">
+    <ng-container *ngIf="showEditTransferRequestSection">
       <ng-container *ngIf="showPrimaryDetailsEdit">
         <mat-icon class="edit-icon" (click)="editPrimaryDetails('Primary Details')">edit</mat-icon>
       </ng-container>
@@ -39,7 +39,7 @@
       <div class="flex flex-col gap-2 pr-3">
         <span class="label">{{ 'NetworkV2Profile.designation' | translate }}</span>
         <span class="primaryDetailsvalue flex gap-2 items-center">{{ primaryDetails?.designation }}
-          <ng-container *ngIf="primaryDetails?.profileDesignationStatus === 'VERIFIED'; else designationNotVerified">
+          <ng-container *ngIf="isDesignationVerified; else designationNotVerified">
             <img class="status-icon ml-1" src="./assets/icons/Accept_icon.png" alt="status">
           </ng-container>
           <ng-template #designationNotVerified>

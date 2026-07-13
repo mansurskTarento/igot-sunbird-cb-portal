@@ -351,6 +351,8 @@
     </div>
     
 </section>
-<div *ngIf="surveyPopup && surveyPopup?.active">
+<div *ngIf="surveyPopup && surveyPopup?.active
+    && domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+    && domainConfSvc.isConfigEnabled('components.dialogs', 'npsSurvey')">
     <ws-survey-form ></ws-survey-form>
     </div>

@@ -4,7 +4,8 @@ import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
+import { LibNotificationsService } from '@sunbird-cb/notification'
 import { Subscription } from 'rxjs'
 import { ZohoSupportService } from '../../services/zoho-support.service'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
@@ -67,6 +68,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
               private router: Router, private notificationsService: NotificationsService,
               private rootService: RootService,
               private matDialog: MatDialogNew,
+              private libNotificationsService: LibNotificationsService,
               public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -364,6 +366,47 @@ export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
       {},
       {
         module: 'Home',
+      }
+    )
+  }
+
+  exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
+    this.raiseTelemetryExploreContent()
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    }
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    }
+    this.router.navigate([this.getGlobalSearchRoute()], navigationExtras)
+  }
+
+  private getGlobalSearchRoute(): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
+  raiseTelemetryExploreContent() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'explore-content',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
       }
     )
   }

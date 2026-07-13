@@ -1,4 +1,6 @@
-<ws-widget-btn-page-back
+<!-- in playerPreview mode the breadcrumb shows only when a collectionId is
+     present in the url (opened from a TOC page) -->
+<ws-widget-btn-page-back *ngIf="!playerPreview || collectionId"
 [widgetData]="{ url: 'home', titles: titles  }">
 </ws-widget-btn-page-back>
 <div class="gyaan-player-wrapper" *ngIf="from !== 'globalSearch'">
