@@ -244,6 +244,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     window.location.reload()
   }
 
+  // dialog/popup visibility from global-config -> components.dialogs
+  isDialogEnabled(dialogKey: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+      && this.domainConfSvc.isConfigEnabled('components.dialogs', dialogKey)
+  }
+
   openIntro() {
     // if (!(this.rootSvc.getCookie('intro') && !!(this.rootSvc.getCookie('intro')))) {
     //   if (this.router.url === '/page/home') {

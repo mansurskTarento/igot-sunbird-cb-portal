@@ -71,6 +71,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   notificationsCount: number = 0
   private myNotificationsSubscription!: Subscription
   redirectPath = '/page/home'
+  bottomNavItems: any[] = []
   constructor(
     private domSanitizer: DomSanitizer,
     private configSvc: ConfigurationsService,
@@ -175,6 +176,7 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
       this.primaryNavbarBackground = this.configSvc.primaryNavBar
       this.pageNavbar = this.configSvc.pageNavBar
       this.primaryNavbarConfig = this.configSvc.primaryNavBarConfig
+      this.buildBottomNavItems()
     }
 
     if (this.configSvc.appsConfig) {
@@ -229,6 +231,23 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
         }
       })
     }
+  }
+
+  /**
+   * Builds the mobile bottom-nav item list from primaryNavbarConfig.smallScreen.all,
+   * filtered/extended by global-config.json -> components.bottomNav:
+   *   items:           { "<label>": false } hides a default item (defaults to visible)
+   *   additionalItems: array of items in the same shape as smallScreen.all entries
+   */
+  buildBottomNavItems() {
+    const defaultItems = _.get(this.primaryNavbarConfig, 'smallScreen.all', []) || []
+    const bottomNavConf = _.get(this.domainConfSvc.getGlobalConfig(), 'components.bottomNav', {}) || {}
+    const itemVisibility = bottomNavConf.items || {}
+    const additionalItems = Array.isArray(bottomNavConf.additionalItems) ? bottomNavConf.additionalItems : []
+    this.bottomNavItems = [...defaultItems, ...additionalItems].filter((item: any) => {
+      const label = (_.get(item, 'config.label') || '').toLowerCase()
+      return itemVisibility[label] !== false
+    })
   }
 
   getMyCount() {
@@ -380,12 +399,30 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   redirectToPath(pathConfig: any) {
-    if (pathConfig && pathConfig.key) {
-      this.router.navigate([pathConfig.path], { queryParams: { key: pathConfig.key } })
-    } else {
-      this.router.navigate([pathConfig.path])
+    let path = pathConfig && pathConfig.path
+    if (pathConfig && (pathConfig.label || '').toLowerCase() === 'search') {
+      path = this.getGlobalSearchRoute(path)
     }
+    const extras: any = {}
+    if (pathConfig && pathConfig.key) {
+      extras.queryParams = { key: pathConfig.key }
+    }
+    if (pathConfig && pathConfig.fragment) {
+      extras.fragment = pathConfig.fragment
+    }
+    this.router.navigate([path], extras)
     this.configSvc.openExploreMenuForMWeb.next(false)
+  }
+
+  // volunteers land on the volunteer search page; everyone else keeps the
+  // configured search path (same role check as top-right-nav-bar)
+  private getGlobalSearchRoute(defaultPath: string): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : defaultPath
   }
 
   openExploreMenu() {

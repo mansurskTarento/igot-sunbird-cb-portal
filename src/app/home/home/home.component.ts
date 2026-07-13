@@ -10,7 +10,7 @@ import _ from 'lodash'
 import { Subject } from 'rxjs'
 import { takeUntil } from 'rxjs/operators'
 
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app'
 import { BtnSettingsService } from '@sunbird-cb/collection'
@@ -53,6 +53,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private userProfileService: UserProfileService,
     private matSnackBar: MatSnackBar,
     private events: EventService,
+    public domainConfSvc: DomainConfService,
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}
@@ -126,7 +127,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
       if (this.configSvc?.unMappedUser?.profileDetails && this.configSvc.unMappedUser.profileDetails.additionalProperties) {
         if (this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed !== undefined) {
           this.isMDOMsgOpen = this.configSvc.unMappedUser.profileDetails.additionalProperties.isProfileUpdatedMsgViewed
-          if (!this.isMDOMsgOpen) {
+          if (!this.isMDOMsgOpen && this.isDialogEnabled('mdoProfileUpdateStatus')) {
             this.getApprovedStatus()
             this.getRejectedStatus()
           }
@@ -158,6 +159,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
         obj['isVisible'] = false
         obj['stripData'] = strip
         obj['isActive'] = isStripActive(strip)
+        obj['order'] = strip.order
         this.sectionList.push(obj)
       })
     }
@@ -261,7 +263,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
 
     this.sliderData = this.activatedRoute.snapshot.data.pageData.data.sliderData?.data
-    this.sectionList.push({ section: 'slider', isVisible: false })
+    // slider position among the strips is driven by sliderData.order in the page config;
+    // configs without an order keep the slider below all strips
+    const sliderOrder = this.activatedRoute.snapshot.data.pageData.data.sliderData?.order
+    this.sectionList.push({
+      section: 'slider',
+      isVisible: false,
+      order: sliderOrder !== undefined && sliderOrder !== null ? sliderOrder : Number.MAX_SAFE_INTEGER,
+    })
+    this.sectionList.sort((a: any, b: any) =>
+      (a.order !== undefined && a.order !== null ? a.order : Number.MAX_SAFE_INTEGER) -
+      (b.order !== undefined && b.order !== null ? b.order : Number.MAX_SAFE_INTEGER))
     this.sectionList.push({ section: 'discuss', isVisible: false })
     this.sectionList.push({ section: 'network', isVisible: false })
 
@@ -284,12 +296,18 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
-    // Make the first few content strips visible initially
-    for (let i = 0; i < this.sectionList.length && i < this.initialVisibleStrips; i++) {
-      if (this.sectionList[i]['section'].startsWith('section_')) {
-        this.sectionList[i]['isVisible'] = true
+    // Make the first few content strips visible initially. The scroll handler never re-checks
+    // section_0..section_4, so those must always be marked visible regardless of where the
+    // config-ordered slider lands. The slider itself is only pre-marked when it sits within
+    // the initial viewport slots; further down it loads lazily on scroll.
+    this.sectionList.forEach((sectionItem: any, index: number) => {
+      if (sectionItem.section.match(new RegExp(`^section_[0-${this.initialVisibleStrips - 1}]$`))) {
+        sectionItem.isVisible = true
       }
-    }
+      if (sectionItem.section === 'slider' && index < this.initialVisibleStrips) {
+        sectionItem.isVisible = true
+      }
+    })
   }
 
   getEnrollmentData() {
@@ -335,7 +353,17 @@ export class HomeComponent implements OnInit, AfterViewInit {
       })
   }
 
+  // dialog/popup visibility from global-config -> components.dialogs
+  isDialogEnabled(dialogKey: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+      && this.domainConfSvc.isConfigEnabled('components.dialogs', dialogKey)
+  }
+
   handleUpdateMobileNudge() {
+    if (!this.isDialogEnabled('profileUpdateNudge')) {
+      this.isNudgeOpen = false
+      return
+    }
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) {
       const profilePopUp = sessionStorage.getItem('hideUpdateProfilePopUp')
       if (this.configSvc.unMappedUser.profileDetails) {

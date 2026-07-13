@@ -98,7 +98,7 @@
           </div>
         </div>
   <div class="seperator"></div>
-  <div class="rating-panel">
+  <div class="rating-panel" *ngIf="showStarRating">
     <div class="" (click)="$event.stopPropagation();">
       <ng-container *ngFor="let start of [1, 2, 3, 4, 5]; let i = index">
         <button i18n-aria-label aria-label="Rating" aria-labelledby="rate-heading"
@@ -112,6 +112,11 @@
       </ng-container>
     </div>
     <div class="subheading-text-bold">Rate this {{data?.courseCategory}}</div>
+  </div>
+  <div class="rating-panel" *ngIf="!showStarRating">
+    <button mat-raised-button color="primary" type="button" class="okay-button" [mat-dialog-close]="true">
+      Okay
+    </button>
   </div>
 </div>
 <div>

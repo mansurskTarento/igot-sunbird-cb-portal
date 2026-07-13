@@ -25,13 +25,30 @@ export class GeneralGuard {
   ): Promise<boolean | UrlTree> {
     const requiredFeatures = (next.data && next.data.requiredFeatures) || []
     const requiredRoles = (next.data && next.data.requiredRoles) || []
-    const pageKey = next.data && next.data.pageKey
+    let pageKey = next.data && next.data.pageKey
+    // the generic /page/:id route declares the literal pageKey 'id'; resolve it to the
+    // actual page name so globalConfig.routes entries like "learn": false can disable it
+    if (pageKey === 'id' && next.params && next.params.id) {
+      pageKey = next.params.id
+    }
 
-    // Check if this route is disabled in globalConfig.routes
+    // Check if this route is disabled in globalConfig.routes. An entry is either a
+    // boolean or an object like { "enabled": false, "allowedSubRoutes": ["player"] },
+    // which disables the feature while keeping the listed sub-paths reachable
     if (pageKey) {
       const routes = this.configSvc.globalConfig?.routes
-      if (routes && routes[pageKey] === false) {
+      const routeConfig = routes && routes[pageKey]
+      if (routeConfig === false) {
         return this.router.parseUrl('/error-feature-unavailable')
+      }
+      if (routeConfig && typeof routeConfig === 'object' && routeConfig.enabled === false) {
+        const base = next.data && next.data.pageId ? `/${next.data.pageId}/` : '/'
+        const urlPath = _state.url.split('?')[0]
+        const isAllowedSubRoute = (routeConfig.allowedSubRoutes || [])
+          .some((subRoute: string) => urlPath.startsWith(`${base}${subRoute}`))
+        if (!isAllowedSubRoute) {
+          return this.router.parseUrl('/error-feature-unavailable')
+        }
       }
     }
 

@@ -29,6 +29,24 @@
                 *ngIf="item.type === 'fontButton' && rnc.section === 'font-setting' && rnc.active  && item?.forPreview">
                 <ws-font-setting></ws-font-setting>
             </li>
+            <li *ngIf="item.type === 'langSelect' && rnc.section === 'language' && domainConfSvc.isConfigEnabled('components.header', 'exploreContent')"
+                class="explore-content-item">
+                <div [ngClass]="{'explore-more': domainConfSvc.isConfigEnabled('components.secondaryHeader.more', 'enabled')}"
+                    class="flex items-center mr-2">
+                    <button mat-raised-button class="mat-btn-outline cursor-pointer explore-content-action"
+                        (click)="exploreContent()">
+                        <div class="flex items-center">
+                            <mat-icon class="mr-1" svgIcon="course-cataloguee"></mat-icon>
+                            <div class="flex items-center explore-content-text">
+                                <span class="">
+                                    {{'cardshublist.exploreContent' | translate}}
+                                </span>
+                                <mat-icon class="ml-1 arrow-chevron">chevron_right</mat-icon>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+            </li>
             <li *ngIf="item.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled && domainConfSvc.isConfigEnabled('components.header', 'language')"
                 class="langdiv">
                 <img src="/assets/icons/top-nav/translate_icon.svg" alt="" [matMenuTriggerFor]="language"
