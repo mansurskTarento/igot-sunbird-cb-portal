@@ -1,12 +1,13 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core'
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core'
 import { MatDialog } from '@angular/material/dialog'
 import { MatDialog as MatDialogNew } from '@angular/material/dialog'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { TranslateService } from '@ngx-translate/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
-import { DomSanitizer } from '@angular/platform-browser'
-import { HttpClient } from '@angular/common/http'
+import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, WsEvents } from '@sunbird-cb/utils-v2'
+import { LibNotificationsService } from '@sunbird-cb/notification'
+import { Subscription } from 'rxjs'
+import { ZohoSupportService } from '../../services/zoho-support.service'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { Router } from '@angular/router'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -16,30 +17,6 @@ import { SurveyPopupComponent } from '@ws/app'
 import { VerificationRequestDialogComponent } from '@ws/app'
 import { RootService } from '../root/root.service'
 import { NotificationsService } from '../../services/notifications.service'
-import { ThemeService } from '@sunbird-cb/design-system'
-import { BtnSettingsService } from '@sunbird-cb/collection'
-// const rightNavConfig = [
-//   {
-//     id: 1,
-//     section: 'download',
-//     active: true,
-//   },
-//   {
-//     id: 2,
-//     section: 'font-setting',
-//     active: true,
-//   },
-//   {
-//     id: 3,
-//     section: 'help',
-//     active: true,
-//   },
-//   {
-//     id: 4,
-//     section: 'profile',
-//     active: true,
-//   },
-// ]
 
 @Component({
   selector: 'ws-top-right-nav-bar',
@@ -47,7 +24,7 @@ import { BtnSettingsService } from '@sunbird-cb/collection'
   styleUrls: ['./top-right-nav-bar.component.scss'],
   standalone: false
 })
-export class TopRightNavBarComponent implements OnInit, OnChanges {
+export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
   @Input() item: any
   @Input() rightNavConfig: any
   @Input() showLangDropdown = true
@@ -56,26 +33,21 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   selectedLanguage = 'en'
   multiLang: any = []
   zohoHtml: any
-  zohoUrl: any = '/assets/static-data/zoho-code.html'
   isMultiLangEnabled: any
   showDropdown: boolean = false
   roles: string[] = []
   enableSupportAI = false
-  fontSizeLevel = 2 // 0=x-small, 1=small, 2=normal, 3=large, 4=x-large
-  private readonly fontClasses = ['x-small-typography', 'small-typography', 'normal-typography', 'large-typography', 'x-large-typography']
-  private readonly fontLabels = ['XS', 'S', 'M', 'L', 'XL']
-  constructor(
-    public dialog: MatDialog, public homePageService: HomePageService,
+  private subscriptions = new Subscription()
+  constructor(public dialog: MatDialog, public homePageService: HomePageService,
     private configSvc: ConfigurationsService,
     private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-    private http: HttpClient, private sanitizer: DomSanitizer,
+    private zohoSupportSvc: ZohoSupportService,
     private events: EventService, private snackBar: MatSnackBar,
     private router: Router, private notificationsService: NotificationsService,
     private rootService: RootService,
     private matDialog: MatDialogNew,
-    public domainConfSvc: DomainConfService,
-    public themeSvc: ThemeService,
-    private btnSettingsSvc: BtnSettingsService) {
+    private libNotificationsService: LibNotificationsService,
+    public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -84,14 +56,14 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
       this.translate.use(lang)
     }
 
-    this.langtranslations.languageSelectedObservable.subscribe(() => {
+    this.subscriptions.add(this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
         this.translate.setDefaultLang('en')
         const lang = localStorage.getItem('websiteLanguage')!
         this.translate.use(lang)
         this.selectedLanguage = lang
       }
-    })
+    }))
 
     if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.roles) {
       this.roles = this.configSvc.unMappedUser.roles
@@ -99,32 +71,31 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.initFontLevel()
     const instanceConfig = this.configSvc.instanceConfig
     if (instanceConfig) {
       this.multiLang = instanceConfig.websitelanguages
       this.isMultiLangEnabled = instanceConfig.isMultilingualEnabled
     }
     this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig.topRightNavConfig : this.rightNavConfig
-    this.homePageService.closeDialogPop.subscribe((data: any) => {
+    this.subscriptions.add(this.homePageService.closeDialogPop.subscribe((data: any) => {
       if (data) {
         this.dialogRef.close()
       }
-    })
+    }))
 
-    this.http.get(this.zohoUrl, { responseType: 'text' }).subscribe(res => {
-      this.zohoHtml = this.sanitizer.bypassSecurityTrustHtml(res)
-    })
+    this.subscriptions.add(this.zohoSupportSvc.getZohoHtml().subscribe(res => {
+      this.zohoHtml = res
+    }))
   }
 
   ngOnChanges() {
     this.rightNavConfig = this.rightNavConfig?.topRightNavConfig ? this.rightNavConfig?.topRightNavConfig : this.rightNavConfig
   }
-  // ngOnChanges() {}
-  // openDialog(): void {
-  //   this.dialogRef = this.dialog.open(DialogBoxComponent, {
-  //     width: '1000px',
-  //   })
+
+  ngOnDestroy() {
+    this.subscriptions.unsubscribe()
+  }
+
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
   }
@@ -147,9 +118,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
 
   onMenuClosed() {
     this.showDropdown = false
-    // setTimeout(() => {
-    //   this.showDropdown = false
-    // }, 3000)
   }
 
   selectLanguage(event: any) {
@@ -373,6 +341,47 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     )
   }
 
+  exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
+    this.raiseTelemetryExploreContent()
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    }
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    }
+    this.router.navigate([this.getGlobalSearchRoute()], navigationExtras)
+  }
+
+  private getGlobalSearchRoute(): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
+  raiseTelemetryExploreContent() {
+    this.events.raiseInteractTelemetry(
+      {
+        type: WsEvents.EnumInteractTypes.CLICK,
+        id: 'explore-content',
+      },
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+  }
+
   openSupportChatBot() {
     if (this.configSvc.iGOTAIConfig && this.configSvc.iGOTAIConfig?.supportAI && this.configSvc.iGOTAIConfig?.supportAI?.all) {
       this.enableSupportAI = true
@@ -385,36 +394,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges {
     } else {
       this.getZohoForm()
     }
-  }
-
-  get fontLabel(): string {
-    return this.fontLabels[this.fontSizeLevel]
-  }
-
-  initFontLevel(): void {
-    const stored = localStorage.getItem('setting')
-    const idx = this.fontClasses.indexOf(stored || 'normal-typography')
-    this.fontSizeLevel = idx >= 0 ? idx : 2
-  }
-
-  increaseFontSize(): void {
-    if (this.fontSizeLevel < 4) {
-      this.fontSizeLevel++
-      this.applyFontSize()
-    }
-  }
-
-  decreaseFontSize(): void {
-    if (this.fontSizeLevel > 0) {
-      this.fontSizeLevel--
-      this.applyFontSize()
-    }
-  }
-
-  private applyFontSize(): void {
-    const fontClass = this.fontClasses[this.fontSizeLevel]
-    localStorage.setItem('setting', fontClass)
-    this.btnSettingsSvc.changeFont(fontClass)
   }
 
 }

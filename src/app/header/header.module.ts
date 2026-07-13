@@ -30,6 +30,7 @@ import { ConfirmDialogModule } from '@sunbird-cb/collection'
   imports: [
     CommonModule,
     MatToolbarModule,
+    MatButtonModule,
     MatIconModule,
     MatMenuModule,
     MatSliderModule,

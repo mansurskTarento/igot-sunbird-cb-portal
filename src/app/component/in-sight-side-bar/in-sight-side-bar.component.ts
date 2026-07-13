@@ -1,7 +1,7 @@
 import { AUTO_STYLE, animate, state, transition, trigger, style } from '@angular/animations'
 import { Component, EventEmitter, OnInit, OnDestroy, Output, ChangeDetectorRef } from '@angular/core'
 import { HomePageService } from '../../services/home-page.service'
-import { ConfigurationsService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService, EventService, WsEvents, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -131,7 +131,8 @@ export class InsightSideBarComponent implements OnInit, OnDestroy {
     private langtranslations: MultilingualTranslationsService,
     private cdr: ChangeDetectorRef,
     private dialog: MatDialog,
-    private commonDataSvc: CommonDataService) {
+    private commonDataSvc: CommonDataService,
+    public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!

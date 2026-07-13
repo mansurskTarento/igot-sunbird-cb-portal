@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { HttpClient } from '@angular/common/http'
+import { HttpClient, HttpHeaders } from '@angular/common/http'
 import { Observable, of, Subject } from 'rxjs'
 import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import {
@@ -102,7 +102,10 @@ export class GbSearchService {
 
   searchVolunteerCoursesComposite(params: any): Promise<any> {
     const url = this.domainConfSvc.getApiUrl('search', 'compositeSearch', DEFAULT_API_ENDPOINTS.COMPOSITE_SEARCH)
-    return this.http.post(url, params).toPromise()
+    const userRootOrg = this.configSrv.userProfile?.userRootOrg
+    const orgId = (typeof userRootOrg === 'string' ? userRootOrg : userRootOrg?.id) || ''
+    const headers = new HttpHeaders({ 'x-authenticated-org-id': orgId })
+    return this.http.post(url, params, { headers }).toPromise()
   }
 
   getApplicationsById(formBody: any) {
@@ -148,9 +151,9 @@ export class GbSearchService {
     return this.http.delete(DEFAULT_API_ENDPOINTS.RECENT_DELETE_BY_TIMESTAMP(id))
   }
 
-  enrollment(request: any, userId: string): any {
+  enrollment(request: any, _userId: string): any {
     const baseUrl = this.domainConfSvc.getApiUrl('user', 'enrollment', '/apis/proxies/v8/learner/course/v4/user/enrollment/list')
-    return this.http.post(`${baseUrl}/${userId}`, request)
+    return this.http.post(`${baseUrl}`, request)
   }
 
   searchExternalContent(params: SearchExternalRequest): Promise<any> {

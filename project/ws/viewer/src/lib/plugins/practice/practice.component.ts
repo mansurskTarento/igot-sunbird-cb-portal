@@ -1219,17 +1219,83 @@ export class PracticeComponent implements OnInit, OnChanges, OnDestroy {
     if (isPreAssessment) {
       if (this.identifier) {
         const MIME_TYPE = 'application/vnd.ekstep.content-collection'
-        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(this.widgetContentService.currentMetaData?.content?.data?.parent, status, MIME_TYPE)
+        const parentId = this.resolvePreEnrolmentAssessmentId()
+        console.log('🎯 [PRE-ENROLLMENT] progress update', {
+          status,
+          parentId,
+          identifier: this.identifier,
+          inHashmap: !!(parentId && this.tocSvc.hashmap[parentId]),
+          hashmapKeys: Object.keys(this.tocSvc.hashmap),
+        })
+        // Don't report "started" for an already completed assessment — the service
+        // unconditionally overwrites the hashmap entry with 0% and would reset the checkmark
+        if (status === 1 && parentId && this.tocSvc.hashmap[parentId] &&
+          Number(this.tocSvc.hashmap[parentId]['completionStatus']) === 2) {
+          return
+        }
+        if (status === 2) {
+          // The TOC card recomputes a collection row's progress from its leafNodes
+          // (updateChildParentMap), so the questionset LEAF must be complete in the
+          // hashmap too — otherwise the collection entry gets recomputed back to 0
+          const leafEntry = this.tocSvc.hashmap[this.identifier] ||
+            { identifier: this.identifier, parent: parentId, primaryCategory: NsContent.EPrimaryCategory.PRACTICE_RESOURCE }
+          leafEntry['completionPercentage'] = 100
+          leafEntry['completionStatus'] = 2
+          leafEntry['status'] = 2
+          this.tocSvc.hashmap[this.identifier] = leafEntry
+        }
+        this.viewerSvc.realTimeProgressUpdateForPreAssessmentQuiz(parentId, status, MIME_TYPE)
         // Also update the local hashmap and trigger milestone lock update
-        setTimeout(() => {
-
+        if (status === 2) {
           setTimeout(() => {
-            this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionPercentage'] = 100
-            this.tocSvc.hashmap[this.widgetContentService.currentMetaData?.content?.data?.parent]['completionStatus'] = 2
+            if (parentId && this.tocSvc.hashmap[parentId]) {
+              this.tocSvc.hashmap[parentId]['completionPercentage'] = 100
+              this.tocSvc.hashmap[parentId]['completionStatus'] = 2
+              this.tocSvc.hashmap[parentId]['status'] = 2
+              // Reassign and emit so the TOC checkmark updates immediately
+              this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
+              this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
+            }
           }, 700)
-        }, 700)
+        }
       }
     }
+  }
+
+  /**
+   * Resolve the hashmap key of the pre-enrolment assessment (the questionset's parent
+   * collection listed in preEnrolmentResources). currentMetaData is unreliable —
+   * viewer-toc overwrites it with the collection content object, whose
+   * `.content.data.parent` is undefined — so validate each candidate against the
+   * hashmap and fall back to scanning it for the entry containing this questionset.
+   */
+  private resolvePreEnrolmentAssessmentId(): string {
+    // The TOC row reads hierarchyMapData[<preEnrolmentResources item id>], so the write
+    // must land on that exact key. The program root is ALSO in the hashmap, so "exists
+    // in hashmap" alone is not a valid check — exclude it explicitly.
+    const programId = this.activatedRoute.snapshot.queryParams.collectionId
+    const isPreEnrolmentEntry = (id: string) => !!(id && id !== programId && this.tocSvc.hashmap[id])
+    // The questionset itself may be listed directly in preEnrolmentResources
+    if (isPreEnrolmentEntry(this.identifier)) {
+      return this.identifier
+    }
+    const metaParent = this.widgetContentService.currentMetaData?.content?.data?.parent
+    if (isPreEnrolmentEntry(metaParent)) {
+      return metaParent
+    }
+    const routeParent = _.get(this.activatedRoute, 'snapshot.data.content.data.parent')
+    if (isPreEnrolmentEntry(routeParent)) {
+      return routeParent
+    }
+    // The seeded pre-enrolment entries carry leafNodes — find the one holding this questionset
+    const hashKey = Object.keys(this.tocSvc.hashmap).find((key: string) => {
+      if (key === programId) {
+        return false
+      }
+      const entry = this.tocSvc.hashmap[key]
+      return entry && Array.isArray(entry.leafNodes) && entry.leafNodes.indexOf(this.identifier) > -1
+    })
+    return hashKey || metaParent || routeParent || ''
   }
   startQuiz() {
     if (this.isXsmall) {

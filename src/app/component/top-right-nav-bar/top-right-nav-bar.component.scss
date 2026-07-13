@@ -159,11 +159,6 @@
   .help-icon {
     height: 20px;
     width: 20px;
-    margin-top: 6px;
-  }
-
-  .notification-icon {
-    margin-top: 6px;
   }
 
   .download-app-chip {
@@ -180,10 +175,44 @@
     list-style: none;
   }
 
+  // flex-center every right-nav item vertically (explore pill, language,
+  // bell, avatar) instead of the per-item margin-top hacks used on desktop.
+  // The host centers itself in the toolbar row (instead of stretching) so
+  // the group as a whole sits on the row's vertical center.
+  :host {
+    display: flex;
+    align-items: center;
+    align-self: center;
+  }
+
   .right-side-nav-items {
-    display: inline-block;
-    margin: 4px 0;
+    display: flex;
+    align-items: center;
+    margin: 0;
     padding-left: 4px !important;
+  }
+
+  .right-side-nav-items li {
+    display: flex;
+    align-items: center;
+  }
+
+  .notification-icon {
+    margin-top: 0;
+  }
+
+  // more specific than the base .bell-icon rule further down the file,
+  // which would otherwise win over this earlier media-query override
+  .notification-icon .bell-icon {
+    margin-top: 0;
+  }
+
+  .langdiv .mob-lang-img {
+    margin-top: 0;
+  }
+
+  .explore-content-item {
+    height: auto;
   }
 }
 
@@ -297,27 +326,61 @@
   color: #fff !important;
 }
 
-.font-size-controls {
-  display: flex;
-  align-items: center;
-  gap: 2px;
+// explore-content button (mirrors card-hubs-list styles)
+// top-aligned, not baseline: the language mat-form-field next to it reports a
+// baseline that includes its hidden MDC subscript area, which drags
+// baseline-aligned siblings downward. Both pills are 32px tall and the
+// language chip renders at the top of its item, so aligning tops levels them.
+.explore-content-item {
+  display: inline-block;
+  vertical-align: top;
+  height: 32px;
+}
 
-  .font-size-label {
-    font-size: 12px;
-    font-weight: 600;
-    min-width: 20px;
-    text-align: center;
+.explore-more {
+  border-right: 1px solid rgba(27, 33, 51, 0.16);
+  padding-right: 0.5rem;
+  margin-right: 0.5rem;
+}
+
+.explore-content-text {
+  display: inline-flex;
+  align-items: center;
+  max-width: 200px;
+  opacity: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.5s ease, opacity 0.5s ease;
+}
+
+::ng-deep .explore-content-action {
+  height: 32px !important;
+  line-height: normal !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 0 12px !important;
+
+  div {
+    font-weight: 700 !important;
   }
 
-  button[mat-icon-button] {
-    width: 32px;
-    height: 32px;
-    line-height: 32px;
+  mat-icon {
+    margin-top: 0 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
+  .mat-mdc-button-touch-target {
+    height: 32px !important;
+  }
+
+  &:hover {
+    background-color: #1B4CA1 !important;
+
+    span,
+    mat-icon {
+      color: #fff !important;
     }
   }
 }

@@ -70,6 +70,16 @@ ws-app-nav-bar {
   padding-top: 104px;
 }
 
+// Used when the secondary header (hubs bar, ~48px) is disabled in global-config
+// (components.secondaryHeader.enabled = false); combines with the classes above
+.height-on-top.height-no-secondary {
+  padding-top: 112px;
+}
+
+.height-on-top-no-marquee.height-no-secondary {
+  padding-top: 56px;
+}
+
 .height-on-top-not-valid-user {
   padding-top: 66px;
 }
