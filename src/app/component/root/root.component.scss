@@ -151,12 +151,12 @@ ws-app-nav-bar {
 }
 
 @media only screen and (max-width: 576px) {
-  .margin186 {
-    margin-top: 186px;
-  }
+  // .margin186 {
+  //   margin-top: 186px;
+  // }
 
   .mt-136 {
-    margin-top: 126px;
+    margin-top: 40px;
   }
 }
 
@@ -169,7 +169,7 @@ ws-app-nav-bar {
 
 @media screen and (min-width: 1199px) {
 
-  .margin186,
+  // .margin186,
   .mt-136 {
     margin-top: 0px;
   }
