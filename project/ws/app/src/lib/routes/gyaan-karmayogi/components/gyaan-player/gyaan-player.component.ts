@@ -25,6 +25,7 @@ export class GyaanPlayerComponent implements OnInit {
   displayContents = true
   collectionId: any = ''
   from: any = ''
+  playerPreview = false
   isInstructionsExpanded = false
   hasLongInstructions = false
 
@@ -40,13 +41,15 @@ export class GyaanPlayerComponent implements OnInit {
               private route: ActivatedRoute,
               public titleCasePipe: TitleCasePipe,
               public translate: TranslateService, private router: Router) {
+    this.playerPreview = !!this.route.snapshot.queryParams.playerPreview
+    this.collectionId = this.route.snapshot.queryParams.collectionId || ''
     if (this.route.parent && this.route.parent.snapshot.data.pageData
       && this.route.parent.snapshot.data.pageData.data
       && this.route.parent.snapshot.data.pageData.data.stripConfig) {
       this.pageConfig = JSON.parse(JSON.stringify(this.route.parent && this.route.parent.snapshot.data.pageData.data))
       this.displayContents = this.route.parent.snapshot.queryParams.playerPreview ? false : true
       this.collectionId = this.route.parent.snapshot.queryParams.collectionId ?
-        this.route.parent.snapshot.queryParams.collectionId : ''
+        this.route.parent.snapshot.queryParams.collectionId : this.collectionId
     }
     this.router.events.subscribe(val => {
       // see also
@@ -72,7 +75,17 @@ export class GyaanPlayerComponent implements OnInit {
     this.resourceData = _.cloneDeep(this.viewerDataSvc.resource)
     this.updateSectorData()
     this.getRelatedContent()
-    if (!this.displayContents) {
+    if (this.playerPreview && this.collectionId) {
+      // opened from the TOC page (playerPreview + collectionId in the url):
+      // breadcrumb leads back to the TOC only, without the Gyaan Karmayogi crumb
+      this.titles = [
+        {
+          title: 'TOC page', disableTranslate: true,
+          queryParams: {}, url: `/app/toc/${this.collectionId}/overview`, icon: 'menu_book',
+        },
+        { title: this.resourceData.name, url: 'none', icon: '' },
+      ]
+    } else if (!this.displayContents) {
       this.titles = [
         { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
         {

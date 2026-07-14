@@ -127,13 +127,21 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.headerFooterConfigData = this.configSvc.headerFooterConfigData
       this.showFooter = true
     }
-    this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
-      this.menuBarDetails = sectionData?.data
+    if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.leftNavBar) {
+      this.menuBarDetails = this.configSvc.instanceConfig.leftNavBar
       if (this.menuBarDetails) {
         this.setAchivements()
         this.setOtherPortals()
       }
-    })
+    } else {
+      this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
+        this.menuBarDetails = sectionData?.data
+        if (this.menuBarDetails) {
+          this.setAchivements()
+          this.setOtherPortals()
+        }
+      })
+    }
 
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
@@ -263,6 +271,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   reloadPage() {
     window.location.reload()
+  }
+
+  // dialog/popup visibility from global-config -> components.dialogs
+  isDialogEnabled(dialogKey: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+      && this.domainConfSvc.isConfigEnabled('components.dialogs', dialogKey)
   }
 
   openIntro() {

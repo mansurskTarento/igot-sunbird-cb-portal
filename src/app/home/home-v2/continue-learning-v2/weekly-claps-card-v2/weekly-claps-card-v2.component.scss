@@ -34,6 +34,9 @@
   font-weight: 700;
   width: fit-content;
   letter-spacing: 0.01em;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 /* ---- Description text ---- */
@@ -42,6 +45,9 @@
   color: var(--text-bandw-black-captions);
   margin: 0;
   line-height: 1.55;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .wc-know-more {
@@ -105,6 +111,9 @@
   font-weight: 700;
   color: var(--text-bandw-black-title);
   line-height: 1;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 /* ---- Date range (startDate – endDate) ---- */
@@ -297,6 +306,9 @@
   font-weight: 700;
   color: #1B4CA1;
   margin: 0 0 10px;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .wc-popup-intro {
@@ -304,6 +316,9 @@
   color: var(--text-bandw-black-display);
   line-height: 1.6;
   margin: 0;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .wc-popup-item {
@@ -353,6 +368,9 @@
   font-weight: 700;
   color: var(--text-bandw-black-body);
   margin: 0 0 6px;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .wc-popup-a {
@@ -360,6 +378,9 @@
   color: var(--text-system-text-disabled);
   margin: 0;
   line-height: 1.6;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .wc-popup-highlight {

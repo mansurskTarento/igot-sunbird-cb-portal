@@ -15,11 +15,14 @@
 }
 
 .cl-heading {
-  font-size: var(--font-size-sub-heading-2);
+  font-size: var(--font-size-title-2);
   font-weight: 700;
   color: var(--text-bandw-black-heading);
   margin: 0;
   letter-spacing: 0.01em;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 /* "View All" pill button */
@@ -33,6 +36,9 @@
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 
   &:hover {
     color: var(--text-button-text-primary-white);

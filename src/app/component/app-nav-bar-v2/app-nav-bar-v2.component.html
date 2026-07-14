@@ -56,7 +56,7 @@
     </div>
     }
 
-    <div class="md:flex items-center md:ml-auto">
+    <div class="md:flex md:gap-4 items-center md:ml-auto">
       @for (item of filteredPrimaryNavbarConfig?.mediumScreen?.right; track item) {
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />

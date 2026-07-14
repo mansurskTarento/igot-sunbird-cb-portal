@@ -302,7 +302,7 @@ export class InitService {
           type: 'page',
           subType: 'application-config-web',
           portal: 'portal',
-          clientVersion: this.configSvc?.globalConfig?.formClentVersion['application-config-web'] || 1.0,
+          clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['application-config-web'] || 1.0,
         },
       }
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
@@ -354,9 +354,16 @@ export class InitService {
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
       this.configSvc.globalConfig = response.result.data
     } catch (e) {
-      console.error('InitService: Failed to load global config', e)
-      this.configSvc.globalConfig = {}
-      this.configSvc.globalConfigLoadFailed = true
+      // form API unavailable — fall back to the bundled static config so feature and
+      // route flags still apply (same pattern as the page resolvers)
+      try {
+        this.configSvc.globalConfig = await firstValueFrom(
+          this.http.get(`${this.configSvc.sitePath}/global-config.json`))
+      } catch (err) {
+        console.error('InitService: Failed to load global config', err)
+        this.configSvc.globalConfig = {}
+        this.configSvc.globalConfigLoadFailed = true
+      }
     }
     return this.configSvc.globalConfig
   }
@@ -401,9 +408,7 @@ export class InitService {
         if (userProfile.rootOrgId) {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe(orgData => {
             this.configSvc.orgReadData = orgData
-            if (orgData && orgData['netcoreDisabled']) {
-
-            } else {
+            if (!(orgData && orgData['netcoreDisabled'])) {
               smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', 'tin')
               smartech('register', 'b632681d782c843e187fd5447c97ed4d')
               smartech('identify', '')
@@ -530,7 +535,6 @@ export class InitService {
             webPortalLang: _.get(profileV2, 'additionalProperties.webPortalLang') || '',
             profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
           }
-
           if (!this.configSvc.nodebbUserProfile) {
             this.configSvc.nodebbUserProfile = {
               username: userPidProfile.userName,
@@ -562,15 +566,19 @@ export class InitService {
         this.configSvc.userRoles = new Set((details.roles || []).map((v: string) => v.toLowerCase()))
         this.configSvc.isActive = details.isActive
 
-        // nps check
-        if (localStorage.getItem('platformratingTime')) {
-          const date = localStorage.getItem('platformratingTime') || ''
-          const isNextDay = moment().subtract(24, 'hours').isBefore(moment(new Date(date)))
-          if (isNextDay) {
+        // nps check (skipped entirely when the NPS survey dialog is disabled
+        // in global-config -> components.dialogs.npsSurvey)
+        if (this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
+          && this.domainConfSvc.isConfigEnabled('components.dialogs', 'npsSurvey')) {
+          if (localStorage.getItem('platformratingTime')) {
+            const date = localStorage.getItem('platformratingTime') || ''
+            const isNextDay = moment().subtract(24, 'hours').isBefore(moment(new Date(date)))
+            if (isNextDay) {
+              this.checkUserFeed()
+            }
+          } else {
             this.checkUserFeed()
           }
-        } else {
-          this.checkUserFeed()
         }
         return details
       } catch (e) {

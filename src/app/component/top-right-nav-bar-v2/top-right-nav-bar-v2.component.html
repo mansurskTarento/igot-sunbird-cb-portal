@@ -72,7 +72,7 @@
   <!-- Profile Widget -->
   @if (item()?.type === 'widgetButton' && rnc.section === 'profile' && rnc.active && item()?.forPreview) {
   <li matTooltipClass="right-nav-tooltip" [matTooltip]="'toprightnavbar.profile' | translate"
-    class="inline-block cursor-pointer">
+    class="inline-block cursor-pointer removeProfileLink">
     <ng-container [wsResolverWidget]="item()?.config"></ng-container>
   </li>
   }
@@ -80,7 +80,8 @@
   }
   @if (item()?.type === 'themeToggle') {
   <li matTooltipClass="right-nav-tooltip"
-    matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}" class="theme-toggle-btn mt-2">
+    matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}"
+    class="theme-toggle-btn mt-2 inline-block">
     <!-- <button mat-icon-button (click)="themeSvc.toggleTheme()" aria-label="Toggle theme">
       <mat-icon>{{ themeSvc.isDark ? 'brightness_7' : 'brightness_4' }}</mat-icon>
     </button> -->

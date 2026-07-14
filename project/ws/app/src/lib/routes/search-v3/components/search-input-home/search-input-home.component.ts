@@ -736,10 +736,11 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   private getGlobalSearchRoute(): string {
-    const userRoles = this.configSvc.userProfileV2?.userRoles || []
-    const isVolunteer = Array.isArray(userRoles) && userRoles.some(
-      (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
-    )
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
     return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
   }
 

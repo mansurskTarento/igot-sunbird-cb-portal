@@ -38,6 +38,11 @@
                                 </ws-feed-list>
                             </ng-container>
                         </div>
+                        <div class="slider"
+                            *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                            <ws-widget-sliders *ngIf="sectionItem.isVisible"
+                                [widgetData]="sliderData"></ws-widget-sliders>
+                        </div>
                     </ng-container>
                     <div class="slider"
                         *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
@@ -63,11 +68,15 @@
                 </ng-container>
 
                 <ng-container *ngIf="!enableLazyLoadingFlag">
-                    <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
-                        <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item"
+                    <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
+                        <ng-container *ngIf="sectionItem.section.startsWith('section_') && sectionItem.isActive">
+                            <ws-feed-list [widgetData]="sectionItem.stripData"
                                 (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
+                        <div class="slider"
+                            *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                            <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                        </div>
                     </ng-container>
 
                     <div class="slider"
@@ -104,6 +113,11 @@
                                 </ws-feed-list>
                             </ng-container>
                         </div>
+                        <div class="slider"
+                            *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                            <ws-widget-sliders *ngIf="sectionItem.isVisible"
+                                [widgetData]="sliderData"></ws-widget-sliders>
+                        </div>
                     </ng-container>
 
                     <div class="slider"
@@ -130,11 +144,15 @@
                 </ng-container>
 
                 <ng-container *ngIf="!enableLazyLoadingFlag">
-                    <ng-container *ngFor="let item of contentStripData; let i=index; trackBy i">
-                        <ng-container *ngIf="item?.strips[0]?.active">
-                            <ws-feed-list [widgetData]="item"
+                    <ng-container *ngFor="let sectionItem of sectionList; let i=index; trackBy i">
+                        <ng-container *ngIf="sectionItem.section.startsWith('section_') && sectionItem.isActive">
+                            <ws-feed-list [widgetData]="sectionItem.stripData"
                                 (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-feed-list>
                         </ng-container>
+                        <div class="slider"
+                            *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                            <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                        </div>
                     </ng-container>
 
                     <div class="slider"
@@ -163,13 +181,14 @@
 <ng-container *ngIf="homePageData?.clientList?.enabled">
     <ws-client-slider [clientList]="clientList"></ws-client-slider>
 </ng-container>
-<ng-container *ngIf="homePageData?.downloadApp?.enabled">
+<ng-container *ngIf="homePageData?.downloadApp?.enabled && isDialogEnabled('downloadApp')">
     <div class="download-section">
         <ws-download-app></ws-download-app>
     </div>
 </ng-container>
 
-<div class="footer footer-update-mobile-number customindex" *ngIf="!isMDOMsgOpen && !canShowCustomAttrOpen">
+<div class="footer footer-update-mobile-number customindex"
+    *ngIf="!isMDOMsgOpen && !canShowCustomAttrOpen && isDialogEnabled('mdoProfileUpdateStatus')">
     <!-- //NOSONAR -->
     <div (click)="handleMDOMsgstatus()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
@@ -191,7 +210,8 @@
     </div>
 </div>
 
-<div class="footer footer-update-mobile-number" *ngIf="isNudgeOpen && !canShowCustomAttrOpen">
+<div class="footer footer-update-mobile-number"
+    *ngIf="isNudgeOpen && !canShowCustomAttrOpen && isDialogEnabled('profileUpdateNudge')">
     <!-- //NOSONAR -->
     <div (click)="handleRemindLater()" class="desktop-cross">X</div>
     <div class="update-mobile-number-flex">
@@ -202,7 +222,8 @@
             'home.updateNow' | translate }}</button>
     </div>
 </div>
-<div class="footer footer-update-mobile-number" *ngIf="canShowCustomAttrOpen">
+<div class="footer footer-update-mobile-number"
+    *ngIf="canShowCustomAttrOpen && isDialogEnabled('customAttributeUpdate')">
     <!-- //NOSONAR -->
     <div class="update-mobile-number-flex">
         <p class="updatetitle">{{ 'home.updateCustomeFiledTitle' | translate }}</p>
