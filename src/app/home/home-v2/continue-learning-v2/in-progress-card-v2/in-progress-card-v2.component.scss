@@ -64,6 +64,9 @@
   letter-spacing: 0.5px;
   text-transform: uppercase;
   pointer-events: none;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 .ip-ring-fg {
@@ -104,6 +107,9 @@
   font-weight: 700;
   width: fit-content;
   letter-spacing: 0.01em;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 /* Course title */
@@ -117,6 +123,9 @@
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 }
 
 /* Org name */
@@ -139,6 +148,9 @@
   cursor: pointer;
   width: fit-content;
   transition: background 0.2s;
+  /* stylelint-disable */
+  font-family: 'Noto Sans';
+  /* stylelint-enable */
 
   &:hover {
     color: var(--environment-button-primary-filled-primary-hover);
