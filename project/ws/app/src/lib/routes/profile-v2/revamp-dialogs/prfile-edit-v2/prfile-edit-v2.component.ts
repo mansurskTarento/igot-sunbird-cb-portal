@@ -122,6 +122,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkingPhone = false
 
   apiConfig: any
+  otherDetailsFields: any = null
 
   constructor(
     private fb: FormBuilder,
@@ -147,6 +148,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.profileDetails = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileDetails', {}) : _.get(this.data, 'profileDetails', {})
     this.profileImage = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileImage', null) : _.get(this.data, 'profileImage', null)
     this.apiConfig = _.get(this.data, 'apiConfig', {})
+    this.otherDetailsFields = hasDialogDetails
+      ? _.get(this.data, 'dialogDetails.otherDetailsFields', null)
+      : _.get(this.data, 'otherDetailsFields', null)
 
     // groupsList can come from either location
     this.groupsList = _.get(this.data, 'groupsList', [])
@@ -207,6 +211,71 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     return translatedString
       .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
       .replace('%NAME%', `<b>(${this.nodalName})</b>`)
+  }
+
+  get isVolunteer(): boolean {
+    return !!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer')
+  }
+
+  // config key (otherDetails.fields) -> form control name in the Other Details form
+  private static readonly OTHER_DETAILS_CONTROL_MAP: { [configKey: string]: string } = {
+    employeeId: 'employeeCode',
+    email: 'primaryEmail',
+    gender: 'gender',
+    dateOfBirth: 'dob',
+    category: 'category',
+    officePinCode: 'pinCode',
+    mobileNumber: 'mobile',
+    motherTongue: 'domicileMedium',
+  }
+
+  // adds Validators.required to every Other Details control whose config entry
+  // says required: true, on top of its existing validators. Fields without the
+  // flag (or with no config at all) keep the current behavior. The cadre chain
+  // (governmentService onwards) keeps its own dynamic required handling.
+  private applyConfiguredRequiredValidators(): void {
+    const fields = this.otherDetailsFields
+    if (!fields || !Object.keys(fields).length) {
+      return
+    }
+    Object.keys(PrfileEditV2Component.OTHER_DETAILS_CONTROL_MAP).forEach(configKey => {
+      if (_.get(fields, `${configKey}.required`) !== true) {
+        return
+      }
+      const control = this.profileForm.get(PrfileEditV2Component.OTHER_DETAILS_CONTROL_MAP[configKey])
+      if (control) {
+        control.setValidators(control.validator
+          ? [control.validator, Validators.required]
+          : [Validators.required])
+        control.updateValueAndValidity({ emitEvent: false })
+      }
+    })
+  }
+
+  // drives the star (*) on labels from the control's actual validators, so it
+  // stays correct when validators are added/removed at runtime (cadre chain)
+  isRequiredField(controlName: string): boolean {
+    const control = this.profileForm ? this.profileForm.get(controlName) : null
+    if (!control || !control.validator) {
+      return false
+    }
+    const errors = control.validator({ value: null } as any)
+    return !!(errors && errors.required)
+  }
+
+  // Other Details field visibility:
+  //  - volunteers never see employeeId / ehrmsId / dateOfRetirement / governmentService
+  //  - no fields map in config -> show everything
+  //  - fields map present -> only the keys explicitly enabled there are shown
+  showOtherDetailsField(fieldKey: string): boolean {
+    const volunteerHiddenFields = ['employeeId', 'ehrmsId', 'dateOfRetirement', 'governmentService']
+    if (this.isVolunteer && volunteerHiddenFields.includes(fieldKey)) {
+      return false
+    }
+    if (!this.otherDetailsFields || !Object.keys(this.otherDetailsFields).length) {
+      return true
+    }
+    return _.get(this.otherDetailsFields, `${fieldKey}.enabled`) === true
   }
 
   private initForm(): void {
@@ -682,6 +751,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.cadreId = _.get(this.profileDetails, 'cadreId', '')
     this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '')
     this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false)
+
+    // otherDetails.fields.<key>.required in the page config marks a field
+    // mandatory (the label star is derived from the resulting validators)
+    this.applyConfiguredRequiredValidators()
 
     this.fetchCadreData()
     this.getMasterLanguage()

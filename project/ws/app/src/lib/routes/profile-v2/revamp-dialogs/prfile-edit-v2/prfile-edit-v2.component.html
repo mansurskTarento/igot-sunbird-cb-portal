@@ -115,7 +115,7 @@
         {{'NetworkV2Profile.pdTooltipMsg' | translate}}
       </div>
       <div class="flex flex-col profile-control">
-        <div class="lable">{{'NetworkV2Profile.group' | translate}}</div>
+        <div class="lable required">{{'NetworkV2Profile.group' | translate}}</div>
         <mat-form-field appearance="outline" class="full-width">
           <mat-select formControlName="group" placeholder="{{'NetworkV2Profile.chooseAGroup' | translate}}">
             <mat-option value="" disabled>{{ 'NetworkV2Profile.chooseAGroup' | translate }}</mat-option>
@@ -125,7 +125,7 @@
       </div>
 
       <div class="flex flex-col profile-control">
-        <div class="lable">{{'NetworkV2Profile.designation' | translate}}</div>
+        <div class="lable required">{{'NetworkV2Profile.designation' | translate}}</div>
         <mat-form-field appearance="outline" class="full-width">
           <mat-select formControlName="designation" placeholder="{{'NetworkV2Profile.chooseADesignation' | translate}}"
             panelClass="profile-control" (openedChange)="setupScrollListener($event)"
@@ -517,8 +517,9 @@
 
     <form [formGroup]="profileForm" class="profile-editor-form">
       <div class="form-fields-container">
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.employeeId' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('employeeId')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('employeeCode')}">
+            {{'NetworkV2Profile.employeeId' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput formControlName="employeeCode">
             <mat-error *ngIf="hasError('employeeCode', 'pattern')">{{'NetworkV2Profile.pleaseEnterAlphaNumeric' |
@@ -526,8 +527,9 @@
           </mat-form-field>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.email' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('email')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('primaryEmail')}">
+            {{'NetworkV2Profile.email' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput type="email" formControlName="primaryEmail" (keyup)="handleEmpty('primaryEmail')">
             <mat-error *ngIf="hasError('primaryEmail', 'pattern')">
@@ -544,8 +546,9 @@
           </div>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.gender' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('gender')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('gender')}">
+            {{'NetworkV2Profile.gender' | translate}}</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="gender">
               <ng-container *ngFor="let gender of eUserGender">
@@ -555,8 +558,9 @@
           </mat-form-field>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.dob' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('dateOfBirth')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('dob')}">
+            {{'NetworkV2Profile.dob' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput [matDatepicker]="picker" formControlName="dob" [max]="currentDate">
             <mat-datepicker-toggle matSuffix [for]="picker">
@@ -566,8 +570,9 @@
           </mat-form-field>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.category' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('category')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('category')}">
+            {{'NetworkV2Profile.category' | translate}}</div>
           <mat-form-field appearance="outline">
             <mat-select formControlName="category">
               <ng-container *ngFor="let category of eCategory">
@@ -578,8 +583,9 @@
         </div>
 
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.officePinCode' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('officePinCode')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('pinCode')}">
+            {{'NetworkV2Profile.officePinCode' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput maxlength="6" formControlName="pinCode">
             <mat-error *ngIf="hasError('pinCode', 'pattern')">
@@ -588,8 +594,9 @@
           </mat-form-field>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.mobileNumber' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('mobileNumber')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('mobile')}">
+            {{'NetworkV2Profile.mobileNumber' | translate}}</div>
           <div class="flex gap-2">
             <div class="country-code">
               +91
@@ -610,8 +617,9 @@
           </div>
         </div>
 
-        <div class="flex flex-col profile-control">
-          <div class="lable">{{'NetworkV2Profile.motherTongue' | translate}}</div>
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('motherTongue')">
+          <div class="lable" [ngClass]="{'required': isRequiredField('domicileMedium')}">
+            {{'NetworkV2Profile.motherTongue' | translate}}</div>
           <mat-form-field appearance="outline">
             <input matInput formControlName="domicileMedium" aria-label="Domicile Medium (Mother Tongue)" matInput
               (keydown)="onkeyDown($event)" [matAutocomplete]="languageAuto">
@@ -630,7 +638,7 @@
           </mat-autocomplete>
         </div>
 
-        <div class="flex flex-col profile-control mb-2">
+        <div class="flex flex-col profile-control mb-2" *ngIf="showOtherDetailsField('ehrmsId')">
           <div class="lable">{{ 'NetworkV2Profile.eHRMSId' | translate }}</div>
           <div>{{profileDetails?.additionalProperties?.externalSystemId || 'NA'}} </div>
           <!-- <mat-form-field appearance="outline">
@@ -638,7 +646,7 @@
           </mat-form-field> -->
         </div>
 
-        <div class="flex flex-col profile-control">
+        <div class="flex flex-col profile-control" *ngIf="showOtherDetailsField('dateOfRetirement')">
           <div class="lable">{{ 'NetworkV2Profile.dor' | translate }}</div>
           <div>{{profileDetails?.additionalProperties?.externalSystemDor || 'NA'}} </div>
           <!-- <mat-form-field appearance="outline">
@@ -646,7 +654,7 @@
           </mat-form-field> -->
         </div>
 
-        <ng-container *ngIf="noCadreDetails">
+        <ng-container *ngIf="noCadreDetails && showOtherDetailsField('governmentService')">
           <div class="flex flex-col profile-control">
             <div class="lable">{{ 'NetworkV2Profile.fromGovOrganization' | translate }}</div>
             <mat-form-field appearance="outline">

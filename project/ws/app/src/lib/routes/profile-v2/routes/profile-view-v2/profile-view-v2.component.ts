@@ -1090,6 +1090,10 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     })
   }
 
+  get isVolunteerUser(): boolean {
+    return !!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer')
+  }
+
   openProfileEditDialog(header: string) {
     const dialogDetails: any = {
       header,
@@ -1110,6 +1114,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       dialogDetails['groupsList'] = this.groupsList
     } else if (header === 'Other Details') {
       dialogDetails['editConfig'] = this.getEditConfig(this.profileConfig?.basicDetails?.otherDetails?.editObjectKey)
+      // field visibility map for the static edit form (empty/absent -> all fields)
+      dialogDetails['otherDetailsFields'] = this.profileConfig?.basicDetails?.otherDetails?.fields || null
     }
 
     // For mandatorySection, wrap dialogDetails and include approval fields
@@ -1133,10 +1139,14 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
     let dialogComponent: any = PrfileEditV2Component
 
+    // volunteers always use the existing static Other Details form so the
+    // volunteer-restricted fields (employeeId, ehrmsId, dateOfRetirement,
+    // governmentService) can be hidden there
     if (
       dialogData.header.toLowerCase() === 'other details'
       && dialogData.editConfig
       && dialogData.editConfig.isDynamicDialog
+      && !this.isVolunteerUser
     ) {
       dialogComponent = DynamicEntryEditComponent
     }
@@ -1752,7 +1762,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (service history, achievements, educational qualifications will edit based on the request)
   addProfileEntry(formBody: any) {
-    const configDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
+    const configDetails: ConfigDetails = this.getConfigDetails('addEntries')
     this.profileV2RevampSvc.addEntriesToProfile(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
