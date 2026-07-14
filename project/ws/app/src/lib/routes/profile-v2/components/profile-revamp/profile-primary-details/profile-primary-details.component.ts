@@ -120,6 +120,22 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     return _.get(this.primaryDetails, 'profileDesignationStatus') === 'VERIFIED'
   }
 
+  // Other Details field visibility:
+  //  - volunteers never see employeeId / ehrmsId / dateOfRetirement / governmentService
+  //  - no fields map in config -> show everything
+  //  - fields map present -> only the keys explicitly enabled there are shown
+  showOtherDetailsField(fieldKey: string): boolean {
+    const volunteerHiddenFields = ['employeeId', 'ehrmsId', 'dateOfRetirement', 'governmentService']
+    if (this.isUserVolunteer && volunteerHiddenFields.includes(fieldKey)) {
+      return false
+    }
+    const fields = _.get(this.primaryDetailsOtherDetailsConfig, 'otherDetails.fields')
+    if (!fields || !Object.keys(fields).length) {
+      return true
+    }
+    return _.get(fields, `${fieldKey}.enabled`) === true
+  }
+
   // the edit/withdraw block renders only when the field flag allows it, the
   // section is not marked read-only (editable: false), and the user is not a
   // volunteer — volunteers cannot edit their system-assigned primary details

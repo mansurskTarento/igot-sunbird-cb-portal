@@ -134,7 +134,7 @@
                           <span>{{ 'NetworkV2Profile.makeTransferRequest' | translate }}</span>
                         </button>
                       </ng-container>
-                      <ng-container *ngIf="enableWR">
+                      <ng-container *ngIf="enableWR && profileConfig?.userDetails?.insideMenuButtons?.transferRequest?.enabled">
                         <button mat-menu-item class="disable-button" matTooltipPosition="right"
                           matTooltip="{{ 'NetworkV2Profile.makeTransferRequest' | translate }}"
                           (click)="MTRTooltip.toggle()">
