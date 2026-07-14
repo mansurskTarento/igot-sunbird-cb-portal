@@ -37,7 +37,7 @@
                                 </ws-feed-list>
                             </ng-container>
                         </div>
-                        <div class="slider"
+                        <div class="slider {{homePageData?.sliderData?.className}}"
                             *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
                             <ws-widget-sliders *ngIf="sectionItem.isVisible" [widgetData]="sliderData"></ws-widget-sliders>
                         </div>
