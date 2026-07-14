@@ -312,26 +312,39 @@ export class PlayerPdfComponent extends WidgetBaseComponent
     }
   }
   fireRealTimeProgress(id: string) {
+    // previewed content (e.g. reference resources opened from the TOC with
+    // playerPreview=true) has no enrollment/batch context to report against
+    if (this.activatedRoute.snapshot.queryParams.playerPreview) {
+      return
+    }
     if (this.totalPages > 0 && this.current.length > 0) {
-      const realTimeProgressRequest = {
-        ...this.realTimeProgressRequest,
-        max_size: this.totalPages,
-        current: this.current,
+      // this method also runs from ngOnDestroy during route deactivation —
+      // an uncaught error here aborts the in-flight navigation, leaving the
+      // user stuck on the player (first click bounces back)
+      try {
+        const realTimeProgressRequest = {
+          ...this.realTimeProgressRequest,
+          max_size: this.totalPages,
+          current: this.current,
+        }
+        const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
+          this.activatedRoute.snapshot.queryParams.batchId, id)
+        const collectionId = (resData && resData.courseId) ? resData.courseId : ''
+        const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
+        const batchId = (resData && resData.batchId) ? resData.batchId : ''
+        if (isPreAssessment) {
+          if (id && collectionId) {
+            this.viewerSvc
+              .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
+          }
+        } else
+          if (id && collectionId && batchId) {
+            this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest, collectionId, batchId)
+          }
+      } catch (e) {
+        // tslint:disable-next-line: no-console
+        console.error('fireRealTimeProgress failed', e)
       }
-      const resData = this.viewerSvc.getBatchIdAndCourseId(this.activatedRoute.snapshot.queryParams.collectionId,
-        this.activatedRoute.snapshot.queryParams.batchId, id)
-      const collectionId = (resData && resData.courseId) ? resData.courseId : ''
-      const isPreAssessment = this.activatedRoute.snapshot.queryParams.preAssessment
-      const batchId = (resData && resData.batchId) ? resData.batchId : ''
-      if (isPreAssessment) {
-        if (id && collectionId) {
-          this.viewerSvc
-            .realTimeProgressUpdateForPreAssessment(id, realTimeProgressRequest)
-        }
-      } else
-        if (id && collectionId && batchId) {
-          this.viewerSvc.realTimeProgressUpdate(id, realTimeProgressRequest, collectionId, batchId)
-        }
     }
     return
   }
