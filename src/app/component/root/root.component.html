@@ -56,8 +56,11 @@
 </div>
 
 <!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
-<!--  && domainConfSvc.isConfigEnabled('featureFlags', 'chatbot') -->
-<ws-app-chatbot *ngIf="!hideHeaderAndFooter" [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
+<!-- iGOTAIConfig is populated only when application.config.json ->
+     iGOTAI.enabled !== false (master switch), so this hides the chatbot
+     whenever the AI features are disabled at the parent level -->
+<ws-app-chatbot *ngIf="!hideHeaderAndFooter && configSvc.iGOTAIConfig?.enabled"
+  [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
 <ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter"
   [headerFooterConfigData]="headerFooterConfigData">
 </ws-app-footer>

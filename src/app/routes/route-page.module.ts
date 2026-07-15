@@ -7,6 +7,7 @@ import { AppTocResolverService } from '@sunbird-cb/toc'
 import { AppHomePageResolverService } from '../services/app-home-page-resolver.service'
 import { HomeResolverService } from '../home/home/home-resolver.service'
 import { FormMicroSiteDataService } from '../services/form-micro-site-data.service'
+import { CustomHomeFormResolverService } from '../component/custom-home/resolvers/custom-home-form-resolver.service'
 
 const routes: Routes = [
   {
@@ -40,6 +41,7 @@ const routes: Routes = [
       module: 'CUSTOM_HOME',
     },
     resolve: {
+      pageData: CustomHomeFormResolverService,
     },
     canActivate: [GeneralGuard],
   },
