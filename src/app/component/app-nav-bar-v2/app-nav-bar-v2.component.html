@@ -6,7 +6,7 @@
     leftNavBarOpen() ? 'top-nav-bar-on-menubar-open' : 'top-nav-bar-on-menubar-close'
   ]">
   @if (mode() === 'top') {
-  <div class="w-full flex justify-between items-center mx-0 md:mx-10" id="root-tool-bar">
+  <div class="w-full flex items-center mx-0" id="root-tool-bar">
     @if (!leftNavBarOpen()) {
     <a [routerLink]="redirectPath" class="logo-dim items-center hidden md:flex" role="link" title="Home"
       [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null" i18n-aria-title
@@ -27,11 +27,11 @@
     </a>
     }
     @if (primaryNavbarConfig?.mediumScreen) {
-    <div class="md:flex md:flex-1 md:justify-center">
-      @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
+    <div [ngClass]="[leftNavBarOpen() ? 'ml-search' : 'ml-search-nav-close']" class="md:flex justify-start">
+      <!-- @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
       <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
-      }
+      } -->
 
       @if (!isforPreview()) {
       <ws-app-search-v4-input-home placeHolder="{{ 'appnavbar.searchforLearningContentsV2' | translate}}"
@@ -72,11 +72,11 @@
   class="mat-elevation-z3 custom mobile-footer-fixed-nav">
 
   @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
-  <ul class="mobile-footer-fixed-nav-list-item-container">
+  <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
     @if (item?.type !== 'explorerButton') {
     <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
-      (click)="redirectToPath(item?.config)">
+      (click)="bottomNavClick(item)">
       <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
         <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
           title="{{item?.config?.label}}" />

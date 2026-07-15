@@ -89,10 +89,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   disableHeightOnTop = false
   // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
-  isHomePage = false
   menuBarDetails: any
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
+  hideFooterSection = signal(false)
+  isHomePage = signal(false)
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -331,12 +332,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
       this.urlService.setPreviousUrl(this.prevUrl)
       if (this.currUrl === '/page/home') {
-        this.isHomePage = true
+        this.isHomePage.set(true)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
         // this.commonDataSvc.fetchMandatoryNotification()
       } else {
-        this.isHomePage = false
+        this.isHomePage.set(false)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
       }
       if (event && event.url) {
@@ -356,8 +357,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         }
       }
       if (window.location.pathname.includes('/page/home')) {
+        this.hideFooterSection.set(true)
         this.changeBg26Jan()
       } else {
+        this.hideFooterSection.set(false)
         this.removeBg26Jan()
       }
 

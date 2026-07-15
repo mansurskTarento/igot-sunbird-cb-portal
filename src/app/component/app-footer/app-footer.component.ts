@@ -18,6 +18,7 @@ import { environment } from 'src/environments/environment'
 })
 export class AppFooterComponent implements OnInit {
   @Input() headerFooterConfigData: any
+  @Input() hideFooterSection: boolean = false
   isXSmall = false
   termsOfUser = true
   environment!: any

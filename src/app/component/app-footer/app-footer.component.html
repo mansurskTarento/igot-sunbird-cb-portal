@@ -1,5 +1,5 @@
 <ng-container *ngIf="showFooter">
-  <ws-footer-section *ngIf="showLinks" [environment]="environment" [hubsList]="hubsList"
+  <ws-footer-section *ngIf="showLinks && !hideFooterSection()" [environment]="environment" [hubsList]="hubsList"
     [headerFooterConfigData]="headerFooterConfigData"></ws-footer-section>
 
   <div *ngIf="showCopyright" class="mat-toolbar mat-ws-mat-primary-text footer-container">

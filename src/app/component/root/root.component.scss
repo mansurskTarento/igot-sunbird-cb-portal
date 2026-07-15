@@ -40,6 +40,17 @@
   z-index: 901;
 }
 
+@media (max-width: 768px) {
+  .klb-popup-panel {
+    top: 50%;
+    left: calc(100% - 373px);
+  }
+
+  .klb-popup-backdrop {
+    left: 0px;
+  }
+}
+
 ws-app-nav-bar {
   z-index: 1000;
 }
@@ -158,6 +169,11 @@ ws-app-nav-bar {
 
 .main-content-on-menubar-close {
   width: calc(100% - 73px);
+}
+
+.home-content {
+  max-width: 1064px;
+  min-height: 400px;
 }
 
 @media only screen and (max-width: 576px) {
