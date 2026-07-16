@@ -94,8 +94,9 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     return (Array.isArray(configured) && configured.length) ? configured : ['course']
   }
 
-  // additional facet keys from application.config.json -> volunteerSearch.facets;
-  // merged on top of the model defaults (SearchOthersFacet + competency keys)
+  // facet keys from application.config.json -> volunteerSearch.facets; when the
+  // key is present with values it replaces the model default facet list
+  // (SearchOthersFacet + competency keys), otherwise the defaults are used
   get configuredFacets(): string[] {
     const configured = _.get(this.configSvc.instanceConfig, 'volunteerSearch.facets')
     return Array.isArray(configured) ? configured : []
@@ -143,10 +144,10 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     ])
     this.searchRequestCourse.request.limit = this.initialPaginationSize
     this.searchRequestCourse.request.filters.courseCategory = this.defaultCourseCategory
-    this.searchRequestCourse.request.facets = _.uniq([
-      ...this.searchRequestCourse.request.facets,
-      ...this.configuredFacets,
-    ])
+    const configuredFacets = this.configuredFacets
+    if (configuredFacets.length) {
+      this.searchRequestCourse.request.facets = _.uniq(configuredFacets)
+    }
     // Default sort for composite API: recently added maps to lastUpdatedOn desc
     this.searchRequestCourse.request.sort_by.createdOn = 'desc'
     this.courseSearchResults = []

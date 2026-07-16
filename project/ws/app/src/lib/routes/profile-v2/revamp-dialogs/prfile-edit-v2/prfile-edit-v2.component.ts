@@ -123,6 +123,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
 
   apiConfig: any
   otherDetailsFields: any = null
+  editConfig: any = null
 
   constructor(
     private fb: FormBuilder,
@@ -151,6 +152,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.otherDetailsFields = hasDialogDetails
       ? _.get(this.data, 'dialogDetails.otherDetailsFields', null)
       : _.get(this.data, 'otherDetailsFields', null)
+
+    // edit object (profileEditConfigs.<editObjectKey>) - top level in both data shapes
+    this.editConfig = _.get(this.data, 'editConfig', null) || _.get(this.data, 'dialogDetails.editConfig', null)
 
     // groupsList can come from either location
     this.groupsList = _.get(this.data, 'groupsList', [])
@@ -213,41 +217,31 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       .replace('%NAME%', `<b>(${this.nodalName})</b>`)
   }
 
-  get isVolunteer(): boolean {
-    return !!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer')
-  }
-
-  // config key (otherDetails.fields) -> form control name in the Other Details form
-  private static readonly OTHER_DETAILS_CONTROL_MAP: { [configKey: string]: string } = {
-    employeeId: 'employeeCode',
-    email: 'primaryEmail',
-    gender: 'gender',
-    dateOfBirth: 'dob',
-    category: 'category',
-    officePinCode: 'pinCode',
-    mobileNumber: 'mobile',
-    motherTongue: 'domicileMedium',
-  }
-
-  // adds Validators.required to every Other Details control whose config entry
-  // says required: true, on top of its existing validators. Fields without the
-  // flag (or with no config at all) keep the current behavior. The cadre chain
-  // (governmentService onwards) keeps its own dynamic required handling.
-  private applyConfiguredRequiredValidators(): void {
-    const fields = this.otherDetailsFields
-    if (!fields || !Object.keys(fields).length) {
+  // applies per-field rules from the edit object (profileEditConfigs ->
+  // otherDetailsEdit.fields, resolved via editObjectKey and passed in as
+  // editConfig). Each descriptor's key is the form control name:
+  //  - required: true -> adds Validators.required on top of existing validators
+  //  - disabled: true -> disables the control (read-only; value still reaches
+  //    the payload via getRawValue). The cadre chain (governmentService
+  //    onwards) keeps its own dynamic handling.
+  private applyConfiguredFieldRules(): void {
+    const editFields = _.get(this.editConfig, 'fields')
+    if (!Array.isArray(editFields) || !editFields.length) {
       return
     }
-    Object.keys(PrfileEditV2Component.OTHER_DETAILS_CONTROL_MAP).forEach(configKey => {
-      if (_.get(fields, `${configKey}.required`) !== true) {
+    editFields.forEach((field: any) => {
+      const control = field && field.key ? this.profileForm.get(field.key) : null
+      if (!control) {
         return
       }
-      const control = this.profileForm.get(PrfileEditV2Component.OTHER_DETAILS_CONTROL_MAP[configKey])
-      if (control) {
+      if (field.required === true) {
         control.setValidators(control.validator
           ? [control.validator, Validators.required]
           : [Validators.required])
         control.updateValueAndValidity({ emitEvent: false })
+      }
+      if (field.disabled === true) {
+        control.disable({ emitEvent: false })
       }
     })
   }
@@ -263,15 +257,11 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     return !!(errors && errors.required)
   }
 
-  // Other Details field visibility:
-  //  - volunteers never see employeeId / ehrmsId / dateOfRetirement / governmentService
+  // Other Details field visibility (otherDetails.fields in the served form config;
+  // role-specific hiding is done via role-based form revisions, not in code):
   //  - no fields map in config -> show everything
   //  - fields map present -> only the keys explicitly enabled there are shown
   showOtherDetailsField(fieldKey: string): boolean {
-    const volunteerHiddenFields = ['employeeId', 'ehrmsId', 'dateOfRetirement', 'governmentService']
-    if (this.isVolunteer && volunteerHiddenFields.includes(fieldKey)) {
-      return false
-    }
     if (!this.otherDetailsFields || !Object.keys(this.otherDetailsFields).length) {
       return true
     }
@@ -752,9 +742,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '')
     this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false)
 
-    // otherDetails.fields.<key>.required in the page config marks a field
-    // mandatory (the label star is derived from the resulting validators)
-    this.applyConfiguredRequiredValidators()
+    // required/disabled per field come from the edit object
+    // (profileEditConfigs.otherDetailsEdit.fields)
+    this.applyConfiguredFieldRules()
 
     this.fetchCadreData()
     this.getMasterLanguage()
@@ -1349,7 +1339,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   genrateOtehrDetailsForm(): void {
-    const formBody: any = this.profileForm.value
+    // getRawValue: config-disabled controls are excluded from form.value and
+    // their fields would otherwise be dropped from the update payload
+    const formBody: any = this.profileForm.getRawValue()
     // if (this.primaryEmailControl && _.get(this.profileDetails, 'primaryEmail', '') !== this.primaryEmailControl.value) {
     //   this.updateEmail(this.primaryEmailControl.value)
     // }
