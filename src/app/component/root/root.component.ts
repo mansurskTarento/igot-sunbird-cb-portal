@@ -24,7 +24,7 @@ import {
 import { BtnPageBackService } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
 import {
-  // AuthKeycloakService,
+  AuthKeycloakService,
   ConfigurationsService,
   // LoggerService,
   DomainConfService,
@@ -70,7 +70,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private swUpdate: SwUpdate,
     private dialog: MatDialog,
     private http: HttpClient,
-    // public authSvc: AuthKeycloakService,
+    private authSvc: AuthKeycloakService,
     public configSvc: ConfigurationsService,
     private valueSvc: ValueService,
     private telemetrySvc: TelemetryService,
@@ -242,6 +242,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   reloadPage() {
     window.location.reload()
+  }
+
+  // used on the global-config error screen: force_logout works without any
+  // loaded configuration (same path as the auth interceptor)
+  logout() {
+    this.authSvc.force_logout()
   }
 
   // dialog/popup visibility from global-config -> components.dialogs
