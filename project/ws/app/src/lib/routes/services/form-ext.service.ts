@@ -47,7 +47,6 @@ export class FormExtService {
 formConfigData(request: any, pageType:any, pageDataKey: any): Observable<any> {
      return this.formConfigReadData(request).pipe(
         map((rData: any) => {
-          debugger
           const finalData = rData && rData.result?.form?.data || rData.result?.data
           return (finalData)
         }),
