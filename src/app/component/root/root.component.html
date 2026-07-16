@@ -78,7 +78,7 @@
       <!--  && domainConfSvc.isConfigEnabled('featureFlags', 'chatbot') -->
       <ws-app-chatbot *ngIf="!hideHeaderAndFooter" [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
       <ws-app-footer class="app-footer"
-        *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter"
+        *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [isHomePage]="isHomePage()"
         [hideFooterSection]="hideFooterSection" [headerFooterConfigData]="headerFooterConfigData">
       </ws-app-footer>
 

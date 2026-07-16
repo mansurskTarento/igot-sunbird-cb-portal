@@ -5,6 +5,10 @@
   background-color: var(--surface-primary);
 }
 
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--surface-primary);
+}
+
 ::ng-deep .jan-bg-change {
   background-image: linear-gradient(95deg, #F7D3C5 0%, #FFF 55%, #9EDEAA 100%) !important;
 
