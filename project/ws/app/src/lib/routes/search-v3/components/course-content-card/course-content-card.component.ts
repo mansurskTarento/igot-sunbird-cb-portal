@@ -25,15 +25,16 @@ import * as _ from 'lodash'
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 const NEW_CONTENT_THRESHOLD_DAYS = 14
 @Component({
-    selector: 'ws-app-course-content-card',
-    templateUrl: './course-content-card.component.html',
-    styleUrls: ['./course-content-card.component.scss'],
-    standalone: false
+  selector: 'ws-app-course-content-card',
+  templateUrl: './course-content-card.component.html',
+  styleUrls: ['./course-content-card.component.scss'],
+  standalone: false
 })
 export class CourseContentCardComponent implements OnInit, OnChanges {
   @Input() content: any
   @Input() enrollment: any[] = []
   @Input() cbpPlans: any[] = []
+  @Input() unenrolledCourses: any[] = []
   @Input() igotSpecializationPrograms: any[] = []
   @Output() telemetry = new EventEmitter<any>()
   contentBookmarked = false
@@ -46,6 +47,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   isIgot = false
   igotSpecializationProgram: any
   CaCourseUnitIds = '[]'
+  isUnenrolled = false
   constructor(
     private configSvc: ConfigurationsService,
     private domainConfSvc: DomainConfService,
@@ -95,6 +97,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         this.igotSpecializationProgram = false
       }
     }
+    this.findIsUnenrolled()
   }
 
   checkForCiosDuration(item: any) {
@@ -197,5 +200,11 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         .join(' · ')
     }
     return ''
+  }
+
+  findIsUnenrolled(): void {
+    if (this.unenrolledCourses.length) {
+      this.isUnenrolled = this.unenrolledCourses.some((ele: any) => ele.courseId === this.content?.identifier)
+    }
   }
 }

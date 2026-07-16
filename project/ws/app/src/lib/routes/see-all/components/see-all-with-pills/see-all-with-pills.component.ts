@@ -205,8 +205,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async searchV6Request(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                        request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-                        _calculateParentStatus: boolean
+    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     // console.log('calling -- ')
@@ -239,7 +239,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             results,
             viewMoreUrl,
           })
-        },                                                  (error: any) => {
+        }, (error: any) => {
           reject(error)
         })
       }
@@ -268,7 +268,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             const currentTabFromMap = (allTabs && allTabs.length &&
               allTabs[this.dynamicTabIndex]) as NsContentStripWithTabsAndPills.IContentStripTab
             this.getTabDataByNewReqTrending(strip, this.dynamicTabIndex, 0, currentTabFromMap,
-                                            calculateParentStatus)
+              calculateParentStatus)
           }
         }
 
@@ -355,7 +355,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
               }
             }
           }
-        },                                                          error => {
+        }, error => {
           console.error('Error fetching microcredentials', error)
           if (strip && strip.tabs) {
             strip.tabs.splice(microTabIndex, 1)
@@ -552,8 +552,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async trendingSearchRequest(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                              request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
-                              _calculateParentStatus: boolean
+    request: NsContentStripWithTabsAndPills.IContentStripUnit['request'],
+    _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
@@ -604,7 +604,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             results = { response: { certifications: proccesedResult } }
           }
           resolve({ results, viewMoreUrl })
-        },                                                                     (error: any) => {
+        }, (error: any) => {
           if (error.error && error.error.status === 400) {
             // this.processStrip(strip, [], 'done', calculateParentStatus, null);
           }
@@ -616,8 +616,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
   }
 
   async microCredentialsSearchRequest(strip: any,
-                                      request: any,
-                                      _calculateParentStatus: boolean
+    request: any,
+    _calculateParentStatus: boolean
   ): Promise<any> {
     const originalFilters: any = []
     return new Promise<any>((resolve, reject) => {
@@ -651,7 +651,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             }
             : null
           resolve({ results, viewMoreUrl })
-        },                                                                               (error: any) => {
+        }, (error: any) => {
           if (error.error && error.error.status === 400) {
             // this.processStrip(strip, [], 'done', calculateParentStatus, null);
           }
@@ -785,7 +785,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
   // MY learning Strip methods starts here
   fetchUserEnrolledData(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
-                        tabIndex: number, pillIndex: any, calculateParentStatus = true) {
+    tabIndex: number, pillIndex: any, calculateParentStatus = true) {
     if (strip.request && strip.request.enrollmentList
       && Object.keys(strip.request.enrollmentList).length) {
       if (strip && strip.tabs && strip.tabs.length && strip.tabs[tabIndex].pillsData) {
@@ -883,13 +883,13 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
             ]
           }
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
-        },                                                                                       (_err: any) => {
+        }, (_err: any) => {
           if (courses && courses?.length) {
             courses = [...courses]
             this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
           }
         })
-      },          (_err: any) => {
+      }, (_err: any) => {
         if (courses && courses?.length) {
           courses = [...courses]
           this.formatNewEnrollmentData(strip, tabIndex, pillIndex, courses, calculateParentStatus)
@@ -916,7 +916,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           events = [...events, ...res.result.events]
         }
         this.formatNewEnrollmentData(strip, tabIndex, pillIndex, events, calculateParentStatus)
-      },                                                                                             (_err: any) => {
+      }, (_err: any) => {
 
       })
     }
@@ -940,6 +940,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         contentTemp.content.primaryCategory = c?.content && c?.content?.primaryCategory || c?.event && c?.event?.resourceType || ''
         contentTemp.cType = c.event ? 'event' : ''
         contentTemp.completedOn = c.completedOn || ''
+        contentTemp.active = c.active || ''
         if (c.surveyCompletionStatus !== undefined) {
           contentTemp.surveyCompletionStatus = c.surveyCompletionStatus
         }

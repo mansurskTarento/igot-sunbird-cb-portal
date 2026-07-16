@@ -45,10 +45,10 @@ import { NetworkV2Service } from '../../../network-v2/services/network-v2.servic
 import moment from 'moment'
 
 @Component({
-    selector: 'ws-app-learn-search',
-    templateUrl: './learn-search.component.html',
-    styleUrls: ['./learn-search.component.scss'],
-    standalone: false
+  selector: 'ws-app-learn-search',
+  templateUrl: './learn-search.component.html',
+  styleUrls: ['./learn-search.component.scss'],
+  standalone: false
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() searchQuery!: { query: string; nlp: string; searchCategory: string }
@@ -117,6 +117,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   compentencyKey!: NsContent.ICompentencyKeys
   enrollmentDetails: any = [];
   cbpPlanList: any = [];
+  unenrolledCourses: any = [];
   igotSpecializationPrograms: any = []
 
   competencyAreaNameKey!: string
@@ -189,7 +190,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.updateNoResultMessage(this.statedata.param)
 
-    this.checkCourseEnrollmentAndCbpPlan()
+
     this.getFetchIgotSpecializationPrograms()
     // this.fetchCbpPlan()
     localStorage.removeItem(SearchConstantLocalStorage.SortType)
@@ -379,6 +380,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content
       this.courseSearchTotalCount = result.result?.count
       this.coursesFacets = result.result?.facets || []
+
+      this.checkCourseEnrollmentAndCbpPlan(this.courseSearchResults)
 
       this.combinedFacets = []
       this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
@@ -1476,15 +1479,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     })
   }
 
-  checkCourseEnrollmentAndCbpPlan() {
+  checkCourseEnrollmentAndCbpPlan(courseSearchResults: any) {
     const userId = this.configSvc.userProfile?.userId || ''
     const request = {
       request: {
         retiredCoursesEnabled: true,
         limit: this.initialPaginationSize,
+        courseId: courseSearchResults.map((course: any) => course.identifier),
       },
     }
-
     forkJoin({
       inProgress: this.searchV3Service.enrollment(
         { request: { ...request.request, status: 'In-Progress' } },
@@ -1492,6 +1495,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       ),
       completed: this.searchV3Service.enrollment(
         { request: { ...request.request, status: 'Completed' } },
+        userId
+      ),
+      unenrolled: this.searchV3Service.enrollment(
+        { request: { ...request.request, status: 'Unenrolled' } },
         userId
       ),
       cbpPlan: this.userService.fetchCbpPlanList(),
@@ -1502,7 +1509,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         (responses.completed as any)?.result?.courses || []
 
       this.enrollmentDetails = [...inProgressCourses, ...completedCourses]
+      console.log('Enrollment Details:', this.enrollmentDetails)
       this.cbpPlanList = responses.cbpPlan || []
+      this.unenrolledCourses = (responses.unenrolled as any)?.result?.courses || []
     })
   }
 
