@@ -4,10 +4,10 @@
     <p>{{ data?.notification?.message?.body }}</p>
   </div>
   <div mat-dialog-actions class="modal-actions">
-    <button mat-stroked-button color="primary" (click)="onReject()" class="btn-reject cursor-pointer">
+    <button mat-stroked-button (click)="onReject()" class="btn-reject cursor-pointer">
       Remind me later
     </button>
-    <button mat-flat-button color="primary" (click)="onAccept()" class="btn-accept cursor-pointer">
+    <button mat-flat-button (click)="onAccept()" class="btn-accept cursor-pointer">
       Reattempt Now
     </button>
   </div>

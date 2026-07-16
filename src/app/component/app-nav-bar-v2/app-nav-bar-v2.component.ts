@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, OnDestroy, OnInit, signal } from '@angular/core'
+import { Component, computed, effect, input, OnDestroy, OnInit, output, signal } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { Router, NavigationEnd, NavigationStart, RouterModule } from '@angular/router'
@@ -56,6 +56,8 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   mode = input<'top' | 'bottom'>('top');
   headerFooterConfigData = input<any>();
   leftNavBarOpen = input<boolean>(false);
+
+  viewAchivements = output<boolean>()
 
   // State signals
   hideKPOnNav = signal(false);
@@ -559,6 +561,14 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     const filteredConfig = JSON.parse(JSON.stringify(config))
     filteredConfig.mediumScreen.right = filteredConfig.mediumScreen.right.filter((item: any) => item.type !== 'themeToggle')
     return filteredConfig
+  }
+
+  bottomNavClick(item: any) {
+    if (item?.config?.key === 'achievements') {
+      this.viewAchivements.emit(true)
+    } else {
+      this.redirectToPath(item?.config)
+    }
   }
 
   redirectToPath(pathConfig: any) {

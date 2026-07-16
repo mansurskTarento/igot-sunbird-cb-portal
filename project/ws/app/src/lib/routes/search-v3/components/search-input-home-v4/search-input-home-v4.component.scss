@@ -146,16 +146,24 @@
     font-size: 12px;
     line-height: 14.4px;
     color: #333d4c !important;
-    background-color: $chipStandardBackground !important;
+    background-color: $chipStandardBackground;
     margin: 4px 2px;
   }
 
   .mat-mdc-chip.selected-search-category {
-    background-color: $brandAccentColor !important;
-    color: $white !important;
+    background-color: var(--environment-button-primary-filled-primary) !important;
+    color: var(--text-button-text-primary-white) !important;
+
+    .mdc-evolution-chip__action {
+      background-color: var(--environment-button-primary-filled-primary) !important;
+    }
+
+    .mdc-evolution-chip__text-label {
+      color: var(--text-button-text-primary-white) !important;
+    }
 
     mat-icon {
-      color: $white !important;
+      color: var(--text-button-text-primary-white) !important;
       vertical-align: middle;
     }
   }
@@ -255,7 +263,7 @@ mat-list-item {
 // ===============================
 
 .search-results {
-  background-color: white;
+  background-color: var(--surface-primary);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 8px;

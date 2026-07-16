@@ -5,6 +5,10 @@
   background-color: var(--surface-primary);
 }
 
+::ng-deep .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-color: var(--surface-primary);
+}
+
 ::ng-deep .jan-bg-change {
   background-image: linear-gradient(95deg, #F7D3C5 0%, #FFF 55%, #9EDEAA 100%) !important;
 
@@ -38,6 +42,17 @@
   left: calc(330px + 24px);
   transform: translateY(-50%);
   z-index: 901;
+}
+
+@media (max-width: 768px) {
+  .klb-popup-panel {
+    top: 50%;
+    left: calc(100% - 373px);
+  }
+
+  .klb-popup-backdrop {
+    left: 0px;
+  }
 }
 
 ws-app-nav-bar {
@@ -158,6 +173,11 @@ ws-app-nav-bar {
 
 .main-content-on-menubar-close {
   width: calc(100% - 73px);
+}
+
+.home-content {
+  max-width: 1064px;
+  min-height: 400px;
 }
 
 @media only screen and (max-width: 576px) {

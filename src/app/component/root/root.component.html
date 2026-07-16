@@ -8,17 +8,15 @@
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
   <div class="flex gap-0 root-container">
-    @if ((isXSmall$ | async) === false) {
+    @if ((isXSmall$ | async) === false && menuBarDetails) {
     <div class="w-fit">
-      @if (menuBarDetails) {
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
         [otherDetailsChanged]="otherDetailsChanged()" (sidebarStateChange)="sidebarStateChanged($event)"
         (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
-      }
     </div>
     }
-    <div
-      [ngClass]="(isXSmall$ | async) === true ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
+    <div class=""
+      [ngClass]="((isXSmall$ | async) === true || !menuBarDetails) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
       <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
       <app-no-connection></app-no-connection>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
@@ -39,7 +37,7 @@
       </ws-header-v2>
       }
       <!-- </ws-widget-sticky-header> -->
-      <div class="height-adjust mx-3" [ngClass]="{
+      <div class="height-adjust mx-4 flex justify-center" [ngClass]="{
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
         'height-adjust-setup' : isSetupPage,
@@ -64,8 +62,14 @@
       'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
     }">
 
-        <div class="abc"
-          [ngClass]="{'margin186': mobileTopHeaderVisibilityStatus && showHubs, 'mt-0': !mobileTopHeaderVisibilityStatus && showHubs, 'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter, 'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage }">
+        <div [ngClass]="{
+            'margin186': mobileTopHeaderVisibilityStatus && showHubs,
+            'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
+            'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
+            'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
+            'home-content': isHomePage(),
+            'container-balanced': !isHomePage()
+            }">
           <router-outlet></router-outlet>
         </div>
       </div>
@@ -74,11 +78,12 @@
       <!--  && domainConfSvc.isConfigEnabled('featureFlags', 'chatbot') -->
       <ws-app-chatbot *ngIf="!hideHeaderAndFooter" [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
       <ws-app-footer class="app-footer"
-        *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter"
-        [headerFooterConfigData]="headerFooterConfigData">
+        *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [isHomePage]="isHomePage()"
+        [hideFooterSection]="hideFooterSection" [headerFooterConfigData]="headerFooterConfigData">
       </ws-app-footer>
 
       <ws-app-nav-bar-v2 class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
+        (viewAchivements)="viewAllAchievements()"
         *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
       </ws-app-nav-bar-v2>
       <ng-container #previewContainer></ng-container>

@@ -298,13 +298,11 @@
     display: flex;
     flex-direction: row;
     height: 64px;
-    padding: 0;
     margin: 0;
-    justify-content: center;
   }
 
   .mobile-footer-fixed-nav-list-item {
-    min-width: 90px;
+    max-width: 90px;
     list-style: none;
     text-align: center;
     height: inherit;
@@ -320,7 +318,7 @@
   .icon-container {
     display: flex;
     flex-direction: column;
-    width: 56px;
+    width: fit-content;
     height: 56px;
     justify-content: center;
     align-items: center;
@@ -336,6 +334,14 @@
       color: rgba(0, 0, 0, 0.6);
     }
   }
+}
+
+.ml-search {
+  margin-left: calc(50% - 532px);
+}
+
+.ml-search-nav-close {
+  margin-left: calc(50% - 532px - 174px);
 }
 
 .signup_div {

@@ -6,7 +6,7 @@ import { HomeV2Component } from './home-v2/home-v2.component'
 import { HomeV2ResolverService } from './home-v2/home-v2-resolver.service'
 const routes: Routes = [
   {
-    path: '',
+    path: 'v0',
     component: HomeComponent,
     resolve: { home: HomeResolverService },
     data: {
@@ -15,7 +15,7 @@ const routes: Routes = [
     },
   },
   {
-    path: 'v2',
+    path: '',
     component: HomeV2Component,
     resolve: { home: HomeV2ResolverService },
     data: {
