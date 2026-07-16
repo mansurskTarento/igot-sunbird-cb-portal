@@ -354,16 +354,12 @@ export class InitService {
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
       this.configSvc.globalConfig = response.result.data
     } catch (e) {
-      // form API unavailable — fall back to the bundled static config so feature and
-      // route flags still apply (same pattern as the page resolvers)
-      try {
-        this.configSvc.globalConfig = await firstValueFrom(
-          this.http.get(`${this.configSvc.sitePath}/global-config.json`))
-      } catch (err) {
-        console.error('InitService: Failed to load global config', err)
-        this.configSvc.globalConfig = {}
-        this.configSvc.globalConfigLoadFailed = true
-      }
+      // the global-web form config is mandatory — when the API fails the app
+      // must show the error screen instead of silently running on a stale
+      // static fallback (root.component renders the error screen off this flag)
+      console.error('InitService: Failed to load global config', e)
+      this.configSvc.globalConfig = {}
+      this.configSvc.globalConfigLoadFailed = true
     }
     return this.configSvc.globalConfig
   }
