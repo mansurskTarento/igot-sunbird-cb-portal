@@ -63,6 +63,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   allSearchResults: any[] = [];
   nlpSearchValue: any
   private hasReadRecentBeenCalled = false;
+  recentSearchLoading = false;
   searchCat: any
   categories = [
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
@@ -191,6 +192,13 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
     return this.domainConfSvc.isSearchCategoryEnabled(categoryValue)
   }
 
+  // recent-search section visibility: components.recentSearch.enabled in
+  // global-config (default true), and the recentRead API must not be disabled
+  get showRecentSearch(): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.recentSearch', 'enabled')
+      && this.domainConfSvc.isApiEnabled('search', 'recentRead')
+  }
+
   autoFilter() {
     if (this.route.snapshot.data.searchPageData) {
       const isAutoCompleteAllowed =
@@ -277,9 +285,7 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async updateRecentSearchQuery(query: any) {
-
-    // AFTER NLW NEED TO ENABLE
-    if (query) {
+    if (query && this.domainConfSvc.isApiEnabled('search', 'recentCreate')) {
       const reqBody = {
         nlpSearchQuery: query?.nlp_search_query,
         searchQuery: query?.search_query,
@@ -296,8 +302,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   async createRecent(data: any) {
-
-    // AFTER NLW NEED TO ENABLE
+    if (!this.domainConfSvc.isApiEnabled('search', 'recentCreate')) {
+      return
+    }
     const reqBody = {
       nlpSearchQuery: data,
       searchQuery: this.queryControl?.value,
@@ -311,8 +318,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   readRecent() {
-    // AFTER NLW NEED TO ENABLE
+    if (!this.domainConfSvc.isApiEnabled('search', 'recentRead')) {
+      return
+    }
+    this.recentSearchLoading = true
     return this.searchV3Service.recentRead().subscribe((res: any) => {
+      this.recentSearchLoading = false
       if (res) {
         // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
         if (res?.result?.searchQueries && res?.result?.searchQueries) {
@@ -321,7 +332,10 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
           this.recentSearches = ''
         }
       }
-    })
+    },
+      () => {
+        this.recentSearchLoading = false
+      })
   }
 
   goToSearchItem(query: any) {
@@ -720,6 +734,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
 
 
   recentDeleteByUserId() {
+    if (!this.domainConfSvc.isApiEnabled('search', 'recentDelete')) {
+      return
+    }
     return this.searchV3Service.recentDeleteByUser().subscribe((result: any) => {
       if (result && result.responseCode === "OK") {
         this.readRecent()
@@ -728,6 +745,9 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   recentDeleteByTimeStamp(id: any) {
+    if (!this.domainConfSvc.isApiEnabled('search', 'recentDelete')) {
+      return
+    }
     return this.searchV3Service.recentDeleteByTime(id).subscribe((result: any) => {
       if (result) {
         this.readRecent()
@@ -989,18 +1009,12 @@ export class SearchInputHomeComponent implements OnInit, OnChanges {
   }
 
   openSearchTemplateF() {
-    // AFTER NLW NEED TO ENABLE
     this.openSearchTemplate = true
-    if (!this.hasReadRecentBeenCalled) {
-      //   this.readRecent();
-      this.hasReadRecentBeenCalled = false
-    }
-
-    // if(this.openSearchTemplate) {
-    //    this.readRecent();
-    // }
-    if (!this.selectedSearchCategory) {
-      // this.searchFromQuery(this.responseNlpQuery);
+    // load recent searches once per session, only when the section and the
+    // recentRead API are enabled in global-config
+    if (!this.hasReadRecentBeenCalled && this.showRecentSearch) {
+      this.readRecent()
+      this.hasReadRecentBeenCalled = true
     }
   }
 
