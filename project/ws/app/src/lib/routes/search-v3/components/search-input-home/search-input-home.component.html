@@ -31,9 +31,10 @@
         [ngClass]="{'disabled-search-btn': !queryControl.value}">{{'gyaanKarmayogi.search' | translate}}</button>
     </form>
 
-    <div class="search-container"  *ngIf="searchCategoriesEnabled" [hidden]="!openSearchTemplate">
+    <div class="search-container" *ngIf="(searchCategoriesEnabled && categories.length) || showRecentSearch"
+      [hidden]="!openSearchTemplate">
       <div class="search-results">
-        <div class="search-categories mb-4">
+        <div class="search-categories mb-4" *ngIf="searchCategoriesEnabled && categories.length">
           <mat-chip-list class="mat-chip-list-content">
             <mat-chip *ngFor="let category of categories" [removable]="false" [highlighted]="false"
               [disableRipple]="true" [selected]="category.value === selectedSearchCategory"
@@ -46,7 +47,16 @@
         </div>
 
         <!-- Display search results here -->
-        <mat-list *ngIf="recentSearches.length">
+        <div class="recent-search-skeleton" *ngIf="showRecentSearch && recentSearchLoading">
+          <span class="text-sm recent-search-title font-normal">Recent Searches</span>
+          <ws-widget-skeleton-loader [height]="'16px'" [bindingClass]="'w-10/12 rounded mb-2'">
+          </ws-widget-skeleton-loader>
+          <ws-widget-skeleton-loader [height]="'16px'" [bindingClass]="'w-8/12 rounded mb-2'">
+          </ws-widget-skeleton-loader>
+          <ws-widget-skeleton-loader [height]="'16px'" [bindingClass]="'w-9/12 rounded mb-2'">
+          </ws-widget-skeleton-loader>
+        </div>
+        <mat-list *ngIf="showRecentSearch && !recentSearchLoading && recentSearches.length">
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
             <a class="text-sm clear-all font-normal cursor-pointer" (click)="recentDeleteByUserId()">Clear All</a>
@@ -67,6 +77,10 @@
             </mat-list-item>
           </ng-container>
         </mat-list>
+        <div class="no-recent-search" *ngIf="showRecentSearch && !recentSearchLoading && !recentSearches.length">
+          <span class="text-sm recent-search-title font-normal">Recent Searches</span>
+          <p class="text-xs font-normal no-recent-search-text">No recent searches</p>
+        </div>
         <ng-container *ngIf="allSearchResults.length > 0">
           <mat-list>
             <div mat-subheader class="flex justify-between mt-4 mb-1">
