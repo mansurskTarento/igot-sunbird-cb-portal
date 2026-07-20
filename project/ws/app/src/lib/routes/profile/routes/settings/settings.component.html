@@ -1,4 +1,4 @@
-<mat-card class="home-card-1">
+<mat-card class="home-card-1" *ngIf="isSettingEnabled('language')">
   <mat-card-content class="home-card-content">
     <img mat-card-image src="/assets/images/profile/2.svg" alt="Photo of a Shiba Inu">
     <div class="ml-8 mt-4">
@@ -168,7 +168,7 @@
     </div>
   </mat-card-content>
 </mat-card>
-<mat-card class="home-card-2">
+<mat-card class="home-card-2" *ngIf="isSettingEnabled('appearance')">
   <mat-card-content class="home-card-content">
     <img mat-card-image src="/assets/images/profile/1.svg" alt="Photo of a Shiba Inu">
     <div class="ml-8  mt-4">

@@ -120,15 +120,11 @@ export class ProfilePrimaryDetailsComponent implements OnInit {
     return _.get(this.primaryDetails, 'profileDesignationStatus') === 'VERIFIED'
   }
 
-  // Other Details field visibility:
-  //  - volunteers never see employeeId / ehrmsId / dateOfRetirement / governmentService
+  // Other Details field visibility is fully config-driven
+  // (profile-v2.json -> profileConfig.basicDetails.otherDetails.fields.<key>.enabled):
   //  - no fields map in config -> show everything
   //  - fields map present -> only the keys explicitly enabled there are shown
   showOtherDetailsField(fieldKey: string): boolean {
-    const volunteerHiddenFields = ['employeeId', 'ehrmsId', 'dateOfRetirement', 'governmentService']
-    if (this.isUserVolunteer && volunteerHiddenFields.includes(fieldKey)) {
-      return false
-    }
     const fields = _.get(this.primaryDetailsOtherDetailsConfig, 'otherDetails.fields')
     if (!fields || !Object.keys(fields).length) {
       return true
