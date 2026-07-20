@@ -544,7 +544,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (currentUserId && rankItem) {
           this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
             const results = res?.result?.result
-            if (Array.isArray(results)) {
+            if (Array.isArray(results) && results.length) {
               const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
               const rank = currentUserRank?.rank
 
@@ -553,9 +553,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                   rankItem.value = `${this.toOrdinal(rank)} Rank`
                 }
               }
-              achievements.sectionLoading = false
-              this.sendDetailsChangedEvent(achievements)
+            } else {
+              rankItem.enabled = false
             }
+            achievements.sectionLoading = false
+            this.sendDetailsChangedEvent(achievements)
           }, (_error: any) => {
             achievements.sectionLoading = false
             this.sendDetailsChangedEvent(achievements)

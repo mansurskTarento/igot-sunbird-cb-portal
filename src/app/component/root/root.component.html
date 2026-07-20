@@ -62,12 +62,11 @@
       'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
     }">
 
-        <div [ngClass]="{
+        <div class="home-content " [ngClass]="{
             'margin186': mobileTopHeaderVisibilityStatus && showHubs,
             'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
             'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
             'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
-            'home-content': isHomePage(),
             'container-balanced': !isHomePage()
             }">
           <router-outlet></router-outlet>
