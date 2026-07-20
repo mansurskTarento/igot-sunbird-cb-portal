@@ -226,6 +226,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this.customHeight
   }
 
+  get showMenuBardetails(): boolean {
+    return this.menuBarDetails && this.currentUrl &&
+      !this.currentUrl.includes('public') &&
+      !this.currentUrl.includes('viewer')
+  }
+
+  get showHeader(): boolean {
+    return this.navBarRequired &&
+      !this.hideHeaderAndFooter &&
+      this.domainConfSvc.isConfigEnabled('components.header', 'enabled')
+  }
+
   @ViewChild('previewContainer', { read: ViewContainerRef, static: true })
   // @ViewChild('userIntro', { static: true }) userIntro!: TemplateRef<any>
   previewContainerViewRef: ViewContainerRef | null = null
@@ -544,7 +556,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (currentUserId && rankItem) {
           this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
             const results = res?.result?.result
-            if (Array.isArray(results)) {
+            if (Array.isArray(results) && results.length) {
               const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
               const rank = currentUserRank?.rank
 
@@ -553,9 +565,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                   rankItem.value = `${this.toOrdinal(rank)} Rank`
                 }
               }
-              achievements.sectionLoading = false
-              this.sendDetailsChangedEvent(achievements)
+            } else {
+              rankItem.enabled = false
             }
+            achievements.sectionLoading = false
+            this.sendDetailsChangedEvent(achievements)
           }, (_error: any) => {
             achievements.sectionLoading = false
             this.sendDetailsChangedEvent(achievements)
