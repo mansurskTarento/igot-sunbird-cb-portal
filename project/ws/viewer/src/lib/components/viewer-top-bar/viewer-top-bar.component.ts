@@ -620,8 +620,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
-    // only open the rating dialog when content feedback is not a restricted feature
-    if (this.configSvc.restrictedFeatures && this.configSvc.restrictedFeatures.has('contentFeedback')) {
+     if (this.tocConfig?.uiVisibility?.rightPanel?.starRating === false) {
       return
     }
     const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
