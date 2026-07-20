@@ -620,6 +620,9 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
+     if (this.tocConfig?.uiVisibility?.rightPanel?.starRating === false) {
+      return
+    }
     const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
       this.activatedRoute.snapshot.queryParams.MLId : ''
     // check if multilingual ID is there then hit the API with MLID

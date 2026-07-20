@@ -255,6 +255,12 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize
     this.searchRequestCourse.request.filters.courseCategory = []
     this.searchRequestCourse.request.filters.avgRating = {}
+    // re-apply configured facets from application.config.json; without this the
+    // freshly created request reverts to the model default (all) facet list
+    const configuredFacets = this.configuredFacets
+    if (configuredFacets.length) {
+      this.searchRequestCourse.request.facets = _.uniq(configuredFacets)
+    }
     this.initialPaginationPage = 1
 
     if (this.searchSortFilter === SortType.RecentlyAdded) {
