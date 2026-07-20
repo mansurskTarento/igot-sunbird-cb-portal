@@ -620,6 +620,10 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
+    // only open the rating dialog when content feedback is not a restricted feature
+    if (this.configSvc.restrictedFeatures && this.configSvc.restrictedFeatures.has('contentFeedback')) {
+      return
+    }
     const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
       this.activatedRoute.snapshot.queryParams.MLId : ''
     // check if multilingual ID is there then hit the API with MLID
