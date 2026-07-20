@@ -226,6 +226,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this.customHeight
   }
 
+  get showMenuBardetails(): boolean {
+    return this.menuBarDetails && this.currentUrl &&
+      !this.currentUrl.includes('public') &&
+      !this.currentUrl.includes('viewer')
+  }
+
+  get showHeader(): boolean {
+    return this.navBarRequired &&
+      !this.hideHeaderAndFooter &&
+      this.domainConfSvc.isConfigEnabled('components.header', 'enabled')
+  }
+
   @ViewChild('previewContainer', { read: ViewContainerRef, static: true })
   // @ViewChild('userIntro', { static: true }) userIntro!: TemplateRef<any>
   previewContainerViewRef: ViewContainerRef | null = null

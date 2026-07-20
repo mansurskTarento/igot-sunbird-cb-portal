@@ -8,7 +8,7 @@
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
   <div class="flex gap-0 root-container">
-    @if ((isXSmall$ | async) === false && menuBarDetails) {
+    @if ((isXSmall$ | async) === false && showMenuBardetails) {
     <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
         [otherDetailsChanged]="otherDetailsChanged()" (sidebarStateChange)="sidebarStateChanged($event)"
@@ -16,7 +16,7 @@
     </div>
     }
     <div class=""
-      [ngClass]="((isXSmall$ | async) === true || !menuBarDetails) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
+      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
       <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
       <app-no-connection></app-no-connection>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
@@ -32,12 +32,13 @@
       <!-- <ws-header *ngIf="navBarRequired && !hideHeaderAndFooter && domainConfSvc.isConfigEnabled('components.header', 'enabled')"
       [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
   </ws-header> -->
-      @if (navBarRequired && !hideHeaderAndFooter && domainConfSvc.isConfigEnabled('components.header', 'enabled')) {
+      @if (showHeader) {
       <ws-header-v2 [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData">
       </ws-header-v2>
       }
       <!-- </ws-widget-sticky-header> -->
-      <div class="height-adjust mx-4 flex justify-center" [ngClass]="{
+      <div class="mx-4 flex justify-center" [ngClass]="{
+        'height-adjust': showHeader,
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
         'height-adjust-setup' : isSetupPage,
@@ -62,12 +63,14 @@
       'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
     }">
 
-        <div class="home-content " [ngClass]="{
+        <div [ngClass]="{
             'margin186': mobileTopHeaderVisibilityStatus && showHubs,
             'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
             'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
             'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
-            'container-balanced': !isHomePage()
+            'container-balanced': !isHomePage(),
+            'home-content': showMenuBardetails,
+            'w-full': !showMenuBardetails
             }">
           <router-outlet></router-outlet>
         </div>
