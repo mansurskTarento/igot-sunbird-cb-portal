@@ -77,11 +77,14 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   isTourGuideAvailable = signal(false);
   isTourGuideClosed = signal(false);
 
+  // Tracks the router url; kept as a signal so computeds below re-evaluate on navigation
+  currentHref = signal(window.location.href);
+
   // Computed signals replacing getters
-  isPlayerPage = computed(() => window.location.href.includes('/viewer/'));
+  isPlayerPage = computed(() => this.currentHref().includes('/viewer/'));
 
   stillOnHomePage = computed(() => {
-    return window.location.href.includes('/public/home')
+    return this.currentHref().includes('/public/home')
   });
 
   fullMenuDispaly = computed(() => {
@@ -160,6 +163,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     this.router.events.pipe(
       filter(event => event instanceof NavigationStart || event instanceof NavigationEnd)
     ).subscribe(event => {
+      this.currentHref.set(event.url)
       if (event instanceof NavigationStart) {
         const isHubEnabled = !(event.url.includes('/certs') ||
           event.url.includes('/achievements') ||
