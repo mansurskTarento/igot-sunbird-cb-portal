@@ -11,7 +11,8 @@
     @if ((isXSmall$ | async) === false && showMenuBardetails) {
     <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
-        [otherDetailsChanged]="otherDetailsChanged()" (sidebarStateChange)="sidebarStateChanged($event)"
+        [otherDetailsChanged]="otherDetailsChanged()" [navBarOpenStatus]="navBarOpenStatusBasedOnNav()"
+        (sidebarStateChange)="sidebarStateChanged($event)"
         (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
     </div>
     }
@@ -33,7 +34,8 @@
       [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
   </ws-header> -->
       @if (showHeader) {
-      <ws-header-v2 [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData">
+      <ws-header-v2 class="block w-full" [leftNavBarOpen]="leftNavBarIsOpen()"
+        [headerFooterConfigData]="headerFooterConfigData">
       </ws-header-v2>
       }
       <!-- </ws-widget-sticky-header> -->

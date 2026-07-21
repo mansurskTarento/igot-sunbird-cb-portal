@@ -89,11 +89,13 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   disableHeightOnTop = false
   // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
-  menuBarDetails: any
+  menuBarDetails: any = {}
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
   isHomePage = signal(false)
+  navBarOpenStatusBasedOnNav = signal(true)
+  openStatusUserSelection = signal(true)
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -129,17 +131,20 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.showFooter = true
     }
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.leftNavBar) {
-      this.menuBarDetails = this.configSvc.instanceConfig.leftNavBar
+      this.menuBarDetails = this.configSvc.instanceConfig.leftNavBar || undefined
       if (this.menuBarDetails) {
+        this.openStatusUserSelection.set(this.menuBarDetails.defaultOpen)
         this.setAchivements()
         this.setOtherPortals()
+        this.setNavOpenStatus()
       }
     } else {
       this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
-        this.menuBarDetails = sectionData?.data
+        this.menuBarDetails = sectionData?.data || undefined
         if (this.menuBarDetails) {
           this.setAchivements()
           this.setOtherPortals()
+          this.setNavOpenStatus()
         }
       })
     }
@@ -352,6 +357,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.isHomePage.set(false)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
       }
+      this.setNavOpenStatus()
       if (event && event.url) {
         if (event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
           this.showNavbar = false
@@ -619,6 +625,16 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   }
 
+  setNavOpenStatus() {
+    if (this.isHomePage()) {
+      this.navBarOpenStatusBasedOnNav.set(this.openStatusUserSelection())
+      this.leftNavBarIsOpen.set(this.openStatusUserSelection())
+    } else {
+      this.navBarOpenStatusBasedOnNav.set(false)
+      this.leftNavBarIsOpen.set(false)
+    }
+  }
+
   sendDetailsChangedEvent(newAchievements: any) {
     const existingDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     existingDetails?.navSections?.forEach((section: any, index: number) => {
@@ -811,6 +827,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   sidebarStateChanged(event: any) {
     if (event) {
+      this.openStatusUserSelection.set(event.isOpen)
       this.leftNavBarIsOpen.set(event.isOpen)
       this.showKarmaLeaderboard.set(false)
     }
