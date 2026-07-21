@@ -70,8 +70,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   approvedDomainList: any = []
   destroySubject$ = new Subject()
   contextToken: any
-  eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
-  eCategory = Object.keys(NsUserProfileDetails.ECategory)
+  eUserGender = Object.values(NsUserProfileDetails.EUserGender)
+  eCategory = Object.values(NsUserProfileDetails.ECategory)
   masterLanguageBackup: any[] = []
   masterLanguages: any[] = []
   isMatcompleteOpened = false
