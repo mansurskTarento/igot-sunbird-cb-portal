@@ -36,7 +36,7 @@ export class HomeCarouselBannerV2Component implements OnInit {
 
   private loadSliderData(): void {
     try {
-      const sliderData: ISliderDataItem[] = this.activatedRoute.snapshot.data.pageData?.data?.sliderData || []
+      const sliderData: ISliderDataItem[] = this.activatedRoute.snapshot.data?.home?.data?.sliderData || []
 
       if (Array.isArray(sliderData) && sliderData.length > 0) {
         this.banners = sliderData
