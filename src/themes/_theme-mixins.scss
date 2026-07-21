@@ -87,10 +87,6 @@
   }
 
   @if $is-dark {
-    .app-logo {
-      filter: contrast(0.5);
-    }
-
     .mat-progress-spinner circle,
     .mat-spinner circle {
       stroke: #ffffff;
