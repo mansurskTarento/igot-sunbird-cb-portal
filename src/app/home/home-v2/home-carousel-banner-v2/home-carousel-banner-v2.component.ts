@@ -53,10 +53,11 @@ export class HomeCarouselBannerV2Component implements OnInit {
     let redirectionUrl = item.redirectUrl || ''
 
     // Build URL with query params if they exist
-    if (item.queryParams && Object.keys(item.queryParams).length > 0) {
-      const queryString = new URLSearchParams(item.queryParams).toString()
-      redirectionUrl = redirectionUrl + (redirectionUrl.includes('?') ? '&' : '?') + queryString
-    }
+    // if (item.queryParams && Object.keys(item.queryParams).length > 0) {
+    //   const queryString = new URLSearchParams(item.queryParams).toString()
+    //   redirectionUrl = redirectionUrl
+    //   + (redirectionUrl.includes('?') ? '&' : '?') + queryString
+    // }
 
     return {
       bannerUrl: item.banners.l || item.banners.xl,
