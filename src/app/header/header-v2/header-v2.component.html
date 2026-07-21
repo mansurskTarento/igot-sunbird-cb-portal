@@ -18,6 +18,8 @@
   </div>
 </div>
 }
-<ws-app-nav-bar-v2 [ngClass]="mobileTopHeaderVisibilityStatus() ? 'top-nav-bar':'top-nav-bar-without-mobile-header'"
-  [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData"
-  [leftNavBarOpen]="leftNavBarOpen"></ws-app-nav-bar-v2>
+<div class="w-full">
+  <ws-app-nav-bar-v2 [ngClass]="mobileTopHeaderVisibilityStatus() ? 'top-nav-bar':'top-nav-bar-without-mobile-header'"
+    [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData"
+    [leftNavBarOpen]="leftNavBarOpen()"></ws-app-nav-bar-v2>
+</div>

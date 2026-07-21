@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common'
-import { Component, Input, signal } from '@angular/core'
+import { Component, input, Input, signal } from '@angular/core'
 import { MatIconModule } from '@angular/material/icon'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { RouterModule } from '@angular/router'
@@ -25,7 +25,7 @@ import { MobileAppsService } from '../../services/mobile-apps.service'
 })
 export class HeaderV2Component {
   // Signals for reactive state management
-  @Input() leftNavBarOpen: boolean = false
+  leftNavBarOpen = input<boolean>(false);
   @Input() headerFooterConfigData: any
 
   isXSmall$ = this.valueSvc.isXSmall$

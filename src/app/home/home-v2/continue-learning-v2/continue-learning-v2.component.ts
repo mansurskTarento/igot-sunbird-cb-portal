@@ -168,7 +168,13 @@ export class ContinueLearningV2Component implements OnInit, OnDestroy {
       {},
       { module: WsEvents.EnumTelemetrymodules.HOME }
     )
-    this.router.navigateByUrl('app/seeAll/new?key=continueLearning&tabSelected=Contents&pillSelected=inprogress')
+    this.router.navigate(['/app/seeAll/new'], {
+      queryParams: {
+        key: 'continueLearning',
+        tabSelected: 'Contents',
+        pillSelected: 'inprogress'
+      }
+    })
   }
 
   ngOnDestroy() {
