@@ -15,11 +15,12 @@
 
   <div class="w-full search relative">
     <form (submit)="updateQuery(queryControl.value || '')" class="mat-full-radius flex items-center">
-      <mat-form-field class="autocomplete-form w-full" color="primary" appearance="outline">
+      <mat-form-field class="autocomplete-form w-full" appearance="outline">
         @if (loaderSearching()) {
         <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-home">
         } @else {
-        <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
+        <mat-icon class="search-home">search</mat-icon>
+        <!-- <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home"> -->
         }
 
         <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
@@ -34,10 +35,10 @@
         }
       </mat-form-field>
 
-      <!-- <button mat-flat-button type="submit" class="mat-btn-flat global-search" [disabled]="!queryControl.value"
+      <button mat-flat-button type="submit" class="mat-btn-flat global-search"
         [ngClass]="{'disabled-search-btn': !queryControl.value}">
         {{'gyaanKarmayogi.search' | translate}}
-      </button> -->
+      </button>
     </form>
 
     <div class="search-container" [hidden]="!openSearchTemplate()">
@@ -59,7 +60,7 @@
         </div>
 
         <!-- Recent Searches -->
-        @if (recentSearches().length) {
+        @if (recentSearches?.length) {
         <mat-list>
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
@@ -67,7 +68,7 @@
               Clear All
             </a>
           </div>
-          @for (query of recentSearches(); track query.timestamp) {
+          @for (query of recentSearches; track query.timestamp) {
           <mat-list-item class="recent-search-list">
             <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center"
               (click)="goToSearchItem(query)">
@@ -83,14 +84,14 @@
         }
 
         <!-- All Search Results -->
-        @if (allSearchResults().length > 0) {
+        @if (allSearchResults() && allSearchResults()?.length > 0) {
         <mat-list>
           <div mat-subheader class="flex justify-between mt-4 mb-1">
             <span class="text-sm recent-search-title font-normal">All Search Results</span>
           </div>
-          @for (result of allSearchResults(); track result.identifier || result.id) {
+          @for (result of allSearchResults(); track result?.identifier || result?.id) {
           <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-            <div matLine class="py-1 flex">
+            <div matLine class="py-1 flex recent-search-text">
               <mat-icon class="mr-3">search</mat-icon>
               <span class="text-xs font-normal recent-search-text text-ellipse">
                 {{ getResultName(result) }}

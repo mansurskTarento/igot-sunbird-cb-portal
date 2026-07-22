@@ -24,6 +24,17 @@
   left: 0;
   top: 10px;
   z-index: 2;
+  color: var(--environment-icon-overall-primary-bandw);
+  width: 16px;
+  height: 16px;
+  font-size: 16px;
+
+  mat-icon {
+    color: var(--environment-icon-overall-primary-bandw);
+    width: 16px;
+    height: 16px;
+    font-size: 16px;
+  }
 }
 
 .search-v3 .search .mat-mdc-text-field-wrapper {
@@ -31,7 +42,7 @@
   border-radius: 31px;
   border: 2px solid transparent;
   background:
-    linear-gradient($white, $white) padding-box,
+    linear-gradient(var(--surface-primary), var(--surface-primary)) padding-box,
     linear-gradient(90deg, #f3962f 0%, #266de6 100%) border-box;
 }
 
@@ -51,6 +62,7 @@
   .mat-mdc-form-field {
     font-size: 14px;
     width: 100%;
+    background-color: var(--surface-primary) !important;
   }
 
   .mat-mdc-text-field-wrapper {
@@ -196,7 +208,7 @@
 // ===============================
 
 .recent-search-title {
-  color: $textGreyShade3;
+  color: var(--text-system-text-disabled, $textGreyShade3);
   font-family: Lato;
   font-weight: 400;
   font-size: 14px;
@@ -209,7 +221,7 @@
 }
 
 .recent-search-text {
-  color: $textRecentSearch;
+  color: var(--text-bandw-black-body, $textRecentSearch);
 }
 
 .search-home-icon {
@@ -265,7 +277,7 @@ mat-list-item {
 .search-results {
   background-color: var(--surface-primary);
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--environment-all-fills-overlay-backdrop);
   margin-top: 8px;
   padding: 16px;
 
@@ -331,9 +343,11 @@ mat-list-item {
 }
 
 .disabled-search-btn {
-  background-color: $white !important;
-  color: #999999 !important;
-  border: 1px solid $borderColor !important;
+  background-color: var(--surface-primary, $white) !important;
+  color: var(--border-strong, #999999) !important;
+  border: 1px solid var(--border-strong, $borderColor) !important;
+  opacity: 0.6;
+  pointer-events: none;
 }
 
 .disabled-search-btn.mat-mdc-unelevated-button[disabled],

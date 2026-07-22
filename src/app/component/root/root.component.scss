@@ -53,6 +53,10 @@
   .klb-popup-backdrop {
     left: 0px;
   }
+
+  .mobileTopVisableHeightAdjust {
+    margin-top: 150px !important;
+  }
 }
 
 ws-app-nav-bar {
@@ -113,7 +117,7 @@ ws-app-nav-bar {
 
 .height-adjust {
   min-height: calc(100vh - (56px + 52px));
-  margin-top: 100px;
+  margin-top: 24px;
 
   @include breakpoint-xs {
     min-height: calc(100vh - (60px + 77px));

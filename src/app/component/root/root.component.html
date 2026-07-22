@@ -39,8 +39,9 @@
       </ws-header-v2>
       }
       <!-- </ws-widget-sticky-header> -->
-      <div class="mx-4 flex justify-center" [ngClass]="{
+      <div class="mx-4 flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
+        'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
         'height-adjust-setup' : isSetupPage,
