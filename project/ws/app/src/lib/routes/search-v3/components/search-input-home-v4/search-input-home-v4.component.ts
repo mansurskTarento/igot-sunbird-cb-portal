@@ -23,7 +23,7 @@ import { MatChipsModule } from '@angular/material/chips'
 import { MatDividerModule } from '@angular/material/divider'
 import { TranslateModule } from '@ngx-translate/core'
 
-import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs'
 import { SearchServService } from '../../../search/services/search-serv.service'
 import { GbSearchService } from '../../services/gb-search.service'
@@ -43,6 +43,7 @@ import {
 import { WidgetContentLibService } from '@sunbird-cb/consumption'
 import { MobileAppsService } from './../../../services/mobile-apps.service'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
+import { MatListModule } from '@angular/material/list'
 
 interface SearchCategoryItem {
   label: string
@@ -65,6 +66,7 @@ interface SearchCategoryItem {
     MatMenuModule,
     MatChipsModule,
     MatDividerModule,
+    MatListModule
   ],
   templateUrl: './search-input-home-v4.component.html',
   styleUrl: './search-input-home-v4.component.scss',
@@ -82,7 +84,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   queryControl: FormControl<string | null>
   languageSearch = signal<string[]>([]);
   disableMenu = signal(false);
-  recentSearches = signal<any[]>([]);
+  recentSearches: any
   searchQuery = signal('');
   allSearchResults = signal<any[]>([]);
   nlpSearchValue = signal<any>(null);
@@ -92,13 +94,14 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   responseNlpQuery = signal('');
   searchLocale = signal('en');
   preferredLanguages = signal('');
+  searchCategoriesEnabled = true;
 
   // Constants
   readonly SAKSHAMAI_ICON_LOADER = '/assets/images/sakshamAI/saksham_ai_loader.gif';
 
   private hasReadRecentBeenCalled = false;
 
-  readonly categories: SearchCategoryItem[] = [
+  categories: SearchCategoryItem[] = [
     { label: 'Content', value: SearchCategory.Courses, icon: 'video-library' },
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
     { label: 'People', value: SearchCategory.People, icon: 'people-search' },
@@ -132,6 +135,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   private searchV3Service = inject(GbSearchService);
   private contSvc = inject(WidgetContentLibService);
   private mobileAppsService = inject(MobileAppsService);
+  private domainConfSvc = inject(DomainConfService)
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
@@ -164,6 +168,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.filterCategoriesByConfig()
     if (!this.activated.snapshot.data.searchPageData) {
       this.searchServSvc
         .getSearchConfig()
@@ -178,6 +183,19 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     } else {
       this.initialize()
     }
+  }
+
+  filterCategoriesByConfig() {
+    this.searchCategoriesEnabled = this.domainConfSvc.isSearchCategoriesEnabled()
+    if (this.domainConfSvc.getSearchCategoriesConfig()) {
+      this.categories = this.categories.filter(cat => {
+        return this.domainConfSvc.isSearchCategoryEnabled(cat.value)
+      })
+    }
+  }
+
+  isCategoryEnabled(categoryValue: string): boolean {
+    return this.domainConfSvc.isSearchCategoryEnabled(categoryValue)
   }
 
   clearSearchTextElement() {
@@ -252,16 +270,50 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     }
   }
 
-  async updateRecentSearchQuery(_query: any) {
-    // NLP logic can be enabled here when needed
+  async updateRecentSearchQuery(query: any) {
+    if (query) {
+      const reqBody = {
+        nlpSearchQuery: query?.nlp_search_query,
+        searchQuery: query?.search_query,
+        searchCategory: query?.search_category[0]
+      }
+      await this.searchV3Service.recentCreate(reqBody).then(() => {
+        this.processRecentSearchText(query)
+      }).catch(() => {
+        this.processRecentSearchText(query)
+      })
+    } else {
+      this.processRecentSearchText(query)
+    }
   }
 
-  async createRecent(_data: any) {
-    // NLP logic can be enabled here when needed
+  async createRecent(data: any) {
+
+    // AFTER NLW NEED TO ENABLE
+    const reqBody = {
+      nlpSearchQuery: data,
+      searchQuery: this.queryControl?.value,
+      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+    }
+
+    await this.searchV3Service.recentCreate(
+      reqBody
+    ).catch()
+
   }
 
   readRecent() {
-    // NLP logic can be enabled here when needed
+    // AFTER NLW NEED TO ENABLE
+    return this.searchV3Service.recentRead().subscribe((res: any) => {
+      if (res) {
+        // this.recentSearches = res.result.searchQueries.nlp_search_query   this.nlpSearchValue = res
+        if (res?.result?.searchQueries && res?.result?.searchQueries) {
+          this.recentSearches = res?.result?.searchQueries
+        } else {
+          this.recentSearches = ''
+        }
+      }
+    })
   }
 
   goToSearchItem(query: any) {
@@ -454,6 +506,15 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     })
   }
 
+  private getGlobalSearchRoute(): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
+  }
+
   processRecentSearchText(query: any) {
     document.getElementById('global-search-input')?.blur()
     const queryParams = {
@@ -495,11 +556,11 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    const mergeQueryParams = window.location.pathname === '/app/globalsearch'
-
+    const searchRoute = this.getGlobalSearchRoute()
+    const mergeQueryParams = window.location.pathname === searchRoute
     if (this.ref() === 'home') {
       this.closed.emit(false)
-      this.router.navigate(['/app/globalsearch'], mergeQueryParams ? navigationExtras : { queryParams })
+      this.router.navigate([searchRoute], mergeQueryParams ? navigationExtras : { queryParams })
     } else {
       this.router.navigate([], { ...navigationExtras, relativeTo: this.activated.parent })
     }

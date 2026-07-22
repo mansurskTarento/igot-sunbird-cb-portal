@@ -60,7 +60,7 @@
         </div>
 
         <!-- Recent Searches -->
-        @if (recentSearches().length) {
+        @if (recentSearches?.length) {
         <mat-list>
           <div mat-subheader class="flex justify-between">
             <span class="text-sm recent-search-title font-normal">Recent Searches</span>
@@ -68,7 +68,7 @@
               Clear All
             </a>
           </div>
-          @for (query of recentSearches(); track query.timestamp) {
+          @for (query of recentSearches; track query.timestamp) {
           <mat-list-item class="recent-search-list">
             <a class="text-left text-xs font-normal recent-search-text courser-pointer flex flex-1 recent_link items-center"
               (click)="goToSearchItem(query)">
@@ -84,12 +84,12 @@
         }
 
         <!-- All Search Results -->
-        @if (allSearchResults().length > 0) {
+        @if (allSearchResults() && allSearchResults()?.length > 0) {
         <mat-list>
           <div mat-subheader class="flex justify-between mt-4 mb-1">
             <span class="text-sm recent-search-title font-normal">All Search Results</span>
           </div>
-          @for (result of allSearchResults(); track result.identifier || result.id) {
+          @for (result of allSearchResults(); track result?.identifier || result?.id) {
           <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
             <div matLine class="py-1 flex recent-search-text">
               <mat-icon class="mr-3">search</mat-icon>
