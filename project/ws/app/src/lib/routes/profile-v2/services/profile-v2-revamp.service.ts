@@ -74,10 +74,16 @@ export class ProfileV2RevampService {
   ) { }
 
   fetchProfile(configDetails: ConfigDetails, _userId: string, isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile | string> {
-    configDetails['defaultUrl'] = API_END_POINTS.GET_USER_BASIC_DETAILS
-    const url = this.commonMethodsService.getEnabledUrl(configDetails)
-    if (!url) {
-      return of('')
+    let url = ''
+    if (isNotCurrentUser && _userId) {
+      // viewing another user's profile: call basic/{userId} directly, ignoring config
+      url = `${API_END_POINTS.GET_USER_BASIC_DETAILS}/${_userId}`
+    } else {
+      configDetails['defaultUrl'] = API_END_POINTS.GET_USER_BASIC_DETAILS
+      url = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!url) {
+        return of('')
+      }
     }
     return this.http.get<NSProfileDataV2.IProfile>(`${url}`)
       .pipe(map(res => {
@@ -155,13 +161,20 @@ export class ProfileV2RevampService {
       }))
   }
 
-  fetchProfileEntries(configDetails: ConfigDetails, _userId: string, entryType: string = 'all'): Observable<NSProfileDataV2.IProfile | string> {
-    configDetails['defaultUrl'] = API_END_POINTS.GET_USER_ENTRIES
-    const url = this.commonMethodsService.getEnabledUrl(configDetails)
-    if (!url) {
-      return of('')
+  fetchProfileEntries(configDetails: ConfigDetails, _userId: string, entryType: string = 'all', isNotCurrentUser?: boolean): Observable<NSProfileDataV2.IProfile | string> {
+    let url = ''
+    if (isNotCurrentUser && _userId) {
+      // viewing another user's profile: call extended/{entryType}/{userId} directly, ignoring config
+      url = `${API_END_POINTS.GET_USER_ENTRIES}${entryType}/${_userId}`
+    } else {
+      configDetails['defaultUrl'] = API_END_POINTS.GET_USER_ENTRIES
+      const base = this.commonMethodsService.getEnabledUrl(configDetails)
+      if (!base) {
+        return of('')
+      }
+      url = `${base}${entryType}`
     }
-    return this.http.get<NSProfileDataV2.IProfile>(`${url}${entryType}`)
+    return this.http.get<NSProfileDataV2.IProfile>(url)
       .pipe(map(res => {
         return res
       }))
@@ -372,8 +385,16 @@ export class ProfileV2RevampService {
   }
 
   fetchApprovalDetails(configDetails: ConfigDetails, requestBody: any): Observable<any> {
+    // global kill-switch via global-config.apis.workflow.userWFApplicationFieldsSearch
+    const gCfg = this.configSvc.globalConfig?.apis?.workflow?.userWFApplicationFieldsSearch
+    if (gCfg && !gCfg.enabled) {
+      return of('')
+    }
     configDetails['defaultUrl'] = API_END_POINTS.APPROVAL_DETAILS
     const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
     return this.http.post<any>(url, requestBody)
   }
 

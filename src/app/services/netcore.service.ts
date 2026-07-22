@@ -24,6 +24,21 @@ export class NetCoreService {
 
       }
 
+    // smartech is injected by the external NetCore tracker script. Ad/tracker
+    // blockers (e.g. Brave Shields) prevent that script from loading, so the
+    // global never exists — an unguarded call throws a ReferenceError that
+    // propagates into business flows and breaks the page. Analytics must
+    // never break the app.
+    private callSmartech(...args: any[]) {
+        try {
+            if (typeof smartech === 'function') {
+                smartech(...args)
+            }
+        } catch (_e) {
+            // tracker blocked/unavailable — silently skip the analytics event
+        }
+    }
+
     getOrgReadData(organisationId: string): Observable<any> {
     const request = {
         request: {
@@ -62,28 +77,28 @@ export class NetCoreService {
         /* tslint:disable */
         // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
-        smartech('contact', '', payload)
+        this.callSmartech('contact', '', payload)
     }
 
     netCoreUserNameUpdate(payload:any) {
          /* tslint:disable */
         //  console.log('this.configSvc.unMappedUser', payload)
          /* tslint:enable */
-        smartech('contact', '', payload)
+        this.callSmartech('contact', '', payload)
     }
 
     netCoreUserProfilePhotoUpdate(payload:any) {
         /* tslint:disable */
         // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
-       smartech('contact', '', payload)
+       this.callSmartech('contact', '', payload)
     }
 
     netCoreUserProfilepdate(payload:any) {
         /* tslint:disable */
         // console.log('this.configSvc.unMappedUser', payload)
         /* tslint:enable */
-        smartech('contact', '', payload)
+        this.callSmartech('contact', '', payload)
     }
 
     netCoreUserProfileUpdateEvent(payload:any, eventName: any, userIdentifier:any) {
@@ -92,8 +107,8 @@ export class NetCoreService {
         // console.log('eventName', eventName)
         // console.log('userIdentifier', userIdentifier)
         /* tslint:enable */
-        smartech('identify', userIdentifier)
-        smartech('dispatch', eventName, payload)
+        this.callSmartech('identify', userIdentifier)
+        this.callSmartech('dispatch', eventName, payload)
     }
 
     trackEvent(eventName:any, userIdentifier:any, userpayload?:any) {
@@ -117,8 +132,8 @@ export class NetCoreService {
             payload['profile_attribute_updated'] = userpayload.toString()
         }
         // console.log('payload', payload)
-        smartech('identify', userIdentifier)
-        smartech('dispatch', eventName, payload)
+        this.callSmartech('identify', userIdentifier)
+        this.callSmartech('dispatch', eventName, payload)
     }
 
     trackEventForContentAndEvent(eventName:any, userIdentifier:any, contentpayload?:any) {
@@ -145,7 +160,7 @@ export class NetCoreService {
         let mergedPayload = {...payload, ...contentpayload}
         // console.log('mergedPayload--', mergedPayload)
         
-        smartech('identify', userIdentifier)
-        smartech('dispatch', eventName, mergedPayload)
+        this.callSmartech('identify', userIdentifier)
+        this.callSmartech('dispatch', eventName, mergedPayload)
     }
 }
