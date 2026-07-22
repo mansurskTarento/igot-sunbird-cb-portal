@@ -15,11 +15,12 @@
 
   <div class="w-full search relative">
     <form (submit)="updateQuery(queryControl.value || '')" class="mat-full-radius flex items-center">
-      <mat-form-field class="autocomplete-form w-full" color="primary" appearance="outline">
+      <mat-form-field class="autocomplete-form w-full" appearance="outline">
         @if (loaderSearching()) {
         <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-home">
         } @else {
-        <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home">
+        <mat-icon class="search-home">search</mat-icon>
+        <!-- <img src="/assets/icons/top-nav/search.svg" alt="searchicon" class="search-home"> -->
         }
 
         <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
@@ -34,10 +35,10 @@
         }
       </mat-form-field>
 
-      <!-- <button mat-flat-button type="submit" class="mat-btn-flat global-search" [disabled]="!queryControl.value"
+      <button mat-flat-button type="submit" class="mat-btn-flat global-search"
         [ngClass]="{'disabled-search-btn': !queryControl.value}">
         {{'gyaanKarmayogi.search' | translate}}
-      </button> -->
+      </button>
     </form>
 
     <div class="search-container" [hidden]="!openSearchTemplate()">
@@ -90,7 +91,7 @@
           </div>
           @for (result of allSearchResults(); track result.identifier || result.id) {
           <mat-list-item class="flex justify-between items-center py-2" (click)="redirectToContent(result)">
-            <div matLine class="py-1 flex">
+            <div matLine class="py-1 flex recent-search-text">
               <mat-icon class="mr-3">search</mat-icon>
               <span class="text-xs font-normal recent-search-text text-ellipse">
                 {{ getResultName(result) }}
