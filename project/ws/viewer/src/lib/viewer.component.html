@@ -2,7 +2,7 @@
   <ng-container *ngIf="!isMobile">
     <viewer-viewer-top-bar [contentReadData]="contentReadData" [content]="hierarchyData || content"
       [forPreview]="forPreview" (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer"
-      (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData"
+      (toggle)="toggleSideBar()" [tocConfig]="tocConfig" [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData"
       [baseContentReadData]="baseContentReadData">
     </viewer-viewer-top-bar>
   </ng-container>
@@ -130,7 +130,7 @@
           *ngIf="!(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <ng-container>
             <viewer-viewer-top-bar [contentReadData]="contentReadData" [content]="hierarchyData || content"
-              (completedCountOutput)="updateCount($event)" [forPreview]="forPreview"
+              (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [tocConfig]="tocConfig"
               [frameReference]="fullScreenContainer" (toggle)="toggleSideBar()" [leafNodesCount]="leafNodesCount"
               [baseContentReadData]="baseContentReadData">
             </viewer-viewer-top-bar>
@@ -178,7 +178,7 @@
   <ng-container *ngIf="!isMobile">
     <viewer-viewer-top-bar [content]="hierarchyData || content" [forPreview]="forPreview"
       (completedCountOutput)="updateCount($event)" [frameReference]="fullScreenContainer" (toggle)="toggleSideBar()"
-      [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData"
+      [leafNodesCount]="leafNodesCount" [hierarchyMapData]="hierarchyMapData" [tocConfig]="tocConfig"
       [baseContentReadData]="baseContentReadData">
     </viewer-viewer-top-bar>
   </ng-container>
@@ -309,7 +309,7 @@
           *ngIf="!(contentMIMEType == 'application/vnd.sunbird.questionset') && !handleBackFromPdfScormFullScreenFlag">
           <ng-container>
             <viewer-viewer-top-bar [content]="hierarchyData || content" (completedCountOutput)="updateCount($event)"
-              [forPreview]="forPreview" [frameReference]="fullScreenContainer" (toggle)="toggleSideBar()"
+              [forPreview]="forPreview" [frameReference]="fullScreenContainer" (toggle)="toggleSideBar()" [tocConfig]="tocConfig"
               [leafNodesCount]="leafNodesCount" [baseContentReadData]="baseContentReadData">
             </viewer-viewer-top-bar>
             <!-- <viewer-viewer-top-bar *ngIf="!fullScreenContainer" [content]="content" (completedCountOutput)="updateCount($event)" [forPreview]="forPreview" [frameReference]="fullScreenContainer"

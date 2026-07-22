@@ -56,7 +56,6 @@ export class TncComponent implements OnInit, OnDestroy {
     this.routeSubscription = this.activatedRoute.data.subscribe((response: Data) => {
       if (response.tnc.data) {
         this.tncData = response.tnc.data
-        this.configSvc.isNewUser = Boolean(this.tncData && this.tncData.isNewUser)
         this.isPublic = response.isPublic || false
       } else {
         this.router.navigate(['error-service-unavailable'])

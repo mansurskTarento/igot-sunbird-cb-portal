@@ -150,67 +150,67 @@
       </ng-container>
     </div>
     <div class="details-grid">
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.employeeId?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('employeeId')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.employeeId' | translate }}</span>
           <span class="value">{{ primaryDetails?.employeeCode }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.email?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('email')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.email' | translate }}</span>
           <span class="value">{{ primaryDetails?.primaryEmail }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.mobileNumber?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('mobileNumber')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.mobileNumber' | translate }}</span>
           <span class="value">+91 {{ primaryDetails?.mobile }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.gender?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('gender')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.gender' | translate }}</span>
           <span class="value">{{ primaryDetails?.gender }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.dateOfBirth?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('dateOfBirth')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.dob' | translate }}</span>
           <span class="value">{{ primaryDetails?.dob }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.motherTongue?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('motherTongue')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.motherTongue' | translate }}</span>
           <span class="value">{{ primaryDetails?.domicileMedium }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.category?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('category')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.category' | translate }}</span>
           <span class="value">{{ primaryDetails?.category }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.officePinCode?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('officePinCode')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.officePinCode' | translate }}</span>
           <span class="value">{{ primaryDetails?.pinCode }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.ehrmsId?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('ehrmsId')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.eHRMSId' | translate }}</span>
           <span class="value">{{ primaryDetails?.externalSystemId || 'N/A' }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.dateOfRetirement?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('dateOfRetirement')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.dor' | translate }}</span>
           <span class="value">{{ primaryDetails?.externalSystemDor || 'N/A' }}</span>
         </div>
       </ng-container>
-      <ng-container *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.governmentService?.enabled">
+      <ng-container *ngIf="showOtherDetailsField('governmentService')">
         <div class="flex flex-col gap-2 pr-3">
           <span class="label">{{ 'NetworkV2Profile.fromGovOrganization' | translate }}</span>
           <span class="value">{{ primaryDetails?.isCadre ? 'Yes' : 'No' }}</span>
@@ -218,42 +218,42 @@
       </ng-container>
       <ng-container *ngIf="primaryDetails?.isCadre">
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.civilServiceType?.enabled && primaryDetails?.civilServiceType">
+          *ngIf="showOtherDetailsField('civilServiceType') && primaryDetails?.civilServiceType">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.civilServiceType' | translate }}</span>
             <span class="value">{{ primaryDetails?.civilServiceType }}</span>
           </div>
         </ng-container>
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.services?.enabled && primaryDetails?.civilServiceName">
+          *ngIf="showOtherDetailsField('services') && primaryDetails?.civilServiceName">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.services' | translate }}</span>
             <span class="value">{{ primaryDetails?.civilServiceName }}</span>
           </div>
         </ng-container>
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.cadre?.enabled && primaryDetails?.cadreName">
+          *ngIf="showOtherDetailsField('cadre') && primaryDetails?.cadreName">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.cadre' | translate }}</span>
             <span class="value">{{ primaryDetails?.cadreName }}</span>
           </div>
         </ng-container>
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.batch?.enabled && primaryDetails?.cadreBatch">
+          *ngIf="showOtherDetailsField('batch') && primaryDetails?.cadreBatch">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.batch' | translate }}</span>
             <span class="value">{{ primaryDetails?.cadreBatch }}</span>
           </div>
         </ng-container>
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.cadreControllingAuthority?.enabled && primaryDetails?.cadreControllingAuthorityName">
+          *ngIf="showOtherDetailsField('cadreControllingAuthority') && primaryDetails?.cadreControllingAuthorityName">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.cadreControllingAuthority' | translate }}</span>
             <span class="value">{{ primaryDetails?.cadreControllingAuthorityName }}</span>
           </div>
         </ng-container>
         <ng-container
-          *ngIf="primaryDetailsOtherDetailsConfig?.otherDetails?.fields?.centralDeputation?.enabled && primaryDetails?.isOnCentralDeputation !== undefined">
+          *ngIf="showOtherDetailsField('centralDeputation') && primaryDetails?.isOnCentralDeputation !== undefined">
           <div class="flex flex-col gap-2 pr-3">
             <span class="label">{{ 'NetworkV2Profile.centralDeputation' | translate }}</span>
             <span class="value">{{ primaryDetails?.isOnCentralDeputation ? 'Yes' : 'No'}}</span>

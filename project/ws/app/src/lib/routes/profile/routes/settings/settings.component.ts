@@ -14,6 +14,7 @@ import {
   UserPreferenceService,
   UtilityService,
   MultilingualTranslationsService,
+  DomainConfService,
 } from '@sunbird-cb/utils-v2'
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators'
 import { BtnSettingsService } from '@sunbird-cb/collection'
@@ -82,6 +83,7 @@ export class SettingsComponent implements OnInit, OnDestroy {
     private utilitySvc: UtilityService,
     private langtranslations: MultilingualTranslationsService,
     private translate: TranslateService,
+    private domainConfSvc: DomainConfService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -184,6 +186,11 @@ export class SettingsComponent implements OnInit, OnDestroy {
     if (this.prefChangeSubs) {
       this.prefChangeSubs.unsubscribe()
     }
+  }
+
+  // reads directly from globalConfig (components.settingsMenu.<key>); no local copy kept
+  isSettingEnabled(key: string): boolean {
+    return this.domainConfSvc.isConfigEnabled('components.settingsMenu', key)
   }
 
   isLocaleAvailable(langPath: string): boolean {
