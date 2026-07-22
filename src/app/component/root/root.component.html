@@ -34,7 +34,8 @@
   </div>
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
-  <div class="flex gap-0 root-container">
+  <div class="flex gap-0 root-container"
+    [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
     @if ((isXSmall$ | async) === false && showMenuBardetails) {
     <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
