@@ -190,7 +190,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     this.updateNoResultMessage(this.statedata.param)
 
-    this.checkCourseEnrollmentAndCbpPlan()
+
     this.getFetchIgotSpecializationPrograms()
     // this.fetchCbpPlan()
     localStorage.removeItem(SearchConstantLocalStorage.SortType)
@@ -380,6 +380,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.courseSearchResults = result.result.content
       this.courseSearchTotalCount = result.result?.count
       this.coursesFacets = result.result?.facets || []
+
+      this.checkCourseEnrollmentAndCbpPlan(this.courseSearchResults)
 
       this.combinedFacets = []
       this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
@@ -1477,15 +1479,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     })
   }
 
-  checkCourseEnrollmentAndCbpPlan() {
+  checkCourseEnrollmentAndCbpPlan(courseSearchResults: any) {
     const userId = this.configSvc.userProfile?.userId || ''
     const request = {
       request: {
         retiredCoursesEnabled: true,
         limit: this.initialPaginationSize,
+        courseId: courseSearchResults.map((course: any) => course.identifier),
       },
     }
-
     forkJoin({
       inProgress: this.searchV3Service.enrollment(
         { request: { ...request.request, status: 'In-Progress' } },

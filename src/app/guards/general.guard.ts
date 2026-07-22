@@ -31,6 +31,12 @@ export class GeneralGuard {
     if (pageKey === 'id' && next.params && next.params.id) {
       pageKey = next.params.id
     }
+    // routes without an explicit pageKey fall back to the last segment of
+    // their pageId (e.g. 'app/toc' -> 'toc', 'app/my-learning' -> 'my-learning')
+    // so globalConfig.routes can control every guarded route
+    if (!pageKey && next.data && next.data.pageId) {
+      pageKey = String(next.data.pageId).split('/').pop()
+    }
 
     // Check if this route is disabled in globalConfig.routes. An entry is either a
     // boolean or an object like { "enabled": false, "allowedSubRoutes": ["player"] },

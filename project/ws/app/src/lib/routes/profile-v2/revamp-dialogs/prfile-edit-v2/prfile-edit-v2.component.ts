@@ -70,8 +70,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   approvedDomainList: any = []
   destroySubject$ = new Subject()
   contextToken: any
-  eUserGender = Object.keys(NsUserProfileDetails.EUserGender)
-  eCategory = Object.keys(NsUserProfileDetails.ECategory)
+  eUserGender = Object.values(NsUserProfileDetails.EUserGender)
+  eCategory = Object.values(NsUserProfileDetails.ECategory)
   masterLanguageBackup: any[] = []
   masterLanguages: any[] = []
   isMatcompleteOpened = false
@@ -122,6 +122,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   checkingPhone = false
 
   apiConfig: any
+  otherDetailsFields: any = null
+  editConfig: any = null
 
   constructor(
     private fb: FormBuilder,
@@ -147,6 +149,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.profileDetails = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileDetails', {}) : _.get(this.data, 'profileDetails', {})
     this.profileImage = hasDialogDetails ? _.get(this.data, 'dialogDetails.profileImage', null) : _.get(this.data, 'profileImage', null)
     this.apiConfig = _.get(this.data, 'apiConfig', {})
+    this.otherDetailsFields = hasDialogDetails
+      ? _.get(this.data, 'dialogDetails.otherDetailsFields', null)
+      : _.get(this.data, 'otherDetailsFields', null)
+
+    // edit object (profileEditConfigs.<editObjectKey>) - top level in both data shapes
+    this.editConfig = _.get(this.data, 'editConfig', null) || _.get(this.data, 'dialogDetails.editConfig', null)
 
     // groupsList can come from either location
     this.groupsList = _.get(this.data, 'groupsList', [])
@@ -207,6 +215,57 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     return translatedString
       .replace('%EMAIL%', `<span class="note-email">${this.nodalEmail}</span>`)
       .replace('%NAME%', `<b>(${this.nodalName})</b>`)
+  }
+
+  // applies per-field rules from the edit object (profileEditConfigs ->
+  // otherDetailsEdit.fields, resolved via editObjectKey and passed in as
+  // editConfig). Each descriptor's key is the form control name:
+  //  - required: true -> adds Validators.required on top of existing validators
+  //  - disabled: true -> disables the control (read-only; value still reaches
+  //    the payload via getRawValue). The cadre chain (governmentService
+  //    onwards) keeps its own dynamic handling.
+  private applyConfiguredFieldRules(): void {
+    const editFields = _.get(this.editConfig, 'fields')
+    if (!Array.isArray(editFields) || !editFields.length) {
+      return
+    }
+    editFields.forEach((field: any) => {
+      const control = field && field.key ? this.profileForm.get(field.key) : null
+      if (!control) {
+        return
+      }
+      if (field.required === true) {
+        control.setValidators(control.validator
+          ? [control.validator, Validators.required]
+          : [Validators.required])
+        control.updateValueAndValidity({ emitEvent: false })
+      }
+      if (field.disabled === true) {
+        control.disable({ emitEvent: false })
+      }
+    })
+  }
+
+  // drives the star (*) on labels from the control's actual validators, so it
+  // stays correct when validators are added/removed at runtime (cadre chain)
+  isRequiredField(controlName: string): boolean {
+    const control = this.profileForm ? this.profileForm.get(controlName) : null
+    if (!control || !control.validator) {
+      return false
+    }
+    const errors = control.validator({ value: null } as any)
+    return !!(errors && errors.required)
+  }
+
+  // Other Details field visibility (otherDetails.fields in the served form config;
+  // role-specific hiding is done via role-based form revisions, not in code):
+  //  - no fields map in config -> show everything
+  //  - fields map present -> only the keys explicitly enabled there are shown
+  showOtherDetailsField(fieldKey: string): boolean {
+    if (!this.otherDetailsFields || !Object.keys(this.otherDetailsFields).length) {
+      return true
+    }
+    return _.get(this.otherDetailsFields, `${fieldKey}.enabled`) === true
   }
 
   private initForm(): void {
@@ -682,6 +741,10 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     this.cadreId = _.get(this.profileDetails, 'cadreId', '')
     this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '')
     this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false)
+
+    // required/disabled per field come from the edit object
+    // (profileEditConfigs.otherDetailsEdit.fields)
+    this.applyConfiguredFieldRules()
 
     this.fetchCadreData()
     this.getMasterLanguage()
@@ -1276,7 +1339,9 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   genrateOtehrDetailsForm(): void {
-    const formBody: any = this.profileForm.value
+    // getRawValue: config-disabled controls are excluded from form.value and
+    // their fields would otherwise be dropped from the update payload
+    const formBody: any = this.profileForm.getRawValue()
     // if (this.primaryEmailControl && _.get(this.profileDetails, 'primaryEmail', '') !== this.primaryEmailControl.value) {
     //   this.updateEmail(this.primaryEmailControl.value)
     // }

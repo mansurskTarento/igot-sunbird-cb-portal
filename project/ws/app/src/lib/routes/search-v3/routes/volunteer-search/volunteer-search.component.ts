@@ -87,6 +87,21 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     this.competencySubThemeKey = `${this.compentencyKey.vKey}.${this.compentencyKey.vCompetencySubTheme}`
   }
 
+  // default course category filter for the volunteer search, driven from
+  // application.config.json -> volunteerSearch.courseCategory (instanceConfig)
+  get defaultCourseCategory(): string[] {
+    const configured = _.get(this.configSvc.instanceConfig, 'volunteerSearch.courseCategory')
+    return (Array.isArray(configured) && configured.length) ? configured : ['course']
+  }
+
+  // facet keys from application.config.json -> volunteerSearch.facets; when the
+  // key is present with values it replaces the model default facet list
+  // (SearchOthersFacet + competency keys), otherwise the defaults are used
+  get configuredFacets(): string[] {
+    const configured = _.get(this.configSvc.instanceConfig, 'volunteerSearch.facets')
+    return Array.isArray(configured) ? configured : []
+  }
+
   ngOnInit() {
     const instanceConfig = this.configSvc.instanceConfig
     this.defaultSideNavBarOpenedSubscription = this.isLtMedium$.subscribe(
@@ -128,7 +143,11 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
       this.competencySubThemeKey,
     ])
     this.searchRequestCourse.request.limit = this.initialPaginationSize
-    this.searchRequestCourse.request.filters.courseCategory = ['course']
+    this.searchRequestCourse.request.filters.courseCategory = this.defaultCourseCategory
+    const configuredFacets = this.configuredFacets
+    if (configuredFacets.length) {
+      this.searchRequestCourse.request.facets = _.uniq(configuredFacets)
+    }
     // Default sort for composite API: recently added maps to lastUpdatedOn desc
     this.searchRequestCourse.request.sort_by.createdOn = 'desc'
     this.courseSearchResults = []
@@ -147,7 +166,8 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
   /**
    * Builds the request body for /composite/v5/search.
    * Maps sort_by.createdOn → lastUpdatedOn since composite API uses lastUpdatedOn.
-   * Strips contentType (not used by composite) and ensures courseCategory defaults to ['course'].
+   * Strips contentType (not used by composite) and ensures courseCategory falls back to the
+   * configured default (application.config.json -> volunteerSearch.courseCategory).
    */
   private buildCompositeRequest(): any {
     const src = this.searchRequestCourse.request
@@ -156,7 +176,7 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     if (src.filters.courseCategory?.length > 0) {
       filters.courseCategory = src.filters.courseCategory
     } else {
-      filters.courseCategory = ['course']
+      filters.courseCategory = this.defaultCourseCategory
     }
 
     // Copy selective filters; skip contentType (irrelevant for composite endpoint)
@@ -235,6 +255,12 @@ export class VolunteerSearchComponent implements OnInit, OnDestroy {
     this.searchRequestCourse.request.limit = this.initialPaginationSize
     this.searchRequestCourse.request.filters.courseCategory = []
     this.searchRequestCourse.request.filters.avgRating = {}
+    // re-apply configured facets from application.config.json; without this the
+    // freshly created request reverts to the model default (all) facet list
+    const configuredFacets = this.configuredFacets
+    if (configuredFacets.length) {
+      this.searchRequestCourse.request.facets = _.uniq(configuredFacets)
+    }
     this.initialPaginationPage = 1
 
     if (this.searchSortFilter === SortType.RecentlyAdded) {

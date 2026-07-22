@@ -259,6 +259,12 @@
   /* stylelint-disable */
   font: 700 14px Lato;
   /* stylelint-enable */
+
+  // star after the label for required fields
+  &.required::after {
+    content: ' *';
+    color: #d32f2f;
+  }
 }
 
 .get-otp {

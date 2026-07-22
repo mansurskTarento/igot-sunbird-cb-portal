@@ -67,7 +67,6 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
     this.compentencyKey =
       this.configSvc.compentency[environment.compentencyVersionKey]
     this.CaCourseUnitIds = this.commonSvc.getCourseUnitIds()
-    this.findIsUnenrolled()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -98,6 +97,7 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         this.igotSpecializationProgram = false
       }
     }
+    this.findIsUnenrolled()
   }
 
   checkForCiosDuration(item: any) {
