@@ -50,7 +50,7 @@ export class EducationalQualificationsComponent implements OnInit {
         urlConfigPath: 'profileV1Extended',
         apiConfig: this.apiConfig
       }
-      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId).subscribe({
+      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'all', !this.isCurrentUser).subscribe({
         next: (res: any) => {
           if (res) {
             this.educationalQualificationsList = _.get(res, 'result.response.educationalQualifications', [])

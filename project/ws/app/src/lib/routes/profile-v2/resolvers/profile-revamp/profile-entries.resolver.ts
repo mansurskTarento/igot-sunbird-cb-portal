@@ -29,12 +29,13 @@ export class profileEntriesResolver {
     } else {
       userId = this.configSvc.userProfile && this.configSvc.userProfile.userId || ''
     }
+    const isNotCurrentUser = userId !== _.get(this.configSvc, 'userProfile.userId')
     const configDetails = {
       defaultUrl: '',
       urlConfigPath: 'profileV1Extended',
       apiConfig: apiConfig
     }
-    return this.profileSvc.fetchProfileEntries(configDetails, userId).pipe(
+    return this.profileSvc.fetchProfileEntries(configDetails, userId, 'all', isNotCurrentUser).pipe(
       map(data => ({ data: _.get(data, 'result.response'), error: null })),
       catchError(error => of({ error, data: null })),
     )

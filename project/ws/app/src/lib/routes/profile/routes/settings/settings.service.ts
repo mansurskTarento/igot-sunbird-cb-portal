@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsSettings } from './settings.model'
 import { NSProfileDataV2 } from '../../../profile-v2/models/profile-v2.model'
 
@@ -20,6 +21,7 @@ export class SettingsService {
 
   constructor(
     private http: HttpClient,
+    private configSvc: ConfigurationsService,
   ) { }
 
   fetchNotificationSettings(): Observable<NsSettings.INotificationGroup[]> {
@@ -56,6 +58,11 @@ export class SettingsService {
   }
 
   resetPassword(): Observable<any> {
-    return this.http.get<any>(API_END_POINTS.RESET_PASSWORD)
+    const cfg = this.configSvc.globalConfig?.apis?.user?.passwordReset
+    if (cfg && !cfg.enabled) {
+      return of(null)
+    }
+    const url = (cfg?.enabled && cfg?.url) ? cfg.url : API_END_POINTS.RESET_PASSWORD
+    return this.http.get<any>(url)
   }
 }

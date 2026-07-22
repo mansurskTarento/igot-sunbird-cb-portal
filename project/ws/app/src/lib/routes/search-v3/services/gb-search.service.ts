@@ -56,6 +56,9 @@ export class GbSearchService {
 
   fetchSearchData(request: any): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    if (!url) {
+      return of(null)
+    }
     return this.http.post<any>(url, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
@@ -110,6 +113,9 @@ export class GbSearchService {
 
   getApplicationsById(formBody: any) {
     const url = this.domainConfSvc.getApiUrl('content', 'applicationsById', DEFAULT_API_ENDPOINTS.GetApplicationsById)
+    if (!url) {
+      return of(null)
+    }
     return this.http.post<any>(url, formBody)
   }
 
@@ -127,11 +133,17 @@ export class GbSearchService {
 
   searchResource(params: SearchV4Request): Promise<any> {
     const url = this.domainConfSvc.getApiUrl('search', 'searchV6', DEFAULT_API_ENDPOINTS.SEARCH_V6)
+    if (!url) {
+      return Promise.resolve(null)
+    }
     return this.http.post(url, params).toPromise()
   }
 
   nlpSearch(params: SearchNLP): Promise<any> {
     const url = this.domainConfSvc.getApiUrl('search', 'nlp', DEFAULT_API_ENDPOINTS.SEARCH_NLP)
+    if (!url) {
+      return Promise.resolve(null)
+    }
     return this.http.post(url, params).toPromise()
   }
   recentCreate(req: any): Promise<any> {
