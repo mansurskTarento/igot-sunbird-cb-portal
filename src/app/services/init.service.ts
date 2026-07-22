@@ -181,8 +181,17 @@ export class InitService {
         await this.fetchUserDetails()
       }
     })
-    await this.globalConfigData()
-    await this.fetchDefaultConfig()
+    // public / preview / creator (editMode) routes have no auth session:
+    //  - skip the protected global-config form call
+    //  - application-config is loaded from the static json (form read only on normal routes)
+    const href = window.location.href
+    const isPublicPreviewOrCreator = href.includes('/public/')
+      || href.includes('&preview=true')
+      || href.includes('editMode=true')
+    if (!isPublicPreviewOrCreator) {
+      await this.globalConfigData()
+    }
+    await this.fetchDefaultConfig(isPublicPreviewOrCreator)
 
     // Invalid User
     try {
@@ -297,19 +306,25 @@ export class InitService {
     }
   }
 
-  private async fetchDefaultConfig(): Promise<NsInstanceConfig.IConfig> {
+  private async fetchDefaultConfig(useStaticConfig = false): Promise<NsInstanceConfig.IConfig> {
     let publicConfig: NsInstanceConfig.IConfig | any
     try {
-      const request = {
-        request: {
-          type: 'page',
-          subType: 'application-config-web',
-          portal: 'portal',
-          clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['application-config-web'] || 1.0,
-        },
+      if (useStaticConfig) {
+        // public / preview / creator routes: load the static json, skip the protected form read
+        publicConfig = await firstValueFrom(this.http
+          .get<NsInstanceConfig.IConfig>(`${this.baseUrl}/application.config.json`))
+      } else {
+        const request = {
+          request: {
+            type: 'page',
+            subType: 'application-config-web',
+            portal: 'portal',
+            clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['application-config-web'] || 1.0,
+          },
+        }
+        const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
+        publicConfig = response?.result?.data || response?.result?.form?.data
       }
-      const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
-      publicConfig = response?.result?.data || response?.result?.form?.data
       if (!publicConfig) {
         throw new Error('InitService: Empty application config received from form API')
       }
