@@ -88,6 +88,22 @@ export class SeeAllService {
     return of(this.getSeeAllConfig).toPromise()
   }
 
+  async getSeeAllFormsConfigJson(pageType?: string, pageSubType?: string): Promise<any> {
+    if (!this.getSeeAllConfig) {
+      this.getSeeAllConfig = {}
+      const requestData: any = {
+        'request': {
+          'type': pageType ? pageType : 'page',
+          'subType': pageSubType ? pageSubType : 'home',
+          'portal': 'portal',
+          'clientVersion':1.0
+        },
+      }
+      this.getSeeAllConfig = await this.formSvc.formConfigData(requestData, pageType, pageSubType).toPromise()
+    }
+    return of(this.getSeeAllConfig).toPromise()
+  }
+
   searchV6(req: NSSearch.ISearchV6Request): Observable<NSSearch.ISearchV6ApiResultV2> {
     const apiPath = _.get(req, 'api.path')
     req.query = req.query || ''

@@ -74,7 +74,7 @@ export class SeeAllHomeComponent implements OnInit, OnDestroy {
       pageSubType = (res.pageSubType) ? res.pageSubType : ''
       pageType = (res.pageType) ? res.pageType : ''
     })
-    const configData = await this.seeAllSvc.getSeeAllConfigJson(pageType, pageSubType).catch(_error => { })
+    const configData = await this.seeAllSvc.getSeeAllFormsConfigJson(pageType, pageSubType).catch(_error => { })
     if (configData && configData.homeStrips) {
       configData.homeStrips.forEach((ele: any) => {
         if (ele && ele.strips.length > 0) {
