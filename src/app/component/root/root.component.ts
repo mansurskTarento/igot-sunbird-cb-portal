@@ -94,6 +94,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
   isHomePage = signal(false)
+  showFullScreen = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
   constructor(
@@ -427,6 +428,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
         } else {
           this.customHeight = false
+        }
+        if (this.currentUrl.startsWith('/app/toc')) {
+          this.showFullScreen.set(true)
+        } else {
+          this.showFullScreen.set(false)
         }
 
         if (

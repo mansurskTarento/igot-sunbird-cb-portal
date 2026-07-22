@@ -71,9 +71,9 @@
             'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
             'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
             'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
-            'container-balanced': !isHomePage(),
-            'home-content': showMenuBardetails,
-            'w-full': !showMenuBardetails
+            'container-balanced': !isHomePage() && !showFullScreen(),
+            'home-content': showMenuBardetails && isHomePage() && !showFullScreen(),
+            'w-full': !showMenuBardetails || showFullScreen()
             }">
           <router-outlet></router-outlet>
         </div>

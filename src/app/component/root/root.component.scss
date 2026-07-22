@@ -44,6 +44,11 @@
   z-index: 901;
 }
 
+.container-balanced {
+  width: 1200px;
+  max-width: 1200px;
+}
+
 @media (max-width: 768px) {
   .klb-popup-panel {
     top: 50%;
