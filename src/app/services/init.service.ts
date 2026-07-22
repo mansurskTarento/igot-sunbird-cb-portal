@@ -193,9 +193,12 @@ export class InitService {
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
         await this.fetchUserEnrollDetails()
-        this.contentDictionarySvc.getDictionary().subscribe({
-          error: (err: any) => this.logger.warn('InitService: Failed to pre-load content dictionary', err),
-        })
+        // pre-load the content dictionary only when enabled via global-config apis.content.dictionary
+        if (this.configSvc.globalConfig?.apis?.content?.dictionary?.enabled) {
+          this.contentDictionarySvc.getDictionary().subscribe({
+            error: (err: any) => this.logger.warn('InitService: Failed to pre-load content dictionary', err),
+          })
+        }
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
