@@ -287,7 +287,7 @@
   }
 
   .mobile-footer-fixed-nav {
-    height: 64px;
+    height: 72px;
     margin: 0;
     padding: 0;
     background-color: #fff;
@@ -297,12 +297,14 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    height: 64px;
+    align-items: center;
+    height: 72px;
     margin: 0;
   }
 
   .mobile-footer-fixed-nav-list-item {
-    max-width: 90px;
+    flex: 1 1 0;
+    min-width: 0;
     list-style: none;
     text-align: center;
     height: inherit;
@@ -311,27 +313,41 @@
     align-items: center;
 
     span {
-      line-height: 16px;
+      line-height: 12px;
     }
   }
 
   .icon-container {
     display: flex;
     flex-direction: column;
-    width: fit-content;
-    height: 56px;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    height: 60px;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
+    gap: 4px;
+    padding: 6px 4px;
+    border-radius: 9999px;
+    background-color: transparent;
+    box-sizing: border-box;
+    transition: background-color 0.25s ease-in-out;
 
     img {
-      height: 24px;
-      width: 24px;
+      height: 20px;
+      width: 20px;
+      flex-shrink: 0;
     }
 
     span {
-      font-size: 12px;
+      font-size: 10px;
       color: rgba(0, 0, 0, 0.6);
+      line-height: 12px;
+      max-width: 100%;
+      white-space: normal;
+      word-break: break-word;
+      text-align: center;
+      transition: color 0.25s ease-in-out;
     }
   }
 }
@@ -353,11 +369,39 @@
 }
 
 .active-icon {
-  border-top: 2px solid rgb(27, 76, 161);
-  background-color: rgba(27, 76, 161, 0.16);
+  .icon-container {
+    background-color: var(--environment-button-primary-filled-primary);
 
-  span {
-    color: rgba(27, 76, 161);
+    span {
+      color: var(--surface-primary);
+    }
+
+    &:not(.keep-icon-color) {
+      position: relative;
+
+      img {
+        visibility: hidden;
+      }
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 20px;
+        height: 20px;
+        background-color: var(--surface-primary);
+        -webkit-mask-image: var(--icon-url);
+        mask-image: var(--icon-url);
+        -webkit-mask-size: contain;
+        mask-size: contain;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: center;
+        mask-position: center;
+      }
+    }
   }
 }
 
