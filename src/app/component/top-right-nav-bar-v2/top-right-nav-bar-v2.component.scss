@@ -6,9 +6,9 @@
   vertical-align: middle;
 }
 
-// ::ng-deep .removeProfileLink .profile-link {
-//   padding: 0px !important;
-// }
+::ng-deep .removeProfileLink .profile-link {
+  padding: 0 10px 3px 0 !important;
+}
 
 .icon-svg {
   display: block;

@@ -568,11 +568,23 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   bottomNavClick(item: any) {
+    this.setActiveRoute(item?.config?.label)
     if (item?.config?.key === 'achievements') {
       this.viewAchivements.emit(true)
     } else {
       this.redirectToPath(item?.config)
     }
+  }
+
+  setActiveRoute(route: string) {
+    const normalizedRoute = route ? route.toLowerCase() : ''
+    this.activeRoute.set(normalizedRoute)
+    localStorage.setItem('activeRoute', normalizedRoute)
+  }
+
+  isTabActive(item: any): boolean {
+    const label = item?.config?.label
+    return !!label && this.activeRoute() === label.toLowerCase()
   }
 
   redirectToPath(pathConfig: any) {
@@ -585,7 +597,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   openExploreMenu() {
-    this.activeRoute.set('explore')
+    this.setActiveRoute('explore')
     this.configSvc.openExploreMenuForMWeb.next(true)
   }
 
