@@ -14,7 +14,7 @@
   }
 
   <div class="w-full search relative">
-    <form (submit)="updateQuery(queryControl.value || '')" class="mat-full-radius flex items-center">
+    <form class="mat-full-radius flex items-center">
       <mat-form-field class="autocomplete-form w-full" appearance="outline">
         @if (loaderSearching()) {
         <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-home">
@@ -35,8 +35,9 @@
         }
       </mat-form-field>
 
-      <button mat-flat-button type="submit" class="mat-btn-flat global-search"
-        [ngClass]="{'disabled-search-btn': !queryControl.value}">
+      <button mat-flat-button type="button" class="mat-btn-flat global-search"
+        [ngClass]="{'disabled-search-btn': !queryControl.value}"
+        (click)="updateQuery(queryControl.value || '')">
         {{'gyaanKarmayogi.search' | translate}}
       </button>
     </form>
@@ -44,9 +45,9 @@
     <div class="search-container" [hidden]="!openSearchTemplate()">
       <div class="search-results">
         <div class="search-categories mb-4">
-          <mat-chip-list class="mat-chip-list-content">
+          <mat-chip-listbox class="mat-chip-list-content" [multiple]="false" [hideSingleSelectionIndicator]="true">
             @for (category of categories; track category.value) {
-            <mat-chip [removable]="false" [highlighted]="false" [disableRipple]="true"
+            <mat-chip-option [removable]="false" [highlighted]="false" [disableRipple]="true"
               [selected]="category.value === selectedSearchCategory()" (click)="selectSearchCategory(category.value)"
               class="category-chip"
               [ngClass]="{'selected-search-category active': category.value === selectedSearchCategory()}">
@@ -54,9 +55,9 @@
               <mat-icon [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
               }
               {{ category.label }}
-            </mat-chip>
+            </mat-chip-option>
             }
-          </mat-chip-list>
+          </mat-chip-listbox>
         </div>
 
         <!-- Recent Searches -->

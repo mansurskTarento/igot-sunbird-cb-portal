@@ -2384,3 +2384,8 @@ ws-widget-btn-page-back-nav .mat-mdc-icon-button {
     right: 0 !important;
   }
 }
+
+// Default UserWay floating icon is replaced by the accessibility button in the header
+#userwayAccessibilityIcon {
+  display: none !important;
+}
