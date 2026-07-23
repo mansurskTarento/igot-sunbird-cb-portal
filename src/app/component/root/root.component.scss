@@ -36,12 +36,25 @@
   z-index: 10001;
 }
 
+.header-postion {
+  position: fixed;
+  z-index: 1000;
+}
+
 .klb-popup-panel {
   position: fixed;
   top: 50%;
   left: calc(330px + 24px);
   transform: translateY(-50%);
   z-index: 10002;
+}
+
+.navBarOpenContent {
+  width: calc(100vw - 344px);
+}
+
+.navBarCloseContent {
+  width: calc(100vw - 88px);
 }
 
 .container-balanced {
@@ -122,7 +135,7 @@ ws-app-nav-bar {
 
 .height-adjust {
   min-height: calc(100vh - (56px + 52px));
-  margin-top: 24px;
+  margin-top: 87px;
 
   @include breakpoint-xs {
     min-height: calc(100vh - (60px + 77px));

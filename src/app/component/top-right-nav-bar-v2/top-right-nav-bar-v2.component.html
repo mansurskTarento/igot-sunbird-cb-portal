@@ -54,7 +54,7 @@
     @if (showLangDropdown()) {
     <mat-form-field class="custom-lang">
       <img src="/assets/icons/top-nav/translate_icon.svg" alt="Language" class="lang-img mr-1 mt-1" />
-      <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage()" [disabled]="false"
+      <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage()" [disabled]="true"
         (ngModelChange)="selectLanguage($event)" class="language-select">
         @for (lang of multiLang(); track lang.key) {
         @if (lang.active) {

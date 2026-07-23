@@ -435,7 +435,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         } else {
           this.customHeight = false
         }
-        if (this.currentUrl.startsWith('/app/toc')) {
+        if (
+          this.currentUrl.startsWith('/app/toc') ||
+          this.currentUrl.startsWith('/viewer/')
+        ) {
           this.showFullScreen.set(true)
         } else {
           this.showFullScreen.set(false)
@@ -579,12 +582,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
               const rank = currentUserRank?.rank
 
               if (rank != null) {
-                if (rankItem) {
-                  rankItem.value = `${this.toOrdinal(rank)} Rank`
-                }
+                rankItem.value = `${this.toOrdinal(rank)} Rank`
+              } else {
+                rankItem.value = 'o Rank'
               }
             } else {
-              rankItem.enabled = false
+              rankItem.value = 'o Rank'
             }
             achievements.sectionLoading = false
             this.sendDetailsChangedEvent(achievements)

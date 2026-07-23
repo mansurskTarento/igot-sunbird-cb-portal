@@ -34,8 +34,7 @@
   </div>
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
-  <div class="flex gap-0 root-container"
-    [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
+  <div class="flex gap-0 root-container" [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
     @if ((isXSmall$ | async) === false && showMenuBardetails) {
     <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
@@ -62,13 +61,16 @@
       [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
   </ws-header> -->
       @if (showHeader) {
-      <ws-header-v2 class="block w-full" [leftNavBarOpen]="leftNavBarIsOpen()"
+      <ws-header-v2 [ngClass]="(leftNavBarIsOpen() ? 'navBarOpenContent' : 'navBarCloseContent')"
+        class="block header-postion" [leftNavBarOpen]="leftNavBarIsOpen()"
         [headerFooterConfigData]="headerFooterConfigData">
       </ws-header-v2>
       }
       <!-- </ws-widget-sticky-header> -->
-      <div class="mx-4 flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
+      <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
+        'navBarOpenContent': leftNavBarIsOpen(),
+        'navBarCloseContent': !leftNavBarIsOpen(),
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
