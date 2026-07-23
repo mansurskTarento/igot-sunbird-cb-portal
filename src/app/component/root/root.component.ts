@@ -4,6 +4,7 @@ import {
   ApplicationRef,
   ChangeDetectorRef,
   Component,
+  effect,
   ElementRef,
   HostListener,
   OnInit,
@@ -122,8 +123,13 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private libNotificationsService: LibNotificationsService,
     private homePageSvc: HomePageService
 
-    // private dialogRef: MatDialogRef<any>,
   ) {
+    effect(() => {
+      if (!this.leftNavBarIsOpen()) {
+        this.showKarmaLeaderboard.set(false)
+      }
+    })
+
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
     }

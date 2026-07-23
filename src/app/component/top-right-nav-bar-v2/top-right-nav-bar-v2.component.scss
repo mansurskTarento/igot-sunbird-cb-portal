@@ -7,7 +7,9 @@
 }
 
 ::ng-deep .removeProfileLink .profile-link {
-  padding: 0 10px 3px 0 !important;
+  padding: 4px 10px 0 0 !important;
+  display: flex;
+  align-items: center;
 }
 
 .icon-svg {
@@ -43,6 +45,16 @@
 
     padding: 0px !important;
     position: relative;
+    border-radius: 8px;
+    overflow: hidden;
+
+    ::ng-deep .mat-mdc-form-field-flex,
+    ::ng-deep .mat-mdc-form-field-infix,
+    ::ng-deep .mat-mdc-select-arrow-wrapper,
+    ::ng-deep .mat-mdc-form-field-icon-suffix {
+      border-radius: inherit;
+      overflow: hidden;
+    }
   }
 
   ::ng-deep .mat-mdc-form-field-infix {
@@ -53,8 +65,14 @@
     // border: 1px solid rgba(0, 0, 0, 0.16) !important;
     border-radius: 8px !important;
     height: 32px;
-    padding: 0px 8px !important;
-    background-color: var(--color-primary-50);
+    padding: 0px 5px !important;
+    background-color: var(--surface-tertiary);
+    overflow: hidden;
+    .mdc-text-field__ripple,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__trailing {
+      border-radius: inherit !important;
+    }
 
     .mat-mdc-select-arrow svg {
       fill: var(--environment-icon-overall-primary-bandw)
