@@ -59,7 +59,7 @@
     </div>
     }
 
-    <div class="md:flex md:gap-4 items-center ml-auto">
+    <div class="flex gap-4 items-center ml-auto">
       @for (item of filteredPrimaryNavbarConfig?.mediumScreen?.right; track item) {
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
@@ -78,9 +78,11 @@
   <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
     @if (item?.type !== 'explorerButton') {
-    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
-      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
+      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''"
+        [class.keep-icon-color]="item?.config?.label?.toLowerCase() === 'home'"
+        [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
         <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
           title="{{item?.config?.label}}" />
         <span>{{item?.config?.label | titlecase}}</span>
@@ -89,9 +91,9 @@
     }
 
     @if (item?.type === 'explorerButton') {
-    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="openExploreMenu()">
-      <div class="icon-container">
+      <div class="icon-container" [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
         <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
           title="{{item?.config?.label}}" />
         <span>{{item?.config?.label | titlecase}}</span>

@@ -289,6 +289,7 @@ const routes: Routes = [
       import('./routes/route-national-learning-week.module').then(u => u.RouteNationalLearningWeekModule),
     canActivate: [GeneralGuard],
     data: {
+      pageKey: 'nlw',
       module: 'National Learning Week',
     },
     resolve: {
@@ -301,6 +302,7 @@ const routes: Routes = [
       import('./routes/route-kalp.module').then(u => u.RouteKalpModule),
     canActivate: [GeneralGuard, BharatKalpGuard],
     data: {
+      pageKey: 'bharat-kalp',
       module: 'Bharat Kalp',
     },
     resolve: {
@@ -466,6 +468,7 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
     data: {
       pageId: 'app/features',
+      pageKey: 'microsites',
       module: 'Settings',
     },
   },
@@ -476,6 +479,7 @@ const routes: Routes = [
     canActivate: [GeneralGuard],
     data: {
       pageId: 'app/Goals',
+      pageKey: 'goals',
       module: 'Profile',
     },
   },
@@ -519,6 +523,7 @@ const routes: Routes = [
     canActivate: [GeneralGuard, LearningGuard],
     data: {
       pageId: '',
+      pageKey: 'my-dashboard',
       module: 'Dashboard',
     },
   },
@@ -563,6 +568,7 @@ const routes: Routes = [
       import('./routes/route-playlist-app.module').then(u => u.RoutePlaylistAppModule),
     canActivate: [GeneralGuard],
     data: {
+      pageKey: 'playlist',
     },
   },
   {
@@ -798,6 +804,7 @@ const routes: Routes = [
     path: 'learner-advisory',
     loadChildren: () => import('./routes/route-learner-advisory.module').then(m => m.RouteLearnerAdvisoryModule),
     canActivate: [GeneralGuard],
+    data: { pageKey: 'learner-advisory' },
     resolve: { home: HomeResolverService },
   },
   {
@@ -807,6 +814,7 @@ const routes: Routes = [
         u => u.PageLeaderRendererModule,
       ),
     canActivate: [GeneralGuard],
+    data: { pageKey: 'page-leaders' },
   },
   {
     path: 'public/home',

@@ -25,7 +25,7 @@ import {
 import { BtnPageBackService } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
 import {
-  // AuthKeycloakService,
+  AuthKeycloakService,
   ConfigurationsService,
   // LoggerService,
   DomainConfService,
@@ -94,6 +94,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
   isHomePage = signal(false)
+  showFullScreen = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
   constructor(
@@ -104,7 +105,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private swUpdate: SwUpdate,
     private dialog: MatDialog,
     private http: HttpClient,
-    // public authSvc: AuthKeycloakService,
+    private authSvc: AuthKeycloakService,
     public configSvc: ConfigurationsService,
     private valueSvc: ValueService,
     private telemetrySvc: TelemetryService,
@@ -291,6 +292,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     window.location.reload()
   }
 
+  // used on the global-config error screen: force_logout works without any
+  // loaded configuration (same path as the auth interceptor)
+  logout() {
+    this.authSvc.force_logout()
+  }
+
   // dialog/popup visibility from global-config -> components.dialogs
   isDialogEnabled(dialogKey: string): boolean {
     return this.domainConfSvc.isConfigEnabled('components.dialogs', 'enabled')
@@ -427,6 +434,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
         } else {
           this.customHeight = false
+        }
+        if (this.currentUrl.startsWith('/app/toc')) {
+          this.showFullScreen.set(true)
+        } else {
+          this.showFullScreen.set(false)
         }
 
         if (
@@ -895,7 +907,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   openAppDownloadDialog() {
-    const dialogRef = this.dialog.open(DialogBoxComponent, { width: '1000px' })
+    const dialogRef = this.dialog.open(DialogBoxComponent, {
+      width: '1000px',
+      panelClass: 'download-app-popup-new'
+    })
     dialogRef.afterClosed().subscribe(() => { })
   }
 

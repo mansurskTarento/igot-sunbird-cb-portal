@@ -75,16 +75,20 @@ export class ProfileCardStatsComponent implements OnInit {
       this.profileDelay = this.configSvc.profileTimelyNudges.profileDelayInSec
     }
     this.showrepublicBanner = false
-    this.getTimelyNudge()
-    const pDelayTime = this.profileDelay * 1000
-    setTimeout(() => {
-      // this.getTimelyNudge()
-      this.showrepublicBanner = true
-    }, pDelayTime)
-    const timeInterval = this.configSvc.profileTimelyNudges.nudgeDelayInSec
-    setTimeout(() => {
-      this.showrepublicBanner = false
-    }, ((1000 * timeInterval) + pDelayTime))
+    // page config (home.json -> profileCard.republicBanner.enabled) controls
+    // the timely nudge banner; a missing entry keeps it enabled (existing behavior)
+    if (this.profileData?.republicBanner?.enabled) {
+      this.getTimelyNudge()
+      const pDelayTime = this.profileDelay * 1000
+      setTimeout(() => {
+        // this.getTimelyNudge()
+        this.showrepublicBanner = true
+      }, pDelayTime)
+      const timeInterval = this.configSvc.profileTimelyNudges.nudgeDelayInSec
+      setTimeout(() => {
+        this.showrepublicBanner = false
+      }, ((1000 * timeInterval) + pDelayTime))
+    }
 
     if (this.profileData?.leaderboardRank?.enabled) {
       this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {

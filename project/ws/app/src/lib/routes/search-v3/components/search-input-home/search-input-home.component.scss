@@ -200,6 +200,25 @@
   color: $primaryDark600;
 }
 
+.recent-search-skeleton {
+  padding: 8px 16px 12px;
+
+  .recent-search-title {
+    display: block;
+    margin-bottom: 12px;
+  }
+}
+
+.no-recent-search {
+  padding: 8px 16px 12px;
+
+  .no-recent-search-text {
+    color: $textGreyShade3;
+    margin: 12px 0 4px;
+    text-align: center;
+  }
+}
+
 .recent-search-text {
   color: $textRecentSearch;
 }

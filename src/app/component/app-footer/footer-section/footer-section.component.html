@@ -4,12 +4,13 @@
             class=" margin-top-xl">
     </div>
 
-    <div class="top_footer_inner flex flex-row justify-between nav-footer">
+    <div class="top_footer_inner flex flex-row  nav-footer"
+        [ngClass]="headerFooterConfigData?.footerContainerClassName || 'justify-between'">
         <ng-container *ngFor="let item of footerSectionConfig">
             <ng-container *ngIf="item?.active">
                 <!-- //NOSONAR -->
                 <div *ngIf="item?.slug === 'hub'" class="flex flex-col justify-start nav-footer-item nav"
-                    (click)="onClick($event)">
+                    [ngClass]="item?.className || ''" (click)="onClick($event)">
                     <h4 class="footer_heading mat-subheading-1 margin-bottom-m">
                         {{ translateLabels(item?.sectionHeading, 'footer') }} </h4>
                     <ul>
@@ -23,7 +24,8 @@
                 </div>
                 <!-- //NOSONAR -->
                 <div *ngIf="item?.slug === 'link' && environment.portals.length > 0"
-                    class="flex flex-col justify-start nav-footer-item nav" (click)="onClick($event)">
+                    class="flex flex-col justify-start nav-footer-item nav" [ngClass]="item?.className || ''"
+                    (click)="onClick($event)">
                     <h4 class="footer_heading mat-subheading-1 margin-bottom-m">
                         {{
                         translateLabels(item?.sectionHeading, 'footer') }} </h4>
@@ -40,7 +42,7 @@
                 </div>
                 <!-- //NOSONAR -->
                 <div *ngIf="item?.slug === 'support'" class="flex flex-col justify-start nav-footer-item nav"
-                    (click)="onClick($event)">
+                    [ngClass]="item?.className || ''" (click)="onClick($event)">
                     <h4 class="footer_heading mat-subheading-1 margin-bottom-m">
                         {{
                         translateLabels(item?.sectionHeading, 'footer') }} </h4>
@@ -57,7 +59,7 @@
                 </div>
                 <!-- //NOSONAR -->
                 <div *ngIf="item?.slug === 'about'" class="flex flex-col justify-start nav-footer-item nav"
-                    (click)="onClick($event)">
+                    [ngClass]="item?.className || ''" (click)="onClick($event)">
                     <h4 class="footer_heading mat-subheading-1 margin-bottom-m">
                         {{
                         translateLabels(item?.sectionHeading, 'footer') }} </h4>
