@@ -43,8 +43,8 @@ export class HomeV2ResolverService {
     return forkJoin([response$, homeConfig, sectionRecordsCount]).pipe(
       map(([responseRes, homeConfigRes, sectionRecordsCountRes]) => {
         const configDetails = responseRes && responseRes.result && responseRes.result.data && responseRes.result.data.homeV2 ? responseRes.result.data.homeV2 : homeConfigRes ? homeConfigRes : []
-        if (configDetails && configDetails.homeSections && sectionRecordsCountRes && sectionRecordsCountRes.result) {
-          const pillsSection = configDetails.homeSections.find((section: any) => section.sectionKey === 'aparCourses')
+        if (configDetails && configDetails.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
+          const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
           if (pillsSection && Array.isArray(pillsSection.pills)) {
             let visablePillsCount = 0
             pillsSection.pills.forEach((pill: any) => {
