@@ -32,7 +32,6 @@ export class AllCompetenciesComponent implements OnInit, OnDestroy, OnChanges {
   } | undefined
   // searchCompArea = new FormControl('')
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school' },
     { title: 'All Competencies', url: 'none', icon: '' },
   ]
 

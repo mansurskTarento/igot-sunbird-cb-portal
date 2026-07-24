@@ -23,7 +23,6 @@ export class ProviderDetailsComponent implements OnInit, OnDestroy {
   provider = ''
   orgId = ''
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     { title: `All Providers`, url: `/app/learn/browse-by/provider/all-providers`, icon: '', disableTranslate: false },
     // { title: `${this.provider}`, url: `none`, icon: '' },
   ]

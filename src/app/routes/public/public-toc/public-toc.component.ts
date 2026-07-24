@@ -262,8 +262,7 @@ export class PublicTocComponent implements OnInit, OnDestroy, AfterViewChecked, 
     handleBreadcrumbs() {
         this.breadcrumbs = {
             url: 'home', titles:
-                [{ title: 'Learn', url: '/page/learn', icon: 'school' },
-                { title: 'Details', url: 'none' }],
+                [{ title: 'Details', url: 'none' }],
         }
 
     }
