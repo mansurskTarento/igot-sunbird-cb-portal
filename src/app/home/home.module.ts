@@ -22,6 +22,7 @@ import { SharedModule } from '../shared/shared.module'
 import { FeedListModule } from './home/feed-list/feed-list.module'
 
 import { HomeComponent } from './home/home.component'
+import { HomeV2Component } from './home-v2/home-v2.component'
 import { DiscussionInfoComponent } from '../component/discussion-info/discussion-info.component'
 import { PageContainerComponent } from '../component/page-container/page-container.component'
 import { ClientSliderComponent } from '../component/client-slider/client-slider.component'
@@ -31,21 +32,25 @@ import { NetworkHubComponent } from './home/network-hub/network-hub.component'
 import { NotificationComponent } from './home/notification/notification.component'
 import { SurveyFormComponent } from '../component/app-survey/survey-form/survey-form.component'
 
-import { HomePageService } from '../services/home-page.service'
 import { PendingRequestModule } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { HttpLoaderFactory } from '../app.module'
 import { HttpClient } from '@angular/common/http'
-import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule } from '@sunbird-cb/consumption'
+import { ContentStripWithTabsLibModule, ContentStripWithTabsPillsModule, ContetnSectionsComponent } from '@sunbird-cb/consumption'
 import { SurveyFormModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
-
-
+import { SbUicCarouselBannerV2Component, CardsModule, CardCourseV2Component } from '@sunbird-cb/consumption'
+import { ContinueLearningV2Module } from './home-v2/continue-learning-v2/continue-learning-v2.module'
+import { WelcomeGreetingV2Component } from './home-v2/welcome-greeting-v2/welcome-greeting-v2.component'
+import { KarmaLeaderboardV2Module } from './home-v2/karma-leaderboard-v2/karma-leaderboard-v2.module'
+import { InSpotlightV2Module } from './home-v2/in-spotlight-v2/in-spotlight-v2.module'
+import { HomeCarouselBannerV2Component } from './home-v2/home-carousel-banner-v2/home-carousel-banner-v2.component'
 @NgModule({
     declarations: [
         HomeComponent,
+        HomeV2Component,
         PageContainerComponent, DiscussionInfoComponent, ClientSliderComponent,
         HomeContainerComponent,
         NetworkHubComponent, NotificationComponent, SurveyFormComponent,
@@ -86,6 +91,15 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         FeedListModule,
         InSightSideBarModule,
         HomeOtherPortalModule,
+        ContetnSectionsComponent,
+        SbUicCarouselBannerV2Component,
+        HomeCarouselBannerV2Component,
+        ContinueLearningV2Module,
+        WelcomeGreetingV2Component,
+        CardsModule,
+        CardCourseV2Component,
+        KarmaLeaderboardV2Module,
+        InSpotlightV2Module,
     ],
     exports: [
         HeaderModule,
@@ -97,7 +111,6 @@ import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-si
         HomeOtherPortalModule,
     ],
     providers: [
-        HomePageService,
         SignupService,
     ],
 })

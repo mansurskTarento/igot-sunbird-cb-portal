@@ -413,7 +413,6 @@ export class InitService {
           enrolledCourseCount,
           userCourseEnrolmentInfo,
         }
-        console.log('userData', userData)
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
 
@@ -479,6 +478,7 @@ export class InitService {
     if (!localStorage.getItem('firsLogin')) {
       this.http.get<any>(firstLoginUrl).pipe(map((res: any) => {
         if (res && res.result) {
+          this.configSvc.isNewUser = !res.result.last_login
           localStorage.setItem('firsLogin', 'true')
         }
       })).toPromise()
@@ -547,6 +547,7 @@ export class InitService {
             desiredTopics: _.get(profileV2, 'desiredTopics') || [],
             userRoles: _.get(profileV2, 'userRoles') || [],
             webPortalLang: _.get(profileV2, 'additionalProperties.webPortalLang') || '',
+            profileUpdateCompletion: _.get(userPidProfile, 'profileUpdateCompletion') || 0,
           }
           if (!this.configSvc.nodebbUserProfile) {
             this.configSvc.nodebbUserProfile = {
@@ -669,6 +670,7 @@ export class InitService {
             desiredTopics: _.get(profileV2, 'desiredTopics') || [],
             userRoles: _.get(profileV2, 'userRoles') || [],
             webPortalLang: _.get(profileV2, 'additionalProperties.webPortalLang') || '',
+            profileCompletionPercentage: _.get(profileV2, 'profileCompletionPercentage') || 0,
           }
 
           if (!this.configSvc.nodebbUserProfile) {

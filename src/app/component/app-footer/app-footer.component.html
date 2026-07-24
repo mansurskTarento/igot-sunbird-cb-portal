@@ -1,8 +1,9 @@
 <ng-container *ngIf="showFooter">
-  <ws-footer-section *ngIf="showLinks" [environment]="environment" [hubsList]="hubsList"
+  <ws-footer-section *ngIf="showLinks && !hideFooterSection()" [environment]="environment" [hubsList]="hubsList"
     [headerFooterConfigData]="headerFooterConfigData"></ws-footer-section>
 
-  <div *ngIf="showCopyright" class="mat-toolbar mat-ws-mat-primary-text footer-container">
+  <div *ngIf="showCopyright" class="mat-toolbar ws-mat-primary-text"
+    [ngClass]="isHomePage ? 'footer-container-home' : 'footer-container'">
     <div class="mat-body text-center flex-1">
       <ng-container>
         <div class="copyright-content">

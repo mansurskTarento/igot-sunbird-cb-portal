@@ -5,8 +5,29 @@
   justify-content: space-between;
   background-color: #ffffff !important;
 
+  .copyright-content {
+    display: inline-block;
+    margin: 26px 0 16px 0;
+  }
+
   @include breakpoint-xs {
     flex-direction: column;
+  }
+}
+
+.footer-container-home {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 55px;
+  background-color: var(--surface-primary) !important;
+  border-top: 1px solid var(--environment-border-and-divider-default-1);
+
+  .copyright {
+    color: var(--text-bandw-black-display);
+    /* stylelint-disable */
+    font: 400 16px Noto Sans;
+    /* stylelint-enable */
   }
 }
 
@@ -30,10 +51,6 @@
   }
 }
 
-.copyright-content {
-  display: inline-block;
-  margin: 26px 0 16px 0;
-}
 
 .copyright-logo {
   display: inline-block;

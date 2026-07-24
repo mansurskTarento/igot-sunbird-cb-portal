@@ -1509,7 +1509,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         (responses.completed as any)?.result?.courses || []
 
       this.enrollmentDetails = [...inProgressCourses, ...completedCourses]
-      console.log('Enrollment Details:', this.enrollmentDetails)
       this.cbpPlanList = responses.cbpPlan || []
       this.unenrolledCourses = (responses.unenrolled as any)?.result?.courses || []
     })

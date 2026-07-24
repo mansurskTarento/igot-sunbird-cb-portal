@@ -2,8 +2,8 @@
 <viewer-overview *ngIf="viewState === 'initial'" [learningObjective]="learningObjective"
   [complexityLevel]="complexityLevel" [duration]="duration" [timeLimit]="getTimeLimit"
   [primaryCategory]="primaryCategory" [canAttempt]="canAttempt" [noOfQuestions]="noOfQuestions"
-  (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory" [courseCategory]="courseCategory"
-  [instructionAssessment]="instructionAssessment" [quizData]="quizData"
+  (userSelection)="getSections($event)" [coursePrimaryCategory]="coursePrimaryCategory"
+  [courseCategory]="courseCategory" [instructionAssessment]="instructionAssessment" [quizData]="quizData"
   [selectedAssessmentCompatibilityLevel]="selectedAssessmentCompatibilityLevel" [forPreview]="forPreview">
 </viewer-overview>
 
@@ -21,7 +21,7 @@
   <!-- Desktop Not Standalone Assessment -->
   <div #quizContainer class="quiz-container"
     *ngIf="viewState !== 'initial' && !isMobile && fetchingQuestionsStatus === 'done'">
-    <div class="flex flex-row margin-m"
+    <div class="flex flex-row justify-between margin-m"
       *ngIf="fetchingQuestionsStatus === 'done' && viewState !== 'detail' && !(viewState === 'answer') && !isSubmitted">
       <div class="left-container">
         <div class="flex flex-row justify-between align-center assessment-header">
@@ -760,7 +760,7 @@
     </div>
   </div>
   <!-- Desktop Skeleton UI -->
-  <div class="flex flex-row quiz-container" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial'
+  <div class="flex flex-row  justify-between quiz-container" *ngIf="!isMobile && fetchingQuestionsStatus !== 'done' && viewState !== 'initial'
   && !(viewState === 'answer') && !isSubmitted">
     <div class="left-container">
       <div class="flex flex-row margin-m justify-between">

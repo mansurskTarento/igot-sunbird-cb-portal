@@ -1,5 +1,5 @@
-<div class="banner-container {{widgetData[currentIndex]?.bannerMetaClass}}" (swipeleft)="slideTo(currentIndex + 1)" (swiperight)="slideTo(currentIndex - 1)"
-  *ngIf="widgetData?.length > 1">
+<div class="banner-container {{widgetData[currentIndex]?.bannerMetaClass}}" (swipeleft)="slideTo(currentIndex + 1)"
+  (swiperight)="slideTo(currentIndex - 1)" *ngIf="widgetData?.length > 1">
   <a (click)="raiseTelemetry(widgetData[currentIndex].redirectUrl)"
     [routerLink]=" !isOpenInNewTab ? widgetData[currentIndex].redirectUrl : './'" class="banner-overlay"
     [ngClass]="{'cursor-auto': !widgetData[currentIndex].redirectUrl}">
@@ -23,7 +23,8 @@
   </div>
 </div>
 <div class="banner-container-solo margin-top-s" *ngIf="widgetData?.length == 1">
-  <img i18n-alt alt="Page Banner" width="100%" height="100%" [src]="widgetData[0].banners" wsUtilsImageResponsive class="banner-image-solo" />
+  <img i18n-alt alt="Page Banner" width="100%" height="100%" [src]="widgetData[0].banners" wsUtilsImageResponsive
+    class="banner-image-solo" />
 </div>
 <!-- <div class="banner-container" (swipeleft)="slideTo(currentIndex + 1)" (swiperight)="slideTo(currentIndex - 1)"
   *ngIf="widgetData?.length">

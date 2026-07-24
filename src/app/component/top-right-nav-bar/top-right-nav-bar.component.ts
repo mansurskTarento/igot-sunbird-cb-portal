@@ -17,28 +17,6 @@ import { SurveyPopupComponent } from '@ws/app'
 import { VerificationRequestDialogComponent } from '@ws/app'
 import { RootService } from '../root/root.service'
 import { NotificationsService } from '../../services/notifications.service'
-// const rightNavConfig = [
-//   {
-//     id: 1,
-//     section: 'download',
-//     active: true,
-//   },
-//   {
-//     id: 2,
-//     section: 'font-setting',
-//     active: true,
-//   },
-//   {
-//     id: 3,
-//     section: 'help',
-//     active: true,
-//   },
-//   {
-//     id: 4,
-//     section: 'profile',
-//     active: true,
-//   },
-// ]
 
 @Component({
   selector: 'ws-top-right-nav-bar',
@@ -61,15 +39,15 @@ export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
   enableSupportAI = false
   private subscriptions = new Subscription()
   constructor(public dialog: MatDialog, public homePageService: HomePageService,
-              private configSvc: ConfigurationsService,
-              private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
-              private zohoSupportSvc: ZohoSupportService,
-              private events: EventService, private snackBar: MatSnackBar,
-              private router: Router, private notificationsService: NotificationsService,
-              private rootService: RootService,
-              private matDialog: MatDialogNew,
-              private libNotificationsService: LibNotificationsService,
-              public domainConfSvc: DomainConfService) {
+    private configSvc: ConfigurationsService,
+    private langtranslations: MultilingualTranslationsService, private translate: TranslateService,
+    private zohoSupportSvc: ZohoSupportService,
+    private events: EventService, private snackBar: MatSnackBar,
+    private router: Router, private notificationsService: NotificationsService,
+    private rootService: RootService,
+    private matDialog: MatDialogNew,
+    private libNotificationsService: LibNotificationsService,
+    public domainConfSvc: DomainConfService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       let lang = JSON.stringify(localStorage.getItem('websiteLanguage'))
@@ -117,11 +95,7 @@ export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     this.subscriptions.unsubscribe()
   }
-  // ngOnChanges() {}
-  // openDialog(): void {
-  //   this.dialogRef = this.dialog.open(DialogBoxComponent, {
-  //     width: '1000px',
-  //   })
+
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
   }
@@ -144,9 +118,6 @@ export class TopRightNavBarComponent implements OnInit, OnChanges, OnDestroy {
 
   onMenuClosed() {
     this.showDropdown = false
-    // setTimeout(() => {
-    //   this.showDropdown = false
-    // }, 3000)
   }
 
   selectLanguage(event: any) {

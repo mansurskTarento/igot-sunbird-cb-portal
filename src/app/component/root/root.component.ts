@@ -4,9 +4,11 @@ import {
   ApplicationRef,
   ChangeDetectorRef,
   Component,
+  effect,
   ElementRef,
   HostListener,
   OnInit,
+  signal,
   // TemplateRef,
   ViewChild,
   ViewContainerRef,
@@ -20,6 +22,7 @@ import {
   ActivatedRoute,
   ActivatedRouteSnapshot,
 } from '@angular/router'
+import { BreakpointObserver } from '@angular/cdk/layout'
 // import { interval, concat, timer } from 'rxjs'
 import { BtnPageBackService } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
@@ -48,12 +51,39 @@ import { concat, interval, timer, of } from 'rxjs'
 // import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
 import { UrlService } from '../../shared/url.service'
+import { LibNotificationsService } from '@sunbird-cb/notification'
+import { HomePageService } from '../../services/home-page.service'
+import { trigger, style, animate, transition } from '@angular/animations'
+import { DialogBoxComponent } from '../dialog-box/dialog-box.component'
+import * as _ from 'lodash'
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
   styleUrls: ['./root.component.scss'],
   providers: [SwUpdate],
-  standalone: false
+  standalone: false,
+  animations: [
+    trigger('slidePanel', [
+      transition(':enter', [
+        style({ left: 'calc(330px - 120px)', opacity: 0 }),
+        animate('280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          style({ left: 'calc(330px + 24px)', opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('220ms cubic-bezier(0.55, 0.06, 0.68, 0.19)',
+          style({ left: 'calc(330px - 120px)', opacity: 0 }))
+      ])
+    ]),
+    trigger('fadeBackdrop', [
+      transition(':enter', [
+        style({ opacity: 0 }),
+        animate('200ms ease', style({ opacity: 1 }))
+      ]),
+      transition(':leave', [
+        animate('200ms ease', style({ opacity: 0 }))
+      ])
+    ])
+  ]
 })
 export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
@@ -61,7 +91,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   disableHeightOnTop = false
   // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
-  isHomePage = false
+  menuBarDetails: any = {}
+  leftNavBarIsOpen = signal(true)
+  showKarmaLeaderboard = signal(false)
+  hideFooterSection = signal(false)
+  isHomePage = signal(false)
+  showFullScreen = signal(false)
+  navBarOpenStatusBasedOnNav = signal(true)
+  openStatusUserSelection = signal(true)
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -84,28 +121,43 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     // private iGOTAIService: iGOTAIService,
     private commonDataSvc: CommonDataService,
     public domainConfSvc: DomainConfService,
+    private libNotificationsService: LibNotificationsService,
+    private homePageSvc: HomePageService,
+    private breakpointObserver: BreakpointObserver
 
-    // private dialogRef: MatDialogRef<any>,
   ) {
+    effect(() => {
+      if (!this.leftNavBarIsOpen()) {
+        this.showKarmaLeaderboard.set(false)
+      }
+    })
 
     if (window.location.pathname.includes('/public/privacy-policy')) {
       this.hideHeaderAndFooter = true
     }
-    if(this.configSvc.headerFooterConfigData ) {
+    if (this.configSvc.headerFooterConfigData) {
       this.headerFooterConfigData = this.configSvc.headerFooterConfigData
       this.showFooter = true
     }
+    if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.leftNavBar) {
+      this.menuBarDetails = this.configSvc.instanceConfig.leftNavBar || undefined
+      if (this.menuBarDetails) {
+        this.openStatusUserSelection.set(this.menuBarDetails.defaultOpen)
+        this.setAchivements()
+        this.setOtherPortals()
+        this.setNavOpenStatus()
+      }
+    } else {
+      this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
+        this.menuBarDetails = sectionData?.data || undefined
+        if (this.menuBarDetails) {
+          this.setAchivements()
+          this.setOtherPortals()
+          this.setNavOpenStatus()
+        }
+      })
+    }
 
-    // this.getHeaderFooterConfiguration().subscribe((_sectionData: any) => {
-      // console.log('headerFooterConfigData',sectionData)
-      // if (sectionData && sectionData.data) {
-      //   debugger
-      //   this.headerFooterConfigData = sectionData.data
-      //   this.showFooter = true
-      //   // Manually trigger change detection to ensure footer updates
-      //   this.changeDetector.detectChanges()
-      // }
-    // })
     if (window.location.pathname.includes('/public/home')
       || window.location.pathname.includes('/public/toc/')
       || window.location.pathname.includes('/viewer/')
@@ -120,16 +172,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     this.mobileAppsSvc.init()
     this.openIntro()
-    // if (this.authSvc.token) {
-    //   // console.log("CALLED AFTER LOGIN")
-    //   this.loginToken = this.authSvc.token
-    // } else {
-    //   // console.log("ALREADY LOGGED IN")
-    //   const lastSaved = localStorage.getItem('kc')
-    //   if (lastSaved) {
-    //       this.loginToken = JSON.parse(lastSaved).token
-    //   }
-    // }
     const locationOrigin = location.origin
 
     CsModule.instance.init({
@@ -198,6 +240,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this.customHeight
   }
 
+  get showMenuBardetails(): boolean {
+    return this.menuBarDetails && this.currentUrl &&
+      !this.currentUrl.includes('public') &&
+      !this.currentUrl.includes('viewer')
+  }
+
+  get showHeader(): boolean {
+    return this.navBarRequired &&
+      !this.hideHeaderAndFooter &&
+      this.domainConfSvc.isConfigEnabled('components.header', 'enabled')
+  }
+
   @ViewChild('previewContainer', { read: ViewContainerRef, static: true })
   // @ViewChild('userIntro', { static: true }) userIntro!: TemplateRef<any>
   previewContainerViewRef: ViewContainerRef | null = null
@@ -209,6 +263,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('skipper') skipper!: ElementRef
 
   isXSmall$ = this.valueSvc.isXSmall$
+  // Matches the tablet overlay-drawer range used by sb-uic-dynamic-sidebar (768px - 1199.98px)
+  isTabView$ = this.breakpointObserver
+    .observe(['(min-width: 768px) and (max-width: 1199.98px)'])
+    .pipe(map(state => state.matches))
   routeChangeInProgress = false
   showNavbar = true
   showFooter = false
@@ -233,6 +291,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   prevUrl = ''
   currUrl = ''
+  detailsChanged = signal(false)
+  otherDetailsChanged = signal(false)
   @HostListener('window:unload', ['$event'])
   unloadHandler(event: any) {
     if (event && event.type === 'unload') {
@@ -275,12 +335,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.mobileTopHeaderVisibilityStatus = status
     })
     this.configSvc.updateTourGuideMethod(this.showTour)
-    this.route.queryParams
-      .subscribe(_params => {
-        // tslint:disable-next-line
-        // console.log(params) // { orderby: "price" }
-      }
-      )
+    // this.route.queryParams
+    //   .subscribe(_params => {
+    //   }
+    //   )
     if (window.location.pathname.includes('/public/home')) {
       this.customHeight = true
     }
@@ -310,14 +368,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
       this.urlService.setPreviousUrl(this.prevUrl)
       if (this.currUrl === '/page/home') {
-        this.isHomePage = true
+        this.isHomePage.set(true)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
         // this.commonDataSvc.fetchMandatoryNotification()
       } else {
-        this.isHomePage = false
+        this.isHomePage.set(false)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
       }
+      this.setNavOpenStatus()
       if (event && event.url) {
         if (event.url.includes('/app/network-v2') && window.innerWidth <= 768) {
           this.showNavbar = false
@@ -335,8 +394,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         }
       }
       if (window.location.pathname.includes('/page/home')) {
+        this.hideFooterSection.set(true)
         this.changeBg26Jan()
       } else {
+        this.hideFooterSection.set(false)
         this.removeBg26Jan()
       }
 
@@ -385,6 +446,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
         } else {
           this.customHeight = false
+        }
+        if (
+          this.currentUrl.startsWith('/app/toc') ||
+          this.currentUrl.startsWith('/viewer/')
+        ) {
+          this.showFullScreen.set(true)
+        } else {
+          this.showFullScreen.set(false)
         }
 
         if (
@@ -438,17 +507,12 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         }
         const objectType = this.route.snapshot.queryParams.primaryCategory || ''
         this.raiseAppStartTelemetry()
-        // console.log('data: ', data)
         if (data.pageContext.pageId && data.pageContext.module) {
           this.telemetrySvc.impression(data, objectType)
         } else {
           this.telemetrySvc.impression()
         }
         this.currentRouteData = []
-        // if (this.appStartRaised) {
-        //   this.telemetrySvc.audit(WsEvents.WsAuditTypes.Created, 'Login', {})
-        //   this.appStartRaised = false
-        // }
         this.activeMenu = localStorage.getItem('activeMenu')
         this.openIntro()
 
@@ -485,6 +549,147 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.disableHeightOnTop = false
     }
 
+  }
+
+
+  setAchivements() {
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
+    achievements.sectionLoading = true
+    this.sendDetailsChangedEvent(achievements)
+    if (achievements) {
+      try {
+        const raw = localStorage.getItem('userEnrollmentCount')
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          const learningHours = _.get(parsed, 'userCourseEnrolmentInfo.timeSpentOnCompletedCourses', 0)
+          const badges = _.get(parsed, 'userCourseEnrolmentInfo.badgeCount', 0)
+          const itemsList = achievements.items.filter((item: any) => item.enabled !== false)
+          if (itemsList && itemsList.length > 0) {
+            itemsList.forEach((item: any) => {
+              switch (item.code) {
+                case 'rank':
+                  break
+                case 'learning_hours':
+                  item.value = this.convertToHoursAndMinutes(learningHours)
+                  break
+                case 'badges':
+                  item.value = `${badges} Badges`
+                  break
+                case 'karma_points':
+                  const karmaPoints = _.get(parsed, 'userCourseEnrolmentInfo.karmaPoints', 0)
+                  item.value = `${karmaPoints} Karma Points`
+              }
+            })
+          }
+          achievements.items = itemsList
+        }
+        const currentUserId = this.configSvc?.unMappedUser?.id
+        const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
+        if (currentUserId && rankItem) {
+          this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+            const results = res?.result?.result
+            if (Array.isArray(results) && results.length) {
+              const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+              const rank = currentUserRank?.rank
+
+              if (rank != null) {
+                rankItem.value = `${this.toOrdinal(rank)} Rank`
+              } else {
+                rankItem.value = 'o Rank'
+              }
+            } else {
+              rankItem.value = 'o Rank'
+            }
+            achievements.sectionLoading = false
+            this.sendDetailsChangedEvent(achievements)
+          }, (_error: any) => {
+            achievements.sectionLoading = false
+            this.sendDetailsChangedEvent(achievements)
+          }
+          )
+        } else {
+          achievements.sectionLoading = false
+          this.sendDetailsChangedEvent(achievements)
+        }
+      } catch (_e) { /* ignore */ }
+    }
+  }
+
+  setOtherPortals() {
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    const quickActionSection = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'quick_actions' && section.enabled !== false)
+    if (quickActionSection && quickActionSection?.items && quickActionSection.items.length > 0) {
+      const otherPortalsSection = quickActionSection?.items?.filter((item: any) => item.code === 'other_portals' && item.enabled !== false)
+      if (otherPortalsSection && otherPortalsSection.length > 0) {
+        const otherPortalChildren = otherPortalsSection?.[0]?.children || []
+        const otherPortalsFilteredChildren: any[] = []
+        if (otherPortalChildren && otherPortalChildren.length > 0) {
+          // normalize user roles once to lowercase set for O(1) lookup
+          const userRolesSet = new Set(Array.from(this.configSvc.userRoles || []).map((r: any) => (r || '').toString().toLowerCase()))
+          otherPortalChildren.forEach((child: any) => {
+            if (child.enabled === false) { return }
+
+            // normalize child roles to array of strings
+            let childRoles: string[] = []
+            if (Array.isArray(child.rolesCanAccess)) {
+              childRoles = child.rolesCanAccess
+            } else if (typeof child.rolesCanAccess === 'string') {
+              childRoles = child.rolesCanAccess.split(',').map((s: string) => s.trim()).filter(Boolean)
+            }
+
+            // check if any child role exists in user's roles (short-circuits on first match)
+            const hasAccess = childRoles.some((cr: string) => userRolesSet.has((cr || '').toLowerCase()))
+            if (hasAccess) {
+              otherPortalsFilteredChildren.push(child)
+            }
+          })
+          otherPortalsSection[0].children = otherPortalsFilteredChildren
+          this.sendOtherDetailsChangedEvent(quickActionSection)
+        }
+      }
+    }
+
+  }
+
+  setNavOpenStatus() {
+    if (this.isHomePage()) {
+      this.navBarOpenStatusBasedOnNav.set(this.openStatusUserSelection())
+      this.leftNavBarIsOpen.set(this.openStatusUserSelection())
+    } else {
+      this.navBarOpenStatusBasedOnNav.set(false)
+      this.leftNavBarIsOpen.set(false)
+    }
+  }
+
+  sendDetailsChangedEvent(newAchievements: any) {
+    const existingDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    existingDetails?.navSections?.forEach((section: any, index: number) => {
+      if (section.sectionKey === 'my_achievements') {
+        existingDetails.navSections[index] = newAchievements
+      }
+    })
+    this.menuBarDetails = JSON.parse(JSON.stringify(existingDetails))
+    this.detailsChanged.set(!this.detailsChanged())
+  }
+
+  sendOtherDetailsChangedEvent(quickActionSection: any) {
+    const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
+    menuBarDetails?.navSections?.forEach((section: any, index: number) => {
+      if (section.sectionKey === 'quick_actions') {
+        menuBarDetails.navSections[index] = quickActionSection
+      }
+    })
+    this.menuBarDetails = JSON.parse(JSON.stringify(menuBarDetails))
+    this.otherDetailsChanged.set(!this.otherDetailsChanged())
+  }
+
+
+  convertToHoursAndMinutes(seconds: number): string {
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+
+    return `${hours}h ${minutes}m`
   }
 
   // private async iGOTAIConfig(): Promise<NsInstanceConfig.IConfig> {
@@ -563,7 +768,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   getChildRouteData(snapshot: ActivatedRouteSnapshot, firstChild: ActivatedRouteSnapshot | null) {
     if (firstChild) {
       if (firstChild.data) {
-        // console.log('firstChild.data', firstChild.data)
         this.currentRouteData.push(firstChild.data)
       }
       if (firstChild.firstChild) {
@@ -632,6 +836,14 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     )
   }
 
+  getLeftNavBarConfiguration() {
+    const baseUrl = this.configSvc.sitePath
+    return this.http.get(`${baseUrl}/page/left-nav.json`).pipe(
+      map(data => ({ data, error: null })),
+      catchError(err => of({ data: null, error: err })),
+    )
+  }
+
   ngAfterViewChecked() {
     const show = this.getTourGuide()
     if (show !== this.showTour) { // check if it change, tell CD update view
@@ -639,4 +851,88 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     this.changeDetector.detectChanges()
   }
+
+  sidebarStateChanged(event: any) {
+    if (event) {
+      this.openStatusUserSelection.set(event.isOpen)
+      this.leftNavBarIsOpen.set(event.isOpen)
+      this.showKarmaLeaderboard.set(false)
+    }
+  }
+
+  onNavItemClicked(event: any) {
+    this.raiseTelemetryExploreContent(event.code, event.subType)
+    switch (event.code) {
+      case 'explore':
+        this.exploreContent()
+        this.menuBarDetails.activeItemCode = event.code
+        break
+      case 'view_all_achievements':
+        this.viewAllAchievements()
+        break
+      case 'download-app':
+        this.openAppDownloadDialog()
+        break
+      default:
+        this.menuBarDetails.activeItemCode = event.code
+    }
+  }
+
+  viewAllAchievements() {
+    this.showKarmaLeaderboard.set(true)
+  }
+
+  exploreContent() {
+    this.libNotificationsService.updateUnreadCount()
+    this.raiseTelemetryExploreContent('explore_content')
+    const queryParams = {
+      q: '',
+      search: null,
+      category: 'courses',
+      p: null,
+      f: null,
+      tab: 'explore-content',
+      filtersPanel: 'show',
+    }
+    const navigationExtras = {
+      queryParams,
+      queryParamsHandling: 'merge' as 'merge',
+    }
+    this.router.navigate(['/app/globalsearch'], navigationExtras)
+  }
+
+  raiseTelemetryExploreContent(id: string, subType: string = '') {
+    const eData: any = {
+      type: WsEvents.EnumInteractTypes.CLICK,
+      id: id,
+    }
+    if (subType) {
+      const telemetrySubTypeKey = subType as keyof typeof WsEvents.EnumTelemetrySubType
+      if (WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]) {
+        eData.subType = WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]
+      }
+    }
+    this.eventSvc.raiseInteractTelemetry(
+      eData,
+      {},
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
+    )
+  }
+
+  openAppDownloadDialog() {
+    const dialogRef = this.dialog.open(DialogBoxComponent, {
+      width: '1000px',
+      panelClass: 'download-app-popup-new'
+    })
+    dialogRef.afterClosed().subscribe(() => { })
+  }
+
+  private toOrdinal(n: number): string {
+    const s = ['th', 'st', 'nd', 'rd']
+    const v = n % 100
+    return n + (s[(v - 20) % 10] || s[v] || s[0])
+  }
+
 }

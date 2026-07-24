@@ -17,7 +17,8 @@
             <ng-container *ngIf="jan26Change && jan26Change.isEnabled">
                 <div class="mob-logo items-center justify-center">
                     <img [src]="jan26Change?.mWeb?.logoUrl" alt="Application Logo" class="app-logo" />
-                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text" [innerHTML]="jan26Change?.mWeb?.logoText"></span>
+                    <span class="mat-subheading-2 ws-mat-default-text margin-left-xs logo-text"
+                        [innerHTML]="jan26Change?.mWeb?.logoText"></span>
                 </div>
             </ng-container>
             <ws-in-sight-side-bar (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)"></ws-in-sight-side-bar>
@@ -33,17 +34,26 @@
                         <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                             <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
                                 <ws-feed-list [widgetData]="sectionItem.stripData"
-                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                    (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                                 </ws-feed-list>
                             </ng-container>
                         </div>
                         <div class="slider {{homePageData?.sliderData?.className}}"
                             *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
-                            <ws-widget-sliders *ngIf="sectionItem.isVisible" [widgetData]="sliderData"></ws-widget-sliders>
+                            <ws-widget-sliders *ngIf="sectionItem.isVisible"
+                                [widgetData]="sliderData"></ws-widget-sliders>
                         </div>
                     </ng-container>
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
+                                <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                            </ng-container>
+                        </ng-container>
+                    </div>
 
-                  
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -69,7 +79,12 @@
                         </div>
                     </ng-container>
 
-                  
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                        <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                    </div>
+
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -94,17 +109,27 @@
                         <div [ngClass]="sectionItem.section" *ngIf="sectionItem.section.startsWith('section_')">
                             <ng-container *ngIf="sectionItem.isVisible && sectionItem.isActive">
                                 <ws-feed-list [widgetData]="sectionItem.stripData"
-                                             (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
+                                    (telemetryRaisedLibrary)="raiseTelemetryInteratEvent($event)">
                                 </ws-feed-list>
                             </ng-container>
                         </div>
                         <div class="slider"
                             *ngIf="sectionItem.section === 'slider' && sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
-                            <ws-widget-sliders *ngIf="sectionItem.isVisible" [widgetData]="sliderData"></ws-widget-sliders>
+                            <ws-widget-sliders *ngIf="sectionItem.isVisible"
+                                [widgetData]="sliderData"></ws-widget-sliders>
                         </div>
                     </ng-container>
 
-                    
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                        <ng-container *ngFor="let sectionItem of sectionList">
+                            <ng-container *ngIf="sectionItem.section === 'slider' && sectionItem.isVisible">
+                                <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+
                     <!-- Discussion section ends here -->
 
                     <!-- Go to Network hub starts here -->
@@ -129,6 +154,11 @@
                             <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
                         </div>
                     </ng-container>
+
+                    <div class="slider"
+                        *ngIf="sliderData && sliderData[0]?.active && homePageData?.sliderData?.enabled">
+                        <ws-widget-sliders [widgetData]="sliderData"></ws-widget-sliders>
+                    </div>
 
                     <!-- Go to Network hub starts here -->
                     <div class="network" *ngIf="homeConfig?.networkHub?.active">
@@ -192,7 +222,8 @@
             'home.updateNow' | translate }}</button>
     </div>
 </div>
-<div class="footer footer-update-mobile-number" *ngIf="canShowCustomAttrOpen && isDialogEnabled('customAttributeUpdate')">
+<div class="footer footer-update-mobile-number"
+    *ngIf="canShowCustomAttrOpen && isDialogEnabled('customAttributeUpdate')">
     <!-- //NOSONAR -->
     <div class="update-mobile-number-flex">
         <p class="updatetitle">{{ 'home.updateCustomeFiledTitle' | translate }}</p>

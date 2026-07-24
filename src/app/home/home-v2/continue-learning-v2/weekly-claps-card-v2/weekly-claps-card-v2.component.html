@@ -1,0 +1,148 @@
+<!-- ===== LOADING SKELETON ===== -->
+@if (isLoading) {
+<div class="wc-card" aria-hidden="true">
+  <div class="wc-skeleton wc-sk-badge"></div>
+  <div class="wc-skeleton wc-sk-desc"></div>
+  <div class="wc-skeleton wc-sk-desc wc-sk-desc-short"></div>
+  <div class="wc-clap-main">
+    <div class="wc-skeleton wc-sk-clap-circle"></div>
+    <div class="wc-right-section">
+      <div class="wc-skeleton wc-sk-total"></div>
+      <div class="wc-weeks-row">
+        @for (w of [1,2,3,4]; track w) {
+        <div class="wc-week-col">
+          <div class="wc-skeleton wc-sk-label"></div>
+          <div class="wc-skeleton wc-sk-check"></div>
+        </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- ===== DISPLAY ONLY HEADER ===== -->
+@if (!isLoading && weeklyData?.displayOnlyHeader) {
+<div class="wc-card" role="region" aria-label="Weekly Claps">
+  <div class="wc-badge" aria-hidden="true">{{ 'continueLearning.weeklyClaps' | translate }}</div>
+  <div class="wc-clap-main">
+    <div class="wc-clap-badge" aria-hidden="true">
+      <img class="wc-clap-icon"
+        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home-v2/clap_rewamp.svg' : 'assets/icons/home-v2/clap_disable_icon.svg'"
+        alt="">
+    </div>
+    <div class="wc-right-section">
+      <div class="wc-total-row"
+        [attr.aria-label]="(insightsData?.weeklyClaps?.total_claps || 0) + ' ' + (insightsData?.weeklyClaps?.total_claps === 1 ? 'Week' : 'Weeks') + ' of claps'">
+        <span class="wc-total-unit" aria-hidden="true">{{ insightsData?.weeklyClaps?.total_claps || 0 }}</span>
+        <span class="wc-total-unit" aria-hidden="true">{{ insightsData?.weeklyClaps?.total_claps === 1 ?
+          ('continueLearning.week' | translate) :
+          ('continueLearning.weeks' | translate) }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+}
+
+<!-- ===== WEEKLY CLAPS CARD (FULL) ===== -->
+@if (insightsData && !isLoading && weeklyData?.enableCard && !weeklyData?.displayOnlyHeader) {
+<div class="wc-card" role="region" aria-labelledby="wc-section-heading">
+
+  <!-- Header badge -->
+  <div class="wc-badge" id="wc-section-heading">{{ 'continueLearning.weeklyClaps' | translate }}</div>
+
+  <!-- Description -->
+  <p class="wc-desc">
+    {{ 'continueLearning.description' | translate }}
+    <a class="wc-know-more" href="javascript:void(0)" aria-label="Know more about Weekly Claps"
+      (click)="openKnowMore()">{{ 'continueLearning.knowMore' | translate }}</a>
+  </p>
+
+  <!-- Two-column layout: clap icon LEFT, count + grid RIGHT -->
+  <div class="wc-clap-main">
+    <div class="wc-clap-badge" aria-hidden="true">
+      <img class="wc-clap-icon"
+        [src]="insightsData?.weeklyClaps?.total_claps ? 'assets/icons/home-v2/clap_rewamp.svg' : 'assets/icons/home-v2/clap_disable_icon.svg'"
+        alt="">
+    </div>
+    <div class="wc-right-section">
+      <!-- Total weeks -->
+      <div class="wc-total-row"
+        [attr.aria-label]="(insightsData?.weeklyClaps?.total_claps || 0) + ' ' + (insightsData?.weeklyClaps?.total_claps === 1 ? 'Week' : 'Weeks') + ' of claps earned'">
+        <span class="wc-total-unit" aria-hidden="true">{{ insightsData?.weeklyClaps?.total_claps || 0 }}</span>
+        <span class="wc-total-unit" aria-hidden="true">{{ insightsData?.weeklyClaps?.total_claps === 1 ?
+          ('continueLearning.week' | translate) :
+          ('continueLearning.weeks' | translate) }}</span>
+      </div>
+      <!-- W1–W4 grid -->
+      @if (insightsData?.weeklyClaps) {
+      <div class="wc-weeks-row" role="list" aria-label="Weekly activity">
+        @for (week of weeklyData?.weekList ?? []; track week.key) {
+        <div class="wc-week-col" role="listitem">
+          <span class="wc-week-label" [class.wc-week-label--active]="week.activeWeek" aria-hidden="true">{{ week.label
+            }}</span>
+          <img class="wc-week-icon"
+            [src]="week.activeWeek
+                    ? (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home-v2/approved.svg' : 'assets/icons/home-v2/highlight.svg')
+                    : (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'assets/icons/home-v2/approved.svg' : 'assets/icons/home-v2/decline_icon.svg')"
+            width="24" height="24"
+            [attr.alt]="week.label + ': ' + (insightsData.weeklyClaps[week.key]?.timespent > 60 ? 'completed' : (week.activeWeek ? 'current week' : 'not completed'))">
+        </div>
+        }
+      </div>
+      }
+    </div>
+  </div>
+</div>
+}
+
+<!-- ===== KNOW MORE POPUP ===== -->
+@if (showPopup) {
+<div class="wc-popup-backdrop" role="presentation" (click)="closePopup()" (keydown.escape)="closePopup()">
+  <div class="wc-popup" role="dialog" aria-modal="true" aria-labelledby="wc-popup-title"
+    (click)="$event.stopPropagation()">
+    <!-- Close -->
+    <button class="wc-popup-close" aria-label="Close Weekly Claps information" (click)="closePopup()">&#x2715;</button>
+
+    <!-- Header -->
+    <div class="wc-popup-header">
+      <img class="wc-popup-header-img" src="assets/icons/home-v2/clap_icon.svg" width="42" height="42"
+        aria-hidden="true" alt="">
+      <h2 class="wc-popup-title" id="wc-popup-title">{{ 'continueLearning.popupTitle' | translate }}</h2>
+      <p class="wc-popup-intro">
+        {{ 'continueLearning.popupIntro' | translate }}
+      </p>
+    </div>
+
+    <!-- Q1 -->
+    <div class="wc-popup-item">
+      <div class="wc-popup-item-icon wc-popup-item-icon--green" aria-hidden="true">
+        <img src="assets/icons/home-v2/clap_icon.svg" width="28" height="28" alt="">
+      </div>
+      <div class="wc-popup-item-body">
+        <p class="wc-popup-q">{{ 'continueLearning.maintainQ' | translate }}</p>
+        <p class="wc-popup-a">
+          {{ 'continueLearning.maintainA1' | translate }} <strong class="wc-popup-highlight">60 {{
+            'continueLearning.minutes' | translate }}</strong>
+          {{ 'continueLearning.maintainA2' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Q2 -->
+    <div class="wc-popup-item">
+      <div class="wc-popup-item-icon wc-popup-item-icon--red" aria-hidden="true">
+        <img src="assets/icons/home-v2/clap_disable_icon.svg" width="28" height="28" alt="">
+      </div>
+      <div class="wc-popup-item-body">
+        <p class="wc-popup-q">{{ 'continueLearning.loseQ' | translate }}</p>
+        <p class="wc-popup-a">
+          {{ 'continueLearning.loseA1' | translate }} <strong class="wc-popup-highlight">60 {{
+            'continueLearning.minutes' | translate }}</strong>
+          {{ 'continueLearning.loseA2' | translate }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+}

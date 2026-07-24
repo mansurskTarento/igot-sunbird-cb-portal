@@ -1340,7 +1340,7 @@ ngx-guided-tour {
 }
 
 .mat-btn-flat {
-  color: #fff !important;
+  color: var(--text-button-text-primary-white, #fff) !important;
   height: 40px !important;
   display: flex !important;
   padding: 12px 16px !important;
@@ -1348,7 +1348,7 @@ ngx-guided-tour {
   align-items: center;
   border: 1px solid !important;
   border-color: $brandAccentColor !important;
-  background-color: $brandAccentColor !important;
+  background-color: var(--environment-button-primary-filled-primary, $brandAccentColor) !important;
   border-radius: 9999px !important;
   font-weight: 700;
 
@@ -1612,14 +1612,17 @@ ngx-guided-tour {
 
   .mdc-evolution-chip__action {
     border-radius: 20px !important;
-    background-color: #ffffff !important;
-    border: 1px solid #d6d6d6 !important;
+    background-color: var(--surface-primary) !important;
+    border: 1px solid var(--border-strong) !important;
     min-height: 32px;
     padding: 0 12px;
   }
 
   .mdc-evolution-chip__text-label {
-    color: #5f5f5f !important;
+    color: var(--text-bandw-black-display);
+    /* stylelint-disable */
+    font-family: 'Noto Sans';
+    /* stylelint-enable */
   }
 
   &:hover {
@@ -2380,4 +2383,9 @@ ws-widget-btn-page-back-nav .mat-mdc-icon-button {
     top: 0 !important;
     right: 0 !important;
   }
+}
+
+// Default UserWay floating icon is replaced by the accessibility button in the header
+#userwayAccessibilityIcon {
+  display: none !important;
 }

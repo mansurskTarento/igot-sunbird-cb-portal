@@ -34,70 +34,116 @@
   </div>
 </div>
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
-<app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
-<app-no-connection></app-no-connection>
-<mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
-</mat-progress-bar>
-<!-- <p class="skipnav">
-  <a href="javascript:void(0);" (click)='skipToMainContent()' translate>
-    Skip to main content
-  </a>
-</p> -->
-<!-- <ws-app-public-nav-bar *ngIf=""></ws-app-public-nav-bar> -->
-<!-- <ws-widget-sticky-header> -->
-<!-- <ws-app-nav-bar class="top-nav-bar" *ngIf="navBarRequired && (isXSmall$ | async) === false" [hidden]="!isShowNavbar" [mode]="'top'"></ws-app-nav-bar> -->
-<ws-header
-  *ngIf="navBarRequired && !hideHeaderAndFooter && domainConfSvc.isConfigEnabled('components.header', 'enabled')"
-  [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
-</ws-header>
-<!-- </ws-widget-sticky-header> -->
-<div class="height-adjust" [ngClass]="{
-  'height-on-bottom custom-scroll':
-    (isXSmall$ | async) === true &&  true && isShowNavbar,
-    'height-adjust-setup' : isSetupPage,
-  'height-on-top':
-    (isXSmall$ | async) === false &&
-    isShowNavbar &&
-    navBarRequired &&
-    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
+  <div class="flex gap-0 root-container" [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
+    @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async) === false) {
+    <div class="w-fit">
+      <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
+        [otherDetailsChanged]="otherDetailsChanged()" [navBarOpenStatus]="navBarOpenStatusBasedOnNav()"
+        (sidebarStateChange)="sidebarStateChanged($event)"
+        (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
+    </div>
+    }
+    <div class=""
+      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
+      <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
+      <app-no-connection></app-no-connection>
+      <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
+      </mat-progress-bar>
+      <!-- <p class="skipnav">
+      <a href="javascript:void(0);" (click)='skipToMainContent()' translate>
+        Skip to main content
+      </a>
+    </p> -->
+      <!-- <ws-app-public-nav-bar *ngIf=""></ws-app-public-nav-bar> -->
+      <!-- <ws-widget-sticky-header> -->
+      <!-- <ws-app-nav-bar class="top-nav-bar" *ngIf="navBarRequired && (isXSmall$ | async) === false" [hidden]="!isShowNavbar" [mode]="'top'"></ws-app-nav-bar> -->
+      <!-- <ws-header *ngIf="navBarRequired && !hideHeaderAndFooter && domainConfSvc.isConfigEnabled('components.header', 'enabled')"
+      [hidden]="!isShowNavbar" [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
+  </ws-header> -->
+      <div class="flex" [class.tab-header-row]="isTabView$ | async">
+        @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async)) {
+        <div class="tab-sidebar-wrapper">
+          <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
+            [otherDetailsChanged]="otherDetailsChanged()" [navBarOpenStatus]="navBarOpenStatusBasedOnNav()"
+            (sidebarStateChange)="sidebarStateChanged($event)"
+            (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
+        </div>
+        }
+        @if (showHeader) {
+        <ws-header-v2 [ngClass]="(leftNavBarIsOpen() ? 'navBarOpenContent' : 'navBarCloseContent')"
+          class="block header-postion" [class.tab-header-width]="isTabView$ | async"
+          [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData">
+        </ws-header-v2>
+        }
+      </div>
+      <!-- </ws-widget-sticky-header> -->
+      <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
+        'height-adjust': showHeader,
+        'navBarOpenContent': leftNavBarIsOpen() && (isTabView$ | async) === false,
+        'navBarCloseContent': !leftNavBarIsOpen() && (isTabView$ | async) === false,
+        'w-full': (isTabView$ | async) === true,
+        'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
+      'height-on-bottom custom-scroll':
+        (isXSmall$ | async) === true &&  true && isShowNavbar,
+        'height-adjust-setup' : isSetupPage,
+      'height-on-top':
+        (isXSmall$ | async) === false &&
+        isShowNavbar &&
+        navBarRequired &&
+        !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
     domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
   'height-on-top-no-marquee':
     (isXSmall$ | async) === false &&
     isShowNavbar &&
     navBarRequired &&
-    !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
-    !domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
+        !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
+        !domainConfSvc.isConfigEnabled('components.marquee', 'enabled'),
   'height-no-secondary':
     (isXSmall$ | async) === false &&
     isShowNavbar &&
     navBarRequired &&
     !isCustomHeight && !hideHeaderAndFooter && !disableHeightOnTop &&
     !domainConfSvc.isConfigEnabled('components.secondaryHeader', 'enabled'),
-  'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
-}">
+      'height-on-top-not-valid-user': (isXSmall$ | async) === false && disableHeightOnTop
+    }">
 
-  <div class="abc"
-    [ngClass]="{'margin186': mobileTopHeaderVisibilityStatus && showHubs, 'mt-0': !mobileTopHeaderVisibilityStatus && showHubs, 'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter, 'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage }">
-    <router-outlet></router-outlet>
+        <div [ngClass]="{
+            'margin186': mobileTopHeaderVisibilityStatus && showHubs,
+            'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
+            'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
+            'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
+            'container-balanced': !isHomePage() && !showFullScreen(),
+            'home-content': showMenuBardetails && isHomePage() && !showFullScreen(),
+            'w-full': !showMenuBardetails || showFullScreen()
+            }">
+          <router-outlet></router-outlet>
+        </div>
+      </div>
+
+      <!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
+      <!--  && domainConfSvc.isConfigEnabled('featureFlags', 'chatbot') -->
+      <ws-app-chatbot *ngIf="!hideHeaderAndFooter && configSvc.iGOTAIConfig?.enabled"
+        [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
+      <ws-app-footer class="app-footer"
+        *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter" [isHomePage]="isHomePage()"
+        [hideFooterSection]="hideFooterSection" [headerFooterConfigData]="headerFooterConfigData">
+      </ws-app-footer>
+
+      <ws-app-nav-bar-v2 class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
+        (viewAchivements)="viewAllAchievements()"
+        *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
+      </ws-app-nav-bar-v2>
+      <ng-container #previewContainer></ng-container>
+      <input #appUpdateTitle type="hidden" i18n-value value="App Update" />
+      <input #appUpdateBody type="hidden" i18n-value value="App has been updated. Do you want to load new version?" />
+      <div #skipper tabindex="-1"></div>
+    </div>
+
+    @if (showKarmaLeaderboard()) {
+    <div class="klb-popup-backdrop" [@fadeBackdrop] aria-hidden="true"></div>
+    <div class="klb-popup-panel" [@slidePanel] role="dialog" aria-modal="true" aria-label="Karma Leaderboard">
+      <ws-karma-leaderboard-v2 (close)="showKarmaLeaderboard.set(false)"></ws-karma-leaderboard-v2>
+    </div>
+    }
   </div>
-</div>
-
-<!-- <ws-app-footer class="app-footer" [ngClass]="{ 'padding-bottom: 56px': !isSetupPage}" *ngIf="showNavbar"></ws-app-footer> -->
-<!-- iGOTAIConfig is populated only when application.config.json ->
-     iGOTAI.enabled !== false (master switch), so this hides the chatbot
-     whenever the AI features are disabled at the parent level -->
-<ws-app-chatbot *ngIf="!hideHeaderAndFooter && configSvc.iGOTAIConfig?.enabled"
-  [rootOrgId]="configSvc?.unMappedUser?.rootOrgId"></ws-app-chatbot>
-<ws-app-footer class="app-footer" *ngIf="showNavbar && showFooter && headerFooterConfigData && !hideHeaderAndFooter"
-  [headerFooterConfigData]="headerFooterConfigData">
-</ws-app-footer>
-
-<ws-app-nav-bar class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
-  *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
-</ws-app-nav-bar>
-
-<ng-container #previewContainer></ng-container>
-<input #appUpdateTitle type="hidden" i18n-value value="App Update" />
-<input #appUpdateBody type="hidden" i18n-value value="App has been updated. Do you want to load new version?" />
-<div #skipper tabindex="-1"></div>
 </ng-container>

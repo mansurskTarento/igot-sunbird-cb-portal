@@ -16,6 +16,7 @@ $color-thin-gray: #d8d8d8;
 
 .container-balanced {
   @extend %page-center;
+  max-width: 100%;
   height: auto;
   // min-height: 400px;
 }
