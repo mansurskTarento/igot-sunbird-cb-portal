@@ -60,7 +60,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
 
   viewAchivements = output<boolean>()
   isTabView$ = this.breakpointObserver
-    .observe(['(min-width: 768px) and (max-width: 1199.98px)'])
+    .observe(['(min-width: 768px) and (max-width: 1024px)'])
     .pipe(map(state => state.matches))
 
   // State signals
