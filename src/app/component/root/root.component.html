@@ -79,14 +79,12 @@
       <!-- </ws-widget-sticky-header> -->
       <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
-        'navBarOpenContent': leftNavBarIsOpen() && (isTabView$ | async) === false && showMenuBardetails,
-        'navBarCloseContent': !leftNavBarIsOpen() && (isTabView$ | async) === false && showMenuBardetails,
+        'navBarOpenContent': leftNavBarIsOpen() && (isTabView$ | async) === false && (isXSmall$ | async) === false && showMenuBardetails,
+        'navBarCloseContent': !leftNavBarIsOpen() && (isTabView$ | async) === false && (isXSmall$ | async) === false && showMenuBardetails,
         'w-full': (isTabView$ | async) === true,
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
-      'bottom-nav-clearance':
-        (isXSmall$ | async) === true && navBarRequired && !hideHeaderAndFooter && isShowNavbar && showBottomNav && !showFooter,
         'height-adjust-setup' : isSetupPage,
       'height-on-top':
         (isXSmall$ | async) === false &&
