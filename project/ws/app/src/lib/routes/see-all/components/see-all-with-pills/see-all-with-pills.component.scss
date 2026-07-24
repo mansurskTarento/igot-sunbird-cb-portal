@@ -1,5 +1,6 @@
 .seeAll-home-container {
     max-width: 1200px;
+    overflow-x: hidden;
 }
 .page-header {
     font-size: 16px;
@@ -9,7 +10,24 @@
     .seeAll-home-container {
         // margin-top: 192px;
         flex-direction: column;
-        padding: 0 16px;
+        padding: 0;
+    }
+}
+.content-container {
+    > .mr-5.mb-5,
+    > .mr-2.mb-5 {
+        flex-shrink: 1;
+        min-width: 0;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+
+    > .mr-5.mb-5 ::ng-deep .card-portrait {
+        max-width: calc(100% - 20px);
+    }
+
+    > .mr-2.mb-5 ::ng-deep .card-portrait {
+        max-width: calc(100% - 8px);
     }
 }
 
@@ -23,7 +41,7 @@
     }
     background: #1B4CA1 !important;
   }
-  
+
   ::ng-deep .content-pill .mat-chip-selected{
     background-color: #1B4CA1 !important;
     .pill-name {
