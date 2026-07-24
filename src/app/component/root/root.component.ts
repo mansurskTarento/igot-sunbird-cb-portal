@@ -265,7 +265,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   isXSmall$ = this.valueSvc.isXSmall$
   // Matches the tablet overlay-drawer range used by sb-uic-dynamic-sidebar (768px - 1199.98px)
   isTabView$ = this.breakpointObserver
-    .observe(['(min-width: 768px) and (max-width: 1199.98px)'])
+    .observe(['(min-width: 768px) and (max-width: 1024px)'])
     .pipe(map(state => state.matches))
   routeChangeInProgress = false
   showNavbar = true
@@ -596,10 +596,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
               if (rank != null) {
                 rankItem.value = `${this.toOrdinal(rank)} Rank`
               } else {
-                rankItem.value = 'o Rank'
+                rankItem.value = '0 Rank'
               }
             } else {
-              rankItem.value = 'o Rank'
+              rankItem.value = '0 Rank'
             }
             achievements.sectionLoading = false
             this.sendDetailsChangedEvent(achievements)

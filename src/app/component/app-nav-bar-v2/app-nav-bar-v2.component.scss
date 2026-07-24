@@ -354,10 +354,12 @@
 
 .ml-search {
   margin-left: max(10px, calc(50% - 532px));
+  max-width: calc(100% - 500px)
 }
 
 .ml-search-nav-close {
   margin-left: max(20px, calc(50% - 532px - 174px));
+  max-width: calc(100% - 500px)
 }
 
 .tab-search {
