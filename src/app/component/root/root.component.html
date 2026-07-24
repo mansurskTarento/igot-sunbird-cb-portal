@@ -72,6 +72,8 @@
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':
         (isXSmall$ | async) === true &&  true && isShowNavbar,
+      'bottom-nav-clearance':
+        (isXSmall$ | async) === true && navBarRequired && !hideHeaderAndFooter && isShowNavbar && showBottomNav && !showFooter,
         'height-adjust-setup' : isSetupPage,
       'height-on-top':
         (isXSmall$ | async) === false &&
