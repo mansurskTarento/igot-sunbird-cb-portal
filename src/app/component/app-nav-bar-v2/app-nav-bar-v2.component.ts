@@ -239,13 +239,13 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
         const themeMode = this.themeSvc.currentTheme
         this.themeSvc.setTheme(themeMode)
         this.activeRoute.set('home')
-      } else if (event.url.includes('/page/explore')) {
-        this.activeRoute.set('explorer')
+      } else if (event.url.includes('/page/explore') || event.url.includes('tab=explore-content')) {
+        this.activeRoute.set('explore')
       } else if (event.url.includes('app/globalsearch') || event.url.includes('/app/search/home')) {
         this.activeRoute.set('search')
       } else if (event.url.includes('app/careers')) {
         this.activeRoute.set('Career')
-      } else if (event.url.includes('app/seeAll?key=continueLearning')) {
+      } else if (event.url.includes('app/seeAll') && event.url.includes('key=continueLearning')) {
         this.activeRoute.set('my learnings')
       }
       if (!event.url.includes('/page/home')) {
@@ -571,6 +571,11 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     this.setActiveRoute(item?.config?.label)
     if (item?.config?.key === 'achievements') {
       this.viewAchivements.emit(true)
+    } else if (item?.config?.key === 'continueLearning') {
+      this.router.navigate(['/app/seeAll/new'], {
+        queryParams: { key: 'continueLearning', tabSelected: 'Contents', pillSelected: 'inprogress' },
+      })
+      this.configSvc.openExploreMenuForMWeb.next(false)
     } else {
       this.redirectToPath(item?.config)
     }
@@ -598,7 +603,9 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
 
   openExploreMenu() {
     this.setActiveRoute('explore')
-    this.configSvc.openExploreMenuForMWeb.next(true)
+    this.router.navigate(['/app/globalsearch'], {
+      queryParams: { q: '', category: 'courses', tab: 'explore-content', filtersPanel: 'show' },
+    })
   }
 
   getKarmaCount() {
