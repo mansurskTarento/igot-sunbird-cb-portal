@@ -22,7 +22,7 @@ import {
 
 import * as _ from 'lodash'
 import { LibNotificationsService } from '@sunbird-cb/notification'
-import { filter, Subscription } from 'rxjs'
+import { filter, map, Subscription } from 'rxjs'
 import { UrlService } from '../../shared/url.service'
 import { NotificationsService } from '../../services/notifications.service'
 import { HeaderModule } from '../../header/header.module'
@@ -30,6 +30,7 @@ import { SearchInputHomeV4Component } from '../../../../project/ws/app/src/lib/r
 import { TopRightNavBarV2Component } from '../top-right-nav-bar-v2/top-right-nav-bar-v2.component'
 import { BtnFeatureV2Component } from '@sunbird-cb/consumption'
 import { ThemeService } from '@sunbird-cb/design-system'
+import { BreakpointObserver } from '@angular/cdk/layout'
 
 @Component({
   selector: 'ws-app-nav-bar-v2',
@@ -58,6 +59,9 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   leftNavBarOpen = input<boolean>(false);
 
   viewAchivements = output<boolean>()
+  isTabView$ = this.breakpointObserver
+    .observe(['(min-width: 768px) and (max-width: 1199.98px)'])
+    .pipe(map(state => state.matches))
 
   // State signals
   hideKPOnNav = signal(false);
@@ -151,7 +155,8 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     private notificationsService: NotificationsService,
     private libNotificationsService: LibNotificationsService,
     private domainConfSvc: DomainConfService,
-    private themeSvc: ThemeService
+    private themeSvc: ThemeService,
+    private breakpointObserver: BreakpointObserver
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
 
