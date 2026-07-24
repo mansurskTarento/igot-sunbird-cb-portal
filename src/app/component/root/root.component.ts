@@ -22,6 +22,7 @@ import {
   ActivatedRoute,
   ActivatedRouteSnapshot,
 } from '@angular/router'
+import { BreakpointObserver } from '@angular/cdk/layout'
 // import { interval, concat, timer } from 'rxjs'
 import { BtnPageBackService } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
@@ -121,7 +122,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private commonDataSvc: CommonDataService,
     public domainConfSvc: DomainConfService,
     private libNotificationsService: LibNotificationsService,
-    private homePageSvc: HomePageService
+    private homePageSvc: HomePageService,
+    private breakpointObserver: BreakpointObserver
 
   ) {
     effect(() => {
@@ -261,6 +263,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('skipper') skipper!: ElementRef
 
   isXSmall$ = this.valueSvc.isXSmall$
+  // Matches the tablet overlay-drawer range used by sb-uic-dynamic-sidebar (768px - 1199.98px)
+  isTabView$ = this.breakpointObserver
+    .observe(['(min-width: 768px) and (max-width: 1199.98px)'])
+    .pipe(map(state => state.matches))
   routeChangeInProgress = false
   showNavbar = true
   showFooter = false

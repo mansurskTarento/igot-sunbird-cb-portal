@@ -10,7 +10,7 @@
     ]">
   @if (mode() === 'top') {
   <div class="w-full flex items-center mx-0" id="root-tool-bar">
-    @if (!leftNavBarOpen()) {
+    @if (!leftNavBarOpen() || (isTabView$ | async)) {
     <a [routerLink]="redirectPath" class="logo-dim items-center hidden md:flex" role="link" title="Home"
       [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null" i18n-aria-title
       i18n-aria-label>
@@ -30,7 +30,8 @@
     </a>
     }
     @if (primaryNavbarConfig?.mediumScreen) {
-    <div [ngClass]="[leftNavBarOpen() ? 'ml-search' : 'ml-search-nav-close']" class="md:flex justify-start">
+    <div [ngClass]="[leftNavBarOpen() ? 'ml-search' : 'ml-search-nav-close', (isTabView$ | async) ? 'tab-search' : '']"
+      class="md:flex justify-start">
       <!-- @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
       <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />

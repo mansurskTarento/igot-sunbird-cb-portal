@@ -187,10 +187,32 @@ ws-app-nav-bar {
 
 .main-content-on-menubar-open {
   width: calc(100% - 330px);
+  overflow: hidden;
 }
 
 .main-content-on-menubar-close {
   width: calc(100% - 73px);
+  overflow: hidden;
+}
+
+// Tab view (768px - 1199.98px): sidebar collapses to its header-height overlay toggle
+// and shares a row with the header instead of reserving a full-height column.
+.tab-header-row {
+  align-items: stretch;
+}
+
+.tab-sidebar-wrapper {
+  flex: 0 0 auto;
+  width: 45px;
+  overflow: hidden;
+  position: fixed;
+  z-index: 1000;
+}
+
+.tab-header-width {
+  width: calc(100vw - 45px) !important;
+  left: 45px;
+  z-index: 900;
 }
 
 .home-content {

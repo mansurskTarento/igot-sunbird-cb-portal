@@ -360,6 +360,10 @@
   margin-left: max(20px, calc(50% - 532px - 174px));
 }
 
+.tab-search {
+  width: calc(100% - 405px);
+}
+
 .signup_div {
   @include breakpoint-xs {
     text-align: center;
