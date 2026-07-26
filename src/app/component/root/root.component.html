@@ -70,7 +70,7 @@
         </div>
         }
         @if (showHeader) {
-        <ws-header-v2 [ngClass]="(leftNavBarIsOpen() ? 'navBarOpenContent' : 'navBarCloseContent')"
+        <ws-header-v2 [ngClass]="(isDesktopView$ | async) ? (leftNavBarIsOpen() ? 'navBarOpenContent' : 'navBarCloseContent') : ''"
           class="block header-postion" [class.tab-header-width]="isTabView$ | async"
           [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData">
         </ws-header-v2>
@@ -79,8 +79,8 @@
       <!-- </ws-widget-sticky-header> -->
       <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
-        'navBarOpenContent': leftNavBarIsOpen() && (isTabView$ | async) === false && showMenuBardetails,
-        'navBarCloseContent': !leftNavBarIsOpen() && (isTabView$ | async) === false && showMenuBardetails,
+        'navBarOpenContent': leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails,
+        'navBarCloseContent': !leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails,
         'w-full': (isTabView$ | async) === true,
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':

@@ -39,6 +39,7 @@ import {
   // NsInstanceConfig,
 } from '@sunbird-cb/utils-v2'
 import { delay, first, catchError, map, filter } from 'rxjs/operators'
+import { combineLatest } from 'rxjs'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { RootService } from './root.service'
 
@@ -267,6 +268,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   isTabView$ = this.breakpointObserver
     .observe(['(min-width: 768px) and (max-width: 1024px)'])
     .pipe(map(state => state.matches))
+  // Desktop-only: sidebar-driven widths (navBarOpenContent/navBarCloseContent) must not apply on mobile or tab
+  isDesktopView$ = combineLatest([this.isXSmall$, this.isTabView$]).pipe(
+    map(([isXSmall, isTabView]) => !isXSmall && !isTabView)
+  )
   routeChangeInProgress = false
   showNavbar = true
   showFooter = false
