@@ -1260,6 +1260,8 @@ $title-line-count: 2;
   border: 1px solid rgba(0, 0, 0, 0.08);
   opacity: 1;
   width: 350px;
+  max-width: 100%;
+  box-sizing: border-box;
   min-height: 154px;
   padding: 16px;
 
@@ -1539,7 +1541,7 @@ $title-line-count: 2;
 
 @media only screen and (max-width:768px) {
   .card-portrait {
-    width: calc(100vw - 66px);
+    width: 100%;
   }
 
   .card-wide-v2 {

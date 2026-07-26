@@ -58,14 +58,19 @@
 }
 
 .container-balanced {
-  width: 1200px;
+  width: 100%;
   max-width: 1200px;
 }
 
 @media (max-width: 768px) {
+  .klb-popup-backdrop {
+    display: none;
+  }
+
   .klb-popup-panel {
-    top: 50%;
+    top: 0;
     left: calc(100% - 373px);
+    transform: none;
   }
 
   .mobileTopVisableHeightAdjust {
@@ -85,10 +90,12 @@ ws-app-nav-bar {
   z-index: 10000;
 }
 
+// Reserves space for the fixed 72px bottom nav bar (.bottom-nav-bar) so page
+// content/buttons are never hidden behind it on mobile.
 .height-on-bottom {
   overflow: auto;
-  // padding-bottom: 56px;
   box-sizing: border-box;
+  padding-bottom: 72px;
 }
 
 .height-on-top {
@@ -127,6 +134,7 @@ ws-app-nav-bar {
   position: fixed;
   width: 100%;
   bottom: 0;
+  z-index: 100;
 }
 
 .height-adjust {
@@ -229,6 +237,11 @@ ws-app-nav-bar {
   .mt-136 {
     margin-top: 40px;
   }
+    .klb-popup-panel {
+      top: 0;
+      left: 0;
+      transform: none;
+    }
 }
 
 

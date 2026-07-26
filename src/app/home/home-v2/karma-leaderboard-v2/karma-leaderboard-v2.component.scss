@@ -926,12 +926,3 @@
   margin-left: auto;
   flex-shrink: 0;
 }
-
-// ── Responsive ───────────────────────────────────────────────
-// Card is fixed 344 px; on very small screens let it stretch.
-@media (max-width: 360px) {
-  .klb-card {
-    width: 100%;
-    max-width: 100%;
-  }
-}

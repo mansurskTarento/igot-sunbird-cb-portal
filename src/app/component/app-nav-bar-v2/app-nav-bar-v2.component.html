@@ -78,7 +78,7 @@
   @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
   <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
-    @if (item?.type !== 'explorerButton') {
+    @if (item?.type !== 'explorerButton' && item?.config?.label?.toLowerCase() !== 'search') {
     <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
       <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''"

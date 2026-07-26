@@ -47,8 +47,7 @@ export class TaxonomyExplorerComponent implements OnInit, OnDestroy {
 
     this.currentTab = this.route.snapshot.url.toString().split('/').pop() || ''
     this.currentTab1 = this.route.snapshot.url.toString().split('/').pop() || ''
-    this.title = [{ title: 'Learn', url: '/page/learn', icon: 'school' },
-    { title: ('All topics'), url: 'none', icon: '' }]
+    this.title = [{ title: ('All topics'), url: 'none', icon: '' }]
     if (!localStorage.getItem('isFirstTab')) {
       localStorage.setItem('currentTab', decodeURI(this.currentTab))
       localStorage.setItem('isFirstTab', 'true')

@@ -117,7 +117,6 @@ export class MdoChannelsAllContentComponent implements OnInit {
               this.seeAllPageConfig = data
               this.contentDataList = this.commonSvc.transformSkeletonToWidgets(data)
               this.titles = [
-                { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
                 { title: 'MDO Channels', url: '/app/learn/mdo-channels/all-channels', icon: '', disableTranslate: true },
                 {
                   title: this.orgName,

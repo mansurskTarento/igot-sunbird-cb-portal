@@ -25,7 +25,6 @@ export class MandatoryCourseComponent implements OnInit, OnDestroy, OnChanges {
   }
   // searchCompArea = new FormControl('')
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school' },
     { title: 'Manadatory course', url: 'none', icon: '' },
   ]
 

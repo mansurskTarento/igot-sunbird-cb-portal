@@ -3,6 +3,8 @@
     opacity: 1;
     background-color: rgb(218,226,240);
     padding: 16px;
+    box-sizing: border-box;
+    overflow-x: hidden;
     border-color: rgba(27,76,161, 1) !important;
     border: 1px solid;
     .title {

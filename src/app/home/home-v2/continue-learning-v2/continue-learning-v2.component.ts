@@ -11,7 +11,7 @@ import { WeeklyClapsCardV2Component } from './weekly-claps-card-v2/weekly-claps-
 // In-progress enrollment payload — same as ContentStripWithTabsPills uses for the "In Progress" pill
 const IN_PROGRESS_PAYLOAD = {
   request: {
-    retiredCoursesEnabled: true,
+    retiredCoursesEnabled: false,
     status: 'In-Progress',
   },
 }
