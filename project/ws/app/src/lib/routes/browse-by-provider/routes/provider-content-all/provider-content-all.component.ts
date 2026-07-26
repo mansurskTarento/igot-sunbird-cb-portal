@@ -27,7 +27,6 @@ export class ProviderContentAllComponent implements OnInit, OnDestroy {
   requestData: any
   selectedTab: any
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     { title: 'All Providers', url: '/app/learn/browse-by/provider/all-providers', icon: '', disableTranslate: false },
     // { title: `${this.provider}`, url: `none`, icon: '' },
   ]

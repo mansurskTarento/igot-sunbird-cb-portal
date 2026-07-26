@@ -4,8 +4,9 @@
       <div class="flex flex-1 flex-column">
         <div class="flex flex-wrap end-line-elipses items-center margin-top-l margin-bottom-l" role="menubar">
           <!-- disabled for explore btn disabled on contact us page refresh-->
-          <a class="flex cursor-pointer simple-hubs-link " href="/" role="menuitem" accesskey="H" i18n-aria-label
-            i18n-aria-title>
+          <a class="flex cursor-pointer simple-hubs-link " [routerLink]="[backUrl.routeUrl]"
+            [queryParams]="backUrl.queryParams" [fragment]="backUrl.fragment" role="menuitem" accesskey="H"
+            i18n-aria-label i18n-aria-title>
             <span
               class="margin-auto  margin-0 mat-subheading-2 {{widgetData?.textClass? widgetData?.textClass: 'ws-mat-default-text-blue'}}">{{
               'btnpageback.home' | translate }}</span>

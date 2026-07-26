@@ -21,7 +21,6 @@ export class MdoChannelsMicrositeComponent implements OnInit {
   hideCompetencyBlock: boolean = false
   contentTabEmptyResponseCount: number = 0
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
       title: `MDO Channel`,
       url: `/app/learn/mdo-channels/all-channels`,
