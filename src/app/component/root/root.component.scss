@@ -68,6 +68,8 @@
   }
 
   .klb-popup-panel {
+    // top: 50%;
+    // left: calc(50% - 170px);
     top: 0;
     left: calc(100% - 373px);
     transform: none;
@@ -237,11 +239,12 @@ ws-app-nav-bar {
   .mt-136 {
     margin-top: 40px;
   }
-    .klb-popup-panel {
-      top: 0;
-      left: 0;
-      transform: none;
-    }
+
+  .klb-popup-panel {
+    top: 0;
+    left: 0;
+    transform: none;
+  }
 }
 
 
