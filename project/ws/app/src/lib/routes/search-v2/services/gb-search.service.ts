@@ -31,6 +31,9 @@ export class GbSearchService {
 
   fetchSearchData(request: any): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('search', 'searchV6', API_END_POINTS.SEARCH_V6)
+    if (!url) {
+      return of(null)
+    }
     return this.http.post<any>(url, request)
   }
   fetchSearchDataByCategory(request: any): Observable<any> {
