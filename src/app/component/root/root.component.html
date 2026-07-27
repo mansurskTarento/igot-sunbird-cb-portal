@@ -36,15 +36,16 @@
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
   <div class="flex gap-0 root-container" [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
     @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async) === false) {
-    <div class="w-fit">
+    <div class="w-fit" [ngClass]="{'fix-left-menu': !isHomePage() && isDesktopView$ && leftNavBarIsOpen()}">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
         [otherDetailsChanged]="otherDetailsChanged()" [navBarOpenStatus]="navBarOpenStatusBasedOnNav()"
-        (sidebarStateChange)="sidebarStateChanged($event)"
+        [isNotHome]="!isHomePage()" (sidebarStateChange)="sidebarStateChanged($event)"
         (navItemClicked)="onNavItemClicked($event)"></sb-uic-dynamic-sidebar>
     </div>
     }
     <div class=""
-      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
+      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')"
+      [class.left-mr-80]="!isHomePage() && (isDesktopView$ | async) && leftNavBarIsOpen()">
       <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
       <app-no-connection></app-no-connection>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
@@ -71,7 +72,7 @@
         }
         @if (showHeader) {
         <ws-header-v2
-          [ngClass]="(isDesktopView$ | async) ? (leftNavBarIsOpen() ? 'navBarOpenContent' : 'navBarCloseContent') : ''"
+          [ngClass]="(isDesktopView$ | async) ? (leftNavBarIsOpen() && isHomePage() ? 'navBarOpenContent' : 'navBarCloseContent') : ''"
           class="block header-postion w-full" [class.tab-header-width]="isTabView$ | async"
           [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
         </ws-header-v2>
@@ -80,8 +81,8 @@
       <!-- </ws-widget-sticky-header> -->
       <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
-        'navBarOpenContent': leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails,
-        'navBarCloseContent': !leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails,
+        'navBarOpenContent': leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails && isHomePage(),
+        'navBarCloseContent': !isHomePage() && (isDesktopView$ | async) && showMenuBardetails,
         'w-full': (isTabView$ | async) === true,
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
       'height-on-bottom custom-scroll':
