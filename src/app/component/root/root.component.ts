@@ -862,6 +862,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.openStatusUserSelection.set(event.isOpen)
       this.leftNavBarIsOpen.set(event.isOpen)
       this.showKarmaLeaderboard.set(false)
+      this.navBarOpenStatusBasedOnNav.set(this.openStatusUserSelection())
     }
   }
 

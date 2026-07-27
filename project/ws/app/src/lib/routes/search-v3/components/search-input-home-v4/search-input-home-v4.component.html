@@ -14,7 +14,7 @@
   }
 
   <div class="w-full search relative">
-    <form class="mat-full-radius flex items-center">
+    <form class="mat-full-radius flex items-center" (submit)="onSearchSubmit($event)">
       <mat-form-field class="autocomplete-form w-full" appearance="outline">
         @if (loaderSearching()) {
         <img [src]="SAKSHAMAI_ICON_LOADER" alt="loader" width="16" class="search-home">
