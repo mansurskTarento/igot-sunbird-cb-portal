@@ -38,7 +38,7 @@
 
 .header-postion {
   position: fixed;
-  z-index: 1000;
+  z-index: 999;
 }
 
 .klb-popup-panel {
@@ -59,7 +59,16 @@
 
 .container-balanced {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1064px;
+}
+
+.fix-left-menu {
+  position: fixed;
+  z-index: 1000;
+}
+
+.left-mr-80 {
+  margin-left: 80px;
 }
 
 @media (max-width: 768px) {
@@ -68,6 +77,8 @@
   }
 
   .klb-popup-panel {
+    // top: 50%;
+    // left: calc(50% - 170px);
     top: 0;
     left: calc(100% - 373px);
     transform: none;
@@ -237,11 +248,12 @@ ws-app-nav-bar {
   .mt-136 {
     margin-top: 40px;
   }
-    .klb-popup-panel {
-      top: 0;
-      left: 0;
-      transform: none;
-    }
+
+  .klb-popup-panel {
+    top: 0;
+    left: 0;
+    transform: none;
+  }
 }
 
 

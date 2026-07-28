@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable } from 'rxjs'
+import { Observable, of } from 'rxjs'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NSProfileDataV2 } from '../models/profile-v2.model'
 // tslint:disable
 import _ from 'lodash'
@@ -25,7 +26,7 @@ const API_END_POINTS = {
   providedIn: 'root',
 })
 export class ProfileV2Service {
-constructor(private http: HttpClient) { }
+constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
   fetchDiscussProfile(wid: string): Observable<any> {
     return this.http.get<any>(`${API_END_POINTS.DISCUSS_PROFILE}/${wid}`)
   }
@@ -47,7 +48,12 @@ constructor(private http: HttpClient) { }
   }
 
   fetchApprovalDetails() {
-    return this.http.post<any>(API_END_POINTS.approvalDetails, {
+    const cfg = this.configSvc.globalConfig?.apis?.workflow?.userWFApplicationFieldsSearch
+    if (cfg && !cfg.enabled) {
+      return of(null)
+    }
+    const url = (cfg?.enabled && cfg?.url) ? cfg.url : API_END_POINTS.approvalDetails
+    return this.http.post<any>(url, {
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     })
