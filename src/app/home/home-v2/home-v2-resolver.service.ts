@@ -35,7 +35,7 @@ export class HomeV2ResolverService {
         type: 'page',
         subType: 'home',
         portal: 'portal',
-        clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['application-config-web'] || 1.0,
+        clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['home'] || 1.0,
       },
     }
     const response$ = this.formSvc.formConfigReadData(request).pipe(catchError(() => of(null)))

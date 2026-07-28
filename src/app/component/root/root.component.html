@@ -36,7 +36,7 @@
 <ng-container *ngIf="!configSvc.globalConfigLoadFailed">
   <div class="flex gap-0 root-container" [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'">
     @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async) === false) {
-    <div class="w-fit" [ngClass]="{'fix-left-menu': !isHomePage() && isDesktopView$ && leftNavBarIsOpen()}">
+    <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
         [otherDetailsChanged]="otherDetailsChanged()" [navBarOpenStatus]="navBarOpenStatusBasedOnNav()"
         [isNotHome]="!isHomePage()" (sidebarStateChange)="sidebarStateChanged($event)"
@@ -44,8 +44,7 @@
     </div>
     }
     <div class=""
-      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (leftNavBarIsOpen() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')"
-      [class.left-mr-80]="!isHomePage() && (isDesktopView$ | async) && leftNavBarIsOpen()">
+      [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (sidebarPushesContent() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
       <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour>
       <app-no-connection></app-no-connection>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
@@ -72,16 +71,17 @@
         }
         @if (showHeader) {
         <ws-header-v2
-          [ngClass]="(isDesktopView$ | async) ? (leftNavBarIsOpen() && isHomePage() ? 'navBarOpenContent' : 'navBarCloseContent') : ''"
+          [ngClass]="(isDesktopView$ | async) ? (sidebarPushesContent() ? 'navBarOpenContent' : 'navBarCloseContent') : ''"
           class="block header-postion w-full" [class.tab-header-width]="isTabView$ | async"
-          [leftNavBarOpen]="leftNavBarIsOpen()" [headerFooterConfigData]="headerFooterConfigData" [showHubs]="showHubs">
+          [leftNavBarOpen]="sidebarPushesContent()" [headerFooterConfigData]="headerFooterConfigData"
+          [showHubs]="showHubs">
         </ws-header-v2>
         }
       </div>
       <!-- </ws-widget-sticky-header> -->
       <div class="flex justify-center mobileTopVisableHeightAdjust" [ngClass]="{
         'height-adjust': showHeader,
-        'navBarOpenContent': leftNavBarIsOpen() && (isDesktopView$ | async) && showMenuBardetails && isHomePage(),
+        'navBarOpenContent': sidebarPushesContent() && (isDesktopView$ | async) && showMenuBardetails,
         'navBarCloseContent': !isHomePage() && (isDesktopView$ | async) && showMenuBardetails,
         'w-full': (isTabView$ | async) === true,
         'mobileTopVisableHeightAdjust': mobileTopHeaderVisibilityStatus,
@@ -112,8 +112,8 @@
         <div [ngClass]="{
             'margin186': mobileTopHeaderVisibilityStatus && showHubs,
             'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
-            'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter,
-            'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage,
+            'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter && (isXSmall$ | async) === false,
+            'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && (isXSmall$ | async) === false,
             'container-balanced': !isHomePage() && !showFullScreen(),
             'home-content': showMenuBardetails && isHomePage() && !showFullScreen(),
             'w-full': !showMenuBardetails || showFullScreen()

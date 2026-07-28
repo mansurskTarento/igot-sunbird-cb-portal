@@ -59,8 +59,9 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   leftNavBarOpen = input<boolean>(false);
 
   viewAchivements = output<boolean>()
+  // Matches BREAKPOINT_QUERIES.TABLET in sb-uic-dynamic-sidebar and isTabView$ in root
   isTabView$ = this.breakpointObserver
-    .observe(['(min-width: 768px) and (max-width: 1024px)'])
+    .observe(['(min-width: 600px) and (max-width: 1024px)'])
     .pipe(map(state => state.matches))
 
   // State signals

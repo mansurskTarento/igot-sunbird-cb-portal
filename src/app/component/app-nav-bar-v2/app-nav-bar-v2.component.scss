@@ -193,15 +193,37 @@
   width: 650px;
 }
 
+// The logo and search hide only where the bottom nav takes over. root.component.html renders the
+// bottom nav solely while isXSmall$ matches (< 600px), so from 600px up the header is the only
+// place either is reachable. These used to hide below 768px (Tailwind's `md:` edge for the logo,
+// the max-width:768px block below for the search), which left 600px-767.98px with neither.
+.header-logo {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .header-logo {
+    display: flex;
+  }
+
+  // No base rule: below 600px this keeps the default block display it had before, since the
+  // search inside it is hidden there anyway.
+  .header-search {
+    display: flex;
+  }
+}
+
+@media only screen and (max-width: 599.98px) {
+  .my-search {
+    display: none;
+  }
+}
+
 .mobile-download-app-desc {
   margin-left: 8px;
 }
 
 @media only screen and (max-width: 768px) {
-  .my-search {
-    display: none;
-  }
-
   .search-small-logo {
     display: flex;
     display: none;
@@ -364,6 +386,33 @@
 
 .tab-search {
   width: calc(100% - 405px);
+}
+
+// Tablet (600px - 1024px): the desktop `calc(100% - 500px)` cap reserves room for the full-width
+// desktop logo and right-hand nav, neither of which is that wide here — at a 620px viewport it
+// leaves the search 120px. Let the wrapper take the space that is actually free instead, capped
+// so the bar does not stretch across the whole toolbar at the top of the range.
+@media (min-width: 600px) and (max-width: 1024px) {
+
+  .ml-search,
+  .ml-search-nav-close {
+    margin-left: 12px;
+    max-width: none;
+  }
+
+  .tab-search {
+    width: auto;
+    flex: 1 1 auto;
+    max-width: 560px;
+    // Flex items default to min-width:auto, which refuses to shrink past the input's intrinsic
+    // width and would push the right-hand icons off the toolbar.
+    min-width: 0;
+  }
+
+  .my-search {
+    width: auto;
+    max-width: none;
+  }
 }
 
 .signup_div {
