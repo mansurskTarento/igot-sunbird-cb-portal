@@ -574,7 +574,6 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   bottomNavClick(item: any) {
-    this.setActiveRoute(item?.config?.label)
     if (item?.config?.key === 'achievements') {
       this.viewAchivements.emit(true)
     } else if (item?.config?.key === 'continueLearning') {
@@ -587,17 +586,6 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
     }
   }
 
-  setActiveRoute(route: string) {
-    const normalizedRoute = route ? route.toLowerCase() : ''
-    this.activeRoute.set(normalizedRoute)
-    localStorage.setItem('activeRoute', normalizedRoute)
-  }
-
-  isTabActive(item: any): boolean {
-    const label = item?.config?.label
-    return !!label && this.activeRoute() === label.toLowerCase()
-  }
-
   redirectToPath(pathConfig: any) {
     if (pathConfig && pathConfig.key) {
       this.router.navigate([pathConfig.path], { queryParams: { key: pathConfig.key } })
@@ -608,7 +596,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   openExploreMenu() {
-    this.setActiveRoute('explore')
+    this.activeRoute.set('explore')
     this.router.navigate(['/app/globalsearch'], {
       queryParams: { q: '', category: 'courses', tab: 'explore-content', filtersPanel: 'show' },
     })

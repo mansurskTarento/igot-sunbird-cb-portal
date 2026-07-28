@@ -309,7 +309,7 @@
   }
 
   .mobile-footer-fixed-nav {
-    height: 72px;
+    height: 64px;
     margin: 0;
     padding: 0;
     background-color: #fff;
@@ -319,12 +319,13 @@
     width: 100%;
     display: flex;
     flex-direction: row;
-    align-items: center;
-    height: 72px;
+    height: 64px;
     margin: 0;
   }
 
   .mobile-footer-fixed-nav-list-item {
+    // Every tab takes an equal share of the bar, so icons stay evenly spaced
+    // whatever the label lengths are, and nothing overflows the toolbar.
     flex: 1 1 0;
     min-width: 0;
     list-style: none;
@@ -345,19 +346,16 @@
     width: 100%;
     max-width: 100%;
     min-width: 0;
-    height: 60px;
+    height: 56px;
     justify-content: center;
     align-items: center;
     gap: 4px;
-    padding: 6px 4px;
-    border-radius: 9999px;
-    background-color: transparent;
     box-sizing: border-box;
-    transition: background-color 0.25s ease-in-out;
+    border-radius: 50%;
 
     img {
-      height: 20px;
-      width: 20px;
+      height: 24px;
+      width: 24px;
       flex-shrink: 0;
     }
 
@@ -366,10 +364,8 @@
       color: rgba(0, 0, 0, 0.6);
       line-height: 12px;
       max-width: 100%;
-      white-space: normal;
-      word-break: break-word;
       text-align: center;
-      transition: color 0.25s ease-in-out;
+      word-break: break-word;
     }
   }
 }
@@ -424,39 +420,11 @@
 }
 
 .active-icon {
-  .icon-container {
-    background-color: var(--environment-button-primary-filled-primary);
+  border-top: 2px solid var(--environment-button-primary-filled-primary);
+  background-color: rgba(27, 76, 161, 0.16);
 
-    span {
-      color: var(--surface-primary);
-    }
-
-    &:not(.keep-icon-color) {
-      position: relative;
-
-      img {
-        visibility: hidden;
-      }
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 6px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 20px;
-        height: 20px;
-        background-color: var(--surface-primary);
-        -webkit-mask-image: var(--icon-url);
-        mask-image: var(--icon-url);
-        -webkit-mask-size: contain;
-        mask-size: contain;
-        -webkit-mask-repeat: no-repeat;
-        mask-repeat: no-repeat;
-        -webkit-mask-position: center;
-        mask-position: center;
-      }
-    }
+  span {
+    color: var(--environment-button-primary-filled-primary);
   }
 }
 
