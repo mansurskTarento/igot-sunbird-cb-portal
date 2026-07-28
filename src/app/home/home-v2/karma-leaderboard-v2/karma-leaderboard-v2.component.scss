@@ -10,7 +10,7 @@
   width: 294px;
   max-width: 294px;
   max-height: 80vh;
-  padding: 10px 24px;
+  padding: 0 24px 10px;
   cursor: default;
   user-select: none;
 
@@ -34,6 +34,10 @@
 
 .klb-card--no-scroll {
   overflow-y: hidden;
+}
+
+.klb-loading-card {
+  padding-top: 10px;
 }
 
 // ── Celebration overlay ──────────────────────────────────────
@@ -94,13 +98,19 @@
 
 // ── Karma Points top heading ────────────────────────────
 .klb-top-section {
-  padding: 16px 0;
+  padding: 0 0 16px;
 }
 
 .klb-top-section-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--surface-primary);
+  margin: 0 -24px;
+  padding: 26px 24px 0;
 }
 
 .klb-close-btn {
