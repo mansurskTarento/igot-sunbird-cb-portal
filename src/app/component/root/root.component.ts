@@ -454,7 +454,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         }
         if (
           this.currentUrl.startsWith('/app/toc') ||
-          this.currentUrl.startsWith('/viewer/')
+          this.currentUrl.startsWith('/viewer/') ||
+          this.currentUrl.startsWith('/app/event-hub/')
         ) {
           this.showFullScreen.set(true)
         } else {
@@ -560,7 +561,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
-    achievements.sectionLoading = true
+    achievements['sectionLoading'] = true
     this.sendDetailsChangedEvent(achievements)
     if (achievements) {
       try {
