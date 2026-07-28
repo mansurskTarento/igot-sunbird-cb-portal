@@ -4,6 +4,7 @@ import {
   ApplicationRef,
   ChangeDetectorRef,
   Component,
+  computed,
   effect,
   ElementRef,
   HostListener,
@@ -100,6 +101,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   showFullScreen = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
+  // The sidebar only pushes page content on the home page. Everywhere else it is an overlay
+  // drawer (see isOverlayMode in sb-uic-dynamic-sidebar), so opening it must leave the header
+  // and main content exactly where they are instead of reflowing them.
+  sidebarPushesContent = computed(() => this.isHomePage() && this.leftNavBarIsOpen())
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -264,9 +269,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   @ViewChild('skipper') skipper!: ElementRef
 
   isXSmall$ = this.valueSvc.isXSmall$
-  // Matches the tablet overlay-drawer range used by sb-uic-dynamic-sidebar (768px - 1199.98px)
+  // Matches BREAKPOINT_QUERIES.TABLET in sb-uic-dynamic-sidebar (600px - 1024px). Starting this
+  // at 768px left 600px-767.98px claimed by neither isXSmall$ (< 600px) nor isTabView$, so the
+  // desktop sidebar rendered in a range the sidebar itself treated as mobile.
   isTabView$ = this.breakpointObserver
-    .observe(['(min-width: 768px) and (max-width: 1024px)'])
+    .observe(['(min-width: 600px) and (max-width: 1024px)'])
     .pipe(map(state => state.matches))
   // Desktop-only: sidebar-driven widths (navBarOpenContent/navBarCloseContent) must not apply on mobile or tab
   isDesktopView$ = combineLatest([this.isXSmall$, this.isTabView$]).pipe(
