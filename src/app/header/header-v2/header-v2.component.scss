@@ -15,7 +15,11 @@
   color: var(--text-bandw-black-display);
 }
 
-@media (max-width : 768px) {
+// The banner is phone-only: 600px-1024px is the tablet overlay-drawer range (see
+// BREAKPOINT_QUERIES.TABLET), where the layout has room for the normal header and the
+// download prompt just crowds it. 599.98px is the Breakpoints.XSmall edge the rest of the
+// app uses for "mobile", so this switches off at the same point as the mobile sidebar.
+@media (max-width : 599.98px) {
   .mobile-download-app-top-header {
     // position: fixed;
     display: flex;
