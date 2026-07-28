@@ -256,6 +256,11 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     })
   }
 
+  onSearchSubmit(event: Event) {
+    event.preventDefault()
+    this.updateQuery(this.queryControl.value || '')
+  }
+
   async updateQuery(query: string) {
     if (query && query.length) {
       await this.searchInNLP(query)

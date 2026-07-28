@@ -14,6 +14,7 @@ import { map } from 'rxjs/operators'
 // tslint:disable
 import _ from 'lodash'
 import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 // tslint:enable
 
 const API_ENDPOINTS = {
@@ -54,7 +55,8 @@ export class UserProfileService {
   constructor(
     private http: HttpClient,
     private translateService: TranslateService,
-    private commonMethodsService: CommonMethodsService
+    private commonMethodsService: CommonMethodsService,
+    private configSvc: ConfigurationsService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')
@@ -136,29 +138,52 @@ export class UserProfileService {
     return this.http.post(API_ENDPOINTS.approveRequest, data)
   }
 
+  // workflow application-fields search is gated by global-config apis.workflow.userWFApplicationFieldsSearch
+  private isWorkflowSearchEnabled(): boolean {
+    const cfg = this.configSvc.globalConfig?.apis?.workflow?.userWFApplicationFieldsSearch
+    return !(cfg && !cfg.enabled)
+  }
+
+  private getWorkflowSearchUrl(): string {
+    const cfg = this.configSvc.globalConfig?.apis?.workflow?.userWFApplicationFieldsSearch
+    return (cfg?.enabled && cfg?.url) ? cfg.url : API_ENDPOINTS.getPendingFields
+  }
+
   listApprovalPendingFields() {
-    return this.http.post<any>(API_ENDPOINTS.getPendingFields, {
+    if (!this.isWorkflowSearchEnabled()) {
+      return of({ result: { data: [] } })
+    }
+    return this.http.post<any>(this.getWorkflowSearchUrl(), {
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     })
   }
 
   fetchApprovalPendingFields() {
-    return this.http.post<any>(API_ENDPOINTS.getApprovalPendingFields, {
+    if (!this.isWorkflowSearchEnabled()) {
+      return of({ result: { data: [] } })
+    }
+    return this.http.post<any>(this.getWorkflowSearchUrl(), {
       serviceName: 'profile',
       applicationStatus: 'SEND_FOR_APPROVAL',
     })
   }
 
   fetchApprovedFields() {
-    return this.http.post<any>(API_ENDPOINTS.getApprovalPendingFields, {
+    if (!this.isWorkflowSearchEnabled()) {
+      return of({ result: { data: [] } })
+    }
+    return this.http.post<any>(this.getWorkflowSearchUrl(), {
       serviceName: 'profile',
       applicationStatus: 'APPROVED',
     })
   }
 
   listRejectedFields() {
-    return this.http.post<any>(API_ENDPOINTS.getPendingFields, {
+    if (!this.isWorkflowSearchEnabled()) {
+      return of({ result: { data: [] } })
+    }
+    return this.http.post<any>(this.getWorkflowSearchUrl(), {
       serviceName: 'profile',
       applicationStatus: 'REJECTED',
     })

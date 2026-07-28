@@ -32,7 +32,6 @@ export class CompetencyDetailsComponent implements OnInit, OnDestroy {
   filterForm: UntypedFormGroup | undefined
   facets: any
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school' },
     { title: 'All Competencies', url: '/app/learn/browse-by/competency', icon: '' },
   ]
   competencyName = ''

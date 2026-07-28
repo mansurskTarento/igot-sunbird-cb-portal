@@ -21,7 +21,6 @@ export class KarmaProgramsMicrositeV2Component implements OnInit {
   originalContentlist: any = []
   seeAllPageConfig: any
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     {
       title: 'Karma Programs',
       url: '/app/learn/karma-programs/all-programs',

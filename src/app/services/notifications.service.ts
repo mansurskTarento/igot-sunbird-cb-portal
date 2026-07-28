@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, Subject } from 'rxjs'
+import { Observable, of, Subject } from 'rxjs'
 import { map, retry } from 'rxjs/operators'
 import * as _ from 'lodash'
 import { Router } from '@angular/router'
@@ -36,7 +36,12 @@ export class NotificationsService {
   }
 
   getNotificationsData(): Observable<any> {
-    return this.http.get(API_END_POINTS.NOTIFICATIONS_COUNT)
+    const cfg = this.configService.globalConfig?.apis?.notification?.unreadCount
+    if (cfg && !cfg.enabled) {
+      return of(null)
+    }
+    const url = (cfg?.enabled && cfg?.url) ? cfg.url : API_END_POINTS.NOTIFICATIONS_COUNT
+    return this.http.get(url)
   }
 
   resetNotificationsCount(): Observable<any> {

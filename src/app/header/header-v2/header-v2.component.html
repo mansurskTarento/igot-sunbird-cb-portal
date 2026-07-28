@@ -22,4 +22,7 @@
   <ws-app-nav-bar-v2 [ngClass]="mobileTopHeaderVisibilityStatus() ? 'top-nav-bar':'top-nav-bar-without-mobile-header'"
     [mode]="'top'" [headerFooterConfigData]="headerFooterConfigData"
     [leftNavBarOpen]="leftNavBarOpen()"></ws-app-nav-bar-v2>
+  <ng-container *ngIf="showHubs && domainConfSvc.isConfigEnabled('components.secondaryHeader', 'enabled')">
+    <ws-widget-grid-layout [widgetData]="widgetData" [fromHeader]="true"></ws-widget-grid-layout>
+  </ng-container>
 </div>

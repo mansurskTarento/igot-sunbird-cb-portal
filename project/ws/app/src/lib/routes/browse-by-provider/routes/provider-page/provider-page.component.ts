@@ -19,7 +19,6 @@ export class ProviderPageComponent implements OnInit  {
   sectionList: any = []
   currentMonthAndYear: any
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     { title: 'All Providers',
       url: '/app/learn/browse-by/provider/all-providers',
       icon: '', disableTranslate: true,

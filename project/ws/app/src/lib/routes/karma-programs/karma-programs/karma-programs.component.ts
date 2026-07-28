@@ -32,7 +32,6 @@ export class KarmaProgramsComponent implements OnInit {
   totalCount = 0
   private unsubscribe = new Subject<void>()
   titles = [
-    { title: 'Learn', url: '/page/learn', icon: 'school', disableTranslate: false },
     { title: 'Karma Programs', url: 'none', icon: '' },
   ]
   getAllProvidersReq = {

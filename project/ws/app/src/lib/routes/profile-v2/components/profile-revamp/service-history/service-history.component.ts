@@ -61,7 +61,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
         urlConfigPath: 'profileV1Extended',
         apiConfig: this.apiConfig
       }
-      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'serviceHistory').subscribe((res: any) => {
+      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'serviceHistory', !this.isCurrentUser).subscribe((res: any) => {
         if (res) {
           this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', [])
           this.serviceHistoryDetails = _.get(res, 'result.response', [])

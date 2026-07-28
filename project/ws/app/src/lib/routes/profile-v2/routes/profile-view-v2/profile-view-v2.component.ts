@@ -1074,7 +1074,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   fetchProfileDetails() {
     const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Basic')
-    this.profileV2RevampSvc.fetchProfile(apiConfigDetails, this.userId).subscribe({
+    this.profileV2RevampSvc.fetchProfile(apiConfigDetails, this.userId, !this.isCurrentUser).subscribe({
       next: (response: any) => {
         if (response) {
           this.profesionalDetails = _.get(response, 'result.response.profiledetails', _.get(response, 'result.response.profileDetails', _.get(response, 'result', {})))
@@ -1837,7 +1837,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   fetchProfileEntries() {
     const apiConfigDetails: ConfigDetails = this.getConfigDetails('profileV1Extended')
-    this.profileV2RevampSvc.fetchProfileEntries(apiConfigDetails, this.userId).subscribe({
+    this.profileV2RevampSvc.fetchProfileEntries(apiConfigDetails, this.userId, 'all', !this.isCurrentUser).subscribe({
       next: (response: any) => {
         if (response) {
           this.patchEntries(_.get(response, 'result.response', {}))
