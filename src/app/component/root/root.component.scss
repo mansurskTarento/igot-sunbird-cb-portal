@@ -90,12 +90,12 @@ ws-app-nav-bar {
   z-index: 10000;
 }
 
-// Reserves space for the fixed 72px bottom nav bar (.bottom-nav-bar) so page
+// Reserves space for the fixed 64px bottom nav bar (.bottom-nav-bar) so page
 // content/buttons are never hidden behind it on mobile.
 .height-on-bottom {
   overflow: auto;
   box-sizing: border-box;
-  padding-bottom: 72px;
+  padding-bottom: 64px;
 }
 
 .height-on-top {

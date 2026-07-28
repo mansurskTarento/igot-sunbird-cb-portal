@@ -78,12 +78,10 @@
   @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
   <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
-    @if (item?.type !== 'explorerButton' && item?.config?.label?.toLowerCase() !== 'search') {
-    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    @if (item?.type !== 'explorerButton') {
+    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
-      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''"
-        [class.keep-icon-color]="item?.config?.label?.toLowerCase() === 'home'"
-        [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
+      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
         <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
           title="{{item?.config?.label}}" />
         <span>{{item?.config?.label | titlecase}}</span>
@@ -92,9 +90,9 @@
     }
 
     @if (item?.type === 'explorerButton') {
-    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="openExploreMenu()">
-      <div class="icon-container" [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
+      <div class="icon-container">
         <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
           title="{{item?.config?.label}}" />
         <span>{{item?.config?.label | titlecase}}</span>
