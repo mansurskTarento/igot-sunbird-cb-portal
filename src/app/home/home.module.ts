@@ -41,12 +41,9 @@ import { SurveyFormModule } from '@sunbird-cb/collection'
 import { MatButtonModule } from '@angular/material/button'
 import { SignupService } from '../routes/signup/signup.service'
 import { InSightSideBarModule } from '../component/in-sight-side-bar/in-sight-side-bar.module'
-import { SbUicCarouselBannerV2Component, CardsModule, CardCourseV2Component } from '@sunbird-cb/consumption'
-import { ContinueLearningV2Module } from './home-v2/continue-learning-v2/continue-learning-v2.module'
-import { WelcomeGreetingV2Component } from './home-v2/welcome-greeting-v2/welcome-greeting-v2.component'
+import { CardsModule, CardCourseV2Component } from '@sunbird-cb/consumption'
 import { KarmaLeaderboardV2Module } from './home-v2/karma-leaderboard-v2/karma-leaderboard-v2.module'
 import { InSpotlightV2Module } from './home-v2/in-spotlight-v2/in-spotlight-v2.module'
-import { HomeCarouselBannerV2Component } from './home-v2/home-carousel-banner-v2/home-carousel-banner-v2.component'
 @NgModule({
     declarations: [
         HomeComponent,
@@ -92,10 +89,6 @@ import { HomeCarouselBannerV2Component } from './home-v2/home-carousel-banner-v2
         InSightSideBarModule,
         HomeOtherPortalModule,
         ContetnSectionsComponent,
-        SbUicCarouselBannerV2Component,
-        HomeCarouselBannerV2Component,
-        ContinueLearningV2Module,
-        WelcomeGreetingV2Component,
         CardsModule,
         CardCourseV2Component,
         KarmaLeaderboardV2Module,
