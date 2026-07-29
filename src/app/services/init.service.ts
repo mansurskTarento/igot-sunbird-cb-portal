@@ -367,7 +367,7 @@ export class InitService {
           subType: 'global-web',
           type: 'page',
           portal: 'portal',
-          clientVersion: 1.0,
+          clientVersion: 2.0,
         },
       }
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
