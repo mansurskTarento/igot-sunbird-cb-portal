@@ -23,12 +23,11 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
-import { ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
+import { buildWeeklyClapsData, ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../routes/services/common-data.service'
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 // Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
 import { HomePageService } from 'src/app/services/home-page.service'
-import { buildWeeklyClapsData } from 'src/app/home/home-v2/continue-learning-v2/weekly-claps-card-v2/weekly-claps-data.util'
 //#endregion
 
 @Component({

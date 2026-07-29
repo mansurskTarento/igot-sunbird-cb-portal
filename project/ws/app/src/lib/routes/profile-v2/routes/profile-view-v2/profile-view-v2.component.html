@@ -505,8 +505,8 @@
 
           <!-- Weekly claps belongs to the statistics view; the leaderboard view ends at the card -->
           <div id="my-weekly-claps" *ngIf="achievementView === 'stats'">
-            <ws-weekly-claps-card-v2 [weeklyData]="weeklyClapsData" [insightsData]="insightsData"
-              [isLoading]="insightsDataLoading"></ws-weekly-claps-card-v2>
+            <sb-uic-weekly-claps-card-v2 [weeklyData]="weeklyClapsData" [insightsData]="insightsData"
+              [isLoading]="insightsDataLoading"></sb-uic-weekly-claps-card-v2>
           </div>
 
           <!-- <div class="assessments-wrapper" *ngIf="assessmentsData">
