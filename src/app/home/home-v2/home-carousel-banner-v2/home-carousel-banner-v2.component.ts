@@ -1,6 +1,11 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy, OnInit } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { NsCarouselBannerV2, SbUicCarouselBannerV2Component } from '@sunbird-cb/consumption'
+import { ValueService } from '@sunbird-cb/utils-v2'
+import { Subscription } from 'rxjs'
+
+const PEEK_PERCENT_DESKTOP = 25
+const PEEK_PERCENT_MOBILE = 0
 
 interface ISliderDataItem {
   active: boolean
@@ -25,13 +30,26 @@ interface ISliderDataItem {
   standalone: true,
   imports: [SbUicCarouselBannerV2Component],
 })
-export class HomeCarouselBannerV2Component implements OnInit {
+export class HomeCarouselBannerV2Component implements OnInit, OnDestroy {
   banners: NsCarouselBannerV2.IBannerItem[] = []
+  // No peek on mobile - the next banner's sliver crowds an already narrow viewport
+  peekPercent = PEEK_PERCENT_DESKTOP
+  private screenSizeSubscription?: Subscription
 
-  constructor(private activatedRoute: ActivatedRoute) { }
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private valueSvc: ValueService,
+  ) { }
 
   ngOnInit(): void {
     this.loadSliderData()
+    this.screenSizeSubscription = this.valueSvc.isXSmall$.subscribe((isXSmall: boolean) => {
+      this.peekPercent = isXSmall ? PEEK_PERCENT_MOBILE : PEEK_PERCENT_DESKTOP
+    })
+  }
+
+  ngOnDestroy(): void {
+    this.screenSizeSubscription?.unsubscribe()
   }
 
   private loadSliderData(): void {
