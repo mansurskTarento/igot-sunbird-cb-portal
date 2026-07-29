@@ -67,14 +67,14 @@
   </div>
   }
   <!-- ── Karma Points top heading ────────────────────────────── -->
+  <div class="klb-top-section-header">
+    <div id="klb-card-title" class="klb-top-title" role="heading" aria-level="2">{{ 'karmaLeaderboard.karmaPoints' |
+      translate }}</div>
+    <button class="klb-close-btn" aria-label="Close Karma Leaderboard" (click)="close.emit()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
   <div class="klb-top-section">
-    <div class="klb-top-section-header">
-      <div id="klb-card-title" class="klb-top-title" role="heading" aria-level="2">{{ 'karmaLeaderboard.karmaPoints' |
-        translate }}</div>
-      <button class="klb-close-btn" aria-label="Close Karma Leaderboard" (click)="close.emit()">
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
     <p class="klb-top-desc">{{ 'karmaLeaderboard.topDesc' | translate }}
     </p>
   </div>
