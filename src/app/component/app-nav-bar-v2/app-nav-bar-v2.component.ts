@@ -1,4 +1,4 @@
-import { Component, computed, effect, input, OnDestroy, OnInit, output, signal } from '@angular/core'
+import { Component, computed, effect, input, OnChanges, OnDestroy, OnInit, output, signal, SimpleChanges } from '@angular/core'
 import { CommonModule } from '@angular/common'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { Router, NavigationEnd, NavigationStart, RouterModule } from '@angular/router'
@@ -52,9 +52,10 @@ import { BreakpointObserver } from '@angular/cdk/layout'
   templateUrl: './app-nav-bar-v2.component.html',
   styleUrl: './app-nav-bar-v2.component.scss'
 })
-export class AppNavBarV2Component implements OnInit, OnDestroy {
+export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
   // Inputs using Angular 20 input() signal
   mode = input<'top' | 'bottom'>('top');
+  showKarmaLeaderboard = input<boolean>(false)
   headerFooterConfigData = input<any>();
   leftNavBarOpen = input<boolean>(false);
 
@@ -81,6 +82,7 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   showLangDropdown = signal(true);
   isTourGuideAvailable = signal(false);
   isTourGuideClosed = signal(false);
+  activeItemKey = signal('')
 
   // Tracks the router url; kept as a signal so computeds below re-evaluate on navigation
   currentHref = signal(window.location.href);
@@ -212,6 +214,12 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
         this.btnAppsConfig = { ...this.basicBtnAppsConfig }
       }
     })
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.showKarmaLeaderboard && changes.showKarmaLeaderboard.currentValue === false && this.activeItemKey() === 'achievements') {
+      this.activeItemKey.set('')
+    }
   }
 
   ngOnInit() {
@@ -574,8 +582,10 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   bottomNavClick(item: any) {
+    this.activeItemKey.set('')
     if (item?.config?.key === 'achievements') {
       this.viewAchivements.emit(true)
+      this.activeItemKey.set(item?.config?.key)
     } else if (item?.config?.key === 'continueLearning') {
       this.router.navigate(['/app/seeAll/new'], {
         queryParams: { key: 'continueLearning', tabSelected: 'Contents', pillSelected: 'inprogress' },
@@ -596,10 +606,12 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   }
 
   openExploreMenu() {
+    // this.activeRoute.set('explore')
+    // this.router.navigate(['/app/globalsearch'], {
+    //   queryParams: { q: '', category: 'courses', tab: 'explore-content', filtersPanel: 'show' },
+    // })
     this.activeRoute.set('explore')
-    this.router.navigate(['/app/globalsearch'], {
-      queryParams: { q: '', category: 'courses', tab: 'explore-content', filtersPanel: 'show' },
-    })
+    this.configSvc.openExploreMenuForMWeb.next(true)
   }
 
   getKarmaCount() {
@@ -648,6 +660,16 @@ export class AppNavBarV2Component implements OnInit, OnDestroy {
   fetchEnrollmentList() {
     const userId = this.configSvc.userProfile?.userId || ''
     this.userSvc.fetchUserBatchList(userId).subscribe()
+  }
+
+  isActive(itemConfig: any) {
+    if (itemConfig && this.activeItemKey() && this.activeItemKey() === itemConfig.key) {
+      return true
+    } else if (itemConfig.label === this.activeRoute() && !this.activeItemKey()) {
+      return true
+    }
+
+    return false
   }
 
   ngOnDestroy() {
