@@ -72,29 +72,30 @@
 }
 <!-- Bottom Navigation Bar (Mobile) -->
 @if (sShowAppNavBar() && !needToHide() && mode() === 'bottom') {
-<mat-toolbar [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles"
-  class="mat-elevation-z3 custom mobile-footer-fixed-nav">
+<mat-toolbar [ngStyle]="primaryNavbarBackground?.styles" class="custom mobile-footer-fixed-nav">
 
   @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
   <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
     @if (item?.type !== 'explorerButton') {
-    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
       <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
-        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
-          title="{{item?.config?.label}}" />
+        <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
+          [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>
     }
 
     @if (item?.type === 'explorerButton') {
-    <li [ngClass]="activeRoute() === item?.config?.label ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="openExploreMenu()">
       <div class="icon-container">
-        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
-          title="{{item?.config?.label}}" />
+        <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
+          [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>
