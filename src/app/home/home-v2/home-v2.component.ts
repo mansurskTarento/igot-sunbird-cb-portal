@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core'
-import { ActivatedRoute, Router } from '@angular/router'
+import { Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
@@ -12,18 +12,14 @@ import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils
 })
 export class HomeV2Component implements OnInit {
 
-  private readonly activatedRoute = inject(ActivatedRoute)
   private readonly configSvc = inject(ConfigurationsService)
   readonly btnSettingsSvc = inject(BtnSettingsService)
   private readonly router = inject(Router)
   private readonly translate = inject(TranslateService)
   private readonly eventSvc = inject(EventService)
 
-  homePageSections: any
-
   ngOnInit(): void {
     this.initializeUserState()
-    this.initializePageData()
     this.handleDefaultFontSetting()
     this.initializeLanguage()
   }
@@ -35,13 +31,6 @@ export class HomeV2Component implements OnInit {
 
     if (isNotMyUser && isIgotOrg) {
       this.router.navigateByUrl('app/person-profile/me#profileInfo')
-    }
-  }
-
-  private initializePageData(): void {
-    const pageData = this.activatedRoute.snapshot.data?.home?.data
-    if (pageData) {
-      this.homePageSections = pageData.homeSection
     }
   }
 

@@ -42,7 +42,7 @@ export class HomeV2ResolverService {
 
     return forkJoin([response$, sectionRecordsCount]).pipe(
       switchMap(([responseRes, sectionRecordsCountRes]) => {
-        const responseConfigDetails = responseRes && responseRes.result && responseRes.result.data && responseRes.result.data.homeV2
+        const responseConfigDetails = responseRes && responseRes.result && responseRes.result.data
         if (responseConfigDetails) {
           return of([responseConfigDetails, sectionRecordsCountRes])
         }

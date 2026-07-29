@@ -60,7 +60,7 @@
     </div>
     }
 
-    <div class="flex gap-4 items-center ml-auto">
+    <div class="flex gap-2 md:gap-4 items-center ml-auto">
       @for (item of filteredPrimaryNavbarConfig?.mediumScreen?.right; track item) {
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
