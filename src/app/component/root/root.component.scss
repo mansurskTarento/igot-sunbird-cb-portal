@@ -24,6 +24,12 @@
 .root-container {
   background-color: var(--surface-primary);
 }
+@media (min-width: 593px) {
+  ::ng-deep .sidebar-overlay {
+    background-color: transparent !important;
+    animation: none !important;
+  }
+}
 
 // ── Karma Leaderboard popup overlay ───────────────────────────────
 .klb-popup-backdrop {
