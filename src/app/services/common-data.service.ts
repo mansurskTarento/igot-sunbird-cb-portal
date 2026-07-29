@@ -28,6 +28,11 @@ export class CommonDataService {
   private mandatoryNotificationSubject = new BehaviorSubject<any>(null)
   public mandatoryNotification$ = this.mandatoryNotificationSubject.asObservable()
 
+  // the sidebar config root.component resolved — application.config (instanceConfig.leftNavBar)
+  // when it carries one, otherwise the static page/left-nav.json it falls back to. Published
+  // here so other pages (the mweb explore menu) render the same items as the sidebar
+  leftNavBarConfig = new BehaviorSubject<any>(null)
+
   // Mandatory notification timer properties
   showMandatoryNotification = false
   isMandatoryModalOpen = false
