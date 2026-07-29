@@ -35,6 +35,14 @@
 .klb-card--no-scroll {
   overflow-y: hidden;
 }
+.klb-card--embedded {
+  width: 294px;
+  max-width: 100%;
+  max-height: none;
+  margin: 0 auto;
+  overflow-y: visible;
+  padding: 8px 16px 16px;
+}
 
 .klb-loading-card {
   padding-top: 10px;
