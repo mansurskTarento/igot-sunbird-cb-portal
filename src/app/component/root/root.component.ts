@@ -914,6 +914,16 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.router.navigate(['/app/person-profile/karma-points'])
   }
 
+  viewMyActivities() {
+    this.showKarmaLeaderboard.set(false)
+    this.eventSvc.raiseInteractTelemetry(
+      { id: 'view_all_achievements', type: WsEvents.EnumInteractTypes.CLICK },
+      {},
+      { module: WsEvents.EnumTelemetrymodules.HOME }
+    )
+    this.router.navigate(['/app/person-profile/me'], { queryParams: { tab: 'activities' } })
+  }
+
   exploreContent() {
     this.libNotificationsService.updateUnreadCount()
     this.raiseTelemetryExploreContent('explore_content')

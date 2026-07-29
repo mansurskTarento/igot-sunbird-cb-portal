@@ -26,6 +26,9 @@ import { DatePipe } from '@angular/common'
 import { ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../routes/services/common-data.service'
 import { NetCoreService } from '../../../../routes/services/netcore.service'
+// Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
+import { HomePageService } from 'src/app/services/home-page.service'
+import { buildWeeklyClapsData } from 'src/app/home/home-v2/continue-learning-v2/weekly-claps-card-v2/weekly-claps-data.util'
 //#endregion
 
 @Component({
@@ -211,8 +214,20 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (m web and activites varailbles)
   selectedTabIndex: any = 0
+  // Achievement section view switch: 'stats' shows the stats card, 'leaderboard' the karma leaderboard
+  achievementView: 'stats' | 'leaderboard' = 'stats'
+  // My Statistics cards. Same four metrics the My Achievements sidebar section shows, so the two
+  // never disagree; values are filled in by setAchievementStats().
+  achievementStats: { key: string, label: string, value: string, icon: string }[] = [
+    { key: 'karmaPoints', label: 'profileInfo.youEarned', value: '0 KP', icon: '/assets/icons/home-v2/karma-badge.svg' },
+    { key: 'rank', label: 'profileInfo.youreRank', value: '--', icon: '/assets/icons/hubs-v2/trophi.svg' },
+    { key: 'badges', label: 'leftNavBar.yourEarned', value: '0 Badges', icon: '/assets/icons/hubs-v2/trophi.svg' },
+    { key: 'learningHours', label: 'leftNavBar.learningHours', value: '0h 0m', icon: '/assets/icons/hubs-v2/badge.svg' },
+  ]
   insightsDataLoading = false
   insightsData: any
+  // weekList for the weekly claps card, derived from the insights payload (see buildWeeklyClapsData)
+  weeklyClapsData: any = null
   orgId: any
   pageData: any
   assessmentsData: any
@@ -250,6 +265,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private commonSvc: CommonDataService,
     private router: Router,
     private netCoreService: NetCoreService,
+    private homePageSvc: HomePageService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -268,12 +284,25 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
+    // ?tab=activities lands straight on the "My activities" tab (used by the Achievements item in
+    // the mobile bottom nav). The tab only exists for one's own profile, so anything else falls
+    // back to Profile. Deferred by a tick because the tab group has already been checked by the
+    // time this hook runs, and assigning here would otherwise trip
+    // ExpressionChangedAfterItHasBeenCheckedError.
+    const wantsActivities = this.activatedRoute.snapshot.queryParamMap.get('tab') === 'activities'
+    if (wantsActivities && this.isCurrentUser && !this.isNotMyUserAndIgotOrg) {
+      setTimeout(() => {
+        this.selectedTabIndex = 1
+      })
+      return
+    }
     this.selectedTabIndex = 0
   }
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
     this.getAchievements()
+    this.setAchievementStats()
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
@@ -378,6 +407,47 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.openSnackbar('Error while fetching achievements')
       console.error('Error while fetching achievements', error)
     })
+  }
+
+  // Karma points, badges and learning hours all come off the cached enrolment payload the rest of
+  // the app reads (see the My Achievements sidebar section); only the rank needs the leaderboard.
+  setAchievementStats() {
+    try {
+      const raw = localStorage.getItem('userEnrollmentCount')
+      const info = raw ? _.get(JSON.parse(raw), 'userCourseEnrolmentInfo', {}) : {}
+      this.setStatValue('karmaPoints', `${_.get(info, 'karmaPoints', 0)} KP`)
+      this.setStatValue('badges', `${_.get(info, 'badgeCount', 0)} Badges`)
+      this.setStatValue('learningHours', this.toHoursAndMinutes(_.get(info, 'timeSpentOnCompletedCourses', 0)))
+    } catch (_e) { /* keep the placeholder values */ }
+
+    this.homePageSvc.getLearnerLeaderboardCached()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        const currentUserId = _.get(this.configSvc, 'unMappedUser.id', '')
+        const entry = _.find(_.get(res, 'result.result', []), (row: any) => row.userId === currentUserId)
+        const rank = _.get(entry, 'rank')
+        if (rank) {
+          this.setStatValue('rank', `${this.toOrdinal(rank)} Rank`)
+        }
+      }, () => { /* leave the placeholder when the leaderboard is unavailable */ })
+  }
+
+  private setStatValue(key: string, value: string) {
+    const stat = this.achievementStats.find((item: any) => item.key === key)
+    if (stat) {
+      stat.value = value
+    }
+  }
+
+  private toHoursAndMinutes(seconds: any): string {
+    const total = Number(seconds) || 0
+    return `${Math.floor(total / 3600)}h ${Math.floor((total % 3600) / 60)}m`
+  }
+
+  private toOrdinal(rank: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd']
+    const v = rank % 100
+    return `${rank}${suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]}`
   }
 
   getProfileDetailsFromRoutes() {
@@ -2051,6 +2121,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           if (this.insightsData && this.insightsData['weekly-claps']) {
             this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
           }
+          // Derive the week list the way home does instead of using the static weekList in page
+          // config, otherwise the same card shows different ticks here than on home
+          this.weeklyClapsData = buildWeeklyClapsData(this.insightsData['weeklyClaps'])
         } else {
           this.insightsDataLoading = false
         }

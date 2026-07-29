@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core'
+import { Component, HostListener, Input, inject } from '@angular/core'
 import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { TranslateModule } from '@ngx-translate/core'
 
@@ -56,6 +56,13 @@ export class WeeklyClapsCardV2Component {
 
   closePopup() {
     this.showPopup = false
+  }
+
+ @HostListener('document:keydown.escape')
+  onEscapeKey() {
+    if (this.showPopup) {
+      this.closePopup()
+    }
   }
 
   getWeekIcon(week: { key: string; activeWeek: boolean }): string {

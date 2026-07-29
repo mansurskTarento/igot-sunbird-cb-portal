@@ -101,46 +101,48 @@
 <div class="wc-popup-backdrop" role="presentation" (click)="closePopup()" (keydown.escape)="closePopup()">
   <div class="wc-popup" role="dialog" aria-modal="true" aria-labelledby="wc-popup-title"
     (click)="$event.stopPropagation()">
-    <!-- Close -->
+    <!-- Close — kept outside .wc-popup-body so it never scrolls out of reach -->
     <button class="wc-popup-close" aria-label="Close Weekly Claps information" (click)="closePopup()">&#x2715;</button>
 
-    <!-- Header -->
-    <div class="wc-popup-header">
-      <img class="wc-popup-header-img" src="assets/icons/home-v2/clap_icon.svg" width="42" height="42"
-        aria-hidden="true" alt="">
-      <h2 class="wc-popup-title" id="wc-popup-title">{{ 'continueLearning.popupTitle' | translate }}</h2>
-      <p class="wc-popup-intro">
-        {{ 'continueLearning.popupIntro' | translate }}
-      </p>
-    </div>
-
-    <!-- Q1 -->
-    <div class="wc-popup-item">
-      <div class="wc-popup-item-icon wc-popup-item-icon--green" aria-hidden="true">
-        <img src="assets/icons/home-v2/clap_icon.svg" width="28" height="28" alt="">
-      </div>
-      <div class="wc-popup-item-body">
-        <p class="wc-popup-q">{{ 'continueLearning.maintainQ' | translate }}</p>
-        <p class="wc-popup-a">
-          {{ 'continueLearning.maintainA1' | translate }} <strong class="wc-popup-highlight">60 {{
-            'continueLearning.minutes' | translate }}</strong>
-          {{ 'continueLearning.maintainA2' | translate }}
+    <div class="wc-popup-body">
+      <!-- Header -->
+      <div class="wc-popup-header">
+        <img class="wc-popup-header-img" src="assets/icons/home-v2/clap_icon.svg" width="42" height="42"
+          aria-hidden="true" alt="">
+        <h2 class="wc-popup-title" id="wc-popup-title">{{ 'continueLearning.popupTitle' | translate }}</h2>
+        <p class="wc-popup-intro">
+          {{ 'continueLearning.popupIntro' | translate }}
         </p>
       </div>
-    </div>
 
-    <!-- Q2 -->
-    <div class="wc-popup-item">
-      <div class="wc-popup-item-icon wc-popup-item-icon--red" aria-hidden="true">
-        <img src="assets/icons/home-v2/clap_disable_icon.svg" width="28" height="28" alt="">
+      <!-- Q1 -->
+      <div class="wc-popup-item">
+        <div class="wc-popup-item-icon wc-popup-item-icon--green" aria-hidden="true">
+          <img src="assets/icons/home-v2/clap_icon.svg" width="28" height="28" alt="">
+        </div>
+        <div class="wc-popup-item-body">
+          <p class="wc-popup-q">{{ 'continueLearning.maintainQ' | translate }}</p>
+          <p class="wc-popup-a">
+            {{ 'continueLearning.maintainA1' | translate }} <strong class="wc-popup-highlight">60 {{
+              'continueLearning.minutes' | translate }}</strong>
+            {{ 'continueLearning.maintainA2' | translate }}
+          </p>
+        </div>
       </div>
-      <div class="wc-popup-item-body">
-        <p class="wc-popup-q">{{ 'continueLearning.loseQ' | translate }}</p>
-        <p class="wc-popup-a">
-          {{ 'continueLearning.loseA1' | translate }} <strong class="wc-popup-highlight">60 {{
-            'continueLearning.minutes' | translate }}</strong>
-          {{ 'continueLearning.loseA2' | translate }}
-        </p>
+
+      <!-- Q2 -->
+      <div class="wc-popup-item">
+        <div class="wc-popup-item-icon wc-popup-item-icon--red" aria-hidden="true">
+          <img src="assets/icons/home-v2/clap_disable_icon.svg" width="28" height="28" alt="">
+        </div>
+        <div class="wc-popup-item-body">
+          <p class="wc-popup-q">{{ 'continueLearning.loseQ' | translate }}</p>
+          <p class="wc-popup-a">
+            {{ 'continueLearning.loseA1' | translate }} <strong class="wc-popup-highlight">60 {{
+              'continueLearning.minutes' | translate }}</strong>
+            {{ 'continueLearning.loseA2' | translate }}
+          </p>
+        </div>
       </div>
     </div>
   </div>

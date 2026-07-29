@@ -132,7 +132,7 @@
       </ws-app-footer>
 
       <ws-app-nav-bar-v2 class="bottom-nav-bar" [hidden]="!isShowNavbar || !showBottomNav"
-        (viewAchivements)="viewAllAchievements()"
+        (viewAchivements)="viewMyActivities()"
         *ngIf="navBarRequired && (isXSmall$ | async) === true && !hideHeaderAndFooter" [mode]="'bottom'">
       </ws-app-nav-bar-v2>
       <ng-container #previewContainer></ng-container>

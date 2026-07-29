@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, output } from '@angular/core'
+import { Component, OnInit, inject, input, output } from '@angular/core'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { HomePageService } from '../../../services/home-page.service'
 import { UserProfileService } from '../../../../../project/ws/app/src/lib/routes/user-profile/services/user-profile.service'
@@ -21,6 +21,7 @@ import { TitleCasePipe } from '@angular/common'
 export class KarmaLeaderboardV2Component implements OnInit {
 
   readonly close = output<void>()
+  readonly embedded = input(false)
 
   loading = true
   rank1: any = null
