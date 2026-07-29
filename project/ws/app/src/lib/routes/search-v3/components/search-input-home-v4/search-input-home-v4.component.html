@@ -36,8 +36,7 @@
       </mat-form-field>
 
       <button mat-flat-button type="button" class="mat-btn-flat global-search"
-        [ngClass]="{'disabled-search-btn': !queryControl.value}"
-        (click)="updateQuery(queryControl.value || '')">
+        [ngClass]="{'disabled-search-btn': !queryControl.value}" (click)="updateQuery(queryControl.value || '')">
         {{'gyaanKarmayogi.search' | translate}}
       </button>
     </form>

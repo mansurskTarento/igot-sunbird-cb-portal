@@ -47,6 +47,27 @@
   left: calc(330px + 24px);
   transform: translateY(-50%);
   z-index: 10002;
+  animation: klb-panel-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes klb-panel-in {
+  from {
+    transform: translateY(-50%) translateX(-24px);
+  }
+
+  to {
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes klb-panel-in-mobile {
+  from {
+    transform: translate(-50%, -50%) translateY(18px) scale(0.96);
+  }
+
+  to {
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
 }
 
 .navBarOpenContent {
@@ -102,11 +123,10 @@
   }
 
   .klb-popup-panel {
-    // top: 50%;
-    // left: calc(50% - 170px);
-    top: 0;
-    left: calc(100% - 373px);
-    transform: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: klb-panel-in-mobile 300ms cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
@@ -270,19 +290,6 @@ ws-app-nav-bar {
   width: 1064px;
   min-height: 400px;
 }
-
-@media only screen and (max-width: 576px) {
-  // .margin186 {
-  //   margin-top: 186px;
-  // }
-
-  .klb-popup-panel {
-    top: 0;
-    left: 0;
-    transform: none;
-  }
-}
-
 
 @media only screen and (min-width: 577px) and (max-width: 768px) {
   .container-margin {

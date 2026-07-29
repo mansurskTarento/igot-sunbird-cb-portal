@@ -157,7 +157,15 @@
 
 @media only screen and (max-width: 768px) {
   .notification-icon {
-    margin-top: 6px;
+    margin-top: 6px !important;
+  }
+
+  .mob-lang-img {
+    margin-top: 0 !important;
+  }
+
+  ::ng-deep .removeProfileLink .profile-link {
+    padding: 0 10px 10px !important;
   }
 
   .download-app-chip {
