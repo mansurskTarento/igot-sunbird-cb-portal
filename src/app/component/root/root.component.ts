@@ -462,7 +462,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (
           this.currentUrl.startsWith('/app/toc') ||
           this.currentUrl.startsWith('/viewer/') ||
-          this.currentUrl.startsWith('/app/event-hub/')
+          (this.currentUrl.startsWith('/app/event-hub/') && this.currentUrl !== '/app/event-hub/home') ||
+          this.currentUrl.startsWith('/public/')
         ) {
           this.showFullScreen.set(true)
         } else {
