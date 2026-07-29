@@ -253,7 +253,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
         const themeMode = this.themeSvc.currentTheme
         this.themeSvc.setTheme(themeMode)
         this.activeRoute.set('home')
-      } else if (event.url.includes('/page/explore') || event.url.includes('tab=explore-content')) {
+      } else if (event.url.includes('/app/explore') || event.url.includes('/page/explore')
+        || event.url.includes('tab=explore-content')) {
         this.activeRoute.set('explore')
       } else if (event.url.includes('app/globalsearch') || event.url.includes('/app/search/home')) {
         this.activeRoute.set('search')
@@ -606,12 +607,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
   }
 
   openExploreMenu() {
-    // this.activeRoute.set('explore')
-    // this.router.navigate(['/app/globalsearch'], {
-    //   queryParams: { q: '', category: 'courses', tab: 'explore-content', filtersPanel: 'show' },
-    // })
     this.activeRoute.set('explore')
-    this.configSvc.openExploreMenuForMWeb.next(true)
+    this.router.navigate(['/app/explore'])
   }
 
   getKarmaCount() {

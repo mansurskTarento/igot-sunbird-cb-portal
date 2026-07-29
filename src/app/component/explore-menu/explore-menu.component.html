@@ -1,0 +1,38 @@
+<div class="explore-menu" role="navigation" aria-label="Explore menu">
+
+  <ng-container *ngFor="let section of sections; trackBy: trackBySectionKey">
+
+    <!-- nav_list: the card grid built from this page's own markup -->
+    <div class="explore-section" *ngIf="section?.kind === NAV_LIST">
+      <h4 class="explore-menu-heading" *ngIf="section?.sectionTitle">{{ heading(section) }}</h4>
+      <div class="explore-menu-grid">
+        <a class="explore-card" *ngFor="let item of section?.items; trackBy: trackByCode" role="menuitem"
+          [attr.aria-label]="label(item)" (click)="onItemClick(item)">
+          <div class="explore-card-icon" aria-hidden="true">
+            <mat-icon *ngIf="item?.iconName">{{ item?.iconName }}</mat-icon>
+            <span class="icon-svg" *ngIf="!item?.iconName && item?.iconUrl"
+              [style.mask-image]="'url(/assets/icons/hubs-v2/' + item?.iconUrl + '.svg)'"
+              [style.-webkit-mask-image]="'url(/assets/icons/hubs-v2/' + item?.iconUrl + '.svg)'"
+              role="presentation"></span>
+          </div>
+          <div class="explore-card-text">
+            <div class="explore-card-title">{{ label(item) }}</div>
+            <div class="explore-card-desc" *ngIf="item?.description">{{ description(item) }}</div>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <!-- info_cards: Help Centre / Other Portals, rendered by the shared sidebar section -->
+    <div class="explore-section" *ngIf="section?.kind === INFO_CARDS">
+      <sb-uic-sidebar-info-cards-section [section]="section" [isOpen]="true" [showContent]="true"
+        [detailsChanged]="false" (itemClicked)="onInfoCardClick($event)">
+      </sb-uic-sidebar-info-cards-section>
+    </div>
+
+  </ng-container>
+
+  <div class="explore-menu-empty" *ngIf="!sections?.length">
+    {{ 'cardshublist.noHubs' | translate }}
+  </div>
+</div>

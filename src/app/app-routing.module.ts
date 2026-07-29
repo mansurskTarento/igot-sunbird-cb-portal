@@ -875,6 +875,13 @@ const routes: Routes = [
     data: { pageId: 'app-tour' },
   },
   {
+    // mweb explore menu: the bottom-nav Explore tab routes here
+    path: 'app/explore',
+    loadChildren: () => import('./routes/route-explore-menu.module').then(m => m.RouteExploreMenuModule),
+    data: { pageId: 'app/explore', pageKey: 'explore', module: 'explore' },
+    canActivate: [GeneralGuard],
+  },
+  {
     path: 'surveyml/:id',
     loadChildren: () => import('./routes/route-survey-shiksha.module').then(m => m.RouteSurveyShikshaModule),
   },

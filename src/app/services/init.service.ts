@@ -19,8 +19,8 @@ import {
 import { environment } from '../../environments/environment'
 /* tslint:disable */
 import _ from 'lodash'
-import { firstValueFrom } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { firstValueFrom, forkJoin, of } from 'rxjs'
+import { catchError, map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 import { NPSGridService } from '@sunbird-cb/collection'
 import { ContentDictionaryService } from '@sunbird-cb/consumption'
@@ -388,10 +388,28 @@ export class InitService {
     if (!enrollmentSummaryConfig?.enabled) {
       return {} as NsInstanceConfig.IConfig
     }
+    const eventEnrollConfig = this.configSvc.globalConfig?.apis?.user?.eventEnroll
     const userId = this.configSvc.userProfile?.userId
-    const publicConfig: NsInstanceConfig.IConfig = await firstValueFrom(this.enrollSvc.fetchEnrollStats(userId, enrollmentSummaryConfig.url)).then((res: any) => {
+    // the course summary and the event summary are independent APIs — fire them together
+    // and merge both into the single `userEnrollmentCount` cache the widgets read from.
+    // Each stream swallows its own error so one failing API does not drop the other's data
+    const courseStats$ = this.enrollSvc.fetchEnrollStats(userId, enrollmentSummaryConfig.url)
+      .pipe(catchError(() => of(null)))
+    const eventStats$ = eventEnrollConfig?.enabled
+      ? this.enrollSvc.fetchEventEnrollStats(eventEnrollConfig.url).pipe(catchError(() => of(null)))
+      : of(null)
+
+    const publicConfig: NsInstanceConfig.IConfig = await firstValueFrom(
+      forkJoin({ courseStats: courseStats$, eventStats: eventStats$ }),
+    ).then(({ courseStats: res, eventStats: eventRes }: any) => {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
+      const userEventEnrolmentInfo: any = (eventRes && eventRes.result && eventRes.result.userEventEnrolmentInfo) || {}
+      const eventEnrolmentCount = {
+        certificate: userEventEnrolmentInfo.eventsAttended ?? 0,
+        inProgress: (userEventEnrolmentInfo.eventsEnrolled ?? 0) - (userEventEnrolmentInfo.eventsAttended ?? 0),
+        learningHours: userEventEnrolmentInfo.hoursSpentOnEvents ?? 0,
+      }
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
         const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
@@ -413,10 +431,17 @@ export class InitService {
         const userData = {
           enrolledCourseCount,
           userCourseEnrolmentInfo,
+          userEventEnrolmentInfo,
+          eventEnrolmentCount,
+          mergedCountData: this.buildMergedCounts(userCourseEnrolmentInfo, eventEnrolmentCount),
         }
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
 
+      } else {
+        // course summary failed or came back empty — still persist whatever the
+        // event summary returned so the stats widgets get the event counts
+        this.storeFallbackEnrollmentCount(userEventEnrolmentInfo, eventEnrolmentCount)
       }
       if (this.configSvc.userProfile) {
         const userProfile = this.configSvc && this.configSvc.userProfile
@@ -444,18 +469,39 @@ export class InitService {
 
       return res
     }).catch((_err: any) => {
-      const userCourseEnrolmentInfo = {
-        enrolledCourseCount: 0,
-        karmaPoints: 0,
-        timeSpentOnCompletedCourses: 0,
-        certificatesIssued: 0,
-        coursesInProgress: 0,
-        addinfo: {},
-      }
-      localStorage.removeItem('userEnrollmentCount')
-      localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
+      this.storeFallbackEnrollmentCount()
     }) as NsInstanceConfig.IConfig || {}
     return publicConfig
+  }
+
+  // course + event counts merged once at init so the stats widgets only read localStorage.
+  // learningHours stays a raw number — formatting (pipDuration 'hms') is the widget's job
+  private buildMergedCounts(courseInfo: any = {}, eventCount: any = {}): any {
+    return {
+      certificate: (courseInfo.certificatesIssued || 0) + (eventCount.certificate || 0),
+      inProgress: (courseInfo.coursesInProgress || 0) + (eventCount.inProgress || 0),
+      learningHours: (parseFloat(courseInfo.timeSpentOnCompletedCourses) || 0)
+        + (parseFloat(eventCount.learningHours) || 0),
+      karmaPoints: courseInfo.karmaPoints || 0,
+      badgeCount: courseInfo.badgeCount || 0,
+    }
+  }
+
+  private storeFallbackEnrollmentCount(userEventEnrolmentInfo: any = {}, eventEnrolmentCount?: any) {
+    const eventCount = eventEnrolmentCount || { certificate: 0, inProgress: 0, learningHours: 0 }
+    const userData = {
+      userEventEnrolmentInfo,
+      enrolledCourseCount: 0,
+      karmaPoints: 0,
+      timeSpentOnCompletedCourses: 0,
+      certificatesIssued: 0,
+      coursesInProgress: 0,
+      addinfo: {},
+      eventEnrolmentCount: eventCount,
+      mergedCountData: this.buildMergedCounts({}, eventCount),
+    }
+    localStorage.removeItem('userEnrollmentCount')
+    localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
   }
 
   get locale(): string {
