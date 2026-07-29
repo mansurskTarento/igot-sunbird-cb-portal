@@ -891,7 +891,27 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   viewAllAchievements() {
-    this.showKarmaLeaderboard.set(true)
+    this.homePageSvc.getLearnerLeaderboardCached().subscribe(
+      (res: any) => {
+        const results = _.get(res, 'result.result', [])
+        if (Array.isArray(results) && results.length >= 3) {
+          this.showKarmaLeaderboard.set(true)
+        } else {
+          this.navigateToKarmaPoints()
+        }
+      },
+      () => {
+        this.navigateToKarmaPoints()
+      },
+    )
+  }
+
+  private navigateToKarmaPoints() {
+    this.showKarmaLeaderboard.set(false)
+    this.openStatusUserSelection.set(false)
+    this.leftNavBarIsOpen.set(false)
+    this.navBarOpenStatusBasedOnNav.set(false)
+    this.router.navigate(['/app/person-profile/karma-points'])
   }
 
   exploreContent() {

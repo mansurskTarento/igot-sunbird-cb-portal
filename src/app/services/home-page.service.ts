@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { Observable, Subject } from 'rxjs'
+import { Observable, Subject, of } from 'rxjs'
 import { shareReplay } from 'rxjs/operators'
 import { DomainConfService } from '@sunbird-cb/utils-v2'
 
@@ -84,7 +84,7 @@ export class HomePageService {
     const url = this.domainConfSvc.getApiUrl('leaderboard', 'learnerLeaderboard', '/apis/proxies/v8/halloffame/learnerleaderboard')
     if (!url) {
       console.warn('Learner leaderboard API is disabled')
-      return new Observable()
+      return of(null)
     }
     return this.http.get(url)
   }
