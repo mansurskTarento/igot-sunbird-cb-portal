@@ -67,13 +67,11 @@ import * as _ from 'lodash'
   animations: [
     trigger('slidePanel', [
       transition(':enter', [
-        style({ left: 'calc(330px - 120px)', opacity: 0 }),
-        animate('280ms cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-          style({ left: 'calc(330px + 24px)', opacity: 1 }))
+        style({ opacity: 0 }),
+        animate('240ms cubic-bezier(0.22, 1, 0.36, 1)', style({ opacity: 1 }))
       ]),
       transition(':leave', [
-        animate('220ms cubic-bezier(0.55, 0.06, 0.68, 0.19)',
-          style({ left: 'calc(330px - 120px)', opacity: 0 }))
+        animate('160ms ease-in', style({ opacity: 0 }))
       ])
     ]),
     trigger('fadeBackdrop', [
