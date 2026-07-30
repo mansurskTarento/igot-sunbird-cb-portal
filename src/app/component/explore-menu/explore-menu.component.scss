@@ -1,0 +1,101 @@
+// Card design mirrors the mweb "more" panel (card-hubs-list): light page behind
+// white cards, icon tile on the left, title + description on the right
+// routed page: fills the content area the router-outlet gives it, header and
+// bottom nav stay owned by root.component
+.explore-menu {
+  background-color: white;
+  padding: 16px;
+  min-height: 100%;
+}
+
+.explore-section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.explore-menu-heading {
+  margin: 0 0 12px;
+  font-weight: 600;
+}
+
+.explore-menu-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+
+  @media (min-width: 576px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.explore-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  padding: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.87);
+  text-decoration: none;
+
+  &:hover .explore-card-title {
+    color: #1b4ca1;
+  }
+}
+
+.explore-card-icon {
+  width: 48px;
+  height: 48px;
+  flex: 0 0 48px;
+  border-radius: 4px;
+  background: rgb(243, 245, 249);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  mat-icon {
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  .icon-svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(0, 0, 0, 0.87);
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+    -webkit-mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+  }
+}
+
+.explore-card-text {
+  padding-left: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.explore-card-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.explore-card-desc {
+  margin-top: 2px;
+  font-size: 12px;
+  line-height: 16px;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.explore-menu-empty {
+  padding: 24px 0;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}

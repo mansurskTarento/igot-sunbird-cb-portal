@@ -150,6 +150,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.setAchivements()
         this.setOtherPortals()
         this.setNavOpenStatus()
+        // share the resolved config so pages outside the sidebar (mweb explore menu)
+        // render the same items instead of resolving the config a second time
+        this.commonDataSvc.leftNavBarConfig.next(this.menuBarDetails)
       }
     } else {
       this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
@@ -158,6 +161,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           this.setAchivements()
           this.setOtherPortals()
           this.setNavOpenStatus()
+          this.commonDataSvc.leftNavBarConfig.next(this.menuBarDetails)
         }
       })
     }
