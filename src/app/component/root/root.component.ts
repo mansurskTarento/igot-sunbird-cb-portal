@@ -59,6 +59,12 @@ import { HomePageService } from '../../services/home-page.service'
 import { trigger, style, animate, transition } from '@angular/animations'
 import { DialogBoxComponent } from '../dialog-box/dialog-box.component'
 import * as _ from 'lodash'
+
+// Anchor on the "Achievement" heading in profile-view-v2, scrolled to from the bottom nav
+const ACHIEVEMENT_SECTION_ID = 'achievement-section'
+// Breathing room left above the heading so it does not sit flush against the top edge
+const ACHIEVEMENT_SCROLL_GAP = 12
+
 @Component({
   selector: 'ws-root',
   templateUrl: './root.component.html',
@@ -916,6 +922,59 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       { module: WsEvents.EnumTelemetrymodules.HOME }
     )
     this.router.navigate(['/app/person-profile/me'], { queryParams: { tab: 'activities' } })
+      .then(() => this.scrollToAchievements())
+  }
+
+  private scrollToAchievements(attempt = 0): void {
+    const MAX_ATTEMPTS = 30
+    const target = document.getElementById(ACHIEVEMENT_SECTION_ID)
+    if (!target) {
+      if (attempt < MAX_ATTEMPTS) {
+        requestAnimationFrame(() => this.scrollToAchievements(attempt + 1))
+      } else {
+        this.scrollContentToTop()
+      }
+      return
+    }
+
+    this.alignAchievements(target)
+  }
+
+  private alignAchievements(target: HTMLElement, pass = 0): void {
+    const MAX_PASSES = 4
+    const scroller = this.getContentScroller()
+    // Re-read every pass: the header's height changes with the banner
+    const headerHeight = scroller
+      ? scroller.getBoundingClientRect().top
+      : document.querySelector('ws-header-v2')?.getBoundingClientRect().height ?? 0
+    const drift = target.getBoundingClientRect().top - headerHeight - ACHIEVEMENT_SCROLL_GAP
+    if (Math.abs(drift) <= 2 || pass >= MAX_PASSES) {
+      return
+    }
+
+    const behavior: ScrollBehavior = pass === 0 ? 'smooth' : 'auto'
+    if (scroller) {
+      scroller.scrollTo({ top: Math.max(0, scroller.scrollTop + drift), behavior })
+    } else {
+      window.scrollTo({ top: Math.max(0, window.scrollY + drift), behavior })
+    }
+    // Give the smooth scroll (and whatever the banner does in response) time to settle
+    setTimeout(() => this.alignAchievements(target, pass + 1), pass === 0 ? 450 : 150)
+  }
+
+  // The mobile content column scrolls instead of the document; on wider layouts it does not
+  private getContentScroller(): HTMLElement | null {
+    const column = document.querySelector('.height-on-bottom') as HTMLElement | null
+    return column && column.scrollHeight > column.clientHeight ? column : null
+  }
+
+  private scrollContentToTop(): void {
+    const scroller = this.getContentScroller()
+    if (scroller) {
+      scroller.scrollTo({ top: 0, behavior: 'smooth' })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   exploreContent() {

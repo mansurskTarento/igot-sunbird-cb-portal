@@ -285,17 +285,44 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   ngAfterViewInit(): void {
     // ?tab=activities lands straight on the "My activities" tab (used by the Achievements item in
     // the mobile bottom nav). The tab only exists for one's own profile, so anything else falls
-    // back to Profile. Deferred by a tick because the tab group has already been checked by the
-    // time this hook runs, and assigning here would otherwise trip
-    // ExpressionChangedAfterItHasBeenCheckedError.
-    const wantsActivities = this.activatedRoute.snapshot.queryParamMap.get('tab') === 'activities'
-    if (wantsActivities && this.isCurrentUser && !this.isNotMyUserAndIgotOrg) {
-      setTimeout(() => {
-        this.selectedTabIndex = 1
+    // back to Profile.
+    //
+    // Subscribed rather than read from the snapshot: tapping Achievements while already on the
+    // profile is a query-param-only navigation, which updates the URL without re-running this
+    // hook - the snapshot read left the Profile tab selected. Only 'activities' switches tabs, so
+    // an unrelated query param change never yanks the user off a tab they picked by hand.
+    let isFirstEmission = true
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(params => {
+        const wantsActivities = params.get('tab') === 'activities'
+        if (wantsActivities && this.isCurrentUser && !this.isNotMyUserAndIgotOrg) {
+          // Deferred by a tick because the tab group has already been checked by the time this
+          // runs, and assigning directly would trip ExpressionChangedAfterItHasBeenCheckedError.
+          setTimeout(() => {
+            this.selectedTabIndex = 1
+          })
+        } else if (isFirstEmission) {
+          this.selectedTabIndex = 0
+        }
+        isFirstEmission = false
       })
+  }
+
+  onTabChange(index: number): void {
+    this.selectedTabIndex = index
+    const next = index === 1 ? 'activities' : 'profile'
+    const current = this.activatedRoute.snapshot.queryParamMap.get('tab')
+    // Leave clean URLs alone: the default tab does not need to announce itself
+    if (current === next || (!current && index === 0)) {
       return
     }
-    this.selectedTabIndex = 0
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { tab: next },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
   }
 
   ngOnInit() {
