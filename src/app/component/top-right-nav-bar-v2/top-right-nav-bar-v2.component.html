@@ -37,8 +37,9 @@
   <!-- Language Select -->
   @if (item()?.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled()) {
   <li class="langdiv flex items-center cursor-pointer">
-    <img [src]="'/assets/icons/top-nav/translate_icon' + (themeSvc.isDark ? '_dark' : '') + '.svg'" alt="Language"
-      [matMenuTriggerFor]="language" class="mob-lang-img flex items-center mx-2 mt-[10px]" />
+    <span class="mob-lang-img flex items-center mx-2 mt-[10px]" role="img" aria-label="Language" title="Language"
+      [matMenuTriggerFor]="language" [style.mask-image]="'url(/assets/icons/top-nav/translate_icon.svg)'"
+      [style.-webkit-mask-image]="'url(/assets/icons/top-nav/translate_icon.svg)'"></span>
     <mat-menu #language="matMenu" xPosition="before">
       @for (lang of multiLang(); track lang.key) {
       @if (lang.active) {
@@ -53,7 +54,9 @@
 
     @if (showLangDropdown()) {
     <mat-form-field class="custom-lang">
-      <img [src]="'/assets/icons/top-nav/translate_icon' + (themeSvc.isDark ? '_dark' : '') + '.svg'" alt="Language" class="lang-img mr-1 mt-1" />
+      <span class="lang-img mr-1 mt-1" role="img" aria-label="Language" title="Language"
+        [style.mask-image]="'url(/assets/icons/top-nav/translate_icon.svg)'"
+        [style.-webkit-mask-image]="'url(/assets/icons/top-nav/translate_icon.svg)'"></span>
       <mat-select matNativeControl panelClass="custom-langselect" [ngModel]="selectedLanguage()" [disabled]="true"
         (ngModelChange)="selectLanguage($event)" class="language-select">
         @for (lang of multiLang(); track lang.key) {

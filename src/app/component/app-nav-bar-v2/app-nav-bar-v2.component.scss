@@ -367,6 +367,13 @@
       -webkit-mask-position: center;
     }
 
+    .nav-icon-img {
+      display: block;
+      height: 24px;
+      width: 24px;
+      flex-shrink: 0;
+    }
+
     span {
       font-size: 10px;
       color: var(--text-bandw-black-fine-print);
@@ -428,8 +435,8 @@
 }
 
 .active-icon {
-  border-top: 2px solid var(--environment-button-primary-filled-primary);
-  background-color: var(--color-primary-50);
+  border-top: 2px solid rgb(27, 76, 161);
+  background-color: #1b4ca129;
 
   span {
     color: var(--environment-button-primary-filled-primary);
