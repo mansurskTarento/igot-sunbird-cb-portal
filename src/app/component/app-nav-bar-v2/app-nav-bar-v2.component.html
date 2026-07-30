@@ -81,9 +81,14 @@
     <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
       <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
+        @if (item?.config?.path === '/page/home') {
+        <img class="nav-icon-img" [src]="'/assets/icons/footer-nav/' + item?.config?.icon + '.svg'"
+          [attr.aria-label]="item?.config?.label" [alt]="item?.config?.label" [title]="item?.config?.label" />
+        } @else {
         <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
           [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
           [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
+        }
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>
@@ -93,9 +98,14 @@
     <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="openExploreMenu()">
       <div class="icon-container">
+        @if (item?.config?.path === '/page/home') {
+        <img class="nav-icon-img" [src]="'/assets/icons/footer-nav/' + item?.config?.icon + '.svg'"
+          [attr.aria-label]="item?.config?.label" [alt]="item?.config?.label" [title]="item?.config?.label" />
+        } @else {
         <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
           [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
           [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
+        }
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>

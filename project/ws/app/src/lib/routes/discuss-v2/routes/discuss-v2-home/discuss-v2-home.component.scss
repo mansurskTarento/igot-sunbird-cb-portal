@@ -17,6 +17,15 @@
 	min-height: 400px;
 }
 
+.dicsussion-v2-content {
+	::ng-deep .container {
+		@media (max-width: 425px) {
+			padding-left: 0 !important;
+			padding-right: 0 !important;
+		}
+	}
+}
+
 
 
 .main-container {
