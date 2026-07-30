@@ -146,6 +146,10 @@
   }
 }
 
+.language-options {
+  color: var(--text-bandw-black-fine-print);
+}
+
 .counter {
   position: absolute;
   top: 0;
@@ -164,7 +168,8 @@
 }
 
 .active {
-  color: rgb(27, 76, 161);
+  color: var(--environment-button-primary-filled-primary);
+  font-weight: 600;
 }
 
 ::ng-deep .mat-mdc-select-panel.custom-langselect {
