@@ -940,7 +940,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         contentTemp.content.primaryCategory = c?.content && c?.content?.primaryCategory || c?.event && c?.event?.resourceType || ''
         contentTemp.cType = c.event ? 'event' : ''
         contentTemp.completedOn = c.completedOn || ''
-        contentTemp.active = c.active || ''
+        contentTemp.active = c.active
         if (c.surveyCompletionStatus !== undefined) {
           contentTemp.surveyCompletionStatus = c.surveyCompletionStatus
         }
