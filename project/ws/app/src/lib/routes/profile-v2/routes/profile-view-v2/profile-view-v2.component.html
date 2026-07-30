@@ -282,7 +282,8 @@
       <!-- #endregion (left routing) -->
 
       <ng-container *ngIf="isMobile; else desktopTabs">
-        <mat-tab-group class="profile-tabs flex w-full" [selectedIndex]="selectedTabIndex" id="matTabGroup">
+        <mat-tab-group class="profile-tabs flex w-full" [selectedIndex]="selectedTabIndex"
+          (selectedIndexChange)="onTabChange($event)" id="matTabGroup">
           <mat-tab label="Profile">
             <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
             <ng-template #blocked>
@@ -470,7 +471,8 @@
       <ng-template #activitySection>
         <div class="flex flex-col gap-4 p-2">
 
-          <div class="ach-heading mt-4">{{ 'profileInfo.achievement' | translate }}</div>
+          <!-- id is the scroll target for the mobile bottom-nav Achievement tab (root.component.ts) -->
+          <div class="ach-heading mt-4" id="achievement-section">{{ 'profileInfo.achievement' | translate }}</div>
 
           <!-- Segmented switch: stats and leaderboard share the section instead of stacking -->
           <div class="ach-switch" role="tablist" [attr.aria-label]="'profileInfo.achievement' | translate">
