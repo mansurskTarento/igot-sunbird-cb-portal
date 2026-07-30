@@ -25,6 +25,7 @@ import { LibNotificationsService } from '@sunbird-cb/notification'
 import { filter, map, Subscription } from 'rxjs'
 import { UrlService } from '../../shared/url.service'
 import { NotificationsService } from '../../services/notifications.service'
+import { UserRestrictionService } from '../../services/user-restriction.service'
 import { HeaderModule } from '../../header/header.module'
 import { SearchInputHomeV4Component } from '../../../../project/ws/app/src/lib/routes/search-v3/components/search-input-home-v4/search-input-home-v4.component'
 import { TopRightNavBarV2Component } from '../top-right-nav-bar-v2/top-right-nav-bar-v2.component'
@@ -159,6 +160,7 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
     private libNotificationsService: LibNotificationsService,
     private domainConfSvc: DomainConfService,
     private themeSvc: ThemeService,
+    private restrictionSvc: UserRestrictionService,
     private breakpointObserver: BreakpointObserver
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
@@ -316,18 +318,9 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
       this.previousUrl.set(previousUrl)
     })
 
-    let isNotMyUser = false
-    let isIgotOrg = false
-
-    if (this.configSvc?.unMappedUser?.profileDetails?.profileStatus) {
-      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user'
-    }
-
-    if (this.configSvc?.unMappedUser?.profileDetails?.employmentDetails?.departmentName) {
-      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot'
-    }
-
-    if (isNotMyUser && isIgotOrg) {
+    // NOT-MY-USER alone disables the nav now — it used to also require the 'igot' holding
+    // org, so disowned users of any other org kept a fully working bottom nav
+    if (this.restrictionSvc.isNotMyUser) {
       this.disableMenu.set(true)
       this.fetchEnrollmentList()
     } else {
