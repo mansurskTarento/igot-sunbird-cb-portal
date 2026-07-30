@@ -52,6 +52,7 @@ import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.compone
 import { concat, interval, timer, of } from 'rxjs'
 // import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
+import { UserRestrictionService } from '../../services/user-restriction.service'
 import { UrlService } from '../../shared/url.service'
 import { LibNotificationsService } from '@sunbird-cb/notification'
 import { HomePageService } from '../../services/home-page.service'
@@ -124,6 +125,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     private urlService: UrlService,
     // private iGOTAIService: iGOTAIService,
     private commonDataSvc: CommonDataService,
+    private restrictionSvc: UserRestrictionService,
     public domainConfSvc: DomainConfService,
     private libNotificationsService: LibNotificationsService,
     private homePageSvc: HomePageService,
@@ -249,7 +251,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   get showMenuBardetails(): boolean {
+    // a NOT-MY-USER account has nowhere to navigate, so it gets no sidebar
     return this.menuBarDetails && this.currentUrl &&
+      !this.restrictionSvc.isNotMyUser &&
       !this.currentUrl.includes('public') &&
       !this.currentUrl.includes('viewer')
   }
@@ -541,24 +545,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.showNavbar = display
     })
 
-    let isNotMyUser = false
-    let isIgotOrg = false
-    // if (this.configSvc && this.configSvc.unMappedUser && this.configSvc.unMappedUser.rootOrgId) {
-    //   this.iGOTAIConfig()
-    // }
-    if (this.configSvc && this.configSvc.unMappedUser
-      && this.configSvc.unMappedUser.profileDetails
-      && this.configSvc.unMappedUser.profileDetails.profileStatus) {
-      isNotMyUser = this.configSvc.unMappedUser.profileDetails.profileStatus.toLowerCase() === 'not-my-user' ? true : false
-    }
-    if (this.configSvc && this.configSvc.unMappedUser
-      && this.configSvc.unMappedUser.profileDetails
-      && this.configSvc.unMappedUser.profileDetails.employmentDetails
-      && this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName) {
-      isIgotOrg = this.configSvc.unMappedUser.profileDetails.employmentDetails.departmentName.toLowerCase() === 'igot' ? true : false
-    }
-    // let isIgotOrg = true
-    if (isNotMyUser && isIgotOrg) {
+    // NOT-MY-USER alone restricts the account now — it used to also require the user to
+    // sit in the 'igot' holding org, which let disowned users of every other org keep
+    // navigating the whole app
+    if (this.restrictionSvc.isNotMyUser) {
       this.disableHeightOnTop = true
       this.router.navigateByUrl('app/person-profile/me#profileInfo')
     } else {
@@ -566,7 +556,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
 
   }
-
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
