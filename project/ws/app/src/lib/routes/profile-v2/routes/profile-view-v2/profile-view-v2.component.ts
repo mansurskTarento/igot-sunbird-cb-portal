@@ -218,9 +218,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   // My Statistics cards. Same four metrics the My Achievements sidebar section shows, so the two
   // never disagree; values are filled in by setAchievementStats().
   achievementStats: { key: string, label: string, value: string, icon: string }[] = [
-    { key: 'karmaPoints', label: 'profileInfo.youEarned', value: '0 KP', icon: '/assets/icons/home-v2/karma-badge.svg' },
+    { key: 'karmaPoints', label: 'profileInfo.youEarned', value: '0 KP', icon: '/assets/icons/hubs-v2/karmapoints.svg' },
     { key: 'rank', label: 'profileInfo.youreRank', value: '--', icon: '/assets/icons/hubs-v2/trophi.svg' },
-    { key: 'badges', label: 'leftNavBar.yourEarned', value: '0 Badges', icon: '/assets/icons/hubs-v2/trophi.svg' },
+    { key: 'badges', label: 'leftNavBar.yourEarned', value: '0 Badges', icon: '/assets/icons/hubs-v2/badges.svg' },
     { key: 'learningHours', label: 'leftNavBar.learningHours', value: '0h 0m', icon: '/assets/icons/hubs-v2/badge.svg' },
   ]
   insightsDataLoading = false
