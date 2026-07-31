@@ -44,7 +44,8 @@
       @for (lang of multiLang(); track lang.key) {
       @if (lang.active) {
       <button mat-menu-item class="px-3" (click)="selectLanguage(lang.key)">
-        <div [class.checkmark]="lang.key === selectedLanguage()" [class.active]="lang.key === selectedLanguage()">
+        <div class="language-options" [class.checkmark]="lang.key === selectedLanguage()"
+          [class.active]="lang.key === selectedLanguage()">
           {{ lang.value }}
         </div>
       </button>

@@ -6,6 +6,7 @@ import {
 } from '@angular/router'
 import { ConfigurationsService, AuthKeycloakService } from '@sunbird-cb/utils-v2'
 import { NSProfileDataV3 } from '@ws/app'
+import { UserRestrictionService } from '../services/user-restriction.service'
 // tslint:disable-next-line
 import _ from 'lodash'
 
@@ -17,12 +18,18 @@ export class GeneralGuard {
     private router: Router,
     private configSvc: ConfigurationsService,
     private authSvc: AuthKeycloakService,
+    private restrictionSvc: UserRestrictionService,
   ) { }
 
   async canActivate(
     next: ActivatedRouteSnapshot,
     _state: RouterStateSnapshot,
   ): Promise<boolean | UrlTree> {
+    // a NOT-MY-USER account only gets its own profile page: block every other route
+    // before the lazy chunk and resolvers run
+    if (this.restrictionSvc.isBlockedUrl(_state.url)) {
+      return this.router.parseUrl(this.restrictionSvc.redirectUrl)
+    }
     const requiredFeatures = (next.data && next.data.requiredFeatures) || []
     const requiredRoles = (next.data && next.data.requiredRoles) || []
     let pageKey = next.data && next.data.pageKey

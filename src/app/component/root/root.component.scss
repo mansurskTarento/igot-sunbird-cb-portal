@@ -188,8 +188,11 @@ ws-app-nav-bar {
   padding-top: 56px;
 }
 
+// A restricted (NOT-MY-USER) account gets no secondary header, marquee or sidebar, so the
+// only chrome to clear is the main header — and .height-adjust already reserves that with
+// its margin-top. The old 66px was stacked on top of it and showed up as an empty band
 .height-on-top-not-valid-user {
-  padding-top: 66px;
+  padding-top: 0;
 }
 
 .top-nav-bar {

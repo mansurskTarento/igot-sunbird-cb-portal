@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ConfigurationsService, EventService, WsEvents, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import { HomePageService } from '../../../services/home-page.service'
-import { Subject } from 'rxjs'
-import { takeUntil } from 'rxjs/operators'
+import { Observable, of, Subject } from 'rxjs'
+import { catchError, takeUntil } from 'rxjs/operators'
 
 @Component({
   selector: 'ws-continue-learning',
@@ -14,6 +14,7 @@ import { takeUntil } from 'rxjs/operators'
 export class ContinueLearningComponent implements OnInit, OnDestroy {
   inProgressCourse: any = null
   isInProgressLoading = true
+  private inProgressCourses: any[] = []
 
   insightsData: any = null
   weeklyData: any = null
@@ -93,38 +94,28 @@ export class ContinueLearningComponent implements OnInit, OnDestroy {
       delete pillPayload.request.limit
     }
 
-    // Call same APIs as My Learning: fetchInternalEnrollmentData + fetchExternalEnrollmentData
-    this.enrollSvc.fetchInternalEnrollmentData(userId, pillPayload)
-      .pipe(takeUntil(this.destroy$))
+    // Same APIs as My Learning, but fetched in parallel and rendered as each one lands.
+    // They used to be nested, which meant the skeleton was only ever cleared inside the
+    // external-enrolment callback — an external call that failed to settle left the card
+    // stuck on the loader even after the internal call had returned its courses
+    this.collectEnrolments(this.enrollSvc.fetchInternalEnrollmentData(userId, pillPayload))
+    this.collectEnrolments(this.enrollSvc.fetchExternalEnrollmentData(pillPayload))
+  }
+
+  // accumulates courses from either enrolment source; whichever responds first renders
+  private collectEnrolments(source$: Observable<any>) {
+    source$
+      .pipe(catchError(() => of(null)), takeUntil(this.destroy$))
       .subscribe((res: any) => {
-        let courses: any[] = []
-        if (res && res.result && res.result.courses && res.result.courses.length) {
-          courses = [...courses, ...res.result.courses]
+        // cleared before formatting so a malformed course can never strand the loader
+        this.isInProgressLoading = false
+        const courses = (res && res.result && res.result.courses) || []
+        if (courses.length) {
+          this.inProgressCourses = [...this.inProgressCourses, ...courses]
         }
-        this.enrollSvc.fetchExternalEnrollmentData(pillPayload)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((extRes: any) => {
-            if (extRes && extRes.result && extRes.result.courses && extRes.result.courses.length) {
-              courses = [...courses, ...extRes.result.courses]
-            }
-            this.inProgressCourse = this.formatAndPickFirst(courses)
-            this.isInProgressLoading = false
-          }, () => {
-            this.inProgressCourse = this.formatAndPickFirst(courses)
-            this.isInProgressLoading = false
-          })
-      }, () => {
-        // If internal fails, try external only (same as library)
-        this.enrollSvc.fetchExternalEnrollmentData(pillPayload)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((extRes: any) => {
-            let courses: any[] = []
-            if (extRes && extRes.result && extRes.result.courses && extRes.result.courses.length) {
-              courses = [...courses, ...extRes.result.courses]
-            }
-            this.inProgressCourse = this.formatAndPickFirst(courses)
-            this.isInProgressLoading = false
-          }, () => { this.isInProgressLoading = false })
+        if (this.inProgressCourses.length) {
+          this.inProgressCourse = this.formatAndPickFirst(this.inProgressCourses)
+        }
       })
   }
 
