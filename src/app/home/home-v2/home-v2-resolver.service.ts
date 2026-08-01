@@ -66,9 +66,27 @@ export class HomeV2ResolverService {
             }
           }
         }
+        this.applyBharatKalpVisibility(configDetails)
         return { data: configDetails, error: null }
       }),
       catchError(err => of({ data: null, error: err })),
     )
+  }
+
+  // Bharat Kalp spotlight card is only for BharatKalp members, the route itself is guarded too
+  private applyBharatKalpVisibility(configDetails: any): void {
+    if (!configDetails || !Array.isArray(configDetails.homeSection) || this.isBharatKalpMember()) {
+      return
+    }
+    const spotlightSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'spotlight')
+    if (spotlightSection && Array.isArray(spotlightSection.spotlightConfig)) {
+      spotlightSection.spotlightConfig = spotlightSection.spotlightConfig
+        .filter((card: any) => card?.cardClickDetails?.id !== 'bharat-kalp')
+    }
+  }
+
+  private isBharatKalpMember(): boolean {
+    const val = this.configSvc?.unMappedUser?.profileDetails?.additionalProperties?.isBharatKalpMember
+    return val === true || val === 'true'
   }
 }
