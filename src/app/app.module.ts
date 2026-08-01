@@ -69,9 +69,8 @@ import { ProfileVerificationDialogComponent } from './profile-verification-dialo
 import { CommonDataService } from './services/common-data.service'
 import { WIDGET_REGISTRATION_CONFIG } from '@sunbird-cb/collection'
 import { MandatoryNotificationModalComponent } from './component/mandatory-notification-modal/mandatory-notification-modal.component'
-import { AppTourComponent } from './component/app-tour/app-tour.component'
 import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
-import { AppTourVideoComponent } from './component/app-tour-video/app-tour-video.component'
+import { AppTourSharedModule } from './component/app-tour/app-tour-shared.module'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
@@ -112,8 +111,6 @@ export function HttpLoaderFactory(http: HttpClient) {
     AppLogoComponent,
     ProfileVerificationDialogComponent,
     MandatoryNotificationModalComponent,
-    AppTourVideoComponent,
-    AppTourComponent,
   ],
   imports: [
     FormsModule,
@@ -143,7 +140,7 @@ export function HttpLoaderFactory(http: HttpClient) {
     PipeSafeSanitizerModule,
     AppChatbotModule,
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production }),
-    // HeaderModule,
+    HeaderModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,
@@ -151,7 +148,8 @@ export function HttpLoaderFactory(http: HttpClient) {
         deps: [HttpClient],
       },
     }),
-    GuidedTourModule
+    GuidedTourModule,
+    AppTourSharedModule,
 
   ],
   exports: [

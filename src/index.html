@@ -29,6 +29,13 @@
   <!-- <link  rel='preload' as='stylesheet' href="https://fonts.googleapis.com/icon?family=Material+Icons&display=swap"> -->
   <!-- <script rel="preload" src="/assets/env.js" as="script"></script> -->
 
+  <!-- Resolve DNS + TLS for third-party origins in parallel with parsing -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.userway.org" crossorigin>
+  <link rel="preconnect" href="https://js.zohostatic.in" crossorigin>
+  <link rel="preconnect" href="https://cdnt.netcoresmartech.com">
+
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
@@ -96,12 +103,19 @@
   <script>window.git_build = '{git-hash}';</script>
   <script>window.git_branch = '{git-branch}';</script>
   <META HTTP-EQUIV='content-type' CONTENT='text/html; charset=UTF-8'>
-  <link href="src\zoho-style.css">
-  <script src='https://js.zohostatic.in/support/app/js/jqueryandencoder.ffa5afd5124fbedceea9.js'
-    integrity="sha384-WxjccFdarXj9qC3CXtilb+x2qSQA3CMFOjT6vA0CkfexBVqYRAISERxH45f5VnmM"
-    crossorigin="anonymous"></script>
-  <script src="src\zoho-script.js"></script>
-  <script rel="preload" src='//cdnt.netcoresmartech.com/smartechclient.js'></script>
+  <!--
+    REMOVED: `src\zoho-style.css` and `src\zoho-script.js`.
+    Both used a backslash, which is not a URL path separator, so they resolved to
+    /src%5Czoho-*.  Neither file is listed in angular.json `assets`, so neither is
+    emitted to dist either - they were a render-blocking 404 and dead markup on every
+    page load.  The Zoho web-to-case form handler (zsWebToCase_120349000004451166) has
+    therefore been non-functional in production.  To restore it: add the files to
+    angular.json `assets` and load them from the contact page only, not globally.
+
+    MOVED BELOW: the zohostatic jQuery and UserWay widget tags are now attached by the
+    idle-loader at the end of <body> instead of loading during initial page load.
+  -->
+  <script defer src='//cdnt.netcoresmartech.com/smartechclient.js'></script>
   <script>
     //  smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00' , "tin");
     //  smartech('register', 'b632681d782c843e187fd5447c97ed4d');
@@ -173,32 +187,69 @@
 
   <!-- <script type="text/javascript" nonce="{place_your_nonce_value_here}" src="https://desk.zoho.in/portal/api/web/inapp/120349000000222059?orgId=60023043070" defer></script> -->
   <!-- <script src="https://desk.zoho.in/portal/api/feedbackwidget/120349000000212259?orgId=60023043070&displayType=popout"></script> -->
-  <script src="https://cdn.userway.org/widget.js" data-account="pam3S93IQ7"
-    integrity="sha384-Z3p55GwPaV0Y6nBmr3ezjEhuMtzgWxMcw78fcSukm0nPEt40UydxMAd18tSNNiCP"
-    crossorigin="anonymous"></script>
+  <!--
+    Third-party widgets, attached once the page has loaded and the browser is idle.
+
+    Previously UserWay was fetched TWICE - once by a parser-blocking script tag and
+    again by an inline injector that appended an identical tag to the body. Both ran
+    during initial page load, so widget.js (which builds its own iframe) competed with
+    the app bundles for bandwidth and main-thread time before first render.
+
+    Nothing here is needed for first paint:
+      - UserWay  : viewer.component.ts only reads the `.userway_p2` element inside a
+                   setTimeout, so it does not need the widget present at bootstrap.
+      - Zoho     : jqueryandencoder.js only backs the web-to-case form handler.
+
+    The `timeout` on requestIdleCallback caps the delay so the accessibility widget
+    still appears promptly on a busy main thread; it is deliberately NOT gated behind
+    user interaction, which would put it out of reach of the users who need it.
+    To override UserWay defaults (position, size, language, colour, type, mobile,
+    trigger), add the relevant data-* key to the `attrs` object below.
+  -->
   <script>
-    (function (d) {
-      var s = d.createElement("script")
-      /* uncomment the following line to override default position*/
-      /* s.setAttribute("data-position", 3);*/
-      /* uncomment the following line to override default size (values: small, large)*/
-      /* s.setAttribute("data-size", "small");*/
-      /* uncomment the following line to override default language (e.g., fr, de, es, he, nl, etc.)*/
-      /* s.setAttribute("data-language", "language");*/
-      /* uncomment the following line to override color set via widget (e.g., #053f67)*/
-      /* s.setAttribute("data-color", "#053e67");*/
-      /* uncomment the following line to override type set via widget (1=person, 2=chair, 3=eye, 4=text)*/
-      /* s.setAttribute("data-type", "1");*/
-      /* s.setAttribute("data-statement_text:", "Our Accessibility Statement");*/
-      /* s.setAttribute("data-statement_url", "http://www.example.com/accessibility")";*/
-      /* uncomment the following line to override support on mobile devices*/
-      /* s.setAttribute("data-mobile", true);*/
-      /* uncomment the following line to set custom trigger action for accessibility menu*/
-      /* s.setAttribute("data-trigger", "triggerId")*/
-      s.setAttribute("data-account", "pam3S93IQ7")
-      s.setAttribute("src", "https://cdn.userway.org/widget.js");
-      (d.body || d.head).appendChild(s)
-    })(document)
+    (function () {
+      var WIDGETS = [
+        {
+          src: 'https://cdn.userway.org/widget.js',
+          integrity: 'sha384-Z3p55GwPaV0Y6nBmr3ezjEhuMtzgWxMcw78fcSukm0nPEt40UydxMAd18tSNNiCP',
+          attrs: { 'data-account': 'pam3S93IQ7' },
+        },
+        {
+          src: 'https://js.zohostatic.in/support/app/js/jqueryandencoder.ffa5afd5124fbedceea9.js',
+          integrity: 'sha384-WxjccFdarXj9qC3CXtilb+x2qSQA3CMFOjT6vA0CkfexBVqYRAISERxH45f5VnmM',
+        },
+      ]
+
+      function attachWidgets() {
+        WIDGETS.forEach(function (widget) {
+          var el = document.createElement('script')
+          el.src = widget.src
+          el.async = true
+          if (widget.integrity) {
+            el.integrity = widget.integrity
+            el.crossOrigin = 'anonymous'
+          }
+          Object.keys(widget.attrs || {}).forEach(function (key) {
+            el.setAttribute(key, widget.attrs[key])
+          })
+          document.body.appendChild(el)
+        })
+      }
+
+      function scheduleWidgets() {
+        if (typeof window.requestIdleCallback === 'function') {
+          window.requestIdleCallback(attachWidgets, { timeout: 3000 })
+        } else {
+          window.setTimeout(attachWidgets, 1500)
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        scheduleWidgets()
+      } else {
+        window.addEventListener('load', scheduleWidgets, { once: true })
+      }
+    })()
   </script>
   <noscript>Please ensure Javascript is enabled for purposes of <a href="https://userway.org">website
       accessibility</a></noscript>
