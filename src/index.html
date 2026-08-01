@@ -210,8 +210,13 @@
     (function () {
       var WIDGETS = [
         {
+          // No `integrity` here, deliberately. cdn.userway.org/widget.js is an unversioned
+          // ~1.7 KB bootstrap that UserWay rewrites at will, so any pinned hash goes stale
+          // and the browser then blocks the script outright - which is exactly what the
+          // previously committed sha384-Z3p55G... hash was already doing. The widget only
+          // ever loaded because the old inline injector alongside it carried no integrity
+          // attribute. Pin a hash here again only if you also self-host a fixed copy.
           src: 'https://cdn.userway.org/widget.js',
-          integrity: 'sha384-Z3p55GwPaV0Y6nBmr3ezjEhuMtzgWxMcw78fcSukm0nPEt40UydxMAd18tSNNiCP',
           attrs: { 'data-account': 'pam3S93IQ7' },
         },
         {
@@ -236,11 +241,18 @@
         })
       }
 
+      var attached = false
+      function attachOnce() {
+        if (attached) { return }
+        attached = true
+        attachWidgets()
+      }
+
       function scheduleWidgets() {
         if (typeof window.requestIdleCallback === 'function') {
-          window.requestIdleCallback(attachWidgets, { timeout: 3000 })
+          window.requestIdleCallback(attachOnce, { timeout: 3000 })
         } else {
-          window.setTimeout(attachWidgets, 1500)
+          window.setTimeout(attachOnce, 1500)
         }
       }
 
@@ -249,6 +261,12 @@
       } else {
         window.addEventListener('load', scheduleWidgets, { once: true })
       }
+
+      // Hard backstop, independent of `load`. The load event waits on every subresource
+      // (Google Fonts, the Zoho and Netcore CDNs), so a single hung third-party request
+      // would otherwise strand the accessibility widget indefinitely - the idle timeout
+      // above cannot help, because its clock only starts once `load` has fired.
+      window.setTimeout(attachOnce, 5000)
     })()
   </script>
   <noscript>Please ensure Javascript is enabled for purposes of <a href="https://userway.org">website
