@@ -1,3 +1,25 @@
 <div class="home-content m-5">
     <sb-uic-contetn-sections (cardClicked)="cardClicked($event)"></sb-uic-contetn-sections>
 </div>
+<div class="footer footer-update-mobile-number"
+    *ngIf="isNudgeOpen && !canShowCustomAttrOpen && isDialogEnabled('profileUpdateNudge')">
+    <!-- //NOSONAR -->
+    <div (click)="handleRemindLater()" class="desktop-cross">X</div>
+    <div class="update-mobile-number-flex">
+        <!-- //NOSONAR --><span (click)="handleRemindLater()" class="mobile-cross">X</span>
+        <img class="hand-icon" src="assets/icons/footer-nav/update-mobile-number.svg" alt="" />
+        <p class="updatetitle">{{ 'home.updateYourProfile' | translate }}</p>
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="fetchProfile()" role="button">{{
+            'home.updateNow' | translate }}</button>
+    </div>
+</div>
+<div class="footer footer-update-mobile-number"
+    *ngIf="canShowCustomAttrOpen && isDialogEnabled('customAttributeUpdate')">
+    <!-- //NOSONAR -->
+    <div class="update-mobile-number-flex">
+        <p class="updatetitle">{{ 'home.updateCustomeFiledTitle' | translate }}</p>
+        <!-- //NOSONAR --><button class="ui fluid-button update-now" (click)="redirectToCustomProfile()"
+            role="button">{{
+            'home.updateCustomeFiledClick' | translate }}</button>
+    </div>
+</div>
