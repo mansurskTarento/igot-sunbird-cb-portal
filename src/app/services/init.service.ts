@@ -189,6 +189,9 @@ export class InitService {
       || href.includes('&preview=true')
       || href.includes('editMode=true')
       || window.location.href.includes('/helpcenter')
+      || window.location.href.includes('/certs') 
+      || window.location.href.includes('/achievements') 
+      || window.location.href.includes('/crp/')
     if (!isPublicPreviewOrCreator) {
       await this.globalConfigData()
     }
@@ -275,6 +278,11 @@ export class InitService {
     this.userPreference.initialize()
 
     // lang selection
+    // Always establish the fallback first. The use() branches below load a language chosen from the
+    // profile or localStorage; if that file 404s (unknown / stale code) the service is left with no
+    // translations at all and every key renders raw, because ngx-translate only falls back when a
+    // defaultLang is set
+    this.translate.setDefaultLang('en')
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       if (this.configSvc.unMappedUser) {
         if (this.configSvc.unMappedUser.profileDetails
@@ -410,15 +418,16 @@ export class InitService {
         inProgress: (userEventEnrolmentInfo.eventsEnrolled ?? 0) - (userEventEnrolmentInfo.eventsAttended ?? 0),
         learningHours: userEventEnrolmentInfo.hoursSpentOnEvents ?? 0,
       }
+      debugger
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
         const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['badgeCount'] = badgeCount
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
-        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
-        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
-        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
+        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0) + (eventEnrolmentCount['learningHours'] || 0)
+        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0) + (eventEnrolmentCount['certificate'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)+ (eventEnrolmentCount['inProgress'] || 0)
         if (userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
           if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
             && userExternalCourseEnrolmentInfo.addinfo

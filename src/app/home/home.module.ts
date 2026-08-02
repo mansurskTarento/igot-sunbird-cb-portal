@@ -77,7 +77,11 @@ import { InSpotlightV2Module } from './home-v2/in-spotlight-v2/in-spotlight-v2.m
         ContentStripWithTabsLibModule,
         ContentStripWithTabsPillsModule,
         MatButtonModule,
-        TranslateModule.forRoot({
+        // forChild, not forRoot: HomeModule is lazy loaded, so forRoot would provide a second
+        // TranslateStore in this module's injector and every `| translate` under the home route
+        // would read an isolated store that InitService never set a language on — the keys render
+        // raw. forChild reuses the root store and its already-loaded translations
+        TranslateModule.forChild({
             loader: {
                 provide: TranslateLoader,
                 useFactory: HttpLoaderFactory,

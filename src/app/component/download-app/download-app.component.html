@@ -1,7 +1,10 @@
 <div style="width:100%;background-color: #fff;">
     <!-- //NOSONAR -->
-    <div class="dialog-close" *ngIf="!isMobile" (click)="closePopup()"><img alt=""
-            src="assets/icons/home/decline_icon.svg" type="button"></div>
+    <div class="dialog-close" *ngIf="!isMobile" (click)="closePopup()">
+        <span class="decline-icon" role="img" aria-label="Close"
+            [style.mask-image]="'url(assets/icons/home/decline_icon.svg)'"
+            [style.-webkit-mask-image]="'url(assets/icons/home/decline_icon.svg)'"></span>
+    </div>
     <div [ngClass]="popupClass === 'download-app-popup' ? 'download-app-popup' : 'download-app'" *ngIf="!isMobile">
         <ng-container>
             <div class="left-side">
