@@ -298,7 +298,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     const reqBody = {
       nlpSearchQuery: data,
       searchQuery: this.queryControl?.value,
-      searchCategory: this.selectedSearchCategory ? this.selectedSearchCategory : 'all'
+      searchCategory: this.selectedSearchCategory() ? this.selectedSearchCategory() : 'all'
     }
 
     await this.searchV3Service.recentCreate(

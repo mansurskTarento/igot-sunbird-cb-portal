@@ -257,8 +257,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   /**
-   * Inside event-hub only the event detail page (home/:eventId) and the player run edge to
-   * edge. The list pages — home, my-events, see-all, view-all — stay in the centred
+   * Inside event-hub only the event detail page (home/:eventId) runs edge to edge. The list
+   * pages — home, my-events, see-all, view-all — and the player stay in the centred
    * container. This used to full-screen everything except the exact string
    * '/app/event-hub/home', which caught the lists and even home itself once it carried
    * query params
@@ -266,7 +266,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   private isFullScreenEventPage(url: string): boolean {
     const path = (url || '').split('?')[0].split('#')[0]
     return /^\/app\/event-hub\/home\/[^/]+/.test(path)
-      || path.startsWith('/app/event-hub/player/')
   }
 
   get showMenuBardetails(): boolean {
