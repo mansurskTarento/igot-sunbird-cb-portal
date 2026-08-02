@@ -418,15 +418,16 @@ export class InitService {
         inProgress: (userEventEnrolmentInfo.eventsEnrolled ?? 0) - (userEventEnrolmentInfo.eventsAttended ?? 0),
         learningHours: userEventEnrolmentInfo.hoursSpentOnEvents ?? 0,
       }
+      debugger
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
         const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['badgeCount'] = badgeCount
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
-        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
-        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
-        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
+        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0) + (eventEnrolmentCount['learningHours'] || 0)
+        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0) + (eventEnrolmentCount['certificate'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)+ (eventEnrolmentCount['inProgress'] || 0)
         if (userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
           if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
             && userExternalCourseEnrolmentInfo.addinfo
