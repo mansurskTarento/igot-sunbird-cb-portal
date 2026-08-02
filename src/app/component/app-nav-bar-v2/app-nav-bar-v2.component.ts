@@ -236,6 +236,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
       }, this.logoDisplayTime)
     }
 
+    this.setActiveRouteFromUrl(this.router.url)
+
     this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: NavigationEnd) => {
@@ -254,17 +256,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
         this.filteredPrimaryNavbarConfig = this.primaryNavbarConfig
         const themeMode = this.themeSvc.currentTheme
         this.themeSvc.setTheme(themeMode)
-        this.activeRoute.set('home')
-      } else if (event.url.includes('/app/explore') || event.url.includes('/page/explore')
-        || event.url.includes('tab=explore-content')) {
-        this.activeRoute.set('explore')
-      } else if (event.url.includes('app/globalsearch') || event.url.includes('/app/search/home')) {
-        this.activeRoute.set('search')
-      } else if (event.url.includes('app/careers')) {
-        this.activeRoute.set('Career')
-      } else if (event.url.includes('app/seeAll') && event.url.includes('key=continueLearning')) {
-        this.activeRoute.set('my learnings')
       }
+      this.setActiveRouteFromUrl(event.url)
       if (!event.url.includes('/page/home')) {
         this.filteredPrimaryNavbarConfig = this.removeThemeToggleFromConfig(this.primaryNavbarConfig)
         this.themeSvc.applyTheme('light')
@@ -650,6 +643,27 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
   fetchEnrollmentList() {
     const userId = this.configSvc.userProfile?.userId || ''
     this.userSvc.fetchUserBatchList(userId).subscribe()
+  }
+
+  setActiveRouteFromUrl(url: string) {
+    let activeRoute = ''
+    if (url.includes('/page/home')) {
+      activeRoute = 'home'
+    } else if (url.includes('/app/explore') || url.includes('/page/explore')
+      || url.includes('tab=explore-content')) {
+      activeRoute = 'explore'
+    } else if (url.includes('app/globalsearch') || url.includes('/app/search/home')) {
+      activeRoute = 'search'
+    } else if (url.includes('app/careers')) {
+      activeRoute = 'Career'
+    } else if (url.includes('app/seeAll') && url.includes('key=continueLearning')) {
+      activeRoute = 'my learnings'
+    }
+
+    if (activeRoute) {
+      this.activeItemKey.set('')
+      this.activeRoute.set(activeRoute)
+    }
   }
 
   isActive(itemConfig: any) {

@@ -528,9 +528,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
         }
 
-        if (!!this.currentUrl.startsWith('/app/toc/')) {
-          this.showBottomNav = false
-        }
+        this.showBottomNav = !this.router.url.startsWith('/app/toc')
       }
 
       if (event instanceof NavigationEnd) {
