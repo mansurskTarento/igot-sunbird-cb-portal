@@ -27,7 +27,7 @@ import { SeeAllHomeComponent } from './components/see-all-home/see-all-home.comp
 import { CardContentV2Module } from '@sunbird-cb/collection'
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { SeeAllWithPillsComponent } from './components/see-all-with-pills/see-all-with-pills.component'
-import { CardsModule, FiltersModule, PaginationModule } from '@sunbird-cb/consumption'
+import { CardsModule, FiltersModule, PaginationModule, CardCourseV2Component, BreadcrumbComponent } from '@sunbird-cb/consumption'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatButtonModule } from '@angular/material/button'
 import { MatCardModule } from '@angular/material/card'
@@ -50,6 +50,7 @@ import { MatTabsModule } from '@angular/material/tabs'
 import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
+import { SeeAllExploreByThemeComponent } from './components/see-all-explore-by-theme/see-all-explore-by-theme.component'
 
 import { HttpClient } from '@angular/common/http'
 import { BadgesModule } from '../badges/badges.module'
@@ -64,6 +65,7 @@ export function SeeAllModulesHttpLoaderFactory(http: HttpClient) {
     SeeAllHomeComponent,
     SeeAllWithPillsComponent,
     SeeAllDynamicComponent,
+    SeeAllExploreByThemeComponent,
   ],
   imports: [
     CommonModule,
@@ -116,6 +118,8 @@ export function SeeAllModulesHttpLoaderFactory(http: HttpClient) {
     CardsModule,
     PaginationModule,
     FiltersModule,
+    CardCourseV2Component,
+    BreadcrumbComponent,
     BadgesModule,
     TranslateModule.forRoot({
       loader: {
