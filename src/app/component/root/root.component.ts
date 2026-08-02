@@ -256,12 +256,26 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return this.customHeight
   }
 
+  /**
+   * Inside event-hub only the event detail page (home/:eventId) runs edge to edge. The list
+   * pages — home, my-events, see-all, view-all — and the player stay in the centred
+   * container. This used to full-screen everything except the exact string
+   * '/app/event-hub/home', which caught the lists and even home itself once it carried
+   * query params
+   */
+  private isFullScreenEventPage(url: string): boolean {
+    const path = (url || '').split('?')[0].split('#')[0]
+    return /^\/app\/event-hub\/home\/[^/]+/.test(path)
+  }
+
   get showMenuBardetails(): boolean {
     // a NOT-MY-USER account has nowhere to navigate, so it gets no sidebar
     return this.menuBarDetails && this.currentUrl &&
       !this.restrictionSvc.isNotMyUser &&
       !this.currentUrl.includes('public') &&
-      !this.currentUrl.includes('viewer')
+      !this.currentUrl.includes('viewer') &&
+      // self-registration via QR runs without the app chrome
+      !this.currentUrl.startsWith('/crp/')
   }
 
   get showHeader(): boolean {
@@ -474,8 +488,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (
           this.currentUrl.startsWith('/app/toc') ||
           this.currentUrl.startsWith('/viewer/') ||
-          (this.currentUrl.startsWith('/app/event-hub/') && this.currentUrl !== '/app/event-hub/home') ||
-          this.currentUrl.startsWith('/public/')
+          this.isFullScreenEventPage(this.currentUrl) ||
+          this.currentUrl.startsWith('/public/') ||
+          // self-registration via QR: a standalone flow, so it gets the full width
+          this.currentUrl.startsWith('/crp/')
         ) {
           this.showFullScreen.set(true)
         } else {

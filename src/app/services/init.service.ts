@@ -189,6 +189,9 @@ export class InitService {
       || href.includes('&preview=true')
       || href.includes('editMode=true')
       || window.location.href.includes('/helpcenter')
+      || window.location.href.includes('/certs') 
+      || window.location.href.includes('/achievements') 
+      || window.location.href.includes('/crp/')
     if (!isPublicPreviewOrCreator) {
       await this.globalConfigData()
     }
@@ -275,6 +278,11 @@ export class InitService {
     this.userPreference.initialize()
 
     // lang selection
+    // Always establish the fallback first. The use() branches below load a language chosen from the
+    // profile or localStorage; if that file 404s (unknown / stale code) the service is left with no
+    // translations at all and every key renders raw, because ngx-translate only falls back when a
+    // defaultLang is set
+    this.translate.setDefaultLang('en')
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       if (this.configSvc.unMappedUser) {
         if (this.configSvc.unMappedUser.profileDetails
