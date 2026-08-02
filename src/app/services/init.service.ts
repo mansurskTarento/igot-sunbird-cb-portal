@@ -189,6 +189,9 @@ export class InitService {
       || href.includes('&preview=true')
       || href.includes('editMode=true')
       || window.location.href.includes('/helpcenter')
+      || window.location.href.includes('/certs') 
+      || window.location.href.includes('/achievements') 
+      || window.location.href.includes('/crp/')
     if (!isPublicPreviewOrCreator) {
       await this.globalConfigData()
     }
