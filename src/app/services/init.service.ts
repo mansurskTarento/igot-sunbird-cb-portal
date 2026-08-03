@@ -189,8 +189,8 @@ export class InitService {
       || href.includes('&preview=true')
       || href.includes('editMode=true')
       || window.location.href.includes('/helpcenter')
-      || window.location.href.includes('/certs') 
-      || window.location.href.includes('/achievements') 
+      || window.location.href.includes('/certs')
+      || window.location.href.includes('/achievements')
       || window.location.href.includes('/crp/')
     if (!isPublicPreviewOrCreator) {
       await this.globalConfigData()
@@ -426,7 +426,7 @@ export class InitService {
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
         userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0) + (eventEnrolmentCount['learningHours'] || 0)
         userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0) + (eventEnrolmentCount['certificate'] || 0)
-        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)+ (eventEnrolmentCount['inProgress'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0) + (eventEnrolmentCount['inProgress'] || 0)
         if (userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
           if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
             && userExternalCourseEnrolmentInfo.addinfo
