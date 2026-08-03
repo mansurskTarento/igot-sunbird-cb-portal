@@ -418,7 +418,6 @@ export class InitService {
         inProgress: (userEventEnrolmentInfo.eventsEnrolled ?? 0) - (userEventEnrolmentInfo.eventsAttended ?? 0),
         learningHours: userEventEnrolmentInfo.hoursSpentOnEvents ?? 0,
       }
-      debugger
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
         const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
