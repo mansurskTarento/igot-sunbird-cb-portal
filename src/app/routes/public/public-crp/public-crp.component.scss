@@ -542,51 +542,74 @@ a.terms-text {
   margin-right: 8px;
 }
 
+// Material 20 renders the MDC form-field DOM (.mat-mdc-*). The rules here used to target
+// the pre-v15 names (.mat-form-field-flex / -infix / -underline / .mat-select-panel), so
+// none of them matched: the control lost its pill border and its icon gutter, leaving the
+// language name colliding with the icon and a stray underline below it
 .langdiv {
-  .mat-focused:not(.mat-form-field-invalid) .mat-form-field-infix::after {
-    color: rgba(0, 0, 0, 0.54) !important;
-    top: 30%;
-    right: 8%;
-    margin-top: -2.5px;
-  }
-
   .custom-lang {
     font: 400 14px/21px Lato, sans-serif;
     width: 133px;
     padding: 0 !important;
     position: relative;
+    border-radius: 16px;
+    overflow: hidden;
 
     @media (max-width: 576px) {
       margin-right: 4px !important;
     }
   }
 
-  ::ng-deep.mat-form-field-appearance-legacy .mat-form-field-wrapper {
-    padding: 0 !important;
-  }
-
-  ::ng-deep.mat-form-field-infix {
-    padding: 0 0 0.6em 2.5em !important;
-  }
-
-  ::ng-deep.mat-form-field-flex {
+  ::ng-deep .mat-mdc-text-field-wrapper {
     border: 1px solid rgba(0, 0, 0, 0.16) !important;
     border-radius: 16px !important;
+    height: 40px;
+    padding: 0 8px !important;
+    background-color: transparent;
+    overflow: hidden;
+
+    // MDC draws the fill/underline decorations that the legacy theme did not
+    .mdc-text-field__ripple,
+    .mdc-line-ripple,
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      display: none !important;
+    }
+  }
+
+  // left gutter keeps the value clear of the absolutely positioned translate icon
+  ::ng-deep .mat-mdc-form-field-infix {
+    padding: 0 0 0 2.25em !important;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+
+  // no hint/error under this control, so the reserved strip only adds height
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
   }
 
   img {
     position: absolute;
-    left: 4%;
-    top: -4px;
+    left: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
   }
+}
+
+// the panel is rendered in the cdk overlay, outside .langdiv — it has to be matched from
+// the top level via its panelClass
+::ng-deep .mat-mdc-select-panel.custom-langselect {
+  margin-top: 3em !important;
+  max-height: 505px !important;
 
   .checkmark::before {
     content: 'L';
     font-family: arial, sans-serif;
-    -ms-transform: scaleX(-1) rotate(-35deg);
-    /* IE 9 */
     -webkit-transform: scaleX(-1) rotate(-35deg);
-    /* Chrome, Safari, Opera */
     transform: scaleX(-1) rotate(-35deg);
     display: inline-block;
     vertical-align: top;
@@ -599,17 +622,6 @@ a.terms-text {
     position: absolute;
     left: 0;
   }
-
-  ::ng-deep.mat-form-field-underline {
-    background-color: none !important;
-    height: 0 !important;
-  }
-}
-
-::ng-deep.mat-select-panel {
-  margin-top: 3em !important;
-  // margin-left: -1em !important;
-  max-height: 505px !important;
 }
 
 a.help-icon {
