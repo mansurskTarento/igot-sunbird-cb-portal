@@ -1007,7 +1007,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       queryParams,
       queryParamsHandling: 'merge' as 'merge',
     }
-    this.router.navigate(['/app/globalsearch'], navigationExtras)
+    this.router.navigate([this.getGlobalSearchRoute()], navigationExtras)
+  }
+  private getGlobalSearchRoute(): string {
+    const profileRoles = this.configSvc.userProfileV2?.userRoles || []
+    const isVolunteer = (!!this.configSvc.userRoles && this.configSvc.userRoles.has('volunteer'))
+      || (Array.isArray(profileRoles) && profileRoles.some(
+        (role: any) => (typeof role === 'string' ? role : role?.role || '').toUpperCase() === 'VOLUNTEER'
+      ))
+    return isVolunteer ? '/app/globalsearch/volunteer' : '/app/globalsearch'
   }
 
   raiseTelemetryExploreContent(id: string, subType: string = '') {
