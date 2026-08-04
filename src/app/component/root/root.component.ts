@@ -1041,7 +1041,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   openAppDownloadDialog() {
     const dialogRef = this.dialog.open(DialogBoxComponent, {
       width: '1000px',
-      panelClass: 'download-app-popup-new'
+      panelClass: 'download-app-popup-new',
+      maxHeight: '95vh',
     })
     dialogRef.afterClosed().subscribe(() => { })
   }
