@@ -39,7 +39,12 @@ import { delay, first, catchError, map, filter } from 'rxjs/operators'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { RootService } from './root.service'
 
-import { CsModule } from '@project-sunbird/client-services'
+// Explicit '/index' subpath: client-services@3.9.5 ships a broken package.json whose
+// `main` (dist/index.js) and `module` (src/index.ts) both point at files it does not
+// contain - the real entry is index.js at the package root. Node and esbuild fall back
+// to it silently, but the dev server's Vite dependency optimizer errors out with
+// "Failed to resolve entry for package". Naming the subpath skips entry resolution.
+import { CsModule } from '@project-sunbird/client-services/index'
 import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
 import { MatDialog } from '@angular/material/dialog'

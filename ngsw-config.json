@@ -8,9 +8,22 @@
       "resources": {
         "files": [
           "/favicon.ico",
-          "index.html",
+          "/index.html",
           "/manifest.webmanifest",
           "/*.css",
+          "/main-*.js",
+          "/polyfills-*.js",
+          "/scripts-*.js",
+          "/runtime-*.js"
+        ]
+      }
+    },
+    {
+      "name": "chunks",
+      "installMode": "lazy",
+      "updateMode": "lazy",
+      "resources": {
+        "files": [
           "/*.js"
         ]
       }
