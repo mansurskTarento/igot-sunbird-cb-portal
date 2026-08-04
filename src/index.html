@@ -40,65 +40,36 @@
 
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
     rel="stylesheet">
-  <script rel="preload">
-    (async function getData() {
-      const url = "/assets/env.json"
-      try {
-        const response = await fetch(url, { cache: "no-cache" })
+  <!--
+    Env config. The request starts here, during head parsing, so it overlaps the bundle
+    download - but the promise is handed to main.ts (see loadEnv), which awaits it before
+    bootstrapping. That handshake is the point: the old version of this block populated
+    window.env with no handshake at all and raced main-*.js for it. env.json is fetched
+    no-cache and always hits the network, while main-*.js is served `immutable` and comes
+    off disk on a repeat visit, so the bundle could evaluate environment.ts first and die
+    with "Cannot read properties of undefined (reading 'name')" - blank page, no clue.
+
+    Assigning the whole document replaces the ~40-key copy that used to live here, which
+    silently dropped every env.json key nobody remembered to add to the list.
+
+    Never let this reject: main.ts attaches its handler a tick later, so a rejection here
+    would surface as an unhandled promise rejection first. Report and resolve; main.ts
+    guarantees window.env is at least an object before anything reads it.
+  -->
+  <script>
+    window['envReady'] = fetch('/assets/env.json', { cache: 'no-cache' })
+      .then(function (response) {
         if (!response.ok) {
-          throw new Error(`Response status: ${response.status}`)
+          throw new Error('Response status: ' + response.status)
         }
-        const envJson = await response.json()
-        window["env"] = window["env"] || {}
-        // Environment variables
-        window["env"]["name"] = envJson.name
-        window["env"]["production"] = envJson.production
-        window["env"]["sitePath"] = envJson.sitePath
-        window["env"]["organisation"] = envJson.organisation
-        window["env"]["framework"] = envJson.framework
-        window["env"]["channelId"] = envJson.channelId
-        window["env"]["azureHost"] = envJson.azureHost
-        //window["env"]["contentHost"] = envJson. ;
-        window["env"]["azureBucket"] = envJson.azureBucket
-        window["env"]["azureOldHost"] = envJson.azureOldHost
-        window["env"]["azureOldBuket"] = envJson.azureOldBuket
-        window["env"]["contentHost"] = envJson.contentHost
-        window["env"]["contentBucket"] = envJson.contentBucket
-        window["env"]["certificateassets"] = envJson.certificateassets
-        window["env"]["missionKarmayogiPath"] = envJson.missionKarmayogiPath
-        window["env"]["helpEmail"] = envJson.helpEmail
-        window["env"]["staticHomePageUrl"] = envJson.staticHomePageUrl
-        window["env"]['cscmsUrl'] = envJson.cscmsUrl
-        window["env"]['dakshtaName'] = envJson.dakshtaName
-        window["env"]["contactMeetLink"] = envJson.contactMeetLink
-        window["env"]["karmayogiBharatLink"] = envJson.karmayogiBharatLink
-        window["env"]["meetingLinkDetail"] = envJson.meetingLinkDetail
-        window["env"]["programStripName"] = envJson.programStripName
-        window["env"]["programStripPrimaryCategory"] = envJson.programStripPrimaryCategory
-        window["env"]["programStripKey"] = envJson.programStripKey
-        window["env"]["quizResultTimeout"] = envJson.quizResultTimeout
-        window["env"]["assessmentBuffer"] = envJson.assessmentBuffer
-        window["env"]["cdnContentHost"] = envJson.cdnContentHost
-        window["env"]["cdnContentBucket"] = envJson.cdnContentBucket
-        window["env"]["dicussV2Bucket"] = envJson.dicussV2Bucket
-        window["env"]["spvorgID"] = envJson.spvorgID
-        window["env"]["mdoChannelsBookmarkId"] = envJson.mdoChannelsBookmarkId
-        window["env"]["apiCache"] = envJson.apiCache
-        window["env"]["portalRoles"] = envJson.portalRoles
-        window["env"]["portals"] = envJson.portals
-        window["env"]["recaptchaKey"] = envJson.recaptchaKey
-        window["env"]["supportEmail"] = envJson.supportEmail
-        window["env"]["providerDataKey"] = envJson.providerDataKey
-        window["env"]["resendOTPTIme"] = envJson.resendOTPTIme
-        window["env"]["compentencyVersionKey"] = envJson.compentencyVersionKey
-        window["env"]["cbcOrg"] = envJson.cbcOrg
-        window["env"]["doptOrg"] = envJson.doptOrg
-        window['env']['portalsForNotifications'] = envJson.portalsForNotifications
-        window['env']['publicContentSurveyId'] = envJson.publicContentSurveyId
-      } catch (error) {
-        console.error("Error in fetching env json")
-      }
-    })(this);
+        return response.json()
+      })
+      .then(function (envJson) {
+        window['env'] = Object.assign(window['env'] || {}, envJson)
+      })
+      .catch(function (error) {
+        console.error('Error in fetching env json', error)
+      })
   </script>
   <script>window.git_build = '{git-hash}';</script>
   <script>window.git_branch = '{git-branch}';</script>
