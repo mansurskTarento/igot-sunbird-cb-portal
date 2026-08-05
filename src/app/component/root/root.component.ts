@@ -104,6 +104,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   hideFooterSection = signal(false)
   isHomePage = signal(false)
   showFullScreen = signal(false)
+  // Routes that need full width (100%) on mobile instead of the default 90% .container-balanced gets.
+  // Add more prefixes here when another route needs the same treatment.
+  fullWidthMobileRoutes = ['/app/learn/bharat-kalp']
+  isFullWidthMobileRoute = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
   // The sidebar only pushes page content on the home page. Everywhere else it is an overlay
@@ -498,6 +502,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           this.showFullScreen.set(false)
         }
 
+        this.isFullWidthMobileRoute.set(
+          this.fullWidthMobileRoutes.some(route => this.currentUrl.startsWith(route))
+        )
+
         if (
           !!this.currentUrl.startsWith('/public/logout')
           || !!this.currentUrl.startsWith('/public/signup')
@@ -576,10 +584,43 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
 
   }
+  private isWithinFirstLoginMonth(): boolean {
+    const firstLoginAt = this.parseServerTimestamp(this.commonDataSvc?.firstLoginTime)
+    if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
+      return false
+    }
+    const created = new Date(firstLoginAt)
+    const unlocksOn = new Date(created.getFullYear(), created.getMonth() + 1, 1)
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    return today.getTime() < unlocksOn.getTime()
+  }
+
+  private parseServerTimestamp(value: any): number {
+    if (value === null || value === undefined) {
+      return NaN
+    }
+    if (typeof value === 'number') {
+      return value
+    }
+    const raw = String(value).trim()
+    if (/^\d+$/.test(raw)) {
+      return Number(raw)
+    }
+    const iso = raw
+      .replace(' ', 'T')
+      .replace(/:(\d{3})(?=[+-]|Z|$)/, '.$1')
+      .replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
+    const parsed = Date.parse(iso)
+    return Number.isNaN(parsed) ? Date.parse(raw) : parsed
+  }
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
+    if (achievements) {
+      achievements.showViewAll = achievements.showViewAll !== false && !this.isWithinFirstLoginMonth()
+    }
     achievements['sectionLoading'] = true
     this.sendDetailsChangedEvent(achievements)
     if (achievements) {

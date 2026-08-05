@@ -664,11 +664,18 @@
 //   background-color: rgba(255, 255, 255, 0.9); /* Adjust opacity here */
 //   z-index: 1; /* Make sure the opacity is above the background image */
 // }
+@media only screen and (max-width: 600px) and (orientation: portrait) {
+  .cb-footer-wrapper {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+  }
+}
 
-.cb-footer-wrapper {
-  position: absolute;
-  width: 100%;
-  bottom: 60px;
+        .cb-footer-wrapper {
+          position: absolute;
+          width: 100%;
+      bottom: 0px;
 }
 
 .my-5px {

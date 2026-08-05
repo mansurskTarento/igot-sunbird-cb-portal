@@ -248,7 +248,7 @@ export class InitService {
         window.location.href.includes('/viewer') || window.location.href.includes('/helpcenter')
       )
     ) {
-      this.logFirstLogin()
+      await this.logFirstLogin()
     }
     return true
   }
@@ -524,19 +524,25 @@ export class InitService {
     localStorage.setItem('telemetrySessionId', uuid())
   }
 
-  private logFirstLogin() {
+  private async logFirstLogin(): Promise<void> {
     const firstLoginUrl = this.domainConfSvc.getApiUrl('user', 'firstLogin', '/apis/proxies/v8/login/entry')
     if (!firstLoginUrl) {
       console.warn('First login API is disabled')
       return
     }
-    if (!localStorage.getItem('firsLogin')) {
-      this.http.get<any>(firstLoginUrl).pipe(map((res: any) => {
-        if (res && res.result) {
+    const isFirstEverLogin = !localStorage.getItem('firsLogin')
+    try {
+      const res: any = await firstValueFrom(this.http.get<any>(firstLoginUrl))
+      if (res && res.result) {
+        this.commonDataSvc.firstLoginTime = res.result.first_login ?? null
+        if (isFirstEverLogin) {
           this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
           localStorage.setItem('firsLogin', 'true')
         }
-      })).toPromise()
+      }
+    } catch (e) {
+      // non-fatal: the greeting falls back to "Welcome Back" and the achievements link stays shown
+      console.error('InitService: login/entry failed', e)
     }
   }
   /**
