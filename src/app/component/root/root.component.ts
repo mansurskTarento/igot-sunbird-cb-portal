@@ -576,10 +576,43 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
 
   }
+  private isWithinFirstLoginMonth(): boolean {
+    const firstLoginAt = this.parseServerTimestamp(this.commonDataSvc?.firstLoginTime)
+    if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
+      return false
+    }
+    const created = new Date(firstLoginAt)
+    const unlocksOn = new Date(created.getFullYear(), created.getMonth() + 1, 1)
+    const now = new Date()
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    return today.getTime() < unlocksOn.getTime()
+  }
+
+  private parseServerTimestamp(value: any): number {
+    if (value === null || value === undefined) {
+      return NaN
+    }
+    if (typeof value === 'number') {
+      return value
+    }
+    const raw = String(value).trim()
+    if (/^\d+$/.test(raw)) {
+      return Number(raw)
+    }
+    const iso = raw
+      .replace(' ', 'T')
+      .replace(/:(\d{3})(?=[+-]|Z|$)/, '.$1')
+      .replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
+    const parsed = Date.parse(iso)
+    return Number.isNaN(parsed) ? Date.parse(raw) : parsed
+  }
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
+    if (achievements) {
+      achievements.showViewAll = achievements.showViewAll !== false && !this.isWithinFirstLoginMonth()
+    }
     achievements['sectionLoading'] = true
     this.sendDetailsChangedEvent(achievements)
     if (achievements) {
