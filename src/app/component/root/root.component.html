@@ -116,7 +116,8 @@
             'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && (isXSmall$ | async) === false,
             'container-balanced': !isHomePage() && !showFullScreen(),
             'home-content': showMenuBardetails && isHomePage() && !showFullScreen(),
-            'w-full': !showMenuBardetails || showFullScreen()
+            'w-full': !showMenuBardetails || showFullScreen(),
+            'full-width-mobile-route': isFullWidthMobileRoute()
             }">
           <router-outlet></router-outlet>
         </div>
