@@ -36,7 +36,7 @@
 
   <!-- Language Select -->
   @if (item()?.type === 'langSelect' && rnc.section === 'language' && rnc.active && isMultiLangEnabled()) {
-  <li class="langdiv flex items-center cursor-pointer">
+  <li class="langdiv flex items-center disabled-lang-select">
     <span class="mob-lang-img flex items-center mx-2 mt-[10px]" role="img" aria-label="Language" title="Language"
       [style.mask-image]="'url(/assets/icons/top-nav/translate_icon.svg)'"
       [style.-webkit-mask-image]="'url(/assets/icons/top-nav/translate_icon_dark.svg)'"
