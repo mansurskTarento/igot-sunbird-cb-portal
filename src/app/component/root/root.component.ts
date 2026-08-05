@@ -104,6 +104,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   hideFooterSection = signal(false)
   isHomePage = signal(false)
   showFullScreen = signal(false)
+  // Routes that need full width (100%) on mobile instead of the default 90% .container-balanced gets.
+  // Add more prefixes here when another route needs the same treatment.
+  fullWidthMobileRoutes = ['/app/learn/bharat-kalp']
+  isFullWidthMobileRoute = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
   // The sidebar only pushes page content on the home page. Everywhere else it is an overlay
@@ -497,6 +501,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         } else {
           this.showFullScreen.set(false)
         }
+
+        this.isFullWidthMobileRoute.set(
+          this.fullWidthMobileRoutes.some(route => this.currentUrl.startsWith(route))
+        )
 
         if (
           !!this.currentUrl.startsWith('/public/logout')
