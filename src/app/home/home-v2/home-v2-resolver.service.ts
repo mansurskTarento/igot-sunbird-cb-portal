@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
-import { Observable, forkJoin, map, catchError, of } from 'rxjs'
+import { Observable, forkJoin, map, catchError, of, switchMap } from 'rxjs'
 import { FormExtService } from '../../services/form-ext.service'
 
 @Injectable({
@@ -35,14 +35,20 @@ export class HomeV2ResolverService {
         type: 'page',
         subType: 'home',
         portal: 'portal',
-        clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['application-config-web'] || 1.0,
+        clientVersion: this.configSvc?.globalConfig?.formClientVersion?.['home'] || 1.0,
       },
     }
     const response$ = this.formSvc.formConfigReadData(request).pipe(catchError(() => of(null)))
 
-    return forkJoin([response$, homeConfig, sectionRecordsCount]).pipe(
-      map(([responseRes, homeConfigRes, sectionRecordsCountRes]) => {
-        const configDetails = responseRes && responseRes.result && responseRes.result.data && responseRes.result.data.homeV2 ? responseRes.result.data.homeV2 : homeConfigRes ? homeConfigRes : []
+    return forkJoin([response$, sectionRecordsCount]).pipe(
+      switchMap(([responseRes, sectionRecordsCountRes]) => {
+        const responseConfigDetails = responseRes && responseRes.result && responseRes.result.data
+        if (responseConfigDetails) {
+          return of([responseConfigDetails, sectionRecordsCountRes])
+        }
+        return homeConfig.pipe(map(homeConfigRes => [homeConfigRes ? homeConfigRes : [], sectionRecordsCountRes]))
+      }),
+      map(([configDetails, sectionRecordsCountRes]) => {
         if (configDetails && configDetails.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
           const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
           if (pillsSection && Array.isArray(pillsSection.pills)) {
@@ -60,9 +66,27 @@ export class HomeV2ResolverService {
             }
           }
         }
+        this.applyBharatKalpVisibility(configDetails)
         return { data: configDetails, error: null }
       }),
       catchError(err => of({ data: null, error: err })),
     )
+  }
+
+  // Bharat Kalp spotlight card is only for BharatKalp members, the route itself is guarded too
+  private applyBharatKalpVisibility(configDetails: any): void {
+    if (!configDetails || !Array.isArray(configDetails.homeSection) || this.isBharatKalpMember()) {
+      return
+    }
+    const spotlightSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'spotlight')
+    if (spotlightSection && Array.isArray(spotlightSection.spotlightConfig)) {
+      spotlightSection.spotlightConfig = spotlightSection.spotlightConfig
+        .filter((card: any) => card?.cardClickDetails?.id !== 'bharat-kalp')
+    }
+  }
+
+  private isBharatKalpMember(): boolean {
+    const val = this.configSvc?.unMappedUser?.profileDetails?.additionalProperties?.isBharatKalpMember
+    return val === true || val === 'true'
   }
 }

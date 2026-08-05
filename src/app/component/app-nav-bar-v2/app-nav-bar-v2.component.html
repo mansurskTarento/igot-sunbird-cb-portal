@@ -11,7 +11,7 @@
   @if (mode() === 'top') {
   <div class="w-full flex items-center mx-0" id="root-tool-bar">
     @if (!leftNavBarOpen() || (isTabView$ | async)) {
-    <a [routerLink]="redirectPath" class="logo-dim items-center hidden md:flex" role="link" title="Home"
+    <a [routerLink]="redirectPath" class="logo-dim items-center header-logo" role="link" title="Home"
       [ngStyle]="jan26Data?.isEnabled ? {'max-width': jan26Data?.desktop?.maxWidth} : null" i18n-aria-title
       i18n-aria-label>
       @if (jan26Data && jan26Data.isEnabled) {
@@ -31,7 +31,7 @@
     }
     @if (primaryNavbarConfig?.mediumScreen) {
     <div [ngClass]="[leftNavBarOpen() ? 'ml-search' : 'ml-search-nav-close', (isTabView$ | async) ? 'tab-search' : '']"
-      class="md:flex justify-start">
+      class="header-search justify-start">
       <!-- @for (item of primaryNavbarConfig?.mediumScreen?.left; track item) {
       <ws-top-right-nav-bar-v2 [item]="item" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
@@ -60,7 +60,7 @@
     </div>
     }
 
-    <div class="flex gap-4 items-center ml-auto">
+    <div class="flex gap-2 md:gap-4 items-center ml-auto">
       @for (item of filteredPrimaryNavbarConfig?.mediumScreen?.right; track item) {
       <ws-top-right-nav-bar-v2 [item]="getItem(item)" [showLangDropdown]="showLangDropdown()"
         [rightNavConfig]="headerFooterConfigData()" [notificationsCount]="notificationsCount()" />
@@ -72,31 +72,40 @@
 }
 <!-- Bottom Navigation Bar (Mobile) -->
 @if (sShowAppNavBar() && !needToHide() && mode() === 'bottom') {
-<mat-toolbar [color]="primaryNavbarBackground?.color" [ngStyle]="primaryNavbarBackground?.styles"
-  class="mat-elevation-z3 custom mobile-footer-fixed-nav">
+<mat-toolbar [ngStyle]="primaryNavbarBackground?.styles" class="custom mobile-footer-fixed-nav">
 
   @if (primaryNavbarConfig?.smallScreen && isLoggedIn()) {
   <ul class="mobile-footer-fixed-nav-list-item-container justify-between px-2">
     @for (item of primaryNavbarConfig?.smallScreen?.all; track item) {
-    @if (item?.type !== 'explorerButton' && item?.config?.label?.toLowerCase() !== 'search') {
-    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    @if (item?.type !== 'explorerButton') {
+    <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="bottomNavClick(item)">
-      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''"
-        [class.keep-icon-color]="item?.config?.label?.toLowerCase() === 'home'"
-        [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
-        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
-          title="{{item?.config?.label}}" />
+      <div class="icon-container" [id]="item?.config?.label?.toLowerCase() === 'search' ? 'feature_mobile_search' : ''">
+        @if (item?.config?.path === '/page/home') {
+        <img class="nav-icon-img" [src]="'/assets/icons/footer-nav/' + item?.config?.icon + '.svg'"
+          [attr.aria-label]="item?.config?.label" [alt]="item?.config?.label" [title]="item?.config?.label" />
+        } @else {
+        <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
+          [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
+        }
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>
     }
 
     @if (item?.type === 'explorerButton') {
-    <li [ngClass]="isTabActive(item) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
+    <li [ngClass]="isActive(item?.config) ? 'active-icon': ''" class="mobile-footer-fixed-nav-list-item"
       (click)="openExploreMenu()">
-      <div class="icon-container" [style.--icon-url]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'">
-        <img src="/assets/icons/footer-nav/{{item?.config?.icon}}.svg" alt="{{item?.config?.label}}"
-          title="{{item?.config?.label}}" />
+      <div class="icon-container">
+        @if (item?.config?.path === '/page/home') {
+        <img class="nav-icon-img" [src]="'/assets/icons/footer-nav/' + item?.config?.icon + '.svg'"
+          [attr.aria-label]="item?.config?.label" [alt]="item?.config?.label" [title]="item?.config?.label" />
+        } @else {
+        <span class="nav-icon-svg" role="img" [attr.aria-label]="item?.config?.label" [title]="item?.config?.label"
+          [style.mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"
+          [style.-webkit-mask-image]="'url(/assets/icons/footer-nav/' + item?.config?.icon + '.svg)'"></span>
+        }
         <span>{{item?.config?.label | titlecase}}</span>
       </div>
     </li>

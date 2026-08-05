@@ -25,6 +25,10 @@ import { DiscussionsModule } from '@sunbird-cb/collection'
 import { RecentRequestsModule } from '@sunbird-cb/collection'
 import { PendingRequestModule } from '@sunbird-cb/collection'
 import { UserLeaderboardModule } from '@sunbird-cb/collection'
+// Standalone; renders the current karma leaderboard design inline in the My activities tab
+import { KarmaLeaderboardV2Component } from 'src/app/home/home-v2/karma-leaderboard-v2/karma-leaderboard-v2.component'
+// Standalone; the home page weekly claps card (now owned by the library), reused in the My activities tab
+import { WeeklyClapsCardV2Component } from '@sunbird-cb/consumption'
 
 import { LeftMenuComponent } from './components/left-menu/left-menu.component'
 import { RightMenuComponent } from './components/right-menu/right-menu.component'
@@ -150,6 +154,8 @@ export function ProfileV2HttpLoaderFactory(http: HttpClient) {
         ProfileCardStatsModule,
         WeeklyClapsModule,
         UserLeaderboardModule,
+        KarmaLeaderboardV2Component,
+        WeeklyClapsCardV2Component,
         UpdatePostsModule,
         DiscussionsModule,
         RecentRequestsModule,

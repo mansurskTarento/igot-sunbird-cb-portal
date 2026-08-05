@@ -19,8 +19,8 @@ import {
 import { environment } from '../../environments/environment'
 /* tslint:disable */
 import _ from 'lodash'
-import { firstValueFrom } from 'rxjs'
-import { map } from 'rxjs/operators'
+import { firstValueFrom, forkJoin, of } from 'rxjs'
+import { catchError, map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 import { NPSGridService } from '@sunbird-cb/collection'
 import { ContentDictionaryService } from '@sunbird-cb/consumption'
@@ -188,6 +188,10 @@ export class InitService {
     const isPublicPreviewOrCreator = href.includes('/public/')
       || href.includes('&preview=true')
       || href.includes('editMode=true')
+      || window.location.href.includes('/helpcenter')
+      || window.location.href.includes('/certs')
+      || window.location.href.includes('/achievements')
+      || window.location.href.includes('/crp/')
     if (!isPublicPreviewOrCreator) {
       await this.globalConfigData()
     }
@@ -274,6 +278,11 @@ export class InitService {
     this.userPreference.initialize()
 
     // lang selection
+    // Always establish the fallback first. The use() branches below load a language chosen from the
+    // profile or localStorage; if that file 404s (unknown / stale code) the service is left with no
+    // translations at all and every key renders raw, because ngx-translate only falls back when a
+    // defaultLang is set
+    this.translate.setDefaultLang('en')
     if (this.configSvc.instanceConfig && this.configSvc.instanceConfig.isMultilingualEnabled) {
       if (this.configSvc.unMappedUser) {
         if (this.configSvc.unMappedUser.profileDetails
@@ -366,7 +375,7 @@ export class InitService {
           subType: 'global-web',
           type: 'page',
           portal: 'portal',
-          clientVersion: 1.0,
+          clientVersion: 2.0,
         },
       }
       const response: any = await firstValueFrom(this.formSvc.formConfigReadData(request))
@@ -387,19 +396,37 @@ export class InitService {
     if (!enrollmentSummaryConfig?.enabled) {
       return {} as NsInstanceConfig.IConfig
     }
+    const eventEnrollConfig = this.configSvc.globalConfig?.apis?.user?.eventEnroll
     const userId = this.configSvc.userProfile?.userId
-    const publicConfig: NsInstanceConfig.IConfig = await firstValueFrom(this.enrollSvc.fetchEnrollStats(userId, enrollmentSummaryConfig.url)).then((res: any) => {
+    // the course summary and the event summary are independent APIs — fire them together
+    // and merge both into the single `userEnrollmentCount` cache the widgets read from.
+    // Each stream swallows its own error so one failing API does not drop the other's data
+    const courseStats$ = this.enrollSvc.fetchEnrollStats(userId, enrollmentSummaryConfig.url)
+      .pipe(catchError(() => of(null)))
+    const eventStats$ = eventEnrollConfig?.enabled
+      ? this.enrollSvc.fetchEventEnrollStats(eventEnrollConfig.url).pipe(catchError(() => of(null)))
+      : of(null)
+
+    const publicConfig: NsInstanceConfig.IConfig = await firstValueFrom(
+      forkJoin({ courseStats: courseStats$, eventStats: eventStats$ }),
+    ).then(({ courseStats: res, eventStats: eventRes }: any) => {
       let userCourseEnrolmentInfo: any = {}
       let userExternalCourseEnrolmentInfo: any = {}
+      const userEventEnrolmentInfo: any = (eventRes && eventRes.result && eventRes.result.userEventEnrolmentInfo) || {}
+      const eventEnrolmentCount = {
+        certificate: userEventEnrolmentInfo.eventsAttended ?? 0,
+        inProgress: (userEventEnrolmentInfo.eventsEnrolled ?? 0) - (userEventEnrolmentInfo.eventsAttended ?? 0),
+        learningHours: userEventEnrolmentInfo.hoursSpentOnEvents ?? 0,
+      }
       if (res && res.result && res.result.userCourseEnrolmentInfo) {
         const badgeCount: any = res.result.badgeCount
         userCourseEnrolmentInfo = res.result.userCourseEnrolmentInfo
         userExternalCourseEnrolmentInfo = res.result.userExternalCourseEnrolmentInfo
         userCourseEnrolmentInfo['badgeCount'] = badgeCount
         userCourseEnrolmentInfo['karmaPoints'] = userCourseEnrolmentInfo['karmaPoints'] + (userExternalCourseEnrolmentInfo['karmaPoints'] || 0)
-        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0)
-        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0)
-        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0)
+        userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] = userCourseEnrolmentInfo['timeSpentOnCompletedCourses'] + (userExternalCourseEnrolmentInfo['timeSpentOnCompletedCourses'] || 0) + (eventEnrolmentCount['learningHours'] || 0)
+        userCourseEnrolmentInfo['certificatesIssued'] = userCourseEnrolmentInfo['certificatesIssued'] + (userExternalCourseEnrolmentInfo['certificatesIssued'] || 0) + (eventEnrolmentCount['certificate'] || 0)
+        userCourseEnrolmentInfo['coursesInProgress'] = userCourseEnrolmentInfo['coursesInProgress'] + (userExternalCourseEnrolmentInfo['coursesInProgress'] || 0) + (eventEnrolmentCount['inProgress'] || 0)
         if (userCourseEnrolmentInfo.addinfo && Object.keys(userCourseEnrolmentInfo.addinfo).length > 0) {
           if (Object.keys(userExternalCourseEnrolmentInfo).length > 0
             && userExternalCourseEnrolmentInfo.addinfo
@@ -412,10 +439,17 @@ export class InitService {
         const userData = {
           enrolledCourseCount,
           userCourseEnrolmentInfo,
+          userEventEnrolmentInfo,
+          eventEnrolmentCount,
+          mergedCountData: this.buildMergedCounts(userCourseEnrolmentInfo, eventEnrolmentCount),
         }
         localStorage.removeItem('userEnrollmentCount')
         localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
 
+      } else {
+        // course summary failed or came back empty — still persist whatever the
+        // event summary returned so the stats widgets get the event counts
+        this.storeFallbackEnrollmentCount(userEventEnrolmentInfo, eventEnrolmentCount)
       }
       if (this.configSvc.userProfile) {
         const userProfile = this.configSvc && this.configSvc.userProfile
@@ -443,18 +477,39 @@ export class InitService {
 
       return res
     }).catch((_err: any) => {
-      const userCourseEnrolmentInfo = {
-        enrolledCourseCount: 0,
-        karmaPoints: 0,
-        timeSpentOnCompletedCourses: 0,
-        certificatesIssued: 0,
-        coursesInProgress: 0,
-        addinfo: {},
-      }
-      localStorage.removeItem('userEnrollmentCount')
-      localStorage.setItem('userEnrollmentCount', JSON.stringify(userCourseEnrolmentInfo))
+      this.storeFallbackEnrollmentCount()
     }) as NsInstanceConfig.IConfig || {}
     return publicConfig
+  }
+
+  // course + event counts merged once at init so the stats widgets only read localStorage.
+  // learningHours stays a raw number — formatting (pipDuration 'hms') is the widget's job
+  private buildMergedCounts(courseInfo: any = {}, eventCount: any = {}): any {
+    return {
+      certificate: (courseInfo.certificatesIssued || 0) + (eventCount.certificate || 0),
+      inProgress: (courseInfo.coursesInProgress || 0) + (eventCount.inProgress || 0),
+      learningHours: (parseFloat(courseInfo.timeSpentOnCompletedCourses) || 0)
+        + (parseFloat(eventCount.learningHours) || 0),
+      karmaPoints: courseInfo.karmaPoints || 0,
+      badgeCount: courseInfo.badgeCount || 0,
+    }
+  }
+
+  private storeFallbackEnrollmentCount(userEventEnrolmentInfo: any = {}, eventEnrolmentCount?: any) {
+    const eventCount = eventEnrolmentCount || { certificate: 0, inProgress: 0, learningHours: 0 }
+    const userData = {
+      userEventEnrolmentInfo,
+      enrolledCourseCount: 0,
+      karmaPoints: 0,
+      timeSpentOnCompletedCourses: 0,
+      certificatesIssued: 0,
+      coursesInProgress: 0,
+      addinfo: {},
+      eventEnrolmentCount: eventCount,
+      mergedCountData: this.buildMergedCounts({}, eventCount),
+    }
+    localStorage.removeItem('userEnrollmentCount')
+    localStorage.setItem('userEnrollmentCount', JSON.stringify(userData))
   }
 
   get locale(): string {
@@ -478,12 +533,27 @@ export class InitService {
     if (!localStorage.getItem('firsLogin')) {
       this.http.get<any>(firstLoginUrl).pipe(map((res: any) => {
         if (res && res.result) {
-          this.configSvc.isNewUser = !res.result.last_login
+          this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
           localStorage.setItem('firsLogin', 'true')
         }
       })).toPromise()
     }
   }
+  /**
+   * A first-ever login used to be signalled by login/entry omitting `last_login`. The backend
+   * now always returns both timestamps and marks a first login by `first_login === last_login`.
+   * The missing-`last_login` case is kept as a fallback so an older backend still works.
+   * Compared as strings because the timestamps are epoch millis that may arrive as either type.
+   */
+  private resolveIsNewUser(result: any): boolean {
+    const lastLogin = result?.last_login
+    if (!lastLogin) {
+      return true
+    }
+    const firstLogin = result?.first_login
+    return !!firstLogin && String(firstLogin) === String(lastLogin)
+  }
+
   private async fetchStartUpDetails(): Promise<any> {
     let apiResponse: any
     if (this.configSvc.instanceConfig) {

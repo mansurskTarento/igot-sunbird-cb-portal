@@ -282,7 +282,8 @@
       <!-- #endregion (left routing) -->
 
       <ng-container *ngIf="isMobile; else desktopTabs">
-        <mat-tab-group class="profile-tabs flex w-full" [selectedIndex]="selectedTabIndex" id="matTabGroup">
+        <mat-tab-group class="profile-tabs flex w-full" [selectedIndex]="selectedTabIndex"
+          (selectedIndexChange)="onTabChange($event)" id="matTabGroup">
           <mat-tab label="Profile">
             <ng-container [ngTemplateOutlet]="profileSection"></ng-container>
             <ng-template #blocked>
@@ -470,21 +471,44 @@
       <ng-template #activitySection>
         <div class="flex flex-col gap-4 p-2">
 
-          <div class="tab-heading mt-4">{{ 'profileInfo.yourStats' | translate }}</div>
+          <!-- id is the scroll target for the mobile bottom-nav Achievement tab (root.component.ts) -->
+          <div class="ach-heading mt-4" id="achievement-section">{{ 'profileInfo.achievement' | translate }}</div>
 
-          <div class="profile-section">
-            <ws-widget-profile-card-stats [isMobile]="true" (expandCollapse)="expandCollapse($event)"
-              [insightsData]="insightsData" [profileData]="pageData.profileCard"
-              [isLoading]="insightsDataLoading"></ws-widget-profile-card-stats>
+          <!-- Segmented switch: stats and leaderboard share the section instead of stacking -->
+          <div class="ach-switch" role="tablist" [attr.aria-label]="'profileInfo.achievement' | translate">
+            <button type="button" class="ach-switch-btn" role="tab"
+              [class.ach-switch-btn--active]="achievementView === 'stats'"
+              [attr.aria-selected]="achievementView === 'stats'" (click)="achievementView = 'stats'">
+              <mat-icon aria-hidden="true">grid_view</mat-icon>
+              <span>{{ 'profileInfo.myStatistics' | translate }}</span>
+            </button>
+            <button type="button" class="ach-switch-btn" role="tab"
+              [class.ach-switch-btn--active]="achievementView === 'leaderboard'"
+              [attr.aria-selected]="achievementView === 'leaderboard'" (click)="achievementView = 'leaderboard'">
+              <span class="ach-switch-icon" aria-hidden="true"></span>
+              <span>{{ 'profileInfo.leaderboard' | translate }}</span>
+            </button>
           </div>
 
-          <div class="flex" id="my-leaderboard-section">
-            <ws-widget-user-leaderboard></ws-widget-user-leaderboard>
+          <div class="ach-stats" *ngIf="achievementView === 'stats'" role="list">
+            <div class="ach-stat-card" *ngFor="let stat of achievementStats" role="listitem"
+              [attr.aria-label]="(stat.label | translate) + ': ' + stat.value">
+              <img class="ach-stat-icon" [src]="stat.icon" alt="" aria-hidden="true">
+              <div class="ach-stat-text">
+                <span class="ach-stat-label">{{ stat.label | translate }}</span>
+                <span class="ach-stat-value">{{ stat.value }}</span>
+              </div>
+            </div>
           </div>
 
-          <div id="my-weekly-claps">
-            <ws-widget-weekly-claps [weeklyData]="pageData.weeklyClaps" [insightsData]="insightsData"
-              [isLoading]="insightsDataLoading"></ws-widget-weekly-claps>
+          <div class="flex" id="my-leaderboard-section" *ngIf="achievementView === 'leaderboard'">
+            <ws-karma-leaderboard-v2 class="w-full" [embedded]="true"></ws-karma-leaderboard-v2>
+          </div>
+
+          <!-- Weekly claps belongs to the statistics view; the leaderboard view ends at the card -->
+          <div id="my-weekly-claps" *ngIf="achievementView === 'stats'">
+            <sb-uic-weekly-claps-card-v2 [weeklyData]="weeklyClapsData" [insightsData]="insightsData"
+              [isLoading]="insightsDataLoading"></sb-uic-weekly-claps-card-v2>
           </div>
 
           <!-- <div class="assessments-wrapper" *ngIf="assessmentsData">

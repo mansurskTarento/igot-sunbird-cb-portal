@@ -23,9 +23,11 @@ import { WithdrawRequestComponent } from '../../components/withdraw-request/with
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout'
 import { TranslateService } from '@ngx-translate/core'
 import { DatePipe } from '@angular/common'
-import { ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
+import { buildWeeklyClapsData, ConfigDetails, ConfirmationDialogComponent, NlwCertificateDialogComponent, NlwCertificateDialogData } from '@sunbird-cb/consumption'
 import { CommonDataService } from '../../../../routes/services/common-data.service'
 import { NetCoreService } from '../../../../routes/services/netcore.service'
+// Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
+import { HomePageService } from 'src/app/services/home-page.service'
 //#endregion
 
 @Component({
@@ -211,8 +213,20 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   //#region (m web and activites varailbles)
   selectedTabIndex: any = 0
+  // Achievement section view switch: 'stats' shows the stats card, 'leaderboard' the karma leaderboard
+  achievementView: 'stats' | 'leaderboard' = 'stats'
+  // My Statistics cards. Same four metrics the My Achievements sidebar section shows, so the two
+  // never disagree; values are filled in by setAchievementStats().
+  achievementStats: { key: string, label: string, value: string, icon: string }[] = [
+    { key: 'karmaPoints', label: 'profileInfo.youEarned', value: '0 KP', icon: '/assets/icons/hubs-v2/karmapoints.svg' },
+    { key: 'rank', label: 'profileInfo.youreRank', value: '--', icon: '/assets/icons/hubs-v2/trophi.svg' },
+    { key: 'badges', label: 'leftNavBar.yourEarned', value: '0 Badges', icon: '/assets/icons/hubs-v2/badges.svg' },
+    { key: 'learningHours', label: 'leftNavBar.learningHours', value: '0h 0m', icon: '/assets/icons/hubs-v2/badge.svg' },
+  ]
   insightsDataLoading = false
   insightsData: any
+  // weekList for the weekly claps card, derived from the insights payload (see buildWeeklyClapsData)
+  weeklyClapsData: any = null
   orgId: any
   pageData: any
   assessmentsData: any
@@ -250,6 +264,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private commonSvc: CommonDataService,
     private router: Router,
     private netCoreService: NetCoreService,
+    private homePageSvc: HomePageService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -268,12 +283,52 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   ngAfterViewInit(): void {
-    this.selectedTabIndex = 0
+    // ?tab=activities lands straight on the "My activities" tab (used by the Achievements item in
+    // the mobile bottom nav). The tab only exists for one's own profile, so anything else falls
+    // back to Profile.
+    //
+    // Subscribed rather than read from the snapshot: tapping Achievements while already on the
+    // profile is a query-param-only navigation, which updates the URL without re-running this
+    // hook - the snapshot read left the Profile tab selected. Only 'activities' switches tabs, so
+    // an unrelated query param change never yanks the user off a tab they picked by hand.
+    let isFirstEmission = true
+    this.activatedRoute.queryParamMap
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(params => {
+        const wantsActivities = params.get('tab') === 'activities'
+        if (wantsActivities && this.isCurrentUser && !this.isNotMyUserAndIgotOrg) {
+          // Deferred by a tick because the tab group has already been checked by the time this
+          // runs, and assigning directly would trip ExpressionChangedAfterItHasBeenCheckedError.
+          setTimeout(() => {
+            this.selectedTabIndex = 1
+          })
+        } else if (isFirstEmission) {
+          this.selectedTabIndex = 0
+        }
+        isFirstEmission = false
+      })
+  }
+
+  onTabChange(index: number): void {
+    this.selectedTabIndex = index
+    const next = index === 1 ? 'activities' : 'profile'
+    const current = this.activatedRoute.snapshot.queryParamMap.get('tab')
+    // Leave clean URLs alone: the default tab does not need to announce itself
+    if (current === next || (!current && index === 0)) {
+      return
+    }
+    this.router.navigate([], {
+      relativeTo: this.activatedRoute,
+      queryParams: { tab: next },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
   }
 
   ngOnInit() {
     this.getProfileDetailsFromRoutes()
     this.getAchievements()
+    this.setAchievementStats()
     if (localStorage.getItem('websiteLanguage')) {
       this.translateService.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
@@ -378,6 +433,47 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.openSnackbar('Error while fetching achievements')
       console.error('Error while fetching achievements', error)
     })
+  }
+
+  // Karma points, badges and learning hours all come off the cached enrolment payload the rest of
+  // the app reads (see the My Achievements sidebar section); only the rank needs the leaderboard.
+  setAchievementStats() {
+    try {
+      const raw = localStorage.getItem('userEnrollmentCount')
+      const info = raw ? _.get(JSON.parse(raw), 'userCourseEnrolmentInfo', {}) : {}
+      this.setStatValue('karmaPoints', `${_.get(info, 'karmaPoints', 0)} KP`)
+      this.setStatValue('badges', `${_.get(info, 'badgeCount', 0)} Badges`)
+      this.setStatValue('learningHours', this.toHoursAndMinutes(_.get(info, 'timeSpentOnCompletedCourses', 0)))
+    } catch (_e) { /* keep the placeholder values */ }
+
+    this.homePageSvc.getLearnerLeaderboardCached()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((res: any) => {
+        const currentUserId = _.get(this.configSvc, 'unMappedUser.id', '')
+        const entry = _.find(_.get(res, 'result.result', []), (row: any) => row.userId === currentUserId)
+        const rank = _.get(entry, 'rank')
+        if (rank) {
+          this.setStatValue('rank', `${this.toOrdinal(rank)} Rank`)
+        }
+      }, () => { /* leave the placeholder when the leaderboard is unavailable */ })
+  }
+
+  private setStatValue(key: string, value: string) {
+    const stat = this.achievementStats.find((item: any) => item.key === key)
+    if (stat) {
+      stat.value = value
+    }
+  }
+
+  private toHoursAndMinutes(seconds: any): string {
+    const total = Number(seconds) || 0
+    return `${Math.floor(total / 3600)}h ${Math.floor((total % 3600) / 60)}m`
+  }
+
+  private toOrdinal(rank: number): string {
+    const suffixes = ['th', 'st', 'nd', 'rd']
+    const v = rank % 100
+    return `${rank}${suffixes[(v - 20) % 10] || suffixes[v] || suffixes[0]}`
   }
 
   getProfileDetailsFromRoutes() {
@@ -2051,6 +2147,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           if (this.insightsData && this.insightsData['weekly-claps']) {
             this.insightsData['weeklyClaps'] = this.insightsData['weekly-claps']
           }
+          // Derive the week list the way home does instead of using the static weekList in page
+          // config, otherwise the same card shows different ticks here than on home
+          this.weeklyClapsData = buildWeeklyClapsData(this.insightsData['weeklyClaps'])
         } else {
           this.insightsDataLoading = false
         }

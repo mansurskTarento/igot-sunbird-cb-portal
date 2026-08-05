@@ -25,6 +25,13 @@
   background-color: var(--surface-primary);
 }
 
+// @media (min-width: 593px) {
+//   ::ng-deep .sidebar-overlay {
+//     background-color: transparent !important;
+//     animation: none !important;
+//   }
+// }
+
 // ── Karma Leaderboard popup overlay ───────────────────────────────
 .klb-popup-backdrop {
   position: fixed;
@@ -47,6 +54,27 @@
   left: calc(330px + 24px);
   transform: translateY(-50%);
   z-index: 10002;
+  animation: klb-panel-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes klb-panel-in {
+  from {
+    transform: translateY(-50%) translateX(-24px);
+  }
+
+  to {
+    transform: translateY(-50%) translateX(0);
+  }
+}
+
+@keyframes klb-panel-in-mobile {
+  from {
+    transform: translate(-50%, -50%) translateY(18px) scale(0.96);
+  }
+
+  to {
+    transform: translate(-50%, -50%) translateY(0) scale(1);
+  }
 }
 
 .navBarOpenContent {
@@ -59,16 +87,41 @@
 
 .container-balanced {
   width: 100%;
-  max-width: 1064px;
+  max-width: 1200px;
 }
 
-.fix-left-menu {
-  position: fixed;
-  z-index: 1000;
+// The content column around this container is calc(100vw - 88px), so the 1200px cap only leaves
+// a gutter while the viewport is at least 1288px (1200 + 88). Below that the container goes
+// full-bleed and the page runs into — and gets clipped by — the column edges. Browser zoom and
+// OS display scaling both shrink the reported CSS viewport, so a 1920px screen at 150% reports
+// 1280px and lands in exactly that state. Step down to the 1064px design content width (the same
+// width .home-content uses) the moment 1200px stops fitting, so the gutters are never lost.
+@media (max-width: 1287.98px) {
+  .container-balanced {
+    max-width: 1064px;
+  }
 }
 
-.left-mr-80 {
-  margin-left: 80px;
+// Narrow viewports need a side gutter: at width:100% the content runs into the screen edges.
+//
+// `max-width` on its own cannot scope this to mobile. OS display scaling and browser zoom both
+// shrink the reported CSS viewport, so a 1920px monitor at 200% reports 960px and would wrongly
+// pick up the mobile width — that is the "breaks at other resolutions / breaks on scale" case.
+// DPI does not separate the two either: zoom changes the reported `resolution` in dppx exactly
+// as a denser screen does, so `min-resolution` matches a zoomed desktop as readily as a phone.
+// `pointer: coarse` is the feature that holds, because it describes the input device and
+// scaling cannot change it.
+//
+// Branch 1 - touch devices (phones and tablets) up to the 1064px content width (see .home-content).
+// Branch 2 - a hard floor at the XSmall breakpoint, so phone-sized viewports always get the
+//            gutter even where `pointer` is unreliable. Matches the isXSmall$ bound the template
+//            uses to drop mt-4 / mt-136, keeping both halves of the mobile layout on one
+//            threshold.
+@media (max-width: 1064px) and (pointer: coarse),
+(max-width: 599.98px) {
+  .container-balanced {
+    width: 90%;
+  }
 }
 
 @media (max-width: 768px) {
@@ -77,13 +130,18 @@
   }
 
   .klb-popup-panel {
-    // top: 50%;
-    // left: calc(50% - 170px);
-    top: 0;
-    left: calc(100% - 373px);
-    transform: none;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    animation: klb-panel-in-mobile 300ms cubic-bezier(0.22, 1, 0.36, 1);
   }
+}
 
+// Reserves room for the mobile download-app banner in ws-header-v2. Must track that banner's
+// own breakpoint (599.98px): the signal driving this class stays true at every width, so if
+// this range is wider than the banner's the layout holds 150px open for a banner that is
+// display:none — which is what left the empty gap at the top of tablet widths.
+@media (max-width: 599.98px) {
   .mobileTopVisableHeightAdjust {
     margin-top: 150px !important;
   }
@@ -101,12 +159,12 @@ ws-app-nav-bar {
   z-index: 10000;
 }
 
-// Reserves space for the fixed 72px bottom nav bar (.bottom-nav-bar) so page
+// Reserves space for the fixed 64px bottom nav bar (.bottom-nav-bar) so page
 // content/buttons are never hidden behind it on mobile.
 .height-on-bottom {
   overflow: auto;
   box-sizing: border-box;
-  padding-bottom: 72px;
+  padding-bottom: 64px;
 }
 
 .height-on-top {
@@ -131,8 +189,11 @@ ws-app-nav-bar {
   padding-top: 56px;
 }
 
+// A restricted (NOT-MY-USER) account gets no secondary header, marquee or sidebar, so the
+// only chrome to clear is the main header — and .height-adjust already reserves that with
+// its margin-top. The old 66px was stacked on top of it and showed up as an empty band
 .height-on-top-not-valid-user {
-  padding-top: 66px;
+  padding-top: 0;
 }
 
 .top-nav-bar {
@@ -239,23 +300,6 @@ ws-app-nav-bar {
   width: 1064px;
   min-height: 400px;
 }
-
-@media only screen and (max-width: 576px) {
-  // .margin186 {
-  //   margin-top: 186px;
-  // }
-
-  .mt-136 {
-    margin-top: 40px;
-  }
-
-  .klb-popup-panel {
-    top: 0;
-    left: 0;
-    transform: none;
-  }
-}
-
 
 @media only screen and (min-width: 577px) and (max-width: 768px) {
   .container-margin {
