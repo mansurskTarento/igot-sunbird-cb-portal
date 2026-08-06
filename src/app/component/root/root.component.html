@@ -45,7 +45,8 @@
     }
     <div class=""
       [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (sidebarPushesContent() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
-      <!-- <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"></app-tour> -->
+      <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"
+        [showOnlyIgotKarmayogi]="true"></app-tour>
       <app-no-connection-v2></app-no-connection-v2>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
       </mat-progress-bar>
