@@ -8,6 +8,7 @@
     "!/**/*__*/**",
     "!/apis/**",
     "!/auth/**",
+    "!/protected/**",
     "!/LA/**",
     "!/ScormCoursePlayer/**"
   ],
