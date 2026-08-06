@@ -897,6 +897,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   onNavItemClicked(event: any) {
     this.raiseTelemetryExploreContent(event.code, event.subType)
     switch (event.code) {
+      case 'start-tour':
+        this.router.navigateByUrl('/page/home')
+        this.configSvc.updateTourGuideMethod(false)
+        break
       case 'explore':
         this.exploreContent()
         this.menuBarDetails.activeItemCode = event.code
