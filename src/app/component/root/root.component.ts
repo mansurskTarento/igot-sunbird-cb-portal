@@ -584,43 +584,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
 
   }
-  private isWithinFirstLoginMonth(): boolean {
-    const firstLoginAt = this.parseServerTimestamp(this.commonDataSvc?.firstLoginTime)
-    if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
-      return false
-    }
-    const created = new Date(firstLoginAt)
-    const unlocksOn = new Date(created.getFullYear(), created.getMonth() + 1, 1)
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    return today.getTime() < unlocksOn.getTime()
-  }
-
-  private parseServerTimestamp(value: any): number {
-    if (value === null || value === undefined) {
-      return NaN
-    }
-    if (typeof value === 'number') {
-      return value
-    }
-    const raw = String(value).trim()
-    if (/^\d+$/.test(raw)) {
-      return Number(raw)
-    }
-    const iso = raw
-      .replace(' ', 'T')
-      .replace(/:(\d{3})(?=[+-]|Z|$)/, '.$1')
-      .replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
-    const parsed = Date.parse(iso)
-    return Number.isNaN(parsed) ? Date.parse(raw) : parsed
-  }
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
-    if (achievements) {
-      achievements.showViewAll = achievements.showViewAll !== false && !this.isWithinFirstLoginMonth()
-    }
     achievements['sectionLoading'] = true
     this.sendDetailsChangedEvent(achievements)
     if (achievements) {
@@ -956,21 +923,24 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         if (Array.isArray(results) && results.length >= 3) {
           this.showKarmaLeaderboard.set(true)
         } else {
-          this.navigateToKarmaPoints()
+          this.showLeaderboardUnavailableMessage()
         }
       },
       () => {
-        this.navigateToKarmaPoints()
+        this.showLeaderboardUnavailableMessage()
       },
     )
   }
 
-  private navigateToKarmaPoints() {
+  /**
+   * The leaderboard needs at least 3 ranked learners before it means anything, so until the
+   * org gets there we tell the user instead of dropping them on the karma points page, which
+   * looked like a mis-routed click. The copy lives in the left nav config — see
+   * CommonDataService.getLeaderboardUnavailableMessage.
+   */
+  private showLeaderboardUnavailableMessage() {
     this.showKarmaLeaderboard.set(false)
-    this.openStatusUserSelection.set(false)
-    this.leftNavBarIsOpen.set(false)
-    this.navBarOpenStatusBasedOnNav.set(false)
-    this.router.navigate(['/app/person-profile/karma-points'])
+    this.commonDataSvc.showLeaderboardUnavailableMessage()
   }
 
   viewMyActivities() {

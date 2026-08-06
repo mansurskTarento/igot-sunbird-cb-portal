@@ -533,15 +533,12 @@ export class InitService {
     const isFirstEverLogin = !localStorage.getItem('firsLogin')
     try {
       const res: any = await firstValueFrom(this.http.get<any>(firstLoginUrl))
-      if (res && res.result) {
-        this.commonDataSvc.firstLoginTime = res.result.first_login ?? null
-        if (isFirstEverLogin) {
-          this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
-          localStorage.setItem('firsLogin', 'true')
-        }
+      if (res && res.result && isFirstEverLogin) {
+        this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
+        localStorage.setItem('firsLogin', 'true')
       }
     } catch (e) {
-      // non-fatal: the greeting falls back to "Welcome Back" and the achievements link stays shown
+      // non-fatal: the greeting falls back to "Welcome Back"
       console.error('InitService: login/entry failed', e)
     }
   }
