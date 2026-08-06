@@ -905,30 +905,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   viewAllAchievements() {
-    this.homePageSvc.getLearnerLeaderboardCached().subscribe(
-      (res: any) => {
-        const results = _.get(res, 'result.result', [])
-        if (Array.isArray(results) && results.length >= 3) {
-          this.showKarmaLeaderboard.set(true)
-        } else {
-          this.showLeaderboardUnavailableMessage()
-        }
-      },
-      () => {
-        this.showLeaderboardUnavailableMessage()
-      },
-    )
-  }
-
-  /**
-   * The leaderboard needs at least 3 ranked learners before it means anything, so until the
-   * org gets there we tell the user instead of dropping them on the karma points page, which
-   * looked like a mis-routed click. The copy lives in the left nav config — see
-   * CommonDataService.getLeaderboardUnavailableMessage.
-   */
-  private showLeaderboardUnavailableMessage() {
-    this.showKarmaLeaderboard.set(false)
-    this.commonDataSvc.showLeaderboardUnavailableMessage()
+    // No pre-check on the leaderboard: the panel fetches it (from the same cached call) and
+    // renders its own empty state when nobody is ranked yet, so there is nothing to route away to.
+    this.showKarmaLeaderboard.set(true)
   }
 
   viewMyActivities() {
