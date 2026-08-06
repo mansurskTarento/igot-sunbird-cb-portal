@@ -8,13 +8,9 @@ import { MatSnackBar, MatSnackBarConfig as MatSnackBarConfig } from '@angular/ma
 import * as _ from 'lodash'
 import { MandatoryNotificationsService } from './mandatory-notifications.service'
 import { BehaviorSubject, Observable, of, Subscription, timer } from 'rxjs'
-import { catchError, map, shareReplay } from 'rxjs/operators'
+import { map } from 'rxjs/operators'
 import { HttpClient } from '@angular/common/http'
 import { MandatoryNotificationModalComponent } from '../component/mandatory-notification-modal/mandatory-notification-modal.component'
-
-// Used when page/left-nav.json is unreachable or omits the key
-const DEFAULT_LEADERBOARD_UNAVAILABLE_MESSAGE =
-  'Your leaderboard is being prepared. Check back once more learners in your organisation start earning karma points.'
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +32,6 @@ export class CommonDataService {
   // when it carries one, otherwise the static page/left-nav.json it falls back to. Published
   // here so other pages (the mweb explore menu) render the same items as the sidebar
   leftNavBarConfig = new BehaviorSubject<any>(null)
-  private leaderboardUnavailableMessage$: Observable<string> | null = null
 
   // Mandatory notification timer properties
   showMandatoryNotification = false
@@ -65,33 +60,6 @@ export class CommonDataService {
   }
   redirectToCustomProfile() {
     this.router.navigate(['/app/person-profile/me'], { fragment: 'orgDetails' })
-  }
-
-  getLeaderboardUnavailableMessage(): Observable<string> {
-    if (!this.leaderboardUnavailableMessage$) {
-      const baseUrl = this.configSvc.sitePath
-      this.leaderboardUnavailableMessage$ = this.http.get<any>(`${baseUrl}/page/left-nav.json`).pipe(
-        map((config: any) => {
-          const navSections = _.get(config, 'navSections', [])
-          const achievements = _.find(navSections, (section: any) => section.sectionKey === 'my_achievements')
-          return _.get(achievements, 'leaderboardUnavailableMessage') || DEFAULT_LEADERBOARD_UNAVAILABLE_MESSAGE
-        }),
-        catchError(() => of(DEFAULT_LEADERBOARD_UNAVAILABLE_MESSAGE)),
-        shareReplay(1),
-      )
-    }
-    return this.leaderboardUnavailableMessage$
-  }
-
-  showLeaderboardUnavailableMessage() {
-    this.getLeaderboardUnavailableMessage().subscribe((message: string) => {
-      this.matSnackBar.open(message, 'X', {
-        duration: 5000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom',
-        panelClass: 'leaderboard-unavailable-snackbar',
-      })
-    })
   }
 
   // dialog/popup visibility from global-config -> components.dialogs

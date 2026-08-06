@@ -707,17 +707,3 @@
   line-height: 1.35;
   overflow-wrap: anywhere;
 }
-
-// Stands in for the leaderboard while the org has fewer than 3 ranked learners
-.ach-leaderboard-message {
-  width: 100%;
-  margin: 0;
-  padding: 24px 16px;
-  border-radius: 12px;
-  background: var(--surface-primary);
-  border: 1px solid var(--environment-border-and-divider-default-1);
-  font-size: 14px;
-  line-height: 1.5;
-  text-align: center;
-  color: var(--text-bandw-black-captions);
-}

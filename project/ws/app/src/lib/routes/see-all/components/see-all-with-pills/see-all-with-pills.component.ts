@@ -13,7 +13,6 @@ import { SeeAllService } from '../../services/see-all.service'
 import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption'
 import { catchError, map, mergeMap } from 'rxjs/operators'
 import { of } from 'rxjs'
-import { HttpClient } from '@angular/common/http'
 
 @Component({
   selector: 'ws-app-see-all-with-pills',
@@ -49,7 +48,6 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     private eventSvc: EventService,
     private langtranslations: MultilingualTranslationsService,
     private enrollSvc: WidgetEnrollService,
-    private http: HttpClient,
   ) {
 
   }
@@ -101,7 +99,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         })
       }
     }
-    await this.applyTabVisibilityConfig()
+    const tabsVisibilityConfig = await this.seeAllSvc.getSeeAllTabsConfig().catch(() => null)
+    this.applyTabVisibilityConfig(tabsVisibilityConfig)
     if (
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
@@ -121,10 +120,17 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       this.seeAllPageConfig.tabs &&
       this.seeAllPageConfig.tabs.length
     ) {
-      this.pillResults = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData
-      this.dynamicPillIndex = _.findIndex(this.pillResults, (v: any) => v.value === this.pillSelected)
-      this.resetSelectedPill(this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData)
-      this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData[this.dynamicPillIndex]['selected'] = true
+      const pillsData = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData || []
+      this.pillResults = pillsData
+      this.dynamicPillIndex = _.findIndex(pillsData, (v: any) => v.value === this.pillSelected)
+      if (this.dynamicPillIndex < 0) {
+        this.dynamicPillIndex = 0
+        this.pillSelected = _.get(pillsData, '[0].value', '')
+      }
+      this.resetSelectedPill(pillsData)
+      if (pillsData[this.dynamicPillIndex]) {
+        pillsData[this.dynamicPillIndex]['selected'] = true
+      }
     }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
 
@@ -138,27 +144,15 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
 
   }
 
-  /**
-   * Tabs on this page can be switched off from home-v2.json without a form-config change, e.g.
-   *   "seeAllTabsConfig": { "forYou": { "trendingAcrossDepartment": false } }
-   * A tab is shown unless its flag is explicitly false, so tabs missing from the config keep
-   * working as before. Failing to read the file leaves every tab visible.
-   */
-  private async applyTabVisibilityConfig(): Promise<void> {
+  private applyTabVisibilityConfig(tabsVisibilityConfig: any): void {
     const tabs = this.seeAllPageConfig && this.seeAllPageConfig.tabs
     if (!tabs || !tabs.length) {
       return
     }
-    const baseUrl = this.configSvc.sitePath
-    const homeV2Config: any = await this.http.get<any>(`${baseUrl}/page/home-v2.json`)
-      .pipe(catchError(() => of(null)))
-      .toPromise()
-    const tabsConfig = _.get(homeV2Config, ['seeAllTabsConfig', this.seeAllPageConfig.key])
-    if (!tabsConfig) {
-      return
-    }
-    const visibleTabs = tabs.filter((tab: any) => tabsConfig[tab.value] !== false)
-    if (visibleTabs.length) {
+    const tabsConfig = _.get(tabsVisibilityConfig, this.seeAllPageConfig.key)
+    const visibleTabs = tabs.filter((tab: any) =>
+      tab.hideTab !== true && _.get(tabsConfig, tab.value) !== false)
+    if (visibleTabs.length && visibleTabs.length !== tabs.length) {
       this.seeAllPageConfig.tabs = visibleTabs
     }
   }
