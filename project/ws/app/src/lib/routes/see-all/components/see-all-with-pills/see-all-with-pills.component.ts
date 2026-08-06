@@ -13,6 +13,7 @@ import { SeeAllService } from '../../services/see-all.service'
 import { NsContentStripWithTabsAndPills } from '@sunbird-cb/consumption'
 import { catchError, map, mergeMap } from 'rxjs/operators'
 import { of } from 'rxjs'
+import { HttpClient } from '@angular/common/http'
 
 @Component({
   selector: 'ws-app-see-all-with-pills',
@@ -48,6 +49,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     private eventSvc: EventService,
     private langtranslations: MultilingualTranslationsService,
     private enrollSvc: WidgetEnrollService,
+    private http: HttpClient,
   ) {
 
   }
@@ -99,6 +101,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         })
       }
     }
+    await this.applyTabVisibilityConfig()
     if (
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
@@ -106,6 +109,12 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     ) {
       this.tabResults = this.seeAllPageConfig.tabs
       this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.value === this.tabSelected)
+      if (this.dynamicTabIndex < 0) {
+        // the tab asked for in the url was hidden by config — fall back to the first visible one
+        this.dynamicTabIndex = 0
+        this.tabSelected = this.tabResults[0] && this.tabResults[0].value
+        this.userSelectedTab = this.tabSelected
+      }
     }
     if (
       this.tabSelected &&
@@ -127,6 +136,31 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       this.fetchUserEnrolledData(this.seeAllPageConfig, tabIndex, pillIndex)
     }
 
+  }
+
+  /**
+   * Tabs on this page can be switched off from home-v2.json without a form-config change, e.g.
+   *   "seeAllTabsConfig": { "forYou": { "trendingAcrossDepartment": false } }
+   * A tab is shown unless its flag is explicitly false, so tabs missing from the config keep
+   * working as before. Failing to read the file leaves every tab visible.
+   */
+  private async applyTabVisibilityConfig(): Promise<void> {
+    const tabs = this.seeAllPageConfig && this.seeAllPageConfig.tabs
+    if (!tabs || !tabs.length) {
+      return
+    }
+    const baseUrl = this.configSvc.sitePath
+    const homeV2Config: any = await this.http.get<any>(`${baseUrl}/page/home-v2.json`)
+      .pipe(catchError(() => of(null)))
+      .toPromise()
+    const tabsConfig = _.get(homeV2Config, ['seeAllTabsConfig', this.seeAllPageConfig.key])
+    if (!tabsConfig) {
+      return
+    }
+    const visibleTabs = tabs.filter((tab: any) => tabsConfig[tab.value] !== false)
+    if (visibleTabs.length) {
+      this.seeAllPageConfig.tabs = visibleTabs
+    }
   }
 
   checkForDateFilters(filters: any) {
