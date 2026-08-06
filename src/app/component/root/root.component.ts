@@ -49,7 +49,7 @@ import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
 import { MatDialog } from '@angular/material/dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
-import { concat, interval, timer, of } from 'rxjs'
+import { concat, interval, of } from 'rxjs'
 // import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
 import { UrlService } from '../../shared/url.service'
@@ -57,7 +57,9 @@ import { UrlService } from '../../shared/url.service'
   selector: 'ws-root',
   templateUrl: './root.component.html',
   styleUrls: ['./root.component.scss'],
-  providers: [SwUpdate],
+  // No `providers: [SwUpdate]` here. ServiceWorkerModule.register() already provides it
+  // at the root; re-providing it built a second instance per component, so update state
+  // observed here was not the state the rest of the app shared.
   standalone: false
 })
 export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
@@ -562,7 +564,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   ngAfterViewInit() {
-    // this.initAppUpdateCheck()
+    this.initAppUpdateCheck()
   }
 
   getChildRouteData(snapshot: ActivatedRouteSnapshot, firstChild: ActivatedRouteSnapshot | null) {
@@ -578,44 +580,55 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   initAppUpdateCheck() {
-    // this.logger.log('LOGGING IN ROOT FOR PWA INIT CHECK')
-    if (environment.production) {
-      const appIsStable$ = this.appRef.isStable.pipe(
-        first(isStable => isStable),
-      )
-      const everySixHours$ = interval(6 * 60 * 60 * 1000)
-      const everySixHoursOnceAppIsStable$ = concat(appIsStable$, everySixHours$)
-      everySixHoursOnceAppIsStable$.subscribe(() => this.swUpdate.checkForUpdate())
-      if (this.swUpdate.isEnabled) {
-        // this.swUpdate.available.subscribe(() => {
+    if (!environment.production || !this.swUpdate.isEnabled) {
+      return
+    }
+
+    // A tab left open across a deployment keeps running the shell the service worker
+    // cached, but the next build deletes that shell's lazy chunks from the server. The
+    // first navigation to a route the user had not visited yet then fails with
+    //   Failed to fetch dynamically imported module: .../chunk-XXXXXXXX.js
+    // `unrecoverable` fires for exactly that - the cached version references assets the
+    // server no longer has. A full reload is the only way out: it fetches the current
+    // index.html, which names the chunks that do exist.
+    this.swUpdate.unrecoverable.subscribe(() => {
+      window.location.reload()
+    })
+
+    // Look for a new deployment once the app settles, then every six hours. Without
+    // this the client can sit on a stale build indefinitely.
+    const appIsStable$ = this.appRef.isStable.pipe(
+      first(isStable => isStable),
+    )
+    const everySixHours$ = interval(6 * 60 * 60 * 1000)
+    concat(appIsStable$, everySixHours$).subscribe(() => {
+      // Rejects when offline; the next tick retries, so failure is not worth surfacing.
+      this.swUpdate.checkForUpdate().catch(() => undefined)
+    })
+
+    // `SwUpdate.available` was removed in Angular 13 - versionUpdates replaces it, and
+    // VERSION_READY is the event that means the new version is fully downloaded and
+    // safe to activate. Subscribing unconditionally (as this did while `available` was
+    // commented out) opened the update prompt on every single load.
+    this.swUpdate.versionUpdates
+      .pipe(filter(evt => evt.type === 'VERSION_READY'))
+      .subscribe(() => {
         const dialogRef = this.dialog.open(DialogConfirmComponent, {
           data: {
             title: (this.appUpdateTitleRef && this.appUpdateTitleRef.nativeElement.value) || '',
             body: (this.appUpdateBodyRef && this.appUpdateBodyRef.nativeElement.value) || '',
           },
         })
-        dialogRef.afterClosed().subscribe(
-          result => {
-            if (result) {
-              this.swUpdate.activateUpdate().then(() => {
-                if ('caches' in window) {
-                  caches.keys()
-                    .then(keyList => {
-                      timer(2000).subscribe(
-                        _ => window.location.reload(),
-                      )
-                      return Promise.all(keyList.map(key => {
-                        return caches.delete(key)
-                      }))
-                    })
-                }
-              })
-            }
-          },
-        )
-        // })
-      }
-    }
+        dialogRef.afterClosed().subscribe(result => {
+          if (!result) {
+            return
+          }
+          // Do not clear the Cache Storage here. The previous version wiped every cache
+          // right after activating, which threw away the version that had just been
+          // installed and forced a full re-download on the next load.
+          this.swUpdate.activateUpdate().then(() => window.location.reload())
+        })
+      })
   }
 
   getTourGuide() {

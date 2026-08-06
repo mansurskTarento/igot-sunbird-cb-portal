@@ -141,6 +141,13 @@ res.sendFile(path.join(__dirname, `${req.url}`))
 // text/html content type for what it requested as a module, which surfaces as
 // ChunkLoadError / "Failed to fetch dynamically imported module" instead of a
 // cache miss. Answer honestly so the client can recover.
+//
+// Drop the Cache-Control that cacheControl() set on the way in. It runs before the
+// static handler knows whether the file exists, so a request for a deleted chunk
+// (chunk-TEZ73SP4.js still matches IMMUTABLE_ASSET) would otherwise return a 404
+// carrying `max-age=31536000, immutable` - pinning "this asset does not exist" in
+// the browser and every intermediary cache for a year.
+res.removeHeader('Cache-Control')
 res.status(404).type('txt').send('Not found')
 
 } else {
