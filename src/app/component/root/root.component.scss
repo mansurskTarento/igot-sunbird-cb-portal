@@ -433,3 +433,7 @@ ws-app-nav-bar {
     transform: translateY(0) scale(1);
   }
 }
+
+::ng-deep .leaderboard-unavailable-snackbar {
+  --mat-snack-bar-button-color: var(--mat-snack-bar-supporting-text-color, var(--mat-sys-inverse-on-surface));
+}

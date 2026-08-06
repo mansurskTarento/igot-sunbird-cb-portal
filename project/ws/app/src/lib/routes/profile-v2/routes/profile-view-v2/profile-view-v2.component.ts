@@ -28,6 +28,9 @@ import { CommonDataService } from '../../../../routes/services/common-data.servi
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 // Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
 import { HomePageService } from 'src/app/services/home-page.service'
+// Aliased: this route already has its own CommonDataService (imported above). The app-level one
+// owns the left nav config, which is where the leaderboard message copy lives.
+import { CommonDataService as AppCommonDataService } from 'src/app/services/common-data.service'
 //#endregion
 
 @Component({
@@ -215,6 +218,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   selectedTabIndex: any = 0
   // Achievement section view switch: 'stats' shows the stats card, 'leaderboard' the karma leaderboard
   achievementView: 'stats' | 'leaderboard' = 'stats'
+  // set when the leaderboard has too few ranked learners to be worth rendering; shown in its place
+  leaderboardMessage = ''
   // My Statistics cards. Same four metrics the My Achievements sidebar section shows, so the two
   // never disagree; values are filled in by setAchievementStats().
   achievementStats: { key: string, label: string, value: string, icon: string }[] = [
@@ -265,6 +270,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private router: Router,
     private netCoreService: NetCoreService,
     private homePageSvc: HomePageService,
+    private appCommonSvc: AppCommonDataService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -456,6 +462,38 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
           this.setStatValue('rank', `${this.toOrdinal(rank)} Rank`)
         }
       }, () => { /* leave the placeholder when the leaderboard is unavailable */ })
+  }
+
+  /**
+   * A leaderboard with fewer than 3 ranked learners has nothing worth showing, so the
+   * leaderboard view carries a message in its place. Copy comes from the my_achievements
+   * section of the left nav config.
+   */
+  showLeaderboardView() {
+    this.achievementView = 'leaderboard'
+    this.homePageSvc.getLearnerLeaderboardCached()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe(
+        (res: any) => {
+          const results = _.get(res, 'result.result', [])
+          if (_.isArray(results) && results.length >= 3) {
+            this.leaderboardMessage = ''
+          } else {
+            this.setLeaderboardMessage()
+          }
+        },
+        () => {
+          this.setLeaderboardMessage()
+        },
+      )
+  }
+
+  private setLeaderboardMessage() {
+    this.appCommonSvc.getLeaderboardUnavailableMessage()
+      .pipe(takeUntil(this.destroySubject$))
+      .subscribe((message: string) => {
+        this.leaderboardMessage = message
+      })
   }
 
   private setStatValue(key: string, value: string) {

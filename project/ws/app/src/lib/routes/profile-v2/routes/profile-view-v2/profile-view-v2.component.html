@@ -484,7 +484,7 @@
             </button>
             <button type="button" class="ach-switch-btn" role="tab"
               [class.ach-switch-btn--active]="achievementView === 'leaderboard'"
-              [attr.aria-selected]="achievementView === 'leaderboard'" (click)="achievementView = 'leaderboard'">
+              [attr.aria-selected]="achievementView === 'leaderboard'" (click)="showLeaderboardView()">
               <span class="ach-switch-icon" aria-hidden="true"></span>
               <span>{{ 'profileInfo.leaderboard' | translate }}</span>
             </button>
@@ -502,7 +502,9 @@
           </div>
 
           <div class="flex" id="my-leaderboard-section" *ngIf="achievementView === 'leaderboard'">
-            <ws-karma-leaderboard-v2 class="w-full" [embedded]="true"></ws-karma-leaderboard-v2>
+            <p class="ach-leaderboard-message" *ngIf="leaderboardMessage" role="status">{{ leaderboardMessage }}</p>
+            <ws-karma-leaderboard-v2 class="w-full" *ngIf="!leaderboardMessage" [embedded]="true">
+            </ws-karma-leaderboard-v2>
           </div>
 
           <!-- Weekly claps belongs to the statistics view; the leaderboard view ends at the card -->
