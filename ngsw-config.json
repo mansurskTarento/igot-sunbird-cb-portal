@@ -10,7 +10,9 @@
     "!/auth/**",
     "!/protected/**",
     "!/LA/**",
-    "!/ScormCoursePlayer/**"
+    "!/ScormCoursePlayer/**",
+    "!/training-pla-ai/**",
+    "!/ai-assessment/**"
   ],
   "assetGroups": [
     {
