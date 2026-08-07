@@ -1,8 +1,10 @@
 <div class="learnsearch margin-top-l margin-bottom-l">
-    <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="false">
-        <mat-sidenav [mode]="'side'" [opened]="sideNavBarOpened" position="start" class="custom-sidenav filter-container-search"
+    <mat-sidenav-container autosize class="container-balanced search-nav-container"
+        [hasBackdrop]="screenSizeIsLtMedium" (backdropClick)="sideNavBarOpened = false">
+        <mat-sidenav [mode]="screenSizeIsLtMedium ? 'over' : 'side'" [(opened)]="sideNavBarOpened" position="start"
+            class="custom-sidenav filter-container-search"
             *ngIf="((combinedFacets.length > 0 ||
-        ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show') && !screenSizeIsLtMedium">
+        ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show')">
             <ng-container>
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets" (appliedFilter)="applySearchFilter($event)"
                     [typesOfEvents]="typesOfEventsFilters" [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"
@@ -115,7 +117,9 @@
                                     courseSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of courseSearchResults; let index = index">
-                                <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
+                                <ws-app-course-content-card class="global-search-course-card"
+                                    [class.global-search-blended-program-card]="course?.primaryCategory === 'Blended Program' || course?.contentType === 'Blended Program'"
+                                    [content]="course" [enrollment]="enrollmentDetails"
                                     [igotSpecializationPrograms]="igotSpecializationPrograms" (telemetry)="applyTelemetry($event, index)"
                                     [cbpPlans]="cbpPlanList" [unenrolledCourses]="unenrolledCourses"></ws-app-course-content-card>
                             </ng-container>

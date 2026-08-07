@@ -783,6 +783,32 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     return 0
   }
 
+  get isForYouResponsiveLayout(): boolean {
+    const activeTabValue = this.userSelectedTab ||
+      (this.dynamicTabIndex >= 0 && this.tabResults[this.dynamicTabIndex]
+        ? this.tabResults[this.dynamicTabIndex].value
+        : '')
+    return this.isForYouResponsiveTab(activeTabValue)
+  }
+
+  isForYouResponsiveTab(tabValue: string): boolean {
+    return Boolean(this.seeAllPageConfig &&
+      this.seeAllPageConfig.key === 'forYou' &&
+      (tabValue === 'igotSpecializations' || tabValue === 'recentlyAdded'))
+  }
+
+  isContinueLearningResponsivePill(tab: any): boolean {
+    const selectedPillIndex = this.getSelectedPillIndex(tab)
+    const selectedPill = selectedPillIndex >= 0 && tab && tab.pillsData
+      ? tab.pillsData[selectedPillIndex]
+      : null
+    const responsivePills = ['inprogress', 'unenrolled', 'completed']
+    return Boolean(this.seeAllPageConfig &&
+      this.seeAllPageConfig.key === 'continueLearning' &&
+      tab && tab.value === 'Contents' &&
+      selectedPill && responsivePills.includes(selectedPill.value))
+  }
+
   // MY learning Strip methods starts here
   fetchUserEnrolledData(strip: NsContentStripWithTabsAndPills.IContentStripUnit,
     tabIndex: number, pillIndex: any, calculateParentStatus = true) {
