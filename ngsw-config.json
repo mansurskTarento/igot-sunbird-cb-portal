@@ -12,7 +12,8 @@
     "!/LA/**",
     "!/ScormCoursePlayer/**",
     "!/training-pla-ai/**",
-    "!/ai-assessment/**"
+    "!/ai-assessment/**",
+    "!/mentorship/**"
   ],
   "assetGroups": [
     {
