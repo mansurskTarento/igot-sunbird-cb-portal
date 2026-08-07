@@ -11,8 +11,11 @@
     "!/protected/**",
     "!/LA/**",
     "!/ScormCoursePlayer/**",
+    "!/training-pla-ai",
     "!/training-pla-ai/**",
+    "!/ai-assessment",
     "!/ai-assessment/**",
+    "!/mentorship",
     "!/mentorship/**"
   ],
   "assetGroups": [
