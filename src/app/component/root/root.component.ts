@@ -99,6 +99,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   menuBarDetails: any = {}
+  private achievementsSection: any = null
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
@@ -617,36 +618,33 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           }
           achievements.items = itemsList
         }
-        const currentUserId = this.configSvc?.unMappedUser?.id
-        const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
-        if (currentUserId && rankItem) {
-          this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
-            const results = res?.result?.result
-            if (Array.isArray(results) && results.length) {
-              const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
-              const rank = currentUserRank?.rank
-
-              if (rank != null) {
-                rankItem.value = `${this.toOrdinal(rank)} Rank`
-              } else {
-                rankItem.value = '0 Rank'
-              }
-            } else {
-              rankItem.value = '0 Rank'
-            }
-            achievements.sectionLoading = false
-            this.sendDetailsChangedEvent(achievements)
-          }, (_error: any) => {
-            achievements.sectionLoading = false
-            this.sendDetailsChangedEvent(achievements)
-          }
-          )
-        } else {
-          achievements.sectionLoading = false
-          this.sendDetailsChangedEvent(achievements)
-        }
+        this.achievementsSection = achievements
+        achievements.sectionLoading = false
+        this.sendDetailsChangedEvent(achievements)
       } catch (_e) { /* ignore */ }
     }
+  }
+
+  private updateAchievementRank() {
+    const currentUserId = this.configSvc?.unMappedUser?.id
+    const achievements = this.achievementsSection
+    const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
+    if (!currentUserId || !rankItem) {
+      return
+    }
+    this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+      const results = res?.result?.result
+      if (Array.isArray(results) && results.length) {
+        const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+        const rank = currentUserRank?.rank
+        rankItem.value = rank != null ? `${this.toOrdinal(rank)} Rank` : '0 Rank'
+      } else {
+        rankItem.value = '0 Rank'
+      }
+      this.sendDetailsChangedEvent(achievements)
+    }, (_error: any) => {
+      this.sendDetailsChangedEvent(achievements)
+    })
   }
 
   setOtherPortals() {
@@ -917,9 +915,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   viewAllAchievements() {
-    // No pre-check on the leaderboard: the panel fetches it (from the same cached call) and
-    // renders its own empty state when nobody is ranked yet, so there is nothing to route away to.
     this.showKarmaLeaderboard.set(true)
+    this.updateAchievementRank()
   }
 
   viewMyActivities() {
