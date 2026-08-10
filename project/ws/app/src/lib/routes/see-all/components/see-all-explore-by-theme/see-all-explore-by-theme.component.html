@@ -7,7 +7,7 @@
     <button matMiniFab aria-label="backToHome" routerLink="/page/home" class="back-btn">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>
-    <span class="mat-h2 mb-0">Explore by Theme</span>
+    <span class="mat-h2 mb-0">{{ pageTitle() }}</span>
   </div>
   <div class="explore-theme-filters flex gap-3 mat-full-radius">
     <mat-form-field appearance="outline" class="theme-search-field">
@@ -69,7 +69,7 @@
       } @empty {
         @if (exploreByThemeNoData()) {
           <div class="explore-theme-no-data m-auto">
-            <p class="mat-body-1">{{ exploreByThemeNoDataMessage() }}</p>
+            <p class="mat-body-1 no-data-title" [innerHTML]="exploreByThemeNoDataMessage()"></p>
           </div>
         }
       }
