@@ -99,6 +99,8 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
         })
       }
     }
+    const tabsVisibilityConfig = await this.seeAllSvc.getSeeAllTabsConfig().catch(() => null)
+    this.applyTabVisibilityConfig(tabsVisibilityConfig)
     if (
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
@@ -106,16 +108,29 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
     ) {
       this.tabResults = this.seeAllPageConfig.tabs
       this.dynamicTabIndex = _.findIndex(this.tabResults, (v: any) => v.value === this.tabSelected)
+      if (this.dynamicTabIndex < 0) {
+        // the tab asked for in the url was hidden by config — fall back to the first visible one
+        this.dynamicTabIndex = 0
+        this.tabSelected = this.tabResults[0] && this.tabResults[0].value
+        this.userSelectedTab = this.tabSelected
+      }
     }
     if (
       this.tabSelected &&
       this.seeAllPageConfig.tabs &&
       this.seeAllPageConfig.tabs.length
     ) {
-      this.pillResults = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData
-      this.dynamicPillIndex = _.findIndex(this.pillResults, (v: any) => v.value === this.pillSelected)
-      this.resetSelectedPill(this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData)
-      this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData[this.dynamicPillIndex]['selected'] = true
+      const pillsData = this.seeAllPageConfig.tabs[this.dynamicTabIndex].pillsData || []
+      this.pillResults = pillsData
+      this.dynamicPillIndex = _.findIndex(pillsData, (v: any) => v.value === this.pillSelected)
+      if (this.dynamicPillIndex < 0) {
+        this.dynamicPillIndex = 0
+        this.pillSelected = _.get(pillsData, '[0].value', '')
+      }
+      this.resetSelectedPill(pillsData)
+      if (pillsData[this.dynamicPillIndex]) {
+        pillsData[this.dynamicPillIndex]['selected'] = true
+      }
     }
     this.contentDataList = this.transformSkeletonToWidgets(this.seeAllPageConfig)
 
@@ -127,6 +142,19 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       this.fetchUserEnrolledData(this.seeAllPageConfig, tabIndex, pillIndex)
     }
 
+  }
+
+  private applyTabVisibilityConfig(tabsVisibilityConfig: any): void {
+    const tabs = this.seeAllPageConfig && this.seeAllPageConfig.tabs
+    if (!tabs || !tabs.length) {
+      return
+    }
+    const tabsConfig = _.get(tabsVisibilityConfig, this.seeAllPageConfig.key)
+    const visibleTabs = tabs.filter((tab: any) =>
+      tab.hideTab !== true && _.get(tabsConfig, tab.value) !== false)
+    if (visibleTabs.length && visibleTabs.length !== tabs.length) {
+      this.seeAllPageConfig.tabs = visibleTabs
+    }
   }
 
   checkForDateFilters(filters: any) {

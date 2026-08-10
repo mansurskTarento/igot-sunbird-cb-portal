@@ -99,6 +99,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // iGOTAIConfigLoaded = false
   // dataSubject = new BehaviorSubject<boolean>(false)
   menuBarDetails: any = {}
+  private achievementsSection: any = null
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
@@ -584,43 +585,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
 
   }
-  private isWithinFirstLoginMonth(): boolean {
-    const firstLoginAt = this.parseServerTimestamp(this.commonDataSvc?.firstLoginTime)
-    if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
-      return false
-    }
-    const created = new Date(firstLoginAt)
-    const unlocksOn = new Date(created.getFullYear(), created.getMonth() + 1, 1)
-    const now = new Date()
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
-    return today.getTime() < unlocksOn.getTime()
-  }
-
-  private parseServerTimestamp(value: any): number {
-    if (value === null || value === undefined) {
-      return NaN
-    }
-    if (typeof value === 'number') {
-      return value
-    }
-    const raw = String(value).trim()
-    if (/^\d+$/.test(raw)) {
-      return Number(raw)
-    }
-    const iso = raw
-      .replace(' ', 'T')
-      .replace(/:(\d{3})(?=[+-]|Z|$)/, '.$1')
-      .replace(/([+-]\d{2})(\d{2})$/, '$1:$2')
-    const parsed = Date.parse(iso)
-    return Number.isNaN(parsed) ? Date.parse(raw) : parsed
-  }
 
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
-    if (achievements) {
-      achievements.showViewAll = achievements.showViewAll !== false && !this.isWithinFirstLoginMonth()
-    }
     achievements['sectionLoading'] = true
     this.sendDetailsChangedEvent(achievements)
     if (achievements) {
@@ -650,36 +618,33 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           }
           achievements.items = itemsList
         }
-        const currentUserId = this.configSvc?.unMappedUser?.id
-        const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
-        if (currentUserId && rankItem) {
-          this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
-            const results = res?.result?.result
-            if (Array.isArray(results) && results.length) {
-              const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
-              const rank = currentUserRank?.rank
-
-              if (rank != null) {
-                rankItem.value = `${this.toOrdinal(rank)} Rank`
-              } else {
-                rankItem.value = '0 Rank'
-              }
-            } else {
-              rankItem.value = '0 Rank'
-            }
-            achievements.sectionLoading = false
-            this.sendDetailsChangedEvent(achievements)
-          }, (_error: any) => {
-            achievements.sectionLoading = false
-            this.sendDetailsChangedEvent(achievements)
-          }
-          )
-        } else {
-          achievements.sectionLoading = false
-          this.sendDetailsChangedEvent(achievements)
-        }
+        this.achievementsSection = achievements
+        achievements.sectionLoading = false
+        this.sendDetailsChangedEvent(achievements)
       } catch (_e) { /* ignore */ }
     }
+  }
+
+  private updateAchievementRank() {
+    const currentUserId = this.configSvc?.unMappedUser?.id
+    const achievements = this.achievementsSection
+    const rankItem = achievements?.items?.find((item: any) => item.code === 'rank' && item.enabled !== false)
+    if (!currentUserId || !rankItem) {
+      return
+    }
+    this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
+      const results = res?.result?.result
+      if (Array.isArray(results) && results.length) {
+        const currentUserRank = results.find((entry: any) => entry.userId === currentUserId)
+        const rank = currentUserRank?.rank
+        rankItem.value = rank != null ? `${this.toOrdinal(rank)} Rank` : '0 Rank'
+      } else {
+        rankItem.value = '0 Rank'
+      }
+      this.sendDetailsChangedEvent(achievements)
+    }, (_error: any) => {
+      this.sendDetailsChangedEvent(achievements)
+    })
   }
 
   setOtherPortals() {
@@ -930,6 +895,10 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   onNavItemClicked(event: any) {
     this.raiseTelemetryExploreContent(event.code, event.subType)
     switch (event.code) {
+      case 'start-tour':
+        this.router.navigateByUrl('/page/home')
+        this.configSvc.updateTourGuideMethod(false)
+        break
       case 'explore':
         this.exploreContent()
         this.menuBarDetails.activeItemCode = event.code
@@ -946,27 +915,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   viewAllAchievements() {
-    this.homePageSvc.getLearnerLeaderboardCached().subscribe(
-      (res: any) => {
-        const results = _.get(res, 'result.result', [])
-        if (Array.isArray(results) && results.length >= 3) {
-          this.showKarmaLeaderboard.set(true)
-        } else {
-          this.navigateToKarmaPoints()
-        }
-      },
-      () => {
-        this.navigateToKarmaPoints()
-      },
-    )
-  }
-
-  private navigateToKarmaPoints() {
-    this.showKarmaLeaderboard.set(false)
-    this.openStatusUserSelection.set(false)
-    this.leftNavBarIsOpen.set(false)
-    this.navBarOpenStatusBasedOnNav.set(false)
-    this.router.navigate(['/app/person-profile/karma-points'])
+    this.showKarmaLeaderboard.set(true)
+    this.updateAchievementRank()
   }
 
   viewMyActivities() {
