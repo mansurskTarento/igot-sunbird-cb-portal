@@ -26,10 +26,14 @@ export class SeeAllExploreByThemeComponent implements OnInit {
   keyData = ''
   sectionConfig = signal<any>(null)
 
+  pageTitle = computed(() => this.sectionConfig()?.header || '')
+
   breadcrumbData = computed<any[]>(() => [
     { url: '/page/home', title: 'Home', icon: 'home' },
-    { title: 'Explore by Theme' },
+    { title: this.pageTitle() },
   ])
+
+  private visiblePills: any[] = []
 
   themeOptions = signal<{ label: string, pill: any }[]>([])
   themeSelected = signal('')
@@ -38,7 +42,7 @@ export class SeeAllExploreByThemeComponent implements OnInit {
   screenSizeIsLtMedium = signal(false)
   searchControl = new FormControl('')
   private searchTerm = signal('')
-  pageSize = signal(20)
+  pageSize = signal(10)
   currentPage = signal(1)
   pageSizeOptions = [10, 20, 50, 100]
   totalItemsCount = computed(() => this.visibleContent().length)
@@ -97,7 +101,7 @@ export class SeeAllExploreByThemeComponent implements OnInit {
 
   exploreByThemeNoDataMessage = computed(() => {
     const pill = this.themeOptions().find(option => option.label === this.themeSelected())?.pill
-    return pill?.contentConfig?.noDataMessage || 'No data found'
+    return pill?.contentConfig?.noDataMessage || 'No courses available yet'
   })
 
   ngOnInit() {
@@ -156,15 +160,33 @@ export class SeeAllExploreByThemeComponent implements OnInit {
     this.themeSelected.set(this.themeOptions().some(option => option.label === initialTheme) ?
       initialTheme : this.themeOptions()[0].label)
 
-    this.loadAllThemeContent(visiblePills)
+    this.visiblePills = visiblePills
+    this.loadThemeContent(this.themeSelected())
+  }
+
+  private loadThemeContent(themeLabel: string) {
+    const loadedContent = this.themeContentMap()
+    const isAllThemes = themeLabel === this.ALL_THEMES_LABEL
+    const pillsToLoad = this.visiblePills.filter((pill: any) => {
+      const label = pill.pillLabel || pill.pillKey
+      return (isAllThemes || label === themeLabel) && !(label in loadedContent)
+    })
+
+    if (!pillsToLoad.length) {
+      this.loader.set(false)
+      return
+    }
+
+    this.loader.set(true)
+    this.loadPillsContent(pillsToLoad)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         finalize(() => this.loader.set(false)),
       )
-      .subscribe(map => this.themeContentMap.set(map))
+      .subscribe(map => this.themeContentMap.update(current => ({ ...current, ...map })))
   }
 
-  loadAllThemeContent(pills: any[]): Observable<any> {
+  loadPillsContent(pills: any[]): Observable<any> {
     const pillLoads = pills.map((pill: any) => {
       const contentIds: string[] = pill.contentConfig && Array.isArray(pill.contentConfig.contentIds) ?
         pill.contentConfig.contentIds : []
@@ -202,6 +224,7 @@ export class SeeAllExploreByThemeComponent implements OnInit {
     this.searchControl.setValue('', { emitEvent: false })
     this.searchTerm.set('')
     this.currentPage.set(1)
+    this.loadThemeContent(themeLabel)
   }
 
   onPageChange(event: any) {

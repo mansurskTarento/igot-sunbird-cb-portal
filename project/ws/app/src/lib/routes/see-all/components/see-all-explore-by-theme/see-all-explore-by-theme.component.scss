@@ -57,7 +57,18 @@
     margin-bottom: 24px;
 
     .theme-select-field {
+      width: 280px;
       min-width: 280px;
+      max-width: 280px;
+
+      ::ng-deep .mat-mdc-select-arrow-wrapper {
+        opacity: 1;
+      }
+
+      ::ng-deep .mat-mdc-select-arrow {
+        opacity: 1;
+        color: rgba(0, 0, 0, 0.54);
+      }
     }
 
     .mat-mdc-select-value {
@@ -85,9 +96,17 @@
 
   .explore-theme-no-data {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     padding: 48px 0;
-    color: rgba(0, 0, 0, 0.54);
+    text-align: center;
+
+    .no-data-title {
+      color: rgba(0, 0, 0, 0.87);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
   }
 }
 
