@@ -166,6 +166,9 @@ export class PaginationComponent implements OnInit, OnChanges {
   }
 
   goToPage(page: number) {
+    if (typeof page !== 'number' || !Number.isFinite(page)) {
+      return
+    }
     this.currentPage = page
     this.pageChange.emit({
       currentPage: this.currentPage,
