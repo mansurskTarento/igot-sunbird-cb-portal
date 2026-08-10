@@ -1847,8 +1847,8 @@
         </span>
       </div>
     </div>
-    <div class="flex">
-      <div class="margin-right-s">
+    <div class="flex cbp-card-body">
+      <div class="margin-right-s cbp-card-media">
         <ng-container *ngIf="widgetData.content.posterImage">
           <div class=" img-block-portrait position-relative">
             <img mat-card-image [src]="widgetData.content.posterImage | pipePublicURL" loading="lazy"
@@ -1894,7 +1894,7 @@
           </ng-template>
         </ng-container>
       </div>
-      <div class="width-1-1">
+      <div class="width-1-1 cbp-card-details">
         <div [id]="'m-c-'+ widgetData.content?.identifier" class="portrait-subheading mat-body-2 title-text">
           {{ widgetData.content.name }}
         </div>
