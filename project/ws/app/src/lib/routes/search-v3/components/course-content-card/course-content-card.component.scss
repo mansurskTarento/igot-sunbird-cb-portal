@@ -573,6 +573,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
     .px-4 {
       margin-left: 0;
       margin-right: 0;
@@ -602,7 +603,7 @@
   }
 }
 
-@media (min-width: 426px) and (max-width: 1024px) {
+@media (max-width: 1024px) {
   :host(.global-search-course-card) {
     display: block;
     width: 100%;
@@ -719,6 +720,48 @@
       max-width: 100%;
       min-width: 0;
       box-sizing: border-box;
+    }
+  }
+}
+
+// Global Search only: keep image badges on one line on narrow m-web screens.
+@media (max-width: 375px) {
+  :host(.global-search-course-card) {
+    .course-badges {
+      right: 4px;
+      bottom: 4px;
+      gap: 2px !important;
+      max-width: calc(100% - 8px);
+      white-space: nowrap;
+    }
+
+    .badge {
+      padding: 3px 4px;
+      font-size: 8px;
+      line-height: 10px;
+      white-space: nowrap;
+    }
+
+    .duration-badge {
+      gap: 2px;
+    }
+
+    .duration-badge mat-icon {
+      width: 12px;
+      height: 12px;
+      font-size: 12px;
+    }
+
+    .course-type {
+      padding: 3px 5px;
+      font-size: 8px;
+      line-height: 10px;
+    }
+
+    .course-type .document-icon {
+      width: 12px;
+      height: 12px;
+      font-size: 12px;
     }
   }
 }

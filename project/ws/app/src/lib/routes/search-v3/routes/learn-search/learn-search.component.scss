@@ -141,6 +141,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  .mobile-search-controls {
+    margin-bottom: 16px;
+  }
+}
+
 @media (max-width: 599px) {
   .custom-sidecontent {
     padding-bottom: 72px;
