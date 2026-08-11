@@ -194,9 +194,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       // tslint: disable
     }
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails &&
-      this.configSvc.unMappedUser.profileDetails.get_started_tour) {
-      this.showTour = this.configSvc.unMappedUser.profileDetails.get_started_tour.skipped ||
-        this.configSvc.unMappedUser.profileDetails.get_started_tour.visited
+      this.configSvc.unMappedUser.profileDetails.get_started_tour_v2) {
+      this.showTour = this.configSvc.unMappedUser.profileDetails.get_started_tour_v2.skipped ||
+        this.configSvc.unMappedUser.profileDetails.get_started_tour_v2.visited
     }
     this.mobileAppsSvc.init()
     this.openIntro()
