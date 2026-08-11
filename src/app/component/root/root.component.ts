@@ -104,6 +104,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // dataSubject = new BehaviorSubject<boolean>(false)
   menuBarDetails: any = {}
   private achievementsSection: any = null
+  private achievementRankRequested = false
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
@@ -148,7 +149,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   ) {
     effect(() => {
-      if (!this.leftNavBarIsOpen()) {
+      if (this.leftNavBarIsOpen()) {
+        this.loadAchievementRankOnce()
+      } else {
         this.showKarmaLeaderboard.set(false)
       }
     })
@@ -164,9 +167,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.menuBarDetails = this.configSvc.instanceConfig.leftNavBar || undefined
       if (this.menuBarDetails) {
         this.openStatusUserSelection.set(this.menuBarDetails.defaultOpen)
+        this.setNavOpenStatus()
         this.setAchivements()
         this.setOtherPortals()
-        this.setNavOpenStatus()
         // share the resolved config so pages outside the sidebar (mweb explore menu)
         // render the same items instead of resolving the config a second time
         this.commonDataSvc.leftNavBarConfig.next(this.menuBarDetails)
@@ -175,9 +178,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.getLeftNavBarConfiguration().subscribe((sectionData: any) => {
         this.menuBarDetails = sectionData?.data || undefined
         if (this.menuBarDetails) {
+          this.setNavOpenStatus()
           this.setAchivements()
           this.setOtherPortals()
-          this.setNavOpenStatus()
           this.commonDataSvc.leftNavBarConfig.next(this.menuBarDetails)
         }
       })
@@ -625,8 +628,16 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.achievementsSection = achievements
         achievements.sectionLoading = false
         this.sendDetailsChangedEvent(achievements)
+        this.loadAchievementRankOnce()
       } catch (_e) { /* ignore */ }
     }
+  }
+
+  private loadAchievementRankOnce() {
+    if (this.achievementRankRequested || !this.leftNavBarIsOpen() || !this.achievementsSection) {
+      return
+    }
+    this.updateAchievementRank()
   }
 
   private updateAchievementRank() {
@@ -636,6 +647,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (!currentUserId || !rankItem) {
       return
     }
+    this.achievementRankRequested = true
     this.homePageSvc.getLearnerLeaderboardCached().subscribe((res: any) => {
       const results = res?.result?.result
       if (Array.isArray(results) && results.length) {
