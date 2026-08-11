@@ -232,7 +232,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "port": 3000,
-            "buildTarget": "fusion:build"
+            "buildTarget": "fusion:build",
+            "prebundle": {
+              "exclude": ["@sunbird-cb/design-system"]
+            }
           },
           "configurations": {
             "production": {
