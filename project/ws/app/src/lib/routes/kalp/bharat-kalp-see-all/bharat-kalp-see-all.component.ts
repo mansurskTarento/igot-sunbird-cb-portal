@@ -312,10 +312,23 @@ export class BharatKalpSeeAllComponent implements OnInit {
       })
   }
 
-  onWeekChange(event: Event): void {
-    this.selectedWeek = +(event.target as HTMLSelectElement).value
-    this.activeTabIndex = 0 /* tab set can change per week — reset to the first visible tab */
+  /**
+   * Shared by both week selectors: everything that must be re-based when the week changes.
+   *
+   * The tab set differs per week, so selection starts at the first visible tab, and the
+   * status pill goes back to All — a filter carried over from the previous week can hide
+   * every card in the new one, which reads as "no content here" rather than "you have a
+   * filter on". Paging is reset by the fetch itself.
+   */
+  private _applyWeekSelection(week: number): void {
+    this.selectedWeek = week
+    this.activeTabIndex = 0
+    this.selectedStatus = 'All'
     this._fetchActiveTabContent()
+  }
+
+  onWeekChange(event: Event): void {
+    this._applyWeekSelection(+(event.target as HTMLSelectElement).value)
   }
 
   onCardContentDataExt(content: any): void {
@@ -332,7 +345,14 @@ export class BharatKalpSeeAllComponent implements OnInit {
     this._fetchActiveTabContent()
   }
 
-  trackTabKey(_: number, tab: ContentTypeTab): string { return tab.key }
+  /* Week-scoped: contentTypeTabs builds fresh objects on every read, so trackBy is needed to
+     stop the tab views churning each change-detection pass - but tracking by key alone also
+     let a tab (and mat-tab-group's selection on it) survive a week change. */
+  trackTabKey(_: number, tab: ContentTypeTab): string { return `${this.selectedWeek}:${tab.key}` }
+
+  /* Identity of the mat-tab-group wrapper — changing week destroys and recreates the group so
+     it re-reads [selectedIndex] instead of holding the previous week's internal selection. */
+  trackTabGroup(_: number, week: number): number { return week }
 
   onSearch(): void { this.currentPage = 0 }
 
@@ -416,10 +436,8 @@ export class BharatKalpSeeAllComponent implements OnInit {
   toggleWeekDropdown(): void { this.weekDropdownOpen = !this.weekDropdownOpen }
 
   selectWeekOption(week: number): void {
-    this.selectedWeek = week
     this.weekDropdownOpen = false
-    this.activeTabIndex = 0 /* tab set can change per week — reset to the first visible tab */
-    this._fetchActiveTabContent()
+    this._applyWeekSelection(week)
   }
 
   /** Display label for a week — configured `name` from week data (e.g. "Week 0"), falls back to "Week N" */
