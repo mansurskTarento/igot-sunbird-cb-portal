@@ -566,6 +566,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.profileBannerUrl = _.get(this.profesionalDetails, 'profileBannerUrl', '')
     this.setProfileCompletionGraph()
     const isCadre = _.get(this.profesionalDetails, 'personalDetails.isCadre', false)
+    const profileOrgName = _.get(this.profileData, 'rootOrgName', '') ||
+      _.get(this.profesionalDetails, 'employmentDetails.departmentName', '') ||
+      _.get(this.profesionalDetails, 'refRootOrg.orgName', '')
+    const currentOrgName = this.isCurrentUser ?
+      (_.get(this.configSvc, 'userProfile.rootOrgName', '') || profileOrgName) : profileOrgName
     this.primaryDetails = {
       firstname: _.get(this.profesionalDetails, 'personalDetails.firstname', _.get(this.profileData, 'firstname', _.get(this.profileData, 'firstName', ''))),
       username: _.get(this.profesionalDetails, 'username', _.get(this.profileData, 'username', '')),
@@ -589,7 +594,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
       aboutme: _.get(this.profesionalDetails, 'employmentDetails.aboutme', ''),
 
-      currentOrgName: _.get(this.configSvc, 'userProfile.rootOrgName', ''),
+      currentOrgName,
       profileStatus: _.get(this.profesionalDetails, 'profileStatus', ''),
     }
     if (isCadre) {
@@ -1782,9 +1787,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             isNew ? this.addAchievementEntry(formBody) : this.updateAchievementEntry(formBody)
           } else if (header === 'Service History') {
             _.get(entryDetails, 'uuid') ?
-              this.updateProfileEntry(formBody) : this.addProfileEntry(formBody)
+              this.updateProfileEntry(formBody) : this.addProfileEntry(formBody, 'Added Successfully')
           } else {
-            isNew ? this.addProfileEntry(formBody) : this.updateProfileEntry(formBody)
+            isNew ? this.addProfileEntry(formBody, 'Added Successfully') : this.updateProfileEntry(formBody)
           }
         }
       }
@@ -1867,13 +1872,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   //#region (service history, achievements, educational qualifications will edit based on the request)
-  addProfileEntry(formBody: any) {
+  addProfileEntry(formBody: any, successMessage: string = 'Updated Successfully') {
     const configDetails: ConfigDetails = this.getConfigDetails('addEntries')
     this.profileV2RevampSvc.addEntriesToProfile(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
           this.fetchProfileEntries()
-          this.openSnackbar('Updated Successfully')
+          this.openSnackbar(successMessage)
         }
       },
       error: (error: HttpErrorResponse) => {
