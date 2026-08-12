@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <!-- Design System: FOUC Prevention - must be first script in head -->
   <script>
-  (function(){var k='kb-design-system-theme',s=null;try{s=localStorage.getItem(k)}catch(e){}var t=s==='dark'?'dark':s==='light'?'light':null;if(!t){t=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}document.documentElement.setAttribute('data-theme',t);document.documentElement.classList.add('theme-igot');document.documentElement.classList.add(t==='dark'?'night-mode':'day-mode')})();
+    (function () { var k = 'kb-design-system-theme', s = null; try { s = localStorage.getItem(k) } catch (e) { } var t = s === 'dark' ? 'dark' : s === 'light' ? 'light' : null; if (!t) { t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light' } document.documentElement.setAttribute('data-theme', t); document.documentElement.classList.add('theme-igot'); document.documentElement.classList.add(t === 'dark' ? 'night-mode' : 'day-mode') })();
   </script>
   <title>iGot</title>
   <base href="/" />
