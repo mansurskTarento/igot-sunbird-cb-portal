@@ -671,8 +671,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
 
   get shouldShowServiceHistorySection(): boolean {
     return (this.isCurrentUser ||
-      (_.get(this.serviceHistoryDetails, 'serviceHistoryList.length', 0) > 0)) &&
+      (_.get(this.serviceHistoryDetails, 'serviceHistoryList.length', 0) > 0) ||
+      this.hasCurrentEmploymentDetails) &&
       _.get(this.profileConfig, 'serviceHistory.enabled', false)
+  }
+
+  get hasCurrentEmploymentDetails(): boolean {
+    return !!(_.get(this.primaryDetails, 'currentOrgName') && _.get(this.primaryDetails, 'designation'))
   }
 
   get shouldShowEducationalQualificationsSection(): boolean {
@@ -762,7 +767,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     this.locationDetails = _.get(entries, 'locationDetails.data[0]', {})
 
     if (!this.isCurrentUser) {
-      if (_.get(this.serviceHistoryDetails, 'serviceHistoryList', []).length === 0) {
+      if (_.get(this.serviceHistoryDetails, 'serviceHistoryList', []).length === 0 &&
+        !this.hasCurrentEmploymentDetails) {
         this.filterProfileRoutes('service-history')
       }
       if (_.get(this.educationalQualificationDetails, 'educationalQualifications', []).length === 0) {
@@ -1773,6 +1779,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         if (formBody) {
           if (header === 'Achievements') {
             isNew ? this.addAchievementEntry(formBody) : this.updateAchievementEntry(formBody)
+          } else if (header === 'Service History') {
+            _.get(entryDetails, 'uuid') ?
+              this.updateProfileEntry(formBody) : this.addProfileEntry(formBody)
           } else {
             isNew ? this.addProfileEntry(formBody) : this.updateProfileEntry(formBody)
           }
@@ -1937,6 +1946,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       next: (response: any) => {
         if (response) {
           this.patchEntries(_.get(response, 'result.response', {}))
+          this.getAchievements()
         }
       },
       error: (error: HttpErrorResponse) => {
