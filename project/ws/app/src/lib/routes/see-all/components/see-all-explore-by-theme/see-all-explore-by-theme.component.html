@@ -1,0 +1,88 @@
+<div class="explore-theme-toolbar">
+  <sb-uic-breadcrumb [widgetData]="breadcrumbData()"></sb-uic-breadcrumb>
+</div>
+
+<div class="explore-theme-container">
+  <div class="title flex gap-4 items-center mb-5">
+    <button matMiniFab aria-label="backToHome" routerLink="/page/home" class="back-btn">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+    <span class="mat-h2 mb-0">{{ pageTitle() }}</span>
+  </div>
+  <div class="explore-theme-filters flex gap-3 mat-full-radius">
+    <mat-form-field appearance="outline" class="theme-search-field">
+      <mat-icon matPrefix>search</mat-icon>
+      <input
+        matInput
+        type="text"
+        [placeholder]="searchPlaceholder()"
+        [formControl]="searchControl"
+      />
+      @if (searchControl.value) {
+        <button
+          mat-icon-button
+          matSuffix
+          (click)="clearSearchControl()"
+          aria-label="Clear"
+          class="mr-2"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+    <div class="explore-theme-controls mat-full-radius-select">
+      <mat-form-field appearance="outline" class="theme-select-field">
+        <!-- <mat-label>Select Theme</mat-label> -->
+        <mat-select
+          [ngModel]="themeSelected()"
+          name="themeSelect"
+          (ngModelChange)="onThemeChange($event)"
+        >
+          @for (theme of themeOptions(); track theme.label) {
+            <mat-option [value]="theme.label">
+              <span>{{ theme.label }}</span>
+            </mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  @if (loader()) {
+    <div class="loader-container">
+      <mat-progress-spinner mode="indeterminate" [diameter]="40"></mat-progress-spinner>
+    </div>
+  } @else {
+    <div class="content-list justify-center sm:justify-start">
+      @for (c of contentDataList(); track $index) {
+        <div class="mr-2 mb-5">
+          @if (screenSizeIsLtMedium()) {
+            <ws-widget-card-content-v2 [widgetData]="c.widgetData"></ws-widget-card-content-v2>
+          } @else {
+            <sb-uic-card-course-v2
+              [content]="c.content"
+              [config]="c.config"
+              [isLoading]="loader()"
+            ></sb-uic-card-course-v2>
+          }
+        </div>
+      } @empty {
+        @if (exploreByThemeNoData()) {
+          <div class="explore-theme-no-data m-auto">
+            <p class="mat-body-1 no-data-title" [innerHTML]="exploreByThemeNoDataMessage()"></p>
+          </div>
+        }
+      }
+    </div>
+
+    @if (totalItemsCount() > 0) {
+      <ws-widget-pagination
+        [defaultPaginationSize]="pageSize()"
+        [defaultPaginationSizeOptions]="pageSizeOptions"
+        [totalItemsCount]="totalItemsCount()"
+        [currentPage]="currentPage()"
+        (pageChange)="onPageChange($event)"
+      ></ws-widget-pagination>
+    }
+  }
+</div>

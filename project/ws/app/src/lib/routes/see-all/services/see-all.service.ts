@@ -89,7 +89,7 @@ export class SeeAllService {
     return of(this.getSeeAllConfig).toPromise()
   }
 
-  async getSeeAllFormsConfigJson(pageType?: string, pageSubType?: string): Promise<any> {
+  async getSeeAllFormsConfigJson(pageType?: string, pageSubType?: string, clientVersion?: number): Promise<any> {
     if (!this.getSeeAllConfig) {
       this.getSeeAllConfig = {}
       const requestData: any = {
@@ -97,7 +97,7 @@ export class SeeAllService {
           'type': pageType ? pageType : 'page',
           'subType': pageSubType ? pageSubType : 'home',
           'portal': 'portal',
-          'clientVersion':1.0
+          'clientVersion': clientVersion || 1.0
         },
       }
       this.getSeeAllConfig = await this.formSvc.formConfigData(requestData, pageType, pageSubType).toPromise()
