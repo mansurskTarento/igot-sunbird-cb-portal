@@ -101,7 +101,7 @@ export class SeeAllExploreByThemeComponent implements OnInit {
 
   exploreByThemeNoDataMessage = computed(() => {
     const pill = this.themeOptions().find(option => option.label === this.themeSelected())?.pill
-    return pill?.contentConfig?.noDataMessage || 'No courses available yet'
+    return pill?.contentConfig?.noDataMessage || this.sectionConfig()?.noDataMessage || ''
   })
 
   ngOnInit() {
