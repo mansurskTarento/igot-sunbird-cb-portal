@@ -1679,6 +1679,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   openServiceHistoryListDialog(dialogDetails: any) {
+    dialogDetails['entryType'] = 'all'
     dialogDetails['currentDesignation'] = _.get(this.primaryDetails, 'designation', '')
     dialogDetails['currentOrgName'] = _.get(this.primaryDetails, 'currentOrgName', '')
     const dialogRef = this.dialog.open(ServiceHistoryComponent, {
