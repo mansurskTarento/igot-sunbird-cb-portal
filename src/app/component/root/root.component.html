@@ -41,7 +41,7 @@
     </div>
   }
   <div class="flex gap-0 root-container" [style.background-color]="isHomePage() ? 'var(--surface-primary)' : '#F3F5F9'" [ngClass]="independenceDayBanner?.isEnabled && isHomePage() ? 'banner-active' : ''"
-    [style.margin-top]="independenceDayBanner?.isEnabled && isHomePage() && (isXSmall$ | async) === false ? '40px' : '0px'">
+    [style.margin-top]="independenceDayBanner?.isEnabled && isHomePage() && (isXSmall$ | async) === false ? '48px' : '0px'">
     @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async) === false) {
     <div class="w-fit">
       <sb-uic-dynamic-sidebar [menuBarDetails]="menuBarDetails" [detailsChanged]="detailsChanged()"
