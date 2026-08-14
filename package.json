@@ -61,7 +61,7 @@
     "@sunbird-cb/notification": "0.0.6-ang-17-20",
     "@sunbird-cb/rain-dashboards": "0.0.1-ang-17-20",
     "@sunbird-cb/resolver-v2": "0.0.1-ang-17-20",
-    "@sunbird-cb/toc": "0.0.14-ang-17-20-unenroll",
+    "@sunbird-cb/toc": "0.0.15-ang-17-20-unenroll",
     "@sunbird-cb/utils-v2": "0.0.5-ang-17-20-ui-ux",
     "@types/file-saver": "^2.0.1",
     "@types/jest": "29.5.13",
