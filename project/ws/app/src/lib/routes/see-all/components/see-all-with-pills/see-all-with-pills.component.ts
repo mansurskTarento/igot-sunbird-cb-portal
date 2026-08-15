@@ -87,7 +87,7 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
       }
     }
     if (!this.seeAllPageConfig) {
-      if (configData) {
+      if (configData && configData.newHomeStrip) {
         configData.newHomeStrip.forEach((ele: any) => {
           if (ele && ele.strips && ele.strips.length > 0) {
             ele.strips.forEach((subEle: any) => {
@@ -98,6 +98,11 @@ export class SeeAllWithPillsComponent implements OnInit, OnDestroy {
           }
         })
       }
+    }
+    if (!this.seeAllPageConfig) {
+      // no strip matched the key in any config source — drop the skeletons instead of throwing
+      this.contentDataList = []
+      return
     }
     const tabsVisibilityConfig = await this.seeAllSvc.getSeeAllTabsConfig().catch(() => null)
     this.applyTabVisibilityConfig(tabsVisibilityConfig)
