@@ -89,9 +89,44 @@
   color: rgba(27, 33, 51, 1);
 }
 
+// Content tabs - scoped to this provider page only
+.content-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 16px;
+  overflow-x: auto;
+
+  .content-tab {
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 10px 16px;
+    /* stylelint-disable-next-line */
+    font: 500 14px 'Lato';
+    color: #616161;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      color: #6750a4;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    &.active {
+      color: #1b2133;
+      border-bottom-color: #6750a4;
+      font-weight: 700;
+    }
+  }
+}
+
 .result-meta {
   padding-bottom: 16px;
-  border-bottom: 1px solid #e0e0e0;
 
   .explore-all-content {
     margin-bottom: 8px;
@@ -114,6 +149,40 @@
 .search-input-block {
   width: 480px;
   max-width: 90%;
+}
+
+// Same pill search as the seeAll home marketplace page - see see-all-home.component.scss.
+// A plain input with absolutely positioned icons rather than a mat-form-field, which is what
+// gives it the flat 52px radius with no MDC outline or subscript space to fight.
+.search-wrapper {
+  .search-icon {
+    top: 8px;
+    left: 20px;
+    cursor: pointer;
+  }
+
+  .search-field {
+    // border-box + 100% keeps the input exactly as wide as .search-wrapper. With the inherited
+    // content-box sizing the 73px of horizontal padding was added on top of the width, so the
+    // input overflowed its wrapper and .clear-icon - positioned against the wrapper - sat well
+    // short of the visible right edge.
+    width: 100%;
+    box-sizing: border-box;
+    padding: 12px 48px 12px 48px;
+    gap: 8px;
+    border-radius: 52px;
+    background: #ffffff;
+    border: 1px solid #00000014;
+  }
+
+  .clear-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+    top: 9px;
+    right: 16px;
+    cursor: pointer;
+  }
 }
 
 
@@ -154,7 +223,7 @@
   position: sticky;
   top: 80px;
   height: fit-content;
-  max-height: calc(100vh - 100px);
+  max-height: 200vh;
   overflow-y: auto;
 }
 
@@ -334,6 +403,7 @@
   // Responsive layout for main content
   .main-content-wrapper {
     flex-direction: column;
+    padding: 0;
   }
 
   .filter-sidebar-wrapper {
