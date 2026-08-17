@@ -52,7 +52,9 @@ formConfigData(request: any, pageType:any, pageDataKey: any): Observable<any> {
         }),
         catchError((_error: any) => {
           const baseUrl = this.configSvc.sitePath
-          return this.http.get(`${baseUrl}/${pageType}/${pageDataKey}.json`).pipe(
+          const fallbackType = pageType || request?.request?.type || 'page'
+          const fallbackKey = pageDataKey || request?.request?.subType || 'home'
+          return this.http.get(`${baseUrl}/${fallbackType}/${fallbackKey}.json`).pipe(
             map(data => (data)),
             catchError(err => of({ data: null, error: err })),
           )
