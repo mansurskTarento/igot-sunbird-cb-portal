@@ -26,7 +26,7 @@ app.use('/healthcheck', healthcheck({
   },
 }))
 
-app.engine('html', require('ejs').renderFile);
+app.engine('html', require('ejs').renderFile)
 
 // Add required helmet configurations
 app.use(
@@ -69,7 +69,7 @@ function serveAssets(hostPath) {
   app.use(
     `${hostPath}/assets`,
     // proxyCreator(express.Router(), CONSTANTS.WEB_HOST_PROXY + '/web-hosted/client-assets/dist'),
-     express.static(path.join(__dirname, `${hostPath}`, `assets`)) //  "public" off of current is root
+    express.static(path.join(__dirname, `${hostPath}`, `assets`)) //  "public" off of current is root
   )
 }
 
@@ -85,7 +85,7 @@ uiHostCreator('', 'en')
 app.use(haltOnTimedOut)
 
 app.use((err, req, res, next) => {
-  //check what error happened here ... 
+  //check what error happened here ...
   res.status(404).render(path.join(__dirname, `404.html`))
 })
 
@@ -129,31 +129,31 @@ function uiHostCreator(hostPath, hostFolderName) {
       orderPreference: ['br', 'gz'],
     }),
   )
-app.get(`${hostPath}/*`, (req, res) => {
-if (req.url.startsWith('/assets/')) {
-res.sendFile(path.join(__dirname, `www/${hostFolderName}/${req.url}`))
+  app.get(`${hostPath}/*`, (req, res) => {
+    if (req.url.startsWith('/assets/')) {
+      res.sendFile(path.join(__dirname, `www/${hostFolderName}/${req.url}`))
 
-} else if (req.url.startsWith('/.well-known/')) {
-res.sendFile(path.join(__dirname, `${req.url}`))
+    } else if (req.url.startsWith('/.well-known/')) {
+      res.sendFile(path.join(__dirname, `${req.url}`))
 
-} else if (STATIC_ASSET.test(req.path)) {
-// Falling through to index.html here hands the browser HTML with a 200 and a
-// text/html content type for what it requested as a module, which surfaces as
-// ChunkLoadError / "Failed to fetch dynamically imported module" instead of a
-// cache miss. Answer honestly so the client can recover.
-//
-// Drop the Cache-Control that cacheControl() set on the way in. It runs before the
-// static handler knows whether the file exists, so a request for a deleted chunk
-// (chunk-TEZ73SP4.js still matches IMMUTABLE_ASSET) would otherwise return a 404
-// carrying `max-age=31536000, immutable` - pinning "this asset does not exist" in
-// the browser and every intermediary cache for a year.
-res.removeHeader('Cache-Control')
-res.status(404).type('txt').send('Not found')
+    } else if (STATIC_ASSET.test(req.path)) {
+      // Falling through to index.html here hands the browser HTML with a 200 and a
+      // text/html content type for what it requested as a module, which surfaces as
+      // ChunkLoadError / "Failed to fetch dynamically imported module" instead of a
+      // cache miss. Answer honestly so the client can recover.
+      //
+      // Drop the Cache-Control that cacheControl() set on the way in. It runs before the
+      // static handler knows whether the file exists, so a request for a deleted chunk
+      // (chunk-TEZ73SP4.js still matches IMMUTABLE_ASSET) would otherwise return a 404
+      // carrying `max-age=31536000, immutable` - pinning "this asset does not exist" in
+      // the browser and every intermediary cache for a year.
+      res.removeHeader('Cache-Control')
+      res.status(404).type('txt').send('Not found')
 
-} else {
-res.sendFile(path.join(__dirname, `www/${hostFolderName}/index.html`))
-}
-})
+    } else {
+      res.sendFile(path.join(__dirname, `www/${hostFolderName}/index.html`))
+    }
+  })
 }
 
 function haltOnTimedOut(req, _res, next) {

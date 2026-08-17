@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common'
 import { SeeAllHomeComponent } from './components/see-all-home/see-all-home.component'
 import { SeeAllWithPillsComponent } from './components/see-all-with-pills/see-all-with-pills.component'
 import { SeeAllDynamicComponent } from './components/see-all-dynamic/see-all-dynamic.component'
+import { SeeAllExploreByThemeComponent } from './components/see-all-explore-by-theme/see-all-explore-by-theme.component'
 import { FormDataResolverService } from '../services/form-data-resolver.service'
 
 const routes: Routes = [
@@ -58,6 +59,16 @@ const routes: Routes = [
     },
     resolve: {
       pageData: FormDataResolverService,
+    },
+  },
+  {
+    path: 'explore-by-theme',
+    pathMatch: 'full',
+    component: SeeAllExploreByThemeComponent,
+    data: {
+      pageType: 'feature',
+      pageKey: 'seeAll',
+      pageId: 'explore-by-theme',
     },
   },
 ]
