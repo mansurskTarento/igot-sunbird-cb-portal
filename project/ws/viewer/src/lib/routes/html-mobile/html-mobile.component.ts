@@ -52,6 +52,39 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
     private configSvc: ConfigurationsService
   ) { }
 
+  // Send events to Flutter WebView
+  private sendEventToFlutter(eventType: string, data: any) {
+    try {
+      const eventData = {
+        eventType,
+        timestamp: new Date().toISOString(),
+        data,
+      }
+
+      // For flutter_inappwebview plugin
+      if ((window as any).flutter_inappwebview) {
+        (window as any).flutter_inappwebview.callHandler('scormEvent', JSON.stringify(eventData))
+      }
+
+      // For webview_flutter plugin using JavaScript channels
+      if ((window as any).ScormEventChannel) {
+        (window as any).ScormEventChannel.postMessage(JSON.stringify(eventData))
+      }
+
+      // Alternative: Post message to parent (if Flutter is listening)
+      if (window.parent) {
+        window.parent.postMessage({
+          source: 'scorm-player',
+          ...eventData,
+        },                        '*')
+      }
+
+      console.log('Event sent to Flutter:', eventType, data)
+    } catch (error) {
+      console.error('Error sending event to Flutter:', error)
+    }
+  }
+
   ngOnInit() {
     // this.activatedRoute.data.subscribe(data => {
     //   this.uuid = data.profileData.data.userId
@@ -98,6 +131,16 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
               this.oldData = this.htmlData
               this.alreadyRaised = true
               // this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.htmlData)
+
+              // Send content loaded event to Flutter
+              this.sendEventToFlutter('CONTENT_LOADED', {
+                contentId: this.htmlData.identifier,
+                contentName: this.htmlData.name,
+                artifactUrl: this.htmlData.artifactUrl,
+                mimeType: this.htmlData.mimeType,
+                primaryCategory: this.htmlData.primaryCategory,
+              })
+
               this.responseSubscription = await fromEvent<MessageEvent>(window, 'message')
                 .pipe(
                   filter(
@@ -178,6 +221,16 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
             this.oldData = this.htmlData
             this.alreadyRaised = true
             // this.raiseEvent(WsEvents.EnumTelemetrySubType.Loaded, this.htmlData)        //mobile requirement telemetry disabled
+
+            // Send content loaded event to Flutter
+            this.sendEventToFlutter('CONTENT_LOADED', {
+              contentId: this.htmlData.identifier,
+              contentName: this.htmlData.name,
+              artifactUrl: this.htmlData.artifactUrl,
+              mimeType: this.htmlData.mimeType,
+              primaryCategory: this.htmlData.primaryCategory,
+            })
+
             this.responseSubscription = await fromEvent<MessageEvent>(window, 'message')
               .pipe(
                 filter(
@@ -200,15 +253,33 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
                       if (event.data.subApplicationName === 'RBCP') {
                         this.subApp = true
                       }
+
+                      // Send SCORM loaded event to Flutter
+                      this.sendEventToFlutter('SCORM_LOADED', {
+                        contentId: this.htmlData.identifier,
+                        subApplicationName: event.data.subApplicationName,
+                      })
                       break
                     case 'CONTINUE_LEARNING':
                       await this.respondSvc.continueLearningRespond(
                         this.htmlData.identifier,
                         event.data.data.continueLearning,
                       )
+
+                      // Send continue learning event to Flutter
+                      this.sendEventToFlutter('CONTINUE_LEARNING', {
+                        contentId: this.htmlData.identifier,
+                        continueLearningData: event.data.data.continueLearning,
+                      })
                       break
                     case 'TELEMETRY':
                       await this.respondSvc.telemetryEvents(event.data)
+
+                      // Send telemetry event to Flutter
+                      this.sendEventToFlutter('TELEMETRY', {
+                        contentId: this.htmlData.identifier,
+                        telemetryData: event.data,
+                      })
                       break
                     default:
                       break
@@ -243,6 +314,12 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
           contextType: 'playlist',
         }
         this.contentSvc.saveContinueLearning(reqBody).toPromise().catch().finally(() => {
+          // Send progress saved event to Flutter
+          this.sendEventToFlutter('PROGRESS_SAVED', {
+            contentId: content.identifier,
+            contextType: 'playlist',
+            timestamp: Date.now(),
+          })
           resolve(true)
         }
         )
@@ -258,6 +335,11 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
           dateAccessed: Date.now(),
         }
         this.contentSvc.saveContinueLearning(reqBody).toPromise().catch().finally(() => {
+          // Send progress saved event to Flutter
+          this.sendEventToFlutter('PROGRESS_SAVED', {
+            contentId: content ? content.identifier : '',
+            timestamp: Date.now(),
+          })
           resolve(true)
         }
         )
@@ -283,6 +365,14 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
   }
 
   async ngOnDestroy() {
+    // Send component unload event to Flutter
+    if (this.htmlData) {
+      this.sendEventToFlutter('CONTENT_UNLOADED', {
+        contentId: this.htmlData.identifier,
+        contentName: this.htmlData.name,
+      })
+    }
+
     if (this.htmlData) {
       if (!this.subApp || this.activatedRoute.snapshot.queryParams.collectionId) {
         await this.saveContinueLearning(this.htmlData)
@@ -358,6 +448,14 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
     this.realTimeProgressTimer = setTimeout(() => {
       this.hasFiredRealTimeProgress = true
       this.fireRealTimeProgress()
+
+      // Send real-time progress event to Flutter
+      if (this.htmlData) {
+        this.sendEventToFlutter('REALTIME_PROGRESS', {
+          contentId: this.htmlData.identifier,
+          progress: this.realTimeProgressRequest,
+        })
+      }
       // tslint:disable-next-line: align
     }, 6 * 1000)
   }
