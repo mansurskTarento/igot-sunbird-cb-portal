@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import * as _ from 'lodash'
-import { MultilingualTranslationsService, ValueService } from '@sunbird-cb/utils-v2'
+import { MultilingualTranslationsService, ValueService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 
 const configMap: any = {
   extContent: {
@@ -18,7 +18,7 @@ const configMap: any = {
       requestedFields: [],
       pageNumber: 0,
       pageSize: 10,
-      facets: ['topic'],
+      facets: ['topic', 'courseType'],
       orderBy: 'createdOn',
       orderDirection: 'desc',
       searchString: '',
@@ -34,6 +34,14 @@ const configMap: any = {
     },
   },
 }
+const COURSE_TYPE_FACET_KEY = 'courseType'
+const CONTENT_TABS = [
+  { key: 'allContent', label: 'All Content' },
+  { key: 'completed', label: 'Completed' },
+  { key: 'inProgress', label: 'In Progress' },
+]
+const ENROLMENT_STATUS_COMPLETED = 2
+const ENROLMENT_STATUS_ALL = 'All'
 @Component({
   selector: 'ws-app-see-all-dynamic',
   templateUrl: './see-all-dynamic.component.html',
@@ -68,11 +76,17 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
   providerDetails: any = null
   apiFacets: any[] = []  // Raw API facets for filter component
   appliedFilters: any = {}  // Filters applied from filter component
+  facetValuesByLabel: any = {}
   isFilterSidebarOpen = false
   public screenSizeIsLtMedium = false
   isLtMedium$ = this.valueSvc.isLtMedium$
   isDescriptionExpanded = false
   showDescriptionToggle = false
+  contentTabs = CONTENT_TABS
+  selectedTab = CONTENT_TABS[0].key
+  enrolledContent: any = { completed: [], inProgress: [] }
+  enrolmentStatusById: { [id: string]: number } = {}
+  isEnrolmentLoading = false
   @ViewChild('descriptionEl') descriptionEl!: ElementRef<HTMLParagraphElement>
   private hasCheckedDescriptionOverflow = false
   titles: any[] = [
@@ -89,7 +103,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     private router: Router,
     private contSvc: WidgetContentLibService,
     private valueSvc: ValueService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private enrollSvc: WidgetEnrollService
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -111,6 +126,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     })
     this.getRouterData()
     this.loadProviderDetails()
+    this.loadEnrolments()
     this.setRandomColor()
   }
 
@@ -195,10 +211,14 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
         Object.keys(this.appliedFilters).forEach((key: string) => {
           const values = this.appliedFilters[key]
           if (values && values.length > 0) {
-            request.filterCriteriaMap[key] = values
+            request.filterCriteriaMap[key] = this.toFilterValues(key, values)
           }
         })
       }
+    }
+
+    if (Array.isArray(request.facets) && !request.facets.includes(COURSE_TYPE_FACET_KEY)) {
+      request.facets = [...request.facets, COURSE_TYPE_FACET_KEY]
     }
 
     // Update pageNumber if present
@@ -249,6 +269,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
             this.contentItems = [...transformed]
           }
 
+          this.applyEnrolmentStatus()
           this.applySort()
           this.loading = false
           this.isLoadingMore = false
@@ -268,24 +289,30 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
    * Transform API facets response to the format expected by reusable-filters component
    * Input format: { "topic": [{ value: "val1", count: 5 }], "courseProvider": [] }
    * Output format: [{ name: 'topic', heading: 'Topic', values: [...], showSearch: true, ... }]
-   * Only includes facets that have values (non-empty arrays)
-   * Orders facets based on position in FilterConfig array from apiConfig
+   * Only includes facets the API returned values for - a config's own `options` are used solely to
+   * relabel those values, unless that entry sets `showOptionsWhenEmpty`
+   * Ordered by each FilterConfig entry's `order`, falling back to its position in the array
    */
   transformFacets(facets: any): any[] {
     if (!facets || typeof facets !== 'object') {
       return []
     }
-
+    const facetsMap = (facets && typeof facets === 'object') ? facets : {}
     const transformedFacets: any[] = []
     const filterConfig = _.get(this.apiConfig, 'FilterConfig', [])
+    this.facetValuesByLabel = {}  // rebuilt from this response, so stale values are never sent
+
+    const hasFiltersApplied = !!this.appliedFilters && Object.keys(this.appliedFilters)
+      .some((key: string) => (this.appliedFilters[key] || []).length > 0)
+    const allowConfigValues = this.totalCount > 0 || hasFiltersApplied
 
     // Iterate over FilterConfig to maintain order
     filterConfig.forEach((config: any, index: number) => {
       const key = config.key
-      const values = facets[key]
+      const values = this.getFacetValues(config, facetsMap[key], allowConfigValues)
 
       // Only include facets that have values (non-empty arrays)
-      if (Array.isArray(values) && values.length > 0) {
+      if (values.length > 0) {
         transformedFacets.push({
           name: key,  // This key will be used in filterCriteriaMap when filter is applied
           heading: config.heading,
@@ -295,18 +322,15 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
           showCount: config.showCount,
           showSeeMore: config.showSeeMore,
           seeMoreLimit: config.seeMoreLimit,
-          order: index,  // Use array index as order
-          values: values.map((item: any) => ({
-            name: _.get(item, 'value', ''),  // API returns 'value', component expects 'name'
-            count: _.get(item, 'count', 0),
-          })),
+          order: _.isNumber(config.order) ? config.order : index,  // config wins, else array position
+          values,
         })
       }
     })
 
     // Add any facets from API that are not in FilterConfig (at the end)
-    Object.keys(facets).forEach((key: string) => {
-      const values = facets[key]
+    Object.keys(facetsMap).forEach((key: string) => {
+      const values = facetsMap[key]
       const isConfigured = filterConfig.some((config: any) => config.key === key)
 
       if (!isConfigured && Array.isArray(values) && values.length > 0) {
@@ -328,7 +352,91 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       }
     })
 
-    return transformedFacets
+    return this.sortFacets(transformedFacets)
+  }
+  getFacetValues(config: any, apiValues: any, allowConfigValues = true): any[] {
+    const key = _.get(config, 'key', '')
+    const { valueToLabel } = this.getOptionAliases(key)
+
+    if (Array.isArray(apiValues) && apiValues.length > 0) {
+      return apiValues.map((item: any) => {
+        const value = _.get(item, 'value', '')  // API returns 'value', component expects 'name'
+        // Show the form's label for it, when it gives one. Array path, so a facet value with a
+        // dot in it ("Dr. Ambedkar…") is read as one key instead of a nested lookup.
+        const name = _.get(valueToLabel, [_.toLower(value)], value)
+        // Remember what the API called it, so applying this option sends that string back verbatim
+        _.set(this.facetValuesByLabel, [key, name], value)
+        return {
+          name,
+          count: _.get(item, 'count', 0),
+        }
+      })
+    }
+
+    // The config's own options are placeholders for a facet the API returned nothing for, so they
+    // are off unless the form opts in with `showOptionsWhenEmpty`. An empty facet now means this
+    // provider genuinely has no content of that type, and offering the boxes anyway only leads to
+    // a filter that returns 0 results.
+    if (!allowConfigValues || !_.get(config, 'showOptionsWhenEmpty', false)) {
+      return []
+    }
+
+    const configValues = _.get(config, 'values', _.get(config, 'options', [])) || []
+    return configValues.map((option: any) => (
+      _.isString(option) ? { name: option } : { name: _.get(option, 'name', _.get(option, 'value', '')) }
+    ))
+  }
+
+  /**
+   * Label/value pairs for one filter section, from the form's `options`.
+   *
+   * An option written as `{ "name": "Open", "value": "Free" }` shows "Open" in the sidebar but
+   * filters on the "Free" the search index actually stores - the two vocabularies differ for
+   * courseType and the backend keeps its own. Plain string options need no aliasing: they are
+   * their own label and value, so they are skipped and everything falls through unchanged.
+   */
+  getOptionAliases(key: string): { labelToValue: any, valueToLabel: any } {
+    const filterConfig = _.get(this.apiConfig, 'FilterConfig', [])
+    const config = _.find(filterConfig, (entry: any) => entry.key === key)
+    const options = _.get(config, 'values', _.get(config, 'options', [])) || []
+    const labelToValue: any = {}
+    const valueToLabel: any = {}
+
+    options.forEach((option: any) => {
+      if (_.isString(option)) {
+        return
+      }
+      const label = _.get(option, 'name', '')
+      const value = _.get(option, 'value', '')
+      // Keyed lower case: the index spells courseType "paid" while the form writes it "Paid", and
+      // the sidebar capitalises whatever it is handed, so casing cannot be relied on to match.
+      if (label && value && _.toLower(label) !== _.toLower(value)) {
+        labelToValue[_.toLower(label)] = value
+        valueToLabel[_.toLower(value)] = label
+      }
+    })
+
+    return { labelToValue, valueToLabel }
+  }
+
+  /**
+   * sb-uic-filter-by emits the label it displayed (`option.name`), so selections are translated
+   * back to the values the search API expects before they go out in filterCriteriaMap.
+   */
+  toFilterValues(key: string, labels: any[]): any[] {
+    const { labelToValue } = this.getOptionAliases(key)
+    return (labels || []).map((label: any) => {
+      // What the facet response called this option wins - it is the exact string the index holds.
+      // The form's `value` is the fallback, for options only shown from config (empty facet).
+      const fromApi = _.get(this.facetValuesByLabel, [key, label])
+      return fromApi !== undefined ? fromApi : _.get(labelToValue, [_.toLower(label)], label)
+    })
+  }
+
+  sortFacets(facets: any[]): any[] {
+    return [...facets]
+      .sort((a: any, b: any) => a.order - b.order)
+      .map((facet: any, index: number) => ({ ...facet, order: index + 1 }))
   }
 
   /**
@@ -344,6 +452,117 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
       .join(' ')
       .trim()
+  }
+  onTabChange(tabKey: string) {
+    this.selectedTab = tabKey
+  }
+
+  get isAllContentTab(): boolean {
+    return this.selectedTab === CONTENT_TABS[0].key
+  }
+
+  get displayedItems(): any[] {
+    return this.isAllContentTab ? this.contentItems : (this.enrolledContent[this.selectedTab] || [])
+  }
+
+  get isListLoading(): boolean {
+    return this.isAllContentTab ? this.loading : this.isEnrolmentLoading
+  }
+
+  loadEnrolments() {
+    this.isEnrolmentLoading = true
+    this.enrollSvc
+      .fetchExternalEnrollmentSearch({ partnerId: this.filterProvider, status: ENROLMENT_STATUS_ALL })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(
+        (res: any) => {
+          const courses = _.get(res, 'result.courses', null) || _.get(res, 'courses', []) || []
+          this.splitEnrolmentsByStatus(courses)
+          this.isEnrolmentLoading = false
+        },
+        () => {
+          this.enrolledContent = { completed: [], inProgress: [] }
+          this.enrolmentStatusById = {}
+          this.isEnrolmentLoading = false
+        }
+      )
+  }
+
+  splitEnrolmentsByStatus(courses: any[]) {
+    const completed: any[] = []
+    const inProgress: any[] = []
+    const statusById: { [id: string]: number } = {}
+
+    courses.forEach((course: any) => {
+      const content = this.toEnrolledContent(course)
+      const status = this.getEnrolmentStatus(course)
+      const contentId = this.getContentKey(course.content) || this.getContentKey(course)
+      if (contentId) {
+        statusById[contentId] = status
+      }
+      if (status === ENROLMENT_STATUS_COMPLETED) {
+        completed.push(content)
+      } else {
+        inProgress.push(content)
+      }
+    })
+
+    this.enrolmentStatusById = statusById
+    this.enrolledContent = {
+      completed: this.commonSvc.transformContentsToWidgetsWithoutStrip(completed),
+      inProgress: this.commonSvc.transformContentsToWidgetsWithoutStrip(inProgress),
+    }
+    this.applyEnrolmentStatus()
+  }
+
+  /**
+   * The enrolment and search responses do not agree on which key carries the content id, so try
+   * each one both are known to use. Returns '' when none of them is present.
+   */
+  getContentKey(content: any): string {
+    return _.get(content, 'contentId', '')
+      || _.get(content, 'identifier', '')
+      || _.get(content, 'externalId', '')
+      || ''
+  }
+
+  /**
+   * The search behind 'All Content' knows nothing about enrolment, so copy the status onto each
+   * card's content - that is the field sb-uic-card-landscape reads to draw its status pill.
+   * Called from both loaders because the two run in parallel and either can land first.
+   */
+  applyEnrolmentStatus() {
+    this.contentItems.forEach((item: any) => {
+      const content = _.get(item, 'widgetData.content')
+      if (!content) {
+        return
+      }
+      const contentId = this.getContentKey(content)
+      // Indexed lookup rather than _.get: a content id containing a dot would be read as a path.
+      const status = contentId ? this.enrolmentStatusById[contentId] : undefined
+      if (status !== undefined) {
+        content.completionStatus = status
+      }
+    })
+  }
+  /**
+   * The record's own `status` is the only thing the tabs split on - nothing else on the
+   * enrolment record gets a say.
+   */
+  getEnrolmentStatus(course: any): number {
+    return Number(_.get(course, 'status', 0)) || 0
+  }
+  toEnrolledContent(course: any): any {
+    const content = _.get(course, 'content', {}) || {}
+    return {
+      ...content,
+      completionPercentage: course.completionPercentage || course.completionpercentage || 0,
+      completionStatus: this.getEnrolmentStatus(course),
+      issuedCertificates: course.issuedCertificates || course.issued_certificates || [],
+      lastContentAccessTime: course.lastContentAccessTime || '',
+      enrolledDate: course.enrolledDate || '',
+      batchId: course.batchId || '',
+    }
   }
 
   onFilterApplied(filters: any) {

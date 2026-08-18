@@ -22,7 +22,7 @@
         </div>
         <div class="flex flex-row flex-wrap content-container" *ngIf="tabResults.length > 0" infinite-scroll
             [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle" (scrolled)="onScrollEnd()">
-            <mat-tab-group animationDuration="0ms" class="mat-tab-labels w-full strips-tabgroup" dynamicHeight
+            <mat-tab-group animationDuration="0ms" class="mat-tab-labels w-full strips-tabgroup"
                 (selectedIndexChange)="tabClicked($event, seeAllPageConfig)" [selectedIndex]="dynamicTabIndex">
                 <mat-tab *ngFor="let tab of tabResults; let last = last;" [label]="tab?.label">
                     <ng-template mat-tab-label>
