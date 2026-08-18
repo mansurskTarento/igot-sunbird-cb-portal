@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { environment } from 'src/environments/environment'
 import { Subscription, timer } from 'rxjs'
 import { Storage } from './SCORMAdapter/storage'
-import { AppTocService, ViewerUtilService } from '@sunbird-cb/toc'
+import { AppTocService } from '@sunbird-cb/toc'
 /* tslint:enable */
 import { WidgetContentService } from '@sunbird-cb/toc'
 
@@ -24,6 +24,7 @@ import { WidgetContentService } from '@sunbird-cb/toc'
 export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('mobileOpenInNewTab', { read: ElementRef }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>
   @Input() htmlContent: NsContent.IContent | null = null
+  @Input() isMobileApp = false
   iframeUrl: SafeResourceUrl | null = null
   iframeName = `piframe_${Date.now()}`
   showIframeSupportWarning = false
@@ -55,13 +56,14 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private pollingInterval: any = null
   private mutationObserver: MutationObserver | null = null
   private progressUpdateTimer: any = null
+  private mediaAttachInterval: any = null
+  private lastSlideSignature: string | null = null
+  private storageEventHandler: ((e: StorageEvent) => void) | null = null
 
   ticks = 0
   private timer!: any
-  private progressSent = false
   // Subscription object
   private sub!: Subscription
-  private scormInitSub: Subscription | null = null
   tocConfigSubscription: Subscription | null = null
   tocConfig!: any
 
@@ -78,7 +80,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private loggerSvc: LoggerService,
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
-    private viewerUtilSvc: ViewerUtilService,
   ) {
     (window as any).API = this.scormAdapterService
     // if (window.addEventListener) {
@@ -104,18 +105,17 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     if (this.htmlContent && this.htmlContent.identifier) {
       this.scormAdapterService.contentId = this.htmlContent.identifier
       if (!this.forPreview) {
-        // The adapter is root-provided, so a previous content's restored keys can still be
-        // sitting on it. Clear before loading so they are not merged into this content.
-        this.scormAdapterService.scormLocalStorageData = {}
         // Take snapshot BEFORE iframe loads to capture clean baseline
         this.localStorageSnapshot = this.takeLocalStorageSnapshot()
         this.startLocalStoragePolling()
+        this.startCrossTabStorageListener()
+        console.log('[SCORM] Initial localStorage snapshot taken, keys:', Object.keys(this.localStorageSnapshot).length)
 
         this.scormAdapterService.loadDataV2()
         this.timer = timer(1000, 1000)
         // subscribing to a observable returns a subscription object
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
-        this.scormInitSub = this.scormAdapterService.scormInitialized$.subscribe(value => {
+        this.scormAdapterService.scormInitialized$.subscribe(value => {
           this.playScormContentFlag = value
           // When loadDataV2 restores data, merge into scormData tracking
           if (this.scormAdapterService.scormLocalStorageData
@@ -126,26 +126,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             }
             // Refresh snapshot so restored keys become baseline
             this.localStorageSnapshot = this.takeLocalStorageSnapshot()
-          }
-          // After loadDataV2 completes (LMSPositive/LMSNegative = data loaded from server),
-          // sync the stored completion status into tocSvc.hashmap so the top-bar shows
-          // correct progress on initial load.
-          if (value !== scormLMSStatus.LMSWating && this.htmlContent) {
-            const storedStatus = this.store.getItem('completionStatus')
-            const storedPercentage = this.store.getItem('completionPercentage')
-            const completionStatus = Number(storedStatus) || 0
-            const completionPercentage = Number(storedPercentage) || 0
-            if (completionStatus > 0 && this.tocSvc.hashmap && this.tocSvc.hashmap[this.htmlContent.identifier]) {
-              const currentStatus = this.tocSvc.hashmap[this.htmlContent.identifier]['completionStatus'] || 0
-              if (completionStatus > currentStatus) {
-                this.tocSvc.hashmap[this.htmlContent.identifier]['completionPercentage'] = completionPercentage
-                this.tocSvc.hashmap[this.htmlContent.identifier]['completionStatus'] = completionStatus
-                this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-                if (this.tocSvc.triggerMilestoneLockUpdate) {
-                  this.tocSvc.triggerMilestoneLockUpdate()
-                }
-                this.viewerUtilSvc.markAsCompleteSubject.next(true)
-              }
+            console.log('[SCORM] Merged restored scormData keys:', Object.keys(restoredKeys))
+            // Auto-resume: data is already restored to localStorage, SCORM content will pick it up on load
+            if (value === scormLMSStatus.LMSPositive) {
+              console.log('[SCORM] AUTO_RESUME - saved progress restored, content will resume on load')
             }
           }
         })
@@ -155,20 +139,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   tickerFunc(tick: any) {
     this.ticks = tick
-    // If not previewing and progress not yet sent,
-    // check completion status on every tick and send real-time progress if completed
-    try {
-      if (!this.forPreview && this.htmlContent && !this.progressSent) {
-        const completion = this.calculateCompletionStatus(this.htmlContent)
-        if (completion && completion.status === 2) {
-          console.log('Content completed, sending real-time progress based on threshold - forcefully')
-          this.progressSent = true
-          this.fireRealTimeProgress(this.htmlContent)
-        }
-      }
-    } catch (e) {
-      this.loggerSvc.error('Error while checking/raising real-time progress', e)
-    }
   }
 
   ngOnDestroy() {
@@ -177,27 +147,30 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     // Final SCORM data capture before destroying
     this.diffStorage()
     this.stopLocalStoragePolling()
+    this.stopCrossTabStorageListener()
     if (this.mutationObserver) {
       this.mutationObserver.disconnect()
       this.mutationObserver = null
+    }
+    if (this.mediaAttachInterval) {
+      clearInterval(this.mediaAttachInterval)
+      this.mediaAttachInterval = null
     }
     if (this.progressUpdateTimer) {
       clearTimeout(this.progressUpdateTimer)
       this.progressUpdateTimer = null
     }
     // console.log('this.ticks: ', this.ticks)
-    this.raiseRealTimeProgress()
+    if (this.isMobileApp) {
+      this.emitScormEventToMobile()
+    } else {
+      this.raiseRealTimeProgress()
+    }
     // Clean up flat localStorage keys written by SCORM content
     // tslint:disable-next-line: max-line-length
     const keysToClean = new Set([...Object.keys(this.scormData), ...Object.keys(this.scormAdapterService.scormLocalStorageData)])
     keysToClean.forEach(key => localStorage.removeItem(key))
-    this.scormData = {}
-    this.scormAdapterService.scormLocalStorageData = {}
     // this.store.clearAll()
-    if (this.scormInitSub) {
-      this.scormInitSub.unsubscribe()
-      this.scormInitSub = null
-    }
     if (this.tocConfigSubscription) {
       this.tocConfigSubscription.unsubscribe()
     }
@@ -248,6 +221,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       if (Object.keys(this.scormData).length > 0) {
         progressData.scormData = { ...this.scormData }
       }
+      console.log('[SCORM] fireRealTimeProgress - scormData keys:', Object.keys(this.scormData))
+      console.log('[SCORM] fireRealTimeProgress - progressData:', JSON.stringify(progressData).substring(0, 500))
 
       const req = {
         ...this.realTimeProgressRequest,
@@ -266,11 +241,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
               || this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] < 2)) {
             this.tocSvc.hashmap[htmlContent.identifier]['completionPercentage'] = req.completionPercentage
             this.tocSvc.hashmap[htmlContent.identifier]['completionStatus'] = req.status
+            this.tocSvc.hashmap[htmlContent.identifier]['status'] = req.status
             this.tocSvc.hashmap = { ...this.tocSvc.hashmap }
-            if (this.tocSvc.triggerMilestoneLockUpdate) {
-              this.tocSvc.triggerMilestoneLockUpdate()
-            }
-            this.viewerUtilSvc.markAsCompleteSubject.next(true)
+            // Emit hashmap update so viewer-top-bar and viewer-toc components re-render progress
+            this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
+            console.log('[SCORM] hashmap updated and emitted for', htmlContent.identifier,
+                        'status:', req.status, 'completion:', req.completionPercentage)
           }
         }
         // this.store.clearAll()
@@ -359,20 +335,25 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // }
         // call fireRealTimeProgress func for LMS data and non-LMS data also
         if (!this.forPreview) {
-          this.fireRealTimeProgress(this.oldData)
+          if (this.isMobileApp) {
+            this.emitScormEventToMobile()
+          } else {
+            this.fireRealTimeProgress(this.oldData)
+          }
         }
         // Stop polling and clean up old content's SCORM localStorage keys
         this.diffStorage()
         this.stopLocalStoragePolling()
-        // Tear down the old iframe's observer/debounce so the next content re-attaches its own
+        this.stopCrossTabStorageListener()
         if (this.mutationObserver) {
           this.mutationObserver.disconnect()
           this.mutationObserver = null
         }
-        if (this.progressUpdateTimer) {
-          clearTimeout(this.progressUpdateTimer)
-          this.progressUpdateTimer = null
+        if (this.mediaAttachInterval) {
+          clearInterval(this.mediaAttachInterval)
+          this.mediaAttachInterval = null
         }
+        this.lastSlideSignature = null
         // tslint:disable-next-line: max-line-length
         const keysToClean = new Set([...Object.keys(this.scormData), ...Object.keys(this.scormAdapterService.scormLocalStorageData)])
         keysToClean.forEach(key => localStorage.removeItem(key))
@@ -384,7 +365,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         this.ticks = 0
-        this.progressSent = false
         this.timer = timer(1000, 1000)
         // subscribing to a observable returns a subscription object
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
@@ -394,6 +374,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           // Take fresh snapshot before new content loads
           this.localStorageSnapshot = this.takeLocalStorageSnapshot()
           this.startLocalStoragePolling()
+          this.startCrossTabStorageListener()
           this.scormAdapterService.loadDataV2()
         }
       }
@@ -511,9 +492,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
               } else {
                 this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
                   // tslint:disable-next-line: max-line-length
-                  // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-                  // tslint:disable-next-line: max-line-length
-                  `/abcd/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
+                  this.ensureSameOriginUrl(`${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`)
                 )
               }
             }
@@ -722,15 +701,14 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       if (key === storageKey) { continue }
 
       const isNew = !(key in this.localStorageSnapshot)
-      // Only track changes on keys we already attributed to the SCORM content.
-      // A pre-existing app key (auth token, telemetry buffer, feature flags) that merely
-      // changes during playback must not be captured - it would be uploaded and then
-      // deleted from localStorage during cleanup.
-      const isChanged = !isNew && (key in this.scormData) && current[key] !== this.localStorageSnapshot[key]
+      const isChanged = !isNew && current[key] !== this.localStorageSnapshot[key]
 
       if (isNew || isChanged) {
         this.scormData[key] = current[key]
         hasChanges = true
+        console.log('[SCORM] diffStorage detected:', isNew ? 'NEW' : 'CHANGED', 'key:', key,
+                    'value length:', current[key] ? current[key].length : 0,
+                    'value:', current[key])
       }
     }
 
@@ -739,10 +717,17 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       if (!(key in current) && key in this.scormData) {
         delete this.scormData[key]
         hasChanges = true
+        console.log('[SCORM] diffStorage detected: REMOVED key:', key)
       }
     }
 
     this.localStorageSnapshot = current
+
+    // Log storage size on every poll
+    const sizeKB = (this.getStorageSize() / 1024).toFixed(1)
+    if (hasChanges) {
+      console.log('[SCORM] Storage size:', sizeKB, 'KB, scormData keys:', Object.keys(this.scormData).length)
+    }
     return hasChanges
   }
 
@@ -759,10 +744,141 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private ensureSameOriginUrl(url: string): string {
+    // In dev mode, route through Angular proxy (/abcd/) for same-origin access
+    // This is required for: localStorage sharing, event injection, SCORM API (window.parent.API)
+    // In production, the server (nginx) handles same-origin routing
+    if (!environment.production) {
+      try {
+        if (url.startsWith('http://') || url.startsWith('https://')) {
+          // Full URL → extract path and route through /abcd/ proxy
+          const parsed = new URL(url)
+          const proxyUrl = `/abcd${parsed.pathname}${parsed.search}`
+          console.log('[SCORM] ensureSameOriginUrl: proxying', url.substring(0, 100), '→', proxyUrl.substring(0, 100))
+          return proxyUrl
+        } else if (url.startsWith('/')) {
+          // Relative URL (e.g. /assets/public/content/...) → prefix with /abcd
+          const proxyUrl = `/abcd${url}`
+          console.log('[SCORM] ensureSameOriginUrl: proxying relative', url.substring(0, 100), '→', proxyUrl.substring(0, 100))
+          return proxyUrl
+        }
+      } catch (_e) {
+        console.warn('[SCORM] ensureSameOriginUrl: URL parse error, returning as-is')
+      }
+    }
     return url
   }
 
-  // --- Iframe event injection: capture SCORM state on interaction ---
+  // --- Storage size tracking ---
+
+  private getStorageSize(): number {
+    let total = 0
+    try {
+      for (let i = 0; i < localStorage.length; i += 1) {
+        const key = localStorage.key(i)
+        if (key) {
+          const val = localStorage.getItem(key)
+          total += key.length + (val ? val.length : 0)
+        }
+      }
+    } catch (_e) { /* ignore */ }
+    return total
+  }
+
+  // --- Reload SCORM content ---
+
+  reloadScormContent() {
+    if (!this.htmlContent) { return }
+    console.log('[SCORM] USER_RELOAD - reloading content')
+    // Capture current state before reload
+    this.diffStorage()
+    // Disconnect observers
+    if (this.mutationObserver) {
+      this.mutationObserver.disconnect()
+      this.mutationObserver = null
+    }
+    if (this.mediaAttachInterval) {
+      clearInterval(this.mediaAttachInterval)
+      this.mediaAttachInterval = null
+    }
+    this.lastSlideSignature = null
+    // Re-trigger ngOnChanges by resetting and re-setting the URL
+    this.pageFetchStatus = 'fetching'
+    this.iframeUrl = null
+    // Small delay then re-assign to force iframe reload
+    setTimeout(() => {
+      if (this.htmlContent) {
+        this.ngOnChanges()
+      }
+      // tslint:disable-next-line: align
+    }, 100)
+  }
+
+  // --- Cross-tab localStorage listener ---
+
+  private startCrossTabStorageListener() {
+    this.stopCrossTabStorageListener()
+    this.storageEventHandler = (e: StorageEvent) => {
+      console.log('[SCORM] Cross-tab storage event:', e.key,
+                  e.oldValue === null ? 'ADDED' : (e.newValue === null ? 'REMOVED' : 'CHANGED'))
+      // Refresh snapshot and capture changes
+      this.localStorageSnapshot = this.takeLocalStorageSnapshot()
+      if (e.key && e.newValue !== null) {
+        const storageKey = this.scormAdapterService.contentId
+        if (e.key !== storageKey) {
+          this.scormData[e.key] = e.newValue
+        }
+      } else if (e.key && e.newValue === null && e.key in this.scormData) {
+        delete this.scormData[e.key]
+      }
+      this.debouncedProgressUpdate()
+    }
+    window.addEventListener('storage', this.storageEventHandler)
+  }
+
+  private stopCrossTabStorageListener() {
+    if (this.storageEventHandler) {
+      window.removeEventListener('storage', this.storageEventHandler)
+      this.storageEventHandler = null
+    }
+  }
+
+  // --- Slide signature & title detection (from reference HTML) ---
+
+  private getSlideSignature(doc: Document): string | null {
+    try {
+      const activeSlide = doc.querySelector('[data-slide-id]') ||
+        doc.querySelector('.slide-layer.active') ||
+        doc.querySelector('.slide-container .slide') ||
+        doc.querySelector('.primary-slide')
+      if (activeSlide) {
+        return activeSlide.getAttribute('data-slide-id') ||
+          activeSlide.getAttribute('data-ref') ||
+          activeSlide.id ||
+          activeSlide.className
+      }
+      const slideWrap = doc.querySelector('#slide-window, #preso, [role="main"]')
+      if (slideWrap) {
+        return slideWrap.getAttribute('aria-label') || String(slideWrap.innerHTML.length)
+      }
+    } catch (_e) { /* ignore */ }
+    return null
+  }
+
+  private getSlideTitle(doc: Document): string {
+    try {
+      const titleEl = doc.querySelector('[data-acc-text]') ||
+        doc.querySelector('.slide-title') ||
+        doc.querySelector('[aria-label]')
+      if (titleEl) {
+        return titleEl.getAttribute('data-acc-text') ||
+          titleEl.getAttribute('aria-label') ||
+          (titleEl.textContent || '').trim().substring(0, 100)
+      }
+    } catch (_e) { /* ignore */ }
+    return ''
+  }
+
+  // --- Iframe Event Injection (from reference HTML) ---
 
   private injectEventTrackers(iframe: HTMLIFrameElement) {
     try {
@@ -770,17 +886,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       const iframeWin = iframe.contentWindow
       if (!iframeDoc || !iframeWin) {
         this.loggerSvc.log('Cannot access iframe document (cross-origin?)')
+        console.warn('[SCORM] Cannot access iframe document (cross-origin?)')
         return
       }
 
-      // Click events -> capture state + trigger progress update
+      // ── Click events → capture state + trigger progress update ──
       iframeDoc.addEventListener('click', (_e: any) => {
         this.diffStorage()
         this.debouncedProgressUpdate()
         // tslint:disable-next-line: align
       }, true)
 
-      // Keyboard navigation (arrows, enter, space, tab)
+      // ── Keyboard navigation (arrows, enter, space, tab, escape) ──
       iframeDoc.addEventListener('keydown', (e: KeyboardEvent) => {
         if (['ArrowLeft', 'ArrowRight', 'Enter', ' ', 'Tab', 'Escape'].includes(e.key)) {
           this.diffStorage()
@@ -789,10 +906,17 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // tslint:disable-next-line: align
       }, true)
 
-      // MutationObserver for slide/DOM changes
+      // ── MutationObserver for slide/DOM changes with signature detection ──
       const slideContainer = iframeDoc.getElementById('preso') || iframeDoc.body
       if (slideContainer && !this.mutationObserver) {
+        this.lastSlideSignature = this.getSlideSignature(iframeDoc)
         this.mutationObserver = new MutationObserver(() => {
+          const newSig = this.getSlideSignature(iframeDoc)
+          if (newSig && newSig !== this.lastSlideSignature) {
+            this.lastSlideSignature = newSig
+            const title = this.getSlideTitle(iframeDoc)
+            console.log('[SCORM] SLIDE_CHANGED:', newSig, 'title:', title)
+          }
           this.diffStorage()
           this.debouncedProgressUpdate()
         })
@@ -804,33 +928,102 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         })
       }
 
-      // Intercept iframe localStorage.setItem for immediate capture
+      // ── Media events (audio/video play/pause/ended/seeked) ──
+      const attachMediaListeners = () => {
+        try {
+          const mediaElements = iframeDoc.querySelectorAll('audio, video')
+          mediaElements.forEach((media: Element) => {
+            const mediaEl = media as HTMLMediaElement
+            if ((mediaEl as any).scormTracked) { return }
+            ;(mediaEl as any).scormTracked = true
+            const events = ['play', 'pause', 'ended', 'seeked']
+            events.forEach(evt => {
+              mediaEl.addEventListener(evt, () => {
+                console.log('[SCORM] MEDIA:', mediaEl.tagName, evt.toUpperCase(),
+                            'time:', Math.round(mediaEl.currentTime * 10) / 10,
+                            'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
+                this.diffStorage()
+                this.debouncedProgressUpdate()
+              })
+            })
+          })
+        } catch (_e) { /* ignore */ }
+      }
+      attachMediaListeners()
+      // Re-scan every 2s for dynamically added media elements
+      this.mediaAttachInterval = setInterval(attachMediaListeners, 2000)
+
+      // ── Intercept iframe localStorage.setItem for immediate capture ──
       try {
-        const storageProto = (iframeWin as any).Storage.prototype
-        const origSetItem = storageProto.setItem
+        const origSetItem = (iframeWin as any).Storage.prototype.setItem
         const self = this
-        storageProto.setItem = function (this: any, key: string, value: string) {
+        ;(iframeWin as any).Storage.prototype.setItem = function (this: any, key: string, value: string) {
           origSetItem.call(this, key, value)
           self.diffStorage()
+          self.debouncedProgressUpdate()
         }
       } catch (_e) {
-        // Could not proxy iframe localStorage
+        console.warn('[SCORM] Could not proxy iframe localStorage.setItem')
       }
 
-      // Hash navigation within iframe
+      // ── Intercept iframe localStorage.removeItem ──
+      try {
+        const origRemoveItem = (iframeWin as any).Storage.prototype.removeItem
+        const self = this
+        ;(iframeWin as any).Storage.prototype.removeItem = function (this: any, key: string) {
+          origRemoveItem.call(this, key)
+          self.diffStorage()
+          self.debouncedProgressUpdate()
+        }
+      } catch (_e) {
+        console.warn('[SCORM] Could not proxy iframe localStorage.removeItem')
+      }
+
+      // ── Hash navigation within iframe ──
       iframeWin.addEventListener('hashchange', () => {
+        console.log('[SCORM] HASH_CHANGE in iframe')
         this.diffStorage()
         this.debouncedProgressUpdate()
       })
 
-      // Before unload - final sync
+      // ── Popstate navigation within iframe ──
+      iframeWin.addEventListener('popstate', () => {
+        console.log('[SCORM] POPSTATE in iframe')
+        this.diffStorage()
+        this.debouncedProgressUpdate()
+      })
+
+      // ── Before unload — final sync ──
       iframeWin.addEventListener('beforeunload', () => {
+        console.log('[SCORM] CONTENT_BEFORE_UNLOAD')
         this.diffStorage()
       })
 
+      // ── Unload ──
+      iframeWin.addEventListener('unload', () => {
+        console.log('[SCORM] CONTENT_UNLOAD')
+      })
+
+      // ── Focus / Blur ──
+      iframeWin.addEventListener('focus', () => {
+        console.log('[SCORM] IFRAME_FOCUS')
+      })
+
+      iframeWin.addEventListener('blur', () => {
+        console.log('[SCORM] IFRAME_BLUR')
+      })
+
+      // ── Error tracking ──
+      iframeWin.addEventListener('error', (e: any) => {
+        console.warn('[SCORM] IFRAME_ERROR:', e.message || 'Unknown error',
+                     'file:', e.filename || '', 'line:', e.lineno || '')
+      })
+
       this.loggerSvc.log('SCORM event trackers injected into iframe')
+      console.log('[SCORM] Event trackers successfully injected into iframe')
     } catch (e) {
       this.loggerSvc.log('Could not inject event trackers (likely cross-origin iframe)')
+      console.warn('[SCORM] Could not inject event trackers - iframe is cross-origin.', e)
     }
   }
 
@@ -840,10 +1033,50 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.progressUpdateTimer = setTimeout(() => {
       if (!this.forPreview && this.htmlContent) {
-        this.fireRealTimeProgress(this.htmlContent)
+        if (this.isMobileApp) {
+          this.emitScormEventToMobile()
+        } else {
+          this.fireRealTimeProgress(this.htmlContent)
+        }
       }
       // tslint:disable-next-line: align
     }, 2000)
+  }
+
+  private emitScormEventToMobile() {
+    if (!this.htmlContent) { return }
+    const storeData = this.store.getAll() || {}
+    const completionData = this.calculateCompletionStatus(this.htmlContent)
+    const payload: any = {
+      type: 'SCORM_EVENT',
+      contentId: this.htmlContent.identifier,
+      primaryCategory: this.htmlContent.primaryCategory,
+      mimeType: this.htmlContent.mimeType,
+      status: (completionData && completionData.status) || 0,
+      completionPercentage: (completionData && completionData.completionPercentage) || 0,
+      spentTime: (completionData && completionData.spentTime) || 0,
+      progressDetails: {
+        ...storeData,
+        spentTime: (completionData && completionData.spentTime) || 0,
+      },
+    }
+    if (Object.keys(this.scormData).length > 0) {
+      payload.progressDetails.scormData = { ...this.scormData }
+    }
+    console.log('[SCORM] Emitting event to mobile:', JSON.stringify(payload).substring(0, 500))
+    // Emit via Flutter JavaScript channel if available
+    try {
+      if ((window as any).ScormEventChannel && (window as any).ScormEventChannel.postMessage) {
+        (window as any).ScormEventChannel.postMessage(JSON.stringify(payload))
+      } else if ((window as any).flutter_inappwebview && (window as any).flutter_inappwebview.callHandler) {
+        (window as any).flutter_inappwebview.callHandler('ScormEventHandler', JSON.stringify(payload))
+      } else {
+        // Fallback: use window.postMessage so Flutter webview can intercept
+        window.parent.postMessage(payload, '*')
+      }
+    } catch (e) {
+      console.warn('[SCORM] Failed to emit event to mobile:', e)
+    }
   }
 
   generateUrl(oldUrl: string) {
