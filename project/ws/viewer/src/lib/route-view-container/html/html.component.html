@@ -1,4 +1,5 @@
-<div [ngClass]="{'padding-remove-left': isScormContent && isLtMedium, 'padding-remove-right': isScormContent && isLtMedium}"
+<div
+  [ngClass]="{'padding-remove-left': isScormContent && isLtMedium, 'padding-remove-right': isScormContent && isLtMedium}"
   class="padding-dynamic" *ngIf="htmlData && isNotEmbed">
   <div class="flex flex-around flex-wrapped">
     <div class="w-full">
@@ -6,12 +7,12 @@
         <mat-card class="html-viewer-container" [ngClass]="{'padding-remove': isLtMedium}">
           <mat-card-content>
             <div id="fullScreenContainer" [ngClass]="{ 'video-player': htmlData?.isIframeSupported != 'no' }">
-              <viewer-plugin-html [htmlContent]="htmlData">
+              <viewer-plugin-html [htmlContent]="htmlData" [isMobileApp]="isMobileApp">
               </viewer-plugin-html>
               <!-- <viewer-plugin-html [htmlContent]="htmlData" *ngIf="playScormContentFlag">
               </viewer-plugin-html> -->
-              
-               <!-- <div class="start-scorm-content-container" *ngIf="!playScormContentFlag">
+
+              <!-- <div class="start-scorm-content-container" *ngIf="!playScormContentFlag">
                   <div class="flex flex-around flex-wrapped">
                     <div class="w-full">
                       <div #htmlContainer>
@@ -28,7 +29,7 @@
                                       <mat-icon class="vertical-align-middle">play_circle_filled</mat-icon>
                                       <span class="fw-700">Play</span>
                                     </span>
-                                  </ng-container>                
+                                  </ng-container>
                                 </button>
                               </div>
                             </div>
@@ -68,7 +69,7 @@
   <mat-card #fullScreenContainer [ngClass]="{'padding-remove': isLtMedium}">
     <mat-card-content>
       <div id="fullScreenContainer" [ngClass]="{ 'video-player': htmlData?.isIframeSupported != 'no' }">
-        <viewer-plugin-html [htmlContent]="htmlData"></viewer-plugin-html>
+        <viewer-plugin-html [htmlContent]="htmlData" [isMobileApp]="isMobileApp"></viewer-plugin-html>
 
       </div>
       <div class="flex justify-end mt-3">
@@ -79,4 +80,3 @@
     </mat-card-content>
   </mat-card>
 </div>
-
