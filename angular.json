@@ -234,7 +234,7 @@
             "port": 3000,
             "buildTarget": "fusion:build",
             "prebundle": {
-              "exclude": ["@sunbird-cb/design-system"]
+              "exclude": ["@sunbird-cb/design-system", "@sunbird-cb/consumption"]
             }
           },
           "configurations": {
