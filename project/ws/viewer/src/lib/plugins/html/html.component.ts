@@ -60,10 +60,20 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private lastSlideSignature: string | null = null
   private storageEventHandler: ((e: StorageEvent) => void) | null = null
 
+  // The iframe must not be created until loadDataV2 has settled, otherwise the SCORM
+  // package boots and reads localStorage before the saved keys have been written back
+  // and always starts from the beginning. restoreSettled gates that; iframeUrlPending
+  // records that ngOnChanges computed a URL which is waiting for the gate to open.
+  private restoreSettled = false
+  private iframeUrlPending = false
+  private restoreTimeoutTimer: any = null
+  private readonly restoreTimeoutMs = 10000
+
   ticks = 0
   private timer!: any
   // Subscription object
   private sub!: Subscription
+  private scormInitSub: Subscription | null = null
   tocConfigSubscription: Subscription | null = null
   tocConfig!: any
 
@@ -111,11 +121,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         this.startCrossTabStorageListener()
         console.log('[SCORM] Initial localStorage snapshot taken, keys:', Object.keys(this.localStorageSnapshot).length)
 
+        this.beginRestore()
         this.scormAdapterService.loadDataV2()
         this.timer = timer(1000, 1000)
         // subscribing to a observable returns a subscription object
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
-        this.scormAdapterService.scormInitialized$.subscribe(value => {
+        this.scormInitSub = this.scormAdapterService.scormInitialized$.subscribe(value => {
           this.playScormContentFlag = value
           // When loadDataV2 restores data, merge into scormData tracking
           if (this.scormAdapterService.scormLocalStorageData
@@ -132,8 +143,43 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
               console.log('[SCORM] AUTO_RESUME - saved progress restored, content will resume on load')
             }
           }
+          // Restore is done (or known to have found nothing) - only now may the iframe load.
+          this.settleRestore()
         })
+        return
       }
+    }
+    // Preview mode and content without an identifier never read progress from the
+    // server, so there is nothing to wait for - let the iframe load straight away.
+    this.settleRestore()
+  }
+
+  // --- Iframe restore gate ---
+
+  private beginRestore() {
+    this.restoreSettled = false
+    if (this.restoreTimeoutTimer) {
+      clearTimeout(this.restoreTimeoutTimer)
+    }
+    // Safety net: a request that never completes must not leave the player blank.
+    this.restoreTimeoutTimer = setTimeout(() => {
+      if (!this.restoreSettled) {
+        console.warn('[SCORM] Restore did not settle within', this.restoreTimeoutMs,
+                     'ms - loading content without resume data')
+        this.settleRestore()
+      }
+      // tslint:disable-next-line: align
+    }, this.restoreTimeoutMs)
+  }
+
+  private settleRestore() {
+    this.restoreSettled = true
+    if (this.restoreTimeoutTimer) {
+      clearTimeout(this.restoreTimeoutTimer)
+      this.restoreTimeoutTimer = null
+    }
+    if (this.iframeUrlPending) {
+      this.applyIframeUrl()
     }
   }
 
@@ -160,6 +206,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       clearTimeout(this.progressUpdateTimer)
       this.progressUpdateTimer = null
     }
+    if (this.restoreTimeoutTimer) {
+      clearTimeout(this.restoreTimeoutTimer)
+      this.restoreTimeoutTimer = null
+    }
     // console.log('this.ticks: ', this.ticks)
     if (this.isMobileApp) {
       this.emitScormEventToMobile()
@@ -170,7 +220,15 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     // tslint:disable-next-line: max-line-length
     const keysToClean = new Set([...Object.keys(this.scormData), ...Object.keys(this.scormAdapterService.scormLocalStorageData)])
     keysToClean.forEach(key => localStorage.removeItem(key))
+    // Reset the tracking maps too. scormAdapterService is providedIn: 'root', so leaving
+    // these populated lets this content's keys be merged into the next one that is opened.
+    this.scormData = {}
+    this.scormAdapterService.scormLocalStorageData = {}
     // this.store.clearAll()
+    if (this.scormInitSub) {
+      this.scormInitSub.unsubscribe()
+      this.scormInitSub = null
+    }
     if (this.tocConfigSubscription) {
       this.tocConfigSubscription.unsubscribe()
     }
@@ -330,6 +388,14 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       this.oldData = this.htmlContent
     } else {
       if (this.htmlContent && (this.oldData.identifier !== this.htmlContent.identifier)) {
+        // Capture what the content wrote since the last poll BEFORE building the upload.
+        // The final bookmark/suspend write happens as Next is clicked, so diffing after
+        // fireRealTimeProgress would drop exactly the position the user left off at.
+        this.diffStorage()
+        // Tear the old iframe down now. The next URL is only applied once that content's
+        // restore has settled, and until then the old package would keep running and
+        // writing localStorage over the new content's baseline snapshot.
+        this.iframeUrl = null
         // if (!this.store.getItem('Initialized')) {
         //   this.fireRealTimeProgress(this.oldData)
         // }
@@ -342,7 +408,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
         // Stop polling and clean up old content's SCORM localStorage keys
-        this.diffStorage()
         this.stopLocalStoragePolling()
         this.stopCrossTabStorageListener()
         if (this.mutationObserver) {
@@ -375,6 +440,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           this.localStorageSnapshot = this.takeLocalStorageSnapshot()
           this.startLocalStoragePolling()
           this.startCrossTabStorageListener()
+          this.beginRestore()
           this.scormAdapterService.loadDataV2()
         }
       }
@@ -453,6 +519,42 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       //   a.click()
       //   URL.revokeObjectURL(objectUrl)
       // })
+      // Do not build the iframe URL yet. The SCORM package reads its resume keys from
+      // localStorage while it boots, so the iframe may only be created once loadDataV2
+      // has written them back. settleRestore() calls applyIframeUrl() when that happens.
+      this.iframeUrlPending = true
+      if (this.restoreSettled) {
+        this.applyIframeUrl()
+      }
+      // testing purpose only
+      // setTimeout(
+      //   () => {
+      //     const ifram = document.getElementsByClassName('html-iframe')[0]
+      //     if (ifram && this.htmlContent) {
+      //       _.set(ifram, 'src',
+      //         `${this.htmlContent.artifactUrl}?timestamp='${new Date().getTime()}`)
+      //     }
+      //   },
+      //   1000,
+      // )
+    } else if (this.htmlContent && this.htmlContent.artifactUrl === '') {
+      this.iframeUrl = null
+      this.pageFetchStatus = 'artifactUrlMissing'
+    } else {
+      this.iframeUrl = null
+      this.pageFetchStatus = 'error'
+    }
+  }
+
+  // Lifted verbatim out of ngOnChanges so the URL can be assigned after the restore
+  // settles instead of during change detection. The block below keeps its original
+  // nesting on purpose, to stay diffable against the pre-fix version.
+  private applyIframeUrl() {
+    this.iframeUrlPending = false
+    if (!this.htmlContent || !this.htmlContent.artifactUrl) {
+      return
+    }
+    {
       if (this.htmlContent &&
         this.htmlContent.mimeType !== 'text/x-url' &&
         this.htmlContent.mimeType !== 'video/x-youtube') {
@@ -523,23 +625,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         )
         // this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.htmlContent.artifactUrl)
       }
-      // testing purpose only
-      // setTimeout(
-      //   () => {
-      //     const ifram = document.getElementsByClassName('html-iframe')[0]
-      //     if (ifram && this.htmlContent) {
-      //       _.set(ifram, 'src',
-      //         `${this.htmlContent.artifactUrl}?timestamp='${new Date().getTime()}`)
-      //     }
-      //   },
-      //   1000,
-      // )
-    } else if (this.htmlContent && this.htmlContent.artifactUrl === '') {
-      this.iframeUrl = null
-      this.pageFetchStatus = 'artifactUrlMissing'
-    } else {
-      this.iframeUrl = null
-      this.pageFetchStatus = 'error'
     }
   }
 
@@ -701,7 +786,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       if (key === storageKey) { continue }
 
       const isNew = !(key in this.localStorageSnapshot)
-      const isChanged = !isNew && current[key] !== this.localStorageSnapshot[key]
+      // Only track changes on keys already attributed to the SCORM content. A pre-existing
+      // app key (auth token, telemetry buffer, feature flags) that merely changes during
+      // playback must not be captured - it would be uploaded and then deleted from
+      // localStorage by the cleanup in ngOnDestroy / ngOnChanges.
+      const isChanged = !isNew && (key in this.scormData) && current[key] !== this.localStorageSnapshot[key]
 
       if (isNew || isChanged) {
         this.scormData[key] = current[key]
