@@ -19,6 +19,7 @@ import { MatInputModule } from '@angular/material/input'
 import { MatButtonModule } from '@angular/material/button'
 import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
+import { MatTooltipModule } from '@angular/material/tooltip'
 import { MatChipsModule } from '@angular/material/chips'
 import { MatDividerModule } from '@angular/material/divider'
 import { TranslateModule } from '@ngx-translate/core'
@@ -64,6 +65,7 @@ interface SearchCategoryItem {
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
+    MatTooltipModule,
     MatChipsModule,
     MatDividerModule,
     MatListModule

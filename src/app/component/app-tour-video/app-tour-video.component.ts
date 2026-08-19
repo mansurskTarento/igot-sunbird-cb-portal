@@ -4,15 +4,16 @@ import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { environment } from 'src/environments/environment'
 
 @Component({
-    selector: 'ws-app-tour-video',
-    templateUrl: './app-tour-video.component.html',
-    styleUrls: ['./app-tour-video.component.scss'],
-    standalone: false
+  selector: 'ws-app-tour-video',
+  templateUrl: './app-tour-video.component.html',
+  styleUrls: ['./app-tour-video.component.scss'],
+  standalone: false
 })
 export class AppTourVideoComponent implements OnInit, OnDestroy {
   @Input() showVideoTour: any
   @Input() isMobile: any
   @Input() videoProgressTime = 0
+  @Input() showOnlyIgotKarmayogi = false
   @Output() emitedValue = new EventEmitter<string>()
   @Output() videoPlayed = new EventEmitter()
   videoPlayedProgress = true
@@ -36,7 +37,7 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.environment = environment
-    this.videoUrl = `https://${this.environment.sitePath}/assets/public/content/guide-videos/Website_Video.mp4`
+    this.videoUrl = `https://${this.environment.sitePath}/assets/public/content/guide-videos/Website_Video_v1.mp4`
     try {
       if (this.videoProgressTime > 0) {
         this.videoPlayedProgress = false

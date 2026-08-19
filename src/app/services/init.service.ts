@@ -31,7 +31,6 @@ import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
-declare const smartech: any
 /* tslint:enable */
 
 @Injectable({
@@ -248,7 +247,7 @@ export class InitService {
         window.location.href.includes('/viewer') || window.location.href.includes('/helpcenter')
       )
     ) {
-      this.logFirstLogin()
+      await this.logFirstLogin()
     }
     return true
   }
@@ -457,10 +456,7 @@ export class InitService {
           this.netCoreService.getOrgReadData(userProfile.rootOrgId).subscribe(orgData => {
             this.configSvc.orgReadData = orgData
             if (!(orgData && orgData['netcoreDisabled'])) {
-              smartech('create', 'ADGMOT35CHFLVDHBJNIG50K968HALK3BMP0VCCVVE0PODR835I00', 'tin')
-              smartech('register', 'b632681d782c843e187fd5447c97ed4d')
-              smartech('identify', '')
-              smartech('dispatch', 1, {})
+              this.netCoreService.bootstrapNetcore()
               if (this.configSvc.netcoreConfig && this.configSvc.netcoreConfig.netcoreWebConfig
                 && this.configSvc.netcoreConfig.netcoreWebConfig.isActive
               ) {
@@ -524,19 +520,22 @@ export class InitService {
     localStorage.setItem('telemetrySessionId', uuid())
   }
 
-  private logFirstLogin() {
+  private async logFirstLogin(): Promise<void> {
     const firstLoginUrl = this.domainConfSvc.getApiUrl('user', 'firstLogin', '/apis/proxies/v8/login/entry')
     if (!firstLoginUrl) {
       console.warn('First login API is disabled')
       return
     }
-    if (!localStorage.getItem('firsLogin')) {
-      this.http.get<any>(firstLoginUrl).pipe(map((res: any) => {
-        if (res && res.result) {
-          this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
-          localStorage.setItem('firsLogin', 'true')
-        }
-      })).toPromise()
+    const isFirstEverLogin = !localStorage.getItem('firsLogin')
+    try {
+      const res: any = await firstValueFrom(this.http.get<any>(firstLoginUrl))
+      if (res && res.result && isFirstEverLogin) {
+        this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
+        localStorage.setItem('firsLogin', 'true')
+      }
+    } catch (e) {
+      // non-fatal: the greeting falls back to "Welcome Back"
+      console.error('InitService: login/entry failed', e)
     }
   }
   /**
