@@ -303,27 +303,27 @@ body {
   margin-right: 12px;
   display: flex;
   width: 38px;
-    height: 38px;
-    justify-content: center;
-    align-items: center;
+  height: 38px;
+  justify-content: center;
+  align-items: center;
 }
 
 .badge-progress-item .badge-name {
   flex: 1;
   color: #333;
-    /* Paragraph 2/Regular */
-    font-family: Inter;
-    font-size: 14px;
-    font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-      margin-bottom: 0px !important;
+  /* Paragraph 2/Regular */
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  margin-bottom: 0px !important;
 }
 
 .badge-progress-item .continue-btn {
   border-radius: 75px;
-    border: 1px solid var(--Primary-KB-Primary-Light, #1B4CA1);
-    color: #1B4CA1 !important;
+  border: 1px solid var(--Primary-KB-Primary-Light, #1B4CA1);
+  color: #1B4CA1 !important;
   border-radius: 20px;
   padding: 6px 16px;
   font-size: 12px;
@@ -335,15 +335,15 @@ body {
   margin-right: 16px;
   white-space: nowrap;
   background: white;
-    color: var(--Primary-KB-Primary-Light, #1B4CA1);
-    text-align: center;
+  color: var(--Primary-KB-Primary-Light, #1B4CA1);
+  text-align: center;
 
-    /* Button */
-    font-family: Lato;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: normal;
+  /* Button */
+  font-family: Lato;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .badge-progress-item .continue-btn::before {
@@ -398,12 +398,12 @@ body {
   flex-direction: column;
   align-items: center;
   padding-bottom: 8px;
-    gap: 10px;
+  gap: 10px;
 }
 
 .badge-card .badge-img-wrap {
   // width: 84px;
-    // height: 84px;
+  // height: 84px;
   margin-top: 8px;
   border-radius: 4px;
   overflow: hidden;
@@ -435,9 +435,9 @@ body {
 .badge-card .badge-label .blue {
   color: #1B4CA1;
   display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .badge-card .badge-label .gray {
@@ -456,13 +456,6 @@ body {
   cursor: pointer;
 }
 
-.badge-card .badge-menu::after {
-  content: '⋮';
-  font-size: 16px;
-  color: rgba(0, 0, 0, 0.5);
-  font-weight: 700;
-}
-
 /* Glow effects on badge images */
 // .glow-red {
 //   box-shadow: 0 0 30px #CB3B28 inset;
@@ -474,8 +467,9 @@ body {
 .course-name {
   font-size: 12px !important;
   color: gray;
-    font-style: italic;
+  font-style: italic;
 }
+
 .earnedcourseName {
   margin-bottom: 0px !important;
   color: gray;
@@ -493,6 +487,7 @@ body {
 .mat-mdc-menu-item {
   background-color: white !important;
 }
+
 .badge-title {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -522,6 +517,7 @@ body {
   word-break: break-word;
   word-wrap: break-word;
 }
+
 .info-icon {
   font-size: 14px;
   color: #888;
