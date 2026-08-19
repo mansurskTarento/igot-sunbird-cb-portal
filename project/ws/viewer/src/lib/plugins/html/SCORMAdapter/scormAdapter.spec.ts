@@ -11,7 +11,7 @@ import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http'
 import { ActivatedRoute } from '@angular/router'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-import { SCORMAdapterService, scormLMSStatus } from './scormAdapter'
+import { SCORMAdapterService, scormLMSStatus, isScormCmiKey } from './scormAdapter'
 import { Storage } from './storage'
 
 const PROGRESS_UPDATE_URL = '/apis/proxies/v8/content-progres'
@@ -103,6 +103,18 @@ describe('SCORMAdapterService', () => {
       service.contentId = CONTENT_A
       expect(store.getItem('cmi.suspend_data')).toBe('A-position')
     })
+  })
+
+  describe('isScormCmiKey', () => {
+    it.each(['cmi.core.exit', 'cmi.suspend_data', 'cmi.core.lesson_status', 'Initialized', 'errors'])(
+      'classifies "%s" as SCORM data model state', key => {
+        expect(isScormCmiKey(key)).toBe(true)
+      })
+
+    it.each(['spentTime', 'completionStatus', 'completionPercentage', 'rise-bookmark', 'progress-map'])(
+      'classifies "%s" as not SCORM data model state', key => {
+        expect(isScormCmiKey(key)).toBe(false)
+      })
   })
 
   describe('getStatus', () => {
@@ -454,6 +466,123 @@ describe('SCORMAdapterService', () => {
 
       expect(localStorage.getItem('a-bookmark')).toBeNull()
       expect(emitted).toEqual([])
+    })
+
+    it('nests CMI under scormData on restore, keeping bookkeeping flat (current shape)', () => {
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        spentTime: 686,
+        scormData: {
+          Initialized: true,
+          errors: '[]',
+          'cmi.core.exit': 'suspend',
+          'cmi.core.lesson_location': 'index.html#/lessons/NEaGucirDA',
+          'cmi.suspend_data': '{"v":2,"d":[123]}',
+          'cmi.core.session_time': '0000:48:40.0',
+        },
+      }, 2, 100))
+
+      // Everything lands in the CMI store, so LMSGetValue keeps working unchanged.
+      expect(store.getItem('cmi.suspend_data')).toBe('{"v":2,"d":[123]}')
+      expect(store.getItem('cmi.core.exit')).toBe('suspend')
+      expect(store.getItem('cmi.core.lesson_location')).toBe('index.html#/lessons/NEaGucirDA')
+      expect(store.getItem('spentTime')).toBe(686)
+      expect(store.getItem('completionStatus')).toBe(2)
+      expect(store.getItem('completionPercentage')).toBe(100)
+      // scormData must not leak into the store as a nested object
+      expect((store.getAll() as any).scormData).toBeUndefined()
+      // CMI is not the package's own localStorage - nothing should be written flat
+      expect(localStorage.getItem('cmi.suspend_data')).toBeNull()
+      expect(service.scormLocalStorageData).toEqual({})
+    })
+
+    it('restores scormLocalStorage into flat localStorage, separately from CMI', () => {
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        spentTime: 12,
+        scormData: { 'cmi.suspend_data': 'slide=4' },
+        scormLocalStorage: { 'rise-bookmark': '4', 'quiz-state': '{"q1":true}' },
+      }))
+
+      expect(store.getItem('cmi.suspend_data')).toBe('slide=4')
+      expect(localStorage.getItem('rise-bookmark')).toBe('4')
+      expect(localStorage.getItem('quiz-state')).toBe('{"q1":true}')
+      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '4', 'quiz-state': '{"q1":true}' })
+      // and the package keys must not pollute the CMI store
+      expect(store.getItem('rise-bookmark')).toBeUndefined()
+    })
+
+    // --- Backward compatibility with records written before CMI was nested ---
+
+    it('LEGACY: restores cmi.* entries written flat on progressdetails', () => {
+      // This is the exact shape the player used to upload.
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        spentTime: 686,
+        completionStatus: 1,
+        completionPercentage: 0,
+        Initialized: true,
+        errors: '[]',
+        'cmi.core.exit': 'suspend',
+        'cmi.core.lesson_location': 'index.html#/lessons/NEaGucirDA',
+        'cmi.suspend_data': '{"v":2,"d":[123]}',
+        'cmi.core.session_time': '0000:48:40.0',
+      }, 2, 100))
+
+      expect(store.getItem('cmi.suspend_data')).toBe('{"v":2,"d":[123]}')
+      expect(store.getItem('cmi.core.exit')).toBe('suspend')
+      expect(store.getItem('spentTime')).toBe(686)
+      // top-level status/percentage win over the stale values inside progressdetails
+      expect(store.getItem('completionStatus')).toBe(2)
+      expect(store.getItem('completionPercentage')).toBe(100)
+    })
+
+    it('LEGACY: treats non-CMI keys inside scormData as the package localStorage keys', () => {
+      // Before the split, scormData was the bucket for a package's own localStorage.
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        spentTime: 30,
+        scormData: { 'rise-bookmark': '7', 'progress-map': '{"a":1}' },
+      }))
+
+      expect(localStorage.getItem('rise-bookmark')).toBe('7')
+      expect(localStorage.getItem('progress-map')).toBe('{"a":1}')
+      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '7', 'progress-map': '{"a":1}' })
+    })
+
+    it('LEGACY: splits a mixed scormData bucket by key, CMI to the store and the rest flat', () => {
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        scormData: { 'cmi.suspend_data': 'slide=9', 'rise-bookmark': '9' },
+      }))
+
+      expect(store.getItem('cmi.suspend_data')).toBe('slide=9')
+      expect(localStorage.getItem('rise-bookmark')).toBe('9')
+      expect(localStorage.getItem('cmi.suspend_data')).toBeNull()
+      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '9' })
+    })
+
+    it('emits LMSPositive when only cmi.* data is present and Initialized is absent', () => {
+      const emitted: scormLMSStatus[] = []
+      service.scormInitialized$.subscribe(v => emitted.push(v))
+
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
+        scormData: { 'cmi.suspend_data': 'slide=2' },
+      }))
+
+      expect(emitted).toEqual([scormLMSStatus.LMSPositive])
+      expect(service._isInitialized()).toBe(true)
+    })
+
+    it('still emits LMSNegative when there is neither CMI nor package storage', () => {
+      const emitted: scormLMSStatus[] = []
+      service.scormInitialized$.subscribe(v => emitted.push(v))
+
+      service.loadDataV2()
+      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, { spentTime: 8 }))
+
+      expect(emitted).toEqual([scormLMSStatus.LMSNegative])
     })
 
     it('cancels an in-flight read when the next content starts loading', () => {

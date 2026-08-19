@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, LoggerService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../../../../../../src/app/services/mobile-apps.service'
-import { SCORMAdapterService, scormLMSStatus } from './SCORMAdapter/scormAdapter'
+import { SCORMAdapterService, scormLMSStatus, isScormCmiKey } from './SCORMAdapter/scormAdapter'
 /* tslint:disable */
 import _ from 'lodash'
 import { environment } from 'src/environments/environment'
@@ -279,16 +279,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       const completionData = this.calculateCompletionStatus(htmlContent)
 
       // Always include ALL available data in progressDetails
-      const storeData = this.store.getAll() || {}
-      const progressData: any = {
-        ...storeData,
-        spentTime: (completionData && completionData.spentTime) || 0,
-      }
-      // Include polled localStorage data (SCORM content's own writes)
-      if (Object.keys(this.scormData).length > 0) {
-        progressData.scormData = { ...this.scormData }
-      }
-      console.log('[SCORM] fireRealTimeProgress - scormData keys:', Object.keys(this.scormData))
+      const progressData = this.buildProgressDetails(completionData)
       console.log('[SCORM] fireRealTimeProgress - progressData:', JSON.stringify(progressData).substring(0, 500))
 
       const req = {
@@ -327,6 +318,33 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       )
     }
     // return
+  }
+
+  /**
+   * Builds the progressdetails payload. SCORM data model entries are nested under
+   * scormData and keys a package wrote into localStorage itself under scormLocalStorage,
+   * so a consumer can tell those apart from the player's own bookkeeping instead of
+   * finding cmi.* entries mixed in flat alongside spentTime.
+   */
+  private buildProgressDetails(completionData: any): any {
+    const storeData: any = this.store.getAll() || {}
+    const progressData: any = {}
+    const scormCmi: any = {}
+    for (const key of Object.keys(storeData)) {
+      if (isScormCmiKey(key)) {
+        scormCmi[key] = storeData[key]
+      } else {
+        progressData[key] = storeData[key]
+      }
+    }
+    progressData.spentTime = (completionData && completionData.spentTime) || 0
+    if (Object.keys(scormCmi).length > 0) {
+      progressData.scormData = scormCmi
+    }
+    if (Object.keys(this.scormData).length > 0) {
+      progressData.scormLocalStorage = { ...this.scormData }
+    }
+    return progressData
   }
 
   calculateCompletionStatus(htmlContent: any) {
@@ -1230,7 +1248,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   private emitScormEventToMobile() {
     if (!this.htmlContent) { return }
-    const storeData = this.store.getAll() || {}
     const completionData = this.calculateCompletionStatus(this.htmlContent)
     const payload: any = {
       type: 'SCORM_EVENT',
@@ -1240,13 +1257,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       status: (completionData && completionData.status) || 0,
       completionPercentage: (completionData && completionData.completionPercentage) || 0,
       spentTime: (completionData && completionData.spentTime) || 0,
-      progressDetails: {
-        ...storeData,
-        spentTime: (completionData && completionData.spentTime) || 0,
-      },
-    }
-    if (Object.keys(this.scormData).length > 0) {
-      payload.progressDetails.scormData = { ...this.scormData }
+      progressDetails: this.buildProgressDetails(completionData),
     }
     console.log('[SCORM] Emitting event to mobile:', JSON.stringify(payload).substring(0, 500))
     // Emit via Flutter JavaScript channel if available

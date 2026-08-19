@@ -22,6 +22,24 @@ export enum scormLMSStatus {
   LMSPositive = 'LMSPositive',
   LMSWating = 'LMSWating',
 }
+
+/**
+ * progressdetails carries two unrelated things, so they are kept in separate buckets:
+ *
+ *   progressdetails: {
+ *     spentTime, completionStatus, completionPercentage,   // the player's own bookkeeping
+ *     scormData:          { 'cmi.*', Initialized, errors } // SCORM data model (the API path)
+ *     scormLocalStorage:  { ... }                          // keys a package wrote itself
+ *   }
+ *
+ * Older records wrote the cmi.* entries flat onto progressdetails and used scormData for
+ * the package's own localStorage keys, so the read path classifies by key name to accept
+ * both. SCORM 1.2 defines every data model element as 'cmi.'-prefixed, which makes that
+ * classification reliable rather than a guess.
+ */
+export function isScormCmiKey(key: string): boolean {
+  return key.startsWith('cmi.') || key === 'Initialized' || key === 'errors'
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -225,32 +243,53 @@ export class SCORMAdapterService {
           for (const content of data.result.contentList) {
             if (content.contentId === this.contentId && content.progressdetails) {
               found = true
-              const data = content.progressdetails
-              // Restore ALL fields from progressdetails (not just hardcoded CMI fields)
-              const scormDataToRestore = data.scormData
-              const loadDatas: any = {
-                ...data,
-                completionStatus: content.status,
-                completionPercentage: content.completionPercentage,
-              }
-              // Remove scormData from store object (it goes to flat localStorage)
-              delete loadDatas.scormData
-              this.store.setAll(loadDatas as IScromData)
+              const details: any = content.progressdetails
+              // The CMI store gets the bookkeeping fields plus every cmi.* entry, wherever
+              // they were written. Package-owned localStorage keys go to flat localStorage.
+              const cmi: any = {}
+              const flat: Record<string, any> = {}
 
-              // Restore flat localStorage keys from scormData (localStorage polling approach)
-              if (scormDataToRestore && typeof scormDataToRestore === 'object') {
-                this.scormLocalStorageData = { ...scormDataToRestore }
+              for (const key of Object.keys(details)) {
+                if (key === 'scormData' || key === 'scormLocalStorage') { continue }
+                // Bookkeeping (spentTime, ...) and, on legacy records, flat cmi.* entries.
+                cmi[key] = details[key]
+              }
+              const nested = details.scormData
+              if (nested && typeof nested === 'object') {
+                for (const key of Object.keys(nested)) {
+                  // Current records nest CMI here; legacy records nested the package's own
+                  // localStorage keys here instead.
+                  if (isScormCmiKey(key)) {
+                    cmi[key] = nested[key]
+                  } else {
+                    flat[key] = nested[key]
+                  }
+                }
+              }
+              if (details.scormLocalStorage && typeof details.scormLocalStorage === 'object') {
+                Object.assign(flat, details.scormLocalStorage)
+              }
+
+              cmi.completionStatus = content.status
+              cmi.completionPercentage = content.completionPercentage
+              this.store.setAll(cmi as IScromData)
+
+              if (Object.keys(flat).length > 0) {
+                this.scormLocalStorageData = { ...flat }
                 Object.keys(this.scormLocalStorageData).forEach(key => {
                   const val = this.scormLocalStorageData[key]
                   window.localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val))
                 })
-                console.log('[SCORM] loadDataV2 - restored', Object.keys(this.scormLocalStorageData).length,
-                  'localStorage keys for', this.contentId, Object.keys(this.scormLocalStorageData))
+                console.log('[SCORM] loadDataV2 - restored', Object.keys(flat).length,
+                  'localStorage keys for', this.contentId, Object.keys(flat))
+              }
+              const cmiKeys = Object.keys(cmi).filter(k => k.startsWith('cmi.'))
+              if (cmiKeys.length) {
+                console.log('[SCORM] loadDataV2 - restored CMI for', this.contentId, cmiKeys)
               }
 
               // Determine initialization status
-              const hasScormData = scormDataToRestore && typeof scormDataToRestore === 'object' && Object.keys(scormDataToRestore).length > 0
-              if (data["Initialized"] || hasScormData) {
+              if (cmi['Initialized'] || cmiKeys.length > 0 || Object.keys(flat).length > 0) {
                 this.store.setItem('Initialized', true)
                 this.updateScormInitialized(scormLMSStatus.LMSPositive)
               } else {
