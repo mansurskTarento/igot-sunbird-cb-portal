@@ -8,6 +8,10 @@
     background-color: #fff;
 }
 
+.download-app-dialog.is-dialog {
+    position: relative;
+}
+
 .download-app {
     display: flex;
     flex-direction: row;
@@ -24,12 +28,20 @@
     height: 344px;
     padding-left: 48px;
     padding-top: 24px;
+    padding-bottom: 50px;
 }
 
 .app-store-button {
     display: flex;
     flex-direction: row;
     margin-top: 50px;
+}
+
+.app-store-button a {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff !important;
+    background-color: #fff !important;
 }
 
 .download-app .left-side {
@@ -85,7 +97,7 @@
 .main-heading {
     color: rgb(27, 76, 161);
     font-size: 36px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'nato-sans', sans-serif;
     font-weight: 600;
     line-height: 1.2;
 }
@@ -93,7 +105,7 @@
 .sub-heading {
     color: rgb(239, 149, 30);
     font-size: 36px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: 'nato-sans', sans-serif;
     font-weight: 600;
 }
 
@@ -109,32 +121,36 @@
 ::ng-deep .mat-dialog-container {
     border-radius: 8px !important;
 }
+::ng-deep .cdk-overlay-container:has(.download-app-dialog) {
+    z-index: 10002;
+    .mat-mdc-dialog-container,
+    .mdc-dialog__surface {
+        border-radius: 16px !important;
+    }
+    .mdc-dialog__surface {
+        background-color: #fff !important;
+    }
+}
 
 .dialog-close {
-    position: fixed;
-    top: 10px;
-    right: 10px;
-    // z-index: 10001;
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-permanent-black-heading);
     cursor: pointer;
+    &:focus {
+        outline: none;
+    }
 }
-
-.decline-icon {
-    display: block;
-    width: 24px;
-    height: 24px;
-    background-color: var(--text-bandw-black-body);
-    mask-size: contain;
-    mask-repeat: no-repeat;
-    mask-position: center;
-    -webkit-mask-size: contain;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center;
-}
-
-// .dialog-close img {
-//     width: 40px;
-//     height: 40px;
-// }
 
 @media (max-width : 1200px) {
     .right-side {
@@ -161,14 +177,14 @@
     .main-heading {
         color: rgb(27, 76, 161);
         font-size: 24px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'nato-sans', sans-serif;
         font-weight: 600;
     }
 
     .sub-heading {
         color: rgb(239, 149, 30);
         font-size: 24px;
-        font-family: 'Montserrat', sans-serif;
+        font-family: 'nato-sans', sans-serif;
         font-weight: 600;
     }
 
@@ -220,5 +236,10 @@
 
     .mobile-download {
         overflow: auto;
+    }
+    .dialog-close {
+        position: absolute;
+        top: 0px;
+        right: 0px;
     }
 }
