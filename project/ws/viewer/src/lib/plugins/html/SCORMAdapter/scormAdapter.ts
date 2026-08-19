@@ -9,7 +9,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 import dayjs from 'dayjs'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-import { Subject } from 'rxjs'
+import { Subject, Subscription } from 'rxjs'
 const API_END_POINTS = {
   SCROM_ADD_UPDTE: '/apis/protected/v8/scrom/add',
   SCROM_FETCH: '/apis/protected/v8/scrom/get',
@@ -30,6 +30,10 @@ export class SCORMAdapterService {
   scormLocalStorageData: Record<string, string> = {}
   public scormInitialized = new Subject<scormLMSStatus>()
   scormInitialized$ = this.scormInitialized.asObservable()
+  // In-flight progress read. Kept so a switch to the next content can cancel the
+  // previous request - otherwise a late response writes the old content's keys
+  // into localStorage after the new content has already been set up.
+  private loadDataSub: Subscription | null = null
 
 
   constructor(
@@ -197,10 +201,25 @@ export class SCORMAdapterService {
         fields: ['progressdetails'],
       },
     }
-    return this.http.post<NsContent.IContinueLearningData>(
+    // Cancel any progress read still in flight for the previous content.
+    if (this.loadDataSub) {
+      this.loadDataSub.unsubscribe()
+      this.loadDataSub = null
+    }
+    // This service is providedIn: 'root', so keys restored for an earlier content are
+    // still on the instance. Drop them before the read so they can never be attributed
+    // to this content when the response carries no scormData of its own.
+    this.scormLocalStorageData = {}
+    const requestedContentId = this.contentId
+    this.loadDataSub = this.http.post<NsContent.IContinueLearningData>(
       `${API_END_POINTS.SCROM_FETCH_PROGRESS}/${req.request.courseId}`, req
     ).subscribe(
       data => {
+        // A response that arrived after the viewer moved on must not touch localStorage.
+        if (requestedContentId !== this.contentId) {
+          console.log('[SCORM] loadDataV2 - stale response for', requestedContentId, 'ignored')
+          return
+        }
         if (data && data.result && data.result.contentList.length) {
           let found = false
           for (const content of data.result.contentList) {
@@ -225,6 +244,8 @@ export class SCORMAdapterService {
                   const val = this.scormLocalStorageData[key]
                   window.localStorage.setItem(key, typeof val === 'string' ? val : JSON.stringify(val))
                 })
+                console.log('[SCORM] loadDataV2 - restored', Object.keys(this.scormLocalStorageData).length,
+                  'localStorage keys for', this.contentId, Object.keys(this.scormLocalStorageData))
               }
 
               // Determine initialization status
@@ -244,7 +265,18 @@ export class SCORMAdapterService {
           this.updateScormInitialized(scormLMSStatus.LMSWating)
         }
       },
+      error => {
+        // Without this the subject never emits, the iframe gate never releases and the
+        // failure is invisible. Emit a terminal status so playback can still proceed.
+        console.error('[SCORM] loadDataV2 - progress read failed for', requestedContentId,
+          'courseId:', req.request.courseId, error)
+        this._setError(101)
+        if (requestedContentId === this.contentId) {
+          this.updateScormInitialized(scormLMSStatus.LMSWating)
+        }
+      },
     )
+    return this.loadDataSub
   }
 
   updateScormInitialized(value: scormLMSStatus) {
