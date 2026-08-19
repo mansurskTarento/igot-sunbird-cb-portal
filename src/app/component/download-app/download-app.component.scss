@@ -130,6 +130,10 @@
     .mdc-dialog__surface {
         background-color: #fff !important;
     }
+
+    .cdk-overlay-backdrop {
+        background: var(--text-system-text-disabled);
+    }
 }
 
 .dialog-close {
