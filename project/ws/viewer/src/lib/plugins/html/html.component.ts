@@ -68,6 +68,15 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private iframeUrlPending = false
   private restoreTimeoutTimer: any = null
   private readonly restoreTimeoutMs = 10000
+  // Must match the route key in proxy/localhost.proxy.json (dev server only).
+  private readonly scormProxyPrefix = '/scorm-content'
+  // packageRoot -> launch file from imsmanifest.xml ('' when the manifest could not be
+  // read, so a failed lookup is not retried on every ngOnChanges for the same content).
+  private launchFileCache: Record<string, string> = {}
+  // Identifier the current iframeUrl was built for. ngOnChanges fires for any input
+  // change, and rebuilding the URL appends a fresh ?timestamp, which reloads the iframe
+  // and restarts the SCORM session from the top - so only build it once per content.
+  private iframeUrlForIdentifier: string | null = null
 
   ticks = 0
   private timer!: any
@@ -396,6 +405,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // restore has settled, and until then the old package would keep running and
         // writing localStorage over the new content's baseline snapshot.
         this.iframeUrl = null
+        this.iframeUrlForIdentifier = null
         // if (!this.store.getItem('Initialized')) {
         //   this.fireRealTimeProgress(this.oldData)
         // }
@@ -539,93 +549,152 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // )
     } else if (this.htmlContent && this.htmlContent.artifactUrl === '') {
       this.iframeUrl = null
+      this.iframeUrlForIdentifier = null
       this.pageFetchStatus = 'artifactUrlMissing'
     } else {
       this.iframeUrl = null
+      this.iframeUrlForIdentifier = null
       this.pageFetchStatus = 'error'
     }
   }
 
-  // Lifted verbatim out of ngOnChanges so the URL can be assigned after the restore
-  // settles instead of during change detection. The block below keeps its original
-  // nesting on purpose, to stay diffable against the pre-fix version.
+  // Resolves the package root + entry file for the content, then assigns iframeUrl.
+  //
+  // The entry file matters: a SCORM package declares its launch file in imsmanifest.xml,
+  // and for Articulate that is scormdriver/indexAPI.html - the file which loads
+  // scormdriver.js, walks window.parent to find window.API and only then hosts
+  // scormcontent/index.html. Pointing the iframe straight at scormcontent/index.html
+  // (which is what initFile often carries) loads the content with no LMS wiring at all,
+  // and the package logs "unable to find the LMS API for ..." for every driver call while
+  // no CMI data is ever written. So the manifest wins over initFile when it can be read.
   private applyIframeUrl() {
     this.iframeUrlPending = false
     if (!this.htmlContent || !this.htmlContent.artifactUrl) {
       return
     }
-    {
-      if (this.htmlContent &&
-        this.htmlContent.mimeType !== 'text/x-url' &&
-        this.htmlContent.mimeType !== 'video/x-youtube') {
-        // if (this.htmlContent.status === 'Live') {
-        //   this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        //     // `https://igot.blob.core.windows.net/content/content/html/${this.htmlContent.identifier}-latest/index.html`
-        // tslint:disable-next-line: max-line-length
-        //     `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-latest/index.html?timestamp='${new Date().getTime()}`
-        //   )
-        // } else {
-        //   this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-        //     // `https://igot.blob.core.windows.net/content/content/html/${this.htmlContent.identifier}-snapshot/index.html`
-        // tslint:disable-next-line: max-line-length
-        //     `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-        //   )
-        // }
-        if (this.htmlContent && this.htmlContent.streamingUrl) {
-          if (this.htmlContent.streamingUrl.includes(environment.azureHost)) {
-            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-              this.ensureSameOriginUrl(this.htmlContent.streamingUrl)
-            )
-          } else {
-            if (this.htmlContent.streamingUrl && this.htmlContent.initFile) {
-              // tslint:disable-next-line:max-line-length
-              const streamUrl = `${this.generateUrl(this.htmlContent.streamingUrl)}/${this.htmlContent.initFile}?timestamp='${new Date().getTime()}`
-              this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-                this.ensureSameOriginUrl(streamUrl)
-              )
-            } else {
-              if (environment.production) {
-                this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-                  // tslint:disable-next-line: max-line-length
-                  // `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-                  // tslint:disable-next-line: max-line-length
-                  `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-                )
-              } else {
-                this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-                  // tslint:disable-next-line: max-line-length
-                  this.ensureSameOriginUrl(`${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`)
-                )
-              }
-            }
+    if (this.iframeUrl && this.iframeUrlForIdentifier === this.htmlContent.identifier) {
+      // Already playing this content. Re-assigning the src would reload the package and
+      // throw away the learner's in-session position, so leave it alone.
+      return
+    }
+    this.iframeUrlForIdentifier = this.htmlContent.identifier
+
+    if (this.htmlContent.mimeType === 'text/x-url' || this.htmlContent.mimeType === 'video/x-youtube') {
+      const artifactUrl = this.htmlContent.artifactUrl
+      setTimeout(
+        () => {
+          if (this.htmlContent && artifactUrl) {
+            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(artifactUrl)
           }
-        } else {
-          if (this.htmlContent.initFile) {
-            // tslint:disable-next-line: max-line-length
-            const initUrl = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/${this.htmlContent.initFile}?timestamp='${new Date().getTime()}`
-            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-              this.ensureSameOriginUrl(initUrl)
-            )
-          } else {
-            // tslint:disable-next-line: max-line-length
-            const fallbackUrl = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot/index.html?timestamp='${new Date().getTime()}`
-            this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(
-              this.ensureSameOriginUrl(fallbackUrl)
-            )
-          }
-        }
+        },
+        1000,
+      )
+      return
+    }
+
+    // tslint:disable-next-line: max-line-length
+    const azureRoot = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot`
+    let packageRoot: string
+    let entryFile: string | null
+
+    if (this.htmlContent.streamingUrl) {
+      if (this.htmlContent.streamingUrl.includes(environment.azureHost)) {
+        packageRoot = this.packageRootFromUrl(this.htmlContent.streamingUrl)
+        entryFile = this.htmlContent.initFile || null
+      } else if (this.htmlContent.initFile) {
+        packageRoot = this.packageRootFromUrl(this.generateUrl(this.htmlContent.streamingUrl))
+        entryFile = this.htmlContent.initFile
       } else {
-        setTimeout(
-          () => {
-            if (this.htmlContent && this.htmlContent.artifactUrl) {
-              this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.htmlContent.artifactUrl)
-            }
-          },
-          1000,
-        )
-        // this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.htmlContent.artifactUrl)
+        packageRoot = azureRoot
+        entryFile = null
+      }
+    } else {
+      packageRoot = azureRoot
+      entryFile = this.htmlContent.initFile || null
+    }
+
+    this.assignScormIframeUrl(packageRoot, entryFile)
+  }
+
+  // streamingUrl is sometimes a directory and sometimes a full file URL. The manifest and
+  // the launch file are both resolved relative to the package root, so strip a trailing
+  // filename before using it as one.
+  private packageRootFromUrl(url: string): string {
+    const clean = url.split('?')[0].replace(/\/+$/, '')
+    const lastSegment = clean.substring(clean.lastIndexOf('/') + 1)
+    return lastSegment.includes('.') ? clean.substring(0, clean.lastIndexOf('/')) : clean
+  }
+
+  /**
+   * Asks imsmanifest.xml for the launch file, then points the iframe at it. Resolution is
+   * best effort - on any failure we fall back to initFile and then to index.html, i.e. the
+   * behaviour that was there before.
+   */
+  private assignScormIframeUrl(packageRoot: string, entryFile: string | null) {
+    const sameOriginRoot = this.ensureSameOriginUrl(packageRoot)
+    const commit = (entry: string | null) => {
+      const resolved = entry || entryFile || 'index.html'
+      const url = `${sameOriginRoot}/${resolved}?timestamp=${new Date().getTime()}`
+      console.log('[SCORM] launch file:', resolved, entry ? '(from imsmanifest.xml)' : '(fallback)')
+      this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(url)
+    }
+
+    const cached = this.launchFileCache[sameOriginRoot]
+    if (cached !== undefined) {
+      commit(cached)
+      return
+    }
+
+    this.resolveScormLaunchFile(sameOriginRoot).then(href => {
+      this.launchFileCache[sameOriginRoot] = href || ''
+      commit(href)
+      // tslint:disable-next-line: align
+    }).catch(() => commit(null))
+  }
+
+  private resolveScormLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return fetch(`${sameOriginRoot}/imsmanifest.xml`, { cache: 'no-cache' })
+      .then(res => {
+        if (!res.ok) {
+          console.warn('[SCORM] imsmanifest.xml returned', res.status, '- falling back to initFile')
+          return null
+        }
+        return res.text().then(text => this.parseLaunchFile(text))
+      })
+      .catch(e => {
+        console.warn('[SCORM] could not read imsmanifest.xml - falling back to initFile', e)
+        return null
+      })
+  }
+
+  private parseLaunchFile(manifestXml: string): string | null {
+    const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
+    if (xml.getElementsByTagName('parsererror').length) {
+      console.warn('[SCORM] imsmanifest.xml is not well formed - falling back to initFile')
+      return null
+    }
+    const resources = Array.from(xml.getElementsByTagName('resource'))
+      .filter(r => r.getAttribute('href'))
+    if (!resources.length) {
+      return null
+    }
+    // Prefer the SCO: that is the resource wired up to the LMS. Assets and plain
+    // webcontent resources are not launchable.
+    const sco = resources.find(r => this.readScormType(r) === 'sco')
+    return (sco || resources[0]).getAttribute('href')
+  }
+
+  private readScormType(resource: Element): string {
+    const attrs = resource.attributes
+    for (let i = 0; i < attrs.length; i += 1) {
+      const attr = attrs.item(i)
+      // The attribute is namespaced (adlcp:scormtype in 1.2, adlcp:scormType in 2004),
+      // and how the prefix survives parsing varies, so match on the local name.
+      if (attr && attr.name.toLowerCase().endsWith('scormtype')) {
+        return (attr.value || '').toLowerCase()
       }
     }
+    return ''
   }
 
   backToDetailsPage() {
@@ -714,7 +783,15 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       let data: any
       if (this.htmlContent) {
         if (typeof data1 === 'string' || data1 instanceof String) {
-          data = JSON.parse(data1.toString())
+          const raw = data1.toString()
+          try {
+            data = JSON.parse(raw)
+          } catch (_e) {
+            // SCORM packages postMessage bare event names ('coursePrev', 'courseNext', ...)
+            // rather than JSON. Treat the string as the event instead of throwing out of
+            // the window 'message' handler.
+            data = { event: raw }
+          }
         } else {
           data = { ...data1 }
         }
@@ -832,29 +909,46 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     return null
   }
 
+  // The SCORM package finds the LMS by walking window.parent looking for window.API, and
+  // writes its bookmark/suspend keys into its own origin's localStorage. Both are blocked
+  // when the iframe is cross-origin, which is what produces Articulate's
+  // "unable to find the LMS API for ..." warnings and an empty scormData on upload.
+  //
+  // In a deployment this is already fine: azureHost and the portal share a host, so the
+  // content is same-origin. It only breaks in local dev, where the app runs on
+  // localhost:4200 while the content still comes from the remote portal host. There we
+  // route the request through the dev-server proxy (see the "/scorm-content" entry in
+  // proxy/localhost.proxy.json) so the package is served from this origin instead.
+  // True only under `ng serve`. Deliberately based on the host rather than
+  // environment.production, which is compiled false by the dev/np/preprod/benchmark
+  // build configurations and so cannot distinguish local from deployed.
+  private isLocalDevServer(): boolean {
+    const host = window.location.hostname
+    return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]'
+  }
+
   private ensureSameOriginUrl(url: string): string {
-    // In dev mode, route through Angular proxy (/abcd/) for same-origin access
-    // This is required for: localStorage sharing, event injection, SCORM API (window.parent.API)
-    // In production, the server (nginx) handles same-origin routing
-    if (!environment.production) {
-      try {
-        if (url.startsWith('http://') || url.startsWith('https://')) {
-          // Full URL → extract path and route through /abcd/ proxy
-          const parsed = new URL(url)
-          const proxyUrl = `/abcd${parsed.pathname}${parsed.search}`
-          console.log('[SCORM] ensureSameOriginUrl: proxying', url.substring(0, 100), '→', proxyUrl.substring(0, 100))
-          return proxyUrl
-        } else if (url.startsWith('/')) {
-          // Relative URL (e.g. /assets/public/content/...) → prefix with /abcd
-          const proxyUrl = `/abcd${url}`
-          console.log('[SCORM] ensureSameOriginUrl: proxying relative', url.substring(0, 100), '→', proxyUrl.substring(0, 100))
-          return proxyUrl
-        }
-      } catch (_e) {
-        console.warn('[SCORM] ensureSameOriginUrl: URL parse error, returning as-is')
+    try {
+      const parsed = new URL(url, window.location.origin)
+      if (parsed.origin === window.location.origin) {
+        return url
       }
+      if (!this.isLocalDevServer()) {
+        // Never rewrite a deployed URL - /scorm-content only exists in the ng serve proxy
+        // config. Note this cannot key off environment.production: the dev, np, preprod
+        // and benchmark build configurations all compile production: false, so testing
+        // that flag would rewrite URLs on four of the five deployable builds and 404.
+        console.warn('[SCORM] Content is cross-origin at', parsed.origin, 'vs page', window.location.origin,
+                     '- the SCORM API and localStorage will not be reachable')
+        return url
+      }
+      const proxyUrl = `${this.scormProxyPrefix}${parsed.pathname}${parsed.search}`
+      console.log('[SCORM] ensureSameOriginUrl: proxying', parsed.origin, '→', proxyUrl.substring(0, 120))
+      return proxyUrl
+    } catch (_e) {
+      console.warn('[SCORM] ensureSameOriginUrl: could not parse', url)
+      return url
     }
-    return url
   }
 
   // --- Storage size tracking ---
@@ -893,6 +987,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     // Re-trigger ngOnChanges by resetting and re-setting the URL
     this.pageFetchStatus = 'fetching'
     this.iframeUrl = null
+    // A reload is the one case where rebuilding the URL for the same content is wanted.
+    this.iframeUrlForIdentifier = null
     // Small delay then re-assign to force iframe reload
     setTimeout(() => {
       if (this.htmlContent) {
