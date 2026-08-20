@@ -265,24 +265,132 @@ describe('SCORMAdapterService', () => {
       req.flush({})
     })
 
-    it('still issues the request with an empty body when the user profile is missing', () => {
+    it('sends nothing when the user profile is missing, rather than PATCHing an empty body', () => {
       configSvcMock.userProfile = null
 
       service.addDataV3(progressReq(2, 100), CONTENT_A).subscribe()
 
-      const req = httpMock.expectOne(updateUrl(CONTENT_A))
-      expect(req.request.body).toEqual({})
-      req.flush({})
+      httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
-    it('still issues the request with an empty body when courseId/batchId are unresolved', () => {
+    it('sends nothing when courseId/batchId are unresolved', () => {
       viewerSvcMock.getBatchIdAndCourseId.mockReturnValue({ courseId: '', batchId: '' })
 
       service.addDataV3(progressReq(2, 100), CONTENT_A).subscribe()
 
-      const req = httpMock.expectOne(updateUrl(CONTENT_A))
-      expect(req.request.body).toEqual({})
-      req.flush({})
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('completes without emitting when it skips the request, so no success handler runs', () => {
+      configSvcMock.userProfile = null
+      const next = jest.fn()
+      const complete = jest.fn()
+
+      service.addDataV3(progressReq(2, 100), CONTENT_A).subscribe({ next, complete })
+
+      expect(next).not.toHaveBeenCalled()
+      expect(complete).toHaveBeenCalled()
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+  })
+
+  describe('suppressProgressApi - the host reports progress itself', () => {
+    // Set when the viewer is embedded in the mobile app: the app receives SCORM_EVENT and
+    // performs its own progress update, so nothing here may PATCH.
+
+    it('stops addDataV3 from issuing a request', () => {
+      service.suppressProgressApi = true
+
+      service.addDataV3(progressReq(2, 100), CONTENT_A).subscribe()
+
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('stops LMSCommit from issuing a request even at a completed status', () => {
+      service.suppressProgressApi = true
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+
+      service.LMSCommit()
+
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('leaves LMSCommit alone when not suppressed', () => {
+      service.suppressProgressApi = false
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+
+      service.LMSCommit()
+
+      httpMock.expectOne(updateUrl(CONTENT_A)).flush({})
+    })
+
+    it('signals progressCommitted$ on every LMSCommit so the host gets the hand-off', () => {
+      service.suppressProgressApi = true
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
+      service.LMSInitialize()
+
+      // incomplete - the API path would not have saved this, but the host still needs it
+      service.LMSSetValue('cmi.suspend_data', 'slide=2')
+      service.LMSCommit()
+      // and again once the package reports completion
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+      service.LMSCommit()
+
+      expect(commits.length).toBe(2)
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('reports success back to the package when the host takes the commit', () => {
+      service.suppressProgressApi = true
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.suspend_data', 'slide=2')
+
+      expect(service.LMSCommit()).toBe(true)
+    })
+
+    it('signals the hand-off from LMSFinish before the store is cleared', () => {
+      service.suppressProgressApi = true
+      let dataAtCommit: any = null
+      service.progressCommitted$.subscribe(() => { dataAtCommit = { ...(store.getAll() as any) } })
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.suspend_data', 'slide=7')
+
+      service.LMSFinish()
+
+      // LMSFinish clears the store, so the emit has to see the data before that happens
+      expect(dataAtCommit).not.toBeNull()
+      expect(dataAtCommit['cmi.suspend_data']).toBe('slide=7')
+      expect(localStorage.getItem(CONTENT_A)).toBeNull()
+    })
+
+    it('does not signal progressCommitted$ when the API path is active', () => {
+      service.suppressProgressApi = false
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+
+      service.LMSCommit()
+
+      expect(commits.length).toBe(0)
+      httpMock.expectOne(updateUrl(CONTENT_A)).flush({})
+    })
+
+    it('does not block the progress read, which resume still needs', () => {
+      service.suppressProgressApi = true
+
+      service.loadDataV2()
+
+      httpMock.expectOne(readUrl()).flush({ result: { contentList: [] } })
+    })
+
+    it('defaults to off', () => {
+      expect(new SCORMAdapterService(
+        store, {} as any, {} as any, {} as any, {} as any, {} as any,
+      ).suppressProgressApi).toBe(false)
     })
   })
 
