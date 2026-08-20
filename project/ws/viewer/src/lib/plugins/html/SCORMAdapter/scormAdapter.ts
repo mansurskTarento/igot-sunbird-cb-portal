@@ -9,7 +9,7 @@ import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { NsContent } from '@sunbird-cb/collection'
 import dayjs from 'dayjs'
 import { ViewerUtilService } from '@sunbird-cb/toc'
-import { Subject, Subscription } from 'rxjs'
+import { EMPTY, Subject, Subscription } from 'rxjs'
 const API_END_POINTS = {
   SCROM_ADD_UPDTE: '/apis/protected/v8/scrom/add',
   SCROM_FETCH: '/apis/protected/v8/scrom/get',
@@ -52,6 +52,14 @@ export class SCORMAdapterService {
   // previous request - otherwise a late response writes the old content's keys
   // into localStorage after the new content has already been set up.
   private loadDataSub: Subscription | null = null
+  // Set when the host reports progress itself (the mobile app receives SCORM_EVENT and
+  // does its own update). LMSCommit is driven by the SCORM package rather than by the
+  // component, so the guard has to live here and not at the component's call sites.
+  suppressProgressApi = false
+  // Fires when the package asked for its state to be persisted while suppressProgressApi
+  // is set, so the component can hand the data to the host instead of PATCHing it.
+  private progressCommitted = new Subject<void>()
+  progressCommitted$ = this.progressCommitted.asObservable()
 
 
   constructor(
@@ -139,6 +147,16 @@ export class SCORMAdapterService {
       // let newData = JSON.stringify(data)
       // data = Base64.encode(newData)
       let _return = false
+
+      // LMSCommit is the package explicitly asking for its state to be persisted, which
+      // makes it the right moment for the hand-off - unlike a load-time or per-interaction
+      // emit. Note this fires at every commit, not only at completion: the host needs the
+      // incremental cmi.suspend_data writes too, or there is nothing to resume from.
+      if (this.suppressProgressApi) {
+        console.log('[SCORM] LMSCommit - handing progress to the host instead of the API')
+        this.progressCommitted.next()
+        return true
+      }
 
       //only for complete and pass status, progress call should be done
       if (this.getStatus(data) === 2) {
@@ -389,7 +407,10 @@ export class SCORMAdapterService {
         },
       }
     } else {
-      req = {}
+      // Without a user profile and a resolved course/batch there is nothing the server can
+      // attribute the progress to, and PATCHing `{}` just burns a request. Report why.
+      console.warn('[SCORM] addDataV2 skipped - no userProfile/courseId/batchId for', this.contentId)
+      return EMPTY
     }
     return this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
   }
@@ -416,7 +437,12 @@ export class SCORMAdapterService {
         },
       }
     } else {
-      req = {}
+      console.warn('[SCORM] addDataV3 skipped - no userProfile/courseId/batchId for', this.contentId)
+      return EMPTY
+    }
+    if (this.suppressProgressApi) {
+      console.log('[SCORM] addDataV3 suppressed, the host reports progress itself')
+      return EMPTY
     }
     return this.http.patch(`${API_END_POINTS.SCROM_UPDTE_PROGRESS}/${this.contentId}`, req)
   }
