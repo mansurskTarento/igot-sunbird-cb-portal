@@ -59,6 +59,8 @@ export class ViewAllComponent {
     'Webinar',
   ]
   selectedResourceType: string = 'All'
+  /* True when the page opened with Event Types already selected via query params */
+  prefilledResourceTypes = false
 
   constructor(private activateRoute: ActivatedRoute, private eventSvc: EventService,
     private datePipe: DatePipe, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar,
@@ -114,10 +116,12 @@ export class ViewAllComponent {
       this.fetchData()
     })
     this.activateRoute.queryParamMap.subscribe(async (data: any) => {
-      if (data.params && data.params.resourceType) {
-        this.selectedResourceType = data.params.resourceType
-        this.selectedFilters['resourceType'] = [data.params.resourceType.toLowerCase()]
-        if (data.params.courseId) {
+      const resourceTypes = this.readResourceTypes(data)
+      if (resourceTypes.length) {
+        this.selectedResourceType = resourceTypes.length === 1 ? resourceTypes[0] : 'All'
+        this.selectedFilters['resourceType'] = resourceTypes.map((type: string) => type.toLowerCase())
+        this.prefilledResourceTypes = true
+        if (data.params && data.params.courseId) {
           this.selectedFilters['courseId'] = [data.params.courseId]
           try {
             const response = await this.eventSvc.getContentData(data.params.courseId).toPromise()
@@ -126,7 +130,7 @@ export class ViewAllComponent {
             this.eventLinked = []
           }
         }
-        if (data.params.tabSelected) {
+        if (data.params && data.params.tabSelected) {
           this.selectedFilters['tabSelected'] = data.params.tabSelected
         }
       }
@@ -137,7 +141,60 @@ export class ViewAllComponent {
       }
     })
     this.titles.push({ title: this.selectedResourceType, url: 'none', icon: '' })
+    if (this.prefilledResourceTypes) {
+      this.loadFilterFacets()
+    }
     this.fetchData()
+  }
+
+  /** Reads ?resourceType=A&resourceType=B as well as ?resourceType=A,B */
+  private readResourceTypes(paramMap: any): string[] {
+    const raw = typeof paramMap?.getAll === 'function'
+      ? paramMap.getAll('resourceType')
+      : paramMap?.params?.resourceType
+    const values: string[] = Array.isArray(raw) ? raw : (raw ? [raw] : [])
+    const types: string[] = []
+    values.forEach((value: string) => {
+      `${value}`.split(',').forEach((part: string) => {
+        const type = part.trim()
+        if (type) {
+          types.push(type)
+        }
+      })
+    })
+    return types
+  }
+
+  private loadFilterFacets() {
+    const requestBody = this.generateRequestBody()
+    /* Every option has to be counted, so drop the selections this pass exists to work around */
+    delete requestBody.request.filters.resourceType
+    delete requestBody.request.filters.sourceName
+    requestBody.request.limit = 1
+    requestBody.request.offset = 0
+    this.eventSvc.getEventsList(requestBody).subscribe((resp: any) => {
+      const facets = _.get(resp, 'result.facets', [])
+      this.sourceNameFacets = _.get(facets.find((f: any) => f.name === 'sourceName'), 'values', [])
+      const rawFacets = (_.get(facets.find((f: any) => f.name === 'resourceType'), 'values', []) as any[])
+        .filter((f: any) => f.name?.toLowerCase() !== 'samuhik charcha')
+      this.resourceTypeFacets = this.sortFacetsByOrder(rawFacets, this.resourceTypeOrder)
+      this.normalizeSelectedResourceTypes()
+      /* Preselected types can sit past the collapsed cut-off — keep their checkboxes visible */
+      this.showMoreResourceTypes = this.resourceTypeFacets.length > 2
+    }, () => {
+      this.prefilledResourceTypes = false
+    })
+  }
+
+  /** Aligns selected Event Types with the exact casing the API reports for each facet */
+  private normalizeSelectedResourceTypes() {
+    if (!this.selectedFilters?.resourceType?.length || !this.resourceTypeFacets.length) {
+      return
+    }
+    this.selectedFilters['resourceType'] = this.selectedFilters['resourceType'].map((selected: string) => {
+      const match = this.resourceTypeFacets.find((f: any) => f.name.toLowerCase() === selected.toLowerCase())
+      return match ? match.name : selected
+    })
   }
 
   returnZero() {
@@ -322,27 +379,24 @@ export class ViewAllComponent {
       const sourceNameFacet = facets.find((f: any) => f.name === 'sourceName')
       const resourceTypeFacet = facets.find((f: any) => f.name === 'resourceType')
       if (this.currentPage <= 1) {
-        if (!this.selectedSources.length) {
-          this.sourceNameFacets = _.get(sourceNameFacet, 'values', [])
+        if (!this.prefilledResourceTypes) {
+          if (!this.selectedSources.length) {
+            this.sourceNameFacets = _.get(sourceNameFacet, 'values', [])
+          }
+          if (!this.selectedFilters?.resourceType?.length || !this.resourceTypeFacets.length) {
+            const rawFacets = (_.get(resourceTypeFacet, 'values', []) as any[])
+              .filter((f: any) => f.name?.toLowerCase() !== 'samuhik charcha')
+            this.resourceTypeFacets = this.sortFacetsByOrder(rawFacets, this.resourceTypeOrder)
+          }
+          // Normalize selectedFilters.resourceType to match exact API facet names
+          this.normalizeSelectedResourceTypes()
+          // Auto-reset show more if facets have 2 or fewer items
+          if (this.resourceTypeFacets.length <= 2) {
+            this.showMoreResourceTypes = false
+          }
         }
-        if (!this.selectedFilters?.resourceType?.length || !this.resourceTypeFacets.length) {
-          const rawFacets = (_.get(resourceTypeFacet, 'values', []) as any[])
-            .filter((f: any) => f.name?.toLowerCase() !== 'samuhik charcha')
-          this.resourceTypeFacets = this.sortFacetsByOrder(rawFacets, this.resourceTypeOrder)
-        }
-        // Normalize selectedFilters.resourceType to match exact API facet names
-        if (this.selectedFilters?.resourceType?.length && this.resourceTypeFacets.length) {
-          this.selectedFilters['resourceType'] = this.selectedFilters['resourceType'].map((selected: string) => {
-            const match = this.resourceTypeFacets.find((f: any) => f.name.toLowerCase() === selected.toLowerCase())
-            return match ? match.name : selected
-          })
-        }
-        // Auto-reset show more if facets have 2 or fewer items
         if (this.sourceNameFacets.length <= 2) {
           this.showMoreSources = false
-        }
-        if (this.resourceTypeFacets.length <= 2) {
-          this.showMoreResourceTypes = false
         }
       }
       this.isLoading = false
@@ -428,6 +482,8 @@ export class ViewAllComponent {
     this.selectedSources = []
     this.showMoreSources = false
     this.showMoreResourceTypes = false
+    this.prefilledResourceTypes = false
+    this.selectedResourceType = 'All'
     // Reset titles to show 'All'
     this.titles = [
       { title: 'Events', url: '/app/event-hub/home', disableTranslate: true, icon: 'event' },
