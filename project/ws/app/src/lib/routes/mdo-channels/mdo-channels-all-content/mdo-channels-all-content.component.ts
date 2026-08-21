@@ -89,7 +89,7 @@ export class MdoChannelsAllContentComponent implements OnInit {
       const requestData: any = {
         'request': {
           'type': 'MDO-channel',
-          'subType': 'microsite-v2',
+          'subType': 'microsite-v3',
           'action': 'page-configuration',
           'component': 'portal',
           'rootOrgId': this.orgId,
