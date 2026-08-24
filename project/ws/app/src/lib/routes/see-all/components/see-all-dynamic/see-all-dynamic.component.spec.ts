@@ -433,7 +433,31 @@ describe('SeeAllDynamicComponent', () => {
   })
 
   describe('loadEnrolments', () => {
-    it('splits courses into completed and in progress', () => {
+    it('asks for every enrolment once and splits the flat records by status', () => {
+      mocks.enrollSvc.fetchExternalEnrollmentSearch.mockReturnValue(of({
+        result: {
+          courses: [
+            { status: 2, contentId: 'c1', name: 'Done' },
+            { status: 1, contentId: 'c2', name: 'Doing' },
+            { status: 0, contentId: 'c3', name: 'Not started' },
+          ],
+        },
+      }))
+
+      component.loadEnrolments()
+
+      expect(mocks.enrollSvc.fetchExternalEnrollmentSearch).toHaveBeenCalledTimes(1)
+      expect(mocks.enrollSvc.fetchExternalEnrollmentSearch).toHaveBeenCalledWith({
+        partnerId: component.filterProvider,
+        status: 'All',
+      })
+      expect(component.enrolledContent.completed.length).toBe(1)
+      expect(component.enrolledContent.inProgress.length).toBe(2)
+      expect(component.enrolmentStatusById).toEqual({ c1: 2, c2: 1, c3: 0 })
+      expect(component.isEnrolmentLoading).toBe(false)
+    })
+
+    it('still splits records that nest their content', () => {
       mocks.enrollSvc.fetchExternalEnrollmentSearch.mockReturnValue(of({
         result: {
           courses: [
@@ -448,12 +472,21 @@ describe('SeeAllDynamicComponent', () => {
       expect(component.enrolledContent.completed.length).toBe(1)
       expect(component.enrolledContent.inProgress.length).toBe(1)
       expect(component.enrolmentStatusById).toEqual({ c1: 2, c2: 1 })
+    })
+
+    it('treats a response with no courses list as no enrolments', () => {
+      mocks.enrollSvc.fetchExternalEnrollmentSearch.mockReturnValue(of({ result: {} }))
+
+      component.loadEnrolments()
+
+      expect(component.enrolledContent).toEqual({ completed: [], inProgress: [] })
+      expect(component.enrolmentStatusById).toEqual({})
       expect(component.isEnrolmentLoading).toBe(false)
     })
 
     it('reads courses from the root of the response too', () => {
       mocks.enrollSvc.fetchExternalEnrollmentSearch.mockReturnValue(of({
-        courses: [{ status: 0, content: { identifier: 'c3' } }],
+        courses: [{ status: 0, identifier: 'c3' }],
       }))
 
       component.loadEnrolments()
@@ -489,7 +522,7 @@ describe('SeeAllDynamicComponent', () => {
       expect(component.getEnrolmentStatus({})).toBe(0)
     })
 
-    it('flattens an enrolment record onto its content', () => {
+    it('flattens a nested enrolment record onto its content', () => {
       const result = component.toEnrolledContent({
         status: 2,
         completionpercentage: 55,
@@ -502,6 +535,23 @@ describe('SeeAllDynamicComponent', () => {
       expect(result.completionStatus).toBe(2)
       expect(result.issuedCertificates).toEqual(['cert'])
       expect(result.batchId).toBe('')
+    })
+
+    it('takes the record itself as the content when the search returns it flat', () => {
+      const result = component.toEnrolledContent({
+        contentId: 'c1',
+        externalId: '91',
+        name: 'Course',
+        appIcon: 'icon.png',
+        status: 0,
+      })
+
+      expect(result.name).toBe('Course')
+      expect(result.contentId).toBe('c1')
+      expect(result.externalId).toBe('91')
+      expect(result.appIcon).toBe('icon.png')
+      expect(result.completionStatus).toBe(0)
+      expect(result.completionPercentage).toBe(0)
     })
 
     it('copies enrolment status onto matching search results only', () => {
