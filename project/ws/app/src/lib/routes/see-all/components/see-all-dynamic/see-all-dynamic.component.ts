@@ -476,7 +476,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       .pipe(takeUntil(this.destroy$))
       .subscribe(
         (res: any) => {
-          const courses = _.get(res, 'result.courses', null) || _.get(res, 'courses', []) || []
+          const courses = _.get(res, 'result.courses', null) || _.get(res, 'courses', null) || []
           this.splitEnrolmentsByStatus(courses)
           this.isEnrolmentLoading = false
         },
@@ -496,7 +496,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     courses.forEach((course: any) => {
       const content = this.toEnrolledContent(course)
       const status = this.getEnrolmentStatus(course)
-      const contentId = this.getContentKey(course.content) || this.getContentKey(course)
+      const contentId = this.getContentKey(content)
       if (contentId) {
         statusById[contentId] = status
       }
@@ -553,7 +553,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     return Number(_.get(course, 'status', 0)) || 0
   }
   toEnrolledContent(course: any): any {
-    const content = _.get(course, 'content', {}) || {}
+    const content = _.get(course, 'content') || course || {}
     return {
       ...content,
       completionPercentage: course.completionPercentage || course.completionpercentage || 0,
