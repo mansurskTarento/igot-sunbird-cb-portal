@@ -124,16 +124,51 @@ describe('SCORMAdapterService', () => {
       ['incomplete', 1],
       ['failed', 1],
       ['browsed', 1],
-    ])('maps lesson_status "%s" to %i', (lessonStatus, expected) => {
+      ['not attempted', 1],
+    ])('SCORM 1.2: maps cmi.core.lesson_status "%s" to %i', (lessonStatus, expected) => {
       expect(service.getStatus({ 'cmi.core.lesson_status': lessonStatus })).toBe(expected)
     })
 
-    it('falls back to 1 when lesson_status is absent', () => {
+    it.each([
+      ['completed', 2],
+      ['incomplete', 1],
+      ['not attempted', 1],
+      ['unknown', 1],
+    ])('SCORM 2004: maps cmi.completion_status "%s" to %i', (status, expected) => {
+      expect(service.getStatus({ 'cmi.completion_status': status })).toBe(expected)
+    })
+
+    it.each([
+      ['passed', 2],
+      ['failed', 1],
+      ['unknown', 1],
+    ])('SCORM 2004: maps cmi.success_status "%s" to %i', (status, expected) => {
+      expect(service.getStatus({ 'cmi.success_status': status })).toBe(expected)
+    })
+
+    it('accepts completion reported on any one of the elements', () => {
+      // 2004 content commonly reports completion and success separately
+      expect(service.getStatus({ 'cmi.completion_status': 'incomplete', 'cmi.success_status': 'passed' })).toBe(2)
+      expect(service.getStatus({ 'cmi.completion_status': 'completed', 'cmi.success_status': 'failed' })).toBe(2)
+    })
+
+    it('is tolerant of casing and stray whitespace', () => {
+      expect(service.getStatus({ 'cmi.core.lesson_status': 'Completed' })).toBe(2)
+      expect(service.getStatus({ 'cmi.completion_status': ' completed ' })).toBe(2)
+    })
+
+    it('falls back to 1 when no status element is present', () => {
+      expect(service.getStatus({ 'cmi.suspend_data': 'slide=3' })).toBe(1)
       expect(service.getStatus({})).toBe(1)
     })
 
     it('falls back to 1 instead of throwing on a null payload', () => {
       expect(service.getStatus(null)).toBe(1)
+    })
+
+    it('ignores non-string values rather than coercing them', () => {
+      expect(service.getStatus({ 'cmi.core.lesson_status': 1 })).toBe(1)
+      expect(service.getStatus({ 'cmi.core.lesson_status': true })).toBe(1)
     })
   })
 
@@ -170,23 +205,31 @@ describe('SCORMAdapterService', () => {
     // --- Characterization tests: these pin down two live defects in error reporting.
     //     They assert what the code does today, not what SCORM 1.2 requires.
 
-    it('DEFECT: _setError discards the raised code, so LMSGetLastError never reports it', () => {
-      // _setError parses the stored array into newErrors, pushes onto newErrors, then
-      // writes back the original `errors` string - the push is thrown away.
-      // Fix: this.store.setItem('errors', JSON.stringify(newErrors))
+    it('records the raised code so LMSGetLastError can report it', () => {
       service.LMSFinish() // raises 301 (not initialized)
 
-      expect(service.LMSGetLastError()).toBe('')
-      expect(store.getItem('errors')).toBe('[]')
+      expect(service.LMSGetLastError()).toBe(301)
     })
 
-    it('DEFECT: LMSGetErrorString only resolves code 0, because errorCodes is an array holding one map', () => {
-      // errorCodes = [{ 0: {...}, 101: {...}, 201: {...} }], so errorCodes[101] is
-      // undefined and every real code returns ''. Fix: index errorCodes[0][errorCode].
+    it('reports the most recent code and pops it off the log', () => {
+      service.LMSSetValue('cmi.core.exit', 'suspend') // 301, not initialized
+      service.LMSInitialize()
+      service.LMSGetValue('cmi.core.score.raw')       // 201, element never set
+
+      expect(service.LMSGetLastError()).toBe(201)
+    })
+
+    it('resolves error strings and diagnostics for real SCORM 1.2 codes', () => {
       expect(service.LMSGetErrorString(0)).toBe('No Error')
-      expect(service.LMSGetErrorString(101)).toBe('')
-      expect(service.LMSGetErrorString(201)).toBe('')
-      expect(service.LMSGetDiagnostic(301)).toBe('')
+      expect(service.LMSGetErrorString(101)).toBe('General Exception')
+      expect(service.LMSGetErrorString(201)).toBe('Invalid argument error')
+      expect(service.LMSGetErrorString(301)).toBe('Not initialized')
+      expect(service.LMSGetDiagnostic(301)).toContain('before the call to LMSInitialize')
+    })
+
+    it('returns "" for a code it does not know', () => {
+      expect(service.LMSGetErrorString(9999)).toBe('')
+      expect(service.LMSGetDiagnostic(9999)).toBe('')
     })
 
     it('LMSFinish wipes the content key from localStorage', () => {
@@ -200,35 +243,185 @@ describe('SCORMAdapterService', () => {
     })
   })
 
-  describe('LMSCommit - completion gated', () => {
-    it('sends a progress update when lesson_status is completed', () => {
+  describe('SCORM 2004 API (window.API_1484_11)', () => {
+    let api: any
+    beforeEach(() => { api = service.scorm2004Api })
+
+    it('exposes exactly the 2004 method names, and none of the 1.2 ones', () => {
+      expect(Object.keys(api).sort()).toEqual([
+        'Commit', 'GetDiagnostic', 'GetErrorString', 'GetLastError',
+        'GetValue', 'Initialize', 'SetValue', 'Terminate',
+      ])
+      // a driver probing for methods must not mistake this for the 1.2 surface
+      expect(api.LMSInitialize).toBeUndefined()
+      expect(api.LMSSetValue).toBeUndefined()
+    })
+
+    it('is a stable object across accesses, so a driver may cache it', () => {
+      expect(service.scorm2004Api).toBe(api)
+    })
+
+    it('answers with the strings "true"/"false", not booleans', () => {
+      expect(api.Initialize('')).toBe('true')
+      expect(api.SetValue('cmi.location', 'page-1')).toBe('true')
+      expect(api.Commit('')).toBe('true')
+      expect(api.Terminate('')).toBe('true')
+      // no completion reported, so nothing should have been PATCHed
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('round-trips values through the same CMI store as the 1.2 path', () => {
+      api.Initialize('')
+      api.SetValue('cmi.location', 'page-4')
+      api.SetValue('cmi.suspend_data', 'state-blob')
+
+      expect(api.GetValue('cmi.location')).toBe('page-4')
+      expect(store.getItem('cmi.suspend_data')).toBe('state-blob')
+    })
+
+    it('reports completion to getStatus via the 2004 elements', () => {
+      api.Initialize('')
+      api.SetValue('cmi.completion_status', 'completed')
+
+      expect(service.getStatus(store.getAll())).toBe(2)
+    })
+
+    it('rejects Initialize twice with 103 Already Initialized', () => {
+      expect(api.Initialize('')).toBe('true')
+      expect(api.Initialize('')).toBe('false')
+      expect(api.GetLastError()).toBe('103')
+      expect(api.GetErrorString(103)).toBe('Already Initialized')
+    })
+
+    it.each([
+      ['GetValue', 122, 'Retrieve Data Before Initialization'],
+      ['SetValue', 132, 'Store Data Before Initialization'],
+      ['Commit', 142, 'Commit Before Initialization'],
+      ['Terminate', 112, 'Termination Before Initialization'],
+    ])('rejects %s before Initialize with %i', (method, code, text) => {
+      const result = api[method]('cmi.location', 'x')
+      expect(result).toBe(method === 'GetValue' ? '' : 'false')
+      expect(api.GetLastError()).toBe(`${code}`)
+      expect(api.GetErrorString(code)).toBe(text)
+    })
+
+    it.each([
+      ['GetValue', 123],
+      ['SetValue', 133],
+      ['Commit', 143],
+      ['Terminate', 113],
+    ])('rejects %s after Terminate with %i', (method, code) => {
+      api.Initialize('')
+      api.Terminate('')
+
+      const result = api[method]('cmi.location', 'x')
+      expect(result).toBe(method === 'GetValue' ? '' : 'false')
+      expect(api.GetLastError()).toBe(`${code}`)
+    })
+
+    it('rejects Initialize after Terminate with 104 Content Instance Terminated', () => {
+      api.Initialize('')
+      api.Terminate('')
+
+      expect(api.Initialize('')).toBe('false')
+      expect(api.GetLastError()).toBe('104')
+    })
+
+    it('raises 403 for an element that has no value yet', () => {
+      api.Initialize('')
+
+      expect(api.GetValue('cmi.progress_measure')).toBe('')
+      expect(api.GetLastError()).toBe('403')
+      expect(api.GetErrorString(403)).toBe('Data Model Element Value Not Initialized')
+    })
+
+    it('uses the 2004 error table, where the 4xx codes differ from 1.2', () => {
+      // 401 is "Not implemented" in 1.2 but "Undefined Data Model Element" in 2004
+      expect(api.GetErrorString(401)).toBe('Undefined Data Model Element')
+      expect(service.LMSGetErrorString(401)).toBe('Not implemented error')
+    })
+
+    it('Commit reaches the same progress path as LMSCommit', () => {
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
+      api.Initialize('')
+      api.SetValue('cmi.completion_status', 'completed')
+
+      api.Commit('')
+
+      expect(commits.length).toBe(1)
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('Commit hands off to the host, suppressed or not', () => {
+      service.suppressProgressApi = true
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
+      api.Initialize('')
+      api.SetValue('cmi.location', 'page-2')
+
+      expect(api.Commit('')).toBe('true')
+
+      expect(commits.length).toBe(1)
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
+    it('a new content resets the terminated state, so the next session can initialize', () => {
+      api.Initialize('')
+      api.Terminate('')
+
+      service.contentId = CONTENT_B
+
+      expect(api.Initialize('')).toBe('true')
+    })
+  })
+
+  describe('LMSCommit - hands the write to the component', () => {
+    // The adapter used to PATCH here itself whenever the status was complete. That was a
+    // second writer: it knows neither completionPercentage nor spentTime, so it wrote a
+    // thinner record over the component's, once per commit - and a package commits per
+    // slide. The component is now the only writer; a commit just says "now".
+
+    it('signals rather than writing when lesson_status is completed', () => {
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
       service.LMSInitialize()
       service.LMSSetValue('cmi.core.lesson_status', 'completed')
 
       service.LMSCommit()
 
-      const req = httpMock.expectOne(updateUrl(CONTENT_A))
-      expect(req.request.method).toBe('PATCH')
-      expect(req.request.body.request.contents[0].status).toBe(2)
-      req.flush({})
+      expect(commits.length).toBe(1)
+      httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
-    it('sends nothing while the content is still incomplete', () => {
+    it('signals while the content is still incomplete too, so bookmarks are saved', () => {
+      const commits: number[] = []
+      service.progressCommitted$.subscribe(() => commits.push(1))
       service.LMSInitialize()
       service.LMSSetValue('cmi.core.lesson_status', 'incomplete')
 
       service.LMSCommit()
 
+      expect(commits.length).toBe(1)
       httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
-    it('returns false even on a successful commit, because the request resolves asynchronously', () => {
+    it('reports success to the package, which a conformant driver checks', () => {
       service.LMSInitialize()
       service.LMSSetValue('cmi.core.lesson_status', 'completed')
 
-      expect(service.LMSCommit()).toBe(false)
+      expect(service.LMSCommit()).toBe(true)
+    })
 
-      httpMock.expectOne(updateUrl(CONTENT_A)).flush({ result: 'ok' })
+    it('repeated commits never turn into repeated requests', () => {
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+
+      service.LMSCommit()
+      service.LMSCommit()
+      service.LMSCommit()
+
+      httpMock.expectNone(updateUrl(CONTENT_A))
     })
   })
 
@@ -306,6 +499,30 @@ describe('SCORMAdapterService', () => {
       httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
+    it('lets the completion update through when the caller forces it', () => {
+      // The mobile route hands running state to the app, but writes completion itself: a
+      // completion that only exists as a hand-off is lost if the webview dies first.
+      service.suppressProgressApi = true
+
+      service.addDataV3(progressReq(2, 100), CONTENT_A, true).subscribe()
+
+      const req = httpMock.expectOne(updateUrl(CONTENT_A))
+      const content = req.request.body.request.contents[0]
+      expect(content.status).toBe(2)
+      expect(content.completionPercentage).toBe(100)
+      req.flush({})
+    })
+
+    it('still suppresses an unforced update after a forced one', () => {
+      service.suppressProgressApi = true
+
+      service.addDataV3(progressReq(2, 100), CONTENT_A, true).subscribe()
+      httpMock.expectOne(updateUrl(CONTENT_A)).flush({})
+
+      service.addDataV3(progressReq(1, 40), CONTENT_A).subscribe()
+      httpMock.expectNone(updateUrl(CONTENT_A))
+    })
+
     it('stops LMSCommit from issuing a request even at a completed status', () => {
       service.suppressProgressApi = true
       service.LMSInitialize()
@@ -316,14 +533,14 @@ describe('SCORMAdapterService', () => {
       httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
-    it('leaves LMSCommit alone when not suppressed', () => {
+    it('makes no difference to LMSCommit, which never writes either way', () => {
       service.suppressProgressApi = false
       service.LMSInitialize()
       service.LMSSetValue('cmi.core.lesson_status', 'completed')
 
       service.LMSCommit()
 
-      httpMock.expectOne(updateUrl(CONTENT_A)).flush({})
+      httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
     it('signals progressCommitted$ on every LMSCommit so the host gets the hand-off', () => {
@@ -351,22 +568,36 @@ describe('SCORMAdapterService', () => {
       expect(service.LMSCommit()).toBe(true)
     })
 
-    it('signals the hand-off from LMSFinish before the store is cleared', () => {
+    it('signals the hand-off from LMSFinish, and keeps the store so the status survives', () => {
       service.suppressProgressApi = true
       let dataAtCommit: any = null
       service.progressCommitted$.subscribe(() => { dataAtCommit = { ...(store.getAll() as any) } })
       service.LMSInitialize()
       service.LMSSetValue('cmi.suspend_data', 'slide=7')
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
 
       service.LMSFinish()
 
-      // LMSFinish clears the store, so the emit has to see the data before that happens
       expect(dataAtCommit).not.toBeNull()
       expect(dataAtCommit['cmi.suspend_data']).toBe('slide=7')
-      expect(localStorage.getItem(CONTENT_A)).toBeNull()
+      // The CMI store is the only copy on this route - clearing it would lose completion,
+      // because the driver only writes lesson_status when the learner reaches the end.
+      expect(store.getItem('cmi.core.lesson_status')).toBe('completed')
+      expect(service.getStatus(store.getAll())).toBe(2)
     })
 
-    it('does not signal progressCommitted$ when the API path is active', () => {
+    it('a resumed session can still read back the completion the driver relies on', () => {
+      service.suppressProgressApi = true
+      service.LMSInitialize()
+      service.LMSSetValue('cmi.core.lesson_status', 'completed')
+      service.LMSFinish()
+
+      // next launch: the driver calls LMSInitialize then reads the status back
+      service.LMSInitialize()
+      expect(service.LMSGetValue('cmi.core.lesson_status')).toBe('completed')
+    })
+
+    it('signals progressCommitted$ on the API path too - the component writes either way', () => {
       service.suppressProgressApi = false
       const commits: number[] = []
       service.progressCommitted$.subscribe(() => commits.push(1))
@@ -375,8 +606,8 @@ describe('SCORMAdapterService', () => {
 
       service.LMSCommit()
 
-      expect(commits.length).toBe(0)
-      httpMock.expectOne(updateUrl(CONTENT_A)).flush({})
+      expect(commits.length).toBe(1)
+      httpMock.expectNone(updateUrl(CONTENT_A))
     })
 
     it('does not block the progress read, which resume still needs', () => {
@@ -471,7 +702,7 @@ describe('SCORMAdapterService', () => {
       result: { contentList: [{ contentId, status, completionPercentage, progressdetails }] },
     })
 
-    it('restores CMI fields into the store and flat keys into localStorage, then emits LMSPositive', () => {
+    it('restores CMI fields into the store and emits LMSPositive', () => {
       const emitted: scormLMSStatus[] = []
       service.scormInitialized$.subscribe(v => emitted.push(v))
 
@@ -485,9 +716,9 @@ describe('SCORMAdapterService', () => {
 
       expect(store.getItem('cmi.suspend_data')).toBe('slide=12')
       expect(store.getItem('completionPercentage')).toBe(60)
-      expect(localStorage.getItem('slide-bookmark')).toBe('12')
-      expect(localStorage.getItem('quiz-state')).toBe('{"q1":true}')
-      expect(service.scormLocalStorageData).toEqual({ 'slide-bookmark': '12', 'quiz-state': '{"q1":true}' })
+      // The package's own localStorage keys are neither restored nor kept.
+      expect(localStorage.getItem('slide-bookmark')).toBeNull()
+      expect(localStorage.getItem('quiz-state')).toBeNull()
       expect(emitted).toEqual([scormLMSStatus.LMSPositive])
     })
 
@@ -529,26 +760,6 @@ describe('SCORMAdapterService', () => {
       httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, { spentTime: 30 }))
 
       expect(emitted).toEqual([scormLMSStatus.LMSNegative])
-    })
-
-    it('clears keys restored for a previous content before the read', () => {
-      service.scormLocalStorageData = { 'stale-key-from-previous-content': 'x' }
-
-      service.loadDataV2()
-
-      expect(service.scormLocalStorageData).toEqual({})
-      httpMock.expectOne(readUrl()).flush({ result: { contentList: [] } })
-    })
-
-    it('does not inherit the previous content keys when the new content has no scormData', () => {
-      service.scormLocalStorageData = { 'a-bookmark': '9' }
-
-      service.contentId = CONTENT_B
-      service.loadDataV2()
-      httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_B, { spentTime: 5 }))
-
-      expect(service.scormLocalStorageData).toEqual({})
-      expect(localStorage.getItem('a-bookmark')).toBeNull()
     })
 
     it('emits LMSWating on a failed read so the caller is never left waiting', () => {
@@ -601,10 +812,9 @@ describe('SCORMAdapterService', () => {
       expect((store.getAll() as any).scormData).toBeUndefined()
       // CMI is not the package's own localStorage - nothing should be written flat
       expect(localStorage.getItem('cmi.suspend_data')).toBeNull()
-      expect(service.scormLocalStorageData).toEqual({})
     })
 
-    it('restores scormLocalStorage into flat localStorage, separately from CMI', () => {
+    it('ignores a scormLocalStorage bucket left by an older build, restoring only CMI', () => {
       service.loadDataV2()
       httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
         spentTime: 12,
@@ -613,10 +823,9 @@ describe('SCORMAdapterService', () => {
       }))
 
       expect(store.getItem('cmi.suspend_data')).toBe('slide=4')
-      expect(localStorage.getItem('rise-bookmark')).toBe('4')
-      expect(localStorage.getItem('quiz-state')).toBe('{"q1":true}')
-      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '4', 'quiz-state': '{"q1":true}' })
-      // and the package keys must not pollute the CMI store
+      // Not written back to localStorage, and not allowed to pollute the CMI store either.
+      expect(localStorage.getItem('rise-bookmark')).toBeNull()
+      expect(localStorage.getItem('quiz-state')).toBeNull()
       expect(store.getItem('rise-bookmark')).toBeUndefined()
     })
 
@@ -645,29 +854,33 @@ describe('SCORMAdapterService', () => {
       expect(store.getItem('completionPercentage')).toBe(100)
     })
 
-    it('LEGACY: treats non-CMI keys inside scormData as the package localStorage keys', () => {
+    it('LEGACY: drops non-CMI keys inside scormData instead of restoring them', () => {
       // Before the split, scormData was the bucket for a package's own localStorage.
+      const emitted: scormLMSStatus[] = []
+      service.scormInitialized$.subscribe(v => emitted.push(v))
+
       service.loadDataV2()
       httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
         spentTime: 30,
         scormData: { 'rise-bookmark': '7', 'progress-map': '{"a":1}' },
       }))
 
-      expect(localStorage.getItem('rise-bookmark')).toBe('7')
-      expect(localStorage.getItem('progress-map')).toBe('{"a":1}')
-      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '7', 'progress-map': '{"a":1}' })
+      expect(localStorage.getItem('rise-bookmark')).toBeNull()
+      expect(localStorage.getItem('progress-map')).toBeNull()
+      expect(store.getItem('rise-bookmark')).toBeUndefined()
+      // Nothing resumable was found, so the player must not claim there was.
+      expect(emitted).toEqual([scormLMSStatus.LMSNegative])
     })
 
-    it('LEGACY: splits a mixed scormData bucket by key, CMI to the store and the rest flat', () => {
+    it('LEGACY: splits a mixed scormData bucket by key, keeping the CMI and dropping the rest', () => {
       service.loadDataV2()
       httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {
         scormData: { 'cmi.suspend_data': 'slide=9', 'rise-bookmark': '9' },
       }))
 
       expect(store.getItem('cmi.suspend_data')).toBe('slide=9')
-      expect(localStorage.getItem('rise-bookmark')).toBe('9')
+      expect(localStorage.getItem('rise-bookmark')).toBeNull()
       expect(localStorage.getItem('cmi.suspend_data')).toBeNull()
-      expect(service.scormLocalStorageData).toEqual({ 'rise-bookmark': '9' })
     })
 
     it('emits LMSPositive when only cmi.* data is present and Initialized is absent', () => {

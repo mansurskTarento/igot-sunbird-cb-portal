@@ -50,15 +50,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
   oldData: any = undefined
 
-  // localStorage polling for SCORM data capture
-  private localStorageSnapshot: Record<string, string> = {}
-  private scormData: Record<string, string> = {}
-  private pollingInterval: any = null
+  // Interaction tracking. The learner's state itself is never read out of localStorage -
+  // it is read from the CMI store the package writes through the SCORM API. These only
+  // decide *when* to push a progress update.
   private mutationObserver: MutationObserver | null = null
   private progressUpdateTimer: any = null
   private mediaAttachInterval: any = null
   private lastSlideSignature: string | null = null
-  private storageEventHandler: ((e: StorageEvent) => void) | null = null
 
   // The iframe must not be created until loadDataV2 has settled, otherwise the SCORM
   // package boots and reads localStorage before the saved keys have been written back
@@ -96,6 +94,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // Subscription object
   private sub!: Subscription
   private scormInitSub: Subscription | null = null
+  // Completion is written once per content. The status cannot go higher and the percentage
+  // is already 100, so every later commit and every later interaction would PATCH the same
+  // record again - which is what a package committing per slide used to do.
+  private completionReported = false
   private commitSub: Subscription | null = null
   private pageHideHandler: (() => void) | null = null
   tocConfigSubscription: Subscription | null = null
@@ -115,7 +117,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
   ) {
+    // SCORM 1.2 content discovers window.API; SCORM 2004 content discovers
+    // window.API_1484_11. Publishing both lets either version bind without the platform
+    // needing to know which one a given package was authored against.
     (window as any).API = this.scormAdapterService
+    ;(window as any).API_1484_11 = this.scormAdapterService.scorm2004Api
     // if (window.addEventListener) {
     window.addEventListener('message', this.receiveMessage.bind(this))
     // }
@@ -141,33 +147,36 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // The app receives SCORM_EVENT and performs the progress update itself.
       this.scormAdapterService.suppressProgressApi = this.isMobileApp
       if (this.trackScormProgress) {
-        // Take snapshot BEFORE iframe loads to capture clean baseline
-        this.localStorageSnapshot = this.takeLocalStorageSnapshot()
-        this.startLocalStoragePolling()
-        this.startCrossTabStorageListener()
-        console.log('[SCORM] Initial localStorage snapshot taken, keys:', Object.keys(this.localStorageSnapshot).length)
-
         this.timer = timer(1000, 1000)
         // subscribing to a observable returns a subscription object
         this.sub = this.timer.subscribe((t: any) => this.tickerFunc(t))
 
-        if (this.isMobileApp) {
-          // The app owns progress on this route: it receives SCORM_EVENT and both saves
-          // and restores state itself, so the viewer neither writes nor reads it. With no
-          // progress read there is nothing for the iframe gate to wait on, so release it
-          // now - otherwise scormInitialized$ never fires and the player stays blank
-          // until the restore timeout.
-          console.log('[SCORM] mobile app route - skipping progress read, the app owns progress')
-          // The package drives the cadence: every LMSCommit (and LMSFinish, which commits
-          // first) hands the current state to the app.
-          this.commitSub = this.scormAdapterService.progressCommitted$.subscribe(() => {
+        // A commit is the package asking for its state to be saved, and it is the only
+        // signal that arrives at the moment the state actually changed - the interaction
+        // debounce is a guess. The adapter no longer writes on commit, so this is what
+        // turns a package's "I have finished" into a progress update.
+        this.commitSub = this.scormAdapterService.progressCommitted$.subscribe(() => {
+          const reported = this.handleCompletion()
+          if (this.isMobileApp && !reported) {
+            // Still hand the running state over; the app saves and restores it itself.
             this.emitScormEventToMobile()
-          })
+          }
+        })
+
+        if (this.isMobileApp) {
+          // The app owns in-progress state on this route: it receives SCORM_EVENT and
+          // both saves and restores it itself, so the viewer does not read progress back.
+          // With no progress read there is nothing for the iframe gate to wait on, so
+          // release it now - otherwise scormInitialized$ never fires and the player stays
+          // blank until the restore timeout. Completion is the exception: see
+          // handleCompletion.
+          console.log('[SCORM] mobile app route - skipping progress read, the app owns progress')
           // ngOnDestroy does not run when the webview or tab is torn down, which on this
           // route is the normal way a session ends - so emit on pagehide as well.
           this.pageHideHandler = () => {
-            this.diffStorage()
-            this.emitScormEventToMobile()
+            if (!this.handleCompletion()) {
+              this.emitScormEventToMobile()
+            }
           }
           window.addEventListener('pagehide', this.pageHideHandler)
           this.settleRestore()
@@ -175,27 +184,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         this.beginRestore()
-        this.scormAdapterService.loadDataV2()
         this.scormInitSub = this.scormAdapterService.scormInitialized$.subscribe(value => {
           this.playScormContentFlag = value
-          // When loadDataV2 restores data, merge into scormData tracking
-          if (this.scormAdapterService.scormLocalStorageData
-            && Object.keys(this.scormAdapterService.scormLocalStorageData).length > 0) {
-            const restoredKeys = this.scormAdapterService.scormLocalStorageData
-            for (const key of Object.keys(restoredKeys)) {
-              this.scormData[key] = restoredKeys[key]
-            }
-            // Refresh snapshot so restored keys become baseline
-            this.localStorageSnapshot = this.takeLocalStorageSnapshot()
-            console.log('[SCORM] Merged restored scormData keys:', Object.keys(restoredKeys))
-            // Auto-resume: data is already restored to localStorage, SCORM content will pick it up on load
-            if (value === scormLMSStatus.LMSPositive) {
-              console.log('[SCORM] AUTO_RESUME - saved progress restored, content will resume on load')
-            }
-          }
           // Restore is done (or known to have found nothing) - only now may the iframe load.
           this.settleRestore()
         })
+        this.scormAdapterService.loadDataV2()
         return
       }
     }
@@ -240,10 +234,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     window.removeEventListener('message', this.receiveMessage)
     window.removeEventListener('onmessage', this.receiveMessage)
-    // Final SCORM data capture before destroying
-    this.diffStorage()
-    this.stopLocalStoragePolling()
-    this.stopCrossTabStorageListener()
     if (this.mutationObserver) {
       this.mutationObserver.disconnect()
       this.mutationObserver = null
@@ -262,18 +252,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     // console.log('this.ticks: ', this.ticks)
     if (this.isMobileApp) {
-      this.emitScormEventToMobile()
+      if (!this.handleCompletion()) {
+        this.emitScormEventToMobile()
+      }
     } else {
       this.raiseRealTimeProgress()
     }
-    // Clean up flat localStorage keys written by SCORM content
-    // tslint:disable-next-line: max-line-length
-    const keysToClean = new Set([...Object.keys(this.scormData), ...Object.keys(this.scormAdapterService.scormLocalStorageData)])
-    keysToClean.forEach(key => localStorage.removeItem(key))
-    // Reset the tracking maps too. scormAdapterService is providedIn: 'root', so leaving
-    // these populated lets this content's keys be merged into the next one that is opened.
-    this.scormData = {}
-    this.scormAdapterService.scormLocalStorageData = {}
     // Root-provided service: leave the suppression flag off so a later non-mobile viewer
     // is not silently prevented from saving progress.
     this.scormAdapterService.suppressProgressApi = false
@@ -318,7 +302,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  private fireRealTimeProgress(htmlContent: any) {
+  private fireRealTimeProgress(htmlContent: any, forceApiUpdate = false) {
     if (htmlContent) {
       this.realTimeProgressRequest.content_type = htmlContent.contentType
       this.realTimeProgressRequest.primaryCategory = htmlContent.primaryCategory
@@ -329,6 +313,15 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // const batchId = this.activatedRoute.snapshot.queryParams.batchId ?
       //   this.activatedRoute.snapshot.queryParams.batchId : ''
       const completionData = this.calculateCompletionStatus(htmlContent)
+      if (completionData && completionData.status === 2) {
+        // Completion is written once per content. Nothing about it can change afterwards -
+        // the status cannot go higher and the percentage is already 100 - so every later
+        // commit and every later interaction would just PATCH the same record again.
+        if (this.completionReported) {
+          return
+        }
+        this.completionReported = true
+      }
 
       // Always include ALL available data in progressDetails
       const progressData = this.buildProgressDetails(completionData)
@@ -341,7 +334,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         progressDetails: progressData,
       }
 
-      this.scormAdapterService.addDataV3(req, htmlContent.identifier).subscribe((_res: any) => {
+      this.scormAdapterService.addDataV3(req, htmlContent.identifier, forceApiUpdate).subscribe((_res: any) => {
         this.loggerSvc.log('Progress updated successfully')
         // for updating the progress hashmap, for instant progress to be shown
         if (this.tocSvc.hashmap && this.tocSvc.hashmap[htmlContent.identifier]) {
@@ -363,6 +356,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         return
         // tslint:disable-next-line: align
       }, (err: any) => {
+        // Let the next trigger try again rather than swallowing the completion.
+        this.completionReported = false
         this.loggerSvc.error('Error calling progress update for scorm content', err)
         // this.store.clearAll()
         return
@@ -374,15 +369,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   /**
    * Builds the progressdetails payload. SCORM data model entries are nested under
-   * scormData and keys a package wrote into localStorage itself under scormLocalStorage,
-   * so a consumer can tell those apart from the player's own bookkeeping instead of
-   * finding cmi.* entries mixed in flat alongside spentTime.
+   * scormData so a consumer can tell them apart from the player's own bookkeeping,
+   * instead of finding cmi.* entries mixed in flat alongside spentTime.
    */
   private buildProgressDetails(completionData: any): any {
     const storeData: any = this.store.getAll() || {}
     const progressData: any = {}
     const scormCmi: any = {}
     for (const key of Object.keys(storeData)) {
+      // The error log is the player's own diagnostics, never uploaded.
+      if (key === 'errors') {
+        continue
+      }
       if (isScormCmiKey(key)) {
         scormCmi[key] = storeData[key]
       } else {
@@ -392,9 +390,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     progressData.spentTime = (completionData && completionData.spentTime) || 0
     if (Object.keys(scormCmi).length > 0) {
       progressData.scormData = scormCmi
-    }
-    if (Object.keys(this.scormData).length > 0) {
-      progressData.scormLocalStorage = { ...this.scormData }
     }
     return progressData
   }
@@ -423,7 +418,31 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     // if (data) {
     spentTimen = this.ticks + (data && data['spentTime'] || 0)
-    if (htmlContent && spentTimen) {
+    // cmi.progress_measure (SCORM 2004, 0..1) is the package's own account of how far the
+    // learner has got.
+    const measure = this.getScormProgressMeasure()
+
+    if (this.isTrackableContent(htmlContent)) {
+      // Trackable content reports its own progress, so the elapsed-time ratio is never
+      // used - not even as a backstop. A SCORM 1.2 package has no progress_measure and so
+      // sits at 0 until it declares itself complete, which is the honest reading of what
+      // 1.2 can tell us; the completion branches above are what take it to 100.
+      percentage = measure !== null ? Math.round(measure * 100) : 0
+      // A package reporting progress_measure 1.0 has finished, whether or not it got round
+      // to writing a completion status as well.
+      return {
+        completionPercentage: percentage,
+        status: percentage >= 100 ? 2 : 1,
+        spentTime: spentTimen,
+      }
+    }
+
+    // Untracked content: the mechanism that was always here. progress_measure still wins
+    // when a package volunteers it, because the elapsed-time ratio is only a proxy - it
+    // reports 33% for someone who finished a 30 minute module in 10.
+    if (measure !== null) {
+      percentage = Math.round(measure * 100)
+    } else if (htmlContent && spentTimen) {
       // ~~ will remove decimal after division
       // tslint:disable-next-line
       percentage = ~~((spentTimen / htmlContent.duration) * 100)
@@ -447,6 +466,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  /**
+   * Whether the content record says the package reports its own progress.
+   *
+   * When the flag is absent - which is every content published before it existed - the old
+   * elapsed-time mechanism is left exactly as it was. Accepts the string form too, because
+   * sibling flags on this record (isIframeSupported) come back as strings.
+   */
+  private isTrackableContent(htmlContent: any): boolean {
+    const flag = htmlContent && htmlContent.isTrackable
+    return flag === true || (typeof flag === 'string' && flag.toLowerCase() === 'true')
+  }
+
   getThreshold() {
     if (this.tocConfig) {
       this.progressThreshold = this.tocConfig.ScormProgressThreshold
@@ -467,13 +498,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       this.oldData = this.htmlContent
     } else {
       if (this.htmlContent && (this.oldData.identifier !== this.htmlContent.identifier)) {
-        // Capture what the content wrote since the last poll BEFORE building the upload.
-        // The final bookmark/suspend write happens as Next is clicked, so diffing after
-        // fireRealTimeProgress would drop exactly the position the user left off at.
-        this.diffStorage()
         // Tear the old iframe down now. The next URL is only applied once that content's
         // restore has settled, and until then the old package would keep running and
-        // writing localStorage over the new content's baseline snapshot.
+        // writing CMI data over the next content's.
         this.iframeUrl = null
         this.iframeUrlForIdentifier = null
         // if (!this.store.getItem('Initialized')) {
@@ -481,15 +508,17 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // }
         // call fireRealTimeProgress func for LMS data and non-LMS data also
         if (this.trackScormProgress) {
+          // The content being left is oldData - htmlContent is already the next one.
           if (this.isMobileApp) {
-            this.emitScormEventToMobile()
+            if (!this.handleCompletion(this.oldData)) {
+              this.emitScormEventToMobile(this.oldData)
+            }
           } else {
             this.fireRealTimeProgress(this.oldData)
           }
         }
-        // Stop polling and clean up old content's SCORM localStorage keys
-        this.stopLocalStoragePolling()
-        this.stopCrossTabStorageListener()
+        // The latch is per content, and the next one starts incomplete.
+        this.completionReported = false
         if (this.mutationObserver) {
           this.mutationObserver.disconnect()
           this.mutationObserver = null
@@ -499,11 +528,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           this.mediaAttachInterval = null
         }
         this.lastSlideSignature = null
-        // tslint:disable-next-line: max-line-length
-        const keysToClean = new Set([...Object.keys(this.scormData), ...Object.keys(this.scormAdapterService.scormLocalStorageData)])
-        keysToClean.forEach(key => localStorage.removeItem(key))
-        this.scormData = {}
-        this.scormAdapterService.scormLocalStorageData = {}
 
         if (this.sub) {
           this.sub.unsubscribe()
@@ -517,10 +541,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         this.scormAdapterService.contentId = this.htmlContent.identifier
         this.scormAdapterService.suppressProgressApi = this.isMobileApp
         if (this.trackScormProgress) {
-          // Take fresh snapshot before new content loads
-          this.localStorageSnapshot = this.takeLocalStorageSnapshot()
-          this.startLocalStoragePolling()
-          this.startCrossTabStorageListener()
           if (this.isMobileApp) {
             // No progress read on this route, so nothing gates the next iframe.
             this.settleRestore()
@@ -901,94 +921,44 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // --- localStorage polling for SCORM data capture ---
-
-  private takeLocalStorageSnapshot(): Record<string, string> {
-    const snap: Record<string, string> = {}
-    for (let i = 0; i < localStorage.length; i += 1) {
-      const key = localStorage.key(i)
-      if (key) {
-        const value = localStorage.getItem(key)
-        if (value !== null) {
-          snap[key] = value
-        }
-      }
+  /**
+   * cmi.progress_measure as a 0..1 number, or null when the package has not reported it.
+   * SCORM 2004 only - 1.2 has no equivalent element, which is why elapsed time is still
+   * the fallback.
+   */
+  private getScormProgressMeasure(): number | null {
+    const storeData: any = this.store.getAll() || {}
+    const raw = storeData['cmi.progress_measure']
+    if (raw === undefined || raw === null || raw === '') {
+      return null
     }
-    return snap
+    const measure = Number(raw)
+    if (isNaN(measure) || measure < 0 || measure > 1) {
+      return null
+    }
+    return measure
   }
 
-  private startLocalStoragePolling() {
-    if (this.pollingInterval) { return }
-    this.pollingInterval = setInterval(() => this.diffStorage(), 500)
-  }
-
-  private stopLocalStoragePolling() {
-    if (this.pollingInterval) {
-      clearInterval(this.pollingInterval)
-      this.pollingInterval = null
-    }
-  }
-
-  private diffStorage() {
-    const current = this.takeLocalStorageSnapshot()
-    const storageKey = this.scormAdapterService.contentId
-    let hasChanges = false
-
-    for (const key of Object.keys(current)) {
-      // Skip our own Storage service key (it stores CMI data separately)
-      if (key === storageKey) { continue }
-
-      const isNew = !(key in this.localStorageSnapshot)
-      // Only track changes on keys already attributed to the SCORM content. A pre-existing
-      // app key (auth token, telemetry buffer, feature flags) that merely changes during
-      // playback must not be captured - it would be uploaded and then deleted from
-      // localStorage by the cleanup in ngOnDestroy / ngOnChanges.
-      const isChanged = !isNew && (key in this.scormData) && current[key] !== this.localStorageSnapshot[key]
-
-      if (isNew || isChanged) {
-        this.scormData[key] = current[key]
-        hasChanges = true
-        console.log('[SCORM] diffStorage detected:', isNew ? 'NEW' : 'CHANGED', 'key:', key,
-                    'value length:', current[key] ? current[key].length : 0,
-                    'value:', current[key])
-      }
-    }
-
-    // Detect removed keys
-    for (const key of Object.keys(this.localStorageSnapshot)) {
-      if (!(key in current) && key in this.scormData) {
-        delete this.scormData[key]
-        hasChanges = true
-        console.log('[SCORM] diffStorage detected: REMOVED key:', key)
-      }
-    }
-
-    this.localStorageSnapshot = current
-
-    // Log storage size on every poll
-    const sizeKB = (this.getStorageSize() / 1024).toFixed(1)
-    if (hasChanges) {
-      console.log('[SCORM] Storage size:', sizeKB, 'KB, scormData keys:', Object.keys(this.scormData).length)
-    }
-    return hasChanges
-  }
-
+  /**
+   * The package's own verdict on completion, or null if it has not given one.
+   *
+   * The authoritative signal is cmi.core.lesson_status. Articulate's SetReachedEnd() calls
+   * SetCompleted(), which writes 'completed' through LMSSetValue into the CMI store - so
+   * the store is where completion has to be read from. Note LMSFinish and cmi.core.exit
+   * are NOT completion signals: a learner exiting half way through also finishes the
+   * session, with exit='suspend'.
+   */
   private getScormCompletionStatus(): number | null {
-    for (const [key, value] of Object.entries(this.scormData)) {
-      const lowerKey = key.toLowerCase()
-      if (lowerKey.includes('lesson_status') || lowerKey.includes('completion_status')) {
-        if (value === 'completed' || value === 'passed') {
-          return 2
-        }
-      }
-    }
-    return null
+    // Delegate to the adapter so "what counts as complete" has one definition, shared with
+    // the status the progress request itself reports. A package that never calls the SCORM
+    // API reports nothing here; calculateCompletionStatus falls back to elapsed time.
+    const storeData: any = this.store.getAll() || {}
+    return this.scormAdapterService.getStatus(storeData) === 2 ? 2 : null
   }
 
-  // The SCORM package finds the LMS by walking window.parent looking for window.API, and
-  // writes its bookmark/suspend keys into its own origin's localStorage. Both are blocked
-  // when the iframe is cross-origin, which is what produces Articulate's
-  // "unable to find the LMS API for ..." warnings and an empty scormData on upload.
+  // The SCORM package finds the LMS by walking window.parent looking for window.API, which
+  // is blocked when the iframe is cross-origin - that is what produces Articulate's
+  // "unable to find the LMS API for ..." warnings and an empty CMI store on upload.
   //
   // In a deployment this is already fine: azureHost and the portal share a host, so the
   // content is same-origin. It only breaks in local dev, where the app runs on
@@ -1027,29 +997,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  // --- Storage size tracking ---
-
-  private getStorageSize(): number {
-    let total = 0
-    try {
-      for (let i = 0; i < localStorage.length; i += 1) {
-        const key = localStorage.key(i)
-        if (key) {
-          const val = localStorage.getItem(key)
-          total += key.length + (val ? val.length : 0)
-        }
-      }
-    } catch (_e) { /* ignore */ }
-    return total
-  }
-
   // --- Reload SCORM content ---
 
   reloadScormContent() {
     if (!this.htmlContent) { return }
     console.log('[SCORM] USER_RELOAD - reloading content')
-    // Capture current state before reload
-    this.diffStorage()
     // Disconnect observers
     if (this.mutationObserver) {
       this.mutationObserver.disconnect()
@@ -1072,35 +1024,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       }
       // tslint:disable-next-line: align
     }, 100)
-  }
-
-  // --- Cross-tab localStorage listener ---
-
-  private startCrossTabStorageListener() {
-    this.stopCrossTabStorageListener()
-    this.storageEventHandler = (e: StorageEvent) => {
-      console.log('[SCORM] Cross-tab storage event:', e.key,
-                  e.oldValue === null ? 'ADDED' : (e.newValue === null ? 'REMOVED' : 'CHANGED'))
-      // Refresh snapshot and capture changes
-      this.localStorageSnapshot = this.takeLocalStorageSnapshot()
-      if (e.key && e.newValue !== null) {
-        const storageKey = this.scormAdapterService.contentId
-        if (e.key !== storageKey) {
-          this.scormData[e.key] = e.newValue
-        }
-      } else if (e.key && e.newValue === null && e.key in this.scormData) {
-        delete this.scormData[e.key]
-      }
-      this.debouncedProgressUpdate()
-    }
-    window.addEventListener('storage', this.storageEventHandler)
-  }
-
-  private stopCrossTabStorageListener() {
-    if (this.storageEventHandler) {
-      window.removeEventListener('storage', this.storageEventHandler)
-      this.storageEventHandler = null
-    }
   }
 
   // --- Slide signature & title detection (from reference HTML) ---
@@ -1151,9 +1074,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         return
       }
 
-      // ── Click events → capture state + trigger progress update ──
+      // ── Click events → trigger progress update ──
       iframeDoc.addEventListener('click', (_e: any) => {
-        this.diffStorage()
         this.debouncedProgressUpdate()
         // tslint:disable-next-line: align
       }, true)
@@ -1161,7 +1083,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // ── Keyboard navigation (arrows, enter, space, tab, escape) ──
       iframeDoc.addEventListener('keydown', (e: KeyboardEvent) => {
         if (['ArrowLeft', 'ArrowRight', 'Enter', ' ', 'Tab', 'Escape'].includes(e.key)) {
-          this.diffStorage()
           this.debouncedProgressUpdate()
         }
         // tslint:disable-next-line: align
@@ -1178,7 +1099,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             const title = this.getSlideTitle(iframeDoc)
             console.log('[SCORM] SLIDE_CHANGED:', newSig, 'title:', title)
           }
-          this.diffStorage()
           this.debouncedProgressUpdate()
         })
         this.mutationObserver.observe(slideContainer, {
@@ -1203,7 +1123,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
                 console.log('[SCORM] MEDIA:', mediaEl.tagName, evt.toUpperCase(),
                             'time:', Math.round(mediaEl.currentTime * 10) / 10,
                             'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
-                this.diffStorage()
                 this.debouncedProgressUpdate()
               })
             })
@@ -1214,50 +1133,21 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // Re-scan every 2s for dynamically added media elements
       this.mediaAttachInterval = setInterval(attachMediaListeners, 2000)
 
-      // ── Intercept iframe localStorage.setItem for immediate capture ──
-      try {
-        const origSetItem = (iframeWin as any).Storage.prototype.setItem
-        const self = this
-        ;(iframeWin as any).Storage.prototype.setItem = function (this: any, key: string, value: string) {
-          origSetItem.call(this, key, value)
-          self.diffStorage()
-          self.debouncedProgressUpdate()
-        }
-      } catch (_e) {
-        console.warn('[SCORM] Could not proxy iframe localStorage.setItem')
-      }
-
-      // ── Intercept iframe localStorage.removeItem ──
-      try {
-        const origRemoveItem = (iframeWin as any).Storage.prototype.removeItem
-        const self = this
-        ;(iframeWin as any).Storage.prototype.removeItem = function (this: any, key: string) {
-          origRemoveItem.call(this, key)
-          self.diffStorage()
-          self.debouncedProgressUpdate()
-        }
-      } catch (_e) {
-        console.warn('[SCORM] Could not proxy iframe localStorage.removeItem')
-      }
-
       // ── Hash navigation within iframe ──
       iframeWin.addEventListener('hashchange', () => {
         console.log('[SCORM] HASH_CHANGE in iframe')
-        this.diffStorage()
         this.debouncedProgressUpdate()
       })
 
       // ── Popstate navigation within iframe ──
       iframeWin.addEventListener('popstate', () => {
         console.log('[SCORM] POPSTATE in iframe')
-        this.diffStorage()
         this.debouncedProgressUpdate()
       })
 
-      // ── Before unload — final sync ──
+      // ── Before unload ──
       iframeWin.addEventListener('beforeunload', () => {
         console.log('[SCORM] CONTENT_BEFORE_UNLOAD')
-        this.diffStorage()
       })
 
       // ── Unload ──
@@ -1293,28 +1183,68 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       clearTimeout(this.progressUpdateTimer)
     }
     this.progressUpdateTimer = setTimeout(() => {
-      // Mobile deliberately does NOT emit here. SCORM_EVENT is a hand-off, and emitting
-      // on every interaction fires it during load (the MutationObserver sees the package
-      // render) - the app only wants it once the content is finished with, so it is raised
-      // from ngOnDestroy and on content switch instead. Capture still happens via
-      // diffStorage on each interaction, so the final emit carries everything.
-      if (this.trackScormProgress && this.htmlContent && !this.isMobileApp) {
-        this.fireRealTimeProgress(this.htmlContent)
+      if (!this.trackScormProgress || !this.htmlContent) {
+        return
       }
+      if (!this.isMobileApp) {
+        this.fireRealTimeProgress(this.htmlContent)
+        return
+      }
+      // Mobile does not push partial progress from here. SCORM_EVENT is a hand-off, and
+      // emitting on every interaction fires it during load (the MutationObserver sees the
+      // package render) - the app only wants the running state at the points it is already
+      // given it. Completion is different: it is pushed the moment it happens rather than
+      // waiting for the learner to close the content.
+      this.handleCompletion()
       // tslint:disable-next-line: align
     }, 2000)
   }
 
   /**
-   * Hands the SCORM data model to the app, which owns progress on the mobile route and
-   * derives status/completion itself. Only contentId and scormData are sent - the
-   * player's own bookkeeping is deliberately left out.
+   * Completion, pushed the moment the package declares it rather than when the learner
+   * happens to close the content.
    *
-   * Raised on exit and on content switch, never during playback: emitting on every
-   * interaction fired it while the package was still rendering.
+   * On the mobile route both halves run: the app is handed a completion-flagged
+   * SCORM_EVENT, and the viewer writes the update itself with forceApiUpdate. The app
+   * normally owns progress there, but a completion that exists only as a hand-off is lost
+   * if the app misses it or the webview is killed first, so this one write does not
+   * depend on that.
+   *
+   * The triggers (every commit, the interaction debounce, pagehide, teardown, content
+   * switch) overlap by design; completionReported makes only the first one write.
+   *
+   * @returns whether it reported, so a caller that was going to hand over the running
+   * state can skip doing so and the app is not sent the same thing twice.
    */
-  private emitScormEventToMobile() {
-    if (!this.htmlContent) { return }
+  private handleCompletion(content: any = this.htmlContent): boolean {
+    if (this.completionReported || !content) {
+      return false
+    }
+    const completion = this.calculateCompletionStatus(content)
+    if (!completion || completion.status !== 2) {
+      return false
+    }
+    console.log('[SCORM] completion detected for', content.identifier,
+                '- writing the progress update')
+    if (this.isMobileApp) {
+      this.emitScormEventToMobile(content, completion)
+    }
+    // Sets completionReported, so later triggers stop here instead of re-sending.
+    this.fireRealTimeProgress(content, true)
+    return true
+  }
+
+  /**
+   * Hands the SCORM data model to the app, which owns the running state on the mobile
+   * route. scormData is the data model itself; status and completionPercentage are the
+   * player's reading of it, so the app does not have to re-derive completion to know a
+   * content is finished.
+   *
+   * Raised on every commit, on exit and on content switch - and immediately on completion,
+   * via handleCompletion.
+   */
+  private emitScormEventToMobile(content: any = this.htmlContent, completion?: any) {
+    if (!content) { return }
     const storeData: any = this.store.getAll() || {}
     const scormData: any = {}
     for (const key of Object.keys(storeData)) {
@@ -1322,10 +1252,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         scormData[key] = storeData[key]
       }
     }
+    const completionData = completion || this.calculateCompletionStatus(content)
     const payload: any = {
       type: 'SCORM_EVENT',
-      contentId: this.htmlContent.identifier,
+      contentId: content.identifier,
       scormData,
+      status: (completionData && completionData.status) || 0,
+      completionPercentage: (completionData && completionData.completionPercentage) || 0,
     }
     if (!Object.keys(scormData).length) {
       console.warn('[SCORM] Emitting event to mobile with empty scormData - the package',
