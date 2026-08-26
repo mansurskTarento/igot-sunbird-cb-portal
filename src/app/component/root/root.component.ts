@@ -120,6 +120,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // drawer (see isOverlayMode in sb-uic-dynamic-sidebar), so opening it must leave the header
   // and main content exactly where they are instead of reflowing them.
   sidebarPushesContent = computed(() => this.isHomePage() && this.leftNavBarIsOpen())
+
+  independenceDayBanner: any
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -280,6 +283,17 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     return /^\/app\/event-hub\/home\/[^/]+/.test(path)
   }
 
+  /**
+   * Bharat Kalp's landing page runs edge to edge, but its children stay in the centred
+   * container - see-all has its own breadcrumb and grid layout that assume it. Matching
+   * the exact path rather than a prefix is what keeps the two apart: startsWith would
+   * take /app/learn/bharat-kalp/see-all full screen too.
+   */
+  private isFullScreenBharatKalp(url: string): boolean {
+    const path = (url || '').split('?')[0].split('#')[0].replace(/\/+$/, '')
+    return path === '/app/learn/bharat-kalp'
+  }
+
   get showMenuBardetails(): boolean {
     // a NOT-MY-USER account has nowhere to navigate, so it gets no sidebar
     return this.menuBarDetails && this.currentUrl &&
@@ -383,6 +397,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     // tslint: disable
   }
   ngOnInit() {
+    this.independenceDayBanner = this.configSvc?.overrideThemeChanges?.independenceDayBanner || {}
     // let showTour = localStorage.getItem('tourGuide')? JSON.parse(localStorage.getItem('tourGuide')||''): {}
     // this.showTour = showTour && showTour.disable ? showTour.disable : false
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
@@ -505,6 +520,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           this.currentUrl.startsWith('/app/toc') ||
           this.currentUrl.startsWith('/viewer/') ||
           this.isFullScreenEventPage(this.currentUrl) ||
+          this.isFullScreenBharatKalp(this.currentUrl) ||
           this.currentUrl.startsWith('/public/') ||
           // self-registration via QR: a standalone flow, so it gets the full width
           this.currentUrl.startsWith('/crp/')

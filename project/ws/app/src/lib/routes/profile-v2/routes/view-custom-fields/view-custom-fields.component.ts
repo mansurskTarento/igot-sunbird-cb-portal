@@ -78,7 +78,7 @@ export class ViewCustomFieldsComponent {
     }
     const configDetails: ConfigDetails = {
       apiConfig: this.apiConfig,
-      urlConfigPath: 'userV1Groups',
+      urlConfigPath: 'orgV1Read',
       defaultUrl: ''
     }
     this.userProfileService.readOrgData(request, configDetails).subscribe((res: any) => {

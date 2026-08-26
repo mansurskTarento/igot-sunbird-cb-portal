@@ -138,54 +138,54 @@ export class CommonDataService {
   }
 
   getOrgDetails(isPlayer: boolean) {
-    this.rootOrgId = this.rootOrgId || this.configSvc?.userProfile?.rootOrgId ||''
+    this.rootOrgId = this.rootOrgId || this.configSvc?.userProfile?.rootOrgId || ''
     const request = {
       request: { organisationId: this.rootOrgId },
     }
-    if (Object.keys(this.configSvc && this.configSvc.orgReadData || {}).length > 0) {
-      const res: any = this.configSvc.orgReadData
-      const isPopupEnabled = _.get(res, 'customfieldsdata?.isPopupEnabled') ? true : false
-      const customFieldsCount = _.get(res, 'customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
-      const customFieldsLength = _.get(res, 'customfieldsdata?.customFieldIds', [])
+    if (Object.keys(this.configSvc && this.configSvc.unMappedUser || {}).length > 0) {
+      const res: any = this.configSvc.unMappedUser
+      const isPopupEnabled = _.get(res, 'rootOrg.customfieldsdata.isPopupEnabled') ? true : false
+      const customFieldsCount = _.get(res, 'rootOrg.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
+      const customFieldsLength = _.get(res, 'rootOrg.customfieldsdata.customFieldIds', [])
       if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
         return this.readCustomattributeDetails(isPlayer)
       }
-        this.updatePlayerStatus(isPlayer)
-        this.checkAndShowMandatoryNotification()
-        return false
+      this.updatePlayerStatus(isPlayer)
+      this.checkAndShowMandatoryNotification()
+      return false
 
     }
-      this.userProfileService.readOrgData(request).subscribe((res: any) => {
-        this.configSvc.orgReadData = res?.result?.response
-        const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
-        const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
-        const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
-        if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
-          return this.readCustomattributeDetails(isPlayer)
-        }
-          this.updatePlayerStatus(isPlayer)
-          this.checkAndShowMandatoryNotification()
-          return false
+    this.userProfileService.readOrgData(request).subscribe((res: any) => {
+      this.configSvc.orgReadData = res?.result?.response
+      const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
+      const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
+      const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
+      if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
+        return this.readCustomattributeDetails(isPlayer)
+      }
+      this.updatePlayerStatus(isPlayer)
+      this.checkAndShowMandatoryNotification()
+      return false
 
-      },                                                     error => {
-        console.error('Error fetching organization details:', error)
-        return false
-      })
+    }, error => {
+      console.error('Error fetching organization details:', error)
+      return false
+    })
 
   }
   readCustomattributeDetails(isPlayer: boolean) {
     this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
-      const customFieldValues = _.get(res, 'result?.response?.customFieldValues', [])
+      const customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       if (customFieldValues && customFieldValues.length === 0) {
         return this.redirectToCustomProfile()
       }
-        // this.redirectToCustomProfile()
+      // this.redirectToCustomProfile()
 
-        this.updatePlayerStatus(isPlayer)
-        this.checkAndShowMandatoryNotification()
-        return false
+      this.updatePlayerStatus(isPlayer)
+      this.checkAndShowMandatoryNotification()
+      return false
 
-    },                                                                                                           error => {
+    }, error => {
       console.error('Error fetching custom attribute details:', error)
       return false
     })
@@ -204,7 +204,7 @@ export class CommonDataService {
       } else {
         this.showMandatoryNotification = false
       }
-    },                                                                      error => {
+    }, error => {
       this.showMandatoryNotification = false
       console.error('Error fetching mandatory notification:', error)
     })
@@ -249,7 +249,7 @@ export class CommonDataService {
 
             this.setMandatoryTimer()
             this.router.navigate(['/viewer/practice/', this.mandatoryNotificationData?.message?.data?.assessmentId],
-                                 {
+              {
                 queryParams: {
                   primaryCategory: this.mandatoryNotificationData?.message?.data?.primaryCategory,
                   collectionId: this.mandatoryNotificationData?.message?.data?.collectionId,
@@ -259,7 +259,7 @@ export class CommonDataService {
               }
             )
           }
-        },                                                                        error => {
+        }, error => {
           console.error('Error marking mandatory notification as read:', error)
           this.showMandatoryNotification = false
           this.setMandatoryTimer()
