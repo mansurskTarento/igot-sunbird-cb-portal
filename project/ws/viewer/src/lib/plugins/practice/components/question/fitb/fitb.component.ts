@@ -167,6 +167,19 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
         }
     }
 
+    private normalizeBlanks(body: string): string {
+        const canonical = '<input style="border-style:none none solid none" />'
+        if (!body) {
+            return body
+        }
+        if (body.includes('_______________') || body.includes(canonical)) {
+            return body
+        }
+        return body
+            .replace(/<input\b[^>]*>/gi, canonical)
+            .replace(/_{3,}/g, canonical)
+    }
+
     init() {
         if (this.question.questionType === 'ftb') {
             // if (this.practiceSvc.questionAnswerHash.value && this.practiceSvc.questionAnswerHash.value[this.question.questionId]) {
@@ -177,6 +190,7 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
             // if (needToModify) {
             let value = (this.practiceSvc.questionAnswerHash.value[this.question.questionId] || '')
             value = value.toString().split(',')
+            this.localQuestion = this.normalizeBlanks(this.localQuestion)
             // tslint:disable-next-line
             let iterationNumber = (this.localQuestion.match(/_______________/g) || []).length
             let fromRichTextEditor = false
@@ -253,8 +267,8 @@ export class FillInTheBlankComponent implements OnInit, OnChanges, AfterViewInit
                             const selected = (value[i] && value[i].toString().trim() === selvalue.toString().trim()) ? 'selected' : ''
                             if (selected) {
                                 optionString = `<option value='${selvalue}' selected=${selected}>${label}</option>`
-                                selectBox = selectBox + optionString                                
-                            } 
+                                selectBox = selectBox + optionString
+                            }
                             else {
                                 optionString = `<option value='${selvalue}'>${label}</option>`
                                 selectBox = selectBox + optionString

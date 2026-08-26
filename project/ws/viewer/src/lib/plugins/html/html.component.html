@@ -87,7 +87,9 @@
     htmlContent?.isIframeSupported !== 'No' &&
     (!htmlContent?.isInIntranet || (htmlContent?.isInIntranet && isUserInIntranet)) &&
     (!isIntranetUrl || (isIntranetUrl && isUserInIntranet))"-->
-  <ng-container *ngIf="playScormContentFlag !== scormLMSStatus.LMSNegative">
+  <!-- iframeUrl is only assigned once the progress restore has settled, so this also
+       keeps the SCORM package from booting before its saved keys are back in localStorage -->
+  <ng-container *ngIf="playScormContentFlag !== scormLMSStatus.LMSNegative && iframeUrl">
     <iframe #iframeElem title=" HTML Content Viewer" i18n-title [src]="iframeUrl"
       (load)="onIframeLoadOrError('load',iframeElem,$event)" (error)="onIframeLoadOrError('error')" [name]="iframeName"
       allow="fullscreen; accelerometer; autoplay; encrypted-media; gyroscope; microphone; camera;"
