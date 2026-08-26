@@ -1,10 +1,10 @@
-<div class="download-app-dialog">
-    <!-- //NOSONAR -->
-    <div class="dialog-close" *ngIf="!isMobile" (click)="closePopup()">
-        <span class="decline-icon" role="img" aria-label="Close"
-            [style.mask-image]="'url(assets/icons/home/decline_icon.svg)'"
-            [style.-webkit-mask-image]="'url(assets/icons/home/decline_icon.svg)'"></span>
-    </div>
+<div class="download-app-dialog" [class.is-dialog]="isDialog">
+    <button type="button" class="dialog-close" *ngIf="isDialog" aria-label="Close" (click)="closePopup()">
+        <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+            <path d="M6 6 L18 18 M18 6 L6 18" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" />
+        </svg>
+    </button>
     <div [ngClass]="popupClass === 'download-app-popup' ? 'download-app-popup' : 'download-app'" *ngIf="!isMobile">
         <ng-container>
             <div class="left-side">
@@ -37,7 +37,7 @@
             <div class="right-side">
                 <div class="circle flex items-center justify-center">
                     <div class="vertical-image">
-                        <img alt="" src="/assets/icons/footer-nav/mobile.png" />
+                        <img alt="" src="/assets/icons/footer-nav/mobile_v2.png" />
                     </div>
                 </div>
             </div>
@@ -47,7 +47,7 @@
         <div class="right-side">
             <div class="circle">
                 <div class="vertical-image">
-                    <img alt="" src="/assets/icons/footer-nav/mobile.png" />
+                    <img alt="" src="/assets/icons/footer-nav/mobile_v2.png" />
                 </div>
             </div>
         </div>
