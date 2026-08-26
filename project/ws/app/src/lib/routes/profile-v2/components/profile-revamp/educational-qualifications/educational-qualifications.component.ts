@@ -47,13 +47,13 @@ export class EducationalQualificationsComponent implements OnInit {
     if (this.userId) {
       const configDetails = {
         defaultUrl: '',
-        urlConfigPath: 'profileV1Extended',
-        apiConfig: this.data?.apiConfig || this.apiConfig
+        urlConfigPath: 'profileV1ExtendedEducation',
+        apiConfig: this.data?.apiConfig || this.apiConfig,
       }
-      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'all', !this.isCurrentUser).subscribe({
+      this.profileV2RevampSvc.fetchProfileEntryList(configDetails, this.userId, 'education').subscribe({
         next: (res: any) => {
           if (res) {
-            this.educationalQualificationsList = _.get(res, 'result.response.educationalQualifications.data', [])
+            this.educationalQualificationsList = _.get(res, 'result.response.educationalQualifications', [])
           }
         },
         error: (err: any) => {
