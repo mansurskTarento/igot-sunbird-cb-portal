@@ -1787,7 +1787,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             isNew ? this.addAchievementEntry(formBody) : this.updateAchievementEntry(formBody)
           } else if (header === 'Service History') {
             _.get(entryDetails, 'uuid') ?
-              this.updateProfileEntry(formBody) : this.addProfileEntry(formBody, 'Added Successfully')
+              this.updateProfileEntry(formBody) :
+              this.addProfileEntry(formBody, 'Added Successfully', _.get(entryDetails, 'isDefaultEntry') ? entryDetails : null)
           } else {
             isNew ? this.addProfileEntry(formBody, 'Added Successfully') : this.updateProfileEntry(formBody)
           }
@@ -1872,18 +1873,46 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   }
 
   //#region (service history, achievements, educational qualifications will edit based on the request)
-  addProfileEntry(formBody: any, successMessage: string = 'Updated Successfully') {
+  addProfileEntry(formBody: any, successMessage: string = 'Updated Successfully', defaultEntry: any = null) {
+    if (defaultEntry) {
+      defaultEntry['isSaving'] = true
+    }
     const configDetails: ConfigDetails = this.getConfigDetails('addEntries')
     this.profileV2RevampSvc.addEntriesToProfile(formBody, configDetails).subscribe({
       next: (response: any) => {
         if (response) {
-          this.fetchProfileEntries()
+          defaultEntry ? this.syncDefaultServiceHistoryEntry(defaultEntry, response) : this.fetchProfileEntries()
           this.openSnackbar(successMessage)
         }
       },
       error: (error: HttpErrorResponse) => {
+        if (defaultEntry) {
+          defaultEntry['isSaving'] = false
+        }
         if (error) {
           this.openSnackbar('Something went wrong please try again')
+        }
+      },
+    })
+  }
+
+  private syncDefaultServiceHistoryEntry(defaultEntry: any, addResponse: any): void {
+    const createdEntry = _.get(addResponse, 'result.response.serviceHistory[0]',
+      _.get(addResponse, 'result.response.serviceHistory', _.get(addResponse, 'result.response', {})))
+    if (_.get(createdEntry, 'uuid')) {
+      Object.assign(defaultEntry, createdEntry, { isDefaultEntry: false, isSaving: false })
+      return
+    }
+    const configDetails: ConfigDetails = this.getConfigDetails('profileV1ExtendedServiceHistory')
+    this.profileV2RevampSvc.fetchProfileEntryList(configDetails, this.userId, 'serviceHistory').subscribe({
+      next: (response: any) => {
+        const normalize = (value: string = '') => value?.trim()?.toLowerCase()
+        const persistedEntry = _.get(response, 'result.response.serviceHistory', []).find((entry: any) =>
+          !!entry?.uuid && normalize(entry?.orgName) === normalize(defaultEntry?.orgName) &&
+          normalize(entry?.designation) === normalize(defaultEntry?.designation)
+        )
+        if (persistedEntry) {
+          Object.assign(defaultEntry, persistedEntry, { isDefaultEntry: false, isSaving: false })
         }
       },
     })

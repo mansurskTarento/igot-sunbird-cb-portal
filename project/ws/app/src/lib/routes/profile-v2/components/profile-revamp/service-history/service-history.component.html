@@ -21,7 +21,7 @@
         <div class="flex justify-between items-start">
           <div class="designation">{{service?.designation}}</div>
           <ng-container *ngIf="isCurrentUser">
-            <mat-icon class="edit-icon" (click)="openEditDialog(service)">edit</mat-icon>
+            <mat-icon *ngIf="!service?.isSaving" class="edit-icon" (click)="openEditDialog(service)">edit</mat-icon>
           </ng-container>
         </div>
         <div class="org-details">{{service?.orgDetails}}</div>
