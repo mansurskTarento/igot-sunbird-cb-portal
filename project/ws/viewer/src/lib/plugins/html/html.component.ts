@@ -101,6 +101,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // is already 100, so every later commit and every later interaction would PATCH the same
   // record again - which is what a package committing per slide used to do.
   private completionReported = false
+  // Per content, like completionReported: the package's data is logged once, not on every
+  // interaction - the reading it guards is recomputed every couple of seconds.
+  private packageDataLogged = false
   private commitSub: Subscription | null = null
   private pageHideHandler: (() => void) | null = null
   tocConfigSubscription: Subscription | null = null
@@ -453,7 +456,19 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       const reported = (measured !== null && measured > 0)
         ? measured
         : this.getReportedScormProgress()
-      percentage = reported !== null ? reported : this.elapsedTimePercentage(htmlContent, spentTimen)
+      if (reported !== null) {
+        percentage = reported
+      } else {
+        percentage = this.elapsedTimePercentage(htmlContent, spentTimen)
+        // Named explicitly: this is the weakest reading of the set - the share of the
+        // content's declared duration the learner has sat through, which is not the same
+        // thing as the share of the content they have been through. If this line is what
+        // is producing the percentage, the package is reporting nothing of its own.
+        console.log('[SCORM] partial progress from elapsed time:', percentage,
+                    `(${spentTimen}s of a declared ${htmlContent && htmlContent.duration}s)`,
+                    '- the package reported no progress of its own')
+        this.logPackageData()
+      }
       // Only the package may declare trackable content finished, so an in-progress reading
       // never reaches 100 - the completion branches above are what take it there.
       percentage = Math.min(Math.max(percentage, savedPercentage), 99)
@@ -539,11 +554,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       console.log('[SCORM] partial progress from cmi.objectives:', objectives)
       return objectives
     }
-    const score = this.getScoreProgress()
-    if (score !== null) {
-      console.log('[SCORM] partial progress from cmi.score:', score)
-      return score
-    }
     return null
   }
 
@@ -592,28 +602,29 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Score as a stand-in for progress, 0..100.
+   * Everything the package has written, logged once per content.
    *
-   * The weakest of the package's own signals, and last in line for that reason: for an
-   * assessment package the score is often the only thing that moves as the learner works
-   * through it. cmi.score.scaled is SCORM 2004 and already a 0..1 fraction; raw against
-   * max covers both versions.
+   * Reached only when no signal in the CMI store says how far the learner has got, which
+   * is where a slide-based reading would have to come from instead. For a SCORM 1.2
+   * package that is cmi.core.lesson_location (the bookmark) and cmi.suspend_data, which
+   * is where an authoring tool records which slides have been seen - so this is the data
+   * such a reading has to be derived from. Logged whole rather than truncated:
+   * suspend_data is long and the interesting part is not at the front.
    */
-  private getScoreProgress(): number | null {
-    const data: any = this.store.getAll() || {}
-    const scaled = this.numericCmi(data, 'cmi.score.scaled')
-    if (scaled !== null && scaled > 0) {
-      return Math.min(Math.round(scaled * 100), 99)
+  private logPackageData() {
+    if (this.packageDataLogged) {
+      return
     }
-    const raw = this.numericCmi(data, 'cmi.core.score.raw', 'cmi.score.raw')
-    if (raw === null || raw <= 0) {
-      return null
+    this.packageDataLogged = true
+    const storeData: any = this.store.getAll() || {}
+    const cmi: any = {}
+    for (const key of Object.keys(storeData)) {
+      if (key.startsWith('cmi.')) {
+        cmi[key] = storeData[key]
+      }
     }
-    // SCORM 1.2 scores are 0..100 by definition, so a package that left score.max unset
-    // is still reporting out of 100.
-    const max = this.numericCmi(data, 'cmi.core.score.max', 'cmi.score.max')
-    const outOf = max !== null && max > 0 ? max : 100
-    return Math.min(Math.round((raw / outOf) * 100), 99)
+    console.log('[SCORM] the package reported no progress of its own. Everything it did write:',
+                JSON.stringify(cmi))
   }
 
   /**
@@ -697,6 +708,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
         // The latch is per content, and the next one starts incomplete.
         this.completionReported = false
+        this.packageDataLogged = false
         if (this.mutationObserver) {
           this.mutationObserver.disconnect()
           this.mutationObserver = null
