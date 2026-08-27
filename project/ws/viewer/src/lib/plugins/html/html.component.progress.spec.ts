@@ -86,11 +86,14 @@ describe('HtmlComponent progress reading', () => {
         expect.objectContaining({ completionPercentage: 25, status: 1 }))
     })
 
-    it('falls back to score when there are no objectives', () => {
-      store.data['cmi.core.score.raw'] = '30'
+    // Score is deliberately not a progress signal: a learner can be 4% scored having seen
+    // every slide, or 100% scored on question 1 of 20.
+    it('does not read score as progress', () => {
+      component.ticks = 0
+      store.data['cmi.core.score.raw'] = '4'
       store.data['cmi.core.score.max'] = '100'
       expect(component.calculateCompletionStatus(trackable)).toEqual(
-        expect.objectContaining({ completionPercentage: 30, status: 1 }))
+        expect.objectContaining({ completionPercentage: 0, status: 1 }))
     })
 
     it('falls back to elapsed time when the package reported nothing at all', () => {
