@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, LoggerService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../../../../../../src/app/services/mobile-apps.service'
-import { SCORMAdapterService, scormLMSStatus, isScormCmiKey } from './SCORMAdapter/scormAdapter'
+import { SCORMAdapterService, scormLMSStatus, isScormCmiKey, isCompleteStatusValue } from './SCORMAdapter/scormAdapter'
 /* tslint:disable */
 import _ from 'lodash'
 import { environment } from 'src/environments/environment'
@@ -38,6 +38,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
   progress = 100
   progressThreshold = 70
+  // The default above, kept intact: progressThreshold itself is overwritten by whatever
+  // the toc config holds, undefined included.
+  private readonly defaultProgressThreshold = 70
   public scormLMSStatus = scormLMSStatus
   playScormContentFlag = scormLMSStatus.LMSWating
   realTimeProgressRequest = {
@@ -398,6 +401,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     const data = this.store.getAll()
     let spentTimen = 0
     let percentage = 0
+    // What has already been recorded for this content, restored by loadDataV2. Every
+    // in-progress reading below is floored at it, because the CMI store starts a session
+    // empty: the first interaction fires the debounced update before the package has
+    // written anything back, and without the floor that PATCHed 0 over a percentage the
+    // learner had already earned.
+    const savedPercentage = this.getSavedPercentage(data)
     // Check SCORM content's own completion status from localStorage data
     const scormStatus = this.getScormCompletionStatus()
     if (scormStatus === 2) {
@@ -410,7 +419,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     if ((data && data['completionStatus'] === 2)) {
       return {
-        completionPercentage: data && data['completionPercentage'],
+        // A record already marked complete but carrying no percentage is still 100 -
+        // sending 0 alongside status 2 is the one combination that cannot be true.
+        completionPercentage: savedPercentage || 100,
         status: data && data['completionStatus'],
         spentTime: data && data['spentTime'],
         // tslint:disable-next-line: whitespace
@@ -423,16 +434,32 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     const measure = this.getScormProgressMeasure()
 
     if (this.isTrackableContent(htmlContent)) {
-      // Trackable content reports its own progress, so the elapsed-time ratio is never
-      // used - not even as a backstop. A SCORM 1.2 package has no progress_measure and so
-      // sits at 0 until it declares itself complete, which is the honest reading of what
-      // 1.2 can tell us; the completion branches above are what take it to 100.
-      percentage = measure !== null ? Math.round(measure * 100) : 0
       // A package reporting progress_measure 1.0 has finished, whether or not it got round
-      // to writing a completion status as well.
+      // to writing a completion status as well. Rounded before the comparison, exactly as
+      // this branch has always done it - anything from 0.995 up reads as 100 and completes.
+      const measured = measure !== null ? Math.round(measure * 100) : null
+      if (measured !== null && measured >= 100) {
+        return {
+          completionPercentage: 100,
+          status: 2,
+          spentTime: spentTimen,
+        }
+      }
+      // progress_measure is a SCORM 2004 element, so no 1.2 package has one, and plenty of
+      // 2004 packages never write it either. Reporting 0 for all of them meant a partly
+      // consumed content sat at 0 until the moment it declared itself complete - so fall
+      // back to the partial signals the package did write, and to elapsed time when it
+      // wrote none. A package that has written 0 counts as having said nothing yet.
+      const reported = (measured !== null && measured > 0)
+        ? measured
+        : this.getReportedScormProgress()
+      percentage = reported !== null ? reported : this.elapsedTimePercentage(htmlContent, spentTimen)
+      // Only the package may declare trackable content finished, so an in-progress reading
+      // never reaches 100 - the completion branches above are what take it there.
+      percentage = Math.min(Math.max(percentage, savedPercentage), 99)
       return {
         completionPercentage: percentage,
-        status: percentage >= 100 ? 2 : 1,
+        status: 1,
         spentTime: spentTimen,
       }
     }
@@ -448,6 +475,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       percentage = ~~((spentTimen / htmlContent.duration) * 100)
     }
     // }
+    // The only change to this path: progress cannot go backwards. Nothing else about it
+    // moves - the reading and the threshold it is compared against are what they were, so
+    // untracked content completes exactly when it used to.
+    percentage = Math.max(percentage, savedPercentage)
 
     if (percentage >= this.getThreshold()) {
       return {
@@ -476,6 +507,153 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private isTrackableContent(htmlContent: any): boolean {
     const flag = htmlContent && htmlContent.isTrackable
     return flag === true || (typeof flag === 'string' && flag.toLowerCase() === 'true')
+  }
+
+  /**
+   * The percentage already recorded for this content, or 0 when there is none.
+   *
+   * loadDataV2 writes the server's completionPercentage into the CMI store on restore, so
+   * this is the learner's earned progress as the session begins - the floor no later
+   * reading may fall below.
+   */
+  private getSavedPercentage(data: any): number {
+    const saved = Number(data && data['completionPercentage'])
+    if (isNaN(saved) || saved <= 0) {
+      return 0
+    }
+    return Math.min(Math.round(saved), 100)
+  }
+
+  /**
+   * How far through the learner is, as 0..100, according to what the package itself wrote
+   * into the CMI store - or null when it wrote nothing that says.
+   *
+   * cmi.progress_measure is handled by the caller, because it is the one element that may
+   * also declare the content finished. What is left are indirect readings, so they are
+   * capped below 100: they exist to lift a stalled 0 to something truthful, never to stand
+   * in for the package declaring completion.
+   */
+  private getReportedScormProgress(): number | null {
+    const objectives = this.getObjectivesProgress()
+    if (objectives !== null) {
+      console.log('[SCORM] partial progress from cmi.objectives:', objectives)
+      return objectives
+    }
+    const score = this.getScoreProgress()
+    if (score !== null) {
+      console.log('[SCORM] partial progress from cmi.score:', score)
+      return score
+    }
+    return null
+  }
+
+  /**
+   * Completed objectives over total, as 0..100.
+   *
+   * Both versions expose objectives as an array (cmi.objectives.N.*, with a _count), and a
+   * package that tracks a slide, scene or section per objective is describing exactly how
+   * far the learner has got. The per-entry status element differs by version - 1.2 has
+   * .status, 2004 has .completion_status and .success_status - so all three are read.
+   */
+  private getObjectivesProgress(): number | null {
+    const data: any = this.store.getAll() || {}
+    const indexes: string[] = []
+    for (const key of Object.keys(data)) {
+      const match = key.match(/^cmi\.objectives\.(\d+)\./)
+      if (match && indexes.indexOf(match[1]) === -1) {
+        indexes.push(match[1])
+      }
+    }
+    if (!indexes.length) {
+      return null
+    }
+    // _count is the package's own account of the array length; one that wrote entries
+    // without it is still counted by what it did write.
+    const declared = this.numericCmi(data, 'cmi.objectives._count')
+    const total = Math.max(declared === null ? 0 : declared, indexes.length)
+    if (total <= 0) {
+      return null
+    }
+    let completed = 0
+    for (const index of indexes) {
+      const status = data[`cmi.objectives.${index}.completion_status`]
+        || data[`cmi.objectives.${index}.status`]
+        || data[`cmi.objectives.${index}.success_status`]
+      if (isCompleteStatusValue(status)) {
+        completed += 1
+      }
+    }
+    if (!completed) {
+      // Objectives declared but none reached yet says nothing more than an empty store
+      // does - let the next signal answer instead of pinning the reading to 0.
+      return null
+    }
+    return Math.min(Math.round((completed / total) * 100), 99)
+  }
+
+  /**
+   * Score as a stand-in for progress, 0..100.
+   *
+   * The weakest of the package's own signals, and last in line for that reason: for an
+   * assessment package the score is often the only thing that moves as the learner works
+   * through it. cmi.score.scaled is SCORM 2004 and already a 0..1 fraction; raw against
+   * max covers both versions.
+   */
+  private getScoreProgress(): number | null {
+    const data: any = this.store.getAll() || {}
+    const scaled = this.numericCmi(data, 'cmi.score.scaled')
+    if (scaled !== null && scaled > 0) {
+      return Math.min(Math.round(scaled * 100), 99)
+    }
+    const raw = this.numericCmi(data, 'cmi.core.score.raw', 'cmi.score.raw')
+    if (raw === null || raw <= 0) {
+      return null
+    }
+    // SCORM 1.2 scores are 0..100 by definition, so a package that left score.max unset
+    // is still reporting out of 100.
+    const max = this.numericCmi(data, 'cmi.core.score.max', 'cmi.score.max')
+    const outOf = max !== null && max > 0 ? max : 100
+    return Math.min(Math.round((raw / outOf) * 100), 99)
+  }
+
+  /**
+   * The elapsed-time proxy, for trackable content whose package reported nothing at all.
+   *
+   * Capped just below the completion threshold: time spent is only ever an estimate, and
+   * on trackable content the package is the only thing allowed to say "finished" - so this
+   * can lift the reading off 0 without ever reaching, or looking like, completion.
+   */
+  private elapsedTimePercentage(htmlContent: any, spentTime: number): number {
+    const duration = Number(htmlContent && htmlContent.duration)
+    if (!spentTime || isNaN(duration) || duration <= 0) {
+      return 0
+    }
+    // getThreshold() answers undefined whenever the toc config carries no
+    // ScormProgressThreshold - tocConfigData is a BehaviorSubject seeded with {}, so
+    // tocConfig is truthy from the first emission. Absorbed here rather than fixed in
+    // getThreshold, because that value is also what decides completion on the untracked
+    // path and changing it would move when existing content completes.
+    const threshold = Number(this.getThreshold())
+    const usable = isNaN(threshold) || threshold <= 0 ? this.defaultProgressThreshold : threshold
+    const ceiling = Math.max(usable - 1, 0)
+    // ~~ will remove decimal after division
+    // tslint:disable-next-line
+    return Math.max(Math.min(~~((spentTime / duration) * 100), ceiling), 0)
+  }
+
+  /** First of `keys` the package has actually written a number to, else null. */
+  private numericCmi(data: any, ...keys: string[]): number | null {
+    for (const key of keys) {
+      const raw = data[key]
+      if (raw === undefined || raw === null || raw === '') {
+        continue
+      }
+      const value = Number(raw)
+      if (!isNaN(value)) {
+        return value
+      }
+    }
+    return null
   }
 
   getThreshold() {
