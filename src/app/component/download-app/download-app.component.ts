@@ -13,6 +13,11 @@ export class DownloadAppComponent implements OnInit {
   public isMobile = false
   // null when the component is rendered inline (home.component.html) rather than in a dialog
   private dialogRef = inject(MatDialogRef, { optional: true })
+
+  get isDialog(): boolean {
+    return !!this.dialogRef
+  }
+
   constructor(public homePageService: HomePageService, private translate: TranslateService) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')

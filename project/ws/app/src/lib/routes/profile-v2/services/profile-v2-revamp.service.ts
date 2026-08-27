@@ -11,6 +11,8 @@ import { CommonMethodsService, ConfigDetails } from '@sunbird-cb/consumption'
 const API_END_POINTS = {
   GET_USER_BASIC_DETAILS: '/apis/proxies/v8/user/profile/v1/basic', // done
   GET_USER_ENTRIES: '/apis/proxies/v8/user/profile/v1/extended/', // done
+  GET_SERVICE_HISTORY: 'apis/proxies/v8/user/profile/v1/extended/serviceHistory',
+  GET_EDUCATION: 'apis/proxies/v8/user/profile/v1/extended/education',
   UPDATE_PROFILE_DETAILS: '/apis/proxies/v8/user/v1/extPatch', // done
   UPDATE_PROFILE_DETAILS_V3: '/apis/proxies/v8/user/v3/extPatch', // done
   GET_RECOMMENDED_USERS: '/apis/proxies/v8/connections/v3/connections/recommended',
@@ -178,6 +180,20 @@ export class ProfileV2RevampService {
       .pipe(map(res => {
         return res
       }))
+  }
+
+  fetchProfileEntryList(
+    configDetails: ConfigDetails,
+    userId: string,
+    entryType: 'serviceHistory' | 'education'
+  ): Observable<NSProfileDataV2.IProfile | string> {
+    configDetails['defaultUrl'] = entryType === 'serviceHistory' ?
+      API_END_POINTS.GET_SERVICE_HISTORY : API_END_POINTS.GET_EDUCATION
+    const url = this.commonMethodsService.getEnabledUrl(configDetails)
+    if (!url) {
+      return of('')
+    }
+    return this.http.get<NSProfileDataV2.IProfile>(`${url.replace(/\/$/, '')}/${userId}`)
   }
 
   getRecommendedUsers(formBody: any): Observable<any> {
@@ -472,13 +488,19 @@ export class ProfileV2RevampService {
     return this.http.put<any>(url, payload)
   }
 
-  listAchievements(configDetails: ConfigDetails, _userId: any): Observable<any> {
+  listAchievements(configDetails: ConfigDetails, userId: string): Observable<any> {
     configDetails['defaultUrl'] = API_END_POINTS.LIST_ACHIEVEMENTS
     const url = this.commonMethodsService.getEnabledUrl(configDetails)
     if (!url) {
       return of('')
     }
-    return this.http.get<any>(`${url}`)
+
+    const loggedInUserId = _.get(this.configSvc, 'userProfile.userId', '')
+    if (userId && userId !== loggedInUserId) {
+      return this.http.get<any>(url, { params: { id: userId } })
+    }
+
+    return this.http.get<any>(url)
   }
 
   deleteAchievementEntry(payload: any, configDetails: ConfigDetails): Observable<any> {

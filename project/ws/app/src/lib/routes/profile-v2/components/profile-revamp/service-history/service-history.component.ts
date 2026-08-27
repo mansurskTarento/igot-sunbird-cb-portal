@@ -58,19 +58,25 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
     if (this.userId) {
       const configDetails: ConfigDetails = {
         defaultUrl: '',
-        urlConfigPath: 'profileV1Extended',
-        apiConfig: this.apiConfig
+        urlConfigPath: 'profileV1ExtendedServiceHistory',
+        apiConfig: this.apiConfig,
       }
-      this.profileV2RevampSvc.fetchProfileEntries(configDetails, this.userId, 'serviceHistory', !this.isCurrentUser).subscribe((res: any) => {
-        if (res) {
-          this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', [])
-          this.serviceHistoryDetails = _.get(res, 'result.response', [])
-          this.formateData()
-        }
-      }, (err: any) => {
-        if (err) {
-          this.openSnackbar('something went wrong while fetching service history please try again later', 5000)
-        }
+      this.profileV2RevampSvc.fetchProfileEntryList(configDetails, this.userId, 'serviceHistory').subscribe({
+        next: (res: any) => {
+          if (res) {
+            this.serviceHistoryList = _.get(res, 'result.response.serviceHistory', [])
+            this.serviceHistoryDetails = {
+              serviceHistoryList: this.serviceHistoryList,
+              count: this.serviceHistoryList?.length,
+            }
+            this.formateData()
+          }
+        },
+        error: (err: any) => {
+          if (err) {
+            this.openSnackbar('something went wrong while fetching service history please try again later', 5000)
+          }
+        },
       })
     }
   }
@@ -90,7 +96,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
           service['isCurrentOrgDetails'] = true
           hasCurrentOrgDetails = true
         }
-        const orgDetails = `${service?.orgName}, ${service?.orgDistrict}, ${service?.orgState}`
+        const orgDetails = [service?.orgName, service?.orgDistrict, service?.orgState].filter(Boolean).join(', ')
         const startDate = service.startDate ? new Date(service.startDate) : null
         let endDate = service.currentlyWorking === 'true' ? null : service.endDate ? new Date(service.endDate) : null
         const formatedStartDate = startDate ? this.datePipe.transform(startDate, 'MMM yyyy') : ''
@@ -107,6 +113,7 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
           orgLogo: '',
           designation: this.currentDesignation,
           isCurrentOrgDetails: true,
+          isDefaultEntry: true,
           orgDetails: this.currentOrgName,
         }
         if (this.serviceHistoryList && this.serviceHistoryList.length > 0) {
@@ -126,6 +133,9 @@ export class ServiceHistoryComponent implements OnInit, OnChanges {
 
   //#region (functions)
   openEditDialog(entry: any = {}): void {
+    if (entry?.isSaving) {
+      return
+    }
     if (this.isPopup) {
       this.dialogRef.close(entry)
     } else {

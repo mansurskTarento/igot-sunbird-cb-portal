@@ -43,15 +43,77 @@
 }
 
 .html-viewer-container {
-  height:573px;
+  height: 573px;
   box-shadow: none !important;
   background: transparent !important;
   padding: 0 !important;
 }
 
+// --- Resume Overlay ---
+.resume-overlay {
+  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+}
+
+.resume-prompt {
+  background: #16213e;
+  border: 2px solid #e94560;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  max-width: 440px;
+  color: #e0e0e0;
+}
+
+.resume-title {
+  color: #e94560;
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.resume-desc {
+  margin-bottom: 10px;
+  font-size: 14px;
+  color: #aaa;
+}
+
+.resume-info {
+  margin-bottom: 15px;
+  font-size: 12px;
+  color: #8b949e;
+}
+
+.resume-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+
+  .btn-resume {
+    background: #e94560;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .btn-restart {
+    background: #0f3460;
+    color: #e0e0e0;
+    font-weight: 600;
+  }
+}
+
 .start-scorm-content-container {
   background: rgb(27, 33, 51);
 }
+
 .content-instruction-container {
   display: flex;
   flex-direction: column;
@@ -102,31 +164,32 @@
 }
 
 
-@media screen and (min-width: 280px) and (max-width: 375px) { 
+@media screen and (min-width: 280px) and (max-width: 375px) {
   .html-viewer-container {
-    height:210px;
+    height: 210px;
     box-shadow: none !important;
     background: rgb(27, 33, 51) !important;
     padding: 0 !important;
   }
 }
 
-@media screen and (min-width: 360px) and (max-width: 360px) { 
+@media screen and (min-width: 360px) and (max-width: 360px) {
   .html-viewer-container {
-    height:166px;
+    height: 166px;
     box-shadow: none !important;
     background: rgb(27, 33, 51) !important;
     padding: 0 !important;
   }
 }
 
-@media screen and (min-width: 376px) and (max-width: 411px) { 
+@media screen and (min-width: 376px) and (max-width: 411px) {
   .html-viewer-container {
-    height:200px;
+    height: 200px;
     box-shadow: none !important;
     background: rgb(27, 33, 51) !important;
     padding: 0 !important;
   }
+
   .content-instruction-container {
     display: flex;
     flex-direction: column;
@@ -141,13 +204,15 @@
     top: 30%;
   }
 }
-@media screen and (min-width: 411px) and (max-width: 414px) { 
+
+@media screen and (min-width: 411px) and (max-width: 414px) {
   .html-viewer-container {
-    height:205px;
+    height: 205px;
     box-shadow: none !important;
     background: rgb(27, 33, 51) !important;
     padding: 0 !important;
   }
+
   .content-instruction-container {
     display: flex;
     flex-direction: column;
@@ -163,13 +228,15 @@
     transform: translateX(-50%);
   }
 }
-@media screen and (min-width: 540px) and (max-width: 540px) { 
+
+@media screen and (min-width: 540px) and (max-width: 540px) {
   .html-viewer-container {
-    height:166px;
+    height: 166px;
     box-shadow: none !important;
     background: rgb(27, 33, 51) !important;
     padding: 0 !important;
   }
+
   .content-instruction-container {
     display: flex;
     flex-direction: column;

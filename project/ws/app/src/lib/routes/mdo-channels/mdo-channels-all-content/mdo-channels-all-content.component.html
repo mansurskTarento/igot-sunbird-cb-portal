@@ -7,7 +7,7 @@
         <div class="container">
             <div class="grid grid-cols-12 gap-4 padding-top-l mb-6">
                 <div class="col-span-12">
-                    <div class="mb-4">
+                    <div class="mb-4 content-width">
                         <div>
                             <mat-form-field appearance="outline" class="pl-1 mat-form-search">
                                 <input name="search" (keyup.enter)="handleSearchQuery($event)" matInput placeholder="Search">
@@ -15,7 +15,7 @@
                         </div>
                     </div>
                     <ng-container *ngIf="contentDataList?.length ; else noData">
-                        <div class="mr-2 mb-5" *ngFor="let c of contentDataList">
+                        <div class="mr-2 mb-5 content-width" *ngFor="let c of contentDataList">
                             <sb-uic-cards [widgetData]="c.widgetData" (triggerTelemetry)="raiseTelemetryInteratEvent($event)"> </sb-uic-cards>
                         </div> 
                     </ng-container>  

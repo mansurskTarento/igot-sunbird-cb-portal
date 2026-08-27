@@ -14,8 +14,20 @@
   height: auto;
 }
 
+.content-width {
+  width: 784px;
+  max-width: 100%;
+}
+
+.mat-form-search {
+  width: 100%;
+}
+
+:host ::ng-deep .content-width .card-wide-v2 {
+  width: 100%;
+}
+
 ::ng-deep .mat-form-search {
-  width: 98%;
 
   .mat-form-field-infix {
     border-top: 0.2em solid transparent !important;
