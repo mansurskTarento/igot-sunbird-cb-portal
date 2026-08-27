@@ -668,7 +668,9 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         break
     }
 
-    courseSearchResult = await this.searchV3Service.searchCoursesv4(searchRequest).catch()
+    courseSearchResult = this.selectedSearchCategory() === SearchCategory.Courses
+      ? await this.searchV3Service.searchCoursesv5(searchRequest).catch()
+      : await this.searchV3Service.searchCoursesv4(searchRequest).catch()
 
     if (this.selectedSearchCategory() === SearchCategory.People) {
       const searchRequest = new SearchPeoplesRequest()

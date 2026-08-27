@@ -44,6 +44,7 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
+import { ContentDictionaryService } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -148,7 +149,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private langtranslations: MultilingualTranslationsService,
     private userService: WidgetUserService,
     private networkV2Service: NetworkV2Service,
-    private indexedDbService: IndexedDbService
+    private indexedDbService: IndexedDbService,
+    private contentDictionarySvc: ContentDictionaryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -354,12 +356,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.searchRequestCourse.request.query = this.statedata?.param
 
-    const result = await this.searchV3Service.searchCoursesv4(this.searchRequestCourse)
+    const result = await this.searchV3Service.searchCoursesv5(this.searchRequestCourse)
 
+    let enrichedContent: any[] = []
     if (result.result && result.result.content && Array.isArray(result.result.content)) {
       const formContextList: any[] = []
       const formRefMap: Record<string, any> = {}
-      for (const content of result.result.content) {
+      const identifiers: string[] = result.result.content
+        .map((c: any) => c.identifier)
+        .filter(Boolean)
+      enrichedContent = identifiers.length
+        ? (await forkJoin(identifiers.map((id: string) => this.contentDictionarySvc.getContent(id))).toPromise() as any[]).filter(Boolean)
+        : []
+
+      for (const content of enrichedContent) {
         if (content?.completionSurveyLink && content?.identifier) {
           const sID = content.completionSurveyLink.split('surveys/')
           const formId = sID[1]
@@ -387,16 +397,14 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
       }
-      // result.result.content = enrichedResults;
     }
     if (result.result && result.result.content) {
-      this.courseSearchResults = result.result.content
+      this.courseSearchResults = enrichedContent
       this.courseSearchTotalCount = result.result?.count
       this.coursesFacets = result.result?.facets || []
 
       this.combinedFacets = []
       this.combinedFacets = [...this.combinedFacets, (result.result?.facets || [])]
-      // });
     } else {
       this.courseSearchResults = []
       this.courseSearchTotalCount = 0
