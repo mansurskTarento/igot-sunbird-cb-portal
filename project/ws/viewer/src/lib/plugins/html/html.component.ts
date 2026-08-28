@@ -38,9 +38,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   forPreview = window.location.href.includes('/public/') || window.location.href.includes('&preview=true')
   progress = 100
   progressThreshold = 70
-  // The default above, kept intact: progressThreshold itself is overwritten by whatever
-  // the toc config holds, undefined included.
-  private readonly defaultProgressThreshold = 70
   public scormLMSStatus = scormLMSStatus
   playScormContentFlag = scormLMSStatus.LMSWating
   realTimeProgressRequest = {
@@ -267,7 +264,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     // Root-provided service: leave the suppression flag off so a later non-mobile viewer
     // is not silently prevented from saving progress.
     this.scormAdapterService.suppressProgressApi = false
-    // this.store.clearAll()
+    this.clearScormStore('viewer teardown')
     if (this.scormInitSub) {
       this.scormInitSub.unsubscribe()
       this.scormInitSub = null
@@ -284,6 +281,30 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       this.tocConfigSubscription.unsubscribe()
     }
     this.iframeUrl = ''
+  }
+
+  /**
+   * Drop this content's CMI store.
+   *
+   * The store is a cache of the record the server holds, not a second source of truth:
+   * loadDataV2 reads that record back and writes it into localStorage before the iframe is
+   * allowed to load. A copy left behind at the end of a session can therefore only ever be
+   * stale, and it is what a package would boot against if it read localStorage before the
+   * restore landed.
+   *
+   * Deliberately not done on the mobile route. Nothing reads progress back there - the app
+   * owns it - which makes the store the only copy of cmi.core.lesson_status, and a package
+   * only writes 'completed' at the moment the learner reaches the end. Wiping it would
+   * lose that for good, which is the same reason LMSFinish leaves it alone.
+   */
+  private clearScormStore(reason: string) {
+    if (this.isMobileApp) {
+      console.log('[SCORM] keeping the CMI store on the mobile route -',
+                  'it holds the only copy of the status:', reason)
+      return
+    }
+    this.store.clearAll()
+    console.log('[SCORM] cleared the CMI store -', reason)
   }
 
   private raiseRealTimeProgress() {
@@ -394,6 +415,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     progressData.spentTime = (completionData && completionData.spentTime) || 0
+    // These come out of the store, where they are whatever the last restore put there, so
+    // they have to be overwritten with the reading being sent - a payload carrying
+    // completionPercentage 1 inside a request whose top level says 4 is just confusing.
+    progressData.completionStatus = (completionData && completionData.status) || 0
+    progressData.completionPercentage = (completionData && completionData.completionPercentage) || 0
     if (Object.keys(scormCmi).length > 0) {
       progressData.scormData = scormCmi
     }
@@ -449,32 +475,33 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
       // progress_measure is a SCORM 2004 element, so no 1.2 package has one, and plenty of
-      // 2004 packages never write it either. Reporting 0 for all of them meant a partly
-      // consumed content sat at 0 until the moment it declared itself complete - so fall
-      // back to the partial signals the package did write, and to elapsed time when it
-      // wrote none. A package that has written 0 counts as having said nothing yet.
+      // 2004 packages never write it either - hence the other readings behind this call,
+      // all of them the package's own account of itself. A package that has written a
+      // measure of 0 counts as having said nothing yet.
       const reported = (measured !== null && measured > 0)
         ? measured
         : this.getReportedScormProgress()
-      if (reported !== null) {
-        percentage = reported
-      } else {
-        percentage = this.elapsedTimePercentage(htmlContent, spentTimen)
-        // Named explicitly: this is the weakest reading of the set - the share of the
-        // content's declared duration the learner has sat through, which is not the same
-        // thing as the share of the content they have been through. If this line is what
-        // is producing the percentage, the package is reporting nothing of its own.
-        console.log('[SCORM] partial progress from elapsed time:', percentage,
-                    `(${spentTimen}s of a declared ${htmlContent && htmlContent.duration}s)`,
-                    '- the package reported no progress of its own')
+      if (reported === null) {
+        // The package has not reported anything yet, which is not the same as it reporting
+        // zero - and with the store cleared at teardown, every session starts out in this
+        // state. Keep the record as it stands rather than writing a 0 over a percentage
+        // the learner has already earned.
+        console.log('[SCORM] the package has reported no progress yet - leaving the',
+                    'recorded percentage at', savedPercentage)
         this.logPackageData()
+        return {
+          completionPercentage: savedPercentage,
+          status: 1,
+          spentTime: spentTimen,
+        }
       }
-      // Only the package may declare trackable content finished, so an in-progress reading
-      // never reaches 100 - the completion branches above are what take it there.
-      percentage = Math.min(Math.max(percentage, savedPercentage), 99)
+      // Exactly what the package reports, and nothing else. Trackable content means the
+      // package is the authority on how far the learner has got, so this is neither
+      // floored at what the server already holds nor capped below 100: if the package
+      // says less than the record does, the record is what is out of date.
       return {
-        completionPercentage: percentage,
-        status: 1,
+        completionPercentage: reported,
+        status: reported >= 100 ? 2 : 1,
         spentTime: spentTimen,
       }
     }
@@ -549,12 +576,113 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
    * in for the package declaring completion.
    */
   private getReportedScormProgress(): number | null {
+    const suspended = this.getSuspendDataProgress()
+    if (suspended !== null) {
+      console.log('[SCORM] partial progress from cmi.suspend_data:', suspended)
+      return suspended
+    }
     const objectives = this.getObjectivesProgress()
     if (objectives !== null) {
       console.log('[SCORM] partial progress from cmi.objectives:', objectives)
       return objectives
     }
     return null
+  }
+
+  /**
+   * The percentage an Articulate Rise package records inside cmi.suspend_data.
+   *
+   * Rise stores its state as {"v":2,"d":[...],"cpv":"..."} where d is the LZW-compressed
+   * JSON of the learner's progress, and that JSON carries a course-level figure outright:
+   *
+   *   {"progress":{"lessons":{"1":{"c":1,"p":100},"3":{"p":50}}, "p":50}}
+   *
+   * progress.p is the number Rise itself shows as "N% COMPLETE", so reporting it is what
+   * makes the platform agree with what the learner is looking at.
+   *
+   * Deliberately NOT averaged from the per-lesson p values. Only lessons the learner has
+   * reached are recorded, so that average divides by the wrong total - on the course above
+   * it reads (100 + 100 + 50) / 3 = 83 against a true 50. Rise counts the lessons that are
+   * not there yet; nothing derivable from this object can.
+   *
+   * Every step is guarded: a package whose suspend_data is any other shape (Storyline's is
+   * not JSON at all) falls through to the next signal rather than throwing.
+   */
+  private getSuspendDataProgress(): number | null {
+    const data: any = this.store.getAll() || {}
+    const raw = data['cmi.suspend_data']
+    if (typeof raw !== 'string' || !raw) {
+      return null
+    }
+    let envelope: any
+    try {
+      envelope = JSON.parse(raw)
+      // tslint:disable-next-line: align
+    } catch (_e) {
+      return null
+    }
+    if (!envelope || !Array.isArray(envelope.d)) {
+      return null
+    }
+    const decoded = this.lzwDecode(envelope.d)
+    if (!decoded) {
+      return null
+    }
+    let state: any
+    try {
+      state = JSON.parse(decoded)
+      // tslint:disable-next-line: align
+    } catch (_e) {
+      console.warn('[SCORM] cmi.suspend_data decompressed to something that is not JSON')
+      return null
+    }
+    const overall = Number(state && state.progress && state.progress.p)
+    // Absent until at least one lesson completes, and absent is not the same as zero: a
+    // learner most of the way through the first lesson of six has a real reading, it is
+    // just not one this object can give. Fall through and let the next signal answer.
+    if (isNaN(overall) || overall <= 0 || overall > 100) {
+      return null
+    }
+    return Math.round(overall)
+  }
+
+  /**
+   * LZW decompression, for the code array Rise packs its state into.
+   *
+   * The dictionary starts as the 256 single characters and grows by one entry per code, so
+   * a value of 256 or more is a back-reference to a string built earlier in the stream.
+   * Returns null on a malformed stream rather than throwing - a code past the end of the
+   * dictionary means this is not the format we think it is.
+   */
+  private lzwDecode(codes: number[]): string | null {
+    if (!codes.length) {
+      return null
+    }
+    const dictionary: string[] = []
+    for (let i = 0; i < 256; i += 1) {
+      dictionary.push(String.fromCharCode(i))
+    }
+    let previous = dictionary[codes[0]]
+    if (previous === undefined) {
+      return null
+    }
+    const out: string[] = [previous]
+    for (let i = 1; i < codes.length; i += 1) {
+      const code = codes[i]
+      let entry: string
+      if (code < dictionary.length) {
+        entry = dictionary[code]
+      } else if (code === dictionary.length) {
+        // The one legal forward reference: the entry being defined by this very code.
+        entry = previous + previous.charAt(0)
+      } else {
+        return null
+      }
+      out.push(entry)
+      dictionary.push(previous + entry.charAt(0))
+      previous = entry
+    }
+    return out.join('')
   }
 
   /**
@@ -598,7 +726,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // does - let the next signal answer instead of pinning the reading to 0.
       return null
     }
-    return Math.min(Math.round((completed / total) * 100), 99)
+    return Math.round((completed / total) * 100)
   }
 
   /**
@@ -625,31 +753,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     console.log('[SCORM] the package reported no progress of its own. Everything it did write:',
                 JSON.stringify(cmi))
-  }
-
-  /**
-   * The elapsed-time proxy, for trackable content whose package reported nothing at all.
-   *
-   * Capped just below the completion threshold: time spent is only ever an estimate, and
-   * on trackable content the package is the only thing allowed to say "finished" - so this
-   * can lift the reading off 0 without ever reaching, or looking like, completion.
-   */
-  private elapsedTimePercentage(htmlContent: any, spentTime: number): number {
-    const duration = Number(htmlContent && htmlContent.duration)
-    if (!spentTime || isNaN(duration) || duration <= 0) {
-      return 0
-    }
-    // getThreshold() answers undefined whenever the toc config carries no
-    // ScormProgressThreshold - tocConfigData is a BehaviorSubject seeded with {}, so
-    // tocConfig is truthy from the first emission. Absorbed here rather than fixed in
-    // getThreshold, because that value is also what decides completion on the untracked
-    // path and changing it would move when existing content completes.
-    const threshold = Number(this.getThreshold())
-    const usable = isNaN(threshold) || threshold <= 0 ? this.defaultProgressThreshold : threshold
-    const ceiling = Math.max(usable - 1, 0)
-    // ~~ will remove decimal after division
-    // tslint:disable-next-line
-    return Math.max(Math.min(~~((spentTime / duration) * 100), ceiling), 0)
   }
 
   /** First of `keys` the package has actually written a number to, else null. */
@@ -706,6 +809,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             this.fireRealTimeProgress(this.oldData)
           }
         }
+        // Still keyed to oldData - contentId is not moved on until further down - so this
+        // drops the store of the content being left, not the one being opened.
+        this.clearScormStore(`switching away from ${this.oldData.identifier}`)
         // The latch is per content, and the next one starts incomplete.
         this.completionReported = false
         this.packageDataLogged = false
@@ -1113,8 +1219,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   /**
    * cmi.progress_measure as a 0..1 number, or null when the package has not reported it.
-   * SCORM 2004 only - 1.2 has no equivalent element, which is why elapsed time is still
-   * the fallback.
+   * SCORM 2004 only - 1.2 has no equivalent element, which is why cmi.suspend_data and
+   * cmi.objectives are read behind it.
    */
   private getScormProgressMeasure(): number | null {
     const storeData: any = this.store.getAll() || {}
@@ -1141,7 +1247,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private getScormCompletionStatus(): number | null {
     // Delegate to the adapter so "what counts as complete" has one definition, shared with
     // the status the progress request itself reports. A package that never calls the SCORM
-    // API reports nothing here; calculateCompletionStatus falls back to elapsed time.
+    // API reports nothing here, and for trackable content that is reported as-is.
     const storeData: any = this.store.getAll() || {}
     return this.scormAdapterService.getStatus(storeData) === 2 ? 2 : null
   }
