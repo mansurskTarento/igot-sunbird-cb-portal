@@ -83,7 +83,8 @@
 
         <div *ngIf="!isEnrolmentLoading && displayedItems.length > 0" class="search-content-card">
           <ng-container *ngFor="let item of displayedItems">
-            <sb-uic-card-landscape [widgetData]="item?.widgetData" (contentData)="getRedirectUrlData($event)">
+            <sb-uic-card-landscape [widgetData]="item?.widgetData" [showEnrolmentStatus]="true"
+              (contentData)="getRedirectUrlData($event)">
             </sb-uic-card-landscape>
           </ng-container>
         </div>
