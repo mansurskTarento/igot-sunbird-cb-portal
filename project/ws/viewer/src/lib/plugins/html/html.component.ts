@@ -952,14 +952,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   // Resolves the package root + entry file for the content, then assigns iframeUrl.
   //
-  // The entry file matters. initFile is the entry the publisher recorded for the package
-  // and it is what wins here; imsmanifest.xml is only read when initFile is absent or the
-  // file it names is not in the package. Note the known cost of that precedence: an
-  // Articulate package declares scormdriver/indexAPI.html in its manifest - the file that
-  // loads scormdriver.js, walks window.parent to find window.API and only then hosts
-  // scormcontent/index.html - while its initFile carries scormcontent/index.html, so such
-  // a package launches with no LMS wiring, logs "unable to find the LMS API for ..." for
-  // every driver call and never writes CMI data.
+  // The entry file matters: launching the wrong one costs all SCORM tracking, because the
+  // package binds window.API from the file it is launched as. See pickLaunchFile for the
+  // precedence and the two package layouts that force it.
   private applyIframeUrl() {
     this.iframeUrlPending = false
     if (!this.htmlContent || !this.htmlContent.artifactUrl) {
@@ -984,7 +979,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       )
       return
     }
-    debugger
     // tslint:disable-next-line: max-line-length
     const azureRoot = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot`
     let packageRoot: string
@@ -1019,9 +1013,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Points the iframe at the package's launch file: initFile first, then imsmanifest.xml,
-   * then index.html. Resolution is best effort - on any failure we land on initFile or
-   * index.html, i.e. the behaviour that was there before.
+   * Points the iframe at the package's launch file: the manifest's SCO when it is really
+   * in the package, then initFile, then index.html. Resolution is best effort - on any
+   * failure we land on initFile or index.html, i.e. the behaviour that was there before.
    */
   private assignScormIframeUrl(packageRoot: string, entryFile: string | null) {
     const sameOriginRoot = this.ensureSameOriginUrl(packageRoot)
@@ -1044,40 +1038,59 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }).catch(() => commit(entryFile || 'index.html', '(fallback)'))
   }
 
-  // initFile is the entry the publisher recorded when it packaged the content, and it is
-  // what the player has always launched, so it wins. imsmanifest.xml is consulted only
-  // when there is no initFile, or when the file initFile names is not in the package -
-  // old ekstep html-archives ship an authoring-tool manifest whose hrefs point at paths
-  // (res/index.html) that publishing flattened away, and letting that manifest override a
-  // working initFile sends the iframe to a file that is not there.
+  // The manifest's SCO wins, but only once we have confirmed it is really in the package.
+  // Both halves are needed, and each is there for a package we have actually seen:
+  //
+  //   Articulate: initFile is scormcontent/index.html, the content with no LMS wiring,
+  //   while the manifest names scormdriver/indexAPI.html - the file that loads
+  //   scormdriver.js, walks window.parent for window.API and only then hosts the content.
+  //   Launch initFile and the package binds no API, writes no cmi.* data, and there is
+  //   nothing to resume from. So the manifest has to win.
+  //
+  //   do_113913397129682944186 and other legacy ekstep html-archives: the manifest is
+  //   internally inconsistent with its own package - it declares the SCO at res/index.html
+  //   and 92 files under res/, but the zip has no res/ directory and those files sit at
+  //   the root. res/index.html is a hard 404. So a manifest href we cannot verify has to
+  //   lose to initFile.
+  //
+  // Checking existence separates them without guessing at versions, tools or dates.
   private pickLaunchFile(
     sameOriginRoot: string,
     entryFile: string | null,
   ): Promise<{ file: string, source: string }> {
-    if (!entryFile) {
-      return this.launchFileFromManifest(sameOriginRoot)
-    }
-    return this.fileExists(`${sameOriginRoot}/${entryFile}`).then(exists => {
-      if (exists) {
-        return Promise.resolve({ file: entryFile, source: '(initFile)' })
-      }
-      console.warn('[SCORM] initFile', entryFile, 'is not in the package - reading imsmanifest.xml')
-      return this.launchFileFromManifest(sameOriginRoot)
-    })
-  }
-
-  private launchFileFromManifest(sameOriginRoot: string): Promise<{ file: string, source: string }> {
-    return this.resolveScormLaunchFile(sameOriginRoot).then(href => {
+    return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
       if (href) {
         return { file: href, source: '(imsmanifest.xml)' }
+      }
+      if (entryFile) {
+        return { file: entryFile, source: '(initFile)' }
       }
       return { file: 'index.html', source: '(default)' }
     })
   }
 
+  // The launch file imsmanifest.xml declares, or null when there is none or it is not in
+  // the package.
+  private verifiedManifestLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return this.resolveScormLaunchFile(sameOriginRoot).then(href => {
+      if (!href) {
+        return null
+      }
+      return this.fileExists(`${sameOriginRoot}/${href}`).then(exists => {
+        if (exists) {
+          return href
+        }
+        console.warn('[SCORM] imsmanifest.xml declares', href,
+                     'but it is not in the package - falling back to initFile')
+        return null
+      })
+    })
+  }
+
   // Only a definitive 404/403 counts as missing. A proxy that will not answer HEAD, or a
-  // network blip, must not be read as "the file is gone" - that would push every package
-  // down the manifest path and undo the precedence above.
+  // network blip, is not evidence the file is gone, so it resolves true and the manifest
+  // is trusted - the manifest is the standards-defined answer, and only a server actually
+  // saying "not here" is grounds to overrule it.
   private fileExists(url: string): Promise<boolean> {
     return fetch(url, { method: 'HEAD', cache: 'no-cache' })
       .then(res => {
@@ -1100,13 +1113,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     return fetch(`${sameOriginRoot}/imsmanifest.xml`, { cache: 'no-cache' })
       .then(res => {
         if (!res.ok) {
-          console.warn('[SCORM] imsmanifest.xml returned', res.status, '- falling back to index.html')
+          console.warn('[SCORM] imsmanifest.xml returned', res.status, '- falling back to initFile')
           return null
         }
         return res.text().then(text => this.parseLaunchFile(text))
       })
       .catch(e => {
-        console.warn('[SCORM] could not read imsmanifest.xml - falling back to index.html', e)
+        console.warn('[SCORM] could not read imsmanifest.xml - falling back to initFile', e)
         return null
       })
   }
