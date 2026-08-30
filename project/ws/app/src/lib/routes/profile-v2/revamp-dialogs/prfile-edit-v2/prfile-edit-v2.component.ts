@@ -719,12 +719,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   //#region (other details)
   private createOtherDetailsForm(): void {
     const dob = _.get(this.profileDetails, 'dob', '')
+    const gender = String(_.get(this.profileDetails, 'gender', '') || '')?.toLowerCase()
+    const category = String(_.get(this.profileDetails, 'category', '') || '')?.toLowerCase()
     this.profileForm = this.fb.group({
       employeeCode: [_.get(this.profileDetails, 'employeeCode', ''), [Validators.pattern(EMP_ID_PATTERN)]],
       primaryEmail: [_.get(this.profileDetails, 'primaryEmail', ''), [Validators.pattern(EMAIL_PATTERN)]],
-      gender: [_.get(this.profileDetails, 'gender', ''), []],
+      gender: [this.eUserGender.find(value => value?.toLowerCase() === gender) || '', []],
       dob: [dob ? new Date(dob) : '', []],
-      category: [_.get(this.profileDetails, 'category', ''), []],
+      category: [this.eCategory.find(value => value?.toLowerCase() === category) || '', []],
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],

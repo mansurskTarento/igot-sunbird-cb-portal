@@ -40,7 +40,7 @@ const routes: Routes = [
         path: ':channel/:orgId/micro-sites',
         component: MdoChannelsMicrositeV2Component,
         data: {
-            pageId: ':channel/:orgId/v2/micro-sites',
+            pageId: ':channel/:orgId/v3/micro-sites',
             module: 'Learn',
         },
         resolve: {
