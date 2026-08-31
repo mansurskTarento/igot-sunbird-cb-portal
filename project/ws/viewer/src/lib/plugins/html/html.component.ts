@@ -16,10 +16,10 @@ import { AppTocService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-    selector: 'viewer-plugin-html',
-    templateUrl: './html.component.html',
-    styleUrls: ['./html.component.scss'],
-    standalone: false
+  selector: 'viewer-plugin-html',
+  templateUrl: './html.component.html',
+  styleUrls: ['./html.component.scss'],
+  standalone: false
 })
 export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('mobileOpenInNewTab', { read: ElementRef }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>
@@ -120,11 +120,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
   ) {
-    // SCORM 1.2 content discovers window.API; SCORM 2004 content discovers
-    // window.API_1484_11. Publishing both lets either version bind without the platform
-    // needing to know which one a given package was authored against.
+    // SCORM 1.2 content discovers window.API. Only this one is published.
+    //
+    // window.API_1484_11 (SCORM 2004) is deliberately NOT published, even though the
+    // adapter carries a shim for it. A driver searches for the 2004 API *first* and only
+    // falls back to 1.2, so publishing it takes every package that would happily have
+    // bound 1.2 - which is all of them, up to now - and moves it onto the 2004 path.
+    // That path is a flat pass-through to the 1.2 key-value store: it has no 2004 data
+    // model, so cmi.mode, cmi.entry, cmi.completion_status, cmi.learner_id and the
+    // collection counts all answer "" with error 403 during the driver's boot handshake,
+    // and the package fails to finish initialising. Publish it again only once
+    // scorm2004GetValue actually implements the 2004 data model.
     (window as any).API = this.scormAdapterService
-    ;(window as any).API_1484_11 = this.scormAdapterService.scorm2004Api
     // if (window.addEventListener) {
     window.addEventListener('message', this.receiveMessage.bind(this))
     // }
@@ -212,7 +219,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     this.restoreTimeoutTimer = setTimeout(() => {
       if (!this.restoreSettled) {
         console.warn('[SCORM] Restore did not settle within', this.restoreTimeoutMs,
-                     'ms - loading content without resume data')
+          'ms - loading content without resume data')
         this.settleRestore()
       }
       // tslint:disable-next-line: align
@@ -300,7 +307,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private clearScormStore(reason: string) {
     if (this.isMobileApp) {
       console.log('[SCORM] keeping the CMI store on the mobile route -',
-                  'it holds the only copy of the status:', reason)
+        'it holds the only copy of the status:', reason)
       return
     }
     this.store.clearAll()
@@ -376,7 +383,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             // Emit hashmap update so viewer-top-bar and viewer-toc components re-render progress
             this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
             console.log('[SCORM] hashmap updated and emitted for', htmlContent.identifier,
-                        'status:', req.status, 'completion:', req.completionPercentage)
+              'status:', req.status, 'completion:', req.completionPercentage)
           }
         }
         // this.store.clearAll()
@@ -487,7 +494,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // state. Keep the record as it stands rather than writing a 0 over a percentage
         // the learner has already earned.
         console.log('[SCORM] the package has reported no progress yet - leaving the',
-                    'recorded percentage at', savedPercentage)
+          'recorded percentage at', savedPercentage)
         this.logPackageData()
         return {
           completionPercentage: savedPercentage,
@@ -752,7 +759,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     console.log('[SCORM] the package reported no progress of its own. Everything it did write:',
-                JSON.stringify(cmi))
+      JSON.stringify(cmi))
   }
 
   /** First of `keys` the package has actually written a number to, else null. */
@@ -952,13 +959,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   // Resolves the package root + entry file for the content, then assigns iframeUrl.
   //
-  // The entry file matters: a SCORM package declares its launch file in imsmanifest.xml,
-  // and for Articulate that is scormdriver/indexAPI.html - the file which loads
-  // scormdriver.js, walks window.parent to find window.API and only then hosts
-  // scormcontent/index.html. Pointing the iframe straight at scormcontent/index.html
-  // (which is what initFile often carries) loads the content with no LMS wiring at all,
-  // and the package logs "unable to find the LMS API for ..." for every driver call while
-  // no CMI data is ever written. So the manifest wins over initFile when it can be read.
+  // The entry file matters: launching the wrong one costs all SCORM tracking, because the
+  // package binds window.API from the file it is launched as. See pickLaunchFile for the
+  // precedence and the two package layouts that force it.
   private applyIframeUrl() {
     this.iframeUrlPending = false
     if (!this.htmlContent || !this.htmlContent.artifactUrl) {
@@ -983,7 +986,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       )
       return
     }
-
     // tslint:disable-next-line: max-line-length
     const azureRoot = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot`
     let packageRoot: string
@@ -1018,30 +1020,104 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Asks imsmanifest.xml for the launch file, then points the iframe at it. Resolution is
-   * best effort - on any failure we fall back to initFile and then to index.html, i.e. the
-   * behaviour that was there before.
+   * Points the iframe at the package's launch file: the manifest's SCO when it is really
+   * in the package, then initFile, then index.html. Resolution is best effort - on any
+   * failure we land on initFile or index.html, i.e. the behaviour that was there before.
    */
   private assignScormIframeUrl(packageRoot: string, entryFile: string | null) {
     const sameOriginRoot = this.ensureSameOriginUrl(packageRoot)
-    const commit = (entry: string | null) => {
-      const resolved = entry || entryFile || 'index.html'
-      const url = `${sameOriginRoot}/${resolved}?timestamp=${new Date().getTime()}`
-      console.log('[SCORM] launch file:', resolved, entry ? '(from imsmanifest.xml)' : '(fallback)')
+    const commit = (file: string, source: string) => {
+      const url = `${sameOriginRoot}/${file}?timestamp=${new Date().getTime()}`
+      console.log('[SCORM] launch file:', file, source)
       this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(url)
     }
 
     const cached = this.launchFileCache[sameOriginRoot]
-    if (cached !== undefined) {
-      commit(cached)
+    if (cached) {
+      commit(cached, '(cached)')
       return
     }
 
-    this.resolveScormLaunchFile(sameOriginRoot).then(href => {
-      this.launchFileCache[sameOriginRoot] = href || ''
-      commit(href)
+    this.pickLaunchFile(sameOriginRoot, entryFile).then(picked => {
+      this.launchFileCache[sameOriginRoot] = picked.file
+      commit(picked.file, picked.source)
       // tslint:disable-next-line: align
-    }).catch(() => commit(null))
+    }).catch(() => commit(entryFile || 'index.html', '(fallback)'))
+  }
+
+  // initFile wins. It is the entry the publisher recorded for this content and the file
+  // the player launched for years, so it is the only choice known to render every package
+  // already in the library. imsmanifest.xml is consulted only when there is no initFile.
+  //
+  // This deliberately gives up something. An Articulate package carries initFile
+  // scormcontent/index.html - the content with no LMS wiring - while its manifest names
+  // scormdriver/indexAPI.html, the file that loads scormdriver.js, walks window.parent for
+  // window.API and only then hosts the content. Launching initFile there means no API
+  // binding, no cmi.* writes and nothing to resume from. Letting the manifest win fixes
+  // that, but it also re-points every other package in the library at a file the player
+  // has never launched, which is how do_1142006579799490561250 - a Storyline web package
+  // whose entry is a plain index.html - stopped rendering.
+  //
+  // Existence-checking the manifest href was meant to make that safe and does not: it
+  // needs a server that answers HEAD honestly and 404s a missing file, and the content
+  // hosts here do neither reliably (object storage answers 403 for both "forbidden" and
+  // "missing", and an SPA-fallback host answers 200 with an app shell for anything at
+  // all). Re-land the Articulate case behind a positive test for that layout - a real
+  // manifest that parses as XML, naming a SCO that is not initFile - not behind a
+  // negative test that a fetch failure can flip.
+  private pickLaunchFile(
+    sameOriginRoot: string,
+    entryFile: string | null,
+  ): Promise<{ file: string, source: string }> {
+    if (entryFile) {
+      return Promise.resolve({ file: entryFile, source: '(initFile)' })
+    }
+    return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
+      if (href) {
+        return { file: href, source: '(imsmanifest.xml)' }
+      }
+      return { file: 'index.html', source: '(default)' }
+    })
+  }
+
+  // The launch file imsmanifest.xml declares, or null when there is none or it is not in
+  // the package.
+  private verifiedManifestLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return this.resolveScormLaunchFile(sameOriginRoot).then(href => {
+      if (!href) {
+        return null
+      }
+      return this.fileExists(`${sameOriginRoot}/${href}`).then(exists => {
+        if (exists) {
+          return href
+        }
+        console.warn('[SCORM] imsmanifest.xml declares', href,
+                     'but it is not in the package - falling back to initFile')
+        return null
+      })
+    })
+  }
+
+  // Only a definitive 404/403 counts as missing. A proxy that will not answer HEAD, or a
+  // network blip, is not evidence the file is gone, so it resolves true and the manifest
+  // is trusted - the manifest is the standards-defined answer, and only a server actually
+  // saying "not here" is grounds to overrule it.
+  private fileExists(url: string): Promise<boolean> {
+    return fetch(url, { method: 'HEAD', cache: 'no-cache' })
+      .then(res => {
+        if (res.ok) {
+          return true
+        }
+        if (res.status === 404 || res.status === 403) {
+          return false
+        }
+        console.warn('[SCORM] could not check', url, '- got', res.status, '- assuming it is there')
+        return true
+        // tslint:disable-next-line: align
+      }).catch(e => {
+        console.warn('[SCORM] could not check', url, '- assuming it is there', e)
+        return true
+      })
   }
 
   private resolveScormLaunchFile(sameOriginRoot: string): Promise<string | null> {
@@ -1062,7 +1138,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private parseLaunchFile(manifestXml: string): string | null {
     const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
     if (xml.getElementsByTagName('parsererror').length) {
-      console.warn('[SCORM] imsmanifest.xml is not well formed - falling back to initFile')
+      console.warn('[SCORM] imsmanifest.xml is not well formed - falling back to index.html')
       return null
     }
     const resources = Array.from(xml.getElementsByTagName('resource'))
@@ -1071,7 +1147,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       return null
     }
     // Prefer the SCO: that is the resource wired up to the LMS. Assets and plain
-    // webcontent resources are not launchable.
+    // webcontent resources are not launchable. Reached only when initFile is absent or
+    // missing from the package, so any resource beats giving up.
     const sco = resources.find(r => this.readScormType(r) === 'sco')
     return (sco || resources[0]).getAttribute('href')
   }
@@ -1163,7 +1240,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           // Inject event trackers after SCORM content boots up
           setTimeout(() => {
             this.injectEventTrackers(iframe)
-          },         1500)
+          }, 1500)
         }
       })
     }
@@ -1281,7 +1358,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
         // and benchmark build configurations all compile production: false, so testing
         // that flag would rewrite URLs on four of the five deployable builds and 404.
         console.warn('[SCORM] Content is cross-origin at', parsed.origin, 'vs page', window.location.origin,
-                     '- the SCORM API and localStorage will not be reachable')
+          '- the SCORM API and localStorage will not be reachable')
         return url
       }
       const proxyUrl = `${this.scormProxyPrefix}${parsed.pathname}${parsed.search}`
@@ -1412,13 +1489,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           mediaElements.forEach((media: Element) => {
             const mediaEl = media as HTMLMediaElement
             if ((mediaEl as any).scormTracked) { return }
-            ;(mediaEl as any).scormTracked = true
+            ; (mediaEl as any).scormTracked = true
             const events = ['play', 'pause', 'ended', 'seeked']
             events.forEach(evt => {
               mediaEl.addEventListener(evt, () => {
                 console.log('[SCORM] MEDIA:', mediaEl.tagName, evt.toUpperCase(),
-                            'time:', Math.round(mediaEl.currentTime * 10) / 10,
-                            'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
+                  'time:', Math.round(mediaEl.currentTime * 10) / 10,
+                  'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
                 this.debouncedProgressUpdate()
               })
             })
@@ -1463,7 +1540,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // ── Error tracking ──
       iframeWin.addEventListener('error', (e: any) => {
         console.warn('[SCORM] IFRAME_ERROR:', e.message || 'Unknown error',
-                     'file:', e.filename || '', 'line:', e.lineno || '')
+          'file:', e.filename || '', 'line:', e.lineno || '')
       })
 
       this.loggerSvc.log('SCORM event trackers injected into iframe')
@@ -1521,7 +1598,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       return false
     }
     console.log('[SCORM] completion detected for', content.identifier,
-                '- writing the progress update')
+      '- writing the progress update')
     if (this.isMobileApp) {
       this.emitScormEventToMobile(content, completion)
     }
@@ -1558,7 +1635,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (!Object.keys(scormData).length) {
       console.warn('[SCORM] Emitting event to mobile with empty scormData - the package',
-                   'wrote no cmi.* data, check it reached window.parent.API')
+        'wrote no cmi.* data, check it reached window.parent.API')
     }
     console.log('[SCORM] Emitting event to mobile:', JSON.stringify(payload).substring(0, 500))
     // Emit via Flutter JavaScript channel if available
