@@ -120,11 +120,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
   ) {
-    // SCORM 1.2 content discovers window.API; SCORM 2004 content discovers
-    // window.API_1484_11. Publishing both lets either version bind without the platform
-    // needing to know which one a given package was authored against.
+    // SCORM 1.2 content discovers window.API. Only this one is published.
+    //
+    // window.API_1484_11 (SCORM 2004) is deliberately NOT published, even though the
+    // adapter carries a shim for it. A driver searches for the 2004 API *first* and only
+    // falls back to 1.2, so publishing it takes every package that would happily have
+    // bound 1.2 - which is all of them, up to now - and moves it onto the 2004 path.
+    // That path is a flat pass-through to the 1.2 key-value store: it has no 2004 data
+    // model, so cmi.mode, cmi.entry, cmi.completion_status, cmi.learner_id and the
+    // collection counts all answer "" with error 403 during the driver's boot handshake,
+    // and the package fails to finish initialising. Publish it again only once
+    // scorm2004GetValue actually implements the 2004 data model.
     (window as any).API = this.scormAdapterService
-      ; (window as any).API_1484_11 = this.scormAdapterService.scorm2004Api
     // if (window.addEventListener) {
     window.addEventListener('message', this.receiveMessage.bind(this))
     // }
@@ -1038,32 +1045,36 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }).catch(() => commit(entryFile || 'index.html', '(fallback)'))
   }
 
-  // The manifest's SCO wins, but only once we have confirmed it is really in the package.
-  // Both halves are needed, and each is there for a package we have actually seen:
+  // initFile wins. It is the entry the publisher recorded for this content and the file
+  // the player launched for years, so it is the only choice known to render every package
+  // already in the library. imsmanifest.xml is consulted only when there is no initFile.
   //
-  //   Articulate: initFile is scormcontent/index.html, the content with no LMS wiring,
-  //   while the manifest names scormdriver/indexAPI.html - the file that loads
-  //   scormdriver.js, walks window.parent for window.API and only then hosts the content.
-  //   Launch initFile and the package binds no API, writes no cmi.* data, and there is
-  //   nothing to resume from. So the manifest has to win.
+  // This deliberately gives up something. An Articulate package carries initFile
+  // scormcontent/index.html - the content with no LMS wiring - while its manifest names
+  // scormdriver/indexAPI.html, the file that loads scormdriver.js, walks window.parent for
+  // window.API and only then hosts the content. Launching initFile there means no API
+  // binding, no cmi.* writes and nothing to resume from. Letting the manifest win fixes
+  // that, but it also re-points every other package in the library at a file the player
+  // has never launched, which is how do_1142006579799490561250 - a Storyline web package
+  // whose entry is a plain index.html - stopped rendering.
   //
-  //   do_113913397129682944186 and other legacy ekstep html-archives: the manifest is
-  //   internally inconsistent with its own package - it declares the SCO at res/index.html
-  //   and 92 files under res/, but the zip has no res/ directory and those files sit at
-  //   the root. res/index.html is a hard 404. So a manifest href we cannot verify has to
-  //   lose to initFile.
-  //
-  // Checking existence separates them without guessing at versions, tools or dates.
+  // Existence-checking the manifest href was meant to make that safe and does not: it
+  // needs a server that answers HEAD honestly and 404s a missing file, and the content
+  // hosts here do neither reliably (object storage answers 403 for both "forbidden" and
+  // "missing", and an SPA-fallback host answers 200 with an app shell for anything at
+  // all). Re-land the Articulate case behind a positive test for that layout - a real
+  // manifest that parses as XML, naming a SCO that is not initFile - not behind a
+  // negative test that a fetch failure can flip.
   private pickLaunchFile(
     sameOriginRoot: string,
     entryFile: string | null,
   ): Promise<{ file: string, source: string }> {
+    if (entryFile) {
+      return Promise.resolve({ file: entryFile, source: '(initFile)' })
+    }
     return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
       if (href) {
         return { file: href, source: '(imsmanifest.xml)' }
-      }
-      if (entryFile) {
-        return { file: entryFile, source: '(initFile)' }
       }
       return { file: 'index.html', source: '(default)' }
     })
