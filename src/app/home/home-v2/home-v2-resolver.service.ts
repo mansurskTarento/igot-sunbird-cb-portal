@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http'
 import { Injectable, inject } from '@angular/core'
 import { Router } from '@angular/router'
 import { ConfigurationsService, IResolveResponse } from '@sunbird-cb/utils-v2'
-import { Observable, forkJoin, map, catchError, of, switchMap } from 'rxjs'
+import { Observable, map, catchError, of, switchMap } from 'rxjs'
 import { FormExtService } from '../../services/form-ext.service'
 
 @Injectable({
@@ -27,9 +27,6 @@ export class HomeV2ResolverService {
     }
     const baseUrl = this.configSvc.sitePath
     const homeConfig = this.http.get<any>(`${baseUrl}/page/home-v2.json`).pipe(catchError(() => of(null)))
-    const sectionRecordsCount = this.http.get<any>(`/apis/proxies/v8/user/content/info`).pipe(
-      catchError(() => of(null)),
-    )
     const request = {
       request: {
         type: 'page',
@@ -40,37 +37,34 @@ export class HomeV2ResolverService {
     }
     const response$ = this.formSvc.formConfigReadData(request).pipe(catchError(() => of(null)))
 
-    return forkJoin([response$, sectionRecordsCount]).pipe(
-      switchMap(([responseRes, sectionRecordsCountRes]) => {
+    return response$.pipe(
+      switchMap(responseRes => {
         const responseConfigDetails = responseRes && responseRes.result && responseRes.result.data
         if (responseConfigDetails) {
-          return of([responseConfigDetails, sectionRecordsCountRes])
+          return of(responseConfigDetails)
         }
-        return homeConfig.pipe(map(homeConfigRes => [homeConfigRes ? homeConfigRes : [], sectionRecordsCountRes]))
+        return homeConfig.pipe(map(homeConfigRes => homeConfigRes ? homeConfigRes : []))
       }),
-      map(([configDetails, sectionRecordsCountRes]) => {
-        if (configDetails && configDetails.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
-          const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
-          if (pillsSection && Array.isArray(pillsSection.pills)) {
-            let visablePillsCount = 0
-            pillsSection.pills.forEach((pill: any) => {
-              if (pill.pillInfoCountKey && sectionRecordsCountRes.result[pill.pillInfoCountKey]) {
-                pill.visibilityMode = 'visible'
-                visablePillsCount = visablePillsCount + 1
-              } else {
-                pill.visibilityMode = 'hidden'
-              }
-            })
-            if (visablePillsCount === 0) {
-              pillsSection.visibilityMode = 'hidden'
-            }
-          }
-        }
+      map(configDetails => {
+        // Pill visibility depends on /apis/proxies/v8/user/content/info, which is slow — that call
+        // now happens in HomeV2Component after the page renders, so the pills section starts
+        // optimistically visible with sectionLoading=true and shows a skeleton until it resolves.
+        this.markPillsSectionLoading(configDetails)
         this.applyBharatKalpVisibility(configDetails)
         return { data: configDetails, error: null }
       }),
       catchError(err => of({ data: null, error: err })),
     )
+  }
+
+  private markPillsSectionLoading(configDetails: any): void {
+    if (!configDetails || !Array.isArray(configDetails.homeSection)) {
+      return
+    }
+    const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
+    if (pillsSection) {
+      pillsSection['sectionLoading'] = true
+    }
   }
 
   // Bharat Kalp spotlight card is only for BharatKalp members, the route itself is guarded too
