@@ -334,6 +334,8 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  overflow-wrap: break-word;
+  word-break: break-word;
 
   &.expanded {
     display: block;
