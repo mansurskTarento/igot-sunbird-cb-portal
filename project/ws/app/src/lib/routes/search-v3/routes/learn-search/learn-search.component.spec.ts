@@ -22,6 +22,14 @@ jest.mock('@sunbird-cb/collection', () => ({
   NsContent: {},
 }), { virtual: true })
 
+// `@sunbird-cb/consumption` resolves (via a linked local package) to a build that itself imports
+// `@project-sunbird/telemetry-sdk`, which is not installed in this workspace. The component only
+// needs `ContentDictionaryService` as a constructor-param type, so mock the module to avoid pulling
+// in that unrelated, unresolvable dependency chain.
+jest.mock('@sunbird-cb/consumption', () => ({
+  ContentDictionaryService: jest.fn(),
+}), { virtual: true })
+
 import { LearnSearchComponent } from './learn-search.component'
 import {
   SearchCategory,
@@ -191,6 +199,14 @@ describe('LearnSearchComponent (No TestBed)', () => {
       const component = createComponent({})
       component.searchQuery = { query: 'abc', nlp: '', searchCategory: '' }
       component.ngOnInit()
+      expect(component.currentUserDept).toBe('')
+    })
+
+    it('does not throw when userProfile is entirely absent', () => {
+      mockConfigSvc.userProfile = undefined
+      const component = createComponent({})
+      component.searchQuery = { query: 'abc', nlp: '', searchCategory: '' }
+      expect(() => component.ngOnInit()).not.toThrow()
       expect(component.currentUserDept).toBe('')
     })
 
@@ -566,6 +582,30 @@ describe('LearnSearchComponent (No TestBed)', () => {
       expect(mockContentDictionarySvc.getContent).not.toHaveBeenCalled()
       expect(component.courseSearchResults).toEqual([])
     })
+
+    it('does not dedupe facets when facets is empty', async () => {
+      const component = createComponent({})
+      component.searchRequestCourse.request.facets = []
+      await component.searchCourses()
+      expect(component.searchRequestCourse.request.facets).toEqual([])
+    })
+
+    it('does not treat non-array content as searchable content', async () => {
+      mockSearchV3Service.searchCoursesv5.mockResolvedValue({ result: { content: 'not-an-array', count: 0, facets: [] } })
+      const component = createComponent({})
+      await component.searchCourses()
+      expect(mockContentDictionarySvc.getContent).not.toHaveBeenCalled()
+    })
+
+    it('does not extract a formId when the completionSurveyLink has no surveys segment', async () => {
+      mockSearchV3Service.searchCoursesv5.mockResolvedValue({
+        result: { content: [{ identifier: 'c1' }], count: 1, facets: [] },
+      })
+      mockContentDictionarySvc.getContent = jest.fn(() => of({ identifier: 'c1', completionSurveyLink: 'https://x/no-match-here' }))
+      const component = createComponent({})
+      await component.searchCourses()
+      expect(mockSearchV3Service.getApplicationsById).not.toHaveBeenCalled()
+    })
   })
 
   // ---------------------------------------------------------------------
@@ -667,6 +707,14 @@ describe('LearnSearchComponent (No TestBed)', () => {
       expect(component.communitiesSearchResults).toEqual([])
       expect(component.communitiesSearchTotalCount).toBe(0)
     })
+
+    it('does not overwrite searchString when statedata param is falsy', async () => {
+      const component = createComponent({})
+      component.statedata = { param: '', path: 'Search' }
+      component.searchRequestCommunities.searchString = 'existing'
+      await component.searchcommunities()
+      expect(component.searchRequestCommunities.searchString).toBe('existing')
+    })
   })
 
   // ---------------------------------------------------------------------
@@ -762,6 +810,29 @@ describe('LearnSearchComponent (No TestBed)', () => {
       component.seeAllResult = SearchCategory.Communities
       await component.getCompetencyHierichy()
       expect(component.competencyFactet.length).toBeGreaterThan(0)
+    })
+
+    it('leaves competencyFactet empty when no facets match the competency keys', async () => {
+      mockSearchV3Service.searchCoursesv4.mockResolvedValue({ result: { count: 0, facets: [] } })
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Courses
+      await component.getCompetencyHierichy()
+      expect(component.competencyFactet).toEqual([])
+    })
+
+    it('leaves competencyFactet empty for Communities when facet arrays are empty', async () => {
+      mockSearchV3Service.searchCommunity.mockReturnValue(Promise.resolve({
+        result: {
+          search_results: {
+            totalCount: 0,
+            facets: { 'v4.compTheme': [], 'v4.compSubTheme': [] },
+          },
+        },
+      }))
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Communities
+      await component.getCompetencyHierichy()
+      expect(component.competencyFactet).toEqual([])
     })
   })
 
@@ -866,6 +937,9 @@ describe('LearnSearchComponent (No TestBed)', () => {
     it('handles the Events category', async () => {
       const component = createComponent({})
       await component.seeAllResults(SearchCategory.Events)
+      // processTypeOfEventsFilter() is fired-and-forgotten (not awaited) inside seeAllResults,
+      // so flush the microtask queue to let its internal loop of awaited calls settle.
+      await new Promise(resolve => setTimeout(resolve, 0))
       expect(mockSearchV3Service.searchCoursesv4).toHaveBeenCalled()
       expect(component.typesOfEventsFilters).toBeDefined()
     })
@@ -1039,6 +1113,91 @@ describe('LearnSearchComponent (No TestBed)', () => {
       await promise
       expect(mockSearchV3Service.searchExternalContent).toHaveBeenCalled()
     })
+
+    it('handles HighestRated with no active category', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      const promise = component.onChangeSortSearch(SortType.HighestRated)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestCourse.request.sort_by.avgRating).toBe('desc')
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+    })
+
+    it('handles AtoZ with no active category', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      const promise = component.onChangeSortSearch(SortType.AtoZ)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestCourse.request.sort_by.name).toBe(SortType.Ascending)
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+    })
+
+    it('handles ZtoA with no active category', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      const promise = component.onChangeSortSearch(SortType.ZtoA)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestCourse.request.sort_by.name).toBe(SortType.Descending)
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+    })
+
+    it('handles RecentlyAdded for Communities', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Communities
+      const promise = component.onChangeSortSearch(SortType.RecentlyAdded)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestCommunities.orderDirection).toBe('desc')
+      expect(mockSearchV3Service.searchCommunity).toHaveBeenCalled()
+    })
+
+    it('handles RecentlyAdded for People', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.People
+      const promise = component.onChangeSortSearch(SortType.RecentlyAdded)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestPeoples.sort_by.createdOn).toBe('desc')
+      expect(mockSearchV3Service.searchConnections).toHaveBeenCalled()
+    })
+
+    it('handles RecentlyAdded for Resources', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Resources
+      const promise = component.onChangeSortSearch(SortType.RecentlyAdded)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestResources.request.sort_by.createdOn).toBe('desc')
+      expect(mockSearchV3Service.searchResource).toHaveBeenCalled()
+    })
+
+    it('handles RecentlyAdded for ExternalContents', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.ExternalContents
+      const promise = component.onChangeSortSearch(SortType.RecentlyAdded)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestExternal.orderBy).toBe('createdOn')
+      expect(mockSearchV3Service.searchExternalContent).toHaveBeenCalled()
+    })
+
+    it('handles HighestRated for Resources', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Resources
+      const promise = component.onChangeSortSearch(SortType.HighestRated)
+      jest.runAllTimers()
+      await promise
+      expect(component.searchRequestResources.request.sort_by.avgRating).toBe('desc')
+      expect(mockSearchV3Service.searchResource).toHaveBeenCalled()
+    })
   })
 
   // ---------------------------------------------------------------------
@@ -1109,6 +1268,22 @@ describe('LearnSearchComponent (No TestBed)', () => {
       const component = createComponent({})
       component.peoplesSearchResults = []
       expect(() => component.getAllConnectionRequests()).not.toThrow()
+    })
+
+    it('does not mark anyone when connectionRequestsSent is empty but people results exist', () => {
+      mockNetworkV2Service.fetchAllConnectionRequests.mockReturnValue(of({ result: { data: [] } }))
+      const component = createComponent({})
+      component.peoplesSearchResults = [{ userId: 'u1' }]
+      component.getAllConnectionRequests()
+      expect(component.peoplesSearchResults[0].requestSent).toBeUndefined()
+    })
+
+    it('skips connection request entries with no usable id', () => {
+      mockNetworkV2Service.fetchAllConnectionRequests.mockReturnValue(of({ result: { data: [{ notAnId: true }] } }))
+      const component = createComponent({})
+      component.peoplesSearchResults = [{ userId: 'u1' }]
+      expect(() => component.getAllConnectionRequests()).not.toThrow()
+      expect(component.peoplesSearchResults[0].requestSent).toBeUndefined()
     })
   })
 
@@ -1253,6 +1428,20 @@ describe('LearnSearchComponent (No TestBed)', () => {
       const component = createComponent({})
       expect(() => component.resetEventsTypesRequest()).not.toThrow()
     })
+
+    it('deletes only the startDateTimeInEpoch filter when only that one is present', () => {
+      const component = createComponent({})
+      component.searchRequestEvents.request.filters.startDateTimeInEpoch = { '<=': 1 }
+      component.resetEventsTypesRequest()
+      expect(component.searchRequestEvents.request.filters.startDateTimeInEpoch).toBeUndefined()
+    })
+
+    it('deletes only the endDateTimeInEpoch filter when only that one is present', () => {
+      const component = createComponent({})
+      component.searchRequestEvents.request.filters.endDateTimeInEpoch = { '>=': 1 }
+      component.resetEventsTypesRequest()
+      expect(component.searchRequestEvents.request.filters.endDateTimeInEpoch).toBeUndefined()
+    })
   })
 
   // ---------------------------------------------------------------------
@@ -1275,6 +1464,51 @@ describe('LearnSearchComponent (No TestBed)', () => {
       component.applySelectedFilters = { a: ['x'], b: ['y'] }
       await component.applyFilterToCaategoryType()
       expect(mockSearchV3Service.searchCoursesv5).not.toHaveBeenCalled()
+    })
+
+    it('re-searches Events', async () => {
+      mockActivated.snapshot = { queryParams: { category: SearchCategory.Events } }
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Events
+      component.applySelectedFilters = { sourceName: ['x'] }
+      await component.applyFilterToCaategoryType()
+      expect(mockSearchV3Service.searchCoursesv4).toHaveBeenCalled()
+    })
+
+    it('re-searches Resources', async () => {
+      mockActivated.snapshot = { queryParams: { category: SearchCategory.Resources } }
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Resources
+      component.applySelectedFilters = { resourceCategory: ['x'] }
+      await component.applyFilterToCaategoryType()
+      expect(mockSearchV3Service.searchResource).toHaveBeenCalled()
+    })
+
+    it('re-searches People', async () => {
+      mockActivated.snapshot = { queryParams: { category: SearchCategory.People } }
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.People
+      component.applySelectedFilters = { rootOrgName: ['x'] }
+      await component.applyFilterToCaategoryType()
+      expect(mockSearchV3Service.searchConnections).toHaveBeenCalled()
+    })
+
+    it('re-searches Communities', async () => {
+      mockActivated.snapshot = { queryParams: { category: SearchCategory.Communities } }
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.Communities
+      component.applySelectedFilters = { orgName: ['x'] }
+      await component.applyFilterToCaategoryType()
+      expect(mockSearchV3Service.searchCommunity).toHaveBeenCalled()
+    })
+
+    it('re-searches ExternalContents', async () => {
+      mockActivated.snapshot = { queryParams: { category: SearchCategory.ExternalContents } }
+      const component = createComponent({})
+      component.seeAllResult = SearchCategory.ExternalContents
+      component.applySelectedFilters = { topic: ['x'] }
+      await component.applyFilterToCaategoryType()
+      expect(mockSearchV3Service.searchExternalContent).toHaveBeenCalled()
     })
   })
 
@@ -1457,6 +1691,110 @@ describe('LearnSearchComponent (No TestBed)', () => {
       component.seeAllResult = SearchCategory.CaseStudy
       await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
       expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+    })
+
+    it('applies RecentlyAdded sort for Communities', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.RecentlyAdded
+      component.seeAllResult = SearchCategory.Communities
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestCommunities.orderDirection).toBe('desc')
+    })
+
+    it('applies RecentlyAdded sort for People', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.RecentlyAdded
+      component.seeAllResult = SearchCategory.People
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestPeoples.sort_by.createdOn).toBe('desc')
+    })
+
+    it('applies RecentlyAdded sort for ExternalContents', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.RecentlyAdded
+      component.seeAllResult = SearchCategory.ExternalContents
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestExternal.orderBy).toBe('createdOn')
+    })
+
+    it('applies MostRelevent sort for Resources', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.MostRelevent
+      component.seeAllResult = SearchCategory.Resources
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestResources.request.sort_by).toEqual({})
+    })
+
+    it('applies AtoZ sort with no active category', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.AtoZ
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestCourse.request.sort_by.name).toBe(SortType.Ascending)
+      expect(component.searchRequestEvents.request.sort_by.name).toBe(SortType.Ascending)
+    })
+
+    it('applies AtoZ sort for Events', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.AtoZ
+      component.seeAllResult = SearchCategory.Events
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestEvents.request.sort_by.name).toBe(SortType.Ascending)
+    })
+
+    it('applies ZtoA sort with no active category', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.ZtoA
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestCourse.request.sort_by.name).toBe(SortType.Descending)
+      expect(component.searchRequestEvents.request.sort_by.name).toBe(SortType.Descending)
+    })
+
+    it('applies ZtoA sort for Events', async () => {
+      const component = createComponent({})
+      component.searchSortFilter = SortType.ZtoA
+      component.seeAllResult = SearchCategory.Events
+      await component.applySearchFilter({ organisation: ['org1'], language: ['en'] })
+      expect(component.searchRequestEvents.request.sort_by.name).toBe(SortType.Descending)
+    })
+
+    it('applies the competencyThemeKey and competencySubThemeKey filters', async () => {
+      const component = createComponent({})
+      const themeKey = component.competencyThemeKey
+      const subThemeKey = component.competencySubThemeKey
+      await component.applySearchFilter({ [themeKey]: ['ThemeA'], [subThemeKey]: ['SubThemeA'] })
+      expect(component.searchRequestCourse.request.filters[themeKey]).toEqual(['ThemeA'])
+      expect(component.searchRequestCourse.request.filters[subThemeKey]).toEqual(['SubThemeA'])
+      expect(component.compentencyKeyExist).toBe(true)
+    })
+
+    it('applies the "Case Study" filter to sectorId', async () => {
+      const component = createComponent({})
+      await component.applySearchFilter({ 'Case Study': ['cs1'], organisation: ['org1'] })
+      expect(component.searchRequestCourse.request.filters.sectorId).toEqual(['cs1'])
+    })
+
+    it('applies several miscellaneous selectedFilters keys in one pass', async () => {
+      const component = createComponent({})
+      await component.applySearchFilter({
+        sourceName: ['src1'],
+        sectorId: ['sec1'],
+        subSectorId: ['sub1'],
+        rootOrgName: ['org1'],
+        'profileDetails.professionalDetails.designation': ['designation1'],
+        competencyArea: ['compA'],
+        orgName: ['orgName1'],
+        topicName: ['topicName1'],
+        resourceType: ['res1'],
+      })
+      expect(component.searchRequestEvents.request.filters.sourceName).toEqual(['src1'])
+      expect(component.searchRequestCourse.request.filters.sectorId).toEqual(['sec1'])
+      expect(component.searchRequestCourse.request.filters.subSectorId).toEqual(['sub1'])
+      expect(component.searchRequestPeoples.filters.rootOrgName).toEqual(['org1'])
+      expect(component.searchRequestPeoples.filters['profileDetails.professionalDetails.designation']).toEqual(['designation1'])
+      expect(component.searchRequestCommunities.filterCriteriaMap.competencyArea).toEqual(['compA'])
+      expect(component.searchRequestCommunities.filterCriteriaMap.orgName).toEqual(['orgName1'])
+      expect(component.searchRequestCommunities.filterCriteriaMap.topicName).toEqual(['topicName1'])
+      expect(component.searchRequestEvents.request.filters.resourceType).toEqual(['res1'])
     })
   })
 })
