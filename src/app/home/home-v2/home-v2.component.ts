@@ -144,7 +144,7 @@ export class HomeV2Component implements OnInit {
     }
     if (cardClickDetails.identifier) {
       object['id'] = cardClickDetails.identifier
-      object['type'] = cardClickDetails.type || 'Course'
+      object['type'] = cardClickDetails.primaryCategory || cardClickDetails.type || 'Course'
     }
     this.eventSvc.raiseInteractTelemetry(
       eData,
