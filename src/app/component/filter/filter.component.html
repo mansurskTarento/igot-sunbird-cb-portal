@@ -18,11 +18,6 @@
         </div>
         <div class="filter-content-container">
         <ng-container *ngIf="showAdditionalFilters">
-            <div class="filter-content flex flex-1" style="align-items: center;">
-                    <span style="flex: 1;">{{'cbpPlanStats.apar' | translate}}</span>
-                    <mat-slide-toggle [checked]="filterObj?.isApar" (change)="onAparChange($event)" style="margin: 0;">
-                    </mat-slide-toggle>
-            </div>
             <div class="filter-content flex flex-1">
                 <mat-accordion>
                     <mat-expansion-panel disableRipple [expanded]="true">
@@ -42,6 +37,31 @@
                                 </mat-accordion>
                                 </div>
                                 <div class="spacer"></div>
+                                <!-- Plan type is only offered when cbp.json configures `planTypes`. -->
+                                <div class="filter-content flex flex-1" *ngIf="planTypeList?.length">
+                                    <mat-accordion>
+                                        <mat-expansion-panel disableRipple [expanded]="true">
+                                            <mat-expansion-panel-header>
+                                                <mat-panel-title>
+                                                    {{'Plan type' | translate}}
+                                                </mat-panel-title>
+                                            </mat-expansion-panel-header>
+                                            <mat-radio-group class="flex flex-col" [value]="filterObj?.planType || ''" (change)="selectPlanType($event.value)">
+                                                <div class="flex flex-1 flex-row category-item">
+                                                    <mat-radio-button disableRipple class="example-margin" [value]="''">
+                                                        {{'All' | translate}}
+                                                    </mat-radio-button>
+                                                </div>
+                                                <div class="flex flex-1 flex-row category-item" *ngFor="let ptype of planTypeList">
+                                                    <mat-radio-button disableRipple class="example-margin" [value]="ptype?.id">
+                                                        {{ translatePlanType(ptype?.name) }}
+                                                    </mat-radio-button>
+                                                </div>
+                                            </mat-radio-group>
+                                        </mat-expansion-panel>
+                                    </mat-accordion>
+                                </div>
+                                <div class="spacer" *ngIf="planTypeList?.length"></div>
                                 <div class="filter-content flex flex-1">
                                     <mat-accordion>
                                         <mat-expansion-panel disableRipple [expanded]="true">

@@ -33,8 +33,10 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
   pageSizeOptions = [10, 20, 50, 100]
   currentPage = 1
   pagedFeedList: any[] = []
-  /** The default year gets no chip — it is the page's normal state, not a filter. */
-  currentPlanYear = ''
+  /** Stands in for the year chip's value if the page ever hands over a filter object without one. */
+  @Input() currentPlanYear = ''
+  /** Configured plan types as {id, name} — the chip shows the name, filterObject holds the id. */
+  @Input() planTypeList: any[] = []
 
   filterValuesBinding: any = {
     status: {
@@ -73,7 +75,9 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
     if (this.activatedRoute.snapshot.data.pageData) {
       this.cbpConfig = this.activatedRoute.snapshot.data.pageData.data
     }
-    this.currentPlanYear = this.widgetSvc.getCurrentFinancialYear()
+    if (!this.currentPlanYear) {
+      this.currentPlanYear = this.widgetSvc.getCurrentFinancialYear()
+    }
     this.searchControl.valueChanges.pipe(
       distinctUntilChanged()
     ).subscribe(() => {
@@ -105,6 +109,21 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
   private updatePagedFeedList() {
     const start = (this.currentPage - 1) * this.pageSize
     this.pagedFeedList = (this.contenFeedList || []).slice(start, start + this.pageSize)
+  }
+
+  /**
+   * Chip text for a plan type id. Falls back to the raw id when the config has no entry for
+   * it, and to the configured name when the instance has no `searchfilters` translation —
+   * ngx-translate returns the key itself for a miss, which is what was rendering.
+   */
+  planTypeLabel(planType: any) {
+    const match = (this.planTypeList || []).find((item: any) => item && item.id === planType)
+    const name = match ? match.name : planType
+    if (!name) {
+      return ''
+    }
+    const translated = this.translateLabel(name, 'searchfilters')
+    return translated && translated.indexOf('searchfilters.') === 0 ? name : translated
   }
 
   emitSearchEvent() {

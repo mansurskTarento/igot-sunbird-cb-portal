@@ -49,28 +49,41 @@ export class HomeV2ResolverService {
         return homeConfig.pipe(map(homeConfigRes => [homeConfigRes ? homeConfigRes : [], sectionRecordsCountRes]))
       }),
       map(([configDetails, sectionRecordsCountRes]) => {
-        if (configDetails && configDetails.homeSection && sectionRecordsCountRes && sectionRecordsCountRes.result) {
-          const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
-          if (pillsSection && Array.isArray(pillsSection.pills)) {
-            let visablePillsCount = 0
-            pillsSection.pills.forEach((pill: any) => {
-              if (pill.pillInfoCountKey && sectionRecordsCountRes.result[pill.pillInfoCountKey]) {
-                pill.visibilityMode = 'visible'
-                visablePillsCount = visablePillsCount + 1
-              } else {
-                pill.visibilityMode = 'hidden'
-              }
-            })
-            if (visablePillsCount === 0) {
-              pillsSection.visibilityMode = 'hidden'
-            }
-          }
-        }
+        this.applyAparPillsVisibility(configDetails, sectionRecordsCountRes)
         this.applyBharatKalpVisibility(configDetails)
         return { data: configDetails, error: null }
       }),
       catchError(err => of({ data: null, error: err })),
     )
+  }
+
+  /**
+   * A pill (APAR / Non-APAR) is only worth showing when the user actually has courses behind it,
+   * so a zero or missing count hides it, and the whole strip goes when no pill survives.
+   * A failed counts call is treated the same as zero: without counts we cannot claim a pill has
+   * content, and a strip that opens into an empty list is worse than no strip.
+   */
+  private applyAparPillsVisibility(configDetails: any, sectionRecordsCountRes: any): void {
+    if (!configDetails || !Array.isArray(configDetails.homeSection)) {
+      return
+    }
+    const pillsSection = configDetails.homeSection.find((section: any) => section.sectionKey === 'aparCourses')
+    if (!pillsSection || !Array.isArray(pillsSection.pills)) {
+      return
+    }
+    const counts = (sectionRecordsCountRes && sectionRecordsCountRes.result) || {}
+    let visablePillsCount = 0
+    pillsSection.pills.forEach((pill: any) => {
+      if (pill.pillInfoCountKey && Number(counts[pill.pillInfoCountKey]) > 0) {
+        pill.visibilityMode = 'visible'
+        visablePillsCount = visablePillsCount + 1
+      } else {
+        pill.visibilityMode = 'hidden'
+      }
+    })
+    if (visablePillsCount === 0) {
+      pillsSection.visibilityMode = 'hidden'
+    }
   }
 
   // Bharat Kalp spotlight card is only for BharatKalp members, the route itself is guarded too

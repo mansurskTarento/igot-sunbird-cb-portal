@@ -18,26 +18,26 @@
             </ng-container>
         </div>
     </div>
-    <div class="flex flex-wrap" *ngIf="filterApplied">
+    <!-- The year chip stands alone: a year is always in effect, filters or not. -->
+    <div class="flex flex-wrap" *ngIf="filterApplied || filterObject?.planYear">
         <ng-container *ngFor="let item of filterObject | keyvalue">
-            <ng-container *ngIf="item?.key === 'isApar'&& item?.value">
-                <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
-                    <p>{{'cbpPlanStats.apar' | translate}}</p>
-                    <mat-icon aria-hidden="true" (click)="closeFilter(item.value,item.key)"
-                        class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
-                        role="img"> close </mat-icon>
-                </div>
-            </ng-container>
-            <ng-container *ngIf="item?.key === 'planYear' && item?.value && item?.value !== currentPlanYear">
+            <!-- No dismiss icon: the year in effect can only be swapped for another one from
+                 the filter panel, there is no "no year" state to fall back to. -->
+            <ng-container *ngIf="item?.key === 'planYear' && item?.value">
                 <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
                     <p>{{item.value}}</p>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="item?.key === 'planType' && item?.value">
+                <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
+                    <p>{{planTypeLabel(item.value)}}</p>
                     <mat-icon aria-hidden="true" (click)="closeFilter(item.value,item.key)"
                         class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
                         role="img"> close </mat-icon>
                 </div>
             </ng-container>
-            <!-- planYear is a plain string; without excluding it the loop below renders one chip per character -->
-            <ng-container *ngIf="item?.key !== 'planYear' && item?.value?.length">
+            <!-- planYear/planType are plain strings; without excluding them the loop below renders one chip per character -->
+            <ng-container *ngIf="item?.key !== 'planYear' && item?.key !== 'planType' && item?.value?.length">
                 <ng-container *ngFor="let item1 of item.value">
                     <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
                         <ng-container *ngIf="item.key === 'status' || item.key === 'timeDuration' ;else allEle">

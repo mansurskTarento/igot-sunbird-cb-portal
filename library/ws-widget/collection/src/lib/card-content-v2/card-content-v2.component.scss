@@ -21,13 +21,32 @@ $secondary-color: #EF951E;
     padding: 4px 8px;
     align-items: end;
     border-radius: 16px;
-    flex-shrink: 0;
+    // Shrinkable, not fixed: the knowledge level badge beside it keeps its width, so a long
+    // category has to give way here rather than push the row past the edge of the card.
+    flex-shrink: 1;
+    min-width: 0;
+    overflow: hidden;
   }
 
   .course_v2.course-category-truncate {
     max-width: 90px;
+  }
+
+  // The label has to do the clipping: `text-overflow` on the pill alone does nothing since
+  // the pill is a flex container, so the ellipsis goes on the flex item that holds the text.
+  .course_v2 ::ng-deep ws-widget-display-content-type {
+    display: block;
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // .content-type-class is a -webkit-box with `word-break: break-all`, which broke a category
+  // that did not fit mid-word. Inline + nowrap instead, so its parent can ellipsis it.
+  .course_v2 ::ng-deep .content-type-class {
+    display: inline;
+    word-break: normal;
     white-space: nowrap;
   }
 
