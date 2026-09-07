@@ -63,11 +63,13 @@
         <div class="mr-2 mb-5" *ngFor="let c of pagedFeedList">
             <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
         </div>
-        <ws-widget-pagination [defaultPaginationSize]="pageSize" [defaultPaginationSizeOptions]="pageSizeOptions"
+        <!-- while loading the cards above are placeholders, so there is nothing to page through -->
+        <ws-widget-pagination *ngIf="!cbpLoader" [defaultPaginationSize]="pageSize" [defaultPaginationSizeOptions]="pageSizeOptions"
             [totalItemsCount]="contenFeedList.length" (pageChange)="onPageChange($event)"></ws-widget-pagination>
     </ng-container>
     <ng-template #emptyTemplate>
-        <div class="w-full flex flex-col items-center justify-center">
+        <!-- a year still being fetched is not a year with no plans -->
+        <div class="w-full flex flex-col items-center justify-center" *ngIf="!cbpLoader">
             <img alt="" class="mt-4 mb-4" src="assets/icons/search-empty.svg">
             <div class="mat-subheading-1 text-center">
                 <p>{{'cbpPlanFeed.noResults' | translate}}</p>
