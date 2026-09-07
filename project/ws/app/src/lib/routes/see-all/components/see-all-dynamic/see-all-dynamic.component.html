@@ -84,6 +84,7 @@
         <div *ngIf="!isEnrolmentLoading && displayedItems.length > 0" class="search-content-card">
           <ng-container *ngFor="let item of displayedItems">
             <sb-uic-card-landscape [widgetData]="item?.widgetData" [showEnrolmentStatus]="true"
+              (triggerTelemetry)="raiseTelemetryInteratEvent($event)"
               (contentData)="getRedirectUrlData($event)">
             </sb-uic-card-landscape>
           </ng-container>
@@ -157,6 +158,7 @@
         [infiniteScrollDistance]="scrollDistance" [infiniteScrollThrottle]="throttle">
         <ng-container *ngFor="let item of contentItems; let index = index">
           <sb-uic-card-landscape [widgetData]="item?.widgetData" [showEnrolmentStatus]="true"
+            (triggerTelemetry)="raiseTelemetryInteratEvent($event)"
             (contentData)="getRedirectUrlData($event)">
           </sb-uic-card-landscape>
         </ng-container>
