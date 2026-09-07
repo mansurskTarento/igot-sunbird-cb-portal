@@ -4,6 +4,7 @@ import { NsContentStripWithTabs } from './content-strip-with-tabs.model'
 // import { HttpClient } from '@angular/common/http'
 import { WidgetContentService } from '@sunbird-cb/toc'
 import { NsContent } from '../_services/widget-content.model'
+import { stampContentType } from '../_services/content-type-util'
 import {
   TFetchStatus,
   LoggerService,
@@ -1098,7 +1099,10 @@ export class ContentStripWithTabsComponent extends WidgetBaseComponent
       const userId: any = this.configSvc.userProfile && this.configSvc.userProfile.userId
       const response = await this.userSvc.fetchCbpPlanList(userId).toPromise()
       if (response) {
-        courses = response
+        // the CBP cache stores a reduced plan item (WidgetUserServiceLib.toReducedCbpData) that
+        // drops contentType - derive it back from the categories the projection does keep, or the
+        // cards fall through every contentType branch (icon, resource layout, excludeContentType)
+        courses = response.map(stampContentType)
         if (strip.tabs && strip.tabs.length) {
           tabResults = this.splitCbpTabsData(courses, strip)
           await this.processStrip(

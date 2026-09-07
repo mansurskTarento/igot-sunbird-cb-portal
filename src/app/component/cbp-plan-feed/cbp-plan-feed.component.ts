@@ -24,6 +24,7 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
   @Input()
   filterObject: any
   @Input() filterApplied = false
+  @Input() cbpLoader = false
   @Output() toggleFilterEvent = new EventEmitter()
   @Output() searchRequest = new EventEmitter()
   @Output() closeFilterKey = new EventEmitter()
