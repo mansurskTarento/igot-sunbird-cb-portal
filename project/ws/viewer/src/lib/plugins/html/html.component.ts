@@ -1058,13 +1058,14 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // has never launched, which is how do_1142006579799490561250 - a Storyline web package
   // whose entry is a plain index.html - stopped rendering.
   //
-  // Existence-checking the manifest href was meant to make that safe and does not: it
-  // needs a server that answers HEAD honestly and 404s a missing file, and the content
-  // hosts here do neither reliably (object storage answers 403 for both "forbidden" and
-  // "missing", and an SPA-fallback host answers 200 with an app shell for anything at
-  // all). Re-land the Articulate case behind a positive test for that layout - a real
-  // manifest that parses as XML, naming a SCO that is not initFile - not behind a
-  // negative test that a fetch failure can flip.
+  // Existence-checking the manifest href was meant to make that safe and does not on its
+  // own: it needs a server that answers HEAD honestly and 404s a missing file, and the
+  // content hosts here do neither reliably (object storage answers 403 for both
+  // "forbidden" and "missing", and an SPA-fallback host answers 200 with an app shell for
+  // anything at all). So the Articulate case is re-landed behind a positive test for that
+  // layout - trackable content, a real manifest that parses as XML, naming a SCO that is
+  // not initFile - rather than behind a negative test that a fetch failure can flip. See
+  // scormDriverLaunchFile for why isTrackable is the gate that makes it safe.
   private pickLaunchFile(
     sameOriginRoot: string,
     entryFile: string | null,
@@ -1090,11 +1091,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
    * entry, with the manifest naming the file that is.
    *
    * This is the positive test the comment above asks for, rather than preferring the
-   * manifest generally. Every condition has to hold - there is an initFile, the manifest
-   * fetches and parses as XML, some resource declares adlcp:scormtype="sco", that SCO is
-   * a different file from initFile, and the file is really in the package - so a package
-   * whose initFile is already the right entry keeps launching it, and a web package with
-   * no manifest at all (the Storyline regression) never reaches this path.
+   * manifest generally. Every condition has to hold - the content is flagged trackable,
+   * there is an initFile, the manifest fetches and parses as XML, some resource declares
+   * adlcp:scormtype="sco", that SCO is a different file from initFile, and the file is
+   * really in the package - so a package whose initFile is already the right entry keeps
+   * launching it, and a web package with no manifest at all never reaches this path.
    *
    * What it fixes: Rise and Storyline publish scormcontent/index.html (or story.html) as
    * initFile and scormdriver/indexAPI.html as the SCO. Only the SCO loads scormdriver.js,
@@ -1102,10 +1103,26 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
    * exposing CommitData to it. Launched at initFile the content finds neither an LMS nor a
    * driver, so it writes no cmi.* at all - no store, no progress updates, nothing to
    * resume from.
+   *
+   * Why isTrackable gates it. Overruling initFile buys exactly one thing: cmi.* data. Only
+   * trackable content spends that data - calculateCompletionStatus reads the package's own
+   * reporting for it, while untracked content derives progress from the elapsed-time ratio
+   * and never looks at the CMI store. So for untracked content there is nothing to win
+   * here and a whole package to lose, which is what do_1142006579799490561250 lost: a
+   * vendor added a jQuery-dependent customisation to slides.min.js and wired
+   * UI_assets/jquery.min.js into index.html (initFile) but not into index_lms.html (the
+   * SCO), so launched at the SCO it throws "$ is not defined" out of autoShowHighlight.
+   * That package is broken and the content is where it has to be fixed - but it is not
+   * trackable, so the player has no reason to be launching its SCO in the first place.
    */
   private scormDriverLaunchFile(sameOriginRoot: string, entryFile: string | null): Promise<string | null> {
     if (!entryFile) {
       // No initFile: the manifest is consulted by the path below anyway.
+      return Promise.resolve(null)
+    }
+    if (!this.isTrackableContent(this.htmlContent)) {
+      // Not trackable: nothing reads cmi.* for this content, so launch what the publisher
+      // recorded and skip the manifest round trips entirely.
       return Promise.resolve(null)
     }
     return this.fetchManifestXml(sameOriginRoot).then(xml => {
