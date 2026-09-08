@@ -46,6 +46,8 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
       2: 'Completed',
     },
     timeDuration: {
+      upcoming: 'Upcoming',
+      overdue: 'Overdue',
       '7ad': 'Upcoming 7 Days',
       '30ad': 'Upcoming 30 Days',
       '90ad': 'Upcoming 3 Months',
@@ -140,7 +142,16 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
     this.closeFilterKey.emit({ value, key })
   }
 
+  /**
+   * ngx-translate returns the key itself for a miss, so a chip whose label the instance's
+   * bundle has no entry for rendered as "searchfilters.overdue". Fall back to the label the
+   * filter was defined with, which is already display text.
+   */
   translateLabel(label: string, type: any) {
-    return this.langtranslations.translateLabel(label, type, '')
+    if (!label) {
+      return ''
+    }
+    const translated = this.langtranslations.translateLabel(label, type, '')
+    return translated && translated.indexOf(`${type}.`) === 0 ? label : translated
   }
 }
