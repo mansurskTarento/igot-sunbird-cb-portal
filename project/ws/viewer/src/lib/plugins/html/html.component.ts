@@ -1069,15 +1069,84 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     sameOriginRoot: string,
     entryFile: string | null,
   ): Promise<{ file: string, source: string }> {
-    if (entryFile) {
-      return Promise.resolve({ file: entryFile, source: '(initFile)' })
-    }
-    return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
-      if (href) {
-        return { file: href, source: '(imsmanifest.xml)' }
+    return this.scormDriverLaunchFile(sameOriginRoot, entryFile).then(driver => {
+      if (driver) {
+        return { file: driver, source: '(imsmanifest.xml SCO - initFile is not the LMS entry)' }
       }
-      return { file: 'index.html', source: '(default)' }
+      if (entryFile) {
+        return { file: entryFile, source: '(initFile)' }
+      }
+      return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
+        if (href) {
+          return { file: href, source: '(imsmanifest.xml)' }
+        }
+        return { file: 'index.html', source: '(default)' }
+      })
     })
+  }
+
+  /**
+   * The Articulate layout, and nothing else: an initFile that is not the package's LMS
+   * entry, with the manifest naming the file that is.
+   *
+   * This is the positive test the comment above asks for, rather than preferring the
+   * manifest generally. Every condition has to hold - there is an initFile, the manifest
+   * fetches and parses as XML, some resource declares adlcp:scormtype="sco", that SCO is
+   * a different file from initFile, and the file is really in the package - so a package
+   * whose initFile is already the right entry keeps launching it, and a web package with
+   * no manifest at all (the Storyline regression) never reaches this path.
+   *
+   * What it fixes: Rise and Storyline publish scormcontent/index.html (or story.html) as
+   * initFile and scormdriver/indexAPI.html as the SCO. Only the SCO loads scormdriver.js,
+   * which finds window.API on the parent and then hosts the content in a nested frame,
+   * exposing CommitData to it. Launched at initFile the content finds neither an LMS nor a
+   * driver, so it writes no cmi.* at all - no store, no progress updates, nothing to
+   * resume from.
+   */
+  private scormDriverLaunchFile(sameOriginRoot: string, entryFile: string | null): Promise<string | null> {
+    if (!entryFile) {
+      // No initFile: the manifest is consulted by the path below anyway.
+      return Promise.resolve(null)
+    }
+    return this.fetchManifestXml(sameOriginRoot).then(xml => {
+      if (!xml) {
+        return null
+      }
+      const sco = this.parseScoLaunchFile(xml)
+      if (!sco || this.isSameFile(sco, entryFile)) {
+        return null
+      }
+      return this.fileExists(`${sameOriginRoot}/${sco}`).then(exists => {
+        if (!exists) {
+          console.warn('[SCORM] imsmanifest.xml declares the SCO', sco,
+                       'but it is not in the package - launching initFile', entryFile)
+          return null
+        }
+        return sco
+      })
+    })
+  }
+
+  /**
+   * The href of the resource declared adlcp:scormtype="sco", or null when no resource
+   * declares one. Deliberately stricter than parseLaunchFile, which falls back to the
+   * first resource carrying an href: overruling initFile is only justified when the
+   * manifest positively names an LMS-wired entry.
+   */
+  private parseScoLaunchFile(manifestXml: string): string | null {
+    const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
+    if (xml.getElementsByTagName('parsererror').length) {
+      return null
+    }
+    const sco = Array.from(xml.getElementsByTagName('resource'))
+      .find(r => r.getAttribute('href') && this.readScormType(r) === 'sco')
+    return sco ? sco.getAttribute('href') : null
+  }
+
+  /** Same file, ignoring the './' and leading '/' a manifest or initFile may carry. */
+  private isSameFile(a: string, b: string): boolean {
+    const normalise = (value: string) => value.replace(/^\.?\//, '').toLowerCase()
+    return normalise(a) === normalise(b)
   }
 
   // The launch file imsmanifest.xml declares, or null when there is none or it is not in
@@ -1121,13 +1190,19 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   private resolveScormLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return this.fetchManifestXml(sameOriginRoot).then(xml => xml ? this.parseLaunchFile(xml) : null)
+  }
+
+  // imsmanifest.xml as text, or null when it is not there or could not be read. A package
+  // published as plain web content has no manifest at all, so a miss here is normal.
+  private fetchManifestXml(sameOriginRoot: string): Promise<string | null> {
     return fetch(`${sameOriginRoot}/imsmanifest.xml`, { cache: 'no-cache' })
       .then(res => {
         if (!res.ok) {
           console.warn('[SCORM] imsmanifest.xml returned', res.status, '- falling back to initFile')
           return null
         }
-        return res.text().then(text => this.parseLaunchFile(text))
+        return res.text()
       })
       .catch(e => {
         console.warn('[SCORM] could not read imsmanifest.xml - falling back to initFile', e)
