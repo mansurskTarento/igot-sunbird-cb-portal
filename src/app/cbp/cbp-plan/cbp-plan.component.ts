@@ -68,6 +68,8 @@ export class CbpPlanComponent implements OnInit {
   contentCompletedStatus = 2
   /** Years offered by the year filter — from cbp.json's `planYears`. */
   planYearList: string[] = []
+  /** Years the filter offers when cbp.json configures no `planYears`, newest first. */
+  private readonly defaultPlanYears = ['2027-28', '2026-27', '2025-26']
   /** Financial year the page falls back to when none is selected or passed in. */
   currentPlanYear = ''
   /** Year `cbpOriginalData` was fetched for — what a new selection is compared against. */
@@ -84,11 +86,11 @@ export class CbpPlanComponent implements OnInit {
   /**
    * The three buckets a plan falls into, offered when cbp.json configures no `planTypes` of
    * its own. They are mutually exclusive by design — the same split the home strips use:
-   * APAR, an AI-drafted plan, or an ordinary training plan (everything else).
+   * APAR, an AI-drafted plan, or an ordinary CBP plan (everything else).
    */
   private readonly defaultPlanTypes = [
     { id: 'apar', name: 'APAR' },
-    { id: 'nonapar', name: 'Non-APAR' },
+    { id: 'nonapar', name: 'CBP Plan' },
     { id: 'aicbp', name: 'AI CBP' },
   ]
 
@@ -139,8 +141,8 @@ export class CbpPlanComponent implements OnInit {
   }
 
   /**
-   * The year filter's options come from cbp.json (`planYears`). Falls back to the current
-   * financial year alone if the config omits them, so the filter is never empty.
+   * The year filter's options come from cbp.json (`planYears`). Falls back to
+   * `defaultPlanYears` if the config omits them, so the filter is never empty.
    *
    * The default year is the current financial year — the one the API itself defaults to —
    * unless the configured list doesn't include it, in which case the newest configured
@@ -151,7 +153,7 @@ export class CbpPlanComponent implements OnInit {
     this.planYearList = Array.isArray(configured) && configured.length ? configured : []
     const financialYear = this.widgetSvc.getCurrentFinancialYear()
     if (!this.planYearList.length) {
-      this.planYearList = [financialYear]
+      this.planYearList = [...this.defaultPlanYears]
     }
     this.currentPlanYear = this.planYearList.includes(financialYear) ? financialYear : this.planYearList[0]
   }
