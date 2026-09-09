@@ -52,6 +52,12 @@ export class FilterComponent implements OnInit {
     competencySubTheme: [],
     providers: [],
   }
+  /**
+   * The filter as it stood when the panel opened, i.e. what is currently applied to the list.
+   * Apply is enabled against this rather than against the defaults, so switching back to a
+   * default value (the current financial year, "All" plan types) still counts as a change.
+   */
+  private appliedFilterSnapshot = ''
   searchThemeControl = new UntypedFormControl()
   @ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
   constructor(private appCbpPlansService: AppCbpPlansService,
@@ -70,6 +76,7 @@ export class FilterComponent implements OnInit {
 
   ngOnInit() {
     this.setDefaultValues()
+    this.appliedFilterSnapshot = this.snapshotFilter()
     this.getFilterEntity()
     this.getProviders()
     this.bindFilter()
@@ -91,11 +98,15 @@ export class FilterComponent implements OnInit {
       { id: 'Standalone Assessment', name: 'Standalone assessment', checked: false },
       { id: 'Moderated Courses', name: 'Moderated courses', checked: false },
     ]
+    // 'upcoming' and 'overdue' are the whole of each side of the due date — what the sidebar's
+    // Upcoming and Overdue sections hold. The rest narrow that to a window relative to today.
     this.timeDuration = [
+      { id: 'upcoming', name: 'Upcoming', checked: false },
       { id: '7ad', name: 'Upcoming 7 Days', checked: false },
       { id: '30ad', name: 'Upcoming 30 Days', checked: false },
       { id: '90ad', name: 'Upcoming 3 Months', checked: false },
       { id: '182ad', name: 'Upcoming 6 Months', checked: false },
+      { id: 'overdue', name: 'Overdue', checked: false },
       { id: '1sw', name: 'Last week', checked: false },
       { id: '1sm', name: 'Last month', checked: false },
       { id: '3sm', name: 'Last 3 months', checked: false },
@@ -278,6 +289,8 @@ export class FilterComponent implements OnInit {
     this.competencySubThemeList = []
     this.clearFilterObj.emit(data)
     this.filterObj = data
+    // The page applies a clear immediately, so this becomes the new baseline for Apply.
+    this.appliedFilterSnapshot = this.snapshotFilter()
     this.checkFilterEmpty()
   }
 
@@ -384,8 +397,28 @@ export class FilterComponent implements OnInit {
     this.competencySubThemeList = this.competencySubThemeOriginalList
   }
 
+  /**
+   * The selection reduced to a comparable form: every key the filter owns, arrays sorted so
+   * that ticking two boxes in either order reads as the same selection.
+   */
+  private snapshotFilter(): string {
+    const source = this.filterObj || {}
+    const normalised: any = {}
+    Object.keys(this.filterObjEmpty).forEach((key: string) => {
+      const value = source[key]
+      normalised[key] = Array.isArray(value) ? value.slice().sort() : (value || '')
+    })
+    return JSON.stringify(normalised)
+  }
+
   checkFilterEmpty() {
-    // A year is always selected, so only a non-default one counts as a filter being applied.
+    // Anything moved since the panel opened is worth applying, even when it lands back on a
+    // default: with 2024-25 applied, picking the current financial year is still a change.
+    if (this.appliedFilterSnapshot && this.snapshotFilter() !== this.appliedFilterSnapshot) {
+      this.filterEmpty = false
+      return false
+    }
+    // Nothing has moved, so Apply stays live only while a non-default filter is in effect.
     if ((this.filterObj['planYear'] && this.filterObj['planYear'] !== this.currentPlanYear) ||
       this.filterObj['planType'] ||
       this.filterObj['primaryCategory'].length ||
@@ -405,8 +438,17 @@ export class FilterComponent implements OnInit {
     // }
   }
 
+  /**
+   * ngx-translate returns the key itself for a miss, so an option the instance's bundle has no
+   * entry for rendered as "searchfilters.overdue" instead of as its name. Fall back to the name
+   * the option was defined with, which is already display text.
+   */
   translateLabel(label: string, type: any) {
-    return this.langtranslations.translateLabel(label, type, '')
+    if (!label) {
+      return ''
+    }
+    const translated = this.langtranslations.translateLabel(label, type, '')
+    return translated && translated.indexOf(`${type}.`) === 0 ? label : translated
   }
 
   /**
