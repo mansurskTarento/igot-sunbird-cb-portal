@@ -5,6 +5,7 @@ import _ from 'lodash'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 import { TranslateService } from '@ngx-translate/core'
 import { AppCbpPlansService } from '../../services/app-cbp-plans.service'
+import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
 // tslint:enable
 
 @Component({
@@ -34,9 +35,15 @@ export class FilterComponent implements OnInit {
   competencySubThemeList: any[] = []
   competencyThemeOriginalList: any[] = []
   competencySubThemeOriginalList: any[] = []
-  isApar = false
+  /** Plan years offered in the filter, newest first — supplied by the page from cbp.json. */
+  @Input() planYearList: string[] = []
+  /** The year the CBP list defaults to; picking it back is not treated as a filter. */
+  @Input() currentPlanYear = ''
+  /** Plan types offered in the filter as {id, name} — supplied by the page from cbp.json. */
+  @Input() planTypeList: any[] = []
   filterObjEmpty: any = {
-    isApar: false,
+    planYear: '',
+    planType: '',
     primaryCategory: [],
     status: [],
     timeDuration: [],
@@ -49,7 +56,8 @@ export class FilterComponent implements OnInit {
   @ViewChildren('checkboxes') checkboxes!: QueryList<ElementRef>
   constructor(private appCbpPlansService: AppCbpPlansService,
     private translate: TranslateService,
-    private langtranslations: MultilingualTranslationsService
+    private langtranslations: MultilingualTranslationsService,
+    private widgetSvc: WidgetUserServiceLib
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -67,6 +75,14 @@ export class FilterComponent implements OnInit {
     this.bindFilter()
   }
   setDefaultValues() {
+    // Both come from the page (cbp.json); only stand in for them if it supplied nothing.
+    if (!this.currentPlanYear) {
+      this.currentPlanYear = this.widgetSvc.getCurrentFinancialYear()
+    }
+    if (!this.planYearList.length) {
+      this.planYearList = [this.currentPlanYear]
+    }
+    this.filterObjEmpty.planYear = this.currentPlanYear
     this.primaryCategoryList = [
       { id: 'Course', name: 'Course', checked: false },
       // { "id": 'Program', name: 'Program',checked: false },
@@ -129,6 +145,24 @@ export class FilterComponent implements OnInit {
 
   hideFilter() {
     this.toggleFilter.emit(false)
+  }
+
+  /**
+   * The plan list is year-scoped on the server, so this is a single choice rather than a
+   * checkbox set — the page refetches for whichever year is applied.
+   */
+  selectPlanYear(planYear: string) {
+    this.filterObj['planYear'] = planYear
+    this.checkFilterEmpty()
+  }
+
+  /**
+   * Plan type is one choice out of the configured list, or '' for all of them — a plan is
+   * either an APAR plan, a training plan or a draft AI plan, never two at once.
+   */
+  selectPlanType(planType: string) {
+    this.filterObj['planType'] = planType
+    this.checkFilterEmpty()
   }
 
   checkedProviders(event: any, item: any) {
@@ -237,6 +271,9 @@ export class FilterComponent implements OnInit {
   clearFilter() {
     this.clearFilterWhileSearch()
     const data = JSON.parse(JSON.stringify(this.filterObjEmpty))
+    // The year is not one of the things Clear resets — the list stays on whichever year is
+    // selected, and only picking a different one in this panel moves it.
+    data.planYear = this.filterObj['planYear'] || this.currentPlanYear
     this.competencyThemeList = []
     this.competencySubThemeList = []
     this.clearFilterObj.emit(data)
@@ -274,9 +311,6 @@ export class FilterComponent implements OnInit {
 
   bindFilter() {
     if (!this.checkFilterEmpty()) {
-      if (this.filterObj['isApar']) {
-        this.onAparChange(this.filterObj['isApar'])
-      }
       if (this.filterObj['primaryCategory'].length) {
         this.primaryCategoryList.forEach((content: any) => {
           content.checked = this.filterObj['primaryCategory'].includes(content.id)
@@ -351,7 +385,9 @@ export class FilterComponent implements OnInit {
   }
 
   checkFilterEmpty() {
-    if (this.filterObj['isApar'] ||
+    // A year is always selected, so only a non-default one counts as a filter being applied.
+    if ((this.filterObj['planYear'] && this.filterObj['planYear'] !== this.currentPlanYear) ||
+      this.filterObj['planType'] ||
       this.filterObj['primaryCategory'].length ||
       this.filterObj['status'].length ||
       this.filterObj['timeDuration'].length ||
@@ -373,14 +409,16 @@ export class FilterComponent implements OnInit {
     return this.langtranslations.translateLabel(label, type, '')
   }
 
-  onAparChange(event: any) {
-    if (typeof event === 'object' && event.checked !== undefined) {
-      this.isApar = event.checked
-      this.filterObj['isApar'] = event.checked
-    } else if (typeof event === 'boolean') {
-      this.isApar = event
-      this.filterObj['isApar'] = event
+  /**
+   * Plan type names arrive from cbp.json as display text. Translate them when the instance
+   * has a `searchfilters` entry for one, and fall back to the configured text when it does
+   * not — ngx-translate returns the key itself for a miss, which is what was rendering.
+   */
+  translatePlanType(name: string) {
+    if (!name) {
+      return ''
     }
-    this.checkFilterEmpty()
+    const translated = this.translateLabel(name, 'searchfilters')
+    return translated && translated.indexOf('searchfilters.') === 0 ? name : translated
   }
 }

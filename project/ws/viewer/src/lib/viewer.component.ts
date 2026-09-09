@@ -365,12 +365,19 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
             // Update completion data for leaf nodes from enrollment's contentStatus
             // Check multiple sources: contentList, langContentStatus, or contentStatus
             let contentStatusMap: any = {}
+            // contentList is the only one of the three sources below that carries a
+            // percentage as well as a status; the other two are contentId -> status maps.
+            // Kept alongside rather than folded in, so those two go on working unchanged.
+            const contentPercentageMap: any = {}
 
             // Priority 1: Build from contentList array (most reliable)
             if (enrolledCourse.contentList && Array.isArray(enrolledCourse.contentList)) {
               enrolledCourse.contentList.forEach((item: any) => {
                 if (item.contentId && item.status !== undefined) {
                   contentStatusMap[item.contentId] = item.status
+                  if (item.completionPercentage !== undefined && item.completionPercentage !== null) {
+                    contentPercentageMap[item.contentId] = Number(item.completionPercentage) || 0
+                  }
                 }
               })
             }
@@ -393,10 +400,17 @@ export class ViewerComponent implements OnInit, OnDestroy, AfterViewChecked {
               Object.keys(contentStatusMap).forEach((contentId: string) => {
                 if (this.tocSvc.hashmap[contentId]) {
                   const status = contentStatusMap[contentId]
+                  const percentage = contentPercentageMap[contentId]
                   this.tocSvc.hashmap[contentId].completionStatus = status || 0
                   this.tocSvc.hashmap[contentId].status = status || 0
-                  this.tocSvc.hashmap[contentId].completionPercentage = status === 2 ? 100 : 0
-
+                  // A part-consumed resource used to land here as 0: only the status was
+                  // carried this far, so anything short of complete was flattened. That is
+                  // why a refresh emptied the progress ring of a resource the learner was
+                  // part way through, and why opening it filled the ring again - the player
+                  // writes the real figure back into the hashmap as it reports progress.
+                  // Complete still means 100 whatever the stored percentage says.
+                  this.tocSvc.hashmap[contentId].completionPercentage =
+                    status === 2 ? 100 : (percentage !== undefined ? percentage : 0)
                 }
               })
             }

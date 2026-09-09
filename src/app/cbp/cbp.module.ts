@@ -4,7 +4,7 @@ import { RouterModule } from '@angular/router'
 import { CbpRoutingModule } from './cbp-routing.module'
 import { HeaderModule } from '../header/header.module'
 import {
-    GridLayoutModule, SlidersModule, ContentStripWithTabsModule, AvatarPhotoModule,
+    GridLayoutModule, SlidersModule, ContentStripWithTabsModule, AvatarPhotoModule, PaginationModule,
 } from '@sunbird-cb/collection'
 import { SkeletonLoaderModule } from '@sunbird-cb/collection'
 import { ProfileCardStatsModule } from '@sunbird-cb/collection'
@@ -66,6 +66,7 @@ import { MatSliderModule } from '@angular/material/slider'
         PipeRelativeTimeModule,
         AvatarPhotoModule,
         CardContentV2Module,
+        PaginationModule,
         FilterSearchPipeModule,
         MatMenuModule,
         MatRadioModule,

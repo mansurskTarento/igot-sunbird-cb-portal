@@ -297,6 +297,16 @@ export class SCORMAdapterService {
         if (data && data.result && data.result.contentList.length) {
           let found = false
           for (const content of data.result.contentList) {
+            if (content.contentId === this.contentId && !content.progressdetails) {
+              // A record with no progressdetails still carries what the server knows about
+              // completion, and the store is cleared at teardown - so this read is the only
+              // thing that puts it back. Without it an in-progress update later in the
+              // session has no floor and can write a lower percentage over the record.
+              this.store.setAll({
+                completionStatus: content.status,
+                completionPercentage: content.completionPercentage,
+              } as IScromData)
+            }
             if (content.contentId === this.contentId && content.progressdetails) {
               found = true
               const details: any = content.progressdetails

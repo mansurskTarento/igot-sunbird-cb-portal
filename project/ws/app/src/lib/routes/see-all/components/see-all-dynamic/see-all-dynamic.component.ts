@@ -2,11 +2,11 @@ import { Component, OnInit, OnDestroy, AfterViewChecked, ElementRef, ViewChild, 
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { Subject } from 'rxjs'
-import { takeUntil } from 'rxjs/operators'
+import { debounceTime, takeUntil } from 'rxjs/operators'
 import { SeeAllService } from '../../services/see-all.service'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import * as _ from 'lodash'
-import { MultilingualTranslationsService, ValueService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
+import { EventService, MultilingualTranslationsService, ValueService, WidgetEnrollService, WsEvents } from '@sunbird-cb/utils-v2'
 
 const configMap: any = {
   extContent: {
@@ -36,12 +36,15 @@ const configMap: any = {
 }
 const COURSE_TYPE_FACET_KEY = 'courseType'
 const CONTENT_TABS = [
-  { key: 'allContent', label: 'All Content' },
-  { key: 'completed', label: 'Completed' },
-  { key: 'inProgress', label: 'In Progress' },
+  { key: 'allContent', label: 'All Content', telemetrySubType: 'card-content-all-content' },
+  { key: 'completed', label: 'Completed', telemetrySubType: 'card-content-completed' },
+  { key: 'inProgress', label: 'In Progress', telemetrySubType: 'card-content-inprogress' },
 ]
 const ENROLMENT_STATUS_COMPLETED = 2
 const ENROLMENT_STATUS_ALL = 'All'
+const TELEMETRY_PAGE_ID = '/app/seeAll/content'
+const TELEMETRY_ENV = 'Marketplace'
+const TELEMETRY_OBJECT_TYPE = 'Course'
 @Component({
   selector: 'ws-app-see-all-dynamic',
   templateUrl: './see-all-dynamic.component.html',
@@ -93,6 +96,7 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
   ]
 
   private destroy$ = new Subject<void>()
+  private searchStringChange$ = new Subject<string>()
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -104,7 +108,8 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     private contSvc: WidgetContentLibService,
     private valueSvc: ValueService,
     private cdr: ChangeDetectorRef,
-    private enrollSvc: WidgetEnrollService
+    private enrollSvc: WidgetEnrollService,
+    private eventSvc: EventService
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       if (localStorage.getItem('websiteLanguage')) {
@@ -124,6 +129,9 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     this.isLtMedium$.pipe(takeUntil(this.destroy$)).subscribe(isLtMedium => {
       this.screenSizeIsLtMedium = isLtMedium
     })
+    this.searchStringChange$
+      .pipe(debounceTime(500), takeUntil(this.destroy$))
+      .subscribe(() => this.onSearch())
     this.getRouterData()
     this.loadProviderDetails()
     this.loadEnrolments()
@@ -686,6 +694,10 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
     this.getCourses(false)
   }
 
+  onSearchKeyChange() {
+    this.searchStringChange$.next(this.searchString)
+  }
+
   onSearch() {
     const isLocalSearchApi = _.get(this.apiConfig, 'isLocalSearch', false)
 
@@ -712,6 +724,43 @@ export class SeeAllDynamicComponent implements OnInit, OnDestroy, AfterViewCheck
       this.getCourses(false)
     }
   }
+
+  raiseTelemetryInteratEvent(content: any) {
+    const tab = _.find(CONTENT_TABS, (entry: any) => entry.key === this.selectedTab)
+    const pageContext: WsEvents.ITelemetryPageContext = {
+      pageId: TELEMETRY_PAGE_ID,
+      module: TELEMETRY_ENV,  // the listener sends this out as the event's `env`
+    }
+    this.eventSvc.dispatchEvent<WsEvents.IWsEventTelemetryInteract>({
+      pageContext,
+      eventType: WsEvents.WsEventType.Telemetry,
+      eventLogLevel: WsEvents.WsEventLogLevel.Info,
+      from: '',
+      to: 'Telemetry',
+      data: {
+        pageContext,
+        eventSubType: WsEvents.EnumTelemetrySubType.Interact,
+        edata: {
+          type: 'click',
+          subType: _.get(tab, 'telemetrySubType', ''),
+          id: this.filterProvider || _.get(this.providerDetails, 'id', ''),
+          pageid: TELEMETRY_PAGE_ID,
+        },
+        object: {
+          id: this.getContentKey(content),
+          type: this.getContentCategory(content),
+        },
+      },
+    })
+  }
+
+  getContentCategory(content: any): string {
+    return _.get(content, 'primaryCategory', '')
+      || _.get(content, 'contentType', '')
+      || _.get(content, 'category', '')
+      || TELEMETRY_OBJECT_TYPE
+  }
+
   async getRedirectUrlData(content: any) {
     if (content.externalId) {
       this.router.navigate(

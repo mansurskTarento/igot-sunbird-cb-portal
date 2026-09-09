@@ -42,8 +42,9 @@ export class UpcomingTimelineComponent implements OnInit {
   }
 
   upComingMethod(event: any) {
+    // APAR is a plan type now rather than a flag of its own, so these tabs name it that way.
     const upcomingData: any = {
-      isApar: false,
+      planType: '',
       primaryCategory: [],
       status: ['0', '1', '2'],
       timeDuration: ['30ad'],
@@ -53,7 +54,7 @@ export class UpcomingTimelineComponent implements OnInit {
       providers: [],
     }
     const overDue: any = {
-      isApar: false,
+      planType: '',
       primaryCategory: [],
       status: ['0', '1'],
       timeDuration: ['3sm'],
@@ -63,7 +64,7 @@ export class UpcomingTimelineComponent implements OnInit {
       providers: [],
     }
     const apar: any = {
-      isApar: true,
+      planType: 'apar',
       primaryCategory: [],
       status: [],
       timeDuration: [],

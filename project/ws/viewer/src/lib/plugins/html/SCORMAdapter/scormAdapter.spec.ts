@@ -722,6 +722,29 @@ describe('SCORMAdapterService', () => {
       expect(emitted).toEqual([scormLMSStatus.LMSPositive])
     })
 
+    // The component clears the CMI store at teardown, so this read is the only thing that
+    // puts the server's view back - including for a record that carries no progressdetails.
+    it('restores completion bookkeeping from a record with no progressdetails', () => {
+      service.loadDataV2()
+
+      httpMock.expectOne(readUrl()).flush({
+        result: { contentList: [{ contentId: CONTENT_A, status: 2, completionPercentage: 100 }] },
+      })
+
+      expect(store.getItem('completionStatus')).toBe(2)
+      expect(store.getItem('completionPercentage')).toBe(100)
+    })
+
+    it('leaves another content\'s record alone', () => {
+      service.loadDataV2()
+
+      httpMock.expectOne(readUrl()).flush({
+        result: { contentList: [{ contentId: CONTENT_B, status: 2, completionPercentage: 100 }] },
+      })
+
+      expect(store.getAll()).toBeNull()
+    })
+
     it('keeps scormData out of the CMI store object', () => {
       service.loadDataV2()
       httpMock.expectOne(readUrl()).flush(progressResponse(CONTENT_A, {

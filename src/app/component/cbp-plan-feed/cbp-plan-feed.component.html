@@ -18,17 +18,26 @@
             </ng-container>
         </div>
     </div>
-    <div class="flex flex-wrap" *ngIf="filterApplied">
+    <!-- The year chip stands alone: a year is always in effect, filters or not. -->
+    <div class="flex flex-wrap" *ngIf="filterApplied || filterObject?.planYear">
         <ng-container *ngFor="let item of filterObject | keyvalue">
-            <ng-container *ngIf="item?.key === 'isApar'&& item?.value">
+            <!-- No dismiss icon: the year in effect can only be swapped for another one from
+                 the filter panel, there is no "no year" state to fall back to. -->
+            <ng-container *ngIf="item?.key === 'planYear' && item?.value">
                 <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
-                    <p>{{'cbpPlanStats.apar' | translate}}</p>
+                    <p>{{item.value}}</p>
+                </div>
+            </ng-container>
+            <ng-container *ngIf="item?.key === 'planType' && item?.value">
+                <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
+                    <p>{{planTypeLabel(item.value)}}</p>
                     <mat-icon aria-hidden="true" (click)="closeFilter(item.value,item.key)"
                         class="ws-mat-default-text mat-icon notranslate material-icons mat-icon-no-color filter-acbp cursor-pointer"
                         role="img"> close </mat-icon>
                 </div>
             </ng-container>
-            <ng-container *ngIf="item?.value?.length">
+            <!-- planYear/planType are plain strings; without excluding them the loop below renders one chip per character -->
+            <ng-container *ngIf="item?.key !== 'planYear' && item?.key !== 'planType' && item?.value?.length">
                 <ng-container *ngFor="let item1 of item.value">
                     <div class="tag-wrap flex margin-right-xs margin-bottom-xs">
                         <ng-container *ngIf="item.key === 'status' || item.key === 'timeDuration' ;else allEle">
@@ -51,12 +60,16 @@
         </ng-container>
     </div>
     <ng-container *ngIf="contenFeedList?.length;else emptyTemplate">
-        <div class="mr-2 mb-5" *ngFor="let c of contenFeedList">
+        <div class="mr-2 mb-5" *ngFor="let c of pagedFeedList">
             <ws-widget-card-content-v2 [widgetData]="c.widgetData"> </ws-widget-card-content-v2>
         </div>
+        <!-- while loading the cards above are placeholders, so there is nothing to page through -->
+        <ws-widget-pagination *ngIf="!cbpLoader" [defaultPaginationSize]="pageSize" [defaultPaginationSizeOptions]="pageSizeOptions"
+            [totalItemsCount]="contenFeedList.length" (pageChange)="onPageChange($event)"></ws-widget-pagination>
     </ng-container>
     <ng-template #emptyTemplate>
-        <div class="w-full flex flex-col items-center justify-center">
+        <!-- a year still being fetched is not a year with no plans -->
+        <div class="w-full flex flex-col items-center justify-center" *ngIf="!cbpLoader">
             <img alt="" class="mt-4 mb-4" src="assets/icons/search-empty.svg">
             <div class="mat-subheading-1 text-center">
                 <p>{{'cbpPlanFeed.noResults' | translate}}</p>

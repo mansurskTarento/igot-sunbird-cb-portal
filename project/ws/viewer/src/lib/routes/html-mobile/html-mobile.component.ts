@@ -8,6 +8,7 @@ import {
   SubapplicationRespondService,
   WsEvents,
   ConfigurationsService,
+  DomainConfService,
 } from '@sunbird-cb/utils-v2'
 import { fromEvent, Subscription } from 'rxjs'
 import { filter } from 'rxjs/operators'
@@ -49,7 +50,8 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
     private respondSvc: SubapplicationRespondService,
     private eventSvc: EventService,
     private accessControlSvc: AccessControlService,
-    private configSvc: ConfigurationsService
+    private configSvc: ConfigurationsService,
+    private domainConfSvc: DomainConfService,
   ) { }
 
   // Send events to Flutter WebView
@@ -349,7 +351,7 @@ export class HtmlMobileComponent implements OnInit, OnDestroy {
 
   generateUrl(oldUrl: string) {
     const chunk = oldUrl.split('/')
-    const newChunk = environment.azureHost.split('/')
+    const newChunk = (this.domainConfSvc.getDomainAzureHost() || '').split('/')
     const newLink = []
     for (let i = 0; i < chunk.length; i += 1) {
       if (i === 2) {

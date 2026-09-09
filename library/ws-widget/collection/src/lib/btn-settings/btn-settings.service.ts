@@ -188,7 +188,7 @@ export class BtnSettingsService {
   }
 
   private applyTheme(theme: NsInstanceConfig.ITheme) {
-    if (!this.loadedThemeStyles.has(theme.themeClass)) {
+    if (!this.loadedThemeStyles.has(theme.themeClass) && !this.isThemeStyleAlreadyLoaded(theme.themeFile)) {
       if (this.useLinkForThemeInjection) {
         const elem = document.createElement('link')
         elem.rel = 'preload stylesheet'
@@ -203,6 +203,7 @@ export class BtnSettingsService {
         elem.src = `${theme.themeFile}.js`
         document.head.appendChild(elem)
       }
+      this.loadedThemeStyles.add(theme.themeClass)
     }
     this.configurationsSvc.activeThemeObject = theme
     if (
@@ -219,6 +220,28 @@ export class BtnSettingsService {
     }
 
     this.updateAppColor(theme)
+  }
+
+  /**
+   * Themes listed in angular.json are built with `inject: true`, so index.html already carries a
+   * <link> to the bundle. Deployed builds also run with `outputHashing: "all"`, which emits it as
+   * `<bundleName>-<hash>.css` - so injecting the literal `${themeFile}.css` here can only ever 404
+   * (and the `.js` counterpart is never emitted at all for a style-only bundle). Matching the
+   * bundle name with an optional hash suffix lets us skip that redundant request; a theme that is
+   * genuinely not bundled still gets injected as before.
+   */
+  private isThemeStyleAlreadyLoaded(themeFile: string): boolean {
+    if (!themeFile) {
+      return false
+    }
+    const bundleName = (themeFile.split('/').pop() || themeFile).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    // `-NGRCT65G` style suffix only - loose enough matching would let `theme-igot-new.css` pass for `theme-igot`
+    const bundlePattern = new RegExp(`^${bundleName}(-[A-Z0-9]{6,12})?\\.css$`)
+    return Array.from(document.querySelectorAll('link[href]')).some(link => {
+      const href = link.getAttribute('href') || ''
+      const fileName = href.split(/[?#]/)[0].split('/').pop() || ''
+      return bundlePattern.test(fileName)
+    })
   }
 
   updateAppColor(theme: NsInstanceConfig.ITheme) {

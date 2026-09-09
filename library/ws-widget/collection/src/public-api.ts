@@ -208,6 +208,7 @@ export * from './lib/_models/error.model'
 export * from './lib/_models/player-media.model'
 // utils
 export * from './lib/_services/viewer-route-util'
+export * from './lib/_services/content-type-util'
 // models
 export * from './lib/_services/widget-content.model'
 // services
@@ -249,6 +250,7 @@ export * from './lib/content-assign/content-assign.model'
 export * from './lib/event-card-v2/event-card-v2.module'
 export * from './lib/content-strip-with-tabs/content-strip-with-tabs.model'
 export * from './lib/_common/pagination/pagination.module'
+export * from './lib/_common/pagination/pagination.component'
 export * from './lib/_common/confirm-dialog/confirm-dialog.component'
 export * from './lib/_common/profile-card-stats/profile-card-stats.module'
 export * from './lib/_common/weekly-claps/weekly-claps.module'

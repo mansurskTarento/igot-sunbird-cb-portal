@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { NsContent } from '@sunbird-cb/collection'
 import { ConfigurationsService, EventService, LoggerService, TFetchStatus } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../../../../../../src/app/services/mobile-apps.service'
-import { SCORMAdapterService, scormLMSStatus, isScormCmiKey } from './SCORMAdapter/scormAdapter'
+import { SCORMAdapterService, scormLMSStatus, isScormCmiKey, isCompleteStatusValue } from './SCORMAdapter/scormAdapter'
 /* tslint:disable */
 import _ from 'lodash'
 import { environment } from 'src/environments/environment'
@@ -16,10 +16,10 @@ import { AppTocService } from '@sunbird-cb/toc'
 import { WidgetContentService } from '@sunbird-cb/toc'
 
 @Component({
-    selector: 'viewer-plugin-html',
-    templateUrl: './html.component.html',
-    styleUrls: ['./html.component.scss'],
-    standalone: false
+  selector: 'viewer-plugin-html',
+  templateUrl: './html.component.html',
+  styleUrls: ['./html.component.scss'],
+  standalone: false
 })
 export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   @ViewChild('mobileOpenInNewTab', { read: ElementRef }) mobileOpenInNewTab !: ElementRef<HTMLAnchorElement>
@@ -98,6 +98,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // is already 100, so every later commit and every later interaction would PATCH the same
   // record again - which is what a package committing per slide used to do.
   private completionReported = false
+  // Per content, like completionReported: the package's data is logged once, not on every
+  // interaction - the reading it guards is recomputed every couple of seconds.
+  private packageDataLogged = false
   private commitSub: Subscription | null = null
   private pageHideHandler: (() => void) | null = null
   tocConfigSubscription: Subscription | null = null
@@ -117,11 +120,18 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     private widgetContentSvc: WidgetContentService,
     private tocSvc: AppTocService,
   ) {
-    // SCORM 1.2 content discovers window.API; SCORM 2004 content discovers
-    // window.API_1484_11. Publishing both lets either version bind without the platform
-    // needing to know which one a given package was authored against.
+    // SCORM 1.2 content discovers window.API. Only this one is published.
+    //
+    // window.API_1484_11 (SCORM 2004) is deliberately NOT published, even though the
+    // adapter carries a shim for it. A driver searches for the 2004 API *first* and only
+    // falls back to 1.2, so publishing it takes every package that would happily have
+    // bound 1.2 - which is all of them, up to now - and moves it onto the 2004 path.
+    // That path is a flat pass-through to the 1.2 key-value store: it has no 2004 data
+    // model, so cmi.mode, cmi.entry, cmi.completion_status, cmi.learner_id and the
+    // collection counts all answer "" with error 403 during the driver's boot handshake,
+    // and the package fails to finish initialising. Publish it again only once
+    // scorm2004GetValue actually implements the 2004 data model.
     (window as any).API = this.scormAdapterService
-    ;(window as any).API_1484_11 = this.scormAdapterService.scorm2004Api
     // if (window.addEventListener) {
     window.addEventListener('message', this.receiveMessage.bind(this))
     // }
@@ -209,7 +219,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     this.restoreTimeoutTimer = setTimeout(() => {
       if (!this.restoreSettled) {
         console.warn('[SCORM] Restore did not settle within', this.restoreTimeoutMs,
-                     'ms - loading content without resume data')
+          'ms - loading content without resume data')
         this.settleRestore()
       }
       // tslint:disable-next-line: align
@@ -261,7 +271,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     // Root-provided service: leave the suppression flag off so a later non-mobile viewer
     // is not silently prevented from saving progress.
     this.scormAdapterService.suppressProgressApi = false
-    // this.store.clearAll()
+    this.clearScormStore('viewer teardown')
     if (this.scormInitSub) {
       this.scormInitSub.unsubscribe()
       this.scormInitSub = null
@@ -278,6 +288,30 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       this.tocConfigSubscription.unsubscribe()
     }
     this.iframeUrl = ''
+  }
+
+  /**
+   * Drop this content's CMI store.
+   *
+   * The store is a cache of the record the server holds, not a second source of truth:
+   * loadDataV2 reads that record back and writes it into localStorage before the iframe is
+   * allowed to load. A copy left behind at the end of a session can therefore only ever be
+   * stale, and it is what a package would boot against if it read localStorage before the
+   * restore landed.
+   *
+   * Deliberately not done on the mobile route. Nothing reads progress back there - the app
+   * owns it - which makes the store the only copy of cmi.core.lesson_status, and a package
+   * only writes 'completed' at the moment the learner reaches the end. Wiping it would
+   * lose that for good, which is the same reason LMSFinish leaves it alone.
+   */
+  private clearScormStore(reason: string) {
+    if (this.isMobileApp) {
+      console.log('[SCORM] keeping the CMI store on the mobile route -',
+        'it holds the only copy of the status:', reason)
+      return
+    }
+    this.store.clearAll()
+    console.log('[SCORM] cleared the CMI store -', reason)
   }
 
   private raiseRealTimeProgress() {
@@ -349,7 +383,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             // Emit hashmap update so viewer-top-bar and viewer-toc components re-render progress
             this.tocSvc.hashmapUpdated.next({ timestamp: Date.now(), hashmap: this.tocSvc.hashmap })
             console.log('[SCORM] hashmap updated and emitted for', htmlContent.identifier,
-                        'status:', req.status, 'completion:', req.completionPercentage)
+              'status:', req.status, 'completion:', req.completionPercentage)
           }
         }
         // this.store.clearAll()
@@ -388,6 +422,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       }
     }
     progressData.spentTime = (completionData && completionData.spentTime) || 0
+    // These come out of the store, where they are whatever the last restore put there, so
+    // they have to be overwritten with the reading being sent - a payload carrying
+    // completionPercentage 1 inside a request whose top level says 4 is just confusing.
+    progressData.completionStatus = (completionData && completionData.status) || 0
+    progressData.completionPercentage = (completionData && completionData.completionPercentage) || 0
     if (Object.keys(scormCmi).length > 0) {
       progressData.scormData = scormCmi
     }
@@ -398,6 +437,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     const data = this.store.getAll()
     let spentTimen = 0
     let percentage = 0
+    // What has already been recorded for this content, restored by loadDataV2. Every
+    // in-progress reading below is floored at it, because the CMI store starts a session
+    // empty: the first interaction fires the debounced update before the package has
+    // written anything back, and without the floor that PATCHed 0 over a percentage the
+    // learner had already earned.
+    const savedPercentage = this.getSavedPercentage(data)
     // Check SCORM content's own completion status from localStorage data
     const scormStatus = this.getScormCompletionStatus()
     if (scormStatus === 2) {
@@ -410,7 +455,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     if ((data && data['completionStatus'] === 2)) {
       return {
-        completionPercentage: data && data['completionPercentage'],
+        // A record already marked complete but carrying no percentage is still 100 -
+        // sending 0 alongside status 2 is the one combination that cannot be true.
+        completionPercentage: savedPercentage || 100,
         status: data && data['completionStatus'],
         spentTime: data && data['spentTime'],
         // tslint:disable-next-line: whitespace
@@ -423,16 +470,45 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     const measure = this.getScormProgressMeasure()
 
     if (this.isTrackableContent(htmlContent)) {
-      // Trackable content reports its own progress, so the elapsed-time ratio is never
-      // used - not even as a backstop. A SCORM 1.2 package has no progress_measure and so
-      // sits at 0 until it declares itself complete, which is the honest reading of what
-      // 1.2 can tell us; the completion branches above are what take it to 100.
-      percentage = measure !== null ? Math.round(measure * 100) : 0
       // A package reporting progress_measure 1.0 has finished, whether or not it got round
-      // to writing a completion status as well.
+      // to writing a completion status as well. Rounded before the comparison, exactly as
+      // this branch has always done it - anything from 0.995 up reads as 100 and completes.
+      const measured = measure !== null ? Math.round(measure * 100) : null
+      if (measured !== null && measured >= 100) {
+        return {
+          completionPercentage: 100,
+          status: 2,
+          spentTime: spentTimen,
+        }
+      }
+      // progress_measure is a SCORM 2004 element, so no 1.2 package has one, and plenty of
+      // 2004 packages never write it either - hence the other readings behind this call,
+      // all of them the package's own account of itself. A package that has written a
+      // measure of 0 counts as having said nothing yet.
+      const reported = (measured !== null && measured > 0)
+        ? measured
+        : this.getReportedScormProgress()
+      if (reported === null) {
+        // The package has not reported anything yet, which is not the same as it reporting
+        // zero - and with the store cleared at teardown, every session starts out in this
+        // state. Keep the record as it stands rather than writing a 0 over a percentage
+        // the learner has already earned.
+        console.log('[SCORM] the package has reported no progress yet - leaving the',
+          'recorded percentage at', savedPercentage)
+        this.logPackageData()
+        return {
+          completionPercentage: savedPercentage,
+          status: 1,
+          spentTime: spentTimen,
+        }
+      }
+      // Exactly what the package reports, and nothing else. Trackable content means the
+      // package is the authority on how far the learner has got, so this is neither
+      // floored at what the server already holds nor capped below 100: if the package
+      // says less than the record does, the record is what is out of date.
       return {
-        completionPercentage: percentage,
-        status: percentage >= 100 ? 2 : 1,
+        completionPercentage: reported,
+        status: reported >= 100 ? 2 : 1,
         spentTime: spentTimen,
       }
     }
@@ -448,6 +524,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       percentage = ~~((spentTimen / htmlContent.duration) * 100)
     }
     // }
+    // The only change to this path: progress cannot go backwards. Nothing else about it
+    // moves - the reading and the threshold it is compared against are what they were, so
+    // untracked content completes exactly when it used to.
+    percentage = Math.max(percentage, savedPercentage)
 
     if (percentage >= this.getThreshold()) {
       return {
@@ -476,6 +556,225 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private isTrackableContent(htmlContent: any): boolean {
     const flag = htmlContent && htmlContent.isTrackable
     return flag === true || (typeof flag === 'string' && flag.toLowerCase() === 'true')
+  }
+
+  /**
+   * The percentage already recorded for this content, or 0 when there is none.
+   *
+   * loadDataV2 writes the server's completionPercentage into the CMI store on restore, so
+   * this is the learner's earned progress as the session begins - the floor no later
+   * reading may fall below.
+   */
+  private getSavedPercentage(data: any): number {
+    const saved = Number(data && data['completionPercentage'])
+    if (isNaN(saved) || saved <= 0) {
+      return 0
+    }
+    return Math.min(Math.round(saved), 100)
+  }
+
+  /**
+   * How far through the learner is, as 0..100, according to what the package itself wrote
+   * into the CMI store - or null when it wrote nothing that says.
+   *
+   * cmi.progress_measure is handled by the caller, because it is the one element that may
+   * also declare the content finished. What is left are indirect readings, so they are
+   * capped below 100: they exist to lift a stalled 0 to something truthful, never to stand
+   * in for the package declaring completion.
+   */
+  private getReportedScormProgress(): number | null {
+    const suspended = this.getSuspendDataProgress()
+    if (suspended !== null) {
+      console.log('[SCORM] partial progress from cmi.suspend_data:', suspended)
+      return suspended
+    }
+    const objectives = this.getObjectivesProgress()
+    if (objectives !== null) {
+      console.log('[SCORM] partial progress from cmi.objectives:', objectives)
+      return objectives
+    }
+    return null
+  }
+
+  /**
+   * The percentage an Articulate Rise package records inside cmi.suspend_data.
+   *
+   * Rise stores its state as {"v":2,"d":[...],"cpv":"..."} where d is the LZW-compressed
+   * JSON of the learner's progress, and that JSON carries a course-level figure outright:
+   *
+   *   {"progress":{"lessons":{"1":{"c":1,"p":100},"3":{"p":50}}, "p":50}}
+   *
+   * progress.p is the number Rise itself shows as "N% COMPLETE", so reporting it is what
+   * makes the platform agree with what the learner is looking at.
+   *
+   * Deliberately NOT averaged from the per-lesson p values. Only lessons the learner has
+   * reached are recorded, so that average divides by the wrong total - on the course above
+   * it reads (100 + 100 + 50) / 3 = 83 against a true 50. Rise counts the lessons that are
+   * not there yet; nothing derivable from this object can.
+   *
+   * Every step is guarded: a package whose suspend_data is any other shape (Storyline's is
+   * not JSON at all) falls through to the next signal rather than throwing.
+   */
+  private getSuspendDataProgress(): number | null {
+    const data: any = this.store.getAll() || {}
+    const raw = data['cmi.suspend_data']
+    if (typeof raw !== 'string' || !raw) {
+      return null
+    }
+    let envelope: any
+    try {
+      envelope = JSON.parse(raw)
+      // tslint:disable-next-line: align
+    } catch (_e) {
+      return null
+    }
+    if (!envelope || !Array.isArray(envelope.d)) {
+      return null
+    }
+    const decoded = this.lzwDecode(envelope.d)
+    if (!decoded) {
+      return null
+    }
+    let state: any
+    try {
+      state = JSON.parse(decoded)
+      // tslint:disable-next-line: align
+    } catch (_e) {
+      console.warn('[SCORM] cmi.suspend_data decompressed to something that is not JSON')
+      return null
+    }
+    const overall = Number(state && state.progress && state.progress.p)
+    // Absent until at least one lesson completes, and absent is not the same as zero: a
+    // learner most of the way through the first lesson of six has a real reading, it is
+    // just not one this object can give. Fall through and let the next signal answer.
+    if (isNaN(overall) || overall <= 0 || overall > 100) {
+      return null
+    }
+    return Math.round(overall)
+  }
+
+  /**
+   * LZW decompression, for the code array Rise packs its state into.
+   *
+   * The dictionary starts as the 256 single characters and grows by one entry per code, so
+   * a value of 256 or more is a back-reference to a string built earlier in the stream.
+   * Returns null on a malformed stream rather than throwing - a code past the end of the
+   * dictionary means this is not the format we think it is.
+   */
+  private lzwDecode(codes: number[]): string | null {
+    if (!codes.length) {
+      return null
+    }
+    const dictionary: string[] = []
+    for (let i = 0; i < 256; i += 1) {
+      dictionary.push(String.fromCharCode(i))
+    }
+    let previous = dictionary[codes[0]]
+    if (previous === undefined) {
+      return null
+    }
+    const out: string[] = [previous]
+    for (let i = 1; i < codes.length; i += 1) {
+      const code = codes[i]
+      let entry: string
+      if (code < dictionary.length) {
+        entry = dictionary[code]
+      } else if (code === dictionary.length) {
+        // The one legal forward reference: the entry being defined by this very code.
+        entry = previous + previous.charAt(0)
+      } else {
+        return null
+      }
+      out.push(entry)
+      dictionary.push(previous + entry.charAt(0))
+      previous = entry
+    }
+    return out.join('')
+  }
+
+  /**
+   * Completed objectives over total, as 0..100.
+   *
+   * Both versions expose objectives as an array (cmi.objectives.N.*, with a _count), and a
+   * package that tracks a slide, scene or section per objective is describing exactly how
+   * far the learner has got. The per-entry status element differs by version - 1.2 has
+   * .status, 2004 has .completion_status and .success_status - so all three are read.
+   */
+  private getObjectivesProgress(): number | null {
+    const data: any = this.store.getAll() || {}
+    const indexes: string[] = []
+    for (const key of Object.keys(data)) {
+      const match = key.match(/^cmi\.objectives\.(\d+)\./)
+      if (match && indexes.indexOf(match[1]) === -1) {
+        indexes.push(match[1])
+      }
+    }
+    if (!indexes.length) {
+      return null
+    }
+    // _count is the package's own account of the array length; one that wrote entries
+    // without it is still counted by what it did write.
+    const declared = this.numericCmi(data, 'cmi.objectives._count')
+    const total = Math.max(declared === null ? 0 : declared, indexes.length)
+    if (total <= 0) {
+      return null
+    }
+    let completed = 0
+    for (const index of indexes) {
+      const status = data[`cmi.objectives.${index}.completion_status`]
+        || data[`cmi.objectives.${index}.status`]
+        || data[`cmi.objectives.${index}.success_status`]
+      if (isCompleteStatusValue(status)) {
+        completed += 1
+      }
+    }
+    if (!completed) {
+      // Objectives declared but none reached yet says nothing more than an empty store
+      // does - let the next signal answer instead of pinning the reading to 0.
+      return null
+    }
+    return Math.round((completed / total) * 100)
+  }
+
+  /**
+   * Everything the package has written, logged once per content.
+   *
+   * Reached only when no signal in the CMI store says how far the learner has got, which
+   * is where a slide-based reading would have to come from instead. For a SCORM 1.2
+   * package that is cmi.core.lesson_location (the bookmark) and cmi.suspend_data, which
+   * is where an authoring tool records which slides have been seen - so this is the data
+   * such a reading has to be derived from. Logged whole rather than truncated:
+   * suspend_data is long and the interesting part is not at the front.
+   */
+  private logPackageData() {
+    if (this.packageDataLogged) {
+      return
+    }
+    this.packageDataLogged = true
+    const storeData: any = this.store.getAll() || {}
+    const cmi: any = {}
+    for (const key of Object.keys(storeData)) {
+      if (key.startsWith('cmi.')) {
+        cmi[key] = storeData[key]
+      }
+    }
+    console.log('[SCORM] the package reported no progress of its own. Everything it did write:',
+      JSON.stringify(cmi))
+  }
+
+  /** First of `keys` the package has actually written a number to, else null. */
+  private numericCmi(data: any, ...keys: string[]): number | null {
+    for (const key of keys) {
+      const raw = data[key]
+      if (raw === undefined || raw === null || raw === '') {
+        continue
+      }
+      const value = Number(raw)
+      if (!isNaN(value)) {
+        return value
+      }
+    }
+    return null
   }
 
   getThreshold() {
@@ -517,8 +816,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
             this.fireRealTimeProgress(this.oldData)
           }
         }
+        // Still keyed to oldData - contentId is not moved on until further down - so this
+        // drops the store of the content being left, not the one being opened.
+        this.clearScormStore(`switching away from ${this.oldData.identifier}`)
         // The latch is per content, and the next one starts incomplete.
         this.completionReported = false
+        this.packageDataLogged = false
         if (this.mutationObserver) {
           this.mutationObserver.disconnect()
           this.mutationObserver = null
@@ -656,13 +959,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   // Resolves the package root + entry file for the content, then assigns iframeUrl.
   //
-  // The entry file matters: a SCORM package declares its launch file in imsmanifest.xml,
-  // and for Articulate that is scormdriver/indexAPI.html - the file which loads
-  // scormdriver.js, walks window.parent to find window.API and only then hosts
-  // scormcontent/index.html. Pointing the iframe straight at scormcontent/index.html
-  // (which is what initFile often carries) loads the content with no LMS wiring at all,
-  // and the package logs "unable to find the LMS API for ..." for every driver call while
-  // no CMI data is ever written. So the manifest wins over initFile when it can be read.
+  // The entry file matters: launching the wrong one costs all SCORM tracking, because the
+  // package binds window.API from the file it is launched as. See pickLaunchFile for the
+  // precedence and the two package layouts that force it.
   private applyIframeUrl() {
     this.iframeUrlPending = false
     if (!this.htmlContent || !this.htmlContent.artifactUrl) {
@@ -687,7 +986,6 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       )
       return
     }
-
     // tslint:disable-next-line: max-line-length
     const azureRoot = `${environment.azureHost}/${environment.azureBucket}/content/html/${this.htmlContent.identifier}-snapshot`
     let packageRoot: string
@@ -722,40 +1020,189 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   /**
-   * Asks imsmanifest.xml for the launch file, then points the iframe at it. Resolution is
-   * best effort - on any failure we fall back to initFile and then to index.html, i.e. the
-   * behaviour that was there before.
+   * Points the iframe at the package's launch file: the manifest's SCO when it is really
+   * in the package, then initFile, then index.html. Resolution is best effort - on any
+   * failure we land on initFile or index.html, i.e. the behaviour that was there before.
    */
   private assignScormIframeUrl(packageRoot: string, entryFile: string | null) {
     const sameOriginRoot = this.ensureSameOriginUrl(packageRoot)
-    const commit = (entry: string | null) => {
-      const resolved = entry || entryFile || 'index.html'
-      const url = `${sameOriginRoot}/${resolved}?timestamp=${new Date().getTime()}`
-      console.log('[SCORM] launch file:', resolved, entry ? '(from imsmanifest.xml)' : '(fallback)')
+    const commit = (file: string, source: string) => {
+      const url = `${sameOriginRoot}/${file}?timestamp=${new Date().getTime()}`
+      console.log('[SCORM] launch file:', file, source)
       this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(url)
     }
 
     const cached = this.launchFileCache[sameOriginRoot]
-    if (cached !== undefined) {
-      commit(cached)
+    if (cached) {
+      commit(cached, '(cached)')
       return
     }
 
-    this.resolveScormLaunchFile(sameOriginRoot).then(href => {
-      this.launchFileCache[sameOriginRoot] = href || ''
-      commit(href)
+    this.pickLaunchFile(sameOriginRoot, entryFile).then(picked => {
+      this.launchFileCache[sameOriginRoot] = picked.file
+      commit(picked.file, picked.source)
       // tslint:disable-next-line: align
-    }).catch(() => commit(null))
+    }).catch(() => commit(entryFile || 'index.html', '(fallback)'))
+  }
+
+  // initFile wins. It is the entry the publisher recorded for this content and the file
+  // the player launched for years, so it is the only choice known to render every package
+  // already in the library. imsmanifest.xml is consulted only when there is no initFile.
+  //
+  // This deliberately gives up something. An Articulate package carries initFile
+  // scormcontent/index.html - the content with no LMS wiring - while its manifest names
+  // scormdriver/indexAPI.html, the file that loads scormdriver.js, walks window.parent for
+  // window.API and only then hosts the content. Launching initFile there means no API
+  // binding, no cmi.* writes and nothing to resume from. Letting the manifest win fixes
+  // that, but it also re-points every other package in the library at a file the player
+  // has never launched, which is how do_1142006579799490561250 - a Storyline web package
+  // whose entry is a plain index.html - stopped rendering.
+  //
+  // Existence-checking the manifest href was meant to make that safe and does not: it
+  // needs a server that answers HEAD honestly and 404s a missing file, and the content
+  // hosts here do neither reliably (object storage answers 403 for both "forbidden" and
+  // "missing", and an SPA-fallback host answers 200 with an app shell for anything at
+  // all). Re-land the Articulate case behind a positive test for that layout - a real
+  // manifest that parses as XML, naming a SCO that is not initFile - not behind a
+  // negative test that a fetch failure can flip.
+  private pickLaunchFile(
+    sameOriginRoot: string,
+    entryFile: string | null,
+  ): Promise<{ file: string, source: string }> {
+    return this.scormDriverLaunchFile(sameOriginRoot, entryFile).then(driver => {
+      if (driver) {
+        return { file: driver, source: '(imsmanifest.xml SCO - initFile is not the LMS entry)' }
+      }
+      if (entryFile) {
+        return { file: entryFile, source: '(initFile)' }
+      }
+      return this.verifiedManifestLaunchFile(sameOriginRoot).then(href => {
+        if (href) {
+          return { file: href, source: '(imsmanifest.xml)' }
+        }
+        return { file: 'index.html', source: '(default)' }
+      })
+    })
+  }
+
+  /**
+   * The Articulate layout, and nothing else: an initFile that is not the package's LMS
+   * entry, with the manifest naming the file that is.
+   *
+   * This is the positive test the comment above asks for, rather than preferring the
+   * manifest generally. Every condition has to hold - there is an initFile, the manifest
+   * fetches and parses as XML, some resource declares adlcp:scormtype="sco", that SCO is
+   * a different file from initFile, and the file is really in the package - so a package
+   * whose initFile is already the right entry keeps launching it, and a web package with
+   * no manifest at all (the Storyline regression) never reaches this path.
+   *
+   * What it fixes: Rise and Storyline publish scormcontent/index.html (or story.html) as
+   * initFile and scormdriver/indexAPI.html as the SCO. Only the SCO loads scormdriver.js,
+   * which finds window.API on the parent and then hosts the content in a nested frame,
+   * exposing CommitData to it. Launched at initFile the content finds neither an LMS nor a
+   * driver, so it writes no cmi.* at all - no store, no progress updates, nothing to
+   * resume from.
+   */
+  private scormDriverLaunchFile(sameOriginRoot: string, entryFile: string | null): Promise<string | null> {
+    if (!entryFile) {
+      // No initFile: the manifest is consulted by the path below anyway.
+      return Promise.resolve(null)
+    }
+    return this.fetchManifestXml(sameOriginRoot).then(xml => {
+      if (!xml) {
+        return null
+      }
+      const sco = this.parseScoLaunchFile(xml)
+      if (!sco || this.isSameFile(sco, entryFile)) {
+        return null
+      }
+      return this.fileExists(`${sameOriginRoot}/${sco}`).then(exists => {
+        if (!exists) {
+          console.warn('[SCORM] imsmanifest.xml declares the SCO', sco,
+                       'but it is not in the package - launching initFile', entryFile)
+          return null
+        }
+        return sco
+      })
+    })
+  }
+
+  /**
+   * The href of the resource declared adlcp:scormtype="sco", or null when no resource
+   * declares one. Deliberately stricter than parseLaunchFile, which falls back to the
+   * first resource carrying an href: overruling initFile is only justified when the
+   * manifest positively names an LMS-wired entry.
+   */
+  private parseScoLaunchFile(manifestXml: string): string | null {
+    const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
+    if (xml.getElementsByTagName('parsererror').length) {
+      return null
+    }
+    const sco = Array.from(xml.getElementsByTagName('resource'))
+      .find(r => r.getAttribute('href') && this.readScormType(r) === 'sco')
+    return sco ? sco.getAttribute('href') : null
+  }
+
+  /** Same file, ignoring the './' and leading '/' a manifest or initFile may carry. */
+  private isSameFile(a: string, b: string): boolean {
+    const normalise = (value: string) => value.replace(/^\.?\//, '').toLowerCase()
+    return normalise(a) === normalise(b)
+  }
+
+  // The launch file imsmanifest.xml declares, or null when there is none or it is not in
+  // the package.
+  private verifiedManifestLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return this.resolveScormLaunchFile(sameOriginRoot).then(href => {
+      if (!href) {
+        return null
+      }
+      return this.fileExists(`${sameOriginRoot}/${href}`).then(exists => {
+        if (exists) {
+          return href
+        }
+        console.warn('[SCORM] imsmanifest.xml declares', href,
+                     'but it is not in the package - falling back to initFile')
+        return null
+      })
+    })
+  }
+
+  // Only a definitive 404/403 counts as missing. A proxy that will not answer HEAD, or a
+  // network blip, is not evidence the file is gone, so it resolves true and the manifest
+  // is trusted - the manifest is the standards-defined answer, and only a server actually
+  // saying "not here" is grounds to overrule it.
+  private fileExists(url: string): Promise<boolean> {
+    return fetch(url, { method: 'HEAD', cache: 'no-cache' })
+      .then(res => {
+        if (res.ok) {
+          return true
+        }
+        if (res.status === 404 || res.status === 403) {
+          return false
+        }
+        console.warn('[SCORM] could not check', url, '- got', res.status, '- assuming it is there')
+        return true
+        // tslint:disable-next-line: align
+      }).catch(e => {
+        console.warn('[SCORM] could not check', url, '- assuming it is there', e)
+        return true
+      })
   }
 
   private resolveScormLaunchFile(sameOriginRoot: string): Promise<string | null> {
+    return this.fetchManifestXml(sameOriginRoot).then(xml => xml ? this.parseLaunchFile(xml) : null)
+  }
+
+  // imsmanifest.xml as text, or null when it is not there or could not be read. A package
+  // published as plain web content has no manifest at all, so a miss here is normal.
+  private fetchManifestXml(sameOriginRoot: string): Promise<string | null> {
     return fetch(`${sameOriginRoot}/imsmanifest.xml`, { cache: 'no-cache' })
       .then(res => {
         if (!res.ok) {
           console.warn('[SCORM] imsmanifest.xml returned', res.status, '- falling back to initFile')
           return null
         }
-        return res.text().then(text => this.parseLaunchFile(text))
+        return res.text()
       })
       .catch(e => {
         console.warn('[SCORM] could not read imsmanifest.xml - falling back to initFile', e)
@@ -766,7 +1213,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private parseLaunchFile(manifestXml: string): string | null {
     const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
     if (xml.getElementsByTagName('parsererror').length) {
-      console.warn('[SCORM] imsmanifest.xml is not well formed - falling back to initFile')
+      console.warn('[SCORM] imsmanifest.xml is not well formed - falling back to index.html')
       return null
     }
     const resources = Array.from(xml.getElementsByTagName('resource'))
@@ -775,7 +1222,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       return null
     }
     // Prefer the SCO: that is the resource wired up to the LMS. Assets and plain
-    // webcontent resources are not launchable.
+    // webcontent resources are not launchable. Reached only when initFile is absent or
+    // missing from the package, so any resource beats giving up.
     const sco = resources.find(r => this.readScormType(r) === 'sco')
     return (sco || resources[0]).getAttribute('href')
   }
@@ -867,7 +1315,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           // Inject event trackers after SCORM content boots up
           setTimeout(() => {
             this.injectEventTrackers(iframe)
-          },         1500)
+          }, 1500)
         }
       })
     }
@@ -923,8 +1371,8 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
 
   /**
    * cmi.progress_measure as a 0..1 number, or null when the package has not reported it.
-   * SCORM 2004 only - 1.2 has no equivalent element, which is why elapsed time is still
-   * the fallback.
+   * SCORM 2004 only - 1.2 has no equivalent element, which is why cmi.suspend_data and
+   * cmi.objectives are read behind it.
    */
   private getScormProgressMeasure(): number | null {
     const storeData: any = this.store.getAll() || {}
@@ -951,20 +1399,11 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   private getScormCompletionStatus(): number | null {
     // Delegate to the adapter so "what counts as complete" has one definition, shared with
     // the status the progress request itself reports. A package that never calls the SCORM
-    // API reports nothing here; calculateCompletionStatus falls back to elapsed time.
+    // API reports nothing here, and for trackable content that is reported as-is.
     const storeData: any = this.store.getAll() || {}
     return this.scormAdapterService.getStatus(storeData) === 2 ? 2 : null
   }
 
-  // The SCORM package finds the LMS by walking window.parent looking for window.API, which
-  // is blocked when the iframe is cross-origin - that is what produces Articulate's
-  // "unable to find the LMS API for ..." warnings and an empty CMI store on upload.
-  //
-  // In a deployment this is already fine: azureHost and the portal share a host, so the
-  // content is same-origin. It only breaks in local dev, where the app runs on
-  // localhost:4200 while the content still comes from the remote portal host. There we
-  // route the request through the dev-server proxy (see the "/scorm-content" entry in
-  // proxy/localhost.proxy.json) so the package is served from this origin instead.
   // True only under `ng serve`. Deliberately based on the host rather than
   // environment.production, which is compiled false by the dev/np/preprod/benchmark
   // build configurations and so cannot distinguish local from deployed.
@@ -973,24 +1412,37 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     return host === 'localhost' || host === '127.0.0.1' || host === '::1' || host === '[::1]'
   }
 
+  // A SCORM package finds the LMS by walking window.parent for window.API, and the browser
+  // blocks every property read across an origin boundary. That is not a degraded-tracking
+  // problem: the first blocked read throws SecurityError inside the package's own boot
+  // code, so a cross-origin package does not merely lose its CMI store, it fails to start
+  // ("Failed to read a named property 'CommitData' from 'Window'"). Serving it from this
+  // origin is the only fix - no response header on the content host can permit a
+  // cross-origin window.parent read, CORS included.
+  //
+  // So a cross-origin package is always re-pointed at this origin by path. The host the
+  // app is served from has to answer that path: deployed, each portal vhost serves the
+  // content paths itself, and if a new vhost does not, the fix belongs there (route the
+  // content prefix on that vhost) rather than here. Under `ng serve` it cannot - /assets
+  // and /content-store are local mocks in proxy/localhost.proxy.json - so the dedicated
+  // "/scorm-content" passthrough in that proxy config carries it to the remote host.
+  //
+  // This used to leave deployed URLs alone, on the assumption that azureHost and the
+  // portal always shared a host. They do not: on a tenant host
+  // (adikarmayogi-portal.uat.karmayogibharat.net) the content still resolved to the main
+  // portal (portal.uat.karmayogibharat.net) and every package there failed to boot.
   private ensureSameOriginUrl(url: string): string {
     try {
       const parsed = new URL(url, window.location.origin)
       if (parsed.origin === window.location.origin) {
         return url
       }
-      if (!this.isLocalDevServer()) {
-        // Never rewrite a deployed URL - /scorm-content only exists in the ng serve proxy
-        // config. Note this cannot key off environment.production: the dev, np, preprod
-        // and benchmark build configurations all compile production: false, so testing
-        // that flag would rewrite URLs on four of the five deployable builds and 404.
-        console.warn('[SCORM] Content is cross-origin at', parsed.origin, 'vs page', window.location.origin,
-                     '- the SCORM API and localStorage will not be reachable')
-        return url
-      }
-      const proxyUrl = `${this.scormProxyPrefix}${parsed.pathname}${parsed.search}`
-      console.log('[SCORM] ensureSameOriginUrl: proxying', parsed.origin, '→', proxyUrl.substring(0, 120))
-      return proxyUrl
+      const sameOriginUrl = this.isLocalDevServer()
+        ? `${this.scormProxyPrefix}${parsed.pathname}${parsed.search}`
+        : `${parsed.pathname}${parsed.search}`
+      console.log('[SCORM] ensureSameOriginUrl: content is cross-origin at', parsed.origin,
+        '- serving it from', window.location.origin, '→', sameOriginUrl.substring(0, 120))
+      return sameOriginUrl
     } catch (_e) {
       console.warn('[SCORM] ensureSameOriginUrl: could not parse', url)
       return url
@@ -1116,13 +1568,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
           mediaElements.forEach((media: Element) => {
             const mediaEl = media as HTMLMediaElement
             if ((mediaEl as any).scormTracked) { return }
-            ;(mediaEl as any).scormTracked = true
+            ; (mediaEl as any).scormTracked = true
             const events = ['play', 'pause', 'ended', 'seeked']
             events.forEach(evt => {
               mediaEl.addEventListener(evt, () => {
                 console.log('[SCORM] MEDIA:', mediaEl.tagName, evt.toUpperCase(),
-                            'time:', Math.round(mediaEl.currentTime * 10) / 10,
-                            'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
+                  'time:', Math.round(mediaEl.currentTime * 10) / 10,
+                  'duration:', Math.round((mediaEl.duration || 0) * 10) / 10)
                 this.debouncedProgressUpdate()
               })
             })
@@ -1167,7 +1619,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       // ── Error tracking ──
       iframeWin.addEventListener('error', (e: any) => {
         console.warn('[SCORM] IFRAME_ERROR:', e.message || 'Unknown error',
-                     'file:', e.filename || '', 'line:', e.lineno || '')
+          'file:', e.filename || '', 'line:', e.lineno || '')
       })
 
       this.loggerSvc.log('SCORM event trackers injected into iframe')
@@ -1225,7 +1677,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       return false
     }
     console.log('[SCORM] completion detected for', content.identifier,
-                '- writing the progress update')
+      '- writing the progress update')
     if (this.isMobileApp) {
       this.emitScormEventToMobile(content, completion)
     }
@@ -1262,7 +1714,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (!Object.keys(scormData).length) {
       console.warn('[SCORM] Emitting event to mobile with empty scormData - the package',
-                   'wrote no cmi.* data, check it reached window.parent.API')
+        'wrote no cmi.* data, check it reached window.parent.API')
     }
     console.log('[SCORM] Emitting event to mobile:', JSON.stringify(payload).substring(0, 500))
     // Emit via Flutter JavaScript channel if available

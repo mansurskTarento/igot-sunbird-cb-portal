@@ -46,6 +46,8 @@ export namespace NSProfileDataV2 {
     typeOfCivilService: string
     civilServiceName: string
     civilServiceType: string
+    civilServiceState?: string
+    civilServiceStateId?: string
     cadreName: string
     cadreBatch: string
     cadreControllingAuthorityName: string

@@ -600,6 +600,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     if (isCadre) {
       this.primaryDetails['civilServiceTypeId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceTypeId', '')
       this.primaryDetails['civilServiceType'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceType', 'NA')
+      this.primaryDetails['civilServiceStateId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceStateId', '')
+      this.primaryDetails['civilServiceState'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceState', '')
       this.primaryDetails['civilServiceId'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceId', '')
       this.primaryDetails['civilServiceName'] = _.get(this.profesionalDetails, 'cadreDetails.civilServiceName', '')
       this.primaryDetails['cadreId'] = _.get(this.profesionalDetails, 'cadreDetails.cadreId', '')
@@ -1395,6 +1397,18 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
             formField: 'civilServiceType',
             resultPath: 'civilServiceType',
             formBodyPath: 'profileDetails.cadreDetails.civilServiceType',
+            isCader: true,
+          },
+          {
+            formField: 'civilServiceStateId',
+            resultPath: 'civilServiceStateId',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceStateId',
+            isCader: true,
+          },
+          {
+            formField: 'civilServiceState',
+            resultPath: 'civilServiceState',
+            formBodyPath: 'profileDetails.cadreDetails.civilServiceState',
             isCader: true,
           },
           {
