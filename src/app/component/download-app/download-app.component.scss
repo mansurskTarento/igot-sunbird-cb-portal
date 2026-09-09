@@ -226,6 +226,39 @@
     }
 }
 
+@media only screen and (min-width: 1201px) and (max-height: 820px) {
+    .download-app .circle,
+    .download-app-popup .circle {
+        position: relative;
+        width: 220px;
+        height: 220px;
+    }
+    .download-app .circle {
+        margin-top: 0;
+    }
+
+    .download-app-popup {
+        height: auto;
+        align-items: center;
+    }
+    .download-app .right-side,
+    .download-app-popup .right-side {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .vertical-image {
+        top: 50%;
+        left: 50%;
+        margin-top: 0;
+        transform: translate(-50%, -50%);
+    }
+
+    .vertical-image img {
+        height: 420px;
+    }
+}
+
 // Mobile landscape: small viewport height + landscape orientation distinguishes phones
 // rotated sideways from tablets/desktops, which stay tall even in landscape.
 @media only screen and (max-height: 500px) and (orientation: landscape) {

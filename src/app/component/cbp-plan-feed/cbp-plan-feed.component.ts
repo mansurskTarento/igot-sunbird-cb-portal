@@ -24,6 +24,7 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
   @Input()
   filterObject: any
   @Input() filterApplied = false
+  @Input() cbpLoader = false
   @Output() toggleFilterEvent = new EventEmitter()
   @Output() searchRequest = new EventEmitter()
   @Output() closeFilterKey = new EventEmitter()
@@ -33,8 +34,10 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
   pageSizeOptions = [10, 20, 50, 100]
   currentPage = 1
   pagedFeedList: any[] = []
-  /** The default year gets no chip — it is the page's normal state, not a filter. */
-  currentPlanYear = ''
+  /** Stands in for the year chip's value if the page ever hands over a filter object without one. */
+  @Input() currentPlanYear = ''
+  /** Configured plan types as {id, name} — the chip shows the name, filterObject holds the id. */
+  @Input() planTypeList: any[] = []
 
   filterValuesBinding: any = {
     status: {
@@ -43,6 +46,8 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
       2: 'Completed',
     },
     timeDuration: {
+      upcoming: 'Upcoming',
+      overdue: 'Overdue',
       '7ad': 'Upcoming 7 Days',
       '30ad': 'Upcoming 30 Days',
       '90ad': 'Upcoming 3 Months',
@@ -73,7 +78,9 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
     if (this.activatedRoute.snapshot.data.pageData) {
       this.cbpConfig = this.activatedRoute.snapshot.data.pageData.data
     }
-    this.currentPlanYear = this.widgetSvc.getCurrentFinancialYear()
+    if (!this.currentPlanYear) {
+      this.currentPlanYear = this.widgetSvc.getCurrentFinancialYear()
+    }
     this.searchControl.valueChanges.pipe(
       distinctUntilChanged()
     ).subscribe(() => {
@@ -107,6 +114,21 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
     this.pagedFeedList = (this.contenFeedList || []).slice(start, start + this.pageSize)
   }
 
+  /**
+   * Chip text for a plan type id. Falls back to the raw id when the config has no entry for
+   * it, and to the configured name when the instance has no `searchfilters` translation —
+   * ngx-translate returns the key itself for a miss, which is what was rendering.
+   */
+  planTypeLabel(planType: any) {
+    const match = (this.planTypeList || []).find((item: any) => item && item.id === planType)
+    const name = match ? match.name : planType
+    if (!name) {
+      return ''
+    }
+    const translated = this.translateLabel(name, 'searchfilters')
+    return translated && translated.indexOf('searchfilters.') === 0 ? name : translated
+  }
+
   emitSearchEvent() {
     this.searchRequest.emit({ query: this.searchControl.value })
     // tslint:disable-next-line: whitespace
@@ -120,7 +142,16 @@ export class CbpPlanFeedComponent implements OnInit, OnChanges {
     this.closeFilterKey.emit({ value, key })
   }
 
+  /**
+   * ngx-translate returns the key itself for a miss, so a chip whose label the instance's
+   * bundle has no entry for rendered as "searchfilters.overdue". Fall back to the label the
+   * filter was defined with, which is already display text.
+   */
   translateLabel(label: string, type: any) {
-    return this.langtranslations.translateLabel(label, type, '')
+    if (!label) {
+      return ''
+    }
+    const translated = this.langtranslations.translateLabel(label, type, '')
+    return translated && translated.indexOf(`${type}.`) === 0 ? label : translated
   }
 }

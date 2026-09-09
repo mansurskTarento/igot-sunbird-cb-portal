@@ -208,6 +208,7 @@ export * from './lib/_models/error.model'
 export * from './lib/_models/player-media.model'
 // utils
 export * from './lib/_services/viewer-route-util'
+export * from './lib/_services/content-type-util'
 // models
 export * from './lib/_services/widget-content.model'
 // services

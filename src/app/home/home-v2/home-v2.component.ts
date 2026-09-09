@@ -1,12 +1,17 @@
 import { Component, OnInit, inject } from '@angular/core'
 import { HttpErrorResponse } from '@angular/common/http'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 import { BtnSettingsService } from '@sunbird-cb/collection'
+import { ContentApiService, VisibilityMode } from '@sunbird-cb/consumption'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { UserProfileService } from '@ws/app'
+import { catchError, of } from 'rxjs'
 import { CommonDataService } from '../../services/common-data.service'
+import { HomePageService } from '../../services/home-page.service'
+
+const APAR_COURSES_SECTION_KEY = 'aparCourses'
 
 @Component({
   selector: 'ws-home-v2',
@@ -19,11 +24,14 @@ export class HomeV2Component implements OnInit {
   private readonly configSvc = inject(ConfigurationsService)
   readonly btnSettingsSvc = inject(BtnSettingsService)
   private readonly router = inject(Router)
+  private readonly route = inject(ActivatedRoute)
   private readonly translate = inject(TranslateService)
   private readonly eventSvc = inject(EventService)
   private readonly userProfileService = inject(UserProfileService)
   private readonly matSnackBar = inject(MatSnackBar)
   private readonly commonDataSvc = inject(CommonDataService)
+  private readonly contentApiService = inject(ContentApiService)
+  private readonly homePageSvc = inject(HomePageService)
 
   isNudgeOpen: any
   canShowCustomAttrOpen: boolean = false
@@ -34,6 +42,47 @@ export class HomeV2Component implements OnInit {
     this.handleDefaultFontSetting()
     this.initializeLanguage()
     this.getListPendingApproval()
+    this.loadPillsSectionInfo()
+  }
+
+  private loadPillsSectionInfo(): void {
+    const configDetails = this.route.snapshot.data?.['home']?.data
+    const pillsSection = configDetails?.homeSection?.find((section: any) => section.sectionKey === APAR_COURSES_SECTION_KEY)
+    if (!pillsSection || pillsSection.visibilityMode !== VisibilityMode.Visible) {
+      return
+    }
+
+    this.homePageSvc.getUserContentInfo().pipe(
+      catchError(() => of(null)),
+    ).subscribe(sectionRecordsCountRes => {
+      const { pills, visibilityMode } = this.computePillsVisibility(pillsSection, sectionRecordsCountRes)
+      this.contentApiService.updateSection(APAR_COURSES_SECTION_KEY, {
+        pills,
+        visibilityMode,
+        sectionLoading: false,
+      })
+    })
+  }
+
+  private computePillsVisibility(pillsSection: any, sectionRecordsCountRes: any): { pills: any[]; visibilityMode: VisibilityMode } {
+    if (!Array.isArray(pillsSection.pills)) {
+      return { pills: pillsSection.pills, visibilityMode: pillsSection.visibilityMode }
+    }
+    if (!sectionRecordsCountRes || !sectionRecordsCountRes.result) {
+      return { pills: pillsSection.pills, visibilityMode: VisibilityMode.Hidden }
+    }
+    let visablePillsCount = 0
+    const pills = pillsSection.pills.map((pill: any) => {
+      const isVisible = !!(pill.pillInfoCountKey && sectionRecordsCountRes.result[pill.pillInfoCountKey])
+      if (isVisible) {
+        visablePillsCount = visablePillsCount + 1
+      }
+      return { ...pill, visibilityMode: isVisible ? VisibilityMode.Visible : VisibilityMode.Hidden }
+    })
+    return {
+      pills,
+      visibilityMode: visablePillsCount === 0 ? VisibilityMode.Hidden : VisibilityMode.Visible,
+    }
   }
 
   private initializeUserState(): void {

@@ -11,7 +11,7 @@ import _ from 'lodash'
 import { CertificateService } from '../_services/certificate.service'
 import { CertificateDialogComponent } from '../_common/certificate-dialog/certificate-dialog.component'
 import { TranslateService } from '@ngx-translate/core'
-import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
+import { CbpPlanCacheService, CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import { ActivatedRoute, Router } from '@angular/router'
 import { VIEWER_ROUTE_FROM_MIME } from '../_services/viewer-route-util'
 import { MatDialog } from '@angular/material/dialog'
@@ -39,7 +39,7 @@ export class CardContentV2Component extends WidgetBaseComponent
   showContentTag = false
   downloadCertificateLoading: boolean = false
   cbPlanMapData: any
-  cbPlanInterval: any
+  cbPlanSubscription: Subscription | null = null
   nsContentConstants: any = NsContent
   btnPlaylistConfig: NsPlaylist.IBtnPlaylist | null = null
   btnGoalsConfig: NsGoal.IBtnGoal | null = null
@@ -61,7 +61,8 @@ export class CardContentV2Component extends WidgetBaseComponent
     private contSvc: WidgetContentLibService,
     private router: Router,
     private route: ActivatedRoute,
-    private commonSvc: CommonMethodsService
+    private commonSvc: CommonMethodsService,
+    private cbpCacheSvc: CbpPlanCacheService
 
   ) {
     super()
@@ -128,9 +129,75 @@ export class CardContentV2Component extends WidgetBaseComponent
           this.checkCriteria() && this.checkContentTypeCriteria() && this.checkMimeTypeCriteria()
       }
     }
-    this.cbPlanInterval = setInterval(() => {
-      this.getCbPlanData()
-    }, 1000)
+    // Was a 1s setInterval polling localStorage['cbpData']. Nothing writes that key any more —
+    // CBP plan data lives in IndexedDB and the cache pushes an update whenever a plan year is
+    // written, so the map is subscribed to rather than polled for.
+    this.cbPlanSubscription = this.cbpCacheSvc.watchPlanMap()
+      .subscribe((planMap: any) => this.cbPlanMapData = planMap)
+  }
+
+  /**
+   * The plan entry that drives this card's due date, status tag and APAR flag.
+   *
+   * On the CBP page the card *is* a plan item — the whole plan object is handed through as
+   * `content` — so that wins, and it is the only source that follows the year the user
+   * selected. Everywhere else (home strips, search) `content` comes from a plain content
+   * API and the plan association is looked up in the CBP plan cache by content id.
+   */
+  get cbpPlanInfo(): any {
+    const content: any = this.widgetData && this.widgetData.content
+    if (!content) {
+      return null
+    }
+    if (content.planDuration) {
+      return content
+    }
+    return (this.cbPlanMapData && this.cbPlanMapData[content.identifier]) || null
+  }
+
+  /**
+   * True once the user has finished the course. The three surfaces disagree on which field
+   * carries the enrolment status — the CBP page stamps `enrolmentStatus` from the live
+   * enrolment dictionary, listing pages set `completionStatus`, and the plan cache carries
+   * `contentStatus` from the enrolment call made when the plan year was fetched — so the
+   * freshest one available wins. Reading only the cached one is why Completed came and went.
+   */
+  isCbpCompleted(plan: any): boolean {
+    const content: any = (this.widgetData && this.widgetData.content) || {}
+    const status = [
+      content.enrolmentStatus,
+      content.completionStatus,
+      plan && plan.contentStatus,
+      content.contentStatus,
+    ].find((value: any) => value !== undefined && value !== null)
+    return Number(status) === 2
+  }
+
+  /**
+   * Knowledge level for the badge. The content APIs do not agree on the key — plan items
+   * carry `difficultyLevel`, other responses `complexityLevel` or `knowledgeLevel` — so
+   * reading only the first left the badge off wherever the backend used one of the others.
+   */
+  get difficultyLevel(): string {
+    const content: any = (this.widgetData && this.widgetData.content) || {}
+    const level = [content.difficultyLevel, content.complexityLevel, content.knowledgeLevel]
+      .find((value: any) => typeof value === 'string' && !!value.trim())
+    return level ? String(level).trim() : ''
+  }
+
+  /** APAR is a property of the plan the content sits in, so the plan entry is asked first. */
+  isCbpApar(plan: any): boolean {
+    const content: any = (this.widgetData && this.widgetData.content) || {}
+    return !!((plan && plan.isApar) || content.isApar)
+  }
+
+  /**
+   * ngx-translate returns the key itself for a missing entry, which would render
+   * 'cardcontentv2.completed' on the card. Fall back to the literal instead.
+   */
+  translateOrDefault(key: string, fallback: string): string {
+    const translated = this.translate.instant(key)
+    return !translated || translated === key ? fallback : translated
   }
 
   checkContentTypeCriteria() {
@@ -188,6 +255,9 @@ export class CardContentV2Component extends WidgetBaseComponent
   ngOnDestroy() {
     if (this.prefChangeSubscription) {
       this.prefChangeSubscription.unsubscribe()
+    }
+    if (this.cbPlanSubscription) {
+      this.cbPlanSubscription.unsubscribe()
     }
   }
 
@@ -415,19 +485,11 @@ export class CardContentV2Component extends WidgetBaseComponent
     return this.langtranslations.translateLabel(label, type, '')
   }
 
+  /** @deprecated CBP plan data now arrives via CbpPlanCacheService.watchPlanMap(). */
   getCbPlanData() {
-    let cbpList: any = {}
-    if (localStorage.getItem('cbpData')) {
-      let cbpListArr = JSON.parse(localStorage.getItem('cbpData') || '')
-      if (cbpListArr && cbpListArr.length) {
-        cbpListArr.forEach((data: any) => {
-          cbpList[data.identifier] = data
-        })
-      }
-      this.cbPlanMapData = cbpList
-      // this.karmaPointLoading = false
-      clearInterval(this.cbPlanInterval)
-    }
+    this.cbpCacheSvc.getPlanMap().then((planMap: any) => {
+      this.cbPlanMapData = planMap
+    })
   }
   async getRedirectUrlData(content: any, _contentType?: any) {
     const contentCategory = content && content.primaryCategory ? content.primaryCategory : 'Content'

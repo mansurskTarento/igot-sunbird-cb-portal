@@ -725,23 +725,12 @@
                 <p *ngIf="isCardElementEnabled('overdue') && widgetData?.content?.planDuration === acbpConstants?.OVERDUE" class="cbp-danger">Over due</p>
               </div>
             </ng-container> -->
-                <!-- CBP / APAR progress tag, driven by the enrolment dictionary status
-                     (0 not started, 1 in progress, 2 completed) that CbpPlanComponent stamps
-                     onto each plan item. Gated on planDuration, which only plan items carry,
-                     so this stays inert on every other surface using this card. Overdue is
-                     suppressed once the course is completed. -->
-                <ng-container *ngIf="widgetData?.content?.planDuration">
-                  <div class="cbp-mark left-0 border-top-radius">
-                    <p *ngIf="widgetData?.content?.enrolmentStatus === 2" class="cbp-success">Completed</p>
-                    <p *ngIf="widgetData?.content?.enrolmentStatus === 1" class="cbp-warning">In - Progress</p>
-                    <p *ngIf="isCardElementEnabled('overdue') && widgetData?.content?.enrolmentStatus !== 2
-                      && widgetData?.content?.planDuration === acbpConstants?.OVERDUE"
-                      class="cbp-danger">{{'cardcontentv2.overDue' | translate}}</p>
-                  </div>
-                </ng-container>
-                <ng-container *ngIf="cbPlanMapData && cbPlanMapData[widgetData?.content?.identifier]">
+                <!-- CBP / APAR overlay. `cbpPlanInfo` covers both surfaces: the plan item
+                                                                                     itself on the CBP page, the plan cache entry on the home strips — so the
+                                                                                     block below is the only place the due date / status tag is drawn. -->
+                <ng-container *ngIf="cbpPlanInfo">
                   <ng-container [ngTemplateOutlet]="cbpPlan" [ngTemplateOutletContext]="{data: {
-                    cbpData: cbPlanMapData[widgetData?.content?.identifier]
+                    cbpData: cbpPlanInfo
                   }}">
                   </ng-container>
                 </ng-container>
@@ -763,8 +752,7 @@
               </div>
               <div class="padding-m">
                 <div class="course_widget flex margin-remove" *ngIf="isCardElementEnabled('contentType')">
-                  <div class="flex flex-end course_v2"
-                    [ngClass]="{'course-category-truncate': widgetData?.content?.difficultyLevel}">
+                  <div class="flex flex-end course_v2 jjj" [ngClass]="{'course-category-truncate': difficultyLevel}">
                     <!-- <mat-icon class="mat-icon main_icon ws-mat-default-text margin-right-xs">video_library</mat-icon> -->
                     <ws-widget-display-content-type i18n-title
                       [title]="widgetData.content?.courseCategory || widgetData.content?.primaryCategory"
@@ -779,9 +767,9 @@
 
                   <!-- Knowledge level block -->
                   <!-- <div *ngIf="true" class="knowledge-level-container"> -->
-                  <div *ngIf="isCardElementEnabled('difficultyLevel') && widgetData?.content?.difficultyLevel"
+                  <div *ngIf="isCardElementEnabled('difficultyLevel') && difficultyLevel"
                     class="knowledge-level-container">
-                    <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'beginner'"
+                    <span *ngIf="difficultyLevel?.toLowerCase() === 'beginner'"
                       class="level-badge beginner">
                       <!-- <span *ngIf="false" class="level-badge beginner" title="Beginner"> -->
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -790,9 +778,9 @@
                           d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
                           fill="#49C951" />
                       </svg>
-                      <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+                      <span class="level-text">{{difficultyLevel}}</span>
                     </span>
-                    <span *ngIf="widgetData.content?.difficultyLevel?.toLowerCase() === 'intermediate'"
+                    <span *ngIf="difficultyLevel?.toLowerCase() === 'intermediate'"
                       class="level-badge intermediate">
                       <!-- <span *ngIf="true" class="level-badge intermediate" title="Intermediate"> -->
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -804,9 +792,9 @@
                           d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
                           fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
                       </svg>
-                      <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+                      <span class="level-text">{{difficultyLevel}}</span>
                     </span>
-                    <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'advanced'"
+                    <span *ngIf="difficultyLevel?.toLowerCase() === 'advanced'"
                       class="level-badge advanced">
                       <!-- <span *ngIf="false" class="level-badge advanced" title="Advanced"> -->
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -828,7 +816,7 @@
                           </clipPath>
                         </defs>
                       </svg>
-                      <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+                      <span class="level-text">{{difficultyLevel}}</span>
                     </span>
                   </div>
                 </div>
@@ -1075,17 +1063,17 @@
           {{ translateLabel(widgetData.content.primaryCategory || widgetData.content.contentType, 'searchfilters') }}
           <!-- {{widgetData.content.primaryCategory || widgetData.content.contentType}} -->
         </p>
-        <div *ngIf="widgetData?.content?.difficultyLevel" class="knowledge-level-container">
-          <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+        <div *ngIf="difficultyLevel" class="knowledge-level-container">
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
               <rect width="16" height="16" fill="#DBF4DC" />
               <path
                 d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
                 fill="#49C951" />
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
-          <span *ngIf="widgetData.content?.difficultyLevel?.toLowerCase() === 'intermediate'"
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'intermediate'"
             class="level-badge intermediate">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
               <rect width="16" height="16" fill="#D1DBEC" />
@@ -1096,9 +1084,9 @@
                 d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
                 fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
-          <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
               <g clip-path="url(#clip0)">
                 <rect width="16" height="16" fill="#FFE6E1" />
@@ -1118,7 +1106,7 @@
                 </clipPath>
               </defs>
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
         </div>
       </div>
@@ -1180,15 +1168,15 @@
         <span class=" ws-mat-white-text duration nodtranslate"> {{ (widgetData?.content?.duration || 120)|
           pipeDurationTransform: 'hms' }}</span>
       </div>
-      <ng-container *ngIf="cbPlanMapData && cbPlanMapData[widgetData?.content?.identifier]">
+      <ng-container *ngIf="cbpPlanInfo">
         <ng-container [ngTemplateOutlet]="cbpPlan" [ngTemplateOutletContext]="{data: {
-          cbpData: cbPlanMapData[widgetData?.content?.identifier]
+          cbpData: cbpPlanInfo
         }}"></ng-container>
       </ng-container>
     </div>
     <mat-card-content class="mat-text-box">
       <div class="course_widget flex flex-between margin-remove">
-        <div class="flex flex-end course_v2">
+        <div class="flex flex-end course_v2 kkk">
           <ng-container
             *ngIf="widgetData.content.contentType === 'Resource' || widgetData.content.contentType === 'Course' || widgetData.content.contentType === 'Module'">
             <mat-icon class="mat-icon ws-mat-default-text margin-right-xs" alt="Audio"
@@ -1230,8 +1218,8 @@
         </div>
         <!-- MyiGOT right corner cards after clicking on overdue show all -->
         <!-- <div *ngIf="true" class="knowledge-level-container"> -->
-        <div *ngIf="widgetData?.content?.difficultyLevel" class="knowledge-level-container">
-          <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+        <div *ngIf="difficultyLevel" class="knowledge-level-container">
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
             <!-- <span *ngIf="false" class="level-badge beginner" title="Beginner"> -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
               <rect width="16" height="16" fill="#DBF4DC" />
@@ -1239,9 +1227,9 @@
                 d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
                 fill="#49C951" />
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
-          <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'intermediate'"
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'intermediate'"
             class="level-badge intermediate">
             <!-- <span *ngIf="true" class="level-badge intermediate" title="Intermediate"> -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -1253,9 +1241,9 @@
                 d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
                 fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
-          <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+          <span *ngIf="difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
             <!-- <span *ngIf="false" class="level-badge advanced" title="Advanced"> -->
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
               <g clip-path="url(#clip0)">
@@ -1276,7 +1264,7 @@
                 </clipPath>
               </defs>
             </svg>
-            <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+            <span class="level-text">{{difficultyLevel}}</span>
           </span>
         </div>
       </div>
@@ -1338,8 +1326,8 @@
       </div>
       <!-- continue Learning knowledge level content -->
       <!-- <div *ngIf="true" class="knowledge-level-container"> -->
-      <div *ngIf="widgetData?.content?.difficultyLevel" class="knowledge-level-container">
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+      <div *ngIf="difficultyLevel" class="knowledge-level-container">
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
           <!-- <span *ngIf="false" class="level-badge beginner" title="Beginner"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
             <rect width="16" height="16" fill="#DBF4DC" />
@@ -1347,9 +1335,9 @@
               d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
               fill="#49C951" />
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'intermediate'"
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'intermediate'"
           class="level-badge intermediate">
           <!-- <span *ngIf="true" class="level-badge intermediate" title="Intermediate"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -1361,9 +1349,9 @@
               d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
               fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
           <!-- <span *ngIf="false" class="level-badge advanced" title="Advanced"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
             <g clip-path="url(#clip0)">
@@ -1384,7 +1372,7 @@
               </clipPath>
             </defs>
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
       </div>
     </div>
@@ -1408,9 +1396,9 @@
                 {{widgetData?.content?.programDuration}} {{widgetData?.content?.programDuration === 1 ? 'day' : 'days'}}
               </span>
             </div>
-            <ng-container *ngIf="cbPlanMapData && cbPlanMapData[widgetData?.content?.identifier]">
+            <ng-container *ngIf="cbpPlanInfo">
               <ng-container [ngTemplateOutlet]="cbpPlan" [ngTemplateOutletContext]="{data: {
-                      cbpData: cbPlanMapData[widgetData?.content?.identifier]
+                      cbpData: cbpPlanInfo
                     }}"></ng-container>
             </ng-container>
           </div>
@@ -1811,8 +1799,8 @@
       <!-- Knowledge level block -->
       <!-- oooo -->
       <!-- <div *ngIf="true" class="knowledge-level-container"> -->
-      <div *ngIf="widgetData?.content?.difficultyLevel" class="knowledge-level-container">
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
+      <div *ngIf="difficultyLevel" class="knowledge-level-container">
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'beginner'" class="level-badge beginner">
           <!-- <span *ngIf="false" class="level-badge beginner" title="Beginner"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
             <rect width="16" height="16" fill="#DBF4DC" />
@@ -1820,9 +1808,9 @@
               d="M7.42267 5C7.67927 4.55555 8.32077 4.55556 8.57737 5L12.0415 11C12.2981 11.4444 11.9773 12 11.4641 12H4.53592C4.02272 12 3.70197 11.4444 3.95857 11L7.42267 5Z"
               fill="#49C951" />
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'intermediate'"
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'intermediate'"
           class="level-badge intermediate">
           <!-- <span *ngIf="true" class="level-badge intermediate" title="Intermediate"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
@@ -1834,9 +1822,9 @@
               d="M7.42267 5.66666C7.67927 5.22221 8.32077 5.22221 8.57737 5.66666L12.0415 11.6667C12.2981 12.1111 11.9773 12.6667 11.4641 12.6667H4.53592C4.02272 12.6667 3.70197 12.1111 3.95857 11.6667L7.42267 5.66666Z"
               fill="#1B4CA1" stroke="#D1DBEC" stroke-width="0.5" />
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
-        <span *ngIf="widgetData?.content?.difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
+        <span *ngIf="difficultyLevel?.toLowerCase() === 'advanced'" class="level-badge advanced">
           <!-- <span *ngIf="false" class="level-badge advanced" title="Advanced"> -->
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none">
             <g clip-path="url(#clip0)">
@@ -1857,7 +1845,7 @@
               </clipPath>
             </defs>
           </svg>
-          <span class="level-text">{{widgetData?.content?.difficultyLevel}}</span>
+          <span class="level-text">{{difficultyLevel}}</span>
         </span>
       </div>
     </div>
@@ -1889,9 +1877,9 @@
                     <p  *ngIf="widgetData?.content?.planDuration === acbpConstants?.OVERDUE"    class="cbp-danger">Over due</p>
                   </div>
                 </ng-container> -->
-            <ng-container *ngIf="cbPlanMapData && cbPlanMapData[widgetData?.content?.identifier]">
+            <ng-container *ngIf="cbpPlanInfo">
               <ng-container [ngTemplateOutlet]="cbpPlan" [ngTemplateOutletContext]="{data: {
-                    cbpData: cbPlanMapData[widgetData?.content?.identifier]
+                    cbpData: cbpPlanInfo
                   }}"></ng-container>
             </ng-container>
           </div>
@@ -1976,22 +1964,30 @@
   </mat-card>
 </ng-template>
 
+<!-- The CBP overlay on a plan card: due date while the plan is still running, "Over due" once
+     it is not, and "Completed" once the user has finished it — plus the APAR / CA flags.
+     `data.cbpData` is the plan entry resolved by `cbpPlanInfo`, which is the card's own
+     content on the CBP page and the plan cache entry everywhere else. -->
 <ng-template #cbpPlan let-data="data">
   <div class="cbp-mark left-0 border-top-radius">
-    <p *ngIf="data.cbpData.planDuration === acbpConstants?.UPCOMING && data?.cbpData?.contentStatus < 2"
-      class="cbp-warning">{{data?.cbpData?.endDate | date: 'd MMM, y'}}</p>
-    <p *ngIf="data.cbpData.planDuration === acbpConstants?.SUCCESS && data?.cbpData?.contentStatus < 2"
-      class="cbp-success">{{data?.cbpData?.endDate | date: 'd MMM, y'}}</p>
-    <p *ngIf="data.cbpData.planDuration === acbpConstants?.OVERDUE && data?.cbpData?.contentStatus < 2"
-      class="cbp-danger">{{'cardcontentv2.overDue' | translate}}</p>
+    <p *ngIf="isCbpCompleted(data?.cbpData)" class="cbp-success">
+      {{translateOrDefault('cardcontentv2.completed', 'Completed')}}</p>
+    <ng-container *ngIf="!isCbpCompleted(data?.cbpData)">
+      <p *ngIf="isCardElementEnabled('overdue') && data?.cbpData?.planDuration === acbpConstants?.OVERDUE"
+        class="cbp-danger">{{'cardcontentv2.overDue' | translate}}</p>
+      <p *ngIf="data?.cbpData?.planDuration === acbpConstants?.UPCOMING" class="cbp-warning">{{data?.cbpData?.endDate |
+        date: 'd MMM, y'}}</p>
+      <p *ngIf="data?.cbpData?.planDuration === acbpConstants?.SUCCESS" class="cbp-success">{{data?.cbpData?.endDate | date:
+        'd MMM, y'}}</p>
+      </ng-container>
   </div>
-  <ng-container *ngIf="widgetData?.content?.isApar || CaCourseUnitIds?.includes(widgetData?.content?.identifier)">
+  <ng-container *ngIf="isCbpApar(data?.cbpData) || CaCourseUnitIds?.includes(widgetData?.content?.identifier)">
     <div class="flex cbp-mark right-0 rounded-bottom">
-      <ng-container *ngIf="widgetData?.content?.isApar">
+      <ng-container *ngIf="isCbpApar(data?.cbpData)">
         <p class="cbp-success apar-flag">APAR</p>
       </ng-container>
       <ng-container *ngIf="CaCourseUnitIds?.includes(widgetData?.content?.identifier)">
-        <p class="cbp-primary apar-flag" [ngClass]="widgetData?.content?.isApar  ? 'margin-left-xs' : ''">CA</p>
+        <p class="cbp-primary apar-flag" [ngClass]="isCbpApar(data?.cbpData) ? 'margin-left-xs' : ''">CA</p>
       </ng-container>
     </div>
   </ng-container>
@@ -2072,9 +2068,9 @@
                     <span>{{widgetData?.content?.cbPlanEndDate | date: 'd MMM, y'}}</span>
                   </div>
                 </ng-container>
-                <ng-container *ngIf="cbPlanMapData && cbPlanMapData[widgetData?.content?.identifier]">
+                <ng-container *ngIf="cbpPlanInfo">
                   <ng-container [ngTemplateOutlet]="cbpPlan" [ngTemplateOutletContext]="{data: {
-                cbpData: cbPlanMapData[widgetData?.content?.identifier]
+                cbpData: cbpPlanInfo
               }}"></ng-container>
                 </ng-container>
 
@@ -2091,9 +2087,9 @@
                     <!-- Display first two sectors -->
                     <ng-container
                       *ngFor="let sector of getUniqueArray(widgetData?.content?.sectorDetails_v1)?.slice(0, 2); let i = index">
-                      <div class="flex flex-end course_v2 mr-2 mb-1">
+                      <div class="flex flex-end course_v2_ds mr-2 mb-1">
                         <span class="content-type-class font-normal mat-caption">
-                          {{sector?.sectorName}}
+                          {{sector?.sectorName || fsdfas}}
                         </span>
                       </div>
                     </ng-container>

@@ -99,4 +99,13 @@ export class HomePageService {
   getNwlConfigiration(url: any): Observable<any> {
     return this.http.get(`${url}/nlw.json`)
   }
+
+  getUserContentInfo(): Observable<any> {
+    const url = this.domainConfSvc.getApiUrl('user', 'contentInfo', '/apis/proxies/v8/user/content/info')
+    if (!url) {
+      console.warn('User content info API is disabled')
+      return of(null)
+    }
+    return this.http.get(url)
+  }
 }

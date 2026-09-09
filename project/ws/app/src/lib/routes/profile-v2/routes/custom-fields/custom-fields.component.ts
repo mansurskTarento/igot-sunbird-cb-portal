@@ -812,7 +812,7 @@ export class CustomFieldsComponent {
         const group = this.customAttrForm.get(`${field.attributeName}_group`) as FormGroup
         if (group && group.value) {
           field.originalCustomFieldData.forEach((item: any) => {
-            if (item?.name && group?.value[item?.name] && !this.isNotApplicable(group?.value[item?.name])) {
+            if (item?.name && group?.value[item?.name] || this.isNotApplicable(group?.value[item?.name])) {
               values.push({
                 attributeName: item.name,
                 value: group.value[item.name],
