@@ -1031,7 +1031,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   exploreContent() {
     this.libNotificationsService.updateUnreadCount()
-    this.raiseTelemetryExploreContent('explore_content')
     const queryParams = {
       q: '',
       search: null,
