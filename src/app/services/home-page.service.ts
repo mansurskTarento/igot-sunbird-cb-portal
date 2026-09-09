@@ -20,6 +20,7 @@ export class HomePageService {
   getInsightsData(payload: any) {
     const url = this.domainConfSvc.getApiUrl('user', 'insights', '/apis/proxies/v8/read/user/insights')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Insights API is disabled')
       return new Observable()
     }
@@ -29,6 +30,7 @@ export class HomePageService {
   geteventsHoursData(): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('user', 'eventEnroll', '/apis/proxies/v8/user/events/enroll/summary')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Event enroll API is disabled')
       return new Observable()
     }
@@ -38,6 +40,7 @@ export class HomePageService {
   getNetworkRecommendations(payload: any): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('connections', 'recommendedUsers', '/apis/proxies/v8/connections/v3/connections/recommended')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Network recommendations API is disabled')
       return new Observable()
     }
@@ -47,6 +50,7 @@ export class HomePageService {
   connectToNetwork(payload: any): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('connections', 'addConnection', '/apis/protected/v8/connections/v2/add/connection')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Add connection API is disabled')
       return new Observable()
     }
@@ -56,6 +60,7 @@ export class HomePageService {
   updateConnection(payload: any): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('connections', 'updateConnection', '/apis/protected/v8/connections/v2/update/connection')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Update connection API is disabled')
       return new Observable()
     }
@@ -63,8 +68,11 @@ export class HomePageService {
   }
 
   getRecentRequests(): Observable<any> {
-    const url = this.domainConfSvc.getApiUrl('connections', 'requestsReceived', '/apis/protected/v8/connections/v2/connections/requests/received')
+    const url = this.domainConfSvc.getApiUrl(
+      'connections', 'requestsReceived', '/apis/protected/v8/connections/v2/connections/requests/received',
+    )
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Connection requests API is disabled')
       return new Observable()
     }
@@ -74,6 +82,7 @@ export class HomePageService {
   getAssessmentinfo(): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('assessment', 'wheebox', '/apis/proxies/v8/wheebox/read')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Assessment API is disabled')
       return new Observable()
     }
@@ -83,6 +92,7 @@ export class HomePageService {
   getLearnerLeaderboard(): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('leaderboard', 'learnerLeaderboard', '/apis/proxies/v8/halloffame/learnerleaderboard')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('Learner leaderboard API is disabled')
       return of(null)
     }
@@ -103,6 +113,7 @@ export class HomePageService {
   getUserContentInfo(): Observable<any> {
     const url = this.domainConfSvc.getApiUrl('user', 'contentInfo', '/apis/proxies/v8/user/content/info')
     if (!url) {
+      // tslint:disable-next-line:no-console
       console.warn('User content info API is disabled')
       return of(null)
     }
