@@ -43,11 +43,17 @@ export class UpcomingTimelineComponent implements OnInit {
 
   upComingMethod(event: any) {
     // APAR is a plan type now rather than a flag of its own, so these tabs name it that way.
+    //
+    // Upcoming and Overdue ask for the side of the due date the section itself is built from —
+    // every plan not yet due, and every plan already past due — rather than for a window
+    // relative to today. A rolling window ("upcoming 30 days", "the last 3 months") lists only
+    // part of what the section counts, and none of it at all once the selected plan year is one
+    // that ended more than that window ago.
     const upcomingData: any = {
       planType: '',
       primaryCategory: [],
-      status: ['0', '1', '2'],
-      timeDuration: ['30ad'],
+      status: ['0', '1'],
+      timeDuration: ['upcoming'],
       competencyArea: [],
       competencyTheme: [],
       competencySubTheme: [],
@@ -57,7 +63,7 @@ export class UpcomingTimelineComponent implements OnInit {
       planType: '',
       primaryCategory: [],
       status: ['0', '1'],
-      timeDuration: ['3sm'],
+      timeDuration: ['overdue'],
       competencyArea: [],
       competencyTheme: [],
       competencySubTheme: [],

@@ -21,6 +21,14 @@ import { InitService } from '../../services/init.service'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
+
+/**
+ * The two ends of the due date, as the time duration filter names them. Both are read off the
+ * plan duration the list stamps on each plan rather than measured against today, so they stay
+ * correct for a plan year that has already ended.
+ */
+const PLAN_DURATION_OVERDUE = NsCardContent.ACBPConst.OVERDUE
+const PLAN_DURATION_UPCOMING = 'upcoming'
 @Component({
     selector: 'ws-cbp-plan',
     templateUrl: './cbp-plan.component.html',
@@ -457,6 +465,19 @@ export class CbpPlanComponent implements OnInit {
     return itemType === selected
   }
   /**
+   * The same split the sidebar sections and the stat tiles count by: a plan is overdue once its
+   * end date has passed, whatever plan year it belongs to. `planDuration` is stamped on every
+   * plan when the list is built ('overdue' | 'upcoming' | 'success'); the end date is compared
+   * directly only for an item that reaches here without it.
+   */
+  private isOverduePlan(data: any): boolean {
+    if (data && data.planDuration) {
+      return data.planDuration === PLAN_DURATION_OVERDUE
+    }
+    return dayjs(data && data.endDate).isBefore(dayjs(), 'day')
+  }
+
+  /**
    * Puts skeleton cards in place of every list the page renders, so a fetch — the first one
    * or the one a year change triggers — reads as loading instead of as data.
    *
@@ -597,6 +618,13 @@ export class CbpPlanComponent implements OnInit {
         filterAppliedonLocal = filterAppliedonLocal ? true : false
         finalFilterValue = (filterAppliedonLocal ? finalFilterValue : this.filteredData).filter((data: any) => {
           if (filterValue['timeDuration'].some((time: any) => {
+            // 'overdue' / 'upcoming' name the whole side of the due date rather than a rolling
+            // window, and are what the sidebar sections link to. Those sections count every plan
+            // whose end date has passed, so answering them with "the last 3 months" dropped
+            // everything overdue for longer than that — the whole of a plan year already ended.
+            if (time === PLAN_DURATION_OVERDUE || time === PLAN_DURATION_UPCOMING) {
+              return this.isOverduePlan(data) === (time === PLAN_DURATION_OVERDUE)
+            }
             const count = Number(time.slice(0, -2))
             if (time.includes('sw')) {
               // tslint:disable-next-line: max-line-length
