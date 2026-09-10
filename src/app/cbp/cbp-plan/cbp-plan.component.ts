@@ -82,8 +82,7 @@ export class CbpPlanComponent implements OnInit {
   // A year is fetched only when it is the selected one. The page used to warm every year in
   // `planYearList` in the background, which meant landing here POSTed cbplan/v3/user/dictionary
   // once per configured year (2025-26 and 2027-28 alongside the year actually being shown).
-  // Selecting a year re-enters getCbPlans(), and the year-scoped IndexedDB cache makes the
-  // second visit to a year free, so the warm-up only ever bought the first switch.
+  // Selecting a year re-enters getCbPlans(), which is the only place that request is made.
   /** Plan types offered by the plan type filter, as {id, name} — from cbp.json's `planTypes`. */
   planTypeList: any[] = []
   /**
@@ -250,7 +249,11 @@ export class CbpPlanComponent implements OnInit {
     this.showPlanSkeletons()
     // Year-scoped on the server: a different year is a different request, cached per year.
     this.loadedPlanYear = this.filterObjData.planYear
-    let response = await this.widgetSvc.fetchCbpPlanListV3(this.filterObjData.planYear).toPromise()
+    // This page is the only caller that asks the server to enrich the response, and it always
+    // refreshes rather than reading the year's cache — the strips populate that same cache with
+    // unenriched results, so reading it here would serve their payload and never send the
+    // enriched request at all.
+    let response = await this.widgetSvc.fetchCbpPlanListV3(this.filterObjData.planYear, true, true).toPromise()
     // the cached plan item is a reduced projection (WidgetUserServiceLib.toReducedCbpData) that
     // drops contentType, so derive it back from the categories the projection does keep - on
     // this page the plan item IS the card's content, and the cards branch on contentType
