@@ -79,8 +79,11 @@ export class CbpPlanComponent implements OnInit {
    * year is selected, so re-reading it on every year change only slowed the switch down.
    */
   private enrolmentDictionary?: Record<string, any>
-  /** Guards `prefetchOtherPlanYears`, so the background warm-up runs once per visit. */
-  private prefetchStarted = false
+  // A year is fetched only when it is the selected one. The page used to warm every year in
+  // `planYearList` in the background, which meant landing here POSTed cbplan/v3/user/dictionary
+  // once per configured year (2025-26 and 2027-28 alongside the year actually being shown).
+  // Selecting a year re-enters getCbPlans(), and the year-scoped IndexedDB cache makes the
+  // second visit to a year free, so the warm-up only ever bought the first switch.
   /** Plan types offered by the plan type filter, as {id, name} — from cbp.json's `planTypes`. */
   planTypeList: any[] = []
   /**
@@ -324,7 +327,6 @@ export class CbpPlanComponent implements OnInit {
       this.usersCbpCount = { upcoming: 0, overdue: 0, completed: 0, apar: 0, all: 0 }
     }
     this.cbpLoader = false
-    this.prefetchOtherPlanYears()
     // this.widgetSvc.fetchCbpPlanList().subscribe(async (res: any) => {
     //   if(res.length) {
     //     this.cbpOriginalData = res
@@ -500,23 +502,6 @@ export class CbpPlanComponent implements OnInit {
     // the stats tiles show their own skeleton while cbpLoader is set; clearing the counts
     // keeps the previous year's numbers from being what those tiles fall back to
     this.usersCbpCount = undefined
-  }
-
-  private async prefetchOtherPlanYears() {
-    if (this.prefetchStarted || this.planYearList.length < 2) {
-      return
-    }
-    this.prefetchStarted = true
-    for (const planYear of this.planYearList) {
-      if (planYear === this.loadedPlanYear) {
-        continue
-      }
-      try {
-        await this.widgetSvc.fetchCbpPlanListV3(planYear).toPromise()
-      } catch {
-        // leaves that year to load when it is selected
-      }
-    }
   }
 
   private transformSkeletonToWidgets(
