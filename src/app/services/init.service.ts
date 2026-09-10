@@ -222,7 +222,7 @@ export class InitService {
         this.fetchEnrolmentDictionary().catch((err: any) =>
           this.logger.warn('InitService: Failed to pre-load enrolment dictionary', err),
         )
-        this.preloadCbpPlans()
+        this.preloadCbpPlans(path)
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
@@ -437,8 +437,15 @@ export class InitService {
    *
    * Deliberately not awaited — startup must not block on it, and every reader already
    * degrades to "no plan tag" on an empty cache.
+   *
+   * Skipped when the app boots straight onto the CBP plan page: that page fetches the plan
+   * list itself, force-refreshed and with server enrichment on, so warming the same year
+   * here only adds a second unenriched POST that the page's own request then supersedes.
    */
-  private preloadCbpPlans(): void {
+  private preloadCbpPlans(path: string): void {
+    if (/(^|\/)cbp(\/|$)/.test(path || '')) {
+      return
+    }
     this.widgetUserSvc.fetchCbpPlanListV3().subscribe({
       error: (err: any) => this.logger.warn('InitService: Failed to pre-load CBP plans', err),
     })

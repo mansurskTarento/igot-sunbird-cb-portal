@@ -111,7 +111,7 @@ export class FilterComponent implements OnInit {
       { id: '1sm', name: 'Last month', checked: false },
       { id: '3sm', name: 'Last 3 months', checked: false },
       { id: '6sm', name: 'Last 6 months', checked: false },
-      { id: '12sm', name: 'Last year', checked: false },
+      // { id: '12sm', name: 'Last year', checked: false },
     ]
     this.contentStatus = [
       { id: '1', name: 'In progress', checked: false },

@@ -79,8 +79,10 @@ export class CbpPlanComponent implements OnInit {
    * year is selected, so re-reading it on every year change only slowed the switch down.
    */
   private enrolmentDictionary?: Record<string, any>
-  /** Guards `prefetchOtherPlanYears`, so the background warm-up runs once per visit. */
-  private prefetchStarted = false
+  // A year is fetched only when it is the selected one. The page used to warm every year in
+  // `planYearList` in the background, which meant landing here POSTed cbplan/v3/user/dictionary
+  // once per configured year (2025-26 and 2027-28 alongside the year actually being shown).
+  // Selecting a year re-enters getCbPlans(), which is the only place that request is made.
   /** Plan types offered by the plan type filter, as {id, name} — from cbp.json's `planTypes`. */
   planTypeList: any[] = []
   /**
@@ -247,7 +249,11 @@ export class CbpPlanComponent implements OnInit {
     this.showPlanSkeletons()
     // Year-scoped on the server: a different year is a different request, cached per year.
     this.loadedPlanYear = this.filterObjData.planYear
-    let response = await this.widgetSvc.fetchCbpPlanListV3(this.filterObjData.planYear).toPromise()
+    // This page is the only caller that asks the server to enrich the response, and it always
+    // refreshes rather than reading the year's cache — the strips populate that same cache with
+    // unenriched results, so reading it here would serve their payload and never send the
+    // enriched request at all.
+    let response = await this.widgetSvc.fetchCbpPlanListV3(this.filterObjData.planYear, true, true).toPromise()
     // the cached plan item is a reduced projection (WidgetUserServiceLib.toReducedCbpData) that
     // drops contentType, so derive it back from the categories the projection does keep - on
     // this page the plan item IS the card's content, and the cards branch on contentType
@@ -324,7 +330,6 @@ export class CbpPlanComponent implements OnInit {
       this.usersCbpCount = { upcoming: 0, overdue: 0, completed: 0, apar: 0, all: 0 }
     }
     this.cbpLoader = false
-    this.prefetchOtherPlanYears()
     // this.widgetSvc.fetchCbpPlanList().subscribe(async (res: any) => {
     //   if(res.length) {
     //     this.cbpOriginalData = res
@@ -500,23 +505,6 @@ export class CbpPlanComponent implements OnInit {
     // the stats tiles show their own skeleton while cbpLoader is set; clearing the counts
     // keeps the previous year's numbers from being what those tiles fall back to
     this.usersCbpCount = undefined
-  }
-
-  private async prefetchOtherPlanYears() {
-    if (this.prefetchStarted || this.planYearList.length < 2) {
-      return
-    }
-    this.prefetchStarted = true
-    for (const planYear of this.planYearList) {
-      if (planYear === this.loadedPlanYear) {
-        continue
-      }
-      try {
-        await this.widgetSvc.fetchCbpPlanListV3(planYear).toPromise()
-      } catch {
-        // leaves that year to load when it is selected
-      }
-    }
   }
 
   private transformSkeletonToWidgets(
