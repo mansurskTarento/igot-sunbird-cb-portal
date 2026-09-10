@@ -28,17 +28,19 @@
           [placeholder]="placeHolder()" i18-aria-label aria-label="search content" (focus)="openSearchTemplateF()"
           [formControl]="queryControl" maxlength="100" (input)="loaderSearching.set(true)" autocomplete="off" />
 
-        @if (queryControl.value && !loaderSearching()) {
-        <mat-icon matSuffix (click)="clearSearchText();" class="cursor-pointer search-close-icon">
-          close
-        </mat-icon>
-        }
-      </mat-form-field>
+        <div class="search-actions" matSuffix>
+          @if (queryControl.value && !loaderSearching()) {
+          <button mat-icon-button type="button" class="search-close-icon" (click)="clearSearchText()">
+            <mat-icon>close</mat-icon>
+          </button>
+          }
 
-      <button mat-flat-button type="button" class="mat-btn-flat global-search"
-        [ngClass]="{'disabled-search-btn': !queryControl.value}" (click)="updateQuery(queryControl.value || '')">
-        {{'gyaanKarmayogi.search' | translate}}
-      </button>
+          <button mat-flat-button type="button" class="mat-btn-flat global-search"
+            [ngClass]="{'disabled-search-btn': !queryControl.value}" (click)="updateQuery(queryControl.value || '')">
+            {{'gyaanKarmayogi.search' | translate}}
+          </button>
+        </div>
+      </mat-form-field>
     </form>
 
     <div class="search-container" [hidden]="!openSearchTemplate() || !hasSearchPanelContent">
