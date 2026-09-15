@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core'
 import { RouterModule, Routes } from '@angular/router'
 import { PlansShowAllComponent } from './plans-show-all/plans-show-all.component'
+import { PlanDetailComponent } from './plan-detail/plan-detail.component'
 
 const routes: Routes = [
   {
@@ -13,6 +14,17 @@ const routes: Routes = [
       pageType: 'feature',
       pageKey: 'plans',
       pageId: 'app/plans',
+      module: 'Learn',
+    },
+  },
+  {
+    // One plan and the content inside it. The id is the plan id the listing cards carry.
+    path: ':id',
+    component: PlanDetailComponent,
+    data: {
+      pageType: 'feature',
+      pageKey: 'plan-detail',
+      pageId: 'app/plans/:id',
       module: 'Learn',
     },
   },

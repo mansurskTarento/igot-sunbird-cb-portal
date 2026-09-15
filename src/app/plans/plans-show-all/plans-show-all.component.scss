@@ -9,13 +9,12 @@
    ────────────────────────────────────────────────────────── */
 
 :host {
-  /* The shell paints the page ground and keeps it light on this route, which left every
-     themed (white, in dark mode) label sitting on a white page. Claiming the ground here
-     covers the breadcrumb, the toolbar and the gaps between them in one place.
-     !important because the shell's own rule carries it. */
+  /* Deliberately paints NO background: the shell's root container owns the page ground and is
+     themed (root.component.html binds --surface-primary on home, --surface-secondary
+     elsewhere). Painting a second, different surface here is what produced a visible band
+     above the content where the two met. */
   display: block;
   min-height: 100%;
-  background: var(--surface-primary) !important;
 
   --pc-panel-shadow: rgba(0, 0, 0, 0.16);
 }
@@ -24,22 +23,16 @@
   /* A 16%-black shadow is invisible against a dark page, so deepen it. */
   --pc-panel-shadow: rgba(0, 0, 0, 0.56);
 }
-/* Content column. The shell no longer caps this route at 1200px — it goes full-bleed so the
-   themed ground above covers the whole viewport — so the cap lives here, mirroring
-   .container-balanced (including its 1064px step-down) to keep the column where it was. */
+/* Content column. `/app/plans` is in root.component.ts's fullBleedRoutes, so the shell hands
+   this route a full-width row instead of the .container-balanced column — the cap lives here
+   instead. Fixed at the 1064px design content width (the same width .home-content uses) rather
+   than .container-balanced's 1200px, so the plan pages keep one column width at every desktop
+   size; the 90% mobile gutter below still mirrors .container-balanced. */
 .plans-breadcrumb,
 .plans-page {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1064px;
   margin: 0 auto;
-}
-
-@media (max-width: 1287.98px) {
-
-  .plans-breadcrumb,
-  .plans-page {
-    max-width: 1064px;
-  }
 }
 
 @media (max-width: 1064px) and (pointer: coarse),

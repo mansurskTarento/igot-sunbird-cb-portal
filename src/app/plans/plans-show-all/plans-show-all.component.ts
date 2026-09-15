@@ -19,8 +19,6 @@ interface IPlanTypeMeta {
   key: PlanTypeKey
   /** Translation key for the page heading, e.g. 'APAR Plan'. */
   titleKey: string
-  /** Trailing breadcrumb crumb — shorter than the heading, as in the design. */
-  crumb: string
   /**
    * Server-side narrowing for this plan type. `isApar` is a facet the plan search already
    * exposes, so it is filterable by construction; `planType` is sent on the assumption the
@@ -32,14 +30,13 @@ interface IPlanTypeMeta {
 }
 
 const PLAN_TYPES: IPlanTypeMeta[] = [
-  { key: 'apar', titleKey: 'plansShowAll.aparPlan', crumb: 'APAR', filter: { isApar: true } },
+  { key: 'apar', titleKey: 'plansShowAll.aparPlan', filter: { isApar: true } },
   {
     key: 'aicbp',
     titleKey: 'plansShowAll.aiCbpDraftPlan',
-    crumb: 'AI CBP',
     filter: { isApar: false, planType: 'AICBP' },
   },
-  { key: 'cbp', titleKey: 'plansShowAll.cbpPlan', crumb: 'CBP', filter: { isApar: false } },
+  { key: 'cbp', titleKey: 'plansShowAll.cbpPlan', filter: { isApar: false } },
 ]
 
 /** Maps a plan-type key to the `planType` a transformed card reports. */
@@ -67,12 +64,10 @@ const FACET_META: Record<string, { heading: string, selectType: 'checkbox' | 'ra
   orgName: { heading: 'Organisation Plan', selectType: 'checkbox', order: 4 },
   orgIdList: { heading: 'Working Organisation', selectType: 'radio', order: 5 },
   designation: { heading: 'Working Designation', selectType: 'radio', order: 6 },
-  contentType: { heading: 'Content Type', selectType: 'checkbox', order: 7 },
-  status: { heading: 'Status', selectType: 'checkbox', order: 8 },
 }
 
 /** Facets that duplicate a control the panel already renders from static options. */
-const SUPPRESSED_FACETS = new Set(['isApar', 'planYear'])
+const SUPPRESSED_FACETS = new Set(['isApar', 'planYear', 'contentType', 'status'])
 
 @Component({
   selector: 'ws-app-plans-show-all',
@@ -139,7 +134,9 @@ export class PlansShowAllComponent implements OnInit {
     this.langTick()
     return [
       { url: '/page/home', title: this.translate.instant('plansShowAll.home'), icon: 'home' },
-      { title: this.activePlanType().crumb },
+      { url: '/app/plans', title: this.translate.instant('plansShowAll.plans') },
+      // The plan type is the page itself, so it is the trailing crumb and carries no link.
+      { title: this.translate.instant(this.activePlanType().titleKey) },
     ]
   })
 
@@ -179,20 +176,6 @@ export class PlansShowAllComponent implements OnInit {
           name: type.key,
           displayName: this.translate.instant(type.titleKey),
           isChecked: type.key === this.planTypeKey(),
-        })),
-      },
-      {
-        key: 'planYear',
-        heading: this.translate.instant('plansShowAll.reportingYear'),
-        selectType: 'radio',
-        showSearch: false,
-        showSeeMore: false,
-        showCount: false,
-        order: 2,
-        options: this.planYearOptions().map(option => ({
-          name: option.value,
-          displayName: option.label,
-          isChecked: option.value === this.planYear(),
         })),
       },
     ]
@@ -302,9 +285,9 @@ export class PlansShowAllComponent implements OnInit {
       })
   }
 
-  /** Facet-derived selections only — the two static sections drive the URL instead. */
+  /** Facet-derived selections only — the plan-type section drives the URL instead. */
   private serverFilters(): Record<string, string[]> {
-    const { planTypeKey, planYear, ...rest } = this.appliedFilters()
+    const { planTypeKey, ...rest } = this.appliedFilters()
     return rest as Record<string, string[]>
   }
 
@@ -366,22 +349,16 @@ export class PlansShowAllComponent implements OnInit {
   }
 
   onFilterApplied(selected: SelectedFilters): void {
-    // Plan type and reporting year live in the URL, so pull them back out of the panel's
-    // payload rather than sending them to the API as filters.
+    // Plan type lives in the URL, so pull it back out of the panel's payload rather than
+    // sending it to the API as a filter. The reporting year is not in the panel at all — the
+    // toolbar's year control owns it.
     const nextType = selected['planTypeKey']?.[0] as PlanTypeKey | undefined
-    const nextYear = selected['planYear']?.[0]
 
     this.appliedFilters.set(selected)
 
-    const typeChanged = nextType && nextType !== this.planTypeKey()
-    const yearChanged = nextYear && nextYear !== this.planYear()
-    if (typeChanged || yearChanged) {
+    if (nextType && nextType !== this.planTypeKey()) {
       // The queryParamMap subscription re-fetches, so do not also fetch here.
-      this.patchQueryParams({
-        planType: nextType ?? this.planTypeKey(),
-        planYear: nextYear ?? this.planYear(),
-        page: 1,
-      })
+      this.patchQueryParams({ planType: nextType, page: 1 })
       return
     }
 

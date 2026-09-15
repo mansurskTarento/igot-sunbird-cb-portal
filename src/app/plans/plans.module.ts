@@ -11,12 +11,14 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core'
 import { TranslateHttpLoader } from '@ngx-translate/http-loader'
 import {
   BreadcrumbComponent,
+  CardCourseV2Component,
   CardPlanV2Component,
   FiltersModule,
   PaginationModule,
 } from '@sunbird-cb/consumption'
 import { PlansRoutingModule } from './plans-routing.module'
 import { PlansShowAllComponent } from './plans-show-all/plans-show-all.component'
+import { PlanDetailComponent } from './plan-detail/plan-detail.component'
 import { PlansFilterMobileComponent } from './plans-filter-mobile/plans-filter-mobile.component'
 import { PlansService } from './services/plans.service'
 
@@ -31,7 +33,7 @@ export function plansHttpLoaderFactory(http: HttpClient) {
  * what separates it from the older `/page/cbp` CbpModule: that page lists a plan's courses.
  */
 @NgModule({
-  declarations: [PlansShowAllComponent],
+  declarations: [PlansShowAllComponent, PlanDetailComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -43,6 +45,7 @@ export function plansHttpLoaderFactory(http: HttpClient) {
     PlansRoutingModule,
     // Standalone pieces from the component library
     BreadcrumbComponent,
+    CardCourseV2Component,
     CardPlanV2Component,
     PlansFilterMobileComponent,
     // NgModule-packaged pieces

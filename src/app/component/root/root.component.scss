@@ -21,6 +21,10 @@
   }
 }
 
+/* The page ground for every route. White in light mode, #1B2133 in dark — the inline
+   [style.background-color] that used to sit on this element is gone: it hardcoded #F3F5F9 for
+   non-home routes, which is what made the page pale blue instead of white and, once tokenised,
+   collided with the breadcrumb's own surface. */
 .root-container {
   background-color: var(--surface-primary);
 }
