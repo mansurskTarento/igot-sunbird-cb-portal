@@ -505,7 +505,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           }
         }
 
-        if (event.url.includes('/viewer')) {
+        if (event.url.includes('/viewer') || event.url.includes('/public/toc')) {
           this.viewerPage = true
         } else {
           this.viewerPage = false

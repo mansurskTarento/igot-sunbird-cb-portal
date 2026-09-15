@@ -4,6 +4,7 @@ import {
   ConfigurationsService,
   EventService,
   MultilingualTranslationsService,
+  UtilityService,
   WsEvents,
 } from '@sunbird-cb/utils-v2'
 import { CommonDataService } from '../../services/common-data.service'
@@ -38,6 +39,7 @@ export class ExploreMenuComponent implements OnInit {
     private eventSvc: EventService,
     private commonDataSvc: CommonDataService,
     private langtranslations: MultilingualTranslationsService,
+    private utilitySvc: UtilityService
   ) { }
 
   ngOnInit() {
@@ -137,6 +139,7 @@ export class ExploreMenuComponent implements OnInit {
   }
 
   onItemClick(item: any) {
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: 'page/home' }])
     this.raiseTelemetry(item?.code, item?.subType || item?.subtype || '')
     const navUrl = item?.navUrl
     if (!navUrl) {
