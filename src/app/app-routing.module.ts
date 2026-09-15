@@ -507,6 +507,19 @@ const routes: Routes = [
     loadChildren: () => import('./routes/route-page.module').then(m => m.RoutePageModule),
   },
   {
+    // Plan listings (APAR / AI CBP / CBP) — the "show all" behind the home plan strips.
+    // Distinct from `page/cbp`, which lists the CONTENT inside a plan rather than the plans.
+    path: 'app/plans',
+    loadChildren: () => import('./plans/plans.module').then(m => m.PlansModule),
+    canActivate: [GeneralGuard],
+    data: {
+      pageType: 'feature',
+      pageKey: 'plans',
+      pageId: 'app/plans',
+      module: 'Learn',
+    },
+  },
+  {
     path: 'app/my-learning',
     loadChildren: () =>
       import('./routes/route-my-learning.module').then(u => u.RouteMyLearningModule),

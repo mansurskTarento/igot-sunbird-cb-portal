@@ -1,0 +1,122 @@
+<div class="plans-breadcrumb">
+  <sb-uic-breadcrumb [widgetData]="breadcrumbData()"></sb-uic-breadcrumb>
+</div>
+
+<div class="plans-page">
+
+  <!-- ── Desktop toolbar ─────────────────────────────────────── -->
+  @if (!isLtMedium()) {
+  <div class="plans-toolbar">
+    <div class="plans-toolbar__title">
+      <button mat-mini-fab class="plans-back-btn" aria-label="Back to home" routerLink="/page/home">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+      </button>
+      <h1 class="plans-toolbar__heading">{{ pageTitle() }}</h1>
+    </div>
+
+    <div class="plans-toolbar__controls">
+      <button type="button" class="plans-pill-btn" [matMenuTriggerFor]="yearMenu"
+        aria-label="Reporting year">
+        <span>{{ planYearLabel() }}</span>
+        <mat-icon class="plans-pill-btn__icon">expand_more</mat-icon>
+      </button>
+
+      <button type="button" class="plans-pill-btn" [matMenuTriggerFor]="sortMenu" [matTooltip]="sortLabel()">
+        <span>{{ 'plansShowAll.sortBy' | translate }}</span>
+        <mat-icon class="plans-pill-btn__icon">sort</mat-icon>
+      </button>
+
+      <button type="button" class="plans-pill-btn" [class.is-active]="isFilterPanelOpen()"
+        (click)="toggleFilterPanel()">
+        <span>{{ 'plansShowAll.filter' | translate }}</span>
+        @if (appliedFilterCount() > 0) {
+        <span class="plans-pill-btn__count">{{ appliedFilterCount() }}</span>
+        }
+        <mat-icon class="plans-pill-btn__icon">filter_list</mat-icon>
+      </button>
+    </div>
+  </div>
+  }
+
+  <!-- ── Mobile toolbar ──────────────────────────────────────── -->
+  @if (isLtMedium()) {
+  <div class="plans-mobile-controls">
+    <button type="button" class="plans-mobile-controls__btn" [matMenuTriggerFor]="sortMenu">
+      <mat-icon>sort</mat-icon>
+      <span>{{ 'plansShowAll.sort' | translate }}</span>
+    </button>
+    <span class="plans-mobile-controls__divider" aria-hidden="true"></span>
+    <button type="button" class="plans-mobile-controls__btn" (click)="toggleFilterPanel()">
+      <mat-icon>filter_list</mat-icon>
+      <span>{{ 'plansShowAll.filter' | translate }}</span>
+      @if (appliedFilterCount() > 0) {
+      <span class="plans-pill-btn__count">{{ appliedFilterCount() }}</span>
+      }
+    </button>
+  </div>
+
+  <button type="button" class="plans-pill-btn plans-pill-btn--block" [matMenuTriggerFor]="yearMenu"
+    aria-label="Reporting year">
+    <span>{{ planYearLabel() }}</span>
+    <mat-icon class="plans-pill-btn__icon">expand_more</mat-icon>
+  </button>
+  }
+
+  <mat-menu #yearMenu="matMenu">
+    @for (option of planYearOptions(); track option.value) {
+    <button mat-menu-item [class.is-selected]="option.value === planYear()"
+      (click)="onPlanYearChange(option.value)">
+      {{ option.label }}
+    </button>
+    }
+  </mat-menu>
+
+  <mat-menu #sortMenu="matMenu">
+    @for (option of sortOptions; track option.labelKey; let i = $index) {
+    <button mat-menu-item [class.is-selected]="i === sortIndex()" (click)="onSortChange(i)">
+      {{ option.labelKey | translate }}
+    </button>
+    }
+  </mat-menu>
+
+  <!-- ── Results ─────────────────────────────────────────────── -->
+  @if (loading()) {
+  <div class="plans-grid" [class.plans-grid--list]="isLtMedium()" aria-busy="true">
+    @for (row of skeletonRows(); track $index) {
+    <sb-uic-card-plan-v2 [isLoading]="true" [layout]="isLtMedium() ? 'landscape' : 'portrait'"></sb-uic-card-plan-v2>
+    }
+  </div>
+  } @else if (cards().length) {
+  <div class="plans-grid" [class.plans-grid--list]="isLtMedium()">
+    @for (card of cards(); track card.identifier) {
+    <sb-uic-card-plan-v2 [plan]="card" [layout]="isLtMedium() ? 'landscape' : 'portrait'"></sb-uic-card-plan-v2>
+    }
+  </div>
+
+  <div class="plans-pagination">
+    <ws-widget-pagination [defaultPaginationSize]="pageSize()" [defaultPaginationSizeOptions]="pageSizeOptions"
+      [totalItemsCount]="totalCount()" [currentPage]="currentPage()"
+      (pageChange)="onPageChange($event)"></ws-widget-pagination>
+  </div>
+  } @else {
+  <div class="plans-no-data">
+    <img src="/assets/icons/no-data.svg" alt="" aria-hidden="true" />
+    <p class="plans-no-data__text">{{ 'plansShowAll.noPlans' | translate }}</p>
+  </div>
+  }
+</div>
+
+<!-- ── Desktop filter slide-over ─────────────────────────────── -->
+@if (!isLtMedium() && isFilterPanelOpen()) {
+<div class="plans-filter-backdrop" (click)="isFilterPanelOpen.set(false)"
+  (keydown.escape)="isFilterPanelOpen.set(false)"></div>
+<aside class="plans-filter-panel" aria-label="Filter plans">
+  <button type="button" mat-icon-button class="plans-filter-panel__close" aria-label="Close filters"
+    (click)="isFilterPanelOpen.set(false)">
+    <mat-icon>close</mat-icon>
+  </button>
+  <sb-uic-filter-by [filterConfig]="filterConfig()" [showClearAllGlobal]="true"
+    (appliedFilter)="onFilterApplied($event)" (filterCleared)="onFilterCleared()">
+  </sb-uic-filter-by>
+</aside>
+}

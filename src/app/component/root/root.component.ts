@@ -114,7 +114,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // Add more prefixes here when another route needs the same treatment.
   fullWidthMobileRoutes = ['/app/learn/bharat-kalp']
   isFullWidthMobileRoute = signal(false)
-  surfaceBackgroundRoutes = ['/app/person-profile/karma-wallet']
+  surfaceBackgroundRoutes = ['/app/person-profile/karma-wallet','/app/plans']
   usesSurfaceBackground = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
@@ -1051,7 +1051,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   exploreContent() {
     this.libNotificationsService.updateUnreadCount()
-    this.raiseTelemetryExploreContent('explore_content')
     const queryParams = {
       q: '',
       search: null,

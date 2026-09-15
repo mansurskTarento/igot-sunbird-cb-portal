@@ -31,7 +31,10 @@ import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
+import { IndexedDbService } from '@sunbird-cb/utils-v2'
 /* tslint:enable */
+
+const ENROLMENT_DICTIONARY_API = '/apis/proxies/v8/user/v1/learning/dictionary'
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +68,7 @@ export class InitService {
     private commonDataSvc: CommonDataService,
     private contentDictionarySvc: ContentDictionaryService,
     private formSvc: FormExtService,
+    private indexedDbSvc: IndexedDbService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,
@@ -211,6 +215,12 @@ export class InitService {
             error: (err: any) => this.logger.warn('InitService: Failed to pre-load content dictionary', err),
           })
         }
+        // pre-load the enrolment dictionary so the cards that look up their own id
+        // already have it cached by the time they render. Deliberately not awaited:
+        // startup must not block on it, and every reader falls back to an empty cache
+        this.fetchEnrolmentDictionary().catch((err: any) =>
+          this.logger.warn('InitService: Failed to pre-load enrolment dictionary', err),
+        )
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
@@ -388,6 +398,31 @@ export class InitService {
       this.configSvc.globalConfigLoadFailed = true
     }
     return this.configSvc.globalConfig
+  }
+
+  /**
+   * The signed-in user's enrolment dictionary, keyed by content id:
+   *   { do_1146388680275148801152: { primaryCategory, courseCategory, active, status } }
+   *
+   * GET /apis/proxies/v8/user/v1/learning/dictionary — takes no payload and no query
+   * params; the backend scopes the response to the caller via the `wid` header added by
+   * AppInterceptorService. It returns the user's whole enrolment set, unfiltered.
+   *
+   * The result is cached in IndexedDB, so any component can read it without re-fetching
+   * (see IndexedDbService.getEnrollmentDetails). Call this directly to force a refresh —
+   * e.g. after the user enrols in something — since the cache is only warmed at startup.
+   *
+   * Disable it per domain with globalConfig.apis.user.enrolmentDictionary.enabled = false.
+   */
+  async fetchEnrolmentDictionary(): Promise<Record<string, any>> {
+    const url = this.domainConfSvc.getApiUrl('user', 'enrolmentDictionary', ENROLMENT_DICTIONARY_API)
+    if (!url) {
+      return {}
+    }
+    const res: any = await firstValueFrom(this.http.get(url))
+    const dictionary = _.get(res, 'result.response', {}) || {}
+    await this.indexedDbSvc.setEnrollmentDetails(dictionary)
+    return dictionary
   }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {

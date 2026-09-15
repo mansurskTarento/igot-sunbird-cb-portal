@@ -599,6 +599,20 @@ h3.shepherd-title {
   overflow: hidden;
 }
 
+/* Mobile plan filter sheet — fills the viewport, so the dialog surface keeps no padding,
+   radius or shadow of its own. */
+.plans-filter-mobile-panel {
+
+  .mat-dialog-container,
+  .mat-mdc-dialog-container,
+  .mat-mdc-dialog-surface {
+    padding: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden;
+  }
+}
+
 
 body:has(.requires-no-scroll) {
   overflow: hidden;

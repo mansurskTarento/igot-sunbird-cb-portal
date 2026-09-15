@@ -1,0 +1,56 @@
+<div class="pfm">
+  <div class="pfm__header">
+    <span class="pfm__title">{{ 'plansShowAll.filterBy' | translate }}</span>
+    @if (selectedCount() > 0) {
+    <button type="button" class="pfm__clear" (click)="clearAll()">
+      <mat-icon class="pfm__clear-icon">close</mat-icon>
+      {{ 'plansShowAll.clearAll' | translate }}
+    </button>
+    }
+  </div>
+
+  <div class="pfm__body">
+    <!-- Section rail -->
+    <nav class="pfm__rail" aria-label="Filter sections">
+      @for (section of sections(); track section.key) {
+      <button type="button" class="pfm__rail-item" [class.is-active]="section.key === activeKey()"
+        [attr.aria-current]="section.key === activeKey() ? 'true' : null" (click)="selectSection(section.key)">
+        {{ section.heading }}
+      </button>
+      }
+    </nav>
+
+    <!-- Active section's options -->
+    <div class="pfm__pane">
+      @if (activeSection(); as section) {
+      <p class="pfm__pane-title">{{ section.heading }}</p>
+
+      @if (section.selectType === 'radio') {
+      <mat-radio-group class="pfm__options" [attr.aria-label]="section.heading">
+        @for (option of section.options; track option.name) {
+        <mat-radio-button class="pfm__option" [value]="option.name" [checked]="isSelected(section.key, option)"
+          (change)="onRadioChange(section.key, option)">
+          {{ option.displayName || option.name }}
+        </mat-radio-button>
+        }
+      </mat-radio-group>
+      } @else {
+      <div class="pfm__options">
+        @for (option of section.options; track option.name) {
+        <mat-checkbox class="pfm__option" [checked]="isSelected(section.key, option)"
+          (change)="onCheckboxChange(section.key, option, $event.checked)">
+          {{ option.displayName || option.name }}
+        </mat-checkbox>
+        }
+      </div>
+      }
+      }
+    </div>
+  </div>
+
+  <div class="pfm__footer">
+    <button type="button" class="pfm__footer-btn pfm__footer-btn--close" (click)="close()">{{ 'plansShowAll.closeFilter' | translate }}</button>
+    <span class="pfm__footer-divider" aria-hidden="true"></span>
+    <button type="button" class="pfm__footer-btn" (click)="apply()">{{ 'plansShowAll.applyFilter' | translate }}</button>
+  </div>
+</div>

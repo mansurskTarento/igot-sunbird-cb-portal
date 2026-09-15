@@ -1,0 +1,250 @@
+/* ── Theme ──────────────────────────────────────────────────
+   Every colour is a design-system custom property. The tokens redefine those under
+   [data-theme="dark"] (set on <html> by ThemeService / the boot script in index.html), so
+   this page follows light/dark mode with no dark-mode ruleset of its own.
+
+   The only literal colours left are marked `permanent`: they sit on the brand primary fill,
+   which stays a strong blue/purple in BOTH themes, so flipping them would put dark text on a
+   dark ground.
+   ────────────────────────────────────────────────────────── */
+
+:host {
+  /* Deliberately paints NO background: the shell's root container owns the page ground and is
+     themed (root.component.html binds --surface-primary on home, --surface-secondary
+     elsewhere). Painting a second, different surface here is what produced a visible band
+     above the content where the two met. */
+  display: block;
+  min-height: 100%;
+
+  --pc-panel-shadow: rgba(0, 0, 0, 0.16);
+}
+
+:host-context([data-theme='dark']) {
+  /* A 16%-black shadow is invisible against a dark page, so deepen it. */
+  --pc-panel-shadow: rgba(0, 0, 0, 0.56);
+}
+/* Content column. `/app/plans` is in root.component.ts's fullBleedRoutes, so the shell hands
+   this route a full-width row instead of the .container-balanced column — the cap lives here
+   instead. Fixed at the 1064px design content width (the same width .home-content uses) rather
+   than .container-balanced's 1200px, so the plan pages keep one column width at every desktop
+   size; the 90% mobile gutter below still mirrors .container-balanced. */
+.plans-breadcrumb,
+.plans-page {
+  width: 100%;
+  max-width: 1064px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1064px) and (pointer: coarse),
+(max-width: 599.98px) {
+
+  .plans-breadcrumb,
+  .plans-page {
+    width: 90%;
+  }
+}
+
+.plans-page {
+  padding: 24px 0 40px;
+}
+
+/* ── Desktop toolbar ─────────────────────────────────────────── */
+.plans-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    min-width: 0;
+  }
+
+  &__heading {
+    margin: 0;
+    font: 600 20px 'Noto Sans';
+    color: var(--text-bandw-black-sub-heading);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+}
+
+/* Matches the black circular back control used on the other see-all pages. */
+.plans-back-btn {
+  border-radius: 8px;
+  box-shadow: none;
+  /* Inverse pair: dark plate + light glyph in light mode, and the reverse in dark mode. */
+  color: var(--surface-primary);
+  background: var(--surface-inverse);
+  height: 32px;
+  width: 32px;
+  flex-shrink: 0;
+}
+
+/* Pill buttons — 'Sort by' and 'Filter' */
+.plans-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 20px;
+  background: transparent;
+  font: 500 14px 'Noto Sans';
+  color: var(--text-bandw-black-sub-heading);
+  cursor: pointer;
+
+  &:hover,
+  &.is-active {
+    border-color: var(--border-focus);
+    color: var(--text-button-text-link);
+  }
+
+  &__icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+  }
+
+  /* Full-width variant — the mobile year button. */
+  &--block {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 9px;
+    background: var(--environment-application-backgrounds-other-background);
+    /* permanent: on the brand fill */
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 600;
+  }
+}
+
+/* ── Mobile toolbar ──────────────────────────────────────────── */
+.plans-mobile-controls {
+  display: flex;
+  align-items: stretch;
+  background: var(--environment-application-backgrounds-other-background);
+  border-radius: 8px;
+  margin-bottom: 16px;
+  overflow: hidden;
+
+  &__btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 48px;
+    border: 0;
+    background: transparent;
+    /* permanent: sits on the brand primary fill, which stays a strong blue in both themes */
+    color: #ffffff;
+    font: 500 14px 'Noto Sans';
+    cursor: pointer;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+
+  &__divider {
+    width: 1px;
+    margin: 12px 0;
+    /* permanent: divider on the brand fill */
+    background: rgba(255, 255, 255, 0.32);
+  }
+}
+
+/* ── Results ─────────────────────────────────────────────────── */
+.plans-grid {
+  display: grid;
+  /* Tracks are sized to the card's fixed 254px so partial columns never stretch it. */
+  grid-template-columns: repeat(auto-fill, 254px);
+  justify-content: start;
+  gap: 20px 16px;
+
+  /* Mobile: full-width landscape rows instead of a portrait grid. */
+  &--list {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.plans-pagination {
+  margin-top: 24px;
+}
+
+.plans-no-data {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 56px 0;
+  text-align: center;
+
+  img {
+    width: 120px;
+    max-width: 100%;
+  }
+
+  &__text {
+    margin: 16px 0 0;
+    font: 600 14px 'Noto Sans';
+    color: var(--text-bandw-black-captions);
+  }
+}
+
+/* ── Desktop filter slide-over ───────────────────────────────── */
+.plans-filter-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: var(--environment-all-fills-overlay-backdrop);
+}
+
+.plans-filter-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1001;
+  width: 340px;
+  max-width: 100vw;
+  overflow-y: auto;
+  background: var(--environment-application-backgrounds-card-background);
+  box-shadow: -4px 0 16px var(--pc-panel-shadow);
+
+  &__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+  }
+}

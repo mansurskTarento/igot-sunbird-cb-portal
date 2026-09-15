@@ -1,0 +1,209 @@
+import { TestBed } from '@angular/core/testing'
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing'
+
+// The real @sunbird-cb/utils-v2 bundle imports @project-sunbird/telemetry-sdk, which jest
+// cannot resolve under jsdom. A factory mock keeps the module from ever being executed.
+jest.mock('@sunbird-cb/utils-v2', () => ({ ConfigurationsService: class { userProfile: any = null } }), { virtual: true })
+
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
+import { IPlanReadResult, IPlanSearchResult, PlansService } from './plans.service'
+
+const READ_URL = (id: string) => `/apis/proxies/v8/cbplan/v3/read/${id}`
+const SEARCH_URL = '/apis/proxies/v8/cbplan/v2/search'
+
+describe('PlansService', () => {
+  let service: PlansService
+  let http: HttpTestingController
+  let configSvc: { userProfile: any }
+
+  beforeEach(() => {
+    configSvc = { userProfile: { rootOrgId: 'org-1' } }
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule],
+      providers: [PlansService, { provide: ConfigurationsService, useValue: configSvc }],
+    })
+    service = TestBed.inject(PlansService)
+    http = TestBed.inject(HttpTestingController)
+  })
+
+  afterEach(() => http.verify())
+
+  // ── Financial year ─────────────────────────────────────────────────────────
+  describe('getCurrentFinancialYear', () => {
+    it('starts the year in April', () => {
+      expect(service.getCurrentFinancialYear(new Date(2026, 3, 1))).toBe('2026-27')
+    })
+
+    it('keeps January to March in the year that began the previous April', () => {
+      expect(service.getCurrentFinancialYear(new Date(2027, 0, 15))).toBe('2026-27')
+      expect(service.getCurrentFinancialYear(new Date(2027, 2, 31))).toBe('2026-27')
+    })
+
+    it('rolls over on 1 April', () => {
+      expect(service.getCurrentFinancialYear(new Date(2027, 2, 31))).toBe('2026-27')
+      expect(service.getCurrentFinancialYear(new Date(2027, 3, 1))).toBe('2027-28')
+    })
+
+    it('zero-pads the end year across a century boundary', () => {
+      expect(service.getCurrentFinancialYear(new Date(2099, 5, 1))).toBe('2099-00')
+    })
+  })
+
+  describe('getPlanYearOptions', () => {
+    it('offers next, current and previous, flagging only the current one', () => {
+      jest.useFakeTimers().setSystemTime(new Date(2026, 8, 12))
+      const options = service.getPlanYearOptions()
+
+      expect(options.map(option => option.value)).toEqual(['2027-28', '2026-27', '2025-26'])
+      expect(options.filter(option => option.isCurrent).map(o => o.value)).toEqual(['2026-27'])
+      jest.useRealTimers()
+    })
+  })
+
+  // ── readPlan ───────────────────────────────────────────────────────────────
+  describe('readPlan', () => {
+    const flush = (content: any): Promise<IPlanReadResult | null> => {
+      const result = new Promise<IPlanReadResult | null>(resolve => {
+        service.readPlan('plan-1').subscribe(resolve)
+      })
+      http.expectOne(READ_URL('plan-1')).flush({ result: { content } })
+      return result
+    }
+
+    it('normalises a contentList of objects, keeping the mandatory flag', async () => {
+      const plan = await flush({
+        id: 'plan-1',
+        name: 'APAR Plan',
+        contentList: [{ identifier: 'do_1', mandatory: false }, { identifier: 'do_2', mandatory: true }],
+      })
+
+      expect(plan!.contentList).toEqual([
+        { identifier: 'do_1', mandatory: false },
+        { identifier: 'do_2', mandatory: true },
+      ])
+    })
+
+    it('normalises a contentList of bare id strings', async () => {
+      const plan = await flush({ id: 'plan-1', name: 'APAR Plan', contentList: ['do_1', 'do_2'] })
+
+      expect(plan!.contentList).toEqual([{ identifier: 'do_1' }, { identifier: 'do_2' }])
+    })
+
+    it('normalises a mixed contentList', async () => {
+      const plan = await flush({
+        id: 'plan-1',
+        name: 'APAR Plan',
+        contentList: ['do_1', { identifier: 'do_2', mandatory: true }],
+      })
+
+      expect(plan!.contentList.map(item => item.identifier)).toEqual(['do_1', 'do_2'])
+    })
+
+    it('accepts contentId as an alias for identifier', async () => {
+      const plan = await flush({ id: 'plan-1', name: 'P', contentList: [{ contentId: 'do_alias' }] })
+
+      expect(plan!.contentList).toEqual([{ identifier: 'do_alias', mandatory: undefined }])
+    })
+
+    // A blank entry must not survive as { identifier: undefined }: it would reach the content
+    // dictionary as a lookup for "undefined" and leave a hole in the rendered grid.
+    it('drops entries with no usable id', async () => {
+      const plan = await flush({
+        id: 'plan-1',
+        name: 'P',
+        contentList: [null, undefined, '', '   ', {}, { mandatory: true }, 'do_ok'],
+      })
+
+      expect(plan!.contentList).toEqual([{ identifier: 'do_ok' }])
+    })
+
+    it('trims whitespace around ids', async () => {
+      const plan = await flush({ id: 'plan-1', name: 'P', contentList: ['  do_1  '] })
+
+      expect(plan!.contentList).toEqual([{ identifier: 'do_1' }])
+    })
+
+    it('returns an empty contentList when the field is missing or not an array', async () => {
+      expect((await flush({ id: 'plan-1', name: 'P' }))!.contentList).toEqual([])
+      expect((await flush({ id: 'plan-1', name: 'P', contentList: 'nope' }))!.contentList).toEqual([])
+    })
+
+    it('preserves the rest of the payload', async () => {
+      const plan = await flush({
+        id: 'plan-1', name: 'plan ttitle', planYear: '2026-27', isApar: true,
+        endDate: '2026-09-09T18:29:59Z', comprehensiveAssessment: 'do_ca', contentList: ['do_1'],
+      })
+
+      expect(plan).toMatchObject({
+        id: 'plan-1', name: 'plan ttitle', planYear: '2026-27', isApar: true,
+        comprehensiveAssessment: 'do_ca',
+      })
+    })
+
+    it('returns null when the response carries no content', async () => {
+      const result = new Promise(resolve => service.readPlan('plan-1').subscribe(resolve))
+      http.expectOne(READ_URL('plan-1')).flush({ result: {} })
+
+      await expect(result).resolves.toBeNull()
+    })
+
+    it('returns null rather than erroring when the request fails', async () => {
+      const result = new Promise(resolve => service.readPlan('plan-1').subscribe(resolve))
+      http.expectOne(READ_URL('plan-1')).error(new ProgressEvent('network error'))
+
+      await expect(result).resolves.toBeNull()
+    })
+  })
+
+  // ── search ─────────────────────────────────────────────────────────────────
+  describe('search', () => {
+    const request = { filter: { planYear: '2026-27' }, pageNumber: 0, pageSize: 12, facets: [] }
+
+    const flush = (body: any): Promise<IPlanSearchResult> => {
+      const result = new Promise<IPlanSearchResult>(resolve => service.search(request).subscribe(resolve))
+      http.expectOne(SEARCH_URL).flush(body)
+      return result
+    }
+
+    it('narrows to live plans while preserving the caller filter', () => {
+      service.search(request).subscribe()
+      const req = http.expectOne(SEARCH_URL)
+
+      expect(req.request.body.filter.status).toEqual(['Live'])
+      expect(req.request.body.filter.planYear).toBe('2026-27')
+      req.flush({})
+    })
+
+    it('passes paging and facets through untouched', () => {
+      service.search({ ...request, pageNumber: 2, pageSize: 50, facets: ['createdByName'] }).subscribe()
+      const req = http.expectOne(SEARCH_URL)
+
+      expect(req.request.body.pageNumber).toBe(2)
+      expect(req.request.body.pageSize).toBe(50)
+      expect(req.request.body.facets).toEqual(['createdByName'])
+      req.flush({})
+    })
+
+    // The endpoint double-nests: { result: { result: { data, totalCount, facets } } }.
+    it('unwraps the doubly-nested result', async () => {
+      const result = await flush({
+        result: { result: { data: [{ id: 'a' }], totalCount: 42, facets: { status: [{ value: 'Live', count: 3 }] } } },
+      })
+
+      expect(result.data).toEqual([{ id: 'a' }])
+      expect(result.totalCount).toBe(42)
+      expect(result.facets['status']).toEqual([{ value: 'Live', count: 3 }])
+    })
+
+    it('falls back to an empty result set on a malformed body', async () => {
+      await expect(flush({})).resolves.toEqual({ data: [], totalCount: 0, facets: {} })
+    })
+
+    it('returns an empty result rather than erroring when the request fails', async () => {
+      const result = new Promise(resolve => service.search(request).subscribe(resolve))
+      http.expectOne(SEARCH_URL).error(new ProgressEvent('network error'))
+
+      await expect(result).resolves.toEqual({ data: [], totalCount: 0, facets: {} })
+    })
+  })
+})
