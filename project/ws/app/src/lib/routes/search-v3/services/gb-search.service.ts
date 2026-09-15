@@ -20,6 +20,7 @@ import { SEARCH_SORT_DROPDOWN } from '@ws/author'
 const DEFAULT_API_ENDPOINTS = {
   SEARCH_V6: '/apis/proxies/v8/sunbirdigot/search',
   SEARCH_V4: '/apis/proxies/v8/sunbirdigot/v4/search',
+  SEARCH_V5: '/apis/proxies/v8/composite/v5/search',
   COMPOSITE_SEARCH: '/apis/proxies/v8/composite/v5/search',
   SEARCH_EXT_CONTENT: '/apis/proxies/v8/cios/v1/search/content',
   SEARCH_PEOPLE: '/apis/proxies/v8/user/v5/public/search',
@@ -96,6 +97,11 @@ export class GbSearchService {
 
   searchCoursesv4(params: SearchV4Request, apiUrl?: string): Promise<any> {
     const url = apiUrl || this.domainConfSvc.getApiUrl('search', 'searchV4', DEFAULT_API_ENDPOINTS.SEARCH_V4)
+    return this.http.post(url, params).toPromise()
+  }
+
+  searchCoursesv5(params: SearchV4Request, apiUrl?: string): Promise<any> {
+    const url = apiUrl || this.domainConfSvc.getApiUrl('search', 'searchV5', DEFAULT_API_ENDPOINTS.SEARCH_V5)
     return this.http.post(url, params).toPromise()
   }
 

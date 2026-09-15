@@ -1,0 +1,89 @@
+<div class="krd">
+
+  <header class="krd__header">
+    <h2 class="krd__title">Convert Karma Points</h2>
+  </header>
+
+  <!-- Conversion rate -->
+  <div class="krd__rate">
+    <span class="krd__rate-side">
+      <img class="krd__rate-icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+      <span class="krd__rate-value">{{ conversionRate | number }}KP</span>
+    </span>
+    <span class="krd__rate-arrow" role="img" aria-label="converts to"
+      [style.mask-image]="'url(' + icons.convert + ')'"
+      [style.-webkit-mask-image]="'url(' + icons.convert + ')'"></span>
+    <span class="krd__rate-side krd__rate-side--end">
+      <img class="krd__rate-icon" [src]="icons.karmaCoin" alt="" aria-hidden="true">
+      <span class="krd__rate-value">1KC</span>
+    </span>
+  </div>
+
+  <div class="krd__body">
+
+    <!-- Monthly cap -->
+    <section class="krd-cap">
+      <div class="krd-cap__row">
+        <span class="krd-cap__label">Convertible this month</span>
+        <span class="krd-cap__value">{{ summary.convertibleThisMonth | number }} of {{ summary.monthlyCap | number }} KP</span>
+      </div>
+      <div class="krd-cap__track">
+        <span class="krd-cap__fill" [style.width.%]="progressPercent"></span>
+      </div>
+      <div class="krd-cap__row krd-cap__row--foot">
+        <span class="krd-cap__hint">
+          {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
+        </span>
+        <span class="krd-cap__hint">Resets {{ resetOnLabel }}</span>
+      </div>
+    </section>
+
+    <!-- Amount -->
+    <label class="krd__label" for="krd-amount">Karma Point to convert</label>
+    <div class="krd-amount" [class.krd-amount--error]="errorMessage">
+      <img class="krd-amount__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+      <input id="krd-amount" class="krd-amount__input" type="number" min="0"
+        [ngModel]="amount" (ngModelChange)="onAmountChange($event)"
+        [disabled]="convertAll || isBlocked || isSubmitting || submitState === 'pending'"
+        aria-label="Karma Points to convert"
+        [attr.aria-invalid]="!!errorMessage" [attr.aria-describedby]="errorMessage ? 'krd-error' : null">
+    </div>
+
+    <p class="krd-error" id="krd-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+    <!-- Accepted but not yet confirmed: not an error, so it reads as a status line -->
+    <p class="krd-pending" role="status" *ngIf="pendingNote">{{ pendingNote }}</p>
+
+    <label class="krd-check">
+      <input class="krd-check__box" type="checkbox" [checked]="convertAll"
+        [disabled]="isBlocked || isSubmitting || submitState === 'pending'"
+        (change)="toggleConvertAll($any($event.target).checked)">
+      <span class="krd-check__label">Convert all Remaining to Karma Coin</span>
+    </label>
+
+    <!-- Outcome -->
+    <section class="krd-receive">
+      <span class="krd-receive__label">You will receive</span>
+      <span class="krd-receive__amount">
+        <img class="krd-receive__icon" [src]="icons.karmaCoin" alt="" aria-hidden="true">
+        <span class="krd-receive__value">{{ willReceive | number }}</span>
+      </span>
+    </section>
+
+    <p class="krd-note">
+      <mat-icon class="krd-note__icon">info_outline</mat-icon>
+      <span>Karma Coins (KC) do not expire and can be used anytime to consume eligible courses on the
+        Marketplace.</span>
+    </p>
+  </div>
+
+  <footer class="krd__footer">
+    <button type="button" class="krd__btn krd__btn--primary" [disabled]="!canConvert"
+      (click)="convert()">
+      <mat-spinner class="krd__btn-spinner" diameter="16" *ngIf="isSubmitting"></mat-spinner>
+      <span>{{ isSubmitting ? 'Converting…' : 'Convert' }}</span>
+    </button>
+    <button type="button" class="krd__btn krd__btn--ghost" [disabled]="isSubmitting"
+      (click)="cancel()">{{ submitState === 'pending' ? 'Close' : 'Cancel' }}</button>
+  </footer>
+</div>

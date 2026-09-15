@@ -69,7 +69,6 @@
   </div>
   }
   @if (!embedded()) {
-  <!-- ── Karma Points top heading ────────────────────────────── -->
   <div class="klb-top-section-header">
     <div id="klb-card-title" class="klb-top-title" role="heading" aria-level="2">{{ 'karmaLeaderboard.karmaPoints' |
       translate }}</div>
@@ -77,13 +76,14 @@
       <mat-icon>close</mat-icon>
     </button>
   </div>
+
+  <!-- ── Karma Points ─────────────────────────────────────────── -->
   <div class="klb-top-section">
     <p class="klb-top-desc">{{ 'karmaLeaderboard.topDesc' | translate }}
     </p>
   </div>
 
-  <!-- ── Header: earned karma points ───────────────────────────── -->
-  <div class="klb-header">
+  <div class="klb-header klb-header--points">
     <div class="klb-header-left">
       <img src="/assets/icons/home-v2/karma-badge.svg" alt="" class="klb-earned-icon" aria-hidden="true">
       <div class="klb-earned-text">
@@ -93,6 +93,29 @@
     </div>
     <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-points']"
       (click)="onNavBtnClick()" aria-label="View your karma points profile">
+      <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div class="klb-divider"></div>
+
+  <!-- ── Karma Coins ──────────────────────────────────────────── -->
+  <div class="klb-top-section klb-top-section--coins">
+    <div class="klb-top-title" role="heading" aria-level="2">{{ 'karmaLeaderboard.karmaCoins' | translate }}</div>
+    <p class="klb-top-desc">{{ 'karmaLeaderboard.karmaCoinsDesc' | translate }}
+    </p>
+  </div>
+
+  <div class="klb-header klb-header--coins">
+    <div class="klb-header-left">
+      <img src="/assets/icons/karmawallet-v2/karmacoin.svg" alt="" class="klb-earned-icon" aria-hidden="true">
+      <div class="klb-earned-text">
+        <span class="klb-earned-label">{{ 'karmaLeaderboard.youveEarned' | translate }}</span>
+        <span class="klb-earned-val">{{ myKarmaCoins }} {{ 'karmaLeaderboard.karmaCoins' | translate }}</span>
+      </div>
+    </div>
+    <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-wallet']"
+      (click)="onKarmaCoinsNavBtnClick()" aria-label="View your Karma Coin wallet">
       <mat-icon>chevron_right</mat-icon>
     </button>
   </div>

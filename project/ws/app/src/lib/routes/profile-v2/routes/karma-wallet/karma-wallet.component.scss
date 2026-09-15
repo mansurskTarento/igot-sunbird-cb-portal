@@ -1,0 +1,878 @@
+// Karma Coin Wallet — colours are scoped to this page to match the approved design.
+// Foreground and divider colours come from tokens that flip on [data-theme], so this page
+// stays legible in dark mode. bandw = black in light / white in dark.
+$kw-ink: var(--environment-icon-overall-primary-bandw);
+$kw-ink-strong: var(--environment-icon-overall-primary-bandw);
+$kw-ink-muted: var(--environment-icon-overall-secondary-bandw);
+$kw-hairline: var(--environment-border-and-divider-default-1);
+$kw-ink-crumb: var(--environment-icon-overall-primary-bandw);
+$kw-font: 'Noto Sans', sans-serif;
+// Success/error hold the same value in both themes by design.
+$kw-credit: var(--environment-all-fills-system-success);
+$kw-debit: var(--environment-all-fills-system-error);
+
+// Date | Description | Credit | Debit | Balance
+$kw-grid: 130px minmax(0, 1fr) 130px 130px 130px;
+$kw-row-pad: 17px;
+
+// The app's global styles pull in Tailwind's utilities and components but NOT its
+// preflight, so there is no global border-box reset to inherit. Every sizing rule
+// below assumes border-box, so this page declares it for itself.
+.kw,
+.kw *,
+.kw *::before,
+.kw *::after {
+  box-sizing: border-box;
+}
+
+// Angular Material's typography config writes font-family straight onto h1-h6 and p
+// (Montserrat / Lato), and a direct element rule beats inheritance from .kw - so Noto Sans
+// has to be asserted on the subtree. mat-icon is excluded to keep its ligature font intact.
+.kw,
+.kw *:not(mat-icon) {
+  font-family: $kw-font;
+}
+
+// 4 cards at 244px + 3 gaps of 30px = 1066px of content, + 20px padding each side.
+.kw {
+  max-width: 1106px;
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+}
+
+// Breadcrumb
+.kw__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+.kw__crumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  &--link {
+    color: var(--color-primary-500);
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &--current {
+    color: $kw-ink-crumb;
+    font-weight: 700;
+  }
+}
+
+// Section glyph, e.g. the person icon on the Profile crumb - takes the crumb's own colour
+.kw__crumb-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  color: inherit;
+}
+
+.kw__crumb-sep {
+  width: 18px;
+  height: 18px;
+  font-size: 18px;
+  line-height: 18px;
+  color: $kw-ink-crumb;
+}
+
+// Page header
+.kw__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 30px;
+}
+
+.kw__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.kw__title {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 32px;
+  color: $kw-ink;
+}
+
+.kw__info-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.kw__info-icon {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  color: var(--environment-icon-overall-secondary-bandw);
+}
+
+.kw__actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.kw__btn {
+  // Flex centring rather than a line-height tuned to the border width, which silently
+  // mis-centres the label the moment the border or height changes.
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+
+  &--ghost,
+  &--retry {
+    // Transparent, not white: reads white on the light page and stays correct in dark mode.
+    border: 2px solid var(--color-primary-500);
+    background: transparent;
+    color: var(--color-primary-500);
+
+    &:hover {
+      background: var(--color-primary-o-8);
+    }
+  }
+
+  &--primary {
+    border: 2px solid var(--color-primary-500);
+    background: var(--color-primary-500);
+    color: #ffffff;
+
+    &:hover {
+      background: var(--color-primary-600);
+      border-color: var(--color-primary-600);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  &--ghost:disabled:hover {
+    background: transparent;
+  }
+}
+
+:host-context([data-theme='dark']) {
+  .kw__btn--primary {
+    border-color: var(--environment-button-primary-filled-primary);
+    background: var(--environment-button-primary-filled-primary);
+    color: var(--environment-icon-overall-primary-wandb);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.86);
+      border-color: rgba(255, 255, 255, 0.86);
+    }
+  }
+
+  .kw__btn--ghost,
+  .kw__btn--retry {
+    border-color: var(--environment-icon-overall-primary-bandw);
+    color: var(--environment-icon-overall-primary-bandw);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+  }
+}
+
+.kw-table__month-label,
+.kw-table__th {
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--environment-icon-overall-secondary-bandw);
+}
+
+// Summary cards
+.kw__stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 30px;
+  margin-bottom: 32px;
+}
+.kw-stats-error {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 150px;
+  padding: 16px 24px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--environment-cards-overall-cards-primary);
+}
+
+.kw-stats-error__icon {
+  flex: none;
+  color: $kw-debit;
+}
+
+.kw-stats-error__text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.kw-stats-error__title {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 22px;
+  color: $kw-ink-strong;
+}
+
+.kw-stats-error__detail {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 20px;
+  color: $kw-ink-muted;
+}
+
+.kw-stats-error__retry {
+  flex: none;
+}
+
+.kw-stat--skeleton {
+  gap: 12px;
+  justify-content: center;
+  // No hover affordance on a placeholder
+  pointer-events: none;
+}
+
+.kw-skel {
+  display: block;
+  border-radius: 4px;
+  background: rgba(127, 127, 127, 0.22);
+  animation: kw-skel-pulse 1.4s ease-in-out infinite;
+
+  &--label {
+    width: 62%;
+    height: 12px;
+  }
+
+  &--value {
+    width: 40%;
+    height: 26px;
+  }
+
+  &--track {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+  }
+
+  &--hint {
+    width: 78%;
+    height: 10px;
+  }
+}
+
+@keyframes kw-skel-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+// Honour a reduced-motion preference - the placeholder still reads without the pulse
+@media (prefers-reduced-motion: reduce) {
+  .kw-skel {
+    animation: none;
+  }
+}
+
+.kw-stat {
+  display: flex;
+  flex-direction: column;
+  min-height: 150px;
+  padding: 16px 24px;
+  border: 2px solid transparent;
+  border-radius: 12px;
+  background: var(--environment-cards-overall-cards-primary);
+  transition: border-color 0.2s ease, color 0.2s ease;
+
+  &:hover {
+    border-color: var(--color-primary-500);
+    .kw-stat__value,
+    .kw-stat__value-sub {
+      color: var(--environment-icon-overall-primary-bandw);
+    }
+  }
+}
+
+:host-context([data-theme='dark']) {
+  .kw-stat__value,
+  .kw-stat__value-sub {
+    color: var(--environment-icon-overall-primary-bandw);
+  }
+
+  .kw-stat:hover .kw-stat__value,
+  .kw-stat:hover .kw-stat__value-sub {
+    color: var(--color-primary-500);
+  }
+
+  .kw-stat__track {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .kw__sort {
+    background: var(--surface-secondary);
+  }
+
+  .kw__tab--active {
+    color: var(--environment-all-fills-system-warning);
+  }
+
+  // Only the underline takes a background; the button itself stays transparent.
+  .kw__tab--active::after {
+    background: var(--environment-all-fills-system-warning);
+  }
+}
+
+.kw-stat__label {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--environment-icon-overall-secondary-bandw);
+}
+
+.kw-stat__value-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.kw-stat__coin,
+.kw-stat__badge {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+}
+
+.kw-stat__value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 36px;
+  color: var(--color-primary-500);
+}
+
+// "of 300 KP" trailing the headline figure - smaller and muted so the number still leads
+.kw-stat__value-sub {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  color: var(--color-primary-500);
+}
+
+// Monthly conversion bar. The fill shows how much of the cap is already converted.
+.kw-stat__track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--environment-all-fills-black-o-black-o-8-96);
+  overflow: hidden;
+}
+
+.kw-stat--progress {
+  .kw-stat__value-row {
+    margin-bottom: 4px;
+  }
+
+  .kw-stat__track {
+    margin-bottom: 8px;
+  }
+}
+
+.kw-stat__fill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--environment-all-fills-system-warning);
+  transition: width 0.25s ease;
+}
+
+.kw-stat__hint {
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--environment-icon-overall-secondary-bandw);
+
+  &--link {
+    text-align: right;
+  }
+}
+
+.kw-stat__link {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-primary-500);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// Coin history header
+.kw__history-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+}
+
+.kw__history-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+  color: $kw-ink;
+}
+
+.kw__sort {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 223px;
+  height: 40px;
+  padding: 0 8px 0 14px;
+  border: 1px solid var(--environment-border-and-divider-default-1);
+  border-radius: 6px;
+  background: var(--environment-application-backgrounds-card-background);
+  font-size: 14px;
+  color: $kw-ink-strong;
+  cursor: pointer;
+
+  &:hover {
+    border-color: var(--environment-icon-overall-secondary-bandw);
+  }
+}
+
+.kw__sort-caret {
+  width: 24px;
+  height: 24px;
+  font-size: 24px;
+  line-height: 24px;
+  color: $kw-ink-muted;
+}
+
+.kw-period {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.kw-period__radio {
+  position: relative;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 2px solid var(--environment-icon-overall-secondary-bandw);
+  border-radius: 50%;
+
+  &--on {
+    border-color: var(--color-primary-500);
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8px;
+      height: 8px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: var(--color-primary-500);
+    }
+  }
+}
+
+.kw-period__label {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: $kw-ink-strong;
+
+  &--on {
+    font-weight: 700;
+  }
+}
+
+
+.kw__range {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.kw__range-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+
+.kw__range-label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 18px;
+  color: $kw-ink-strong;
+}
+
+.kw__range-field {
+  width: 180px;
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    display: none;
+  }
+  ::ng-deep .mat-mdc-form-field-flex {
+    align-items: center;
+  }
+
+  ::ng-deep .mat-mdc-form-field-infix {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  ::ng-deep .mat-mdc-input-element {
+    text-align: left;
+    margin: 0;
+  }
+
+  // Material leaves the toggle hard against the outline; this is the gap after the icon.
+  ::ng-deep .mat-mdc-form-field-icon-suffix {
+    padding-right: 8px;
+  }
+}
+
+.kw__range-sep {
+  align-self: flex-end;
+  padding-bottom: 11px;
+  font-size: 13px;
+  color: $kw-ink-muted;
+}
+
+.kw__range-error {
+  margin: -8px 0 18px;
+  // Follows the range it belongs to, which is left-aligned now
+  text-align: left;
+  font-size: 12.5px;
+  line-height: 18px;
+  color: var(--environment-all-fills-system-error);
+}
+
+
+.kw__tabs {
+  display: flex;
+  align-items: flex-end;
+  gap: 30px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--environment-border-and-divider-default-1);
+}
+
+.kw__tab {
+  position: relative;
+  padding: 0 2px 12px;
+  border: none;
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  color: $kw-ink-muted;
+  cursor: pointer;
+
+  &:hover {
+    color: $kw-ink-strong;
+  }
+
+  &--active {
+    color: var(--color-primary-500);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -1px;
+      height: 2.5px;
+      border-radius: 2px 2px 0 0;
+      background: var(--color-primary-500);
+    }
+  }
+}
+
+// History table
+.kw-table {
+  overflow-x: auto;
+}
+
+.kw-table__group {
+  min-width: 760px;
+
+  & + & {
+    margin-top: 16px;
+  }
+}
+
+.kw-table__month {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 30px;
+  padding: 0 $kw-row-pad;
+  border: none;
+  border-radius: 8px 8px 0 0;
+  background: var(--environment-cards-overall-cards-primary);
+  cursor: pointer;
+}
+
+.kw-table__month-label {
+  letter-spacing: 0.7px;
+}
+
+.kw-table__month-caret {
+  width: 20px;
+  height: 20px;
+  font-size: 20px;
+  line-height: 20px;
+  color: var(--environment-icon-overall-secondary-bandw);
+  transition: transform 0.2s ease;
+
+  &--collapsed {
+    transform: rotate(-90deg);
+  }
+}
+
+.kw-table__head,
+.kw-table__row {
+  display: grid;
+  grid-template-columns: $kw-grid;
+}
+
+.kw-table__head {
+  align-items: center;
+  padding: 8px 0 8px $kw-row-pad;
+  border-top: 1px solid var(--environment-border-and-divider-default-1);
+  background: var(--environment-cards-overall-cards-primary);
+}
+
+.kw-table__th--num {
+  text-align: center;
+}
+
+.kw-table__row {
+  align-items: start;
+  padding: 16px 0 16px $kw-row-pad;
+  border-bottom: 1px solid $kw-hairline;
+}
+
+.kw-table__date {
+  font-size: 13.5px;
+  line-height: 22px;
+  color: $kw-ink-strong;
+}
+
+.kw-table__desc {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  padding-right: 16px;
+}
+
+.kw-table__desc-title {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 22px;
+  color: $kw-ink-strong;
+}
+
+.kw-table__desc-sub {
+  font-size: 12.5px;
+  line-height: 17px;
+  color: $kw-ink-muted;
+}
+
+.kw-table__num {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 22px;
+  text-align: center;
+  color: $kw-ink-strong;
+
+  &--credit {
+    font-weight: 700;
+    color: $kw-credit;
+  }
+
+  &--debit {
+    font-weight: 700;
+    color: $kw-debit;
+  }
+
+  &--balance {
+    font-weight: 700;
+  }
+}
+
+// States
+.kw__empty {
+  padding: 32px 0;
+  font-size: 14px;
+  color: $kw-ink-muted;
+}
+
+.kw__loader {
+  display: flex;
+  justify-content: center;
+  padding: 32px 0;
+}
+
+// Responsive
+@media screen and (max-width: 1024px) {
+  .kw__stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .kw {
+    padding: 16px 16px 40px;
+  }
+  .kw-stats-error {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .kw__header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .kw__actions {
+    width: 100%;
+
+    .kw__btn {
+      flex: 1;
+      padding: 0 12px;
+    }
+  }
+
+  .kw__stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kw__history-head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .kw__history-filter {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .kw__sort {
+    width: 100%;
+  }
+
+  .kw__range-field {
+    width: 160px;
+  }
+}
+
+@media screen and (max-width: 430px) {
+  .kw__range {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .kw__range-field {
+    width: 100%;
+  }
+
+  .kw__range-sep {
+    align-self: center;
+    padding-bottom: 0;
+  }
+}
+
+@media screen and (max-width: 450px) {
+  .kw__actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .kw__btn {
+      flex: 0 0 auto;
+    }
+  }
+}
+
+::ng-deep [data-theme='dark'] {
+  .kw-period-menu.mat-mdc-menu-panel {
+    background: var(--surface-secondary);
+  }
+
+  // Selected option follows the active tab's orange; the brand colour is too dim on this surface.
+  .kw-period__radio--on {
+    border-color: var(--environment-all-fills-system-warning);
+
+    &::after {
+      background: var(--environment-all-fills-system-warning);
+    }
+  }
+
+  .kw-period__label--on {
+    color: var(--environment-all-fills-system-warning);
+  }
+}

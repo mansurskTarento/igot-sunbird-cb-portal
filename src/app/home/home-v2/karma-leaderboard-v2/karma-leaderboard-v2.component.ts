@@ -33,6 +33,8 @@ export class KarmaLeaderboardV2Component implements OnInit {
   monthName = ''
   year: any = null
   myKarmaPoints = 0
+  /* TODO: populate from the Karma Coin wallet API once it exists; 0 until then */
+  myKarmaCoins = 0
 
   // Celebration banner
   showOverlay = false
@@ -170,6 +172,15 @@ export class KarmaLeaderboardV2Component implements OnInit {
       { id: 'karma-leaderboard-view-karma-points', type: WsEvents.EnumInteractTypes.CLICK, subType: 'view-karma-points' },
       {},
       { module: WsEvents.EnumTelemetrymodules.KARMAPOINTS }
+    )
+  }
+
+  onKarmaCoinsNavBtnClick() {
+    this.close.emit()
+    this.eventSvc.raiseInteractTelemetry(
+      { id: 'wallet-balance', type: WsEvents.EnumInteractTypes.CLICK, subType: WsEvents.EnumInteractSubTypes.PROFILE },
+      {},
+      { pageId: 'page/home' }
     )
   }
 

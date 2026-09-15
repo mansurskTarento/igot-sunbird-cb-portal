@@ -1,0 +1,56 @@
+<div class="kci">
+
+  <header class="kci__header">
+    <h2 class="kci__title">What is Karma Coins?</h2>
+    <button type="button" class="kci__close" (click)="close('close-icon')" aria-label="Close">
+      <mat-icon class="kci__close-icon">close</mat-icon>
+    </button>
+  </header>
+
+  <div class="kci__body">
+
+    <!-- Points vs coins -->
+    <div class="kci__pair">
+      <div class="kci-card">
+        <img class="kci-card__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+        <h3 class="kci-card__title">Karma Points</h3>
+        <p class="kci-card__text">Your Lifetime record. Only ever goes up, Spending never touches it.</p>
+      </div>
+      <div class="kci-card">
+        <img class="kci-card__icon" [src]="icons.karmaCoin" alt="" aria-hidden="true">
+        <h3 class="kci-card__title">Karma Coins</h3>
+        <p class="kci-card__text">Your spendable balance. Use it on marketplace courses.</p>
+      </div>
+    </div>
+
+    <!-- Worked example -->
+    <section class="kci-work">
+      <div class="kci-work__head">
+        <img class="kci-work__icon" [src]="icons.bell" alt="" aria-hidden="true">
+        <h3 class="kci-work__title">How Karma Coins work</h3>
+      </div>
+      <p class="kci-work__text">
+        Every Karma Point you earn also earns you Karma Coin. The points stay as a permanent records of
+        what you achieved. The coins are what you actually spends.
+      </p>
+
+      <ol class="kci-flow">
+        <li class="kci-flow__step" *ngFor="let step of flowSteps">
+          <img class="kci-flow__icon" [src]="step.icon" alt="" aria-hidden="true">
+          <span class="kci-flow__value">{{ step.value }}</span>
+          <span class="kci-flow__caption">{{ step.caption }}</span>
+        </li>
+      </ol>
+
+      <p class="kci-note">
+        <strong class="kci-note__lead">300-point monthly cap</strong>. Up to 300 Karma Points can be
+        redeemed each calendar month. Anything above that can only be redeemed in the following month,
+        so nothing is lost.
+      </p>
+    </section>
+  </div>
+
+  <footer class="kci__footer">
+    <button type="button" class="kci__cta" (click)="close('walkthrough')">Start Walkthrough</button>
+  </footer>
+</div>

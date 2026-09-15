@@ -1,7 +1,13 @@
-import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild, OnDestroy } from '@angular/core'
+// tslint:disable-next-line: max-line-length
+import { ChangeDetectorRef, Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild, OnDestroy } from '@angular/core'
 import { TranslateService } from '@ngx-translate/core'
-import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { EventService, TelemetryService, WsEvents } from '@sunbird-cb/utils-v2'
+import { $t } from '@project-sunbird/telemetry-sdk'
 import { environment } from 'src/environments/environment'
+
+const SECOND_VIDEO_TITLE_KEY = 'tourvideo.whatIsKarmaWallet'
+const SECOND_VIDEO_TITLE_FALLBACK = 'What is Karma Wallet?'
+const TOUR_VIDEO_PAGE_ID = 'page/home'
 
 @Component({
   selector: 'ws-app-tour-video',
@@ -14,15 +20,24 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   @Input() isMobile: any
   @Input() videoProgressTime = 0
   @Input() showOnlyIgotKarmayogi = false
+  @Input() secondVideoEnabled = false
+  @Input() startVideoIndex = 0
   @Output() emitedValue = new EventEmitter<string>()
   @Output() videoPlayed = new EventEmitter()
+  @Output() videosCompleted = new EventEmitter<void>()
   videoPlayedProgress = true
   environment: any
   videoUrl: any
+  videoUrl1: any
+  activeVideoIndex = 0
   // tslint:disable-next-line
   @ViewChild('tourVideoTag') tourVideoTag!: ElementRef<HTMLVideoElement>
 
-  constructor(private eventService: EventService, private translate: TranslateService) {
+  constructor(
+    private eventService: EventService,
+    private translate: TranslateService,
+    private telemetrySvc: TelemetryService,
+    private cdr: ChangeDetectorRef) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
       const lang = localStorage.getItem('websiteLanguage')!
@@ -38,8 +53,14 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.environment = environment
     this.videoUrl = `https://${this.environment.sitePath}/assets/public/content/guide-videos/Website_Video_v1.mp4`
+    // this.videoUrl1 = `https://${this.environment.sitePath}/assets/public/content/guide-videos/Website_Video_v2.mp4`
+    this.videoUrl1 ="https://lorem.video/720p.mp4"
+    this.activeVideoIndex = this.startVideoIndex === 1 ? 1 : 0
+    if (this.activeVideoIndex === 1) {
+      this.raiseKarmaWalletVideoImpression()
+    }
     try {
-      if (this.videoProgressTime > 0) {
+      if (this.videoProgressTime > 0 && this.activeVideoIndex === 0) {
         this.videoPlayedProgress = false
         setTimeout(() => {
           // @ts-ignore
@@ -67,6 +88,46 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
     this.raiseVideStartTelemetry()
   }
 
+  get currentVideoUrl(): any {
+    return this.activeVideoIndex === 1 ? this.videoUrl1 : this.videoUrl
+  }
+
+  get secondVideoTitle(): string {
+    const translated = this.translate.instant(SECOND_VIDEO_TITLE_KEY)
+    if (!translated || translated === SECOND_VIDEO_TITLE_KEY) {
+      return SECOND_VIDEO_TITLE_FALLBACK
+    }
+    return translated
+  }
+  onVideoEnded() {
+    if (this.activeVideoIndex === 1) {
+      this.videosCompleted.emit()
+      return
+    }
+    if (!this.secondVideoEnabled || !this.videoUrl1) {
+      return
+    }
+    this.playSecondVideo()
+  }
+
+  private playSecondVideo() {
+    this.activeVideoIndex = 1
+    this.raiseKarmaWalletVideoImpression()
+    const videoTag: any = this.tourVideoTag && this.tourVideoTag.nativeElement
+    if (videoTag) {
+      videoTag.ontimeupdate = null
+    }
+    this.cdr.detectChanges()
+    if (!videoTag) {
+      return
+    }
+    videoTag.load()
+    const playRequest = videoTag.play()
+    if (playRequest && playRequest.catch) {
+      playRequest.catch(() => { })
+    }
+  }
+
   letsStart() {
     this.emitedValue.emit('start')
   }
@@ -77,6 +138,27 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.raiseVideEndTelemetry(this.tourVideoTag.nativeElement.currentTime)
+  }
+
+  private raiseKarmaWalletVideoImpression() {
+    const pData = this.telemetrySvc.pData || {}
+    try {
+      $t.impression(
+        {
+          pageid: TOUR_VIDEO_PAGE_ID,
+          type: 'view',
+          uri: TOUR_VIDEO_PAGE_ID,
+        },
+        {
+          context: {
+            pdata: { ...pData, id: pData.id },
+            env: "Karma Wallet",
+          },
+          object: {},
+        },
+      )
+    } catch (err) {
+    }
   }
 
   raiseVideStartTelemetry() {

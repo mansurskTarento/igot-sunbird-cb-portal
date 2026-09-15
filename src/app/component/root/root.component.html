@@ -40,7 +40,7 @@
       <span>{{independenceDayBanner?.desktop?.onTopText}}</span>
     </div>
   }
-  <div class="flex gap-0 root-container" [ngClass]="independenceDayBanner?.isEnabled && isHomePage() ? 'banner-active' : ''"
+  <div class="flex gap-0 root-container" [style.background-color]="isHomePage() || usesSurfaceBackground() ? 'var(--surface-primary)' : '#F3F5F9'" [ngClass]="independenceDayBanner?.isEnabled && isHomePage() ? 'banner-active' : ''"
     [style.margin-top]="independenceDayBanner?.isEnabled && isHomePage() && (isXSmall$ | async) === false ? '48px' : '0px'">
     @if ((isXSmall$ | async) === false && showMenuBardetails && (isTabView$ | async) === false) {
     <div class="w-fit">
@@ -52,8 +52,8 @@
     }
     <div class=""
       [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (sidebarPushesContent() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
-      <app-tour *ngIf="loggedinUser && !showTour && !disableHeightOnTop && isDialogEnabled('tour')"
-        [showOnlyIgotKarmayogi]="true"></app-tour>
+      <app-tour *ngIf="loggedinUser && (!showTour || karmaWalletVideoPending) && !disableHeightOnTop && isDialogEnabled('tour')"
+        [showOnlyIgotKarmayogi]="true" (closed)="karmaWalletVideoPending = false"></app-tour>
       <app-no-connection-v2></app-no-connection-v2>
       <mat-progress-bar mode="indeterminate" color="warn" class="route-change" *ngIf="routeChangeInProgress">
       </mat-progress-bar>

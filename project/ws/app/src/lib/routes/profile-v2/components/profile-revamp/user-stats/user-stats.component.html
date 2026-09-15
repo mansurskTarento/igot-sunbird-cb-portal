@@ -8,7 +8,9 @@
           <mat-icon class="infoIcon" matTooltip="{{stat?.stateInfo}}">info_outline</mat-icon>
           </div>
         </ng-container>
-        <ng-container *ngIf="stat?.totalPoints > 0">
+        <!-- Wallet Balance shows the chevron at a zero count too, same reason as its View All
+             on desktop: an empty wallet is exactly when someone wants to open it. -->
+        <ng-container *ngIf="stat?.totalPoints > 0 || stat?.identifier === 'walletBalance'">
           <div class="block md:hidden rightArrowDiv"  (click)="viewAll(stat)">
             <mat-icon class="right-arrow" >chevron_right</mat-icon>
           </div>
@@ -21,7 +23,10 @@
           <div class="statPoints">{{stat?.totalPoints}}</div>
         </div>
 
-      <ng-container *ngIf="((stat?.totalPoints > 1) || stat?.state === 'My Badges') && !isNotMyUserAndIgotOrg">
+      <!-- Wallet Balance is listed alongside My Badges because both need View All even at a zero
+           count - a wallet with no coins is exactly when someone wants to open it. -->
+      <ng-container
+        *ngIf="((stat?.totalPoints > 1) || stat?.state === 'My Badges' || stat?.identifier === 'walletBalance') && !isNotMyUserAndIgotOrg">
           <div class="viewAll hidden md:block">
             <a (click)="viewAll(stat)" >{{'NetworkV2Profile.viewAll' | translate}}</a>
           </div>

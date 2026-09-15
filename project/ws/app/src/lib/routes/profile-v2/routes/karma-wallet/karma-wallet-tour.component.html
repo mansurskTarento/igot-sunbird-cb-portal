@@ -1,0 +1,41 @@
+@if (active && step) {
+<div class="kwt" role="dialog" aria-modal="true" [attr.aria-label]="step.title">
+  <div class="kwt__spot" [style.top.px]="spot.top" [style.left.px]="spot.left"
+    [style.width.px]="spot.width" [style.height.px]="spot.height"
+    [style.border-radius.px]="radius"></div>
+
+  <div class="kwt__popover" [class]="'kwt__popover--' + placement"
+    [style.top.px]="popover.top" [style.left.px]="popover.left"
+    [style.width.px]="popoverWidth">
+
+    <span class="kwt__arrow"
+      [style.left.px]="placement === 'bottom' || placement === 'top' ? arrowOffset : null"
+      [style.top.px]="placement === 'left' || placement === 'right' ? arrowOffset : null"></span>
+
+    <div class="kwt__head">
+      <span class="kwt__badge">STEP {{ index + 1 }} OF {{ steps.length }}</span>
+      <span class="kwt__dots" aria-hidden="true">
+        @for (s of steps; track $index) {
+        <span class="kwt__dot" [class.kwt__dot--on]="$index === index"></span>
+        }
+      </span>
+    </div>
+
+    <h3 class="kwt__title">{{ step.title }}</h3>
+    <div class="kwt__body" [innerHTML]="step.body"></div>
+
+    <div class="kwt__actions">
+      @if (!isLast) {
+      <button type="button" class="kwt__link" (click)="skip()">Skip Tour</button>
+      }
+      <span class="kwt__spacer"></span>
+      @if (!isFirst) {
+      <button type="button" class="kwt__btn kwt__btn--ghost" [disabled]="busy"
+        (click)="back()">Back</button>
+      }
+      <button type="button" class="kwt__btn kwt__btn--primary" [disabled]="busy"
+        (click)="next()">{{ isLast ? 'Ok' : 'Next' }}</button>
+    </div>
+  </div>
+</div>
+}

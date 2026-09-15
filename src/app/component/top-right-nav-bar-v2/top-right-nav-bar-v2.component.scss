@@ -225,3 +225,107 @@
     display: none !important;
   }
 }
+
+$kc-font: 'Noto Sans', sans-serif;
+$kc-width: 164px;
+$kc-height: 30px;
+$kc-violet-min: 60px;
+
+.karma-coins-chip {
+  --kc-fill: var(--color-primary-500);
+  --kc-on-fill: var(--environment-icon-overall-primary-wandb);
+  --kc-surface: var(--environment-application-backgrounds-card-background);
+  --kc-label: var(--color-primary-500);
+  --kc-ring: rgba(0, 0, 0, 0.08);
+  --kc-placeholder: rgba(255, 255, 255, 0.32);
+
+  display: inline-flex;
+  align-items: stretch;
+  width: auto;
+  min-width: $kc-width;
+  height: $kc-height;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--kc-surface);
+  font-family: $kc-font;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--kc-ring), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 0 0 1px var(--kc-ring), 0 2px 6px rgba(0, 0, 0, 0.16);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--kc-fill);
+    outline-offset: 2px;
+  }
+
+  &__amount {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex: 0 0 auto;
+    min-width: $kc-violet-min;
+    padding: 0 6px;
+    border-radius: 999px 0 0 999px;
+    background: var(--kc-fill);
+  }
+
+  &__icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  &__value {
+    font: 700 13px/18px $kc-font;
+    color: var(--kc-on-fill);
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 0 auto;
+    padding: 0 10px;
+    font: 500 12px/16px $kc-font;
+    color: var(--kc-label);
+  }
+
+  &__placeholder {
+    width: 28px;
+    height: 12px;
+    border-radius: 6px;
+    background: var(--kc-placeholder);
+  }
+}
+
+:host-context([data-theme='dark']) {
+  .karma-coins-chip {
+    --kc-fill: var(--environment-button-primary-filled-primary);
+    --kc-surface: var(--environment-cards-overall-cards-primary);
+    --kc-label: var(--environment-icon-overall-primary-bandw);
+    --kc-ring: rgba(255, 255, 255, 0.16);
+    --kc-placeholder: rgba(0, 0, 0, 0.24);
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .karma-coins-chip {
+    min-width: 0;
+
+    &__amount {
+      flex: 1;
+      border-radius: 999px;
+    }
+
+    &__label {
+      display: none;
+    }
+  }
+}

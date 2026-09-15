@@ -119,7 +119,7 @@
   z-index: 100;
   background: var(--surface-primary);
   margin: 0 -24px;
-  padding: 26px 24px 0;
+  padding: 16px 24px 0;
 }
 
 .klb-close-btn {
@@ -147,8 +147,8 @@
 }
 
 .klb-top-title {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-bandw-black-display);
   margin-bottom: 16px;
   font-family: 'Noto Sans';
@@ -194,8 +194,8 @@
 }
 
 .klb-earned-val {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-bandw-black-display);
   line-height: 1.3;
 }
@@ -219,6 +219,25 @@
     width: 22px;
     height: 22px;
   }
+}
+
+// Karma Coins block spacing, per the design: 24 above the heading, 16 from the description to
+// the earned row, 24 below it. The two paddings meet between the description and the row, so
+// the section keeps the whole 16 and the header contributes nothing on that edge.
+// Scoped to --coins so the Karma Points block above keeps its original rhythm.
+.klb-top-section--coins {
+  padding: 24px 0 16px;
+}
+
+.klb-header--coins {
+  padding: 0 0 24px;
+}
+
+// 24px above the divider that separates Karma Points from Karma Coins, matching the gap below
+// the coins row. Only the bottom edge changes - the 14px on top keeps the existing gap from
+// the description above it.
+.klb-header--points {
+  padding-bottom: 24px;
 }
 
 .klb-divider {

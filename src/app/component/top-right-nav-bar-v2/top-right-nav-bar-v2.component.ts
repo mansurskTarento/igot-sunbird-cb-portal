@@ -21,7 +21,7 @@ import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection'
 import { SurveyPopupComponent } from '@ws/app'
-import { VerificationRequestDialogComponent } from '@ws/app'
+import { VerificationRequestDialogComponent, KarmaWalletService } from '@ws/app'
 import { RootService } from '../root/root.service'
 import { NotificationsService } from '../../services/notifications.service'
 import { ThemeService } from '@sunbird-cb/design-system'
@@ -48,6 +48,7 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
   ],
   templateUrl: './top-right-nav-bar-v2.component.html',
   styleUrls: ['./top-right-nav-bar-v2.component.scss'],
+  providers: [KarmaWalletService],
 })
 export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   // Inputs as signals
@@ -66,12 +67,27 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   roles = signal<string[]>([])
   enableSupportAI = signal(false)
   fontSizeLevel = signal(2) // 0=x-small, 1=small, 2=normal, 3=large, 4=x-large
+  karmaCoins = signal<number | null>(null)
 
   // Computed
   rightNavConfig = computed(() => {
     const input = this.rightNavConfigInput()
     return input?.topRightNavConfig ? input.topRightNavConfig : input
   })
+
+  showKarmaWallet = computed(() => {
+    if (this.item()?.enabled === false) {
+      return false
+    }
+    const sections = this.rightNavConfig()
+    if (!Array.isArray(sections)) {
+      return true
+    }
+    const section = sections.find((s: any) => s?.section === 'karma-wallet')
+    return !section || section.active !== false
+  })
+
+  walletTooltip = computed(() => this.item()?.tooltipText || 'Karma Wallet')
 
   fontLabel = computed(() => this.fontLabels[this.fontSizeLevel()])
 
@@ -93,6 +109,7 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   private rootService = inject(RootService)
   themeSvc = inject(ThemeService)
   private btnSettingsSvc = inject(BtnSettingsService)
+  private karmaWalletSvc = inject(KarmaWalletService)
 
   private dialogRef: any
   private subs: Subscription[] = []
@@ -147,6 +164,20 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
         this.zohoHtml.set(res)
       })
     )
+
+    this.loadKarmaCoins()
+  }
+
+  private loadKarmaCoins() {
+    if (this.item()?.type !== 'walletButton') {
+      return
+    }
+    this.subs.push(
+      this.karmaWalletSvc.getWalletSummary().subscribe({
+        next: summary => this.karmaCoins.set(summary?.walletBalance || 0),
+        error: () => this.karmaCoins.set(0),
+      })
+    )
   }
 
   ngOnDestroy() {
@@ -155,6 +186,15 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
+  }
+
+  goToKarmaWallet(): void {
+    this.events.raiseInteractTelemetry(
+      { type: 'click', subType: 'home-page-header', id: 'wallet-icon' },
+      {},
+      { pageId: 'page/home' }
+    )
+    this.router.navigate(['/app/person-profile/karma-wallet'])
   }
 
   onBellClick() {

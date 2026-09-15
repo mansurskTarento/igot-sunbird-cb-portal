@@ -1,0 +1,250 @@
+
+$kwt-font: 'Noto Sans', sans-serif;
+$kwt-accent: var(--color-secondary-500);   // the highlight ring
+$kwt-dim: rgba(15, 18, 28, 0.55);
+$kwt-z: 2147483647;
+
+.kwt {
+  position: fixed;
+  inset: 0;
+  z-index: $kwt-z;
+  pointer-events: auto;
+  cursor: default;
+  font-family: $kwt-font;
+}
+
+.kwt__spot {
+  position: fixed;
+  box-shadow: 0 0 0 9999px $kwt-dim;
+  border: 2px solid $kwt-accent;
+  pointer-events: none;
+  transition: top 0.2s ease, left 0.2s ease, width 0.2s ease, height 0.2s ease;
+}
+
+$kwt-bar: 6px;
+$kwt-radius: 10px;
+$kwt-arrow: 9px;
+
+.kwt__popover {
+  position: fixed;
+  width: 360px;
+  max-width: calc(100vw - 24px);
+  padding: 16px;
+  background: var(--environment-application-backgrounds-card-background, #fff);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.24);
+  pointer-events: auto;
+
+  // popover sits below the target -> target is above it -> bar on top
+  &--bottom {
+    border-top: $kwt-bar solid $kwt-accent;
+    border-radius: 0 0 $kwt-radius $kwt-radius;
+  }
+
+  &--top {
+    border-bottom: $kwt-bar solid $kwt-accent;
+    border-radius: $kwt-radius $kwt-radius 0 0;
+  }
+
+  // popover sits left of the target -> target is to its right -> bar on the right
+  &--left {
+    border-right: $kwt-bar solid $kwt-accent;
+    border-radius: $kwt-radius 0 0 $kwt-radius;
+  }
+
+  &--right {
+    border-left: $kwt-bar solid $kwt-accent;
+    border-radius: 0 $kwt-radius $kwt-radius 0;
+  }
+}
+
+.kwt__arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border: $kwt-arrow solid transparent;
+
+  .kwt__popover--bottom & {
+    top: -($kwt-arrow * 2 + $kwt-bar);
+    border-bottom-color: $kwt-accent;
+    transform: translateX(-$kwt-arrow);
+  }
+
+  .kwt__popover--top & {
+    bottom: -($kwt-arrow * 2 + $kwt-bar);
+    border-top-color: $kwt-accent;
+    transform: translateX(-$kwt-arrow);
+  }
+
+  .kwt__popover--left & {
+    right: -($kwt-arrow * 2 + $kwt-bar);
+    border-left-color: $kwt-accent;
+    transform: translateY(-$kwt-arrow);
+  }
+
+  .kwt__popover--right & {
+    left: -($kwt-arrow * 2 + $kwt-bar);
+    border-right-color: $kwt-accent;
+    transform: translateY(-$kwt-arrow);
+  }
+}
+
+.kwt__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.kwt__badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--color-primary-o-8, rgba(27, 76, 161, 0.08));
+  font: 600 11px/16px $kwt-font;
+  letter-spacing: 0.04em;
+  color: var(--text-bandw-black-body, rgba(0, 0, 0, 0.8));
+}
+
+.kwt__dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.kwt__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  border: 1px solid var(--text-bandw-black-fine-print, rgba(0, 0, 0, 0.4));
+
+  // The active dot is a stadium rather than a larger circle, so the row does not reflow
+  &--on {
+    width: 22px;
+    border-color: transparent;
+    background: var(--environment-icon-overall-primary-bandw, #000);
+  }
+}
+
+.kwt__title {
+  margin: 0 0 8px;
+  font: 700 16px/22px $kwt-font;
+  color: var(--environment-icon-overall-primary-bandw, #000);
+}
+
+.kwt__body {
+  font: 400 13px/20px $kwt-font;
+  color: var(--text-bandw-black-body, rgba(0, 0, 0, 0.8));
+
+  ::ng-deep ul {
+    margin: 0;
+    padding-left: 18px;
+    list-style: disc;
+  }
+
+  ::ng-deep li {
+    margin-bottom: 4px;
+  }
+}
+
+.kwt__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.kwt__spacer {
+  flex: 1;
+}
+
+.kwt__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: 600 13px/20px $kwt-font;
+  color: var(--color-primary-500, #1b4ca1);
+  cursor: pointer;
+}
+
+.kwt__btn {
+  min-width: 74px;
+  padding: 7px 16px;
+  border-radius: 6px;
+  font: 600 13px/20px $kwt-font;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+
+  &--ghost {
+    border: 1px solid var(--color-primary-500, #1b4ca1);
+    background: transparent;
+    color: var(--color-primary-500, #1b4ca1);
+  }
+
+  &--primary {
+    border: 1px solid var(--color-primary-500, #1b4ca1);
+    background: var(--color-primary-500, #1b4ca1);
+    color: var(--environment-icon-overall-primary-wandb, #fff);
+  }
+}
+
+:host-context([data-theme='dark']) {
+  .kwt__popover {
+    // background: var(--environment-cards-overall-cards-primary, #0f121c);
+  }
+  .kwt__badge {
+    background: rgba(255, 255, 255, 0.14);
+    color: var(--environment-icon-overall-primary-bandw);
+  }
+
+  // Same problem, same fix: the inactive dot's border token does not flip either
+  .kwt__dot {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .kwt__btn--primary {
+    border-color: var(--environment-button-primary-filled-primary);
+    background: var(--environment-button-primary-filled-primary);
+    color: var(--environment-icon-overall-primary-wandb);
+  }
+
+  .kwt__btn--ghost,
+  .kwt__link {
+    border-color: var(--environment-icon-overall-primary-bandw);
+    color: var(--environment-icon-overall-primary-bandw);
+  }
+}
+
+@media screen and (max-width: 600px) {
+  // Width comes from the component - see popoverWidth
+  .kwt__popover {
+    padding: 14px;
+    width: 316px !important;
+  }
+
+  .kwt__title {
+    font-size: 15px;
+    line-height: 21px;
+  }
+
+  // Skip / Back / Next together overflow a 360px phone at the desktop metrics
+  .kwt__actions {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .kwt__btn {
+    min-width: 0;
+    padding: 7px 12px;
+  }
+}
+
+::ng-deep body.kwt-tour-active {
+
+  .chatbot-icon-container,
+  .bottom-nav-bar {
+    display: none !important;
+  }
+}

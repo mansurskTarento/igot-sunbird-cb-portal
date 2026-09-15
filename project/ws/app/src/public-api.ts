@@ -49,6 +49,7 @@ export * from './lib/routes/profile-v3/components/dialog-box/dialog-box.componen
 export * from './lib/routes/user-profile/services/user-profile.service'
 export * from './lib/routes/events/routes/events-calendar/events-calendar.module'
 export * from './lib/routes/profile-v2/services/profile-v2.servive'
+export * from './lib/routes/profile-v2/routes/karma-wallet/karma-wallet.service'
 export * from './lib/routes/peer-validation/components/survey-popup/survey-popup.component'
 export * from './lib/routes/peer-validation/components/verification-request-dialog/verification-request-dialog.component'
 export * from './lib/routes/see-all/services/see-all.service'

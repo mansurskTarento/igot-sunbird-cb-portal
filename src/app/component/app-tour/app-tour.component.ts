@@ -1,4 +1,4 @@
-import { Component, HostListener, Input, OnChanges } from '@angular/core'
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core'
 import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'igot-cb-tour-guide'
 import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { UserProfileService } from '@ws/app'
@@ -25,6 +25,10 @@ export class AppTourComponent implements OnChanges {
   showVideoTour = false
   isMobile = false
   hideCloseBtn = false
+  karmaWalletVideoPending = false
+  getStartedPending = true
+  startVideoIndex = 0
+  @Output() closed = new EventEmitter<void>()
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     if (event.key === 'Escape') {
       this.skipTour('', '')
@@ -175,12 +179,15 @@ export class AppTourComponent implements OnChanges {
       this.translate.use(lang)
     }
     this.isMobile = this.utilitySvc.isMobile
+    this.readTourProgress()
     this.raiseGetStartedStartTelemetry()
   }
   ngOnChanges(): void {
     if (this.showOnlyIgotKarmayogi) {
       this.starVideoPlayer()
-      this.updateTourstatus({ visited: true, skipped: false })
+      if (this.getStartedPending) {
+        this.updateTourstatus({ visited: true, skipped: false })
+      }
     }
   }
   updateTourstatus(status: any) {
@@ -193,6 +200,48 @@ export class AppTourComponent implements OnChanges {
     this.userProfileSvc.editProfileDetails(reqUpdates).subscribe((_res: any) => {
       // console.log("re s ", res )
     })
+  }
+
+  // profileDetails as it arrives from /apis/proxies/v8/api/user/v2/read
+  private karmaWalletTourStatus(): any {
+    const profileDetails = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+    return (profileDetails && profileDetails.karma_wallet_tour) || {}
+  }
+
+  private readTourProgress(): void {
+    const profileDetails = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+    const getStarted = (profileDetails && profileDetails.get_started_tour_v2) || {}
+    this.getStartedPending = !(getStarted.visited || getStarted.skipped)
+    this.karmaWalletVideoPending = this.karmaWalletTourStatus().video_visited !== true
+    this.startVideoIndex = (!this.getStartedPending && this.karmaWalletVideoPending) ? 1 : 0
+  }
+  onVideosCompleted(): void {
+    this.karmaWalletVideoPending = false
+    const karmaWalletTour = { visited: false, skipped: false, video_visited: true }
+    const reqUpdates = {
+      request: {
+        userId: this.configSvc.unMappedUser.id,
+        profileDetails: { karma_wallet_tour: karmaWalletTour },
+      },
+    }
+    this.userProfileSvc.editProfileDetails(reqUpdates).subscribe((_res: any) => {
+      // console.log("re s ", res )
+    })
+    // keep the in-memory profile in step, the read api only runs once per session
+    if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
+      this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
+    }
+    this.raiseTemeletyInterat('karma-wallet-video-completed', 'video')
+    if (!this.showOnlyIgotKarmayogi) {
+      return
+    }
+    this.raiseGetStartedEndTelemetry()
+    this.configSvc.updateTourGuideMethod(true)
+    this.noScroll = false
+    this.showpopup = false
+    this.showVideoTour = false
+    this.closePopupIcon = false
+    this.closed.emit()
   }
 
   emitFromVideo(event: any) {
@@ -229,7 +278,9 @@ export class AppTourComponent implements OnChanges {
 
   public skipTour(screen: string, subType: string): void {
     // localStorage.setItem('tourGuide',JSON.stringify({'disable': true}) )
-    this.updateTourstatus({ visited: true, skipped: true })
+    if (this.getStartedPending) {
+      this.updateTourstatus({ visited: true, skipped: true })
+    }
     this.configSvc.updateTourGuideMethod(true)
     if (screen.length > 0 && subType.length > 0) {
       this.raiseTemeletyInterat(screen, subType)
@@ -247,12 +298,13 @@ export class AppTourComponent implements OnChanges {
     this.showVideoTour = false
     this.showCompletePopup = false
     this.closePopupIcon = false
+    this.closed.emit()
     setTimeout(() => {
       // tslint:disable-next-line
       this.guidedTourService && this.guidedTourService.skipTour()
       // tslint:disable-next-line: align
     }, 2000)
-    if (this.isMobile) {
+    if (this.isMobile && this.getStartedPending) {
       // tslint:disable-next-line: align
       // @ts-ignore
       setTimeout(() => {
@@ -275,6 +327,7 @@ export class AppTourComponent implements OnChanges {
   }
 
   onCongrats(): void {
+    this.closed.emit()
     this.showCompletePopup = false
     localStorage.setItem('tourGuide', JSON.stringify({ 'disable': true }))
     this.configSvc.updateTourGuideMethod(true)

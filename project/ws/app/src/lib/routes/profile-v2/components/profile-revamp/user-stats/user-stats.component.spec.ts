@@ -1,10 +1,21 @@
 import { UserStatsComponent } from './user-stats.component';
 import { UserStats } from '../../../models/profile-revamp.model';
 import { Router } from '@angular/router';
+import { EventService } from '@sunbird-cb/utils-v2';
 
 describe('UserStatsComponent', () => {
   let component: UserStatsComponent;
   let mockRouter: jest.Mocked<Router>;
+  let mockEventSvc: { raiseInteractTelemetry: jest.Mock };
+
+  /* The Wallet Balance card as the profile page builds it */
+  const walletStat: UserStats = {
+    state: 'NetworkV2Profile.walletBalance',
+    totalPoints: '0',
+    iconUrl: '/assets/icons/karmawallet-v2/karmacoin.svg',
+    vewAllUrl: '/app/person-profile/karma-wallet',
+    identifier: 'walletBalance'
+  };
 
   beforeEach(() => {
     // Create mock router with proper typing
@@ -12,8 +23,10 @@ describe('UserStatsComponent', () => {
       navigateByUrl: jest.fn()
     } as any;
 
+    mockEventSvc = { raiseInteractTelemetry: jest.fn() };
+
     // Create component instance
-    component = new UserStatsComponent(mockRouter);
+    component = new UserStatsComponent(mockRouter, mockEventSvc as unknown as EventService);
 
     // Initialize component properties
     component.userStats = [];
@@ -603,4 +616,50 @@ describe('UserStatsComponent', () => {
       expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/special-chars?param=value&other=test');
     });
   });
+
+  describe('Wallet Balance telemetry', () => {
+    it('should raise the interact event when Wallet Balance View All is clicked', () => {
+      component.viewAll(walletStat);
+
+      expect(mockEventSvc.raiseInteractTelemetry).toHaveBeenCalledTimes(1);
+      const [edata, object, pageContext] = mockEventSvc.raiseInteractTelemetry.mock.calls[0];
+
+      /* edata, as the analytics spec asks for it */
+      expect(edata).toEqual({
+        type: 'click',
+        subType: 'profile',
+        id: 'wallet-balance'
+      });
+      expect(object).toEqual({});
+      /* pageid comes off the context, not off edata - the listener reads it from
+         data.pageContext.pageId. Without this the route would give '/app/person-profile/me'. */
+      expect(pageContext).toEqual({ pageId: 'app/person-profile/me' });
+    });
+
+    it('should still navigate to the wallet after raising the event', () => {
+      component.viewAll(walletStat);
+
+      expect(mockRouter.navigateByUrl).toHaveBeenCalledWith('/app/person-profile/karma-wallet');
+    });
+
+    it('should raise nothing for the other stat cards', () => {
+      component.viewAll({
+        state: 'NetworkV2Profile.myKarmaPoints',
+        totalPoints: '25',
+        iconUrl: './assets/icons/karma-point-logo.jpg',
+        vewAllUrl: 'app/person-profile/karma-points',
+        identifier: 'karmaPoints'
+      });
+
+      expect(mockEventSvc.raiseInteractTelemetry).not.toHaveBeenCalled();
+    });
+
+    it('should raise the event even when the card has no url to navigate to', () => {
+      component.viewAll({ ...walletStat, vewAllUrl: '' });
+
+      expect(mockEventSvc.raiseInteractTelemetry).toHaveBeenCalledTimes(1);
+      expect(mockRouter.navigateByUrl).not.toHaveBeenCalled();
+    });
+  });
+
 });
