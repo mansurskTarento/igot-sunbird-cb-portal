@@ -285,13 +285,13 @@ export class WidgetUserService {
         const uniqueUsersByID = _.uniqBy(sortedData, 'identifier')
         const sortedByEndDate = _.orderBy(uniqueUsersByID, ['endDate'], ['asc'])
         const sortedByStatus = _.orderBy(sortedByEndDate, ['contentStatus'], ['asc'])
-        localStorage.setItem('cbpData', JSON.stringify(sortedByStatus))
+        // localStorage.setItem('cbpData', JSON.stringify(sortedByStatus))
         return sortedByStatus
       }
-      localStorage.setItem('cbpData', JSON.stringify(contentNew))
+      // localStorage.setItem('cbpData', JSON.stringify(contentNew))
       return contentNew
     }
-    localStorage.setItem('cbpData', JSON.stringify([]))
+    // localStorage.setItem('cbpData', JSON.stringify([]))
     return []
   }
 
