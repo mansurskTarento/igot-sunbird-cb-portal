@@ -677,7 +677,19 @@
           </div>
         </ng-container>
 
-        <ng-container *ngIf="profileForm.get('civilServiceType').value && profileForm.get('isCadre').value">
+        <ng-container *ngIf="showStateSelection">
+          <div class="flex flex-col profile-control">
+            <div class="lable required">{{ 'NetworkV2Profile.state' | translate }}</div>
+            <mat-form-field appearance="outline">
+              <mat-select formControlName="civilServiceState" (selectionChange)="onStateSelect($event.value)">
+                <mat-option *ngFor="let stateName of civilServiceStateNames" [value]="stateName">{{ stateName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="showServiceSelection">
           <div class="flex flex-col profile-control">
             <div class="lable required">{{ 'NetworkV2Profile.services' | translate }}</div>
             <mat-form-field appearance="outline">

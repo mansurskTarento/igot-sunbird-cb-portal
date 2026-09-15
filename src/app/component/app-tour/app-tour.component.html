@@ -85,6 +85,23 @@
 </div>
 
 <!-- <ngx-guided-tour backText="Previous" doneText="Finish" progressIndicatorLocation="inside-next-button"></ngx-guided-tour> -->
+<!-- Karma wallet coach mark: pinned under the header wallet entry point -->
+<div *ngIf="showWalletCoachMark" class="kw-coach" [ngClass]="{'requires-no-scroll': noScroll}">
+  <div class="kw-coach__spot" [style.top.px]="walletSpot.top" [style.left.px]="walletSpot.left"
+    [style.width.px]="walletSpot.width" [style.height.px]="walletSpot.height"></div>
+  <div class="kw-coach__card" role="dialog" aria-label="Your Karma Wallet" [style.top.px]="walletCard.top"
+    [style.left.px]="walletCard.left" [style.width.px]="walletCard.width">
+    <span class="kw-coach__arrow" [style.left.px]="walletCard.arrowLeft"></span>
+    <div class="kw-coach__title">Your Karma Wallet</div>
+    <p class="kw-coach__body">Tap here to manage your Karma Coins&mdash;view your coin history, convert points, and
+      redeem coins for Marketplace courses.</p>
+    <div class="kw-coach__actions">
+      <button type="button" class="kw-coach__btn kw-coach__btn--ghost" (click)="skipWalletTour()">Skip</button>
+      <button type="button" class="kw-coach__btn kw-coach__btn--primary" (click)="exploreWalletTour()">Explore</button>
+    </div>
+  </div>
+</div>
+
 <ngx-guided-tour nextText="{{'tour.next' | translate}}" backText="{{'tour.previous' | translate}}"
   doneText="{{'tour.finish' | translate}}" progressIndicatorLocation="dots"></ngx-guided-tour>
 

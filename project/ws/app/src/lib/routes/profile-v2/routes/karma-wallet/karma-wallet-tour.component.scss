@@ -11,6 +11,13 @@ $kwt-z: 2147483647;
   pointer-events: auto;
   cursor: default;
   font-family: $kwt-font;
+  // the overlay swallows wheel / touch scrolling as well as clicks
+  touch-action: none;
+  overscroll-behavior: contain;
+}
+
+::ng-deep body.kwt-scroll-lock {
+  overflow: hidden !important;
 }
 
 .kwt__spot {

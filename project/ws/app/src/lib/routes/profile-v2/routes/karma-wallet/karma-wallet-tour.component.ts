@@ -11,6 +11,7 @@ const ARROW_INSET = 22
 const NARROW_VIEWPORT = 600
 const NARROW_GUTTER = 8
 const POPOVER_WIDTH = 360
+const SETTLE_DELAYS = [200, 500, 900]
 
 interface IRect { top: number; left: number; width: number; height: number }
 
@@ -40,6 +41,8 @@ export class KarmaWalletTourComponent implements OnDestroy {
   private target: HTMLElement | null = null
   private basePlacement: TKarmaTourPlacement = 'bottom'
   private measureHandle = 0
+  private settleHandles: number[] = []
+  private bodyPaddingRight: string | null = null
 
   constructor(private cdr: ChangeDetectorRef, private zone: NgZone, private host: ElementRef) { }
 
@@ -64,6 +67,7 @@ export class KarmaWalletTourComponent implements OnDestroy {
     this.active = true
     document.body.appendChild(this.host.nativeElement)
     document.body.classList.add('kwt-tour-active')
+    this.lockScroll()
     await this.enterStep()
   }
 
@@ -124,6 +128,8 @@ export class KarmaWalletTourComponent implements OnDestroy {
 
   ngOnDestroy() {
     this.active = false
+    this.clearSettleMeasures()
+    this.unlockScroll()
     if (this.measureHandle) {
       cancelAnimationFrame(this.measureHandle)
       this.measureHandle = 0
@@ -156,6 +162,42 @@ export class KarmaWalletTourComponent implements OnDestroy {
     await this.nextFrame()
     await this.nextFrame()
     this.measure()
+    this.scheduleSettleMeasures()
+  }
+
+  private scheduleSettleMeasures() {
+    this.clearSettleMeasures()
+    SETTLE_DELAYS.forEach(delay => {
+      this.settleHandles.push(window.setTimeout(() => {
+        if (this.active) {
+          this.measure()
+        }
+        // tslint:disable-next-line: align
+      }, delay))
+    })
+  }
+
+  private clearSettleMeasures() {
+    this.settleHandles.forEach(handle => clearTimeout(handle))
+    this.settleHandles = []
+  }
+
+  /* overflow: hidden also blocks scrollBy, so the lock comes off for the one call */
+  private lockScroll() {
+    const gutter = window.innerWidth - document.documentElement.clientWidth
+    if (gutter > 0) {
+      this.bodyPaddingRight = document.body.style.paddingRight
+      document.body.style.paddingRight = `${gutter}px`
+    }
+    document.body.classList.add('kwt-scroll-lock')
+  }
+
+  private unlockScroll() {
+    document.body.classList.remove('kwt-scroll-lock')
+    if (this.bodyPaddingRight !== null) {
+      document.body.style.paddingRight = this.bodyPaddingRight
+      this.bodyPaddingRight = null
+    }
   }
 
   private scrollTargetBelowPopover() {
@@ -168,7 +210,9 @@ export class KarmaWalletTourComponent implements OnDestroy {
     const desiredTop = Math.min(h + ARROW_GAP + SPOT_PAD + VIEWPORT_MARGIN, vh * 0.6)
     const delta = this.target.getBoundingClientRect().top - desiredTop
     if (Math.abs(delta) > 4) {
+      document.body.classList.remove('kwt-scroll-lock')
       window.scrollBy(0, delta)
+      document.body.classList.add('kwt-scroll-lock')
     }
   }
 
@@ -294,7 +338,9 @@ export class KarmaWalletTourComponent implements OnDestroy {
 
   private close(reason: 'completed' | 'skipped') {
     this.active = false
+    this.clearSettleMeasures()
     this.target = null
+    this.unlockScroll()
     document.body.classList.remove('kwt-tour-active')
     this.finished.emit(reason)
     this.cdr.detectChanges()

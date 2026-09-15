@@ -23,6 +23,9 @@ import { NOTIFICATION_TIME } from '@ws/author'
 import { UserProfileService } from '../../../user-profile/services/user-profile.service'
 import { TranslateService } from '@ngx-translate/core'
 import { ConfigDetails } from '@sunbird-cb/consumption'
+
+/** Form control holding the state of a state-scoped civil service type. */
+const CIVIL_SERVICE_STATE = 'civilServiceState'
 // import { Router } from '@angular/router';
 
 @Component({
@@ -79,6 +82,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   showBatchForNoCadre = true
   civilServiceTypeId = ''
   civilServiceId = ''
+  civilServiceStateId = ''
   cadreId = ''
   noCadreDetails = true
   civilServiceData: any
@@ -98,6 +102,12 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   exclusionYear: any
   selectedCadreName: any
   selectedCadre: any
+  // a "State Service" style civil service type nests its services one level deeper,
+  // under stateList[].serviceList, so a state dropdown sits between type and service
+  civilServiceStateList: any[] = []
+  civilServiceStateNames: string[] = []
+  hasCivilServiceStates = false
+  selectedCivilServiceState: any
   nodalEmail: string = ''
   nodalName: string = ''
 
@@ -719,17 +729,20 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   //#region (other details)
   private createOtherDetailsForm(): void {
     const dob = _.get(this.profileDetails, 'dob', '')
+    const gender = String(_.get(this.profileDetails, 'gender', '') || '')?.toLowerCase()
+    const category = String(_.get(this.profileDetails, 'category', '') || '')?.toLowerCase()
     this.profileForm = this.fb.group({
       employeeCode: [_.get(this.profileDetails, 'employeeCode', ''), [Validators.pattern(EMP_ID_PATTERN)]],
       primaryEmail: [_.get(this.profileDetails, 'primaryEmail', ''), [Validators.pattern(EMAIL_PATTERN)]],
-      gender: [_.get(this.profileDetails, 'gender', ''), []],
+      gender: [this.eUserGender.find(value => value?.toLowerCase() === gender) || '', []],
       dob: [dob ? new Date(dob) : '', []],
-      category: [_.get(this.profileDetails, 'category', ''), []],
+      category: [this.eCategory.find(value => value?.toLowerCase() === category) || '', []],
       pinCode: [_.get(this.profileDetails, 'pinCode', ''), [Validators.minLength(6), Validators.maxLength(6), Validators.pattern(PIN_CODE_PATTERN)]],
       mobile: [_.get(this.profileDetails, 'mobile', ''), [Validators.minLength(10), Validators.maxLength(10), Validators.pattern(MOBILE_PATTERN)]],
       domicileMedium: [_.get(this.profileDetails, 'domicileMedium', ''), []],
       isCadre: [_.get(this.profileDetails, 'isCadre')],
       civilServiceType: [_.get(this.profileDetails, 'civilServiceType', ''), []],
+      civilServiceState: [_.get(this.profileDetails, CIVIL_SERVICE_STATE, ''), []],
       civilServiceName: [_.get(this.profileDetails, 'civilServiceName', ''), []],
       cadreName: [_.get(this.profileDetails, 'cadreName', ''), []],
       cadreBatch: [_.get(this.profileDetails, 'cadreBatch', ''), []],
@@ -738,6 +751,7 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
     })
     this.civilServiceTypeId = _.get(this.profileDetails, 'civilServiceTypeId', '')
     this.civilServiceId = _.get(this.profileDetails, 'civilServiceId', '')
+    this.civilServiceStateId = _.get(this.profileDetails, 'civilServiceStateId', '')
     this.cadreId = _.get(this.profileDetails, 'cadreId', '')
     this.cadreControllingAuthority = _.get(this.profileDetails, 'cadreControllingAuthorityName', '')
     this.isCadreStatus = _.get(this.profileDetails, 'isCadre', false)
@@ -808,6 +822,31 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   get mobileControl() {
     const mobileControl = this.profileForm.get('mobile')
     return mobileControl
+  }
+
+  get showStateSelection(): boolean {
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const isCadreControl = this.profileForm.get('isCadre')
+    return !!(
+      this.hasCivilServiceStates &&
+      typeOfCivilServiceControl && typeOfCivilServiceControl.value &&
+      isCadreControl && isCadreControl.value
+    )
+  }
+
+  get showServiceSelection(): boolean {
+    const typeOfCivilServiceControl = this.profileForm.get('civilServiceType')
+    const isCadreControl = this.profileForm.get('isCadre')
+    if (!typeOfCivilServiceControl || !typeOfCivilServiceControl.value ||
+      !isCadreControl || !isCadreControl.value) {
+      return false
+    }
+    // a state-scoped type has no services to offer until its state is chosen
+    if (this.hasCivilServiceStates) {
+      const stateControl = this.profileForm.get(CIVIL_SERVICE_STATE)
+      return !!(stateControl && stateControl.value)
+    }
+    return true
   }
 
   get showCadreDetails(): boolean {
@@ -984,12 +1023,16 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.addValidation(cadreNameControl)
       this.addValidation(cadreBatchControl)
       this.addValidation(cadreControllingAuthorityControl)
+      // the type is reset here, so no state applies until getService() sees a
+      // state-scoped type again
+      this.clearCivilServiceStates()
       this.civilServiceTypeId = ''
       this.civilServiceId = ''
       this.cadreId = ''
     }
     else {
       this.showBatchForNoCadre = false
+      this.clearCivilServiceStates()
       this.removeValidation(typeOfCivilServiceControl)
       this.removeValidation(serviceNameControl)
       this.removeValidation(cadreNameControl)
@@ -1017,6 +1060,105 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
   }
 
   getService(event: any, isReset: boolean = true) {
+    const stateControl = this.profileForm.get(CIVIL_SERVICE_STATE)
+    const serviceNameControl = this.profileForm.get('civilServiceName')
+    const cadreControl = this.profileForm.get('cadreName')
+    const batchControl = this.profileForm.get('cadreBatch')
+    const cadreControllingAuthorityControl = this.profileForm.get('cadreControllingAuthority')
+    if (isReset) {
+      if (stateControl) { stateControl.reset() }
+      if (serviceNameControl) { serviceNameControl.reset() }
+      if (cadreControl) { cadreControl.reset() }
+      if (batchControl) { batchControl.reset() }
+      if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
+    }
+
+    this.serviceType = _.get(this.civilServiceData, 'civilServiceTypeList', []).find((element: any) => element.name === event)
+    if (this.serviceType) {
+      this.serviceId = this.serviceType.id
+      this.civilServiceStateList = this.resolveStateLevel(this.serviceType)
+      this.hasCivilServiceStates = this.civilServiceStateList.length > 0
+      this.setStateValidation(this.hasCivilServiceStates)
+      if (this.hasCivilServiceStates) {
+        // services live under the chosen state, so the service dropdown stays
+        // empty until onStateSelect fills it
+        this.civilServiceStateNames = this.civilServiceStateList.map((stateItem: any) => stateItem.name)
+        this.serviceListData = []
+        this.serviceNamesList = []
+        if (!isReset && stateControl && stateControl.value) {
+          stateControl.updateValueAndValidity()
+          this.onStateSelect(stateControl.value, false)
+        }
+        return
+      }
+      this.civilServiceStateNames = []
+      this.selectedCivilServiceState = null
+      this.civilServiceStateId = ''
+      this.serviceListData = this.serviceType.serviceList
+      this.serviceNamesList = this.serviceListData.map((service: any) => service.name)
+      if (!isReset && serviceNameControl && serviceNameControl.value) {
+        serviceNameControl.updateValueAndValidity()
+        this.onServiceSelect(serviceNameControl.value, false)
+      }
+    }
+  }
+
+  // Finds the state level of a civil service type. The contract (see ICivilServiceType
+  // in sb-cb-ui-access-settings' cadre-mapping.service.ts) is `states`, carried by the
+  // State Service type INSTEAD of serviceList, each state holding its own serviceList.
+  // The remaining lookups are tolerance only, since cadreConfig is server-owned: other
+  // key names, then any array whose entries carry a serviceList, then a flat serviceList
+  // grouped by a per-service state field. A type with no state level returns [] and
+  // keeps the original type -> service behaviour.
+  private resolveStateLevel(serviceTypeNode: any): any[] {
+    if (!serviceTypeNode) {
+      return []
+    }
+    const namedKeys = ['states', 'stateList', 'stateServiceList', 'stateServices']
+    const namedMatch = namedKeys
+      .map(key => _.get(serviceTypeNode, key))
+      .find(candidate => Array.isArray(candidate) && candidate.length)
+    if (namedMatch) {
+      return namedMatch
+    }
+    const nestedKey = Object.keys(serviceTypeNode).find(key => {
+      if (key === 'serviceList') {
+        return false
+      }
+      const value = serviceTypeNode[key]
+      return Array.isArray(value) && value.length &&
+        value.every((item: any) => item && Array.isArray(item.serviceList))
+    })
+    if (nestedKey) {
+      return serviceTypeNode[nestedKey]
+    }
+    return this.groupServicesByStateField(_.get(serviceTypeNode, 'serviceList', []))
+  }
+
+  // Last-resort shape: a flat serviceList whose entries each name their own state.
+  // Collapses it into the same {id, name, serviceList} nodes the state level uses.
+  private groupServicesByStateField(serviceList: any): any[] {
+    if (!Array.isArray(serviceList) || !serviceList.some((service: any) => service && service.state)) {
+      return []
+    }
+    const grouped: any[] = []
+    serviceList.forEach((service: any) => {
+      if (!service || !service.state) {
+        return
+      }
+      let bucket = grouped.find((item: any) => item.name === service.state)
+      if (!bucket) {
+        bucket = { id: service.stateId || '', name: service.state, serviceList: [] }
+        grouped.push(bucket)
+      }
+      bucket.serviceList.push(service)
+    })
+    return grouped
+  }
+
+  // mirrors getService for the extra level a state-scoped type adds: picking a
+  // state is what supplies the service list the rest of the chain feeds off
+  onStateSelect(event: any, isReset: boolean = true) {
     const serviceNameControl = this.profileForm.get('civilServiceName')
     const cadreControl = this.profileForm.get('cadreName')
     const batchControl = this.profileForm.get('cadreBatch')
@@ -1027,17 +1169,40 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       if (batchControl) { batchControl.reset() }
       if (cadreControllingAuthorityControl) { cadreControllingAuthorityControl.reset() }
     }
-
-    this.serviceType = _.get(this.civilServiceData, 'civilServiceTypeList', []).find((element: any) => element.name === event)
-    if (this.serviceType) {
-      this.serviceListData = this.serviceType.serviceList
-      this.serviceNamesList = this.serviceListData.map((service: any) => service.name)
-      this.serviceId = this.serviceType.id
-      if (!isReset && serviceNameControl && serviceNameControl.value) {
-        serviceNameControl.updateValueAndValidity()
-        this.onServiceSelect(serviceNameControl.value, false)
-      }
+    this.selectedCivilServiceState = this.civilServiceStateList.find((stateItem: any) => stateItem.name === event)
+    this.civilServiceStateId = _.get(this.selectedCivilServiceState, 'id', '')
+    this.serviceListData = _.get(this.selectedCivilServiceState, 'serviceList', []) || []
+    this.serviceNamesList = this.serviceListData.map((service: any) => service.name)
+    if (!isReset && serviceNameControl && serviceNameControl.value) {
+      serviceNameControl.updateValueAndValidity()
+      this.onServiceSelect(serviceNameControl.value, false)
     }
+  }
+
+  // required only while a state-scoped type is selected. Unlike addValidation /
+  // removeValidation this keeps an existing value when turning the rule on, so
+  // the saved state survives the initial getService(type, false) on load.
+  private setStateValidation(isRequired: boolean): void {
+    const stateControl = this.profileForm.get(CIVIL_SERVICE_STATE)
+    if (!stateControl) {
+      return
+    }
+    if (isRequired) {
+      stateControl.setValidators([Validators.required])
+    } else {
+      stateControl.clearValidators()
+      stateControl.setValue('', { emitEvent: false })
+    }
+    stateControl.updateValueAndValidity({ emitEvent: false })
+  }
+
+  private clearCivilServiceStates(): void {
+    this.hasCivilServiceStates = false
+    this.civilServiceStateList = []
+    this.civilServiceStateNames = []
+    this.selectedCivilServiceState = null
+    this.civilServiceStateId = ''
+    this.setStateValidation(false)
   }
 
   onServiceSelect(event: any, isReset: boolean = true) {
@@ -1054,30 +1219,105 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.selectedService = this.serviceListData.find((service: any) => service.name === this.selectedServiceName)
       this.civilServiceName = this.selectedService.name
       this.civilServiceId = this.selectedService.id
-      this.cadreList = this.selectedService.cadreList ? this.selectedService.cadreList.map((cadre: any) => cadre.name) : []
+      this.cadreList = _.get(this.selectedService, 'cadreList', []).map((cadre: any) => cadre.name)
     }
     if (this.selectedService && this.selectedService.cadreControllingAuthority) {
       this.cadreControllingAuthority = this.selectedService.cadreControllingAuthority
     } else {
       this.cadreControllingAuthority = 'NA'
     }
-    if (this.selectedService && this.selectedService.cadreList &&
-      (this.selectedService.cadreList.length === 0 ||
+    // a service with no cadre level offers the batch straight away. Read the list
+    // through _.get: state services omit `cadreList` altogether rather than
+    // sending [], and the old truthiness check dropped them into the else branch,
+    // leaving the Batch dropdown rendered but with no options to select.
+    const selectedCadreList = _.get(this.selectedService, 'cadreList', [])
+    if (this.selectedService &&
+      (selectedCadreList.length === 0 ||
         !isReset && batchControl && batchControl.value)
     ) {
       this.showBatchForNoCadre = true
-      this.startBatch = this.selectedService.commonBatchStartYear
-      this.endBatch = this.selectedService.commonBatchEndYear
-      this.exclusionYear = this.selectedService.commonBatchExclusionYearList
+      const batchRange = this.resolveBatchRange()
+      this.startBatch = batchRange.start
+      this.endBatch = batchRange.end
+      this.exclusionYear = batchRange.exclusions
       // tslint:disable
-      this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-        .filter(year => !this.exclusionYear.includes(year))
+      this.yearArray = this.buildYearArray(this.startBatch, this.endBatch, this.exclusionYear)
+      this.syncBatchValue()
     } else {
       this.showBatchForNoCadre = false
     }
     if (!isReset && cadreControl && batchControl) {
       cadreControl.updateValueAndValidity()
       batchControl.updateValueAndValidity()
+    }
+  }
+
+  // A real batch year, not just any finite number. Number(null) and Number('')
+  // are both 0, so a config sending nulls for the range would otherwise build a
+  // single bogus "0" option instead of showing nothing.
+  private isValidBatchYear(year: any): boolean {
+    const value = Number(year)
+    return year !== null && year !== '' && Number.isFinite(value) && value >= 1900 && value <= 2200
+  }
+
+  // Resolves where the batch range lives for the current selection. Per the contract
+  // it is always the service's commonBatchStartYear/commonBatchEndYear (a cadre
+  // narrows it further via startBatchYear/endBatchYear); the state-level lookups are
+  // tolerance in case a deployment moves the range up a level. Yields nothing when no
+  // level carries a usable range - that is a gap in cadreConfig, not a UI state, so
+  // the dropdown is left empty rather than showing an invented year.
+  private resolveBatchRange(): { start: any, end: any, exclusions: any } {
+    const candidates = [
+      {
+        start: _.get(this.selectedService, 'commonBatchStartYear'),
+        end: _.get(this.selectedService, 'commonBatchEndYear'),
+        exclusions: _.get(this.selectedService, 'commonBatchExclusionYearList'),
+      },
+      {
+        start: _.get(this.selectedService, 'startBatchYear'),
+        end: _.get(this.selectedService, 'endBatchYear'),
+        exclusions: _.get(this.selectedService, 'exculsionYearList'),
+      },
+      {
+        start: _.get(this.selectedCivilServiceState, 'commonBatchStartYear'),
+        end: _.get(this.selectedCivilServiceState, 'commonBatchEndYear'),
+        exclusions: _.get(this.selectedCivilServiceState, 'commonBatchExclusionYearList'),
+      },
+      {
+        start: _.get(this.selectedCivilServiceState, 'startBatchYear'),
+        end: _.get(this.selectedCivilServiceState, 'endBatchYear'),
+        exclusions: _.get(this.selectedCivilServiceState, 'exculsionYearList'),
+      },
+    ]
+    const usable = candidates.find(range =>
+      this.isValidBatchYear(range.start) && this.isValidBatchYear(range.end))
+    return usable || { start: null, end: null, exclusions: [] }
+  }
+
+  // Builds the batch year options. Guards the range because Array.from({length: NaN})
+  // silently yields [], which is how a config missing commonBatchStartYear /
+  // commonBatchEndYear turns into an empty Batch dropdown with no error anywhere.
+  private buildYearArray(startYear: any, endYear: any, exclusions: any): number[] {
+    const start = Number(startYear)
+    const end = Number(endYear)
+    if (!this.isValidBatchYear(startYear) || !this.isValidBatchYear(endYear) || end < start) {
+      return []
+    }
+    const excluded = (Array.isArray(exclusions) ? exclusions : []).map((year: any) => Number(year))
+    return Array.from({ length: end - start + 1 }, (_unused, index) => start + index)
+      .filter(year => !excluded.includes(year))
+  }
+
+  // A saved batch can come back as the string "1962" while the options are the
+  // number 1962; mat-select compares by identity and would show an empty field.
+  private syncBatchValue(): void {
+    const batchControl = this.profileForm.get('cadreBatch')
+    if (!batchControl || batchControl.value === null || batchControl.value === '' || batchControl.value === undefined) {
+      return
+    }
+    const current = Number(batchControl.value)
+    if (Number.isFinite(current) && this.yearArray.indexOf(current) > -1 && batchControl.value !== current) {
+      batchControl.setValue(current, { emitEvent: false })
     }
   }
 
@@ -1094,8 +1334,8 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       this.endBatch = this.selectedService.cadreList.find((cadre: any) => cadre.name === this.selectedCadreName).endBatchYear
       this.exclusionYear = this.selectedCadre.exculsionYearList
       // tslint:disable
-      this.yearArray = Array.from({ length: this.endBatch - this.startBatch + 1 }, (_, index) => this.startBatch + index)
-        .filter(year => !this.exclusionYear.includes(year))
+      this.yearArray = this.buildYearArray(this.startBatch, this.endBatch, this.exclusionYear)
+      this.syncBatchValue()
       this.cadreId = this.selectedCadre.id
     }
 
@@ -1362,11 +1602,14 @@ export class PrfileEditV2Component implements OnInit, OnDestroy {
       ) || isCadreControl.value) {
         formBody['civilServiceTypeId'] = this.serviceId || ''
         formBody['civilServiceId'] = this.civilServiceId || ''
+        formBody['civilServiceStateId'] = this.civilServiceStateId || ''
         formBody['cadreId'] = this.cadreId || ''
         formBody['cadreControllingAuthorityName'] = this.cadreControllingAuthority || ''
         formBody['isOnCentralDeputation'] = isOnCentralDeputationControl?.value || false
       } else {
         formBody['civilServiceType'] = ''
+        formBody[CIVIL_SERVICE_STATE] = ''
+        formBody['civilServiceStateId'] = ''
         formBody['civilServiceName'] = ''
         formBody['isCadre'] = false
         formBody['cadreBatch'] = ''

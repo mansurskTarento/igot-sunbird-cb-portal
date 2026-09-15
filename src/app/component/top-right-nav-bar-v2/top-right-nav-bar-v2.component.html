@@ -87,18 +87,12 @@
   <!-- Karma Coin Wallet -->
   @if (item()?.type === 'walletButton' && showKarmaWallet()) {
   <li class="flex items-center">
-    <button type="button" class="karma-coins-chip" matTooltipClass="right-nav-tooltip"
-      [matTooltip]="walletTooltip()" (click)="goToKarmaWallet()">
-      <span class="karma-coins-chip__amount">
-        <img class="karma-coins-chip__icon" src="/assets/icons/karmawallet-v2/karmacoin.svg" alt=""
-          aria-hidden="true" />
-        @if (karmaCoins() === null) {
-        <span class="karma-coins-chip__placeholder" aria-hidden="true"></span>
-        } @else {
-        <span class="karma-coins-chip__value">{{ karmaCoins() | number }}</span>
-        }
-      </span>
-      <span class="karma-coins-chip__label">Karma Coins</span>
+    <button type="button" class="karma-wallet-btn" matTooltipClass="right-nav-tooltip"
+      [matTooltip]="walletTooltip()" [attr.aria-label]="walletTooltip()" (click)="goToKarmaWallet()"
+      [matBadge]="karmaCoins() | number" matBadgePosition="below before" matBadgeSize="small"
+      matBadgeOverlap="true" [matBadgeHidden]="false">
+      <img class="karma-wallet-btn__icon" src="/assets/icons/karmawallet-v2/KarmaWallet_topnav.svg" alt=""
+        aria-hidden="true" />
     </button>
   </li>
   }

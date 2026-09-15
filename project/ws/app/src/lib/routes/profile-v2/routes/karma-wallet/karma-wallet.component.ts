@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { MatDatepicker } from '@angular/material/datepicker'
 import {
   DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE, MatDateFormats, NativeDateAdapter,
@@ -37,6 +37,8 @@ const LOOKBACK_YEARS = 1
 const END_BEFORE_START = 'The end date cannot be earlier than the start date.'
 const HISTORY_ERROR = 'We could not load your coin history. Please try again.'
 const SUMMARY_ERROR = 'We could not load your Karma Coin Wallet. Please try again.'
+const TOUR_ANCHOR_RETRIES = 40
+const TOUR_ANCHOR_INTERVAL = 100
 /* the coin-history range pickers must read as DD/MM/YYYY, not the en-US M/D/YYYY default */
 export const KARMA_WALLET_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -157,11 +159,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   activePeriod: TKarmaWalletPeriod = 'recent'
   groups: IKarmaCoinTxnGroup[] = []
   loading = true
-  /* The summary drives all four cards, so they hold a skeleton until it resolves. Separate
-     from `loading`, which tracks the history table - the two calls settle independently. */
   summaryLoading = true
-  /* Set when the summary call fails, and the only thing that puts the cards' slot into the
-     error state. Empty whenever the four cards hold real figures. */
   summaryError = ''
   customStart: Date | null = null
   customEnd: Date | null = null
@@ -174,9 +172,12 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   private collapsedKeys = new Set<string>()
   private readonly historyRequest$ = new Subject<IKarmaTransactionsRequest>()
   private readonly destroy$ = new Subject<void>()
+  private autoStartWalkthrough = false
+  private destroyed = false
 
   constructor(
     private router: Router,
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private telemetrySvc: TelemetryService,
     private events: EventService,
@@ -193,6 +194,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.raisePageImpression()
+    this.autoStartWalkthrough = this.route.snapshot.queryParamMap.get('walkthrough') === 'true'
+    this.startWalkthroughOnce()
 
     this.fetchSummary()
 
@@ -214,6 +217,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroyed = true
     this.destroy$.next()
     this.destroy$.complete()
   }
@@ -365,6 +369,38 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       queryParams: { from: 'karma-wallet' },
     })
   }
+  private startWalkthroughOnce() {
+    if (!this.autoStartWalkthrough) {
+      return
+    }
+    this.autoStartWalkthrough = false
+    this.awaitTourAnchor(0)
+  }
+  private awaitTourAnchor(attempt: number) {
+    if (this.destroyed) {
+      return
+    }
+    const selector = this.tourSteps.length ? this.tourSteps[0].selector : ''
+    if (selector && this.tour && document.querySelector(selector)) {
+      this.clearWalkthroughParam()
+      this.startWalkthrough()
+      return
+    }
+    if (attempt >= TOUR_ANCHOR_RETRIES) {
+      return
+    }
+    setTimeout(() => this.awaitTourAnchor(attempt + 1), TOUR_ANCHOR_INTERVAL)
+  }
+
+  private clearWalkthroughParam() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { walkthrough: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
+  }
+
   startWalkthrough() {
     this.raiseWalkthroughClick()
     this.tour.start(this.tourSteps)

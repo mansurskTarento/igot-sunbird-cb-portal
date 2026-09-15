@@ -1,4 +1,7 @@
 import 'jest-preset-angular/setup-jest'
+// components with i18n templates compile to $localize calls, which is a global the
+// AOT build provides but jest does not; without it they fail with "$localize is not defined"
+import '@angular/localize/init'
 Object.defineProperty(window, 'env', {
     value: {
       sitePath: 'http://example.com',

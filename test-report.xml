@@ -1,108 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <testExecutions version="1">
   <file path="/home/bharathr/iGot/projects/portals/learner/sunbird-cb-portal/project/ws/viewer/src/lib/plugins/html/SCORMAdapter/scormAdapter.spec.ts">
-    <testCase name="SCORMAdapterService should be created" duration="34"/>
-    <testCase name="SCORMAdapterService contentId points the Storage service at the same localStorage key" duration="13"/>
-    <testCase name="SCORMAdapterService contentId scopes stored CMI data per content" duration="8"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.core.exit&quot; as SCORM data model state" duration="12"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.suspend_data&quot; as SCORM data model state" duration="8"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.core.lesson_status&quot; as SCORM data model state" duration="10"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;Initialized&quot; as SCORM data model state" duration="7"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;errors&quot; as SCORM data model state" duration="5"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;spentTime&quot; as not SCORM data model state" duration="5"/>
+    <testCase name="SCORMAdapterService should be created" duration="28"/>
+    <testCase name="SCORMAdapterService contentId points the Storage service at the same localStorage key" duration="6"/>
+    <testCase name="SCORMAdapterService contentId scopes stored CMI data per content" duration="7"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.core.exit&quot; as SCORM data model state" duration="7"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.suspend_data&quot; as SCORM data model state" duration="5"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;cmi.core.lesson_status&quot; as SCORM data model state" duration="5"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;Initialized&quot; as SCORM data model state" duration="5"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;errors&quot; as SCORM data model state" duration="6"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;spentTime&quot; as not SCORM data model state" duration="6"/>
     <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;completionStatus&quot; as not SCORM data model state" duration="5"/>
     <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;completionPercentage&quot; as not SCORM data model state" duration="4"/>
-    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;rise-bookmark&quot; as not SCORM data model state" duration="4"/>
+    <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;rise-bookmark&quot; as not SCORM data model state" duration="3"/>
     <testCase name="SCORMAdapterService isScormCmiKey classifies &quot;progress-map&quot; as not SCORM data model state" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;completed&quot; to 2" duration="4"/>
+    <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;completed&quot; to 2" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;passed&quot; to 2" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;incomplete&quot; to 1" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;failed&quot; to 1" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;browsed&quot; to 1" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;not attempted&quot; to 1" duration="3"/>
+    <testCase name="SCORMAdapterService getStatus SCORM 1.2: maps cmi.core.lesson_status &quot;not attempted&quot; to 1" duration="4"/>
     <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.completion_status &quot;completed&quot; to 2" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.completion_status &quot;incomplete&quot; to 1" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.completion_status &quot;not attempted&quot; to 1" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.completion_status &quot;unknown&quot; to 1" duration="2"/>
-    <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.success_status &quot;passed&quot; to 2" duration="2"/>
+    <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.completion_status &quot;unknown&quot; to 1" duration="3"/>
+    <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.success_status &quot;passed&quot; to 2" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.success_status &quot;failed&quot; to 1" duration="3"/>
     <testCase name="SCORMAdapterService getStatus SCORM 2004: maps cmi.success_status &quot;unknown&quot; to 1" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus accepts completion reported on any one of the elements" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus is tolerant of casing and stray whitespace" duration="2"/>
-    <testCase name="SCORMAdapterService getStatus falls back to 1 when no status element is present" duration="2"/>
-    <testCase name="SCORMAdapterService getStatus falls back to 1 instead of throwing on a null payload" duration="3"/>
-    <testCase name="SCORMAdapterService getStatus ignores non-string values rather than coercing them" duration="3"/>
+    <testCase name="SCORMAdapterService getStatus accepts completion reported on any one of the elements" duration="11"/>
+    <testCase name="SCORMAdapterService getStatus is tolerant of casing and stray whitespace" duration="5"/>
+    <testCase name="SCORMAdapterService getStatus falls back to 1 when no status element is present" duration="4"/>
+    <testCase name="SCORMAdapterService getStatus falls back to 1 instead of throwing on a null payload" duration="4"/>
+    <testCase name="SCORMAdapterService getStatus ignores non-string values rather than coercing them" duration="5"/>
     <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSInitialize marks the store initialized and emits LMSPositive" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSSetValue / LMSGetValue are rejected before LMSInitialize" duration="6"/>
-    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSSetValue / LMSGetValue round-trip once initialized" duration="6"/>
+    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSSetValue / LMSGetValue are rejected before LMSInitialize" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSSetValue / LMSGetValue round-trip once initialized" duration="3"/>
     <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSGetValue returns &quot;&quot; for an element that was never set" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSFinish is refused when not initialized" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSFinish is refused when not initialized" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 1.2 API surface records the raised code so LMSGetLastError can report it" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 1.2 API surface reports the most recent code and pops it off the log" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 1.2 API surface resolves error strings and diagnostics for real SCORM 1.2 codes" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 1.2 API surface resolves error strings and diagnostics for real SCORM 1.2 codes" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 1.2 API surface returns &quot;&quot; for a code it does not know" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSFinish wipes the content key from localStorage" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) exposes exactly the 2004 method names, and none of the 1.2 ones" duration="14"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) is a stable object across accesses, so a driver may cache it" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) answers with the strings &quot;true&quot;/&quot;false&quot;, not booleans" duration="6"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) round-trips values through the same CMI store as the 1.2 path" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) reports completion to getStatus via the 2004 elements" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Initialize twice with 103 Already Initialized" duration="5"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects GetValue before Initialize with 122" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 1.2 API surface LMSFinish wipes the content key from localStorage" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) exposes exactly the 2004 method names, and none of the 1.2 ones" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) is a stable object across accesses, so a driver may cache it" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) answers with the strings &quot;true&quot;/&quot;false&quot;, not booleans" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) round-trips values through the same CMI store as the 1.2 path" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) reports completion to getStatus via the 2004 elements" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Initialize twice with 103 Already Initialized" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects GetValue before Initialize with 122" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects SetValue before Initialize with 132" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Commit before Initialize with 142" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Commit before Initialize with 142" duration="3"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Terminate before Initialize with 112" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects GetValue after Terminate with 123" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects SetValue after Terminate with 133" duration="4"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Commit after Terminate with 143" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Terminate after Terminate with 113" duration="3"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Initialize after Terminate with 104 Content Instance Terminated" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) raises 403 for an element that has no value yet" duration="3"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Terminate after Terminate with 113" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) rejects Initialize after Terminate with 104 Content Instance Terminated" duration="5"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) raises 403 for an element that has no value yet" duration="5"/>
     <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) uses the 2004 error table, where the 4xx codes differ from 1.2" duration="3"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) Commit reaches the same progress path as LMSCommit" duration="3"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) Commit hands off to the host, suppressed or not" duration="4"/>
-    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) a new content resets the terminated state, so the next session can initialize" duration="4"/>
-    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component signals rather than writing when lesson_status is completed" duration="4"/>
-    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component signals while the content is still incomplete too, so bookmarks are saved" duration="4"/>
-    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component reports success to the package, which a conformant driver checks" duration="4"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) Commit reaches the same progress path as LMSCommit" duration="2"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) Commit hands off to the host, suppressed or not" duration="2"/>
+    <testCase name="SCORMAdapterService SCORM 2004 API (window.API_1484_11) a new content resets the terminated state, so the next session can initialize" duration="2"/>
+    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component signals rather than writing when lesson_status is completed" duration="3"/>
+    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component signals while the content is still incomplete too, so bookmarks are saved" duration="2"/>
+    <testCase name="SCORMAdapterService LMSCommit - hands the write to the component reports success to the package, which a conformant driver checks" duration="2"/>
     <testCase name="SCORMAdapterService LMSCommit - hands the write to the component repeated commits never turn into repeated requests" duration="3"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated carries status, completionPercentage and progressDetails through to the request" duration="9"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated defaults a missing status to 0" duration="5"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated addresses the URL by the active contentId while the body uses the explicit one" duration="5"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated sends nothing when the user profile is missing, rather than PATCHing an empty body" duration="4"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated sends nothing when courseId/batchId are unresolved" duration="3"/>
-    <testCase name="SCORMAdapterService addDataV3 - not completion gated completes without emitting when it skips the request, so no success handler runs" duration="4"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself stops addDataV3 from issuing a request" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself lets the completion update through when the caller forces it" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself still suppresses an unforced update after a forced one" duration="4"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself stops LMSCommit from issuing a request even at a completed status" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself makes no difference to LMSCommit, which never writes either way" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals progressCommitted$ on every LMSCommit so the host gets the hand-off" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself reports success back to the package when the host takes the commit" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals the hand-off from LMSFinish, and keeps the store so the status survives" duration="3"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated carries status, completionPercentage and progressDetails through to the request" duration="6"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated defaults a missing status to 0" duration="3"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated addresses the URL by the active contentId while the body uses the explicit one" duration="2"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated sends nothing when the user profile is missing, rather than PATCHing an empty body" duration="2"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated sends nothing when courseId/batchId are unresolved" duration="2"/>
+    <testCase name="SCORMAdapterService addDataV3 - not completion gated completes without emitting when it skips the request, so no success handler runs" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself stops addDataV3 from issuing a request" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself lets the completion update through when the caller forces it" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself still suppresses an unforced update after a forced one" duration="3"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself stops LMSCommit from issuing a request even at a completed status" duration="1"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself makes no difference to LMSCommit, which never writes either way" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals progressCommitted$ on every LMSCommit so the host gets the hand-off" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself reports success back to the package when the host takes the commit" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals the hand-off from LMSFinish, and keeps the store so the status survives" duration="2"/>
     <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself a resumed session can still read back the completion the driver relies on" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals progressCommitted$ on the API path too - the component writes either way" duration="3"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself does not block the progress read, which resume still needs" duration="4"/>
-    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself defaults to off" duration="3"/>
-    <testCase name="SCORMAdapterService progress updates continue after 100% completion sends the update that first reports 100%" duration="3"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself signals progressCommitted$ on the API path too - the component writes either way" duration="2"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself does not block the progress read, which resume still needs" duration="6"/>
+    <testCase name="SCORMAdapterService suppressProgressApi - the host reports progress itself defaults to off" duration="2"/>
+    <testCase name="SCORMAdapterService progress updates continue after 100% completion sends the update that first reports 100%" duration="2"/>
     <testCase name="SCORMAdapterService progress updates continue after 100% completion does not suppress a repeat update once 100% has already been reported" duration="3"/>
-    <testCase name="SCORMAdapterService progress updates continue after 100% completion issues one request per SCORM emit after completion" duration="6"/>
-    <testCase name="SCORMAdapterService progress updates continue after 100% completion keeps refreshing lastAccessTime and spentTime on each post-completion update" duration="4"/>
-    <testCase name="SCORMAdapterService progress updates continue after 100% completion never downgrades a reported status - the component clamps before calling" duration="4"/>
-    <testCase name="SCORMAdapterService loadDataV2 restores CMI fields into the store and emits LMSPositive" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 keeps scormData out of the CMI store object" duration="3"/>
+    <testCase name="SCORMAdapterService progress updates continue after 100% completion issues one request per SCORM emit after completion" duration="8"/>
+    <testCase name="SCORMAdapterService progress updates continue after 100% completion keeps refreshing lastAccessTime and spentTime on each post-completion update" duration="3"/>
+    <testCase name="SCORMAdapterService progress updates continue after 100% completion never downgrades a reported status - the component clamps before calling" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 restores CMI fields into the store and emits LMSPositive" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 restores completion bookkeeping from a record with no progressdetails" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 leaves another content&apos;s record alone" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 keeps scormData out of the CMI store object" duration="2"/>
     <testCase name="SCORMAdapterService loadDataV2 emits LMSWating when the course has no entry for this content" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 emits LMSWating on an empty content list" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 emits LMSNegative when progress exists but carries neither Initialized nor scormData" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 emits LMSWating on a failed read so the caller is never left waiting" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 ignores a response that arrives after the viewer moved to another content" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 nests CMI under scormData on restore, keeping bookkeeping flat (current shape)" duration="3"/>
+    <testCase name="SCORMAdapterService loadDataV2 emits LMSWating on an empty content list" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 emits LMSNegative when progress exists but carries neither Initialized nor scormData" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 emits LMSWating on a failed read so the caller is never left waiting" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 ignores a response that arrives after the viewer moved to another content" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 nests CMI under scormData on restore, keeping bookkeeping flat (current shape)" duration="2"/>
     <testCase name="SCORMAdapterService loadDataV2 ignores a scormLocalStorage bucket left by an older build, restoring only CMI" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 LEGACY: restores cmi.* entries written flat on progressdetails" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 LEGACY: drops non-CMI keys inside scormData instead of restoring them" duration="4"/>
-    <testCase name="SCORMAdapterService loadDataV2 LEGACY: splits a mixed scormData bucket by key, keeping the CMI and dropping the rest" duration="4"/>
-    <testCase name="SCORMAdapterService loadDataV2 emits LMSPositive when only cmi.* data is present and Initialized is absent" duration="4"/>
-    <testCase name="SCORMAdapterService loadDataV2 still emits LMSNegative when there is neither CMI nor package storage" duration="3"/>
-    <testCase name="SCORMAdapterService loadDataV2 cancels an in-flight read when the next content starts loading" duration="3"/>
+    <testCase name="SCORMAdapterService loadDataV2 LEGACY: restores cmi.* entries written flat on progressdetails" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 LEGACY: drops non-CMI keys inside scormData instead of restoring them" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 LEGACY: splits a mixed scormData bucket by key, keeping the CMI and dropping the rest" duration="3"/>
+    <testCase name="SCORMAdapterService loadDataV2 emits LMSPositive when only cmi.* data is present and Initialized is absent" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 still emits LMSNegative when there is neither CMI nor package storage" duration="2"/>
+    <testCase name="SCORMAdapterService loadDataV2 cancels an in-flight read when the next content starts loading" duration="2"/>
+  </file>
+  <file path="/home/bharathr/iGot/projects/portals/learner/sunbird-cb-portal/project/ws/viewer/src/lib/plugins/html/html.component.spec.ts">
+  </file>
+  <file path="/home/bharathr/iGot/projects/portals/learner/sunbird-cb-portal/project/ws/viewer/src/lib/plugins/html/html.component.launch.spec.ts">
+    <testCase name="HtmlComponent launch file selection keeps initFile when the SCO drops a script initFile loads" duration="35"/>
+    <testCase name="HtmlComponent launch file selection launches the SCO once it loads everything initFile does" duration="13"/>
+    <testCase name="HtmlComponent launch file selection launches the SCO of a driver-wrapper package" duration="13"/>
+    <testCase name="HtmlComponent launch file selection launches the SCO when the two launchers load the same scripts" duration="9"/>
+    <testCase name="HtmlComponent launch file selection launches the SCO when a launcher cannot be read" duration="5"/>
+    <testCase name="HtmlComponent launch file selection launches initFile for untracked content without reading the package" duration="2"/>
+    <testCase name="HtmlComponent launch file selection launches initFile when there is no manifest" duration="2"/>
+    <testCase name="HtmlComponent launch file selection falls back to the manifest when there is no initFile" duration="4"/>
+  </file>
+  <file path="/home/bharathr/iGot/projects/portals/learner/sunbird-cb-portal/project/ws/viewer/src/lib/plugins/html/html.component.progress.spec.ts">
+    <testCase name="HtmlComponent progress reading trackable content reports 0 for a package that has been opened but not consumed" duration="12"/>
+    <testCase name="HtmlComponent progress reading trackable content reports cmi.progress_measure when the package writes one" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content completes on cmi.progress_measure 1" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content completes on a progress_measure that rounds to 100" duration="0"/>
+    <testCase name="HtmlComponent progress reading trackable content falls back to completed objectives for a SCORM 1.2 package" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content does not read score as progress" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content ignores time spent entirely" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content reports 100 when the package says every objective is done" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content completes when the package writes cmi.core.lesson_status" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content keeps the recorded percentage while the package is silent" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content reports a package figure below the recorded percentage" duration="1"/>
+    <testCase name="HtmlComponent progress reading trackable content reports the package reading once it passes the recorded percentage" duration="0"/>
+    <testCase name="HtmlComponent progress reading trackable content reports 100 for a record already marked complete without a percentage" duration="0"/>
+    <testCase name="HtmlComponent progress reading untracked content (behaviour pinned to what it was) still completes on elapsed time at the threshold" duration="1"/>
+    <testCase name="HtmlComponent progress reading untracked content (behaviour pinned to what it was) reports the elapsed-time ratio below the threshold" duration="0"/>
+    <testCase name="HtmlComponent progress reading untracked content (behaviour pinned to what it was) lets cmi.progress_measure win over the clock, including a measure of 0" duration="1"/>
+    <testCase name="HtmlComponent progress reading untracked content (behaviour pinned to what it was) does not let objectives or score raise the reading here" duration="0"/>
+    <testCase name="HtmlComponent progress reading untracked content (behaviour pinned to what it was) does not fall below the percentage already recorded" duration="0"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) reports the figure Rise itself displays" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) does not average the per-lesson percentages to 83" duration="0"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) is what the payload carries" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) does not read a part-finished first lesson as the whole course" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) corrects a record left too high by an earlier reading" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) still completes when the package says so" duration="0"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) reports 100 when Rise says the course is done" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) falls through when suspend_data is another format" duration="1"/>
+    <testCase name="HtmlComponent progress reading an Articulate Rise package (cmi.suspend_data) falls through on a corrupt code stream instead of throwing" duration="1"/>
+    <testCase name="HtmlComponent progress reading clearing the CMI store drops it on teardown" duration="1"/>
+    <testCase name="HtmlComponent progress reading clearing the CMI store keeps it on the mobile route, where nothing reads progress back" duration="0"/>
+    <testCase name="HtmlComponent progress reading clearing the CMI store drops the outgoing content&apos;s store, not the incoming one&apos;s" duration="2"/>
+    <testCase name="HtmlComponent progress reading clearing the CMI store builds the update payload before dropping the store" duration="1"/>
+    <testCase name="HtmlComponent progress reading an unusable completion threshold leaves getThreshold answering what it always did" duration="1"/>
+    <testCase name="HtmlComponent progress reading an unusable completion threshold honours a configured threshold" duration="0"/>
   </file>
 </testExecutions>
