@@ -23,7 +23,7 @@ import { firstValueFrom, forkJoin, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
 import { NPSGridService } from '@sunbird-cb/collection'
-import { ContentDictionaryService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { ContentDictionaryService } from '@sunbird-cb/consumption'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
@@ -31,7 +31,7 @@ import { NetCoreService } from './netcore.service'
 import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
-import { IndexedDbService } from '@ws/app/src/lib/routes/search-v3/services/indexed-db.service'
+import { IndexedDbService } from '@sunbird-cb/utils-v2'
 /* tslint:enable */
 
 const ENROLMENT_DICTIONARY_API = '/apis/proxies/v8/user/v1/learning/dictionary'
@@ -69,7 +69,6 @@ export class InitService {
     private contentDictionarySvc: ContentDictionaryService,
     private formSvc: FormExtService,
     private indexedDbSvc: IndexedDbService,
-    private widgetUserSvc: WidgetUserServiceLib,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,
@@ -222,7 +221,6 @@ export class InitService {
         this.fetchEnrolmentDictionary().catch((err: any) =>
           this.logger.warn('InitService: Failed to pre-load enrolment dictionary', err),
         )
-        this.preloadCbpPlans(path)
       } else if (path.includes('/public/welcome')) {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
@@ -425,30 +423,6 @@ export class InitService {
     const dictionary = _.get(res, 'result.response', {}) || {}
     await this.indexedDbSvc.setEnrollmentDetails(dictionary)
     return dictionary
-  }
-
-  /**
-   * Warms the CBP plan cache (IndexedDB, iGotCbpDB/cbpPlans) for the current financial year.
-   *
-   * The cards that show a plan's due date, overdue flag and APAR tag look their own content
-   * id up in that cache; nothing on the home page fetches the plan list itself, so without
-   * this the cache is only ever written by a visit to /app/cbp and those tags appeared or
-   * not depending on whether the user had been there inside the cache's TTL.
-   *
-   * Deliberately not awaited — startup must not block on it, and every reader already
-   * degrades to "no plan tag" on an empty cache.
-   *
-   * Skipped when the app boots straight onto the CBP plan page: that page fetches the plan
-   * list itself, force-refreshed and with server enrichment on, so warming the same year
-   * here only adds a second unenriched POST that the page's own request then supersedes.
-   */
-  private preloadCbpPlans(path: string): void {
-    if (/(^|\/)cbp(\/|$)/.test(path || '')) {
-      return
-    }
-    this.widgetUserSvc.fetchCbpPlanListV3().subscribe({
-      error: (err: any) => this.logger.warn('InitService: Failed to pre-load CBP plans', err),
-    })
   }
 
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {

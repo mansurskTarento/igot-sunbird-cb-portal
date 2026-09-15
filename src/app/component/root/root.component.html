@@ -122,9 +122,9 @@
             'mt-0': !mobileTopHeaderVisibilityStatus && showHubs,
             'mt-136': mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && !hideHeaderAndFooter && (isXSmall$ | async) === false,
             'mt-4': !mobileTopHeaderVisibilityStatus && !showHubs && !viewerPage && (isXSmall$ | async) === false,
-            'container-balanced': !isHomePage() && !isFullBleedRoute() && !showFullScreen(),
+            'container-balanced': !isHomePage() && !showFullScreen(),
             'home-content': showMenuBardetails && isHomePage() && !showFullScreen(),
-            'w-full': !showMenuBardetails || showFullScreen() || isFullBleedRoute(),
+            'w-full': !showMenuBardetails || showFullScreen() ,
             'full-width-mobile-route': isFullWidthMobileRoute()
             }">
           <router-outlet></router-outlet>
