@@ -744,8 +744,6 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
         this.myBadgesCount = _.get(this.profileData, 'badgeCount', 0)
         switch (userStat.identifier) {
           case 'walletBalance':
-            /* TODO: read from the Karma Coin wallet API once it exists; profileData has no
-               wallet balance yet, so this falls back to 0. */
             userStat.totalPoints = _.get(this.profileData, 'walletBalance', 0)
             break
           case 'karmaPoints':

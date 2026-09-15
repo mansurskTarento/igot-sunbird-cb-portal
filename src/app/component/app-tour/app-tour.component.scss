@@ -454,3 +454,77 @@
     }
   }
 }
+/* Karma wallet coach mark -------------------------------------------------- */
+.kw-coach {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+}
+
+/* the dim is the spot's own ring, so the header icon stays visible inside it */
+.kw-coach__spot {
+  position: fixed;
+  border-radius: 12px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+.kw-coach__card {
+  position: fixed;
+  box-sizing: border-box;
+  padding: 16px;
+  border-radius: 10px;
+  border-top: 4px solid #F3962E;
+  background: #FFFFFF;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  font-family: 'Noto Sans', sans-serif;
+}
+
+.kw-coach__arrow {
+  position: absolute;
+  top: -10px;
+  width: 0;
+  height: 0;
+  margin-left: -7px;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-bottom: 7px solid #F3962E;
+}
+
+.kw-coach__title {
+  margin-bottom: 8px;
+  font: 600 14px/20px 'Noto Sans', sans-serif;
+  color: #1B1B1F;
+}
+
+.kw-coach__body {
+  margin: 0 0 16px;
+  font: 400 12px/18px 'Noto Sans', sans-serif;
+  color: #4A4A55;
+}
+
+.kw-coach__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.kw-coach__btn {
+  min-width: 72px;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font: 600 12px/18px 'Noto Sans', sans-serif;
+  cursor: pointer;
+}
+
+.kw-coach__btn--ghost {
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  background: transparent;
+  color: #1B1B1F;
+}
+
+.kw-coach__btn--primary {
+  border: 0;
+  background: var(--color-primary-500, #5C2EBC);
+  color: #FFFFFF;
+}

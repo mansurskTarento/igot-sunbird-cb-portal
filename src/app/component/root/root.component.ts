@@ -206,6 +206,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       const karmaWalletTour = this.configSvc.unMappedUser.profileDetails.karma_wallet_tour
       this.karmaWalletVideoPending = !karmaWalletTour || karmaWalletTour.video_visited !== true
+      this.karmaWalletTourPending = !karmaWalletTour || karmaWalletTour.visited !== true
     }
     this.mobileAppsSvc.init()
     this.openIntro()
@@ -354,6 +355,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   loginToken: any
   showTour = false
   karmaWalletVideoPending = false
+  karmaWalletTourPending = false
   currentRouteData: any = []
   loggedinUser = !!(this.configSvc.userProfile && this.configSvc.userProfile.userId)
   headerFooterConfigData: any = null
@@ -655,8 +657,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                      or karma_points would fall through and take the coins value. */
                   break
                 case 'karma_coins':
-                  /* TODO: read from the Karma Coin wallet API once it exists; 0 until then */
-                  item.value = '0 Karma Coins'
+                  const walletBalance = _.get(parsed, 'userCourseEnrolmentInfo.walletBalance', 0)
+                  item.value = `${walletBalance} Karma Coins`
                   break
                 default:
                   break
