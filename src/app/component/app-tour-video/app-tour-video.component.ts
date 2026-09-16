@@ -137,7 +137,8 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.raiseVideEndTelemetry(this.tourVideoTag.nativeElement.currentTime)
+    const videoTag = this.tourVideoTag && this.tourVideoTag.nativeElement
+    this.raiseVideEndTelemetry(videoTag ? videoTag.currentTime : 0)
   }
 
   private raiseKarmaWalletVideoImpression() {
