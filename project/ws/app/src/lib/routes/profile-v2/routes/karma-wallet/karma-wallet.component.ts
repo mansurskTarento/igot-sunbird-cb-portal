@@ -23,7 +23,10 @@ import {
   IKarmaWalletTab,
   KARMA_WALLET_ENV,
   KARMA_WALLET_PAGE_ID,
+  isTxnStatus,
   readApiError,
+  TXN_STATUS_FAILED,
+  TXN_STATUS_IN_PROGRESS,
   TKarmaWalletPeriod,
 } from './karma-wallet.model'
 import { KarmaWalletService } from './karma-wallet.service'
@@ -37,6 +40,10 @@ const LOOKBACK_YEARS = 1
 const END_BEFORE_START = 'The end date cannot be earlier than the start date.'
 const HISTORY_ERROR = 'We could not load your coin history. Please try again.'
 const SUMMARY_ERROR = 'We could not load your Karma Coin Wallet. Please try again.'
+const CONVERSION_ERROR = 'We could not convert your Karma Points. Please try again.'
+const KARMA_POINTS_ROUTE = '/app/person-profile/karma-points'
+const KARMA_POINTS_PAGE_ID = 'app/person-profile'
+const KARMA_POINTS_URI = 'app/person-profile/karma-points?from=karma-wallet'
 const TOUR_ANCHOR_RETRIES = 40
 const TOUR_ANCHOR_INTERVAL = 100
 /* the coin-history range pickers must read as DD/MM/YYYY, not the en-US M/D/YYYY default */
@@ -97,7 +104,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       body: `View your complete Karma Coin transaction history. Filter by time period or
         transaction type - All, Earned, or Redeemed - to quickly find transactions and track
         your running balance.`,
-      placement: 'left',
+      /* right, so the section title and tabs stay readable behind it */
+      placement: 'right',
     },
     {
       selector: '.kw__btn--primary',
@@ -173,6 +181,9 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   private readonly historyRequest$ = new Subject<IKarmaTransactionsRequest>()
   private readonly destroy$ = new Subject<void>()
   private autoStartWalkthrough = false
+  converting = false
+  private convertingAccepted = false
+  pendingConversion: IKarmaCoinTransaction | null = null
   private destroyed = false
 
   constructor(
@@ -247,7 +258,23 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   get canRedeem(): boolean {
-    return this.summary.redeemEnabled
+    return this.summary.redeemEnabled && !this.pendingConversion
+  }
+
+  /* 'Conversion in progress - 4 KP -> 4 KC' on the banner, both sides off the row itself */
+  get pendingConversionCoins(): number {
+    return this.pendingConversion ? this.pendingConversion.amount : 0
+  }
+
+  get pendingConversionPoints(): number {
+    const points = this.pendingConversion && this.pendingConversion.pointsToConvert
+    /* pointsToConvert only rides along on POINTS_CONVERSION rows */
+    return points === undefined || points === null ? this.pendingConversionCoins : points
+  }
+
+  /* A conversion the wallet could not complete; the row stays, flagged */
+  isFailed(txn: IKarmaCoinTransaction): boolean {
+    return isTxnStatus(txn.status, TXN_STATUS_FAILED)
   }
 
   get hasTransactions(): boolean {
@@ -365,9 +392,32 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
 
   viewUnredeemedKarmaPoints() {
     this.raiseClick('view-more', 'unconverted-karma')
-    this.router.navigate(['/app/person-profile/karma-points'], {
+    this.raiseKarmaPointsImpression()
+    this.router.navigate([KARMA_POINTS_ROUTE], {
       queryParams: { from: 'karma-wallet' },
     })
+  }
+
+  /* The karma points page the View More link leads to, reported from here */
+  private raiseKarmaPointsImpression() {
+    const pData = this.telemetrySvc.pData || {}
+    try {
+      $t.impression(
+        {
+          pageid: KARMA_POINTS_PAGE_ID,
+          type: 'page',
+          uri: KARMA_POINTS_URI,
+        },
+        {
+          context: {
+            pdata: { ...pData, id: pData.id },
+            env: KARMA_WALLET_ENV,
+          },
+          object: {},
+        },
+      )
+    } catch (err) {
+    }
   }
   private startWalkthroughOnce() {
     if (!this.autoStartWalkthrough) {
@@ -509,15 +559,51 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       scrollStrategy: new NoopScrollStrategy(),
     })
     ref.afterClosed().subscribe((result: any) => {
-      const outcome = result && result.redeemed
-        ? 'convert'
-        : (result && result.pending ? 'pending' : 'cancel')
-      if (outcome !== 'cancel') {
+      if (result && result.converting) {
+        this.runConversion(result.converting)
+        return
+      }
+      if (result && result.redeemed) {
         this.fetchSummary()
         this.fetchTransactions()
       }
     })
     return ref
+  }
+
+  /* The conversion runs here rather than in the dialog: the dialog closes as Convert is
+     pressed, and a request tied to it would be cancelled with it. */
+  private runConversion(request: { requestId: string, pointsToConvert: number }) {
+    this.converting = true
+    this.karmaWalletSvc.redeem({ request }).pipe(
+      takeUntil(this.destroy$),
+    ).subscribe({
+      next: result => this.onConversionResult(result),
+      error: err => this.onConversionFailed(readApiError(err)),
+    })
+  }
+
+  private onConversionResult(result: any) {
+    if (result && result.status === 'FAILED') {
+      this.onConversionFailed(result.errorMessage || '')
+      return
+    }
+    this.convertingAccepted = true
+  }
+
+  private onConversionFailed(message: string) {
+    this.converting = false
+    this.convertingAccepted = false
+    this.openSnackbar(message || CONVERSION_ERROR)
+  }
+  closeConverting() {
+    const reload = this.convertingAccepted
+    this.converting = false
+    this.convertingAccepted = false
+    if (reload) {
+      this.fetchSummary()
+      this.fetchTransactions()
+    }
   }
 
   useKarmaCoins() {
@@ -607,7 +693,12 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   /* Tab and period are applied by the API now, so this only groups what came back */
   private buildGroups() {
     const grouped = new Map<string, IKarmaCoinTxnGroup>()
-    this.transactions.forEach(txn => {
+    this.pendingConversion = this.transactions
+      .find(txn => isTxnStatus(txn.status, TXN_STATUS_IN_PROGRESS)) || null
+    /* an unsettled conversion reads as the banner above, never as a history row */
+    const settled = this.transactions
+      .filter(txn => !isTxnStatus(txn.status, TXN_STATUS_IN_PROGRESS))
+    settled.forEach(txn => {
       const date = new Date(txn.date)
       const key = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, '0')}`
       if (!grouped.has(key)) {

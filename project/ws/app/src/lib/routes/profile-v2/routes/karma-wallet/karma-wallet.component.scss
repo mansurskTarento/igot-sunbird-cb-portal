@@ -379,7 +379,12 @@ $kw-row-pad: 17px;
   margin-bottom: 10px;
 }
 
-.kw-stat__coin,
+.kw-stat__coin {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
 .kw-stat__badge {
   width: 26px;
   height: 26px;
@@ -733,6 +738,26 @@ $kw-row-pad: 17px;
   color: $kw-ink-strong;
 }
 
+/* 'Failed' beside the row title, dotted like a status pip */
+.kw-table__failed {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 8px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 18px;
+  color: #d13924;
+
+  &::before {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+}
+
 .kw-table__desc-sub {
   font-size: 12.5px;
   line-height: 17px;
@@ -806,10 +831,6 @@ $kw-row-pad: 17px;
     }
   }
 
-  .kw__stats {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
   .kw__history-head {
     flex-direction: column;
     align-items: flex-start;
@@ -847,6 +868,11 @@ $kw-row-pad: 17px;
 }
 
 @media screen and (max-width: 450px) {
+  /* one card per row only once two no longer fit; 450-767px keeps the two-up grid */
+  .kw__stats {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .kw__actions {
     flex-direction: column;
     align-items: stretch;
@@ -874,5 +900,127 @@ $kw-row-pad: 17px;
 
   .kw-period__label--on {
     color: var(--environment-all-fills-system-warning);
+  }
+}
+
+/* Conversion progress popup. Owns its backdrop rather than going through MatDialog, whose
+   scroll block takes the scrollbar out of 100vw and slides the page sideways. */
+.kw-converting {
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    background: rgba(0, 0, 0, 0.32);
+  }
+
+  &__panel {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10002;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 640px;
+    max-width: 92vw;
+    padding: 32px 24px 24px;
+    border-radius: 8px;
+    background: #fff;
+    font-family: 'Noto Sans', sans-serif;
+    box-shadow:
+      0 11px 15px -7px rgba(0, 0, 0, 0.2),
+      0 24px 38px 3px rgba(0, 0, 0, 0.14),
+      0 9px 46px 8px rgba(0, 0, 0, 0.12);
+  }
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 20px;
+    border: 4px solid var(--color-primary-100, #ede9fe);
+    border-top-color: var(--color-primary-500, #4c1d95);
+    border-radius: 50%;
+    animation: kw-converting-spin 0.9s linear infinite;
+  }
+
+  &__title {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 26px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  &__message {
+    margin: 0 0 24px;
+    max-width: 480px;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  &__btn {
+    min-width: 124px;
+    height: 36px;
+    padding: 8px 16px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    border: 1px solid var(--color-primary-500, #4c1d95);
+    background: #fff;
+    color: var(--color-primary-500, #4c1d95);
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+  }
+}
+
+@keyframes kw-converting-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Unsettled conversion banner, between the stat cards and the coin history */
+.kw-inprogress {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 0 0 24px;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: var(--color-primary-50, #f5f3ff);
+  font-family: 'Noto Sans', sans-serif;
+
+  &__spinner {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    border: 3px solid var(--color-primary-100, #ede9fe);
+    border-top-color: var(--color-primary-500, #4c1d95);
+    border-radius: 50%;
+    animation: kw-converting-spin 0.9s linear infinite;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.87);
+  }
+
+  &__text {
+    margin: 4px 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    color: rgba(0, 0, 0, 0.6);
   }
 }

@@ -333,7 +333,7 @@ export class KarmaWalletTourComponent implements OnDestroy {
     if (room[other] >= needed(other)) {
       return other
     }
-    return room[preferred] >= room[other] ? preferred : other
+    return preferred
   }
 
   private close(reason: 'completed' | 'skipped') {

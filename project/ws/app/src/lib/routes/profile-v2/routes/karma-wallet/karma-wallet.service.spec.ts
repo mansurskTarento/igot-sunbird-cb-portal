@@ -36,6 +36,9 @@ describe('toCoinRow against a live transactions payload', () => {
     expect(toCoinRow(RESPONSE_ROWS[0])).toEqual({
       transactionId: 'TXN-000027',
       date: 1724745000000,
+      status: undefined,
+      amount: 300,
+      pointsToConvert: undefined,
       title: 'Karma Points Redemption',
       description: 'Converted 300 Karma Points to Karma Coins',
       credit: 300,
@@ -49,6 +52,9 @@ describe('toCoinRow against a live transactions payload', () => {
     expect(toCoinRow(RESPONSE_ROWS[1])).toEqual({
       transactionId: 'TXN-000028',
       date: 1724745000000,
+      status: undefined,
+      amount: 40,
+      pointsToConvert: undefined,
       title: 'Marketplace Course Purchase',
       description: 'Understanding AI from MIT — Provider: MIT OpenCourseWare',
       credit: 0,
