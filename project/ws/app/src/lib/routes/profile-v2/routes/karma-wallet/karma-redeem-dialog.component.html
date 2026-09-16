@@ -44,19 +44,16 @@
       <img class="krd-amount__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
       <input id="krd-amount" class="krd-amount__input" type="number" min="0"
         [ngModel]="amount" (ngModelChange)="onAmountChange($event)"
-        [disabled]="convertAll || isBlocked || isSubmitting || submitState === 'pending'"
+        [disabled]="convertAll || isBlocked"
         aria-label="Karma Points to convert"
         [attr.aria-invalid]="!!errorMessage" [attr.aria-describedby]="errorMessage ? 'krd-error' : null">
     </div>
 
     <p class="krd-error" id="krd-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
 
-    <!-- Accepted but not yet confirmed: not an error, so it reads as a status line -->
-    <p class="krd-pending" role="status" *ngIf="pendingNote">{{ pendingNote }}</p>
-
     <label class="krd-check">
       <input class="krd-check__box" type="checkbox" [checked]="convertAll"
-        [disabled]="isBlocked || isSubmitting || submitState === 'pending'"
+        [disabled]="isBlocked"
         (change)="toggleConvertAll($any($event.target).checked)">
       <span class="krd-check__label">Convert all Remaining to Karma Coin</span>
     </label>
@@ -80,10 +77,8 @@
   <footer class="krd__footer">
     <button type="button" class="krd__btn krd__btn--primary" [disabled]="!canConvert"
       (click)="convert()">
-      <mat-spinner class="krd__btn-spinner" diameter="16" *ngIf="isSubmitting"></mat-spinner>
-      <span>{{ isSubmitting ? 'Converting…' : 'Convert' }}</span>
+      <span>Convert</span>
     </button>
-    <button type="button" class="krd__btn krd__btn--ghost" [disabled]="isSubmitting"
-      (click)="cancel()">{{ submitState === 'pending' ? 'Close' : 'Cancel' }}</button>
+    <button type="button" class="krd__btn krd__btn--ghost" (click)="cancel()">Cancel</button>
   </footer>
 </div>

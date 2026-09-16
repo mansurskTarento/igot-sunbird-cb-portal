@@ -91,10 +91,10 @@
     </div>
 
     <div class="kw-stat">
-      <div class="kw-stat__label">Total Redeemed</div>
+      <div class="kw-stat__label">Total Converted</div>
       <div class="kw-stat__value-row">
         <img class="kw-stat__coin" [src]="icons.karmaCoin" alt="" aria-hidden="true">
-        <span class="kw-stat__value">{{ summary.totalRedeemed | number }}</span>
+        <span class="kw-stat__value">{{ summary.totalEarnedTillDate | number }}</span>
       </div>
       <div class="kw-stat__hint">Converted from Karma Points to Karma Coins</div>
     </div>
@@ -103,7 +103,7 @@
       <div class="kw-stat__label">Unredeemed Karma Points</div>
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
-        <span class="kw-stat__value">{{ summary.unredeemedKarmaPoints | number }}</span>
+        <span class="kw-stat__value">{{ summary.totalEarnedTillDate | number }}</span>
       </div>
       <div class="kw-stat__hint kw-stat__hint--link">
         <a class="kw-stat__link" href="javascript:void(0)" (click)="viewUnredeemedKarmaPoints()">View More</a>
@@ -113,6 +113,17 @@
   </section>
 
   <!-- Coin history -->
+  <!-- An unsettled conversion: the row is kept out of the history below until it lands -->
+  <div class="kw-inprogress" role="status" *ngIf="pendingConversion">
+    <span class="kw-inprogress__spinner" aria-hidden="true"></span>
+    <div class="kw-inprogress__body">
+      <p class="kw-inprogress__title">Conversion in progress &middot;
+        {{ pendingConversionPoints | number }} KP &rarr; {{ pendingConversionCoins | number }} KC</p>
+      <p class="kw-inprogress__text">Please refresh the page or return after some time to view the latest status in
+        the Coin History section below.</p>
+    </div>
+  </div>
+
   <section class="kw__history" aria-label="Coin history">
     <div class="kw__history-head">
       <h2 class="kw__history-title">Coin History</h2>
@@ -197,7 +208,9 @@
           <div class="kw-table__row" role="row" *ngFor="let txn of group.transactions">
             <span class="kw-table__date">{{ txn.date | date: 'd MMM yyyy' }}</span>
             <span class="kw-table__desc">
-              <span class="kw-table__desc-title">{{ txn.title }}</span>
+              <span class="kw-table__desc-title">{{ txn.title }}
+                <span class="kw-table__failed" *ngIf="isFailed(txn)">Failed</span>
+              </span>
               <span class="kw-table__desc-sub">{{ txn.description }}</span>
               <span class="kw-table__desc-sub">{{ txn.transactionId }}</span>
             </span>
@@ -228,3 +241,14 @@
      own tour and shares nothing with the shell's <app-tour>. -->
 <ws-app-karma-wallet-tour #tour (finished)="onTourFinished()"
   (action)="onTourAction($event)"></ws-app-karma-wallet-tour>
+
+<div class="kw-converting" *ngIf="converting">
+  <div class="kw-converting__backdrop" aria-hidden="true"></div>
+  <div class="kw-converting__panel" role="dialog" aria-modal="true" aria-label="Converting your Karma Points">
+    <span class="kw-converting__spinner" aria-hidden="true"></span>
+    <p class="kw-converting__title">We&rsquo;re converting your Karma Points</p>
+    <p class="kw-converting__message">This might take some time &mdash; you can close this window and come back to
+      check the status later.</p>
+    <button type="button" class="kw-converting__btn" (click)="closeConverting()">Close</button>
+  </div>
+</div>
