@@ -103,7 +103,7 @@
       <div class="kw-stat__label">Unredeemed Karma Points</div>
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
-        <span class="kw-stat__value">{{ summary.totalEarnedTillDate | number }}</span>
+        <span class="kw-stat__value">{{ summary.unredeemedKarmaPoints | number }}</span>
       </div>
       <div class="kw-stat__hint kw-stat__hint--link">
         <a class="kw-stat__link" href="javascript:void(0)" (click)="viewUnredeemedKarmaPoints()">View More</a>
