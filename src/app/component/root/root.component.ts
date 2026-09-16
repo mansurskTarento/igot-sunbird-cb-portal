@@ -505,7 +505,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           }
         }
 
-        if (event.url.includes('/viewer')) {
+        if (event.url.includes('/viewer') || event.url.includes('/public/toc')) {
           this.viewerPage = true
         } else {
           this.viewerPage = false
@@ -1053,7 +1053,6 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   exploreContent() {
     this.libNotificationsService.updateUnreadCount()
-    this.raiseTelemetryExploreContent('explore_content')
     const queryParams = {
       q: '',
       search: null,

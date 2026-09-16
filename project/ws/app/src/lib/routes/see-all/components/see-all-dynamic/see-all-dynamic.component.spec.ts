@@ -7,9 +7,15 @@ jest.mock('@sunbird-cb/consumption', () => ({
   WidgetContentLibService: class { },
 }))
 jest.mock('@sunbird-cb/utils-v2', () => ({
+  EventService: class { },
   MultilingualTranslationsService: class { },
   ValueService: class { },
   WidgetEnrollService: class { },
+  WsEvents: {
+    WsEventType: { Telemetry: 'telemetry' },
+    WsEventLogLevel: { Info: 'info' },
+    EnumTelemetrySubType: { Interact: 'Interact' },
+  },
 }))
 
 import { SeeAllDynamicComponent } from './see-all-dynamic.component'
@@ -37,6 +43,7 @@ describe('SeeAllDynamicComponent', () => {
     valueSvc: { isLtMedium$: of(false) },
     cdr: { detectChanges: jest.fn() },
     enrollSvc: { fetchExternalEnrollmentSearch: jest.fn().mockReturnValue(of({ result: { courses: [] } })) },
+    eventSvc: { dispatchEvent: jest.fn() },
     ...overrides,
   })
 
@@ -53,6 +60,7 @@ describe('SeeAllDynamicComponent', () => {
       mocks.valueSvc,
       mocks.cdr,
       mocks.enrollSvc,
+      mocks.eventSvc,
     )
     return component
   }
@@ -781,6 +789,66 @@ describe('SeeAllDynamicComponent', () => {
 
       expect(component.appliedFilters).toEqual({ topic: ['Ethics'] })
       expect(mocks.seeAllService.getCourses).toHaveBeenCalled()
+    })
+  })
+
+  describe('card click telemetry', () => {
+    const dispatched = () => mocks.eventSvc.dispatchEvent.mock.calls[0][0]
+
+    it('sends the edata and object the spec asks for', () => {
+      component.filterProvider = 'prov-1'
+
+      // the shape the CIOS content search actually returns - no category field of any kind
+      component.raiseTelemetryInteratEvent({ contentId: 'ext_114651611181', externalId: '92', name: 'DPDP 3' })
+
+      expect(dispatched().data.edata).toEqual({
+        type: 'click',
+        subType: 'card-content-all-content',
+        id: 'prov-1',
+        pageid: '/app/seeAll/content',
+      })
+      expect(dispatched().data.object).toEqual({ id: 'ext_114651611181', type: 'Course' })
+    })
+
+    it('sets env and pageid on the event itself, not only inside its data', () => {
+      component.raiseTelemetryInteratEvent({ contentId: 'c1' })
+
+      // the listener reads env off the top level pageContext and pageid off the one under data
+      expect(dispatched().pageContext).toEqual({ pageId: '/app/seeAll/content', module: 'Marketplace' })
+      expect(dispatched().data.pageContext).toEqual({ pageId: '/app/seeAll/content', module: 'Marketplace' })
+      expect(dispatched().data.eventSubType).toBe('Interact')
+    })
+
+    it('names the completed tab when that is the one open', () => {
+      component.selectedTab = 'completed'
+
+      component.raiseTelemetryInteratEvent({ contentId: 'c1' })
+
+      expect(dispatched().data.edata.subType).toBe('card-content-completed')
+    })
+
+    it('names the in progress tab when that is the one open', () => {
+      component.selectedTab = 'inProgress'
+
+      component.raiseTelemetryInteratEvent({ contentId: 'c2' })
+
+      expect(dispatched().data.edata.subType).toBe('card-content-inprogress')
+    })
+
+    it('falls back to the loaded provider id when the route had none', () => {
+      component.filterProvider = ''
+      component.providerDetails = { id: 'prov-9' }
+
+      component.raiseTelemetryInteratEvent({ contentId: 'c1' })
+
+      expect(dispatched().data.edata.id).toBe('prov-9')
+    })
+
+    it('defaults the category to Course and prefers a real one if it ever appears', () => {
+      expect(component.getContentCategory({})).toBe('Course')
+      expect(component.getContentCategory({ primaryCategory: 'Program' })).toBe('Program')
+      expect(component.getContentCategory({ contentType: 'Learning Resource' })).toBe('Learning Resource')
+      expect(component.getContentCategory({ category: 'Event' })).toBe('Event')
     })
   })
 

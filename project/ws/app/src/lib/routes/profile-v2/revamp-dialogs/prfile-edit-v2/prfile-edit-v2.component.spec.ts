@@ -7,22 +7,6 @@ import { FormBuilder } from '@angular/forms'
 import { of, throwError, Subject } from 'rxjs'
 import { HttpErrorResponse } from '@angular/common/http'
 
-jest.mock('@sunbird-cb/utils-v2', () => ({
-  ImageCropComponent: jest.fn(),
-  PipeCertificateImageURL: jest.fn(),
-}))
-jest.mock('@ws/author/src/lib/modules/shared/components/notification/notification.component', () => ({
-  NotificationComponent: jest.fn(),
-}))
-jest.mock('@ws/author/src/lib/constants/upload', () => ({
-  PROFILE_IMAGE_SUPPORT_TYPES: ['.jpg', '.jpeg', '.png'],
-}))
-jest.mock('@ws/author/src/lib/constants/notificationMessage', () => ({
-  Notify: { INVALID_IMG_FORMAT: 'INVALID_IMG_FORMAT' },
-}))
-jest.mock('@ws/author/src/lib/constants/constant', () => ({
-  NOTIFICATION_TIME: 2,
-}))
 
 describe('PrfileEditV2Component (Jest, no TestBed)', () => {
   let component: any
@@ -34,6 +18,9 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
   let mockDatePipe: any
   let mockPipeImgUrl: any
   let mockUserProfileService: any
+  let mockConfigSvc: any
+  let mockTranslate: any
+  let mockLocation: any
   let formBuilder: any
   let mockData: any
 
@@ -47,7 +34,13 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
       fetchCadre: jest.fn().mockReturnValue(of({ result: { response: { value: { civilServiceType: { civilServiceTypeList: [] } } } } })),
       getMasterLanguages: jest.fn().mockReturnValue(of({ languages: [{ id: 1, name: 'English' }] })),
       getWhiteListDomain: jest.fn().mockReturnValue(of({ result: { domains: ['example.com'] } })),
-      handleTranslateTo: jest.fn().mockReturnValue('Translated message')
+      handleTranslateTo: jest.fn().mockReturnValue('Translated message'),
+      // added to the service after this spec was written
+      fetchNodalDetails: jest.fn().mockReturnValue(of({ result: { response: { content: [] } } })),
+      searchIgotDesignation: jest.fn().mockReturnValue(of({ result: { count: 0, Term: [] } })),
+      searchUserByField: jest.fn().mockReturnValue(of({ result: { response: { count: 0 } } })),
+      fetchApprovalDetails: jest.fn().mockReturnValue(of({ result: { data: [] } })),
+      withDrawRequest: jest.fn().mockReturnValue(of({})),
     }
     mockSnackBar = { open: jest.fn(), openFromComponent: jest.fn() }
     mockOtpService = {
@@ -66,7 +59,14 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     }
     mockDatePipe = { transform: jest.fn().mockReturnValue('01-01-1990') }
     mockPipeImgUrl = { transform: jest.fn().mockReturnValue('transformed-image-url') }
-    mockUserProfileService = { handleTranslateTo: jest.fn().mockReturnValue('Translated message') }
+    mockUserProfileService = {
+      handleTranslateTo: jest.fn().mockReturnValue('Translated message'),
+      editProfileDetailsV3: jest.fn().mockReturnValue(of({})),
+      getOrganizationData: jest.fn().mockReturnValue(of({ result: { response: { content: [], count: 0 } } })),
+    }
+    mockConfigSvc = { unMappedUser: { id: 'user-1', profileDetails: {} }, userProfile: { rootOrgId: 'org-1' } }
+    mockTranslate = { instant: jest.fn().mockReturnValue('translated') }
+    mockLocation = { replaceState: jest.fn() }
     formBuilder = new FormBuilder()
     mockData = {
       header: 'Profile',
@@ -85,7 +85,10 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
       mockDialog,
       mockDatePipe,
       mockPipeImgUrl,
-      mockUserProfileService
+      mockUserProfileService,
+      mockConfigSvc,
+      mockTranslate,
+      mockLocation
     )
   })
 
@@ -152,7 +155,7 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     component.profileDetails.district = 'TestDistrict'
     component.ngOnInit()
     component.getDistrictsList('TestState', true)
-    expect(mockProfileV2RevampService.getDistrictsList).toHaveBeenCalledWith('TestState')
+    expect(mockProfileV2RevampService.getDistrictsList).toHaveBeenCalledWith(expect.anything(), 'TestState')
     expect(component.districtsList.length).toBeGreaterThan(0)
   })
 
@@ -327,7 +330,7 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     component.ngOnInit()
     component.primaryEmailControl.setValue('test@example.com')
     component.handleGenerateEmailOTP()
-    expect(mockOtpService.sendEmailOtp).toHaveBeenCalledWith('test@example.com')
+    expect(mockOtpService.sendEmailOtp).toHaveBeenCalledWith('test@example.com', expect.anything())
   })
 
   it('should handle verify OTP', () => {
@@ -341,9 +344,9 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     component.header = 'Other Details'
     component.ngOnInit()
     component.handleResendOTP({ type: 'email', value: 'test@example.com' })
-    expect(mockOtpService.sendEmailOtp).toHaveBeenCalledWith('test@example.com')
+    expect(mockOtpService.sendEmailOtp).toHaveBeenCalledWith('test@example.com', expect.anything())
     component.handleResendOTP({ type: 'mobile', value: '9876543210' })
-    expect(mockOtpService.resendOtp).toHaveBeenCalledWith('9876543210')
+    expect(mockOtpService.resendOtp).toHaveBeenCalledWith('9876543210', expect.anything())
   })
 
   it('should check isEmailAllowed', () => {
@@ -359,7 +362,7 @@ describe('PrfileEditV2Component (Jest, no TestBed)', () => {
     component.ngOnInit()
     component.mobileControl.setValue('9876543210')
     component.handleGenerateOTP()
-    expect(mockOtpService.sendOtp).toHaveBeenCalledWith('9876543210')
+    expect(mockOtpService.sendOtp).toHaveBeenCalledWith('9876543210', expect.anything())
   })
 
   it('should handle empty mobile and email', () => {
