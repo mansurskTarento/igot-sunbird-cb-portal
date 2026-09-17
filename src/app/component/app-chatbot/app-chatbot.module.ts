@@ -14,7 +14,18 @@ import { PipeDurationTransformModule } from '@sunbird-cb/utils-v2'
 import { DragDropModule } from '@angular/cdk/drag-drop'
 import { NonReleventFeedbackDialogModule } from '@sunbird-cb/collection'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { ItsmChatModule } from '@sunbird-cb/itsm-chatbot'
+import { ItsmChatModule, SupportAIComponent } from '@sunbird-cb/itsm-chatbot'
+
+// Guard the library hook until its conditional textarea is rendered.
+const supportAIAfterViewInit = SupportAIComponent.prototype.ngAfterViewInit
+SupportAIComponent.prototype.ngAfterViewInit = function (): void {
+  if (this.textArea) {
+    supportAIAfterViewInit.call(this)
+  } else {
+    setTimeout(() => this.scrollToBottomEvent.emit(), 200)
+  }
+}
+
 @NgModule({
   declarations: [
     ClickOutsideDirective,
