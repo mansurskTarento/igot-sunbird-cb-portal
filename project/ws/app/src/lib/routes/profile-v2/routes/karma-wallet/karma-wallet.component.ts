@@ -181,6 +181,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   private readonly historyRequest$ = new Subject<IKarmaTransactionsRequest>()
   private readonly destroy$ = new Subject<void>()
   private autoStartWalkthrough = false
+  /* arriving from the marketplace's Insufficient Karma Coins popup */
+  private autoOpenConvert = false
   converting = false
   private convertingAccepted = false
   pendingConversion: IKarmaCoinTransaction | null = null
@@ -207,6 +209,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     this.raisePageImpression()
     this.autoStartWalkthrough = this.route.snapshot.queryParamMap.get('walkthrough') === 'true'
     this.startWalkthroughOnce()
+    this.autoOpenConvert = this.route.snapshot.queryParamMap.get('convert') === 'true'
 
     this.fetchSummary()
 
@@ -442,6 +445,24 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     setTimeout(() => this.awaitTourAnchor(attempt + 1), TOUR_ANCHOR_INTERVAL)
   }
 
+  private openConvertOnce() {
+    if (!this.autoOpenConvert) {
+      return
+    }
+    this.autoOpenConvert = false
+    this.clearConvertParam()
+    this.redeemKarmaPoints()
+  }
+
+  private clearConvertParam() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { convert: null },
+      queryParamsHandling: 'merge',
+      replaceUrl: true,
+    })
+  }
+
   private clearWalkthroughParam() {
     this.router.navigate([], {
       relativeTo: this.route,
@@ -625,6 +646,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       next: summary => {
         this.summary = summary
         this.summaryLoading = false
+        this.openConvertOnce()
       },
       error: err => {
         const message = readApiError(err) || SUMMARY_ERROR
