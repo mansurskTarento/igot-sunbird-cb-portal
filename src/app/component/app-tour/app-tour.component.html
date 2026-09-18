@@ -141,7 +141,7 @@
   <div (click)="$event.stopPropagation()">
     <ws-app-tour-video [videoProgressTime]="videoProgressTime" (emitedValue)="emitFromVideo($event)"
       [secondVideoEnabled]="karmaWalletVideoPending" [startVideoIndex]="startVideoIndex"
-      (videosCompleted)="onVideosCompleted()"
+      (videosCompleted)="onVideosCompleted()" (walletVideoStarted)="onWalletVideoStarted()"
       [showVideoTour]="showVideoTour" [isMobile]="isMobile"
       [showOnlyIgotKarmayogi]="showOnlyIgotKarmayogi"></ws-app-tour-video>
   </div>
@@ -168,7 +168,7 @@
   [ngClass]="{'requires-no-scroll': noScroll}">
   <ws-app-tour-video [videoProgressTime]="videoProgressTime" (emitedValue)="emitFromVideo($event)"
     [secondVideoEnabled]="karmaWalletVideoPending" [startVideoIndex]="startVideoIndex"
-    (videosCompleted)="onVideosCompleted()"
+    (videosCompleted)="onVideosCompleted()" (walletVideoStarted)="onWalletVideoStarted()"
     [showVideoTour]="showVideoTour" [isMobile]="isMobile" [showOnlyIgotKarmayogi]="showOnlyIgotKarmayogi">
   </ws-app-tour-video>
   <!-- <div *ngIf="showVideoTour && isMobile" class="video-tour-mobile">
