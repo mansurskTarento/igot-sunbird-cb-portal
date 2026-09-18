@@ -256,7 +256,17 @@ export class AppTourComponent implements OnChanges {
     this.karmaWalletTourPending = this.karmaWalletTourStatus().visited !== true
     this.startVideoIndex = (!this.getStartedPending && this.karmaWalletVideoPending) ? 1 : 0
   }
-  onVideosCompleted(): void {
+  /* Recorded as the video starts, not when it finishes: someone who plays it and closes the
+     dialog half way has seen it, and should not be shown it again. */
+  onWalletVideoStarted(): void {
+    this.markWalletVideoVisited()
+    this.raiseTemeletyInterat('karma-wallet-video-played', 'video')
+  }
+
+  private markWalletVideoVisited(): void {
+    if (!this.karmaWalletVideoPending) {
+      return
+    }
     this.karmaWalletVideoPending = false
     const karmaWalletTour = { visited: false, skipped: false, video_visited: true }
     const reqUpdates = {
@@ -272,6 +282,11 @@ export class AppTourComponent implements OnChanges {
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
     }
+  }
+
+  onVideosCompleted(): void {
+    /* normally already done on play; this covers a browser that never fired it */
+    this.markWalletVideoVisited()
     this.raiseTemeletyInterat('karma-wallet-video-completed', 'video')
     if (!this.showOnlyIgotKarmayogi) {
       return
