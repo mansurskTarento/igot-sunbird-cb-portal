@@ -8,7 +8,7 @@
   @if (!isLtMedium()) {
   <div class="plans-toolbar">
     <div class="plans-toolbar__title">
-      <button mat-mini-fab class="plans-back-btn" aria-label="Back to home" routerLink="/page/home">
+      <button mat-mini-fab class="plans-back-btn" [attr.aria-label]="'plansShowAll.backToHome' | translate" routerLink="/page/home">
         <mat-icon>keyboard_arrow_left</mat-icon>
       </button>
       <h1 class="plans-toolbar__heading">{{ pageTitle() }}</h1>
@@ -16,7 +16,7 @@
 
     <div class="plans-toolbar__controls">
       <button type="button" class="plans-pill-btn" [matMenuTriggerFor]="yearMenu"
-        aria-label="Reporting year">
+        [attr.aria-label]="'plansShowAll.reportingYear' | translate">
         <span>{{ planYearLabel() }}</span>
         <mat-icon class="plans-pill-btn__icon">expand_more</mat-icon>
       </button>
@@ -56,13 +56,13 @@
   </div>
 
   <button type="button" class="plans-pill-btn plans-pill-btn--block" [matMenuTriggerFor]="yearMenu"
-    aria-label="Reporting year">
+    [attr.aria-label]="'plansShowAll.reportingYear' | translate">
     <span>{{ planYearLabel() }}</span>
     <mat-icon class="plans-pill-btn__icon">expand_more</mat-icon>
   </button>
   }
 
-  <mat-menu #yearMenu="matMenu">
+  <mat-menu #yearMenu="matMenu" class="plans-menu">
     @for (option of planYearOptions(); track option.value) {
     <button mat-menu-item [class.is-selected]="option.value === planYear()"
       (click)="onPlanYearChange(option.value)">
@@ -71,7 +71,7 @@
     }
   </mat-menu>
 
-  <mat-menu #sortMenu="matMenu">
+  <mat-menu #sortMenu="matMenu" class="plans-menu">
     @for (option of sortOptions; track option.labelKey; let i = $index) {
     <button mat-menu-item [class.is-selected]="i === sortIndex()" (click)="onSortChange(i)">
       {{ option.labelKey | translate }}
@@ -110,8 +110,8 @@
 @if (!isLtMedium() && isFilterPanelOpen()) {
 <div class="plans-filter-backdrop" (click)="isFilterPanelOpen.set(false)"
   (keydown.escape)="isFilterPanelOpen.set(false)"></div>
-<aside class="plans-filter-panel" aria-label="Filter plans">
-  <button type="button" mat-icon-button class="plans-filter-panel__close" aria-label="Close filters"
+<aside class="plans-filter-panel" [attr.aria-label]="'plansShowAll.filterPlans' | translate">
+  <button type="button" mat-icon-button class="plans-filter-panel__close" [attr.aria-label]="'plansShowAll.closeFilters' | translate"
     (click)="isFilterPanelOpen.set(false)">
     <mat-icon>close</mat-icon>
   </button>

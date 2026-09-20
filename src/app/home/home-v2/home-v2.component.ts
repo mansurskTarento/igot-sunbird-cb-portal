@@ -54,8 +54,42 @@ export class HomeV2Component implements OnInit {
 
     this.homePageSvc.getUserContentInfo().pipe(
       catchError(() => of(null)),
-    ).subscribe(sectionRecordsCountRes => {
-      const { pills, visibilityMode } = this.computePillsVisibility(pillsSection, sectionRecordsCountRes)
+    ).subscribe(_sectionRecordsCountRes => {
+       debugger
+      let data = {
+    "id": "api.content.user.info",
+    "ver": "1.0",
+    "ts": "2026-09-19T08:30:14.729621188Z",
+    "params": {
+        "resMsgId": "6c22a0ee-0d6d-4d6b-a68b-d016659db03f",
+        "msgId": "6c22a0ee-0d6d-4d6b-a68b-d016659db03f",
+        "err": null,
+        "status": "success",
+        "errMsg": null
+    },
+    "responseCode": "OK",
+    "result": {
+        "trainingPlan": 1,
+        "caProgram": 0,
+        "standaloneAssessment": 0,
+        "moderatedContent": 0,
+        "contentIds": {
+            "trainingPlan": [],
+            "caProgram": [],
+            "standaloneAssessment": [],
+            "moderatedContent": [],
+            "apar": [],
+            "aiCbp": [],
+            "learningPathway": [
+                "do_11449432237040435214"
+            ]
+        },
+        "apar": 1,
+        "aiCbp": 1,
+        "learningPathway": 1
+    }
+}
+      const { pills, visibilityMode } = this.computePillsVisibility(pillsSection, data)
       this.contentApiService.updateSection(APAR_COURSES_SECTION_KEY, {
         pills,
         visibilityMode,

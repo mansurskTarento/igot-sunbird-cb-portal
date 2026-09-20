@@ -9,7 +9,7 @@ const API_END_POINTS = {
   // CONTENT (one item per content id), so it cannot back a plan listing — see
   // CardTransformerService.processPlanCards.
   SEARCH_PLANS: '/apis/proxies/v8/cbplan/v2/search',
-  READ_PLAN: (id: string) => `/apis/proxies/v8/cbplan/v3/read/${id}`,
+  READ_PLAN: (id: string) => `/apis/proxies/v8/cbplan/v4/read/${id}`,
 }
 
 /** Plan types the listing can be scoped to. Matches the mock's "Plan Type" filter. */

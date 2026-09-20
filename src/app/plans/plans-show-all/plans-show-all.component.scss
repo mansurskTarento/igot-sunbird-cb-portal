@@ -248,3 +248,37 @@
     z-index: 1;
   }
 }
+
+/**
+ * Selected state for the reporting-year and sort menus.
+ *
+ * `::ng-deep` without a `:host` prefix, matching the pattern used elsewhere in the portal:
+ * a mat-menu renders its panel in the CDK overlay, OUTSIDE this component's encapsulated
+ * DOM, so an ordinary scoped rule never reaches it. The `.plans-menu` panel class is what
+ * keeps this from leaking to every menu in the app.
+ *
+ * Without this the `.is-selected` class the template has always set had nothing bound to
+ * it, so both menus opened with no indication of the current choice.
+ */
+::ng-deep .mat-mdc-menu-panel.plans-menu {
+  .mat-mdc-menu-item.is-selected {
+    font-weight: 600;
+    color: var(--text-button-text-link);
+    background: var(--environment-application-backgrounds-application-background);
+
+    // A colour difference alone would not survive a colour-vision deficiency or a
+    // high-contrast theme, so the choice is marked with a glyph as well.
+    &::after {
+      content: 'check';
+      margin-left: 12px;
+      font-family: 'Material Icons';
+      font-size: 18px;
+      line-height: 1;
+      vertical-align: middle;
+    }
+
+    .mat-mdc-menu-item-text {
+      font-weight: 600;
+    }
+  }
+}

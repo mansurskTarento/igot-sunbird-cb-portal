@@ -8,7 +8,7 @@ jest.mock('@sunbird-cb/utils-v2', () => ({ ConfigurationsService: class { userPr
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { IPlanReadResult, IPlanSearchResult, PlansService } from './plans.service'
 
-const READ_URL = (id: string) => `/apis/proxies/v8/cbplan/v3/read/${id}`
+const READ_URL = (id: string) => `/apis/proxies/v8/cbplan/v4/read/${id}`
 const SEARCH_URL = '/apis/proxies/v8/cbplan/v2/search'
 
 describe('PlansService', () => {
