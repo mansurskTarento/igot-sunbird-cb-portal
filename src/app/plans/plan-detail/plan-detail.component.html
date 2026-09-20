@@ -5,7 +5,7 @@
 <div class="plan-detail">
 
   <div class="plan-detail__title-row">
-    <button mat-mini-fab class="plan-detail__back" aria-label="Back to plans" routerLink="/app/plans"
+    <button mat-mini-fab class="plan-detail__back" [attr.aria-label]="'planDetail.backToPlans' | translate" routerLink="/app/plans"
       [queryParams]="listingQueryParams()">
       <mat-icon>keyboard_arrow_left</mat-icon>
     </button>

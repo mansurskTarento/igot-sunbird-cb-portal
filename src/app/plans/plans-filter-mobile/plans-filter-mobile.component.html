@@ -11,7 +11,7 @@
 
   <div class="pfm__body">
     <!-- Section rail -->
-    <nav class="pfm__rail" aria-label="Filter sections">
+    <nav class="pfm__rail" [attr.aria-label]="'plansShowAll.filterSections' | translate">
       @for (section of sections(); track section.key) {
       <button type="button" class="pfm__rail-item" [class.is-active]="section.key === activeKey()"
         [attr.aria-current]="section.key === activeKey() ? 'true' : null" (click)="selectSection(section.key)">
