@@ -69,8 +69,6 @@
           }
         </dl>
 
-        <div class="plan-panel__divider"></div>
-
         <dl class="plan-panel__rows">
           <div class="plan-panel__row">
             <dt>{{ 'cardplanv2.createdBy' | translate }}</dt>
@@ -87,33 +85,17 @@
           @if (reportingYear()) {
           <div class="plan-panel__row">
             <dt>{{ 'planDetail.reportingYear' | translate }}</dt>
-            <dd class="plan-panel__value">{{ reportingYear() }}</dd>
+            <dd class="plan-panel__value">{{ reportingYearLabel() }}</dd>
           </div>
           }
         </dl>
       </section>
 
-      <!-- Comprehensive assessment -->
+      <!-- Comprehensive assessment: the same card the courses use. CardCourseV2Component
+           draws its own media area for an assessment that has no poster of its own, so this
+           page no longer builds a panel by hand for that case. -->
       @if (assessment(); as ca) {
-      <section class="plan-ca">
-        <div class="plan-ca__banner">
-          {{ 'planDetail.comprehensiveAssessment' | translate }}
-        </div>
-
-        <div class="plan-ca__body" [class.plan-ca__body--locked]="assessmentState() === 'locked'">
-          <span class="plan-ca__chip">{{ 'planDetail.comprehensiveAssessment' | translate }}</span>
-
-          <h3 class="plan-ca__title" [matTooltip]="ca.title" [matTooltipShowDelay]="400">{{ ca.title }}</h3>
-
-          <div class="plan-ca__footer">
-            <span class="plan-ca__org">{{ ca.organisation?.[0] || ca.provider }}</span>
-            <span class="plan-status" [class]="'plan-status--' + assessmentState()">
-              <span class="plan-status__dot" aria-hidden="true"></span>
-              {{ assessmentStateKey() | translate }}
-            </span>
-          </div>
-        </div>
-      </section>
+      <sb-uic-card-course-v2 [content]="ca" [assessmentState]="assessmentState()"></sb-uic-card-course-v2>
       }
     </aside>
   </div>

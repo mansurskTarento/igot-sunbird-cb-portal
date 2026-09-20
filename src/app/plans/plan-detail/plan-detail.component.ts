@@ -1,8 +1,8 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { Observable, forkJoin, of } from 'rxjs'
-import { catchError, switchMap } from 'rxjs/operators'
+import { Observable, combineLatest, forkJoin, from, of } from 'rxjs'
+import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators'
 import { TranslateService } from '@ngx-translate/core'
 import { WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import {
@@ -12,12 +12,17 @@ import {
   CommonMethodsService,
   ContentDictionaryService,
   IBreadcrumbItem,
+  IUserCbpPlan,
   PlanCardViewModel,
+  UserCbpPlansService,
 } from '@sunbird-cb/consumption'
 import { IPlanReadResult, PlansService } from '../services/plans.service'
 
 /** State of the plan's comprehensive assessment, shown in the progress panel and on its card. */
 type AssessmentState = 'locked' | 'available' | 'completed'
+
+/** Plan-type keys `/app/plans` understands; anything else in the URL is ignored. */
+const LISTING_PLAN_TYPES = ['apar', 'aicbp', 'cbp']
 
 @Component({
   selector: 'ws-app-plan-detail',
@@ -32,6 +37,7 @@ export class PlanDetailComponent implements OnInit {
   private readonly dictionarySvc = inject(ContentDictionaryService)
   private readonly cardTransformer = inject(CardTransformerService)
   private readonly enrollSvc = inject(WidgetEnrollService)
+  private readonly userCbpPlansSvc = inject(UserCbpPlansService)
   private readonly commonSvc = inject(CommonMethodsService)
   private readonly translate = inject(TranslateService)
   private readonly destroyRef = inject(DestroyRef)
@@ -75,6 +81,12 @@ export class PlanDetailComponent implements OnInit {
   })
   private readonly caCourseIds = signal<string[]>([])
   private readonly langTick = signal(0)
+  /**
+   * Listing plan-type key handed over in the URL by the card that was clicked, used only
+   * until the plan itself resolves — without it the back link renders as "CBP Plan" for a
+   * beat on every APAR and AI-CBP plan, because `plan()` is still null.
+   */
+  private readonly planTypeHint = signal<string>('')
 
   // ── Derived ────────────────────────────────────────────────────────────────
   readonly planTitle = computed(() => this.plan()?.title ?? '')
@@ -119,6 +131,16 @@ export class PlanDetailComponent implements OnInit {
     return isNaN(parsed.getTime()) ? '' : this.plansSvc.getCurrentFinancialYear(parsed)
   })
 
+  /**
+   * The reporting year as the panel prints it — '2026 - 27'. Spacing only; `reportingYear()`
+   * stays the bare 'YYYY-YY' the API and the listing's year filter both speak.
+   */
+  readonly reportingYearLabel = computed(() => {
+    const year = this.reportingYear()
+    const parts = year.split('-')
+    return parts.length === 2 ? `${parts[0]} - ${parts[1]}` : year
+  })
+
   readonly totalCourses = computed(() => this.courses().length)
 
   readonly completedCourses = computed(() =>
@@ -161,12 +183,24 @@ export class PlanDetailComponent implements OnInit {
     this.primeTranslations()
     this.caCourseIds.set(this.parseCaCourseIds())
 
-    this.route.paramMap
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(params => {
-        const id = params.get('id')
+    // Both maps, because the plan year in the query string decides whether this page needs
+    // the read API at all — see resolvePlan$. distinctUntilChanged keeps an unrelated query
+    // param change from re-running the whole load.
+    combineLatest([this.route.paramMap, this.route.queryParamMap])
+      .pipe(
+        map(([params, query]) => ({
+          id: params.get('id') ?? '',
+          planYear: query.get('planYear') ?? '',
+          planType: query.get('planType') ?? '',
+        })),
+        distinctUntilChanged((a, b) =>
+          a.id === b.id && a.planYear === b.planYear && a.planType === b.planType),
+        takeUntilDestroyed(this.destroyRef),
+      )
+      .subscribe(({ id, planYear, planType }) => {
+        this.planTypeHint.set(LISTING_PLAN_TYPES.includes(planType) ? planType : '')
         if (id) {
-          this.fetchPlan(id)
+          this.fetchPlan(id, planYear)
         } else {
           this.loading.set(false)
         }
@@ -174,10 +208,10 @@ export class PlanDetailComponent implements OnInit {
   }
 
   // ── Data ───────────────────────────────────────────────────────────────────
-  private fetchPlan(id: string): void {
+  private fetchPlan(id: string, planYear: string): void {
     this.loading.set(true)
 
-    this.plansSvc.readPlan(id)
+    this.resolvePlan$(id, planYear)
       .pipe(
         switchMap(raw => {
           if (!raw) {
@@ -222,6 +256,71 @@ export class PlanDetailComponent implements OnInit {
       })
   }
 
+  /**
+   * The plan itself — out of the CBPlan V4 cache when that year is already in IndexedDB, off
+   * the read endpoint when it is not.
+   *
+   * The listing and the home strips both render from that cache entry, so a plan opened from
+   * either is already on the device in full: name, dates, content ids, the lot. Reading it
+   * back is free, where `readPlan` is a second request for data we are already holding.
+   *
+   * A miss — no entry, an entry past its TTL, or a plan belonging to some other year — falls
+   * straight through to the API, which is exactly what this page did before. So the cache can
+   * only remove a request, never add one.
+   */
+  private resolvePlan$(id: string, planYear: string): Observable<IPlanReadResult | null> {
+    return from(this.findCachedPlan(id, planYear)).pipe(
+      switchMap(cached => cached ? of(this.toReadResult(cached)) : this.plansSvc.readPlan(id)),
+    )
+  }
+
+  /**
+   * The plan in the cached year, if it is there.
+   *
+   * Scans all three lists rather than picking one by the `planType` param: a plan id is
+   * unique across them, and letting a hand-edited or stale URL choose the list would turn a
+   * wrong guess into a needless API call. The param stays a display hint, nothing more.
+   */
+  private async findCachedPlan(id: string, planYear: string): Promise<IUserCbpPlan | undefined> {
+    try {
+      const year = planYear || this.userCbpPlansSvc.getCurrentPlanYear()
+      const entry = await this.userCbpPlansSvc.getCacheEntry(year)
+      // Valid only. UserCbpPlansService keeps stale entries to fall back on when the API
+      // fails, not to serve as a source of truth — a plan edited since would go unnoticed
+      // here, and the read endpoint is the cheaper way to be right.
+      if (!entry || !this.userCbpPlansSvc.isEntryValid(entry)) {
+        return undefined
+      }
+      return [...entry.aparPlanList, ...entry.aiCbpPlanList, ...entry.cbpPlanList]
+        .find((plan: IUserCbpPlan) => plan && plan.planId === id)
+    } catch {
+      // The cache is an optimisation; a database that is blocked or unavailable just means
+      // this page loads the way it always did.
+      return undefined
+    }
+  }
+
+  /**
+   * A cached V4 plan in the shape the rest of this page already speaks.
+   *
+   * Only three fields actually differ. Everything the card transformer reads — planYear,
+   * endDate, isApar, planType, createdByOrgName, contentList — the V4 plan already carries
+   * under the same names.
+   */
+  private toReadResult(plan: IUserCbpPlan): IPlanReadResult {
+    return {
+      ...plan,
+      id: plan.planId,
+      contentList: (plan.contentList ?? [])
+        .filter(item => !!(item && item.identifier))
+        .map(item => ({ identifier: item.identifier, mandatory: item.mandatory })),
+      // V4 sends null where the read endpoint omits the field. Falsy either way, but the
+      // declared types here are `string | undefined`, so the nulls are dropped.
+      planType: plan.planType || undefined,
+      comprehensiveAssessment: plan.comprehensiveAssessment || undefined,
+    }
+  }
+
   private applyContents(contents: Record<string, any>): void {
     const raw = this.raw()
     if (!raw) {
@@ -238,19 +337,31 @@ export class PlanDetailComponent implements OnInit {
       ...(planType === 'AICBP' ? { planTypeV2: 'AICBP' } : {}),
     }
 
-    const toCard = (id: string): CardViewModel | null => {
+    const toCard = (id: string, mandatory = false): CardViewModel | null => {
       const content = contents?.[id]
       if (!content) {
         return null
       }
-      const [card] = this.cardTransformer
-        .transformCards([{ ...content, ...planFlags }], CardType.CourseCard) as CardViewModel[]
-      return card ?? null
+      const [card] = this.cardTransformer.transformCards(
+        [{ ...content, ...planFlags, ...(mandatory ? { isCA: true } : {}) }],
+        CardType.CourseCard) as CardViewModel[]
+      if (!card) {
+        return null
+      }
+      // Set twice on purpose. The transformer keeps a fixed field set and parks everything
+      // else under `metadata`, but CardCourseV2Component reads `isCA` off the TOP level
+      // (unlike `isApar`, which it looks for in both places) — so the chip needs the stamp
+      // here, while the rail's "CA Courses" count reads the metadata copy above.
+      return mandatory ? { ...card, isCA: true } as CardViewModel : card
     }
 
+    // A plan marks the courses its comprehensive assessment covers with `mandatory` on the
+    // contentList entry; nothing on the content itself says so. Both plan sources carry the
+    // flag — CBPlan V4 in IUserCbpPlanContent, the read endpoint through
+    // PlansService.normaliseContentList — so this works cached or fetched.
     this.courses.set(
       raw.contentList
-        .map(item => toCard(item?.identifier))
+        .map(item => toCard(item?.identifier, !!item?.mandatory))
         .filter((card): card is CardViewModel => !!card))
 
     this.assessment.set(raw.comprehensiveAssessment ? toCard(raw.comprehensiveAssessment) : null)
@@ -316,18 +427,24 @@ export class PlanDetailComponent implements OnInit {
     }
   }
 
+  /** The loaded plan's own type, or the URL's hint while it is still loading. */
   private listingPlanType(): string {
-    switch (this.plan()?.planType) {
+    const loaded = this.plan()?.planType
+    if (!loaded) {
+      return this.planTypeHint() || 'cbp'
+    }
+    switch (loaded) {
       case 'APAR': return 'apar'
       case 'AICBP': return 'aicbp'
       default: return 'cbp'
     }
   }
 
+  /** Derived from listingPlanType() so the crumb's label and its link can never disagree. */
   private listingTitleKey(): string {
-    switch (this.plan()?.planType) {
-      case 'APAR': return 'plansShowAll.aparPlan'
-      case 'AICBP': return 'plansShowAll.aiCbpDraftPlan'
+    switch (this.listingPlanType()) {
+      case 'apar': return 'plansShowAll.aparPlan'
+      case 'aicbp': return 'plansShowAll.aiCbpDraftPlan'
       default: return 'plansShowAll.cbpPlan'
     }
   }

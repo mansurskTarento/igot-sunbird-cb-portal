@@ -244,6 +244,16 @@ export class PlansShowAllComponent implements OnInit {
     return this.translate.instant(this.activePlanType().titleKey)
   })
 
+  /**
+   * The heading, with how many plans the listing currently holds — `totalCount`, so the
+   * number agrees with the pager below and moves when a filter narrows the list.
+   *
+   * No count while the year is still loading: "All Plans (0)" over a grid of skeletons
+   * reads as an answer, and there isn't one yet.
+   */
+  readonly pageHeading = computed(() =>
+    this.loading() ? this.pageTitle() : `${this.pageTitle()} (${this.totalCount()})`)
+
   readonly breadcrumbData = computed<IBreadcrumbItem[]>(() => {
     this.langTick()
     return [

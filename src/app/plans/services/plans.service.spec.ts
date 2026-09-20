@@ -140,6 +140,30 @@ describe('PlansService', () => {
       })
     })
 
+    it('renames caLinkedId to the comprehensiveAssessment the cache and UI speak', async () => {
+      const plan = await flush({
+        id: 'fa138ed0-b2b0-11f1-a393-aba9d9498b1e',
+        name: 'test training plan apar v2',
+        isApar: true,
+        contentList: [
+          { identifier: 'do_114368437854142464153', mandatory: true },
+          { identifier: 'do_114376977434968064182', mandatory: false },
+        ],
+        caLinkedId: 'do_11465935796996505611',
+      })
+
+      expect(plan!.comprehensiveAssessment).toBe('do_11465935796996505611')
+      // `planId` too, so a read plan and a cached one are interchangeable.
+      expect(plan!['planId']).toBe('fa138ed0-b2b0-11f1-a393-aba9d9498b1e')
+      expect(plan!.contentList[0].mandatory).toBe(true)
+    })
+
+    it('leaves comprehensiveAssessment alone when the payload already uses that name', async () => {
+      const plan = await flush({ id: 'plan-1', name: 'P', comprehensiveAssessment: 'do_ca' })
+
+      expect(plan!.comprehensiveAssessment).toBe('do_ca')
+    })
+
     it('returns null when the response carries no content', async () => {
       const result = new Promise(resolve => service.readPlan('plan-1').subscribe(resolve))
       http.expectOne(READ_URL('plan-1')).flush({ result: {} })
