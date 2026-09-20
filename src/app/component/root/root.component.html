@@ -53,7 +53,7 @@
     <div class=""
       [ngClass]="((isXSmall$ | async) === true || !showMenuBardetails || (isTabView$ | async) === true) ? 'w-full' : (sidebarPushesContent() ? 'main-content-on-menubar-open' : 'main-content-on-menubar-close')">
       <app-tour
-        *ngIf="loggedinUser && (!showTour || karmaWalletVideoPending || karmaWalletTourPending) && !disableHeightOnTop && isDialogEnabled('tour')"
+        *ngIf="loggedinUser && isHomePage() && (!showTour || karmaWalletVideoPending || karmaWalletTourPending) && !disableHeightOnTop && isDialogEnabled('tour')"
         [showOnlyIgotKarmayogi]="true"
         (closed)="karmaWalletVideoPending = false; karmaWalletTourPending = false"></app-tour>
       <app-no-connection-v2></app-no-connection-v2>

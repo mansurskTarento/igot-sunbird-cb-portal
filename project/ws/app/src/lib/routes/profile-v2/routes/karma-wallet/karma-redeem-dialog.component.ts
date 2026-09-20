@@ -24,7 +24,6 @@ const MONTH_NAMES = [
 ]
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
-const BLOCKED_AMOUNT_KEYS = ['.', ',', 'e', 'E', '+', '-']
 
 @Component({
   selector: 'ws-app-karma-redeem-dialog',
@@ -178,20 +177,16 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
     /* Typing anything short of the full allowance clears the shortcut */
     this.convertAll = this.amount === this.maxConvertible && this.amount > 0
   }
-  onAmountKeydown(event: KeyboardEvent) {
-    if (BLOCKED_AMOUNT_KEYS.indexOf(event.key) >= 0) {
+  allowOnlyNumbers(event: KeyboardEvent) {
+    const allowedKeys = [
+      'Backspace',
+      'Delete',
+      'ArrowLeft',
+      'ArrowRight',
+    ]
+
+    if (!/^[0-9]$/.test(event.key) && !allowedKeys.includes(event.key)) {
       event.preventDefault()
-    }
-  }
-  onAmountInput(event: any) {
-    const element = event && event.target
-    if (!element) {
-      return
-    }
-    const whole = `${element.value || ''}`.split('.')[0].replace(/[^0-9]/g, '')
-    if (`${element.value}` !== whole) {
-      element.value = whole
-      this.onAmountChange(whole)
     }
   }
 
