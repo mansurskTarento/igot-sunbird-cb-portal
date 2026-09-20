@@ -828,12 +828,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   raiseAppStartTelemetry() {
     if (!this.appStartRaised) {
+      this.telemetrySvc.sendEmptyObjectForNextInteract()
       // Application start telemetry
       const event = {
         eventType: WsEvents.WsEventType.Telemetry,
         eventLogLevel: WsEvents.WsEventLogLevel.Info,
         data: {
-          edata: { type: '' },
+          edata: {
+            "type": "app",
+            "mode": "view",
+            "pageid": "/page/home",
+            "duration": 1
+          },
           object: {},
           state: WsEvents.EnumTelemetrySubType.Loaded,
           eventSubType: WsEvents.EnumTelemetrySubType.Loaded,
@@ -1076,6 +1082,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   raiseTelemetryExploreContent(id: string, subType: string = '') {
+    this.telemetrySvc.sendEmptyObjectForNextInteract()
     const eData: any = {
       type: WsEvents.EnumInteractTypes.CLICK,
       id: id,

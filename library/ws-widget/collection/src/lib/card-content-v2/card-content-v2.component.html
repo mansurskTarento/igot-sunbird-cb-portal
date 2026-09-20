@@ -1154,7 +1154,8 @@
 </ng-template>
 
 <ng-template #cardWideV2>
-  <mat-card class="card-wide-v2 padding-remove position-relative flex">
+  <mat-card class="card-wide-v2 padding-remove position-relative flex cursor-pointer"
+    (click)="raiseTelemetry();getRedirectUrlData(widgetData?.content); $event.stopPropagation()">
     <div class="imageholder ">
       <img mat-card-image class="margin-remove"
         [src]="widgetData.content.posterImage || widgetData.content.appIcon  | pipePublicURL"

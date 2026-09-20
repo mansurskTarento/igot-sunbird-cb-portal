@@ -219,7 +219,7 @@ export class CustomFieldsComponent {
           this.masterListFormGroups[field.attributeName] = nestedGroup
 
           // Add a control for the main field to store combined value
-          formControls[field.attributeName] = [parentValues, validators]
+          formControls[field.attributeName] = [parentValues]
         } else {
           // Even for empty data, create hierarchy with at least one level
           this.hierarchyFields[field.attributeName] = ['item']
@@ -229,7 +229,7 @@ export class CustomFieldsComponent {
           const nestedGroup = this.fb.group(nestedFormControls)
           this.masterListFormGroups[field.attributeName] = nestedGroup
 
-          formControls[field.attributeName] = ['', validators]
+          formControls[field.attributeName] = ['']
         }
       }
     })
