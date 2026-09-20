@@ -100,9 +100,19 @@ export class PlansService {
   }
 
   /**
-   * One plan by id. Returns the plan itself only — `contentList` carries content ids, whose
-   * metadata the caller resolves through the content dictionary (IndexedDB), and
-   * `comprehensiveAssessment` is a single content id resolved the same way.
+   * One plan by id, normalised to the shape the CBPlan user dictionary uses — which is what
+   * UserCbpPlansService caches in IndexedDB and what every plan consumer already reads.
+   *
+   * The two endpoints describe the same plan differently, so a screen that can be fed by
+   * either (the detail page resolves from the cache first and falls back here) would otherwise
+   * have to branch on which one answered:
+   *
+   *   read endpoint          dictionary / cache
+   *   id                     planId
+   *   caLinkedId             comprehensiveAssessment
+   *
+   * `contentList` carries content ids only; their metadata comes from the content dictionary,
+   * and `comprehensiveAssessment` is a single content id resolved the same way.
    */
   readPlan(id: string): Observable<IPlanReadResult | null> {
     return this.http.get(API_END_POINTS.READ_PLAN(id)).pipe(
@@ -113,6 +123,10 @@ export class PlansService {
         }
         return {
           ...content,
+          // Both names kept: `id` because callers and the existing tests read it, `planId`
+          // so the object is interchangeable with a cached one.
+          planId: content.planId ?? content.id,
+          comprehensiveAssessment: content.comprehensiveAssessment ?? content.caLinkedId,
           contentList: this.normaliseContentList(content.contentList),
         } as IPlanReadResult
       }),
