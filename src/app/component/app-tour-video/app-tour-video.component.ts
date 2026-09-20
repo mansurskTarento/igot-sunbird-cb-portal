@@ -25,11 +25,14 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   @Output() emitedValue = new EventEmitter<string>()
   @Output() videoPlayed = new EventEmitter()
   @Output() videosCompleted = new EventEmitter<void>()
+  // the karma wallet video started playing - the parent records it as seen there and then
+  @Output() walletVideoStarted = new EventEmitter<void>()
   videoPlayedProgress = true
   environment: any
   videoUrl: any
   videoUrl1: any
   activeVideoIndex = 0
+  private walletVideoReported = false
   // tslint:disable-next-line
   @ViewChild('tourVideoTag') tourVideoTag!: ElementRef<HTMLVideoElement>
 
@@ -99,6 +102,14 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
     }
     return translated
   }
+  onVideoPlay() {
+    if (this.activeVideoIndex !== 1 || this.walletVideoReported) {
+      return
+    }
+    this.walletVideoReported = true
+    this.walletVideoStarted.emit()
+  }
+
   onVideoEnded() {
     if (this.activeVideoIndex === 1) {
       this.videosCompleted.emit()
@@ -137,7 +148,8 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.raiseVideEndTelemetry(this.tourVideoTag.nativeElement.currentTime)
+    const videoTag = this.tourVideoTag && this.tourVideoTag.nativeElement
+    this.raiseVideEndTelemetry(videoTag ? videoTag.currentTime : 0)
   }
 
   private raiseKarmaWalletVideoImpression() {

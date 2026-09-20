@@ -1,12 +1,11 @@
 import { MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { EventService } from '@sunbird-cb/utils-v2'
-import { Observable, Subject, of, throwError } from 'rxjs'
+import { of, throwError } from 'rxjs'
 
 import { KarmaRedeemDialogComponent } from './karma-redeem-dialog.component'
 import {
   EMPTY_KARMA_WALLET_SUMMARY,
-  IKarmaRedeemStatusResult,
   IKarmaWalletSummary,
   newRequestId,
 } from './karma-wallet.model'
@@ -42,7 +41,6 @@ describe('KarmaRedeemDialogComponent', () => {
   let serviceStub: {
     getWalletSummary: jest.Mock
     redeem: jest.Mock
-    getRedeemStatus: jest.Mock
   }
 
   /* Builds the dialog. `data` null takes the fallback fetch; a summary takes the hand-over. */
@@ -62,7 +60,6 @@ describe('KarmaRedeemDialogComponent', () => {
     serviceStub = {
       getWalletSummary: jest.fn(() => of(SUMMARY)),
       redeem: jest.fn(() => of(ACCEPTED)),
-      getRedeemStatus: jest.fn((requestId: string) => of({ requestId, status: 'PROCESSING' })),
     }
     component = build()
     component.ngOnInit()
@@ -161,139 +158,35 @@ describe('KarmaRedeemDialogComponent', () => {
     expect(component.canConvert).toBe(false)
   })
 
-  it('should not close on the 202 alone, before the outcome is known', () => {
-    /* A deferred POST, so the in-flight state can be observed at all */
-    const accepted = new Subject<typeof ACCEPTED>()
-    serviceStub.redeem.mockReturnValue(accepted as unknown as Observable<typeof ACCEPTED>)
-
+  it('should hand the conversion request to the page and close on Convert', () => {
     component.onAmountChange(50)
     component.convert()
 
-    expect(component.isSubmitting).toBe(true)
-    /* Nothing has been written at this point */
-    expect(dialogRefStub.close).not.toHaveBeenCalled()
-    expect(serviceStub.getRedeemStatus).not.toHaveBeenCalled()
-
-    accepted.next(ACCEPTED)
-    expect(serviceStub.getRedeemStatus).toHaveBeenCalledTimes(1)
+    /* The page runs the call: a request owned by this dialog would die with it */
+    expect(serviceStub.redeem).not.toHaveBeenCalled()
+    expect(dialogRefStub.close).toHaveBeenCalledTimes(1)
+    const result = dialogRefStub.close.mock.calls[0][0]
+    expect(result.converting.pointsToConvert).toBe(50)
+    expect(typeof result.converting.requestId).toBe('string')
+    expect(result.converting.requestId.length).toBeGreaterThan(0)
   })
 
-  it('should close with the converted totals once the conversion is confirmed', () => {
-    serviceStub.getRedeemStatus.mockReturnValue(of({
-      requestId: 'req-1',
-      status: 'SUCCESS',
-      transactionId: 'TXN-000028',
-      pointsConverted: 50,
-    } as IKarmaRedeemStatusResult))
-
+  it('should send a fresh request id on every conversion', () => {
     component.onAmountChange(50)
     component.convert()
+    component.convert()
 
-    expect(dialogRefStub.close).toHaveBeenCalledWith({
-      redeemed: 50,
-      received: 50,
-      transactionId: 'TXN-000028',
-    })
+    const first = dialogRefStub.close.mock.calls[0][0].converting.requestId
+    const second = dialogRefStub.close.mock.calls[1][0].converting.requestId
+    expect(first).not.toBe(second)
   })
 
-  it('should read the status exactly once, whatever it says', () => {
+  it('should close with nothing on Cancel', () => {
     component.onAmountChange(50)
-    component.convert()
-
-    /* A PROCESSING answer used to cost 12 requests over 18s and end in this same state */
-    expect(serviceStub.getRedeemStatus).toHaveBeenCalledTimes(1)
-    expect(component.submitState).toBe('pending')
-  })
-
-  it('should surface the rejection wording when the request is refused outright', () => {
-    serviceStub.redeem.mockReturnValue(throwError(() => ({
-      status: 400,
-      error: {
-        responseCode: 'CLIENT_ERROR',
-        params: {
-          err: 'MONTHLY_CAP_EXCEEDED',
-          errmsg: 'Only 180 Karma Points can be converted this month',
-        },
-      },
-    })))
-
-    component.onAmountChange(50)
-    component.convert()
-
-    /* The server's wording goes to the snackbar, not into the form */
-    expect(snackBarStub.open).toHaveBeenCalledWith(
-      'Only 180 Karma Points can be converted this month', 'X', { duration: 5000 })
-    expect(component.errorMessage).toBe('')
-    /* And the form is editable again, so the amount can be corrected */
-    expect(component.isSubmitting).toBe(false)
-    expect(component.canConvert).toBe(true)
-    expect(dialogRefStub.close).not.toHaveBeenCalled()
-  })
-
-  it('should hold a conversion as pending when the status endpoint is unreachable', () => {
-    /* 403 is what the gateway answered while redeem/status was not whitelisted */
-    serviceStub.getRedeemStatus.mockReturnValue(throwError(() => ({ status: 403, error: {} })))
-
-    component.onAmountChange(50)
-    component.convert()
-
-    /* The POST was accepted, so the points may well have converted. Calling that a failure
-       would tell the user it did not happen when it may have. */
-    expect(component.submitState).toBe('pending')
-    expect(snackBarStub.open).not.toHaveBeenCalled()
-  })
-
-  it('should still report a real status error as a failure', () => {
-    serviceStub.getRedeemStatus.mockReturnValue(throwError(() => ({
-      status: 500, error: { params: { errmsg: 'Conversion service is down' } },
-    })))
-
-    component.onAmountChange(50)
-    component.convert()
-
-    expect(snackBarStub.open).toHaveBeenCalledWith(
-      'Conversion service is down', 'X', { duration: 5000 })
-  })
-
-  it('should surface the wording of a conversion that fails after it was accepted', () => {
-    serviceStub.getRedeemStatus.mockReturnValue(of({
-      requestId: 'req-1',
-      status: 'FAILED',
-      errorCode: 'MONTHLY_CAP_EXCEEDED',
-      errorMessage: 'Only 180 Karma Points can be converted this month',
-    } as IKarmaRedeemStatusResult))
-
-    component.onAmountChange(50)
-    component.convert()
-
-    expect(snackBarStub.open).toHaveBeenCalledWith(
-      'Only 180 Karma Points can be converted this month', 'X', { duration: 5000 })
-    expect(component.isSubmitting).toBe(false)
-    expect(dialogRefStub.close).not.toHaveBeenCalled()
-  })
-
-  it('should report a conversion still being processed as pending, on one read', () => {
-    component.onAmountChange(50)
-    component.convert()
-
-    /* PROCESSING is not terminal, so the dialog settles as pending straight away */
-    expect(component.submitState).toBe('pending')
-    expect(component.pendingNote).not.toBe('')
-    expect(component.canConvert).toBe(false)
-
-    /* Closing a pending conversion tells the page behind to refresh anyway */
     component.cancel()
-    expect(dialogRefStub.close).toHaveBeenCalledWith({ pending: true })
-  })
 
-  it('should fall back to its own wording when a failure carries none', () => {
-    serviceStub.redeem.mockReturnValue(throwError(() => ({ status: 500, error: {} })))
-
-    component.onAmountChange(50)
-    component.convert()
-
-    expect(snackBarStub.open).toHaveBeenCalledWith(
-      'We could not convert your Karma Points. Please try again.', 'X', { duration: 5000 })
+    expect(dialogRefStub.close).toHaveBeenCalledWith()
+    expect(serviceStub.redeem).not.toHaveBeenCalled()
   })
 
   it('should report a failed summary call in the snackbar', () => {
@@ -308,11 +201,8 @@ describe('KarmaRedeemDialogComponent', () => {
   })
 
   it('should not submit on Convert while the amount is zero', () => {
-    serviceStub.redeem.mockClear()
-
     component.convert()
 
-    expect(serviceStub.redeem).not.toHaveBeenCalled()
     expect(dialogRefStub.close).not.toHaveBeenCalled()
   })
 
@@ -482,7 +372,6 @@ describe('KarmaRedeemDialogComponent', () => {
     it('should still report the click when Cancel is really Close on a pending conversion', () => {
       component.amount = 50
       component.convert()
-      serviceStub.getRedeemStatus.mockReturnValue(of({ requestId: 'req-1', status: 'PROCESSING' }))
       eventsStub.dispatchEvent.mockClear()
 
       component.cancel()

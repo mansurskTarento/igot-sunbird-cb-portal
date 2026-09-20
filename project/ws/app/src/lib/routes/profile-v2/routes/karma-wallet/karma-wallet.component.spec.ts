@@ -1,6 +1,6 @@
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { Router } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { EventService, TelemetryService } from '@sunbird-cb/utils-v2'
 import { $t } from '@project-sunbird/telemetry-sdk'
 import { Observable, of, throwError } from 'rxjs'
@@ -116,6 +116,8 @@ const transactionsFor = (
 describe('KarmaWalletComponent', () => {
   let component: KarmaWalletComponent
   let routerStub: { navigate: jest.Mock }
+  /* the walkthrough flag the header coach mark hands over on ?walkthrough=true */
+  let routeStub: { snapshot: { queryParamMap: { get: jest.Mock } } }
   let eventsStub: { dispatchEvent: jest.Mock }
   let snackBarStub: { open: jest.Mock }
   let dialogStub: { open: jest.Mock }
@@ -130,6 +132,7 @@ describe('KarmaWalletComponent', () => {
 
   const build = () => new KarmaWalletComponent(
     routerStub as unknown as Router,
+    routeStub as unknown as ActivatedRoute,
     dialogStub as unknown as MatDialog,
     telemetryStub as unknown as TelemetryService,
     eventsStub as unknown as EventService,
@@ -147,6 +150,7 @@ describe('KarmaWalletComponent', () => {
 
   beforeEach(() => {
     routerStub = { navigate: jest.fn() }
+    routeStub = { snapshot: { queryParamMap: { get: jest.fn(() => null) } } }
     eventsStub = { dispatchEvent: jest.fn() }
     snackBarStub = { open: jest.fn() }
     dialogResult = undefined

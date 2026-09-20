@@ -5,8 +5,8 @@ import {
   EventService,
   MultilingualTranslationsService,
   TelemetryService,
+  UtilityService,
   WsEvents,
-  UtilityService
 } from '@sunbird-cb/utils-v2'
 import { CommonDataService } from '../../services/common-data.service'
 
@@ -141,6 +141,7 @@ export class ExploreMenuComponent implements OnInit {
   }
 
   onItemClick(item: any) {
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: 'page/home' }])
     this.raiseTelemetry(item?.code, item?.subType || item?.subtype || '')
     const navUrl = item?.navUrl
     if (!navUrl) {

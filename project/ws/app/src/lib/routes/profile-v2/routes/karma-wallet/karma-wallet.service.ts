@@ -7,8 +7,6 @@ import {
   IKarmaCoinTransactionApi,
   IKarmaRedeemAcceptedResponse,
   IKarmaRedeemRequest,
-  IKarmaRedeemStatusResponse,
-  IKarmaRedeemStatusResult,
   IKarmaTransactionsRequest,
   IKarmaTransactionsResponse,
   IKarmaWalletSummary,
@@ -21,7 +19,6 @@ export const API_END_POINTS = {
   WALLET_SUMMARY: `${WALLET_BASE}/summary`,
   WALLET_TRANSACTIONS: `${WALLET_BASE}/transactions`,
   WALLET_REDEEM: `${WALLET_BASE}/redeem`,
-  WALLET_REDEEM_STATUS: `${WALLET_BASE}/redeem/status`,
 }
 
 @Injectable()
@@ -48,15 +45,7 @@ export class KarmaWalletService {
       map(response => response.result),
     )
   }
-
-  getRedeemStatus(requestId: string): Observable<IKarmaRedeemStatusResult> {
-    return this.http.get<IKarmaRedeemStatusResponse>(
-      `${API_END_POINTS.WALLET_REDEEM_STATUS}/${requestId}`).pipe(
-      map(response => response.result),
-    )
-  }
 }
-
 
 const ACTION_TITLES: { [actionType: string]: string } = {
   POINTS_REDEMPTION: 'Karma Points Redemption',
@@ -113,6 +102,9 @@ export function toCoinRow(txn: IKarmaCoinTransactionApi): IKarmaCoinTransaction 
   return {
     transactionId: txn.transactionId,
     date: txn.date,
+    status: txn.status,
+    amount: txn.amount,
+    pointsToConvert: txn.pointsToConvert,
     title: titleFor(txn.actionType),
     description: descriptionFor(txn),
     credit: isCredit ? txn.amount : 0,
