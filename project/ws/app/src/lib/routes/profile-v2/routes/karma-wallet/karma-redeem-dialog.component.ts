@@ -7,7 +7,6 @@ import { takeUntil } from 'rxjs/operators'
 import {
   EMPTY_KARMA_WALLET_SUMMARY,
   IKarmaRedeemDialogData,
-  IKarmaRedeemStatusResult,
   IKarmaWalletSummary,
   KARMA_CONVERSION_RATE,
   KARMA_WALLET_ENV,
@@ -18,13 +17,13 @@ import {
 import { KarmaWalletService } from './karma-wallet.service'
 
 const ICON_BASE = '/assets/icons/karmawallet-v2'
-const GENERIC_REDEEM_ERROR = 'We could not convert your Karma Points. Please try again.'
 const SUMMARY_ERROR = 'We could not load your conversion limit. Please try again.'
 const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
 const MONTH_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
 
 @Component({
   selector: 'ws-app-karma-redeem-dialog',
@@ -49,10 +48,8 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
   convertAll = false
   loading = true
   referenceDate = new Date()
-  submitState: 'idle' | 'submitting' | 'pending' = 'idle'
 
   private readonly destroy$ = new Subject<void>()
-  private readonly stopPolling$ = new Subject<void>()
 
   constructor(
     private dialogRef: MatDialogRef<KarmaRedeemDialogComponent>,
@@ -89,8 +86,6 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.stopPolling$.next()
-    this.stopPolling$.complete()
     this.destroy$.next()
     this.destroy$.complete()
   }
@@ -154,10 +149,6 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
   }
 
   /* True from the POST until the conversion is confirmed, failed, or given up on */
-  get isSubmitting(): boolean {
-    return this.submitState === 'submitting'
-  }
-
   get errorMessage(): string {
     if (this.isBlocked) {
       return this.blockedMessage
@@ -174,15 +165,7 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
   }
 
   get canConvert(): boolean {
-    return !this.isBlocked && !this.isSubmitting && this.submitState !== 'pending'
-      && this.amount > 0 && this.amount <= this.maxConvertible
-  }
-
-  /* Shown once polling has given up: queued, and it will land on its own */
-  get pendingNote(): string {
-    return this.submitState === 'pending'
-      ? 'Your conversion is still being processed. Your wallet will update once it completes.'
-      : ''
+    return !this.isBlocked && this.amount > 0 && this.amount <= this.maxConvertible
   }
 
   onAmountChange(value: any) {
@@ -194,40 +177,42 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
     /* Typing anything short of the full allowance clears the shortcut */
     this.convertAll = this.amount === this.maxConvertible && this.amount > 0
   }
+  allowOnlyNumbers(event: KeyboardEvent) {
+    const allowedKeys = [
+      'Backspace',
+      'Delete',
+      'ArrowLeft',
+      'ArrowRight',
+    ]
+
+    if (!/^[0-9]$/.test(event.key) && !allowedKeys.includes(event.key)) {
+      event.preventDefault()
+    }
+  }
 
   toggleConvertAll(checked: boolean) {
     this.convertAll = checked
     this.amount = checked ? this.maxConvertible : 0
   }
 
+  /* The wallet page runs the conversion and owns the progress popup: this dialog closes the
+     moment Convert is pressed, so the request cannot die with it. */
   convert() {
     if (!this.canConvert) {
       return
     }
     this.raiseClick('convert-karma-points-convert', this.amount)
-    this.submitState = 'submitting'
-    /* Client-generated: it is what makes a retry idempotent and what the status poll asks for */
-    const requestId = newRequestId()
-
-    this.karmaWalletSvc.redeem({
-      /* Shorthand first, to keep tslint's object-shorthand-properties-first happy */
-      request: { requestId, pointsToConvert: this.amount },
-    }).pipe(
-      takeUntil(this.destroy$),
-    ).subscribe({
-      next: accepted => this.readRedeemStatus(accepted.requestId || requestId),
-      /* A 400 from the pre-publish validation lands here, carrying the server's own wording */
-      error: err => this.onRedeemFailed(readApiError(err)),
+    this.dialogRef.close({
+      converting: {
+        /* Client-generated: it is what makes a retry idempotent */
+        requestId: newRequestId(),
+        pointsToConvert: this.amount,
+      },
     })
   }
 
   cancel() {
     this.raiseClick('convert-karma-points-cancel', 0)
-    this.stopPolling$.next()
-    if (this.submitState === 'pending') {
-      this.dialogRef.close({ pending: true })
-      return
-    }
     this.dialogRef.close()
   }
   private raiseClick(id: string, points: number) {
@@ -250,48 +235,4 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
     })
   }
 
-  private readRedeemStatus(requestId: string) {
-    this.karmaWalletSvc.getRedeemStatus(requestId).pipe(
-      takeUntil(this.stopPolling$),
-      takeUntil(this.destroy$),
-    ).subscribe({
-      next: status => this.onRedeemStatus(status),
-      error: err => this.onStatusPollFailed(err),
-    })
-  }
-
-  private onStatusPollFailed(err: any) {
-    this.stopPolling$.next()
-    const status = err && err.status
-    if (status === 403 || status === 404 || status === 0) {
-      this.submitState = 'pending'
-      return
-    }
-    this.onRedeemFailed(readApiError(err))
-  }
-
-  private onRedeemStatus(status: IKarmaRedeemStatusResult) {
-    if (status.status === 'SUCCESS') {
-      this.stopPolling$.next()
-      const converted = status.pointsConverted === undefined ? this.amount : status.pointsConverted
-      this.dialogRef.close({
-        redeemed: converted,
-        received: Math.floor(converted / (this.conversionRate || 1)),
-        transactionId: status.transactionId,
-      })
-      return
-    }
-
-    if (status.status === 'FAILED') {
-      this.onRedeemFailed(status.errorMessage || '')
-      return
-    }
-    this.stopPolling$.next()
-    this.submitState = 'pending'
-  }
-  private onRedeemFailed(message: string) {
-    this.stopPolling$.next()
-    this.submitState = 'idle'
-    this.openSnackbar(message || GENERIC_REDEEM_ERROR)
-  }
 }

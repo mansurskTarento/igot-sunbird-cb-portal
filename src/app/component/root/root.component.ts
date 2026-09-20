@@ -206,6 +206,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       const karmaWalletTour = this.configSvc.unMappedUser.profileDetails.karma_wallet_tour
       this.karmaWalletVideoPending = !karmaWalletTour || karmaWalletTour.video_visited !== true
+      this.karmaWalletTourPending = !karmaWalletTour || karmaWalletTour.visited !== true
     }
     this.mobileAppsSvc.init()
     this.openIntro()
@@ -354,6 +355,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   loginToken: any
   showTour = false
   karmaWalletVideoPending = false
+  karmaWalletTourPending = false
   currentRouteData: any = []
   loggedinUser = !!(this.configSvc.userProfile && this.configSvc.userProfile.userId)
   headerFooterConfigData: any = null
@@ -503,7 +505,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
           }
         }
 
-        if (event.url.includes('/viewer')) {
+        if (event.url.includes('/viewer') || event.url.includes('/public/toc')) {
           this.viewerPage = true
         } else {
           this.viewerPage = false
@@ -655,8 +657,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
                      or karma_points would fall through and take the coins value. */
                   break
                 case 'karma_coins':
-                  /* TODO: read from the Karma Coin wallet API once it exists; 0 until then */
-                  item.value = '0 Karma Coins'
+                  const walletBalance = _.get(parsed, 'userCourseEnrolmentInfo.walletBalance', 0)
+                  item.value = `${walletBalance} Karma Coins`
                   break
                 default:
                   break
@@ -828,12 +830,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
 
   raiseAppStartTelemetry() {
     if (!this.appStartRaised) {
+      this.telemetrySvc.sendEmptyObjectForNextInteract()
       // Application start telemetry
       const event = {
         eventType: WsEvents.WsEventType.Telemetry,
         eventLogLevel: WsEvents.WsEventLogLevel.Info,
         data: {
-          edata: { type: '' },
+          edata: {
+            "type": "app",
+            "mode": "view",
+            "pageid": "/page/home",
+            "duration": 1
+          },
           object: {},
           state: WsEvents.EnumTelemetrySubType.Loaded,
           eventSubType: WsEvents.EnumTelemetrySubType.Loaded,
@@ -1076,6 +1084,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   }
 
   raiseTelemetryExploreContent(id: string, subType: string = '') {
+    this.telemetrySvc.sendEmptyObjectForNextInteract()
     const eData: any = {
       type: WsEvents.EnumInteractTypes.CLICK,
       id: id,

@@ -6,7 +6,7 @@
     </div>
     <div class="video-player-row">
       <video id="tourVideoTag" disablePictureInPicture="true" controls controlsList="nodownload" height="100%"
-        width="100%" [autoplay]="true" (ended)="onVideoEnded()" #tourVideoTag>
+        width="100%" [autoplay]="true" (play)="onVideoPlay()" (ended)="onVideoEnded()" #tourVideoTag>
         <source src="{{currentVideoUrl}}" type="video/mp4">
       </video>
     </div>
@@ -26,7 +26,7 @@
   <div class="flex tour-video-container">
     <div class="video-header-row-mobile">
       <video id="tourVideoTag" disablePictureInPicture="true" controls controlsList="nodownload" height="100%"
-        width="100%" [autoplay]="true" (ended)="onVideoEnded()" #tourVideoTag>
+        width="100%" [autoplay]="true" (play)="onVideoPlay()" (ended)="onVideoEnded()" #tourVideoTag>
         <source src="{{currentVideoUrl}}" type="video/mp4">
       </video>
       <div class="pt-2">

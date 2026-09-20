@@ -33,7 +33,6 @@ export class KarmaLeaderboardV2Component implements OnInit {
   monthName = ''
   year: any = null
   myKarmaPoints = 0
-  /* TODO: populate from the Karma Coin wallet API once it exists; 0 until then */
   myKarmaCoins = 0
 
   // Celebration banner
@@ -62,6 +61,7 @@ export class KarmaLeaderboardV2Component implements OnInit {
       if (raw) {
         const parsed = JSON.parse(raw)
         this.myKarmaPoints = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.karmaPoints) || 0
+        this.myKarmaCoins = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.walletBalance) || 0
       }
     } catch (_e) { /* ignore */ }
 

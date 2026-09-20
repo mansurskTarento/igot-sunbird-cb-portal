@@ -43,15 +43,8 @@ export interface IKarmaRedeemDialogData {
   summary: IKarmaWalletSummary
 }
 
-export interface IKarmaRedeemAcceptedResponse {
-  responseCode: string
-  result: {
-    requestId: string
-    status: TKarmaRedeemStatus
-  }
-}
-
-export interface IKarmaRedeemStatusResult {
+/* The redeem call answers with the outcome itself - there is no status endpoint to poll */
+export interface IKarmaRedeemResult {
   requestId: string
   status: TKarmaRedeemStatus
   /* SUCCESS only */
@@ -62,9 +55,9 @@ export interface IKarmaRedeemStatusResult {
   errorMessage?: string
 }
 
-export interface IKarmaRedeemStatusResponse {
+export interface IKarmaRedeemAcceptedResponse {
   responseCode: string
-  result: IKarmaRedeemStatusResult
+  result: IKarmaRedeemResult
 }
 
 export interface IKarmaApiRejection {
@@ -116,6 +109,10 @@ export interface IKarmaCoinTransactionApi {
   contextType: string
   contextId: string
   addinfo: string
+  /* 'IN_PROGRESS' while a conversion has not settled; absent on completed rows */
+  status?: string
+  /* POINTS_CONVERSION only: the Karma Points side of the conversion */
+  pointsToConvert?: number
 }
 
 export interface IKarmaTransactionsResponse {
@@ -125,10 +122,24 @@ export interface IKarmaTransactionsResponse {
   }
 }
 
+export const TXN_STATUS_IN_PROGRESS = 'IN_PROGRESS'
+export const TXN_STATUS_FAILED = 'FAILED'
+
+/* the api spells these back in mixed case ('Failed', 'FAILED', 'failed'), so compare folded */
+export function isTxnStatus(status: any, expected: string): boolean {
+  return `${status || ''}`.trim().toUpperCase() === expected
+}
+
 export interface IKarmaCoinTransaction {
   transactionId: string
   /* Epoch milliseconds, straight off the API */
   date: number
+  /* 'IN_PROGRESS' keeps the row out of the history and the Convert button disabled */
+  status?: string
+  /* Karma Coins moved, whichever direction the row ran */
+  amount: number
+  /* POINTS_CONVERSION only: the Karma Points that went in */
+  pointsToConvert?: number
   /* Primary label, e.g. 'Event Attendance' */
   title: string
   /* Secondary label, e.g. 'Karmayogi Talks — Evidence-based policy' */

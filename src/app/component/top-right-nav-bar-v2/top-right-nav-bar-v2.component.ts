@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatBadgeModule } from '@angular/material/badge'
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -21,7 +22,7 @@ import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection'
 import { SurveyPopupComponent } from '@ws/app'
-import { VerificationRequestDialogComponent, KarmaWalletService } from '@ws/app'
+import { VerificationRequestDialogComponent } from '@ws/app'
 import { RootService } from '../root/root.service'
 import { NotificationsService } from '../../services/notifications.service'
 import { ThemeService } from '@sunbird-cb/design-system'
@@ -40,6 +41,7 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
     MatMenuModule,
     MatButtonModule,
     MatTooltipModule,
+    MatBadgeModule,
     MatSelectModule,
     MatFormFieldModule,
     TranslateModule,
@@ -48,7 +50,6 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
   ],
   templateUrl: './top-right-nav-bar-v2.component.html',
   styleUrls: ['./top-right-nav-bar-v2.component.scss'],
-  providers: [KarmaWalletService],
 })
 export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   // Inputs as signals
@@ -67,7 +68,7 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   roles = signal<string[]>([])
   enableSupportAI = signal(false)
   fontSizeLevel = signal(2) // 0=x-small, 1=small, 2=normal, 3=large, 4=x-large
-  karmaCoins = signal<number | null>(null)
+  karmaCoins = signal<number>(0)
 
   // Computed
   rightNavConfig = computed(() => {
@@ -109,7 +110,6 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   private rootService = inject(RootService)
   themeSvc = inject(ThemeService)
   private btnSettingsSvc = inject(BtnSettingsService)
-  private karmaWalletSvc = inject(KarmaWalletService)
 
   private dialogRef: any
   private subs: Subscription[] = []
@@ -144,6 +144,7 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initFontLevel()
+    this.karmaCoins.set(this.configSvc.unMappedUser?.walletBalance || 0)
 
     const instanceConfig = this.configSvc.instanceConfig
     if (instanceConfig) {
@@ -162,20 +163,6 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
     this.subs.push(
       this.zohoSupportSvc.getZohoHtml().subscribe(res => {
         this.zohoHtml.set(res)
-      })
-    )
-
-    this.loadKarmaCoins()
-  }
-
-  private loadKarmaCoins() {
-    if (this.item()?.type !== 'walletButton') {
-      return
-    }
-    this.subs.push(
-      this.karmaWalletSvc.getWalletSummary().subscribe({
-        next: summary => this.karmaCoins.set(summary?.walletBalance || 0),
-        error: () => this.karmaCoins.set(0),
       })
     )
   }
