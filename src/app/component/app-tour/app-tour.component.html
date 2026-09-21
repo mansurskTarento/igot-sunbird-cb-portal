@@ -1,5 +1,5 @@
 <div class="skip-tour-modal" *ngIf="closePopupIcon">
-  <mat-icon *ngIf="!hideCloseBtn" (click)="skipTour('','')"
+  <mat-icon *ngIf="!hideCloseBtn" (click)="closeModal()"
     class="mat-icon notranslate material-icons mat-icon-no-color" role="img" aria-hidden="true">close</mat-icon>
 </div>
 <div (click)="closeModal()" *ngIf="showpopup" class="backdrop bg-zinc-400" [ngClass]="{'requires-no-scroll': noScroll}">

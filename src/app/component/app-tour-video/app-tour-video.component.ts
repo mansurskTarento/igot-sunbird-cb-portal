@@ -110,6 +110,14 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
     this.walletVideoStarted.emit()
   }
 
+  advanceToWalletVideo(): boolean {
+    if (this.activeVideoIndex === 1 || !this.secondVideoEnabled || !this.videoUrl1) {
+      return false
+    }
+    this.playSecondVideo()
+    return true
+  }
+
   onVideoEnded() {
     if (this.activeVideoIndex === 1) {
       this.videosCompleted.emit()
