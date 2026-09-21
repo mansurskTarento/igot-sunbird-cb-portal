@@ -1,7 +1,7 @@
 import { MatDialog } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { ActivatedRoute, Router } from '@angular/router'
-import { EventService, TelemetryService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, TelemetryService } from '@sunbird-cb/utils-v2'
 import { $t } from '@project-sunbird/telemetry-sdk'
 import { Observable, of, throwError } from 'rxjs'
 import { delay } from 'rxjs/operators'
@@ -121,7 +121,12 @@ describe('KarmaWalletComponent', () => {
   let eventsStub: { dispatchEvent: jest.Mock }
   let snackBarStub: { open: jest.Mock }
   let dialogStub: { open: jest.Mock }
-  let serviceStub: { getWalletSummary: jest.Mock, getTransactions: jest.Mock, redeem: jest.Mock }
+  let serviceStub: {
+    getWalletSummary: jest.Mock, getTransactions: jest.Mock, redeem: jest.Mock,
+    updateProfileDetails: jest.Mock,
+  }
+  /* karma_wallet_tour drives the first-visit info popup */
+  let configStub: { unMappedUser: any }
   /* What the redeem dialog closes with, per test */
   let dialogResult: any
 
@@ -138,6 +143,7 @@ describe('KarmaWalletComponent', () => {
     eventsStub as unknown as EventService,
     serviceStub as unknown as KarmaWalletService,
     snackBarStub as unknown as MatSnackBar,
+    configStub as unknown as ConfigurationsService,
   )
 
   /* A component already loaded against the 26 Aug 2026 anchor */
@@ -159,6 +165,10 @@ describe('KarmaWalletComponent', () => {
       getWalletSummary: jest.fn(() => of(SUMMARY)),
       getTransactions: jest.fn(transactionsFor),
       redeem: jest.fn(() => of({ requestId: 'req-1', status: 'SUCCESS' })),
+      updateProfileDetails: jest.fn(() => of({})),
+    }
+    configStub = {
+      unMappedUser: { id: 'user-1', profileDetails: { karma_wallet_tour: { visited: true } } },
     }
     impressionSpy.mockClear()
     component = load()
@@ -166,6 +176,81 @@ describe('KarmaWalletComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  /* First landing: the info popup introduces Karma Coins and the visit is recorded */
+  it('should open the karma coins info popup when karma_wallet_tour has not been visited', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: false, skipped: false }
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).toHaveBeenCalledTimes(1)
+    expect(serviceStub.updateProfileDetails).toHaveBeenCalledWith({
+      request: {
+        userId: 'user-1',
+        profileDetails: { karma_wallet_tour: { visited: true, skipped: false } },
+      },
+    })
+  })
+
+  /* The home page tour keeps video_visited in the same object - the patch must not drop it */
+  it('should keep the other karma_wallet_tour flags when recording the visit', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = {
+      visited: false, skipped: false, video_visited: true,
+    }
+
+    load()
+
+    const patched = serviceStub.updateProfileDetails.mock.calls[0][0]
+    expect(patched.request.profileDetails.karma_wallet_tour).toEqual({
+      visited: true, skipped: false, video_visited: true,
+    })
+    /* and the in-memory profile follows, so a second visit this session stays quiet */
+    expect(configStub.unMappedUser.profileDetails.karma_wallet_tour.visited).toBe(true)
+  })
+
+  it('should not open the popup again once karma_wallet_tour is visited', () => {
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).not.toHaveBeenCalled()
+    expect(serviceStub.updateProfileDetails).not.toHaveBeenCalled()
+  })
+
+  /* ?walkthrough=true already opens this dialog; the first visit must not stack a second */
+  it('should open only one info popup when arriving on the walkthrough link', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: false }
+    routeStub.snapshot.queryParamMap.get = jest.fn((key: string) =>
+      key === 'walkthrough' ? 'true' : null)
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).toHaveBeenCalledTimes(1)
+    expect(serviceStub.updateProfileDetails).toHaveBeenCalled()
+  })
+
+  it('should still show the popup when the profile has no karma_wallet_tour at all', () => {
+    configStub.unMappedUser.profileDetails = {}
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).toHaveBeenCalledTimes(1)
+    const patched = serviceStub.updateProfileDetails.mock.calls[0][0]
+    expect(patched.request.profileDetails.karma_wallet_tour).toEqual({ visited: true })
+  })
+
+  it('should not break the page when recording the visit fails', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: false }
+    serviceStub.updateProfileDetails = jest.fn(() => throwError(() => new Error('patch failed')))
+    dialogStub.open.mockClear()
+
+    expect(() => load()).not.toThrow()
+    expect(dialogStub.open).toHaveBeenCalledTimes(1)
+    expect(snackBarStub.open).not.toHaveBeenCalled()
   })
 
   it('should default to the All tab over the Recent period', () => {
@@ -219,7 +304,7 @@ describe('KarmaWalletComponent', () => {
     component.selectPeriod('lastMonth')
 
     const conversion = component.groups[0].transactions
-      .find(txn => txn.title === 'Karma Points Redemption')
+      .find(txn => txn.title === 'Karma Coins Redeemption')
     expect(conversion).toBeTruthy()
     expect(conversion && conversion.description)
       .toBe('Converted 300 Karma Points to Karma Coins')

@@ -6,7 +6,7 @@ import {
 } from '@angular/material/core'
 import { MatDialog, MatDialogRef } from '@angular/material/dialog'
 import { MatSnackBar } from '@angular/material/snack-bar'
-import { EventService, TelemetryService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, TelemetryService, WsEvents } from '@sunbird-cb/utils-v2'
 import { $t } from '@project-sunbird/telemetry-sdk'
 import { NoopScrollStrategy } from '@angular/cdk/overlay'
 import { of, Subject } from 'rxjs'
@@ -44,8 +44,6 @@ const CONVERSION_ERROR = 'We could not convert your Karma Points. Please try aga
 const KARMA_POINTS_ROUTE = '/app/person-profile/karma-points'
 const KARMA_POINTS_PAGE_ID = 'app/person-profile'
 const KARMA_POINTS_URI = 'app/person-profile/karma-points?from=karma-wallet'
-const TOUR_ANCHOR_RETRIES = 40
-const TOUR_ANCHOR_INTERVAL = 100
 /* the coin-history range pickers must read as DD/MM/YYYY, not the en-US M/D/YYYY default */
 export const KARMA_WALLET_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -63,6 +61,14 @@ const MONTH_NAMES = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
 ]
+
+function shortMonth(index: number): string {
+  return (MONTH_NAMES[index] || '').slice(0, 3)
+}
+
+function displayDate(date: Date): string {
+  return `${date.getDate()} ${shortMonth(date.getMonth())} ${date.getFullYear()}`
+}
 
 @Component({
   selector: 'ws-app-karma-wallet',
@@ -188,7 +194,6 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   pendingConversion: IKarmaCoinTransaction | null = null
   lastCredit: IKarmaCoinTransaction | null = null
   lastDebit: IKarmaCoinTransaction | null = null
-  private destroyed = false
 
   constructor(
     private router: Router,
@@ -198,6 +203,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     private events: EventService,
     private karmaWalletSvc: KarmaWalletService,
     private snackBar: MatSnackBar,
+    private configSvc: ConfigurationsService,
   ) { }
 
   /* Every API failure on this page is reported here and nowhere else */
@@ -210,7 +216,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.raisePageImpression()
     this.autoStartWalkthrough = this.route.snapshot.queryParamMap.get('walkthrough') === 'true'
-    this.startWalkthroughOnce()
+    this.openInfoOnFirstVisit(this.startWalkthroughOnce())
     this.autoOpenConvert = this.route.snapshot.queryParamMap.get('convert') === 'true'
 
     this.fetchSummary()
@@ -233,7 +239,6 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.destroyed = true
     this.destroy$.next()
     this.destroy$.complete()
   }
@@ -253,7 +258,23 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return MONTH_NAMES[index]
   }
 
-  /* Share of this month's cap already converted - what the card's orange bar fills to */
+  get monthlyLimitReached(): boolean {
+    return this.summary.convertibleThisMonth <= 0 &&
+      this.summary.convertedThisMonth >= this.summary.monthlyCap &&
+      this.summary.monthlyCap > 0
+  }
+
+  get capResetsOnLabel(): string {
+    const parts = (this.summary.capResetsOn || '').split('-')
+    const month = Number(parts[1])
+    const day = Number(parts[2])
+    if (parts.length === 3 && month >= 1 && month <= 12 && day >= 1) {
+      return `${day} ${shortMonth(month - 1)}`
+    }
+    const next = new Date(this.referenceDate.getFullYear(), this.referenceDate.getMonth() + 1, 1)
+    return `1 ${shortMonth(next.getMonth())}`
+  }
+
   get conversionProgress(): number {
     if (!this.summary.monthlyCap) {
       return 0
@@ -308,6 +329,15 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
 
   get hasTransactions(): boolean {
     return this.groups.some(group => group.transactions.length > 0)
+  }
+
+  /* An empty custom range names its own dates, so the user can see what to widen */
+  get emptyMessage(): string {
+    if (this.activePeriod === 'custom' && this.customStart && this.customEnd) {
+      return `No transactions between ${displayDate(this.customStart)} and ` +
+        `${displayDate(this.customEnd)}. Try a different date range.`
+    }
+    return 'No Karma Coin transactions yet.'
   }
 
   openKarmaCoinsInfo() {
@@ -448,27 +478,58 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     } catch (err) {
     }
   }
-  private startWalkthroughOnce() {
-    if (!this.autoStartWalkthrough) {
+  /* profileDetails as it arrives from /apis/proxies/v8/api/user/v2/read */
+  private walletTourStatus(): any {
+    const profileDetails = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
+    return (profileDetails && profileDetails.karma_wallet_tour) || {}
+  }
+
+  /* First landing on the wallet: introduce Karma Coins, then never again for this user.
+     `alreadyOpen` is the ?walkthrough=true link having opened the same dialog a moment ago. */
+  private openInfoOnFirstVisit(alreadyOpen: boolean) {
+    const walletTour = this.walletTourStatus()
+    if (walletTour.visited === true) {
       return
+    }
+    if (!alreadyOpen) {
+      this.openKarmaCoinsInfo()
+    }
+    this.markWalletTourVisited(walletTour)
+  }
+
+  /* Merged, not replaced: the home page tour keeps video_visited / skipped in the same object */
+  private markWalletTourVisited(walletTour: any) {
+    const userId = this.configSvc.unMappedUser && this.configSvc.unMappedUser.id
+    const karmaWalletTour = { ...walletTour, visited: true }
+    /* kept in step in memory, the read api only runs once per session */
+    if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
+      this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
+    }
+    if (!userId) {
+      return
+    }
+    const reqUpdates = {
+      request: {
+        userId,
+        profileDetails: { karma_wallet_tour: karmaWalletTour },
+      },
+    }
+    /* a failed patch only means the popup returns next session; it is not worth a snackbar */
+    this.karmaWalletSvc.updateProfileDetails(reqUpdates).pipe(
+      takeUntil(this.destroy$),
+      catchError(() => of(null)),
+    ).subscribe()
+  }
+
+  /* True when it opened the info dialog, so the first-visit check does not stack a second one */
+  private startWalkthroughOnce(): boolean {
+    if (!this.autoStartWalkthrough) {
+      return false
     }
     this.autoStartWalkthrough = false
-    this.awaitTourAnchor(0)
-  }
-  private awaitTourAnchor(attempt: number) {
-    if (this.destroyed) {
-      return
-    }
-    const selector = this.tourSteps.length ? this.tourSteps[0].selector : ''
-    if (selector && this.tour && document.querySelector(selector)) {
-      this.clearWalkthroughParam()
-      this.startWalkthrough()
-      return
-    }
-    if (attempt >= TOUR_ANCHOR_RETRIES) {
-      return
-    }
-    setTimeout(() => this.awaitTourAnchor(attempt + 1), TOUR_ANCHOR_INTERVAL)
+    this.clearWalkthroughParam()
+    this.openKarmaCoinsInfo()
+    return true
   }
 
   private openConvertOnce() {

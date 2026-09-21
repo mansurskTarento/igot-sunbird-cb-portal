@@ -39,7 +39,7 @@ describe('toCoinRow against a live transactions payload', () => {
       status: undefined,
       amount: 300,
       pointsToConvert: undefined,
-      title: 'Karma Points Redemption',
+      title: 'Karma Coins Redeemption',
       description: 'Converted 300 Karma Points to Karma Coins',
       credit: 300,
       debit: 0,

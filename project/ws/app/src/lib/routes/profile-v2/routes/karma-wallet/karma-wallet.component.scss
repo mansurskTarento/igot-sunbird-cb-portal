@@ -363,6 +363,7 @@ $kw-row-pad: 17px;
 }
 
 .kw-stat__label {
+  min-height: 32px;
   margin-bottom: 12px;
   font-size: 12px;
   font-weight: 600;
@@ -376,7 +377,7 @@ $kw-row-pad: 17px;
   display: flex;
   align-items: center;
   gap: 6px;
-  margin-bottom: 10px;
+  margin-bottom: 18px;
 }
 
 .kw-stat__coin {
@@ -432,14 +433,19 @@ $kw-row-pad: 17px;
   transition: width 0.25s ease;
 }
 
+.kw-stat__hint-line {
+  display: block;
+}
+
 .kw-stat__hint {
-  margin-top: auto;
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
   color: var(--environment-icon-overall-secondary-bandw);
 
+  // "View More" keeps sitting at the bottom-right of its card
   &--link {
+    margin-top: auto;
     text-align: right;
   }
 }

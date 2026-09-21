@@ -80,13 +80,19 @@
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
         <span class="kw-stat__value">{{ summary.convertibleThisMonth | number }}</span>
-        <span class="kw-stat__value-sub">of {{ summary.monthlyCap | number }} KP</span>
       </div>
       <div class="kw-stat__track">
         <span class="kw-stat__fill" [style.width.%]="conversionProgress"></span>
       </div>
-      <div class="kw-stat__hint">
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth > 0">
         {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
+      </div>
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth <= 0 && monthlyLimitReached">
+        Monthly limit of {{ summary.monthlyCap | number }} KP reached. Resets on {{ capResetsOnLabel }}
+      </div>
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth <= 0 && !monthlyLimitReached">
+        <span class="kw-stat__hint-line">{{ summary.convertedThisMonth | number }} points converted.</span>
+        <span class="kw-stat__hint-line">No Unconverted points left</span>
       </div>
     </div>
 
@@ -100,7 +106,7 @@
     </div>
 
     <div class="kw-stat">
-      <div class="kw-stat__label">Unconverted Karma</div>
+      <div class="kw-stat__label">Unconverted Karma points</div>
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
         <span class="kw-stat__value">{{ summary.unredeemedKarmaPoints | number }}</span>
@@ -111,7 +117,7 @@
     </div>
     </ng-template>
   </section>
-  
+
   <div class="kw-last" *ngIf="lastCredit || lastDebit">
     <ng-container *ngIf="lastCredit">
       <ng-container *ngTemplateOutlet="lastCard; context: { $implicit: lastCredit, credit: true }"></ng-container>
@@ -232,8 +238,8 @@
           <div class="kw-table__head" role="row">
             <span class="kw-table__th" role="columnheader">Date</span>
             <span class="kw-table__th" role="columnheader">Description</span>
-            <span class="kw-table__th kw-table__th--num" role="columnheader">Credit</span>
-            <span class="kw-table__th kw-table__th--num" role="columnheader">Debit</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Earned</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Redeemed</span>
             <span class="kw-table__th kw-table__th--num" role="columnheader">Balance</span>
           </div>
 
@@ -260,7 +266,7 @@
 
     <!-- A failed history call is reported in the snackbar, so this stays a plain empty state -->
     <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError">
-      No Karma Coin transactions yet.
+      {{ emptyMessage }}
     </div>
 
     <div class="kw__loader" *ngIf="loading">
@@ -269,8 +275,6 @@
   </section>
 </div>
 
-<!-- Walkthrough. Started only by "Start Walkthrough" in the info dialog; it is this page's
-     own tour and shares nothing with the shell's <app-tour>. -->
 <ws-app-karma-wallet-tour #tour (finished)="onTourFinished()"
   (action)="onTourAction($event)"></ws-app-karma-wallet-tour>
 
