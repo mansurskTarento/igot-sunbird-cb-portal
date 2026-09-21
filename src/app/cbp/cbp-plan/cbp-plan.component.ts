@@ -16,7 +16,7 @@ import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
 import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
-import { IndexedDbService } from '@ws/app/src/lib/routes/search-v3/services/indexed-db.service'
+import { IndexedDbService } from '@sunbird-cb/utils-v2'
 import { InitService } from '../../services/init.service'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)

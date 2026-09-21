@@ -83,3 +83,27 @@ $dark-theme: mat.m2-define-dark-theme((color: $color-config,
         @include theme-based-configurations($dark-theme);
     }
 }
+/* ---------------------------------------------------
+   5. APP SURFACE
+
+   The page background has to be painted here, globally.
+
+   `mat.all-component-themes` only emits the `--mat-app-background-color` token, and the
+   `.mat-app-background` class that reads it comes from `mat.app-background()`, which nothing
+   includes at global scope: `mat.core()` is a no-op from Material 20 on, and the pages that do
+   pull the Material mixins in do it from a *component* stylesheet, where Angular rewrites the
+   selectors to `[_ngcontent-%COMP%]` so they can never match `<html>` or `<body>`.
+
+   The same applies to the `::ng-deep .mat-app-background` rule in root.component.scss: `<body>`
+   is an ancestor of `<app-root>`, and emulated encapsulation only reaches a component's own
+   descendants. So the body was left with no background of its own and fell back to the browser
+   default white, in both modes. Light mode hid it; in dark mode the design tokens flip the text
+   to white and it turned into white-on-white.
+
+   Driven off the design-system tokens, so it follows `[data-theme]` like every other surface.
+--------------------------------------------------- */
+
+body.mat-app-background {
+    background-color: var(--surface-primary);
+    color: var(--text-bandw-black-body);
+}

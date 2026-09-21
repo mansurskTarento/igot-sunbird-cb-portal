@@ -5,7 +5,12 @@
   // position: fixed;
   width: 100%;
   // top: 0;
-  background-color: #fff;
+  /* The header shell behind the toolbar. This was #fff, which showed as a white strip under
+     the header in dark mode wherever the toolbar did not fill the shell — the toolbar itself
+     already paints --surface-primary (app-nav-bar-v2.component.scss), as does
+     .mobile-download-app-top-header just below. The token is #ffffff in light mode, so light
+     mode is unchanged. */
+  background-color: var(--surface-primary);
   z-index: 1000;
 }
 

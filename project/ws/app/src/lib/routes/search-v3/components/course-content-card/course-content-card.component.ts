@@ -20,7 +20,7 @@ import { CertificateDialogComponent } from '@sunbird-cb/collection'
 import { CertificateService } from '../../../certificate/services/certificate.service'
 import { Router } from '@angular/router'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
-import { IndexedDbService } from '../../services/indexed-db.service'
+import { IndexedDbService } from '@sunbird-cb/utils-v2'
 import * as _ from 'lodash'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24

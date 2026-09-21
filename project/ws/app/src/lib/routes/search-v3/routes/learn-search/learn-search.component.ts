@@ -9,7 +9,7 @@ import {
   EventEmitter,
 } from '@angular/core'
 import { GbSearchService } from '../../services/gb-search.service'
-import { IndexedDbService } from '../../services/indexed-db.service'
+import { IndexedDbService } from '@sunbird-cb/utils-v2'
 import {
   ConfigurationsService,
   EventService,

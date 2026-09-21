@@ -1,0 +1,103 @@
+<div class="plan-detail__breadcrumb">
+  <sb-uic-breadcrumb [widgetData]="breadcrumbData()"></sb-uic-breadcrumb>
+</div>
+
+<div class="plan-detail">
+
+  <div class="plan-detail__title-row">
+    <button mat-mini-fab class="plan-detail__back" [attr.aria-label]="'planDetail.backToPlans' | translate" routerLink="/app/plans"
+      [queryParams]="listingQueryParams()">
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+    <h1 class="plan-detail__heading">{{ planTitle() }}</h1>
+  </div>
+
+  @if (loading()) {
+  <div class="plan-detail__body">
+    <div class="plan-detail__courses" aria-busy="true">
+      @for (row of [0, 1, 2, 3, 4, 5]; track row) {
+      <sb-uic-card-course-v2 [isLoading]="true"></sb-uic-card-course-v2>
+      }
+    </div>
+    <aside class="plan-detail__rail">
+      <div class="plan-panel plan-panel--skeleton"></div>
+    </aside>
+  </div>
+  } @else {
+  <div class="plan-detail__body">
+
+    <!-- ── Courses in the plan ─────────────────────────────── -->
+    <div class="plan-detail__courses">
+      @for (course of courses(); track course.identifier) {
+      <sb-uic-card-course-v2 [content]="course" [cbPlanMapData]="cbPlanMapData()"></sb-uic-card-course-v2>
+      } @empty {
+      <div class="plan-detail__empty">
+        <img src="/assets/icons/no-data.svg" alt="" aria-hidden="true" />
+        <p>{{ 'planDetail.noCourses' | translate }}</p>
+      </div>
+      }
+    </div>
+
+    <!-- ── Right rail ──────────────────────────────────────── -->
+    <aside class="plan-detail__rail">
+
+      <!-- Progress on this plan -->
+      <section class="plan-panel">
+        <h2 class="plan-panel__title">{{ 'planDetail.progressOnPlan' | translate }}</h2>
+
+        <dl class="plan-panel__rows">
+          <div class="plan-panel__row">
+            <dt>{{ 'planDetail.coursesCompleted' | translate }}</dt>
+            <dd class="plan-panel__value">{{ completedCourses() }} {{ 'planDetail.of' | translate }} {{ totalCourses() }}</dd>
+          </div>
+
+          @if (caCourses().length) {
+          <div class="plan-panel__row">
+            <dt>{{ 'planDetail.caCourses' | translate }}</dt>
+            <dd class="plan-panel__value">{{ completedCaCourses() }} {{ 'planDetail.of' | translate }} {{ caCourses().length }}</dd>
+          </div>
+          }
+
+          @if (assessment()) {
+          <div class="plan-panel__row">
+            <dt>{{ 'planDetail.comprehensiveAssessment' | translate }}</dt>
+            <dd class="plan-panel__value plan-status" [class]="'plan-status--' + assessmentState()">
+              <span class="plan-status__dot" aria-hidden="true"></span>
+              {{ assessmentStateKey() | translate }}
+            </dd>
+          </div>
+          }
+        </dl>
+
+        <dl class="plan-panel__rows">
+          <div class="plan-panel__row">
+            <dt>{{ 'cardplanv2.createdBy' | translate }}</dt>
+            <dd class="plan-panel__value plan-panel__value--wrap">{{ createdBy() }}</dd>
+          </div>
+
+          @if (dueDate()) {
+          <div class="plan-panel__row">
+            <dt>{{ 'planDetail.dueDate' | translate }}</dt>
+            <dd class="plan-panel__value">{{ dueDate() | date: 'dd MMM yyyy' }}</dd>
+          </div>
+          }
+
+          @if (reportingYear()) {
+          <div class="plan-panel__row">
+            <dt>{{ 'planDetail.reportingYear' | translate }}</dt>
+            <dd class="plan-panel__value">{{ reportingYearLabel() }}</dd>
+          </div>
+          }
+        </dl>
+      </section>
+
+      <!-- Comprehensive assessment: the same card the courses use. CardCourseV2Component
+           draws its own media area for an assessment that has no poster of its own, so this
+           page no longer builds a panel by hand for that case. -->
+      @if (assessment(); as ca) {
+      <sb-uic-card-course-v2 [content]="ca" [assessmentState]="assessmentState()"></sb-uic-card-course-v2>
+      }
+    </aside>
+  </div>
+  }
+</div>

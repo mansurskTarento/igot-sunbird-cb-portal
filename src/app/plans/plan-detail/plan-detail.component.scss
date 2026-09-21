@@ -1,0 +1,226 @@
+/* ── Theme ──────────────────────────────────────────────────
+   Every colour is a design-system custom property, and each one used here is defined in BOTH
+   the light and dark token blocks — so this page follows the app's mode with no dark-mode
+   ruleset of its own. The page ground comes from the shell, which is themed; `/app/plans` is
+   registered in root.component.ts's fullBleedRoutes, so the content row spans the viewport and
+   the column is capped here instead.
+   ────────────────────────────────────────────────────────── */
+
+:host {
+  /* No background of its own — the shell's root container owns the themed page ground. See
+     the note in plans-show-all.component.scss. */
+  display: block;
+  min-height: 100%;
+}
+
+/* Content column, fixed at the 1064px design content width so this page and the listing share
+   one column at every desktop size. The 90% mobile gutter mirrors .container-balanced. */
+.plan-detail__breadcrumb,
+.plan-detail {
+  width: 100%;
+  max-width: 1064px;
+  margin: 0 auto;
+}
+
+@media (max-width: 1064px) and (pointer: coarse),
+(max-width: 599.98px) {
+
+  .plan-detail__breadcrumb,
+  .plan-detail {
+    width: 90%;
+  }
+}
+
+.plan-detail {
+  padding: 24px 0 40px;
+  font-family: 'Noto Sans';
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    min-width: 0;
+  }
+
+  &__back {
+    border-radius: 8px;
+    box-shadow: none;
+    /* Inverse pair: dark plate + light glyph in light mode, and the reverse in dark. */
+    color: var(--surface-primary);
+    background: var(--surface-inverse);
+    height: 32px;
+    width: 32px;
+    flex-shrink: 0;
+  }
+
+  &__heading {
+    margin: 0;
+    font: 600 20px 'Noto Sans';
+    color: var(--text-bandw-black-heading);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Courses on the left, the plan's own summary on the right. */
+  &__body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 24px;
+  }
+
+  /* Exactly three cards per row: three tracks at the course card's fixed 254px, which the card
+     will not stretch or shrink to fill. 3 x 254 + 2 x 16 = 794px, so the grid is pinned at that
+     and the rail takes whatever the 1064px column has left. Sizing the grid (rather than the
+     rail) is what guarantees the row count — an `auto-fill` track list gives however many
+     columns happen to fit, which is what produced two. */
+  &__courses {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 254px);
+    justify-content: start;
+    gap: 20px 16px;
+  }
+
+  /* Takes what the grid leaves (246px at the full 1064px column). The flex-basis is the point
+     below which it wraps under the courses rather than being crushed — see flex-wrap above. */
+  &__rail {
+    flex: 1 1 220px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__empty {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px 0;
+    text-align: center;
+
+    img {
+      width: 120px;
+      max-width: 100%;
+    }
+
+    p {
+      margin: 16px 0 0;
+      font: 600 14px 'Noto Sans';
+      color: var(--text-bandw-black-captions);
+    }
+  }
+
+  /* Below the tablet breakpoint the rail drops under the courses rather than squeezing them. */
+  @media (max-width: 1064px) {
+    &__body {
+      flex-direction: column;
+    }
+
+    &__rail {
+      flex: 1 1 auto;
+      width: 100%;
+    }
+
+    /* The pinned three-track grid would overflow here, so go back to as many as fit. */
+    &__courses {
+      width: 100%;
+      grid-template-columns: repeat(auto-fill, 254px);
+      justify-content: center;
+    }
+  }
+}
+
+/* ── Progress panel ─────────────────────────────────────────── */
+.plan-panel {
+  padding: 16px;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--environment-application-backgrounds-card-background);
+
+  &--skeleton {
+    height: 260px;
+  }
+
+  &__title {
+    margin: 0 0 12px;
+    font: 600 14px 'Noto Sans';
+    color: var(--text-bandw-black-heading);
+  }
+
+  &__rows {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* Rows are separated by a rule rather than a gap, and the spacing comes from the padding
+       either side of it — which is why the two lists no longer need a divider between them. */
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-default);
+
+    dt {
+      font: 400 12px 'Noto Sans';
+      color: var(--text-bandw-black-captions);
+    }
+
+    dd {
+      margin: 0;
+    }
+  }
+
+  &__value {
+    font: 600 12px 'Noto Sans';
+    color: var(--text-bandw-black-sub-heading);
+    text-align: right;
+    white-space: nowrap;
+
+    &--wrap {
+      white-space: normal;
+    }
+  }
+
+  /* The panel closes on its last row, so that one carries no rule. `:last-of-type` picks the
+     second <dl>, whichever rows inside it happen to be rendered. */
+  &__rows:last-of-type &__row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+/* ── Status pill (shared by the panel row and the assessment card) ───────────── */
+.plan-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 600 12px 'Noto Sans';
+  white-space: nowrap;
+
+  /* currentColor drives the dot, so each state needs one declaration. */
+  &--locked {
+    color: var(--text-system-text-error);
+  }
+
+  &--available {
+    color: var(--text-system-text-warning);
+  }
+
+  &--completed {
+    color: var(--text-system-text-success);
+  }
+
+  &__dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+}
