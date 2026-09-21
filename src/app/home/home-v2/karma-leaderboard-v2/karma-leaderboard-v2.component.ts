@@ -178,7 +178,7 @@ export class KarmaLeaderboardV2Component implements OnInit {
   onKarmaCoinsNavBtnClick() {
     this.close.emit()
     this.eventSvc.raiseInteractTelemetry(
-      { id: 'wallet-balance', type: WsEvents.EnumInteractTypes.CLICK, subType: WsEvents.EnumInteractSubTypes.PROFILE },
+      { id: 'wallet-balance', type: WsEvents.EnumInteractTypes.CLICK, subType: 'my-achievements' },
       {},
       { pageId: 'page/home' }
     )
