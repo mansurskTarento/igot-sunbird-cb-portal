@@ -1,0 +1,254 @@
+<div class="kw">
+
+  <!-- Breadcrumb -->
+  <nav class="kw__breadcrumb" aria-label="breadcrumb">
+    <a class="kw__crumb kw__crumb--link" [routerLink]="['/page/home']">
+      <span>Home</span>
+    </a>
+    <mat-icon class="kw__crumb-sep" aria-hidden="true">chevron_right</mat-icon>
+    <a class="kw__crumb kw__crumb--link" [routerLink]="['/app/person-profile/me']">
+      <mat-icon class="kw__crumb-icon" aria-hidden="true">person</mat-icon>
+      <span>Profile</span>
+    </a>
+    <mat-icon class="kw__crumb-sep" aria-hidden="true">chevron_right</mat-icon>
+    <span class="kw__crumb kw__crumb--current" aria-current="page">
+      <span>Karma Wallet</span>
+    </span>
+  </nav>
+
+  <!-- Page header -->
+  <header class="kw__header">
+    <div class="kw__title-wrap">
+      <h1 class="kw__title">Karma Coin Wallet</h1>
+      <button type="button" class="kw__info-btn" aria-label="About Karma Coin Wallet" (click)="openKarmaCoinsInfo()">
+        <mat-icon class="kw__info-icon">info_outline</mat-icon>
+      </button>
+    </div>
+    <div class="kw__actions">
+      <button type="button" class="kw__btn kw__btn--ghost" [disabled]="!canRedeem"
+        (click)="redeemKarmaPoints()">Convert Karma Points</button>
+      <button type="button" class="kw__btn kw__btn--primary" (click)="useKarmaCoins()">Redeem Karma Coins</button>
+    </div>
+  </header>
+
+  <!-- Summary cards -->
+  <section class="kw__stats" aria-label="Karma coin summary"
+    [attr.aria-busy]="summaryLoading ? 'true' : null">
+
+    <!-- Skeleton until the summary resolves. Inside the same section so the grid, and the
+         walkthrough's .kw__stats anchor, are there either way. -->
+    <ng-container *ngIf="summaryLoading; else summarySettled">
+      <div class="kw-stat kw-stat--skeleton" *ngFor="let slot of skeletonSlots; let i = index"
+        aria-hidden="true">
+        <span class="kw-skel kw-skel--label"></span>
+        <span class="kw-skel kw-skel--value"></span>
+        <!-- The second card carries a progress track; matching it keeps the row heights
+             equal, so nothing jumps when the real cards arrive. -->
+        <span class="kw-skel kw-skel--track" *ngIf="i === 1"></span>
+        <span class="kw-skel kw-skel--hint"></span>
+      </div>
+    </ng-container>
+
+    <!-- Settled either way: the failed call gets a standing retry where the cards would be,
+         rather than a snackbar the user cannot act on once it has gone. -->
+    <ng-template #summarySettled>
+      <div class="kw-stats-error" *ngIf="summaryError; else statCards" role="alert">
+        <mat-icon class="kw-stats-error__icon" aria-hidden="true">error_outline</mat-icon>
+        <div class="kw-stats-error__text">
+          <div class="kw-stats-error__title">Something went wrong</div>
+          <div class="kw-stats-error__detail">{{ summaryError }}</div>
+        </div>
+        <!-- --retry, not --ghost: the walkthrough anchors step 4 on the first .kw__btn--ghost
+             in the document, and that has to stay the header's Convert button. -->
+        <button type="button" class="kw__btn kw__btn--retry kw-stats-error__retry"
+          (click)="retrySummary()">Retry</button>
+      </div>
+    </ng-template>
+
+    <ng-template #statCards>
+    <div class="kw-stat">
+      <div class="kw-stat__label">Wallet Balance</div>
+      <div class="kw-stat__value-row">
+        <img class="kw-stat__coin" [src]="icons.karmaCoin" alt="" aria-hidden="true">
+        <span class="kw-stat__value">{{ summary.walletBalance | number }}</span>
+      </div>
+      <div class="kw-stat__hint">Available for course redemption</div>
+    </div>
+
+    <div class="kw-stat kw-stat--progress">
+      <div class="kw-stat__label">Pending for conversion this month</div>
+      <div class="kw-stat__value-row">
+        <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+        <span class="kw-stat__value">{{ summary.convertibleThisMonth | number }}</span>
+        <span class="kw-stat__value-sub">of {{ summary.monthlyCap | number }} KP</span>
+      </div>
+      <div class="kw-stat__track">
+        <span class="kw-stat__fill" [style.width.%]="conversionProgress"></span>
+      </div>
+      <div class="kw-stat__hint">
+        {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
+      </div>
+    </div>
+
+    <div class="kw-stat">
+      <div class="kw-stat__label">Total Converted</div>
+      <div class="kw-stat__value-row">
+        <img class="kw-stat__coin" [src]="icons.karmaCoin" alt="" aria-hidden="true">
+        <span class="kw-stat__value">{{ summary.totalEarnedTillDate | number }}</span>
+      </div>
+      <div class="kw-stat__hint">Converted from Karma Points to Karma Coins</div>
+    </div>
+
+    <div class="kw-stat">
+      <div class="kw-stat__label">Unconverted Karma</div>
+      <div class="kw-stat__value-row">
+        <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+        <span class="kw-stat__value">{{ summary.unredeemedKarmaPoints | number }}</span>
+      </div>
+      <div class="kw-stat__hint kw-stat__hint--link">
+        <a class="kw-stat__link" href="javascript:void(0)" (click)="viewUnredeemedKarmaPoints()">View More</a>
+      </div>
+    </div>
+    </ng-template>
+  </section>
+
+  <!-- Coin history -->
+  <!-- An unsettled conversion: the row is kept out of the history below until it lands -->
+  <div class="kw-inprogress" role="status" *ngIf="pendingConversion">
+    <span class="kw-inprogress__spinner" aria-hidden="true"></span>
+    <div class="kw-inprogress__body">
+      <p class="kw-inprogress__title">Conversion in progress &middot;
+        {{ pendingConversionPoints | number }} KP &rarr; {{ pendingConversionCoins | number }} KC</p>
+      <p class="kw-inprogress__text">Please refresh the page or return after some time to view the latest status in
+        the Coin History section below.</p>
+    </div>
+  </div>
+
+  <section class="kw__history" aria-label="Coin history">
+    <div class="kw__history-head">
+      <h2 class="kw__history-title">Coin History</h2>
+      <button type="button" class="kw__sort" [matMenuTriggerFor]="periodMenu"
+        aria-label="Filter coin history by period">
+        <span class="kw__sort-label">{{ activePeriodLabel }}</span>
+        <mat-icon class="kw__sort-caret" aria-hidden="true">arrow_drop_down</mat-icon>
+      </button>
+      <mat-menu #periodMenu="matMenu" panelClass="kw-period-menu">
+        <button mat-menu-item type="button" role="menuitemradio" *ngFor="let option of periodOptions"
+          [attr.aria-checked]="activePeriod === option.value" (click)="selectPeriod(option.value)">
+          <span class="kw-period">
+            <span class="kw-period__radio" [class.kw-period__radio--on]="activePeriod === option.value"></span>
+            <span class="kw-period__label" [class.kw-period__label--on]="activePeriod === option.value">
+              {{ option.label }}
+            </span>
+          </span>
+        </button>
+      </mat-menu>
+    </div>
+
+    <div class="kw__range" *ngIf="activePeriod === 'custom'">
+      <div class="kw__range-item">
+        <label class="kw__range-label" for="kw-range-start">Start Date</label>
+        <mat-form-field appearance="outline" class="kw__range-field">
+          <input id="kw-range-start" matInput readonly placeholder="Select Date"
+            [matDatepicker]="customStartPicker" [min]="minSelectableDate"
+            [max]="maxSelectableDate" [ngModel]="customStart"
+            (dateChange)="onCustomStartChange($event.value)" (click)="customStartPicker.open()">
+          <mat-datepicker-toggle matSuffix [for]="customStartPicker">
+            <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #customStartPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <span class="kw__range-sep" aria-hidden="true">to</span>
+
+      <div class="kw__range-item">
+        <label class="kw__range-label" for="kw-range-end">End Date</label>
+        <mat-form-field appearance="outline" class="kw__range-field">
+          <input id="kw-range-end" matInput readonly placeholder="Select Date"
+            [matDatepicker]="customEndPicker" [min]="minSelectableDate"
+            [max]="maxSelectableDate" [ngModel]="customEnd"
+            (dateChange)="onCustomEndChange($event.value)" (click)="customEndPicker.open()">
+          <mat-datepicker-toggle matSuffix [for]="customEndPicker">
+            <mat-icon class="datepicker-icon" matDatepickerToggleIcon>calendar_today</mat-icon>
+          </mat-datepicker-toggle>
+          <mat-datepicker #customEndPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <p class="kw__range-error" role="alert" *ngIf="customError">{{ customError }}</p>
+
+    <div class="kw__tabs" role="tablist">
+      <button type="button" role="tab" class="kw__tab" *ngFor="let tab of tabs"
+        [class.kw__tab--active]="activeTab === tab.value" [attr.aria-selected]="activeTab === tab.value"
+        (click)="selectTab(tab.value)">
+        {{ tab.label }}
+      </button>
+    </div>
+
+    <div class="kw-table" *ngIf="hasTransactions">
+      <div class="kw-table__group" *ngFor="let group of groups">
+        <button type="button" class="kw-table__month" [attr.aria-expanded]="group.expanded"
+          (click)="toggleGroup(group)">
+          <span class="kw-table__month-label">{{ group.label }}</span>
+          <mat-icon class="kw-table__month-caret" [class.kw-table__month-caret--collapsed]="!group.expanded"
+            aria-hidden="true">arrow_drop_down</mat-icon>
+        </button>
+
+        <ng-container *ngIf="group.expanded">
+          <div class="kw-table__head" role="row">
+            <span class="kw-table__th" role="columnheader">Date</span>
+            <span class="kw-table__th" role="columnheader">Description</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Credit</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Debit</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Balance</span>
+          </div>
+
+          <div class="kw-table__row" role="row" *ngFor="let txn of group.transactions">
+            <span class="kw-table__date">{{ txn.date | date: 'd MMM yyyy' }}</span>
+            <span class="kw-table__desc">
+              <span class="kw-table__desc-title">{{ txn.title }}
+                <span class="kw-table__failed" *ngIf="isFailed(txn)">Failed</span>
+              </span>
+              <span class="kw-table__desc-sub">{{ txn.description }}</span>
+              <span class="kw-table__desc-sub">{{ txn.transactionId }}</span>
+            </span>
+            <span class="kw-table__num" [class.kw-table__num--credit]="txn.credit > 0">
+              {{ txn.credit > 0 ? '+' + (txn.credit | number) : '0' }}
+            </span>
+            <span class="kw-table__num" [class.kw-table__num--debit]="txn.debit > 0">
+              {{ txn.debit > 0 ? '-' + (txn.debit | number) : '0' }}
+            </span>
+            <span class="kw-table__num kw-table__num--balance">{{ txn.balance | number }}</span>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <!-- A failed history call is reported in the snackbar, so this stays a plain empty state -->
+    <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError">
+      No Karma Coin transactions yet.
+    </div>
+
+    <div class="kw__loader" *ngIf="loading">
+      <mat-spinner diameter="32"></mat-spinner>
+    </div>
+  </section>
+</div>
+
+<!-- Walkthrough. Started only by "Start Walkthrough" in the info dialog; it is this page's
+     own tour and shares nothing with the shell's <app-tour>. -->
+<ws-app-karma-wallet-tour #tour (finished)="onTourFinished()"
+  (action)="onTourAction($event)"></ws-app-karma-wallet-tour>
+
+<div class="kw-converting" *ngIf="converting">
+  <div class="kw-converting__backdrop" aria-hidden="true"></div>
+  <div class="kw-converting__panel" role="dialog" aria-modal="true" aria-label="Converting your Karma Points">
+    <span class="kw-converting__spinner" aria-hidden="true"></span>
+    <p class="kw-converting__title">We&rsquo;re converting your Karma Points</p>
+    <p class="kw-converting__message">This might take some time &mdash; you can close this window and come back to
+      check the status later.</p>
+    <button type="button" class="kw-converting__btn" (click)="closeConverting()">Close</button>
+  </div>
+</div>

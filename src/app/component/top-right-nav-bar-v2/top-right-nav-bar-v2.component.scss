@@ -225,3 +225,59 @@
     display: none !important;
   }
 }
+
+$kc-font: 'Noto Sans', sans-serif;
+$kw-icon: 32px;
+
+.karma-wallet-btn {
+  --kw-badge-surface: var(--environment-application-backgrounds-card-background);
+  --kw-badge-text: var(--color-primary-500);
+  --kw-badge-ring: rgba(0, 0, 0, 0.08);
+
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  line-height: 0;
+
+  &:focus-visible {
+    outline: 2px solid var(--kw-badge-text);
+    outline-offset: 2px;
+    border-radius: 8px;
+  }
+
+  &__icon {
+    display: block;
+    width: $kw-icon;
+    height: $kw-icon;
+    flex-shrink: 0;
+  }
+
+  ::ng-deep .mat-badge-content {
+    left: auto !important;
+    right: 20px !important;
+    top: auto !important;
+    bottom: 0 !important;
+    min-width: 20px;
+    width: auto;
+    height: auto;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--kw-badge-surface);
+    box-shadow: 0 0 0 1px var(--kw-badge-ring), 0 1px 2px rgba(0, 0, 0, 0.08);
+    font: 700 11px/16px $kc-font;
+    color: var(--kw-badge-text);
+    white-space: nowrap;
+    pointer-events: none;
+  }
+}
+
+:host-context([data-theme='dark']) {
+  .karma-wallet-btn {
+    --kw-badge-surface: var(--environment-cards-overall-cards-primary);
+    --kw-badge-text: var(--environment-icon-overall-primary-bandw);
+    --kw-badge-ring: rgba(255, 255, 255, 0.16);
+  }
+}

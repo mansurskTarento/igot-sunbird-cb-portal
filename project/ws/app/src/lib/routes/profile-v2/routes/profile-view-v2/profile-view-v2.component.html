@@ -254,7 +254,9 @@
       </div>
     </ng-container>
     <ng-container *ngIf="shouldShowUserStatsDesktop">
-      <div>
+      <!-- w-full: the column centres its children, so without it this wrapper shrink-wraps and
+           the stats row spills out of the column instead of scrolling inside it. -->
+      <div class="w-full">
         <ws-app-user-stats [userStats]="userStats" [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
       </div>
     </ng-container>
@@ -307,7 +309,7 @@
         <ng-container *ngIf="showProfileSection; else blocked">
           <div class="flex flex-col gap-4">
             <ng-container *ngIf="shouldShowUserStatsMobile">
-              <div>
+              <div class="w-full">
                 <ws-app-user-stats [userStats]="userStats" [isMobile]="isMobile"
                   [isNotMyUserAndIgotOrg]="isNotMyUserAndIgotOrg"></ws-app-user-stats>
               </div>

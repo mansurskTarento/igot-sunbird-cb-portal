@@ -9,8 +9,18 @@ import { ProfileKarmapointsComponent } from './routes/profile-karmapoints/profil
 import { ProfileViewV2Component } from './routes/profile-view-v2/profile-view-v2.component'
 import { profileResolver } from './resolvers/profile-revamp/profile.resolver'
 import { profileEntriesResolver } from './resolvers/profile-revamp/profile-entries.resolver'
+import { KarmaWalletComponent } from './routes/karma-wallet/karma-wallet.component'
+import { KarmaWalletService } from './routes/karma-wallet/karma-wallet.service'
 
 const routes: Routes = [
+  {
+    path: 'karma-wallet',
+    component: KarmaWalletComponent,
+    data: {
+      pageId: 'karma-wallet',
+      module: 'Profile',
+    },
+  },
   {
     path: '',
     component: ProfileComponent,
@@ -74,6 +84,7 @@ const routes: Routes = [
     Profilev2BadgesResolve,
     profileResolver,
     profileEntriesResolver,
+    KarmaWalletService,
   ],
 })
 export class ProfileV2RoutingModule { }

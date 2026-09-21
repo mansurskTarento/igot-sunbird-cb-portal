@@ -33,6 +33,7 @@ export class KarmaLeaderboardV2Component implements OnInit {
   monthName = ''
   year: any = null
   myKarmaPoints = 0
+  myKarmaCoins = 0
 
   // Celebration banner
   showOverlay = false
@@ -60,6 +61,7 @@ export class KarmaLeaderboardV2Component implements OnInit {
       if (raw) {
         const parsed = JSON.parse(raw)
         this.myKarmaPoints = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.karmaPoints) || 0
+        this.myKarmaCoins = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.walletBalance) || 0
       }
     } catch (_e) { /* ignore */ }
 
@@ -170,6 +172,15 @@ export class KarmaLeaderboardV2Component implements OnInit {
       { id: 'karma-leaderboard-view-karma-points', type: WsEvents.EnumInteractTypes.CLICK, subType: 'view-karma-points' },
       {},
       { module: WsEvents.EnumTelemetrymodules.KARMAPOINTS }
+    )
+  }
+
+  onKarmaCoinsNavBtnClick() {
+    this.close.emit()
+    this.eventSvc.raiseInteractTelemetry(
+      { id: 'wallet-balance', type: WsEvents.EnumInteractTypes.CLICK, subType: WsEvents.EnumInteractSubTypes.PROFILE },
+      {},
+      { pageId: 'page/home' }
     )
   }
 

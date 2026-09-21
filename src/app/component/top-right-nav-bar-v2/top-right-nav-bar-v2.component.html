@@ -84,6 +84,18 @@
   }
   }
   }
+  <!-- Karma Coin Wallet -->
+  @if (item()?.type === 'walletButton' && showKarmaWallet()) {
+  <li class="flex items-center">
+    <button type="button" class="karma-wallet-btn" matTooltipClass="right-nav-tooltip"
+      [matTooltip]="walletTooltip()" [attr.aria-label]="walletTooltip()" (click)="goToKarmaWallet()"
+      [matBadge]="karmaCoins() | number" matBadgePosition="below before" matBadgeSize="small"
+      matBadgeOverlap="true" [matBadgeHidden]="false">
+      <img class="karma-wallet-btn__icon" src="/assets/icons/karmawallet-v2/KarmaWallet_topnav.svg" alt=""
+        aria-hidden="true" />
+    </button>
+  </li>
+  }
   @if (item()?.type === 'themeToggle') {
   <li matTooltipClass="right-nav-tooltip"
     matTooltip="{{ themeSvc.isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}"

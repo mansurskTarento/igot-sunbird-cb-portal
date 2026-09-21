@@ -1,9 +1,38 @@
+:host {
+  // A custom element is inline by default, and .profileLeftSection centres its children, so the
+  // host would otherwise shrink-wrap to the cards' full width and spill out of the 858px column.
+  display: block;
+  width: 100%;
+}
+
 .states {
-  max-width: 100vw;
+  // width:0 + min-width:100% fills the host while still reporting a zero min-content upward.
+  // .profileLeftSection is a flex item with no min-width:0, so a content-based min-content here
+  // becomes its automatic minimum size and widens the whole page instead of scrolling this row.
+  width: 0;
+  min-width: 100%;
   overflow-x: auto;
+  overscroll-behavior-x: contain;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #0000002e transparent;
+
+  &::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    background: #0000002e;
+  }
 }
 
 .stateCard {
+  flex: 0 0 auto;
   width: 168.5px;
   height: 65px;
   padding: 16px;

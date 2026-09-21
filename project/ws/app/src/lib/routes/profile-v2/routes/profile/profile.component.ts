@@ -9,6 +9,9 @@ import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import _ from 'lodash'
 /* tslint:enable */
 
+/* The widget prepends its own "Home" link, so this is just the trailing crumb */
+const DEFAULT_TITLES = [{ title: 'Profile', url: 'none', icon: 'person' }]
+
 @Component({
     selector: 'app-profile-v2',
     templateUrl: './profile.component.html',
@@ -20,7 +23,7 @@ import _ from 'lodash'
 export class ProfileComponent implements OnInit, OnDestroy {
   sideNavBarOpened = true
   panelOpenState = false
-  titles = [{ title: 'Profile', url: 'none', icon: 'person' }]
+  titles: any[] = DEFAULT_TITLES
   unread = 0
   currentRoute = 'home'
   banner!: NsWidgetResolver.IWidgetData<any>
@@ -36,6 +39,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.router.events.subscribe((event: Event) => {
       if (event instanceof NavigationEnd) {
         this.bindUrl(event.urlAfterRedirects.replace('/app/discuss/', ''))
+        this.titles = this.titlesFor(event.urlAfterRedirects)
 
         if (event.urlAfterRedirects === '/app/person-profile/me') {
           if (this.configSvc.userProfile) {
@@ -91,6 +95,33 @@ export class ProfileComponent implements OnInit, OnDestroy {
       this.sideNavBarOpened = !isLtMedium
       this.screenSizeIsLtMedium = isLtMedium
     })
+  }
+
+  /**
+   * Feeds the existing back-nav widget rather than adding a second breadcrumb. The widget
+   * always renders its own leading "Home" link, so a titles entry per crumb after that is all
+   * it needs, and a url other than 'none' is what makes an entry clickable.
+   *
+   * The labels are deliberately left translatable: the widget renders the translated branch in
+   * its link colour and the disableTranslate branch in grey, so opting out of translation also
+   * opts out of looking like a link. Both labels have btnpageback keys in the i18n bundle.
+   *
+   * The query string is parsed rather than substring-matched, so an unrelated route that
+   * happens to contain the same text cannot change the trail.
+   */
+  private titlesFor(url: string): any[] {
+    const query = url.split('?')[1]
+    const from = query ? new URLSearchParams(query).get('from') : null
+    if (from === 'karma-wallet') {
+      return [
+        { title: 'Profile', url: '/app/person-profile/me', icon: 'person' },
+        { title: 'Karma Wallet', url: '/app/person-profile/karma-wallet' },
+        /* Current page: url 'none' renders it grey and unclickable, and that branch prints the
+           label verbatim, so this one needs no btnpageback key. */
+        { title: 'Karma Points', url: 'none' },
+      ]
+    }
+    return DEFAULT_TITLES
   }
 
   bindUrl(path: string) {

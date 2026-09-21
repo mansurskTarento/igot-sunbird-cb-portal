@@ -141,6 +141,7 @@ export class ExploreMenuComponent implements OnInit {
   }
 
   onItemClick(item: any) {
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: 'page/home' }])
     this.raiseTelemetry(item?.code, item?.subType || item?.subtype || '')
     const navUrl = item?.navUrl
     if (!navUrl) {

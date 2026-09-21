@@ -56,6 +56,13 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   myBadgesCount: any = 0
   userStats: UserStats[] = [
     {
+      state: 'NetworkV2Profile.walletBalance',
+      totalPoints: '0',
+      iconUrl: '/assets/icons/karmawallet-v2/karmacoin.svg',
+      vewAllUrl: '/app/person-profile/karma-wallet',
+      identifier: 'walletBalance',
+    },
+    {
       state: 'NetworkV2Profile.myKarmaPoints',
       totalPoints: '0',
       iconUrl: './assets/icons/karma-point-logo.jpg',
@@ -516,8 +523,11 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     if (_.get(this.profileConfig, 'userStats.enabled', false)) {
       const userStatsConfig: any = this.profileConfig.userStats
       this.userStats = this.userStats.filter((userStat: UserStats) => {
-        if (userStat.identifier && userStatsConfig[userStat.identifier].enabled) {
-          userStat['viewAllEnabled'] = userStatsConfig[userStat.identifier].viewAllEnabled
+        /* Optional chaining matters: an identifier with no config entry used to throw here
+           rather than simply being treated as switched off. */
+        const statConfig = userStat.identifier ? userStatsConfig[userStat.identifier] : undefined
+        if (statConfig?.enabled) {
+          userStat['viewAllEnabled'] = statConfig.viewAllEnabled
           return true
         }
         return false
@@ -735,6 +745,9 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.userStats.forEach((userStat: UserStats) => {
         this.myBadgesCount = _.get(this.profileData, 'badgeCount', 0)
         switch (userStat.identifier) {
+          case 'walletBalance':
+            userStat.totalPoints = _.get(this.profileData, 'walletBalance', 0)
+            break
           case 'karmaPoints':
             userStat.totalPoints = _.get(this.profileData, 'karmaPoints', 0)
             break

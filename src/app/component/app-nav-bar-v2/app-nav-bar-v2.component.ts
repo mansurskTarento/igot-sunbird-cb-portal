@@ -252,14 +252,16 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
         this.hideKPOnNav.set(false)
       }
 
-      if (event.url.includes('/page/home')) {
-        this.filteredPrimaryNavbarConfig = this.primaryNavbarConfig
+      const themedRoute = this.supportsThemeToggle(event.url)
+      if (themedRoute) {
+        this.filteredPrimaryNavbarConfig = this.withoutDisabledItems(this.primaryNavbarConfig)
         const themeMode = this.themeSvc.currentTheme
         this.themeSvc.setTheme(themeMode)
       }
       this.setActiveRouteFromUrl(event.url)
-      if (!event.url.includes('/page/home')) {
-        this.filteredPrimaryNavbarConfig = this.removeThemeToggleFromConfig(this.primaryNavbarConfig)
+      if (!themedRoute) {
+        this.filteredPrimaryNavbarConfig =
+          this.withoutDisabledItems(this.removeThemeToggleFromConfig(this.primaryNavbarConfig))
         this.themeSvc.applyTheme('light')
       }
     })
@@ -556,6 +558,26 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
 
   translateLabels(label: string, type: any): string {
     return this.langtranslations.translateLabelWithoutspace(label, type, '')
+  }
+
+  private readonly themedRoutes = [
+    '/page/home',
+    '/app/person-profile/karma-wallet',
+  ]
+
+  private supportsThemeToggle(url: string): boolean {
+    return this.themedRoutes.some(route => url.includes(route))
+  }
+
+  withoutDisabledItems(config: NsInstanceConfig.IPrimaryNavbarConfig | null): NsInstanceConfig.IPrimaryNavbarConfig | null {
+    if (!config || !config.mediumScreen || !config.mediumScreen.right) {
+      return config
+    }
+
+    const filteredConfig = JSON.parse(JSON.stringify(config))
+    filteredConfig.mediumScreen.right = filteredConfig.mediumScreen.right
+      .filter((item: any) => item && item.enabled !== false)
+    return filteredConfig
   }
 
   removeThemeToggleFromConfig(config: NsInstanceConfig.IPrimaryNavbarConfig | null): NsInstanceConfig.IPrimaryNavbarConfig | null {

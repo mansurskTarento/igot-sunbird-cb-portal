@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
+import { MatBadgeModule } from '@angular/material/badge'
 import { MatSelectModule } from '@angular/material/select'
 import { MatFormFieldModule } from '@angular/material/form-field'
 import { MatSnackBar } from '@angular/material/snack-bar'
@@ -40,6 +41,7 @@ import { WidgetResolverModule } from '@sunbird-cb/resolver'
     MatMenuModule,
     MatButtonModule,
     MatTooltipModule,
+    MatBadgeModule,
     MatSelectModule,
     MatFormFieldModule,
     TranslateModule,
@@ -66,12 +68,27 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   roles = signal<string[]>([])
   enableSupportAI = signal(false)
   fontSizeLevel = signal(2) // 0=x-small, 1=small, 2=normal, 3=large, 4=x-large
+  karmaCoins = signal<number>(0)
 
   // Computed
   rightNavConfig = computed(() => {
     const input = this.rightNavConfigInput()
     return input?.topRightNavConfig ? input.topRightNavConfig : input
   })
+
+  showKarmaWallet = computed(() => {
+    if (this.item()?.enabled === false) {
+      return false
+    }
+    const sections = this.rightNavConfig()
+    if (!Array.isArray(sections)) {
+      return true
+    }
+    const section = sections.find((s: any) => s?.section === 'karma-wallet')
+    return !section || section.active !== false
+  })
+
+  walletTooltip = computed(() => this.item()?.tooltipText || 'Karma Wallet')
 
   fontLabel = computed(() => this.fontLabels[this.fontSizeLevel()])
 
@@ -127,6 +144,7 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initFontLevel()
+    this.karmaCoins.set(this.configSvc.unMappedUser?.walletBalance || 0)
 
     const instanceConfig = this.configSvc.instanceConfig
     if (instanceConfig) {
@@ -155,6 +173,15 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabel(label, type, '')
+  }
+
+  goToKarmaWallet(): void {
+    this.events.raiseInteractTelemetry(
+      { type: 'click', subType: 'home-page-header', id: 'wallet-icon' },
+      {},
+      { pageId: 'page/home' }
+    )
+    this.router.navigate(['/app/person-profile/karma-wallet'])
   }
 
   onBellClick() {
