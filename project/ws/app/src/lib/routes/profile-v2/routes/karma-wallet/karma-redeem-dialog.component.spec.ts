@@ -369,7 +369,7 @@ describe('KarmaRedeemDialogComponent', () => {
       expect(serviceStub.redeem).not.toHaveBeenCalled()
     })
 
-    it('should still report the click when Cancel is really Close on a pending conversion', () => {
+    it('should still report the click when Cancel follows a conversion handover', () => {
       component.amount = 50
       component.convert()
       eventsStub.dispatchEvent.mockClear()
@@ -377,7 +377,8 @@ describe('KarmaRedeemDialogComponent', () => {
       component.cancel()
 
       expect(lastEvent().data.edata.id).toBe('convert-karma-points-cancel')
-      expect(dialogRefStub.close).toHaveBeenCalledWith({ pending: true })
+      /* the handover already closed it; Cancel closes with nothing, never a pending result */
+      expect(dialogRefStub.close).toHaveBeenLastCalledWith()
     })
   })
 })

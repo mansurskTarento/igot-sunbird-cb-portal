@@ -111,19 +111,51 @@
     </div>
     </ng-template>
   </section>
-
-  <!-- Coin history -->
-  <!-- An unsettled conversion: the row is kept out of the history below until it lands -->
-  <div class="kw-inprogress" role="status" *ngIf="pendingConversion">
-    <span class="kw-inprogress__spinner" aria-hidden="true"></span>
-    <div class="kw-inprogress__body">
-      <p class="kw-inprogress__title">Conversion in progress &middot;
-        {{ pendingConversionPoints | number }} KP &rarr; {{ pendingConversionCoins | number }} KC</p>
-      <p class="kw-inprogress__text">Please refresh the page or return after some time to view the latest status in
-        the Coin History section below.</p>
-    </div>
+  
+  <div class="kw-last" *ngIf="lastCredit || lastDebit">
+    <ng-container *ngIf="lastCredit">
+      <ng-container *ngTemplateOutlet="lastCard; context: { $implicit: lastCredit, credit: true }"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="lastDebit">
+      <ng-container *ngTemplateOutlet="lastCard; context: { $implicit: lastDebit, credit: false }"></ng-container>
+    </ng-container>
   </div>
 
+  <ng-template #lastCard let-txn let-credit="credit">
+    <div class="kw-last__card" [ngClass]="'kw-last__card--' + txnState(txn)" role="status">
+      <span class="kw-last__spinner" *ngIf="txnState(txn) === 'progress'" aria-hidden="true"></span>
+      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'success'">check_circle</mat-icon>
+      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'failed'">error</mat-icon>
+
+      <div class="kw-last__body" [ngSwitch]="txnState(txn)">
+        <ng-container *ngSwitchCase="'progress'">
+          <p class="kw-last__title" *ngIf="credit">Coins Earned &middot; In Progress ( {{ txnPoints(txn) | number }} KP
+            &rarr; {{ txnCoins(txn) | number }} KC )</p>
+          <p class="kw-last__title" *ngIf="!credit">Coins Redeemed &middot; In Progress ( {{ txnCoins(txn) | number }}
+            KC )</p>
+          <p class="kw-last__text">Please refresh this page to view the status of your latest transaction.</p>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'failed'">
+          <p class="kw-last__title">Last Transaction &middot; Coins {{ credit ? 'Earned' : 'Redeemed' }}</p>
+          <p class="kw-last__text" *ngIf="credit">Failed &middot; {{ txnPoints(txn) | number }} KP Not Converted
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+          <p class="kw-last__text" *ngIf="!credit">Failed &middot; {{ txnCoins(txn) | number }} KC Not Redeemed
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <p class="kw-last__title">Last Transaction &middot; Coins {{ credit ? 'Earned' : 'Redeemed' }}</p>
+          <p class="kw-last__text" *ngIf="credit">{{ txnPoints(txn) | number }} KP &rarr; {{ txnCoins(txn) | number }}
+            KC &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+          <p class="kw-last__text" *ngIf="!credit">{{ txnCoins(txn) | number }} KC Redeemed
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Coin history -->
   <section class="kw__history" aria-label="Coin history">
     <div class="kw__history-head">
       <h2 class="kw__history-title">Coin History</h2>

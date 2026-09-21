@@ -986,23 +986,40 @@ $kw-row-pad: 17px;
   }
 }
 
-/* Unsettled conversion banner, between the stat cards and the coin history */
-.kw-inprogress {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  margin: 0 0 24px;
-  padding: 16px 20px;
-  border-radius: 8px;
-  background: var(--color-primary-50, #f5f3ff);
-  font-family: 'Noto Sans', sans-serif;
+.kw-last {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+
+  &__card {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 24px;
+    border-radius: 8px;
+
+    /* one direction on its own takes the whole row rather than half of it */
+    &:only-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    width: 25px;
+    height: 25px;
+    font-size: 25px;
+    line-height: 25px;
+    margin-top: 0;
+  }
 
   &__spinner {
     flex-shrink: 0;
     width: 20px;
     height: 20px;
-    margin-top: 2px;
-    border: 3px solid var(--color-primary-100, #ede9fe);
+    margin-top: 1px;
+    border: 2px solid var(--color-primary-100, #ede9fe);
     border-top-color: var(--color-primary-500, #4c1d95);
     border-radius: 50%;
     animation: kw-converting-spin 0.9s linear infinite;
@@ -1010,17 +1027,46 @@ $kw-row-pad: 17px;
 
   &__title {
     margin: 0;
-    font-size: 16px;
-    font-weight: 500;
-    line-height: 24px;
-    color: rgba(0, 0, 0, 0.87);
+    font-size: 15px;
+    font-weight: 600;
+    line-height: 22px;
   }
 
   &__text {
-    margin: 4px 0 0;
-    font-size: 14px;
+    margin: 2px 0 0;
+    font-size: 13px;
     font-weight: 400;
     line-height: 20px;
-    color: rgba(0, 0, 0, 0.6);
+  }
+  &__card--success {
+    background: #e9f7ef;
+
+    .kw-last__icon { color: #1e8e3e; }
+    .kw-last__title { color: #146c33; }
+    .kw-last__text { color: var(--color-tertiary-300) }
+  }
+
+  /* the wallet could not complete it */
+  &__card--failed {
+    background: #fdecef;
+
+    .kw-last__icon { color: #d1274b; }
+    .kw-last__title { color: #b3163a; }
+    .kw-last__text { color: var(--color-tertiary-300); }
+  }
+
+  /* accepted, still settling */
+  &__card--progress {
+    background: var(--color-primary-50, #eceafb);
+
+    .kw-last__title { color: var(--color-primary-500, #3d2a8f); }
+    .kw-last__text { color: rgba(0, 0, 0, 0.6); }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .kw-last {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
   }
 }

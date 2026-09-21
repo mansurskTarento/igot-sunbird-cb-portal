@@ -121,7 +121,7 @@ describe('KarmaWalletComponent', () => {
   let eventsStub: { dispatchEvent: jest.Mock }
   let snackBarStub: { open: jest.Mock }
   let dialogStub: { open: jest.Mock }
-  let serviceStub: { getWalletSummary: jest.Mock, getTransactions: jest.Mock }
+  let serviceStub: { getWalletSummary: jest.Mock, getTransactions: jest.Mock, redeem: jest.Mock }
   /* What the redeem dialog closes with, per test */
   let dialogResult: any
 
@@ -158,6 +158,7 @@ describe('KarmaWalletComponent', () => {
     serviceStub = {
       getWalletSummary: jest.fn(() => of(SUMMARY)),
       getTransactions: jest.fn(transactionsFor),
+      redeem: jest.fn(() => of({ requestId: 'req-1', status: 'SUCCESS' })),
     }
     impressionSpy.mockClear()
     component = load()
@@ -208,7 +209,7 @@ describe('KarmaWalletComponent', () => {
     /* The row below it is a marketplace debit, described from its addinfo */
     const debit = component.groups[0].transactions[1]
     expect(debit.title).toBe('Marketplace Course Purchase')
-    expect(debit.description).toBe('Understanding AI from MIT — Provider: MIT OpenCourseWare')
+    expect(debit.description).toBe('MIT OpenCourseWare - Understanding AI from MIT')
     expect(debit.credit).toBe(0)
     expect(debit.debit).toBe(40)
   })
@@ -465,7 +466,7 @@ describe('KarmaWalletComponent', () => {
 
       component.redeemKarmaPoints()
 
-      const expected = result && (result.redeemed || result.pending) ? 1 : 0
+      const expected = result && result.redeemed ? 1 : 0
       expect(serviceStub.getWalletSummary.mock.calls.length).toBe(expected)
       expect(serviceStub.getTransactions.mock.calls.length).toBe(expected)
     }
@@ -474,8 +475,21 @@ describe('KarmaWalletComponent', () => {
       closeWith({ redeemed: 50, received: 50, transactionId: 'TXN-000028' })
     })
 
-    it('should refetch the wallet for a conversion that is still queued', () => {
-      closeWith({ pending: true })
+    it('should not refetch on the handover itself - the conversion has not run yet', () => {
+      closeWith({ converting: { requestId: 'req-1', pointsToConvert: 50 } })
+      expect(component.converting).toBe(true)
+    })
+
+    it('should refetch once the conversion popup is closed', () => {
+      dialogResult = { converting: { requestId: 'req-1', pointsToConvert: 50 } }
+      component.redeemKarmaPoints()
+      serviceStub.getWalletSummary.mockClear()
+      serviceStub.getTransactions.mockClear()
+
+      component.closeConverting()
+
+      expect(serviceStub.getWalletSummary.mock.calls.length).toBe(1)
+      expect(serviceStub.getTransactions.mock.calls.length).toBe(1)
     })
 
     it('should leave the wallet alone when the dialog was simply dismissed', () => {
@@ -591,19 +605,21 @@ describe('KarmaWalletComponent', () => {
     expect(dialogStub.open).not.toHaveBeenCalled()
   })
 
-  it('should raise a view impression when the walkthrough starts', () => {
-    ;(component as any).tour = { start: jest.fn() }
+  /* The walkthrough used to raise its own view impression; it reports a click only now */
+  it('should report the walkthrough start as a click and raise no further impression', () => {
+    const tourStub = { start: jest.fn() }
+    ;(component as any).tour = tourStub
+    impressionSpy.mockClear()
+    eventsStub.dispatchEvent.mockClear()
+
     component.startWalkthrough()
 
-    /* Not calls[0] - ngOnInit has already raised the page-load impression */
-    const [edata, options] = impressionSpy.mock.calls.slice(-1)[0] as any[]
-    /* type is the reason this goes straight to the SDK - the platform service would emit the
-       first URL segment here instead */
-    expect(edata.type).toBe('view')
-    expect(edata.pageid).toBe(edata.uri.split('?')[0])
-    expect(options.context.env).toBe('Karma Wallet')
-    expect(options.object).toEqual({})
-    expect(options.context.pdata.id).toBe('prod.sunbird-cb-portal')
+    expect(tourStub.start).toHaveBeenCalledWith(component.tourSteps)
+    expect(impressionSpy).not.toHaveBeenCalled()
+    const event = eventsStub.dispatchEvent.mock.calls.slice(-1)[0][0] as any
+    expect(event.data.edata.id).toBe('start-walkthrough')
+    expect(event.data.edata.subType).toBe('what-is-karma-coins')
+    expect(event.pageContext.module).toBe('Karma Wallet')
   })
 
   it('should raise a what-is-karma-coins click when the walkthrough starts', () => {

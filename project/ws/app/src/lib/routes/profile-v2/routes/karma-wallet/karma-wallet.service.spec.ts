@@ -56,7 +56,7 @@ describe('toCoinRow against a live transactions payload', () => {
       amount: 40,
       pointsToConvert: undefined,
       title: 'Marketplace Course Purchase',
-      description: 'Understanding AI from MIT — Provider: MIT OpenCourseWare',
+      description: 'MIT OpenCourseWare - Understanding AI from MIT',
       credit: 0,
       debit: 40,
       balance: 752,

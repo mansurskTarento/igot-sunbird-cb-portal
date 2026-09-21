@@ -186,6 +186,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   converting = false
   private convertingAccepted = false
   pendingConversion: IKarmaCoinTransaction | null = null
+  lastCredit: IKarmaCoinTransaction | null = null
+  lastDebit: IKarmaCoinTransaction | null = null
   private destroyed = false
 
   constructor(
@@ -276,6 +278,30 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   /* A conversion the wallet could not complete; the row stays, flagged */
+  /* 'progress' | 'failed' | 'success' - a row with no status at all has settled */
+  txnState(txn: IKarmaCoinTransaction | null): string {
+    if (!txn) {
+      return ''
+    }
+    if (isTxnStatus(txn.status, TXN_STATUS_IN_PROGRESS)) {
+      return 'progress'
+    }
+    return isTxnStatus(txn.status, TXN_STATUS_FAILED) ? 'failed' : 'success'
+  }
+
+  /* The Karma Points side: what addinfo reports once settled, what the row asked for until then */
+  txnPoints(txn: IKarmaCoinTransaction | null): number {
+    if (!txn) {
+      return 0
+    }
+    const points = txn.pointsConverted === undefined ? txn.pointsToConvert : txn.pointsConverted
+    return Number(points === undefined ? txn.amount : points) || 0
+  }
+
+  txnCoins(txn: IKarmaCoinTransaction | null): number {
+    return txn ? Number(txn.amount) || 0 : 0
+  }
+
   isFailed(txn: IKarmaCoinTransaction): boolean {
     return isTxnStatus(txn.status, TXN_STATUS_FAILED)
   }
@@ -712,11 +738,27 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return `${date.getFullYear()}-${month}-${day}`
   }
 
-  /* Tab and period are applied by the API now, so this only groups what came back */
+  private buildLastTransactions() {
+    const rows = this.transactions
+    if (this.activeTab === 'earned') {
+      this.lastCredit = rows.length ? rows[0] : null
+      this.lastDebit = null
+      return
+    }
+    if (this.activeTab === 'redeemed') {
+      this.lastDebit = rows.length ? rows[0] : null
+      this.lastCredit = null
+      return
+    }
+    this.lastCredit = rows.find(txn => txn.type === 'earned') || null
+    this.lastDebit = rows.find(txn => txn.type === 'redeemed') || null
+  }
+
   private buildGroups() {
     const grouped = new Map<string, IKarmaCoinTxnGroup>()
     this.pendingConversion = this.transactions
       .find(txn => isTxnStatus(txn.status, TXN_STATUS_IN_PROGRESS)) || null
+    this.buildLastTransactions()
     /* an unsettled conversion reads as the banner above, never as a history row */
     const settled = this.transactions
       .filter(txn => !isTxnStatus(txn.status, TXN_STATUS_IN_PROGRESS))
