@@ -4,8 +4,9 @@ import {
   ConfigurationsService,
   EventService,
   MultilingualTranslationsService,
-  UtilityService,
+  TelemetryService,
   WsEvents,
+  UtilityService
 } from '@sunbird-cb/utils-v2'
 import { CommonDataService } from '../../services/common-data.service'
 
@@ -39,7 +40,8 @@ export class ExploreMenuComponent implements OnInit {
     private eventSvc: EventService,
     private commonDataSvc: CommonDataService,
     private langtranslations: MultilingualTranslationsService,
-    private utilitySvc: UtilityService
+    private utilitySvc: UtilityService,
+    private telemetrySvc: TelemetryService
   ) { }
 
   ngOnInit() {
@@ -200,6 +202,8 @@ export class ExploreMenuComponent implements OnInit {
   }
 
   private raiseTelemetry(id: string, subType: string = '') {
+    this.telemetrySvc.sendEmptyObjectForNextInteract()
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: 'page/home' }])
     const eData: any = {
       id,
       type: WsEvents.EnumInteractTypes.CLICK,
