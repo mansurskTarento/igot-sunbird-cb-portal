@@ -124,6 +124,7 @@ export interface IKarmaTransactionsResponse {
 
 export const TXN_STATUS_IN_PROGRESS = 'IN_PROGRESS'
 export const TXN_STATUS_FAILED = 'FAILED'
+export const TXN_STATUS_SUCCESS = 'SUCCESS'
 
 /* the api spells these back in mixed case ('Failed', 'FAILED', 'failed'), so compare folded */
 export function isTxnStatus(status: any, expected: string): boolean {
@@ -132,17 +133,12 @@ export function isTxnStatus(status: any, expected: string): boolean {
 
 export interface IKarmaCoinTransaction {
   transactionId: string
-  /* Epoch milliseconds, straight off the API */
   date: number
-  /* 'IN_PROGRESS' keeps the row out of the history and the Convert button disabled */
   status?: string
-  /* Karma Coins moved, whichever direction the row ran */
   amount: number
-  /* POINTS_CONVERSION only: the Karma Points that went in */
   pointsToConvert?: number
-  /* Primary label, e.g. 'Event Attendance' */
+  pointsConverted?: number
   title: string
-  /* Secondary label, e.g. 'Karmayogi Talks — Evidence-based policy' */
   description: string
   credit: number
   debit: number
