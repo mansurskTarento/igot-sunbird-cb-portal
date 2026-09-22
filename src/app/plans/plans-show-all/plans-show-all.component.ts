@@ -258,7 +258,6 @@ export class PlansShowAllComponent implements OnInit {
     this.langTick()
     return [
       { url: '/page/home', title: this.translate.instant('plansShowAll.home'), icon: 'home' },
-      { url: '/app/plans', title: this.translate.instant('plansShowAll.plans') },
       // The plan type is the page itself, so it is the trailing crumb and carries no link.
       { title: this.translate.instant(this.activePlanType().titleKey) },
     ]
