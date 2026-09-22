@@ -141,10 +141,6 @@ export class AppTourVideoComponent implements OnInit, OnDestroy {
       return
     }
     videoTag.load()
-    const playRequest = videoTag.play()
-    if (playRequest && playRequest.catch) {
-      playRequest.catch(() => { })
-    }
   }
 
   letsStart() {

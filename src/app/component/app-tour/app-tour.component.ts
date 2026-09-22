@@ -601,16 +601,7 @@ export class AppTourComponent implements OnChanges {
   }
 
   closeModal() {
-    if (this.showVideoTour && this.karmaWalletVideoPending) {
-      if (this.tourVideo && this.tourVideo.advanceToWalletVideo()) {
-        return
-      }
-      this.startVideoIndex = 1
-      this.showVideoTour = false
-      setTimeout(() => {
-        this.showVideoTour = true
-        // tslint:disable-next-line: align
-      }, 0)
+    if (this.showVideoTour && this.tourVideo && this.tourVideo.advanceToWalletVideo()) {
       return
     }
     this.skipTour('', '')
