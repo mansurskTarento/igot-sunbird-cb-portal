@@ -24,6 +24,9 @@ type AssessmentState = 'locked' | 'available' | 'completed'
 /** Plan-type keys `/app/plans` understands; anything else in the URL is ignored. */
 const LISTING_PLAN_TYPES = ['apar', 'aicbp', 'cbp']
 
+/** Reporting year as the listing's filter and the plan APIs both spell it — '2026-27'. */
+const PLAN_YEAR_PATTERN = /^\d{4}-\d{2}$/
+
 @Component({
   selector: 'ws-app-plan-detail',
   templateUrl: './plan-detail.component.html',
@@ -87,6 +90,8 @@ export class PlanDetailComponent implements OnInit {
    * beat on every APAR and AI-CBP plan, because `plan()` is still null.
    */
   private readonly planTypeHint = signal<string>('')
+  /** The same for the reporting year, until `reportingYear()` can answer for the plan itself. */
+  private readonly planYearHint = signal<string>('')
 
   // ── Derived ────────────────────────────────────────────────────────────────
   readonly planTitle = computed(() => this.plan()?.title ?? '')
@@ -95,7 +100,6 @@ export class PlanDetailComponent implements OnInit {
     this.langTick()
     return [
       { url: '/page/home', title: this.translate.instant('plansShowAll.home'), icon: 'home' },
-      { url: '/app/plans', title: this.translate.instant('plansShowAll.plans') },
       // Back to the listing filtered to this plan's own type, not whatever it defaults to.
       {
         url: '/app/plans',
@@ -106,8 +110,21 @@ export class PlanDetailComponent implements OnInit {
     ]
   })
 
-  /** Back / breadcrumb target keeps the listing on the plan type this plan belongs to. */
-  readonly listingQueryParams = computed(() => ({ planType: this.listingPlanType() }))
+  /**
+   * Back / breadcrumb target keeps the listing on the plan type AND the reporting year this
+   * plan belongs to. Without the year the listing falls back to the current one, so leaving a
+   * 2025-26 plan lands on a page that does not contain the plan just left — the type filter
+   * alone is not enough to get back where the user came from.
+   *
+   * The plan's own year once it has loaded, the URL's before that. Neither is guaranteed: a
+   * plan with no year and no end date sends no `planYear`, and the listing defaults as usual.
+   */
+  readonly listingQueryParams = computed(() => {
+    const planYear = this.reportingYear() || this.planYearHint()
+    return planYear
+      ? { planType: this.listingPlanType(), planYear }
+      : { planType: this.listingPlanType() }
+  })
 
   readonly createdBy = computed(() => this.plan()?.createdByName || '—')
 
@@ -199,6 +216,7 @@ export class PlanDetailComponent implements OnInit {
       )
       .subscribe(({ id, planYear, planType }) => {
         this.planTypeHint.set(LISTING_PLAN_TYPES.includes(planType) ? planType : '')
+        this.planYearHint.set(PLAN_YEAR_PATTERN.test(planYear) ? planYear : '')
         if (id) {
           this.fetchPlan(id, planYear)
         } else {

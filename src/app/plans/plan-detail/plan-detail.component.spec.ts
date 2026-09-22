@@ -411,11 +411,11 @@ describe('PlanDetailComponent', () => {
       const crumbs = component.breadcrumbData()
 
       expect(crumbs.map(crumb => crumb.title)).toEqual([
-        'plansShowAll.home', 'plansShowAll.plans', 'plansShowAll.aparPlan', 'plan ttitle',
+        'plansShowAll.home', 'plansShowAll.aparPlan', 'plan ttitle',
       ])
       expect(crumbs[0].url).toBe('/page/home')
       expect(crumbs[1].url).toBe('/app/plans')
-      expect(crumbs[3].url).toBeUndefined() // the current page is not a link
+      expect(crumbs[2].url).toBeUndefined() // the current page is not a link
     })
 
     // /app/plans defaults to the APAR listing, so a CBP plan has to say which one it came from.
@@ -423,10 +423,10 @@ describe('PlanDetailComponent', () => {
       plansSvc.readPlan.mockReturnValue(of(rawPlan({ isApar: false })))
       component.ngOnInit()
       await settle()
-      const typeCrumb = component.breadcrumbData()[2]
+      const typeCrumb = component.breadcrumbData()[1]
 
       expect(typeCrumb.url).toBe('/app/plans')
-      expect(typeCrumb.queryParams).toEqual({ planType: 'cbp' })
+      expect(typeCrumb.queryParams).toEqual({ planType: 'cbp', planYear: '2026-27' })
       expect(typeCrumb.title).toBe('plansShowAll.cbpPlan')
     })
   })
@@ -501,18 +501,44 @@ describe('PlanDetailComponent', () => {
       expect(plansSvc.readPlan).not.toHaveBeenCalled()
     })
 
-    it('points the back link at the type in the URL before the plan has loaded', () => {
+    it('points the back link at the type and year in the URL before the plan has loaded', () => {
       fromUrl('2026-27', 'aicbp')
       component.ngOnInit()
 
-      expect(component.listingQueryParams()).toEqual({ planType: 'aicbp' })
+      expect(component.listingQueryParams()).toEqual({ planType: 'aicbp', planYear: '2026-27' })
     })
 
     it('ignores a plan type the listing does not understand', () => {
       fromUrl('2026-27', 'not-a-plan-type')
       component.ngOnInit()
 
-      expect(component.listingQueryParams()).toEqual({ planType: 'cbp' })
+      expect(component.listingQueryParams()).toEqual({ planType: 'cbp', planYear: '2026-27' })
+    })
+
+    it('ignores a year that is not a YYYY-YY pair', () => {
+      fromUrl('last year', 'apar')
+      component.ngOnInit()
+
+      expect(component.listingQueryParams()).toEqual({ planType: 'apar' })
+    })
+
+    // The URL's year is only a hint: a plan reached from a link carrying the wrong one still
+    // has to send the listing to the year it actually belongs to.
+    it('prefers the loaded plan\'s own year over the URL\'s', async () => {
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({ planYear: '2025-26', isApar: false })))
+      fromUrl('2026-27', 'cbp')
+      component.ngOnInit()
+      await settle()
+
+      expect(component.listingQueryParams()).toEqual({ planType: 'cbp', planYear: '2025-26' })
+    })
+
+    it('sends no year when neither the URL nor the plan names one', async () => {
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({ planYear: undefined, endDate: undefined })))
+      component.ngOnInit()
+      await settle()
+
+      expect(component.listingQueryParams()).toEqual({ planType: 'apar' })
     })
   })
 

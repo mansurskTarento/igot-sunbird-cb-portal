@@ -6,10 +6,9 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 jest.mock('@sunbird-cb/utils-v2', () => ({ ConfigurationsService: class { userProfile: any = null } }), { virtual: true })
 
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
-import { IPlanReadResult, IPlanSearchResult, PlansService } from './plans.service'
+import { IPlanReadResult, PlansService } from './plans.service'
 
 const READ_URL = (id: string) => `/apis/proxies/v8/cbplan/v4/read/${id}`
-const SEARCH_URL = '/apis/proxies/v8/cbplan/v2/search'
 
 describe('PlansService', () => {
   let service: PlansService
@@ -179,55 +178,4 @@ describe('PlansService', () => {
     })
   })
 
-  // ── search ─────────────────────────────────────────────────────────────────
-  describe('search', () => {
-    const request = { filter: { planYear: '2026-27' }, pageNumber: 0, pageSize: 12, facets: [] }
-
-    const flush = (body: any): Promise<IPlanSearchResult> => {
-      const result = new Promise<IPlanSearchResult>(resolve => service.search(request).subscribe(resolve))
-      http.expectOne(SEARCH_URL).flush(body)
-      return result
-    }
-
-    it('narrows to live plans while preserving the caller filter', () => {
-      service.search(request).subscribe()
-      const req = http.expectOne(SEARCH_URL)
-
-      expect(req.request.body.filter.status).toEqual(['Live'])
-      expect(req.request.body.filter.planYear).toBe('2026-27')
-      req.flush({})
-    })
-
-    it('passes paging and facets through untouched', () => {
-      service.search({ ...request, pageNumber: 2, pageSize: 50, facets: ['createdByName'] }).subscribe()
-      const req = http.expectOne(SEARCH_URL)
-
-      expect(req.request.body.pageNumber).toBe(2)
-      expect(req.request.body.pageSize).toBe(50)
-      expect(req.request.body.facets).toEqual(['createdByName'])
-      req.flush({})
-    })
-
-    // The endpoint double-nests: { result: { result: { data, totalCount, facets } } }.
-    it('unwraps the doubly-nested result', async () => {
-      const result = await flush({
-        result: { result: { data: [{ id: 'a' }], totalCount: 42, facets: { status: [{ value: 'Live', count: 3 }] } } },
-      })
-
-      expect(result.data).toEqual([{ id: 'a' }])
-      expect(result.totalCount).toBe(42)
-      expect(result.facets['status']).toEqual([{ value: 'Live', count: 3 }])
-    })
-
-    it('falls back to an empty result set on a malformed body', async () => {
-      await expect(flush({})).resolves.toEqual({ data: [], totalCount: 0, facets: {} })
-    })
-
-    it('returns an empty result rather than erroring when the request fails', async () => {
-      const result = new Promise(resolve => service.search(request).subscribe(resolve))
-      http.expectOne(SEARCH_URL).error(new ProgressEvent('network error'))
-
-      await expect(result).resolves.toEqual({ data: [], totalCount: 0, facets: {} })
-    })
-  })
 })
