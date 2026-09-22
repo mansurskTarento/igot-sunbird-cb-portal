@@ -1,9 +1,10 @@
-import { Component, EventEmitter, HostListener, Input, OnChanges, Output } from '@angular/core'
+import { Component, EventEmitter, HostListener, Input, OnChanges, Output, ViewChild } from '@angular/core'
 import { Router } from '@angular/router'
 import { ProgressIndicatorLocation, GuidedTour, Orientation, GuidedTourService } from 'igot-cb-tour-guide'
 import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@sunbird-cb/utils-v2'
 import { UserProfileService } from '@ws/app'
 import { TranslateService } from '@ngx-translate/core'
+import { AppTourVideoComponent } from '../app-tour-video/app-tour-video.component'
 
 // the header wallet entry point the coach mark points at, newest markup first
 const WALLET_ANCHOR_SELECTORS = ['.karma-wallet-btn', '.karma-coins-chip']
@@ -48,6 +49,7 @@ export class AppTourComponent implements OnChanges {
   walletSpot = { top: 0, left: 0, width: 0, height: 0 }
   walletCard = { top: 0, left: 0, width: 0, arrowLeft: 0 }
   startVideoIndex = 0
+  @ViewChild(AppTourVideoComponent) tourVideo?: AppTourVideoComponent
   @Output() closed = new EventEmitter<void>()
   @HostListener('document:keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
     if (event.key !== 'Escape') {
@@ -57,7 +59,7 @@ export class AppTourComponent implements OnChanges {
       this.skipWalletTour()
       return
     }
-    this.skipTour('', '')
+    this.closeModal()
   }
 
   @HostListener('window:resize') onWindowResize() {
@@ -599,6 +601,9 @@ export class AppTourComponent implements OnChanges {
   }
 
   closeModal() {
+    if (this.showVideoTour && this.tourVideo && this.tourVideo.advanceToWalletVideo()) {
+      return
+    }
     this.skipTour('', '')
   }
 

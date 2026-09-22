@@ -80,13 +80,19 @@
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
         <span class="kw-stat__value">{{ summary.convertibleThisMonth | number }}</span>
-        <span class="kw-stat__value-sub">of {{ summary.monthlyCap | number }} KP</span>
       </div>
       <div class="kw-stat__track">
         <span class="kw-stat__fill" [style.width.%]="conversionProgress"></span>
       </div>
-      <div class="kw-stat__hint">
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth > 0">
         {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
+      </div>
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth <= 0 && monthlyLimitReached">
+        Monthly limit of {{ summary.monthlyCap | number }} KP reached. Resets on {{ capResetsOnLabel }}
+      </div>
+      <div class="kw-stat__hint" *ngIf="summary.convertibleThisMonth <= 0 && !monthlyLimitReached">
+        <span class="kw-stat__hint-line">{{ summary.convertedThisMonth | number }} points converted.</span>
+        <span class="kw-stat__hint-line">No Unconverted points left</span>
       </div>
     </div>
 
@@ -100,7 +106,7 @@
     </div>
 
     <div class="kw-stat">
-      <div class="kw-stat__label">Unconverted Karma</div>
+      <div class="kw-stat__label">Unconverted Karma points</div>
       <div class="kw-stat__value-row">
         <img class="kw-stat__badge" [src]="icons.karmaPoints" alt="" aria-hidden="true">
         <span class="kw-stat__value">{{ summary.unredeemedKarmaPoints | number }}</span>
@@ -112,18 +118,50 @@
     </ng-template>
   </section>
 
-  <!-- Coin history -->
-  <!-- An unsettled conversion: the row is kept out of the history below until it lands -->
-  <div class="kw-inprogress" role="status" *ngIf="pendingConversion">
-    <span class="kw-inprogress__spinner" aria-hidden="true"></span>
-    <div class="kw-inprogress__body">
-      <p class="kw-inprogress__title">Conversion in progress &middot;
-        {{ pendingConversionPoints | number }} KP &rarr; {{ pendingConversionCoins | number }} KC</p>
-      <p class="kw-inprogress__text">Please refresh the page or return after some time to view the latest status in
-        the Coin History section below.</p>
-    </div>
+  <div class="kw-last" *ngIf="lastCredit || lastDebit">
+    <ng-container *ngIf="lastCredit">
+      <ng-container *ngTemplateOutlet="lastCard; context: { $implicit: lastCredit, credit: true }"></ng-container>
+    </ng-container>
+    <ng-container *ngIf="lastDebit">
+      <ng-container *ngTemplateOutlet="lastCard; context: { $implicit: lastDebit, credit: false }"></ng-container>
+    </ng-container>
   </div>
 
+  <ng-template #lastCard let-txn let-credit="credit">
+    <div class="kw-last__card" [ngClass]="'kw-last__card--' + txnState(txn)" role="status">
+      <span class="kw-last__spinner" *ngIf="txnState(txn) === 'progress'" aria-hidden="true"></span>
+      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'success'">check_circle</mat-icon>
+      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'failed'">error</mat-icon>
+
+      <div class="kw-last__body" [ngSwitch]="txnState(txn)">
+        <ng-container *ngSwitchCase="'progress'">
+          <p class="kw-last__title" *ngIf="credit">Coins Earned &middot; In Progress ( {{ txnPoints(txn) | number }} KP
+            &rarr; {{ txnCoins(txn) | number }} KC )</p>
+          <p class="kw-last__title" *ngIf="!credit">Coins Redeemed &middot; In Progress ( {{ txnCoins(txn) | number }}
+            KC )</p>
+          <p class="kw-last__text">Please refresh this page to view the status of your latest transaction.</p>
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'failed'">
+          <p class="kw-last__title">Last Transaction &middot; Coins {{ credit ? 'Earned' : 'Redeemed' }}</p>
+          <p class="kw-last__text" *ngIf="credit">Failed &middot; {{ txnPoints(txn) | number }} KP Not Converted
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+          <p class="kw-last__text" *ngIf="!credit">Failed &middot; {{ txnCoins(txn) | number }} KC Not Redeemed
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <p class="kw-last__title">Last Transaction &middot; Coins {{ credit ? 'Earned' : 'Redeemed' }}</p>
+          <p class="kw-last__text" *ngIf="credit">{{ txnPoints(txn) | number }} KP &rarr; {{ txnCoins(txn) | number }}
+            KC &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+          <p class="kw-last__text" *ngIf="!credit">{{ txnCoins(txn) | number }} KC Redeemed
+            &middot; {{ txn.date | date: 'd MMM yyyy' }} &middot; {{ txn.transactionId }}</p>
+        </ng-container>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Coin history -->
   <section class="kw__history" aria-label="Coin history">
     <div class="kw__history-head">
       <h2 class="kw__history-title">Coin History</h2>
@@ -200,8 +238,8 @@
           <div class="kw-table__head" role="row">
             <span class="kw-table__th" role="columnheader">Date</span>
             <span class="kw-table__th" role="columnheader">Description</span>
-            <span class="kw-table__th kw-table__th--num" role="columnheader">Credit</span>
-            <span class="kw-table__th kw-table__th--num" role="columnheader">Debit</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Earned</span>
+            <span class="kw-table__th kw-table__th--num" role="columnheader">Redeemed</span>
             <span class="kw-table__th kw-table__th--num" role="columnheader">Balance</span>
           </div>
 
@@ -228,7 +266,7 @@
 
     <!-- A failed history call is reported in the snackbar, so this stays a plain empty state -->
     <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError">
-      No Karma Coin transactions yet.
+      {{ emptyMessage }}
     </div>
 
     <div class="kw__loader" *ngIf="loading">
@@ -237,8 +275,6 @@
   </section>
 </div>
 
-<!-- Walkthrough. Started only by "Start Walkthrough" in the info dialog; it is this page's
-     own tour and shares nothing with the shell's <app-tour>. -->
 <ws-app-karma-wallet-tour #tour (finished)="onTourFinished()"
   (action)="onTourAction($event)"></ws-app-karma-wallet-tour>
 
