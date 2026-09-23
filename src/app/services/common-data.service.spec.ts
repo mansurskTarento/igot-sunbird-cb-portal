@@ -1,20 +1,45 @@
-import { CommonDataService } from './common-data.service';
+import { CommonDataService } from './common-data.service'
+import { of, throwError } from 'rxjs'
 
+// CommonDataService imports UserProfileService from '@ws/app', whose real barrel
+// transitively pulls in a stale @sunbird-cb/discussion-v2 bundle referencing an
+// uninstalled 'ckeditor5' package. We only need the UserProfileService reference,
+// which is stubbed manually below anyway, so mock the module as virtual.
+jest.mock('@ws/app', () => ({
+  UserProfileService: jest.fn(),
+}), { virtual: true })
+
+// CommonDataService uses plain constructor injection, so it can be instantiated
+// directly with mocked dependencies — no TestBed needed. The previous spec was
+// stale: it passed 5 constructor args (current constructor takes 8) and called
+// methods without the now-required isPlayer argument, so it failed to compile.
 describe('CommonDataService', () => {
-  let service: CommonDataService;
-  let mockRouter: any;
-  let mockConfigSvc: any;
-  let mockUserProfileService: any;
-  let mockDialog: any;
-  let mockMatSnackBar: any;
+  let service: CommonDataService
+  let mockRouter: any
+  let mockConfigSvc: any
+  let mockUserProfileService: any
+  let mockDialog: any
+  let mockMatSnackBar: any
+  let mockMandatoryNotificationsService: any
+  let mockHttp: any
+  let mockDomainConfSvc: any
+  let mockLocalStorage: any
+
+  const create = () =>
+    new CommonDataService(
+      mockRouter,
+      mockConfigSvc,
+      mockUserProfileService,
+      mockDialog,
+      mockMatSnackBar,
+      mockMandatoryNotificationsService,
+      mockHttp,
+      mockDomainConfSvc
+    )
 
   beforeEach(() => {
-    // Mock Router
-    mockRouter = {
-      navigate: jest.fn()
-    };
+    mockRouter = { navigate: jest.fn() }
 
-    // Mock ConfigurationsService
     mockConfigSvc = {
       unMappedUser: {
         id: 'user-123',
@@ -23,102 +48,136 @@ describe('CommonDataService', () => {
           personalDetails: {
             mobile: '9876543210',
             primaryEmail: 'user@example.com',
-            lastProfileVerificationPromptDate: null
-          }
-        }
+            lastProfileVerificationPromptDate: null,
+          },
+        },
       },
       userProfile: {
         firstName: 'John',
-        lastName: 'Doe'
-      }
-    };
+        lastName: 'Doe',
+        rootOrgId: 'org-456',
+      },
+      globalConfig: {
+        mandatoryPopupDuration: 7200,
+        languageMap: { odisha: 'odia' },
+        languageBasedContent: {
+          odia: { welcomeBanner: 'odia-banner' },
+          english: { welcomeBanner: 'english-banner' },
+        },
+      },
+    }
 
-    // Mock UserProfileService
     mockUserProfileService = {
-      editProfileDetails: jest.fn(),
-      readOrgData: jest.fn(),
-      readCustomattributeDetails: jest.fn()
-    };
+      editProfileDetails: jest.fn().mockReturnValue(of({ result: { response: 'SUCCESS' } })),
+      readOrgData: jest.fn().mockReturnValue(of({ result: { response: {} } })),
+      readCustomattributeDetails: jest.fn().mockReturnValue(of({ result: { response: { customFieldValues: [] } } })),
+    }
 
-    // Mock MatDialog
-    mockDialog = {
-      open: jest.fn()
-    };
+    mockDialog = { open: jest.fn() }
+    mockMatSnackBar = { open: jest.fn() }
 
-    // Mock MatSnackBar
-    mockMatSnackBar = {
-      open: jest.fn()
-    };
+    mockMandatoryNotificationsService = {
+      getMandatoryNotification: jest.fn().mockReturnValue(of(null)),
+      markMandatoryAsRead: jest.fn().mockReturnValue(of({ responseCode: 'OK' })),
+    }
 
-    // Create service with mocked dependencies
-    service = new CommonDataService(
-      mockRouter,
-      mockConfigSvc,
-      mockUserProfileService,
-      mockDialog,
-      mockMatSnackBar
-    );
-  });
+    mockHttp = {
+      get: jest.fn().mockReturnValue(of({ result: { response: { profileDetails: { additionalProperties: {} } } } })),
+    }
+
+    mockDomainConfSvc = {
+      isConfigEnabled: jest.fn().mockReturnValue(true),
+    }
+
+    mockLocalStorage = { getItem: jest.fn().mockReturnValue(null), setItem: jest.fn() }
+    Object.defineProperty(window, 'localStorage', { value: mockLocalStorage, writable: true, configurable: true })
+
+    service = create()
+  })
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+  })
+
+  it('should be defined', () => {
+    expect(service).toBeDefined()
+  })
 
   describe('constructor', () => {
-    it('should create the service', () => {
-      expect(service).toBeTruthy();
-    });
+    it('should initialize rootOrgId from configSvc.unMappedUser', () => {
+      expect(service.rootOrgId).toBe('org-456')
+    })
 
-    it('should initialize rootOrgId from config service', () => {
-      expect(service.rootOrgId).toBe('org-456');
-    });
+    it('should default rootOrgId to empty string when unMappedUser is absent', () => {
+      mockConfigSvc.unMappedUser = null
+      const newService = create()
+      expect(newService.rootOrgId).toBe('')
+    })
 
-    it('should set rootOrgId to empty string if unMappedUser is null', () => {
-      mockConfigSvc.unMappedUser = null;
-      const newService = new CommonDataService(
-        mockRouter,
-        mockConfigSvc,
-        mockUserProfileService,
-        mockDialog,
-        mockMatSnackBar
-      );
-      expect(newService.rootOrgId).toBe('');
-    });
-  });
+    it('should default rootOrgId to empty string when unMappedUser.rootOrgId is absent', () => {
+      mockConfigSvc.unMappedUser = { id: 'user-1' }
+      const newService = create()
+      expect(newService.rootOrgId).toBe('')
+    })
+
+    it('should read popupDuration from globalConfig.mandatoryPopupDuration', () => {
+      expect(service.popupDuration).toBe(7200)
+    })
+
+    it('should default popupDuration to 7200 when globalConfig is absent', () => {
+      mockConfigSvc.globalConfig = undefined
+      const newService = create()
+      expect(newService.popupDuration).toBe(7200)
+    })
+  })
 
   describe('redirectToCustomProfile', () => {
-    it('should navigate to custom profile with orgDetails fragment', () => {
-      service.redirectToCustomProfile();
+    it('should navigate to the custom profile with orgDetails fragment', () => {
+      service.redirectToCustomProfile()
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/app/person-profile/me'], { fragment: 'orgDetails' })
+    })
+  })
 
-      expect(mockRouter.navigate).toHaveBeenCalledWith(
-        ['/app/person-profile/me'],
-        { fragment: 'orgDetails' }
-      );
-    });
-  });
+  describe('isDialogEnabled', () => {
+    it('should return true when both components.dialogs.enabled and the given key are enabled', () => {
+      mockDomainConfSvc.isConfigEnabled.mockReturnValue(true)
+      expect(service.isDialogEnabled('profileVerification')).toBe(true)
+    })
+
+    it('should return false when components.dialogs is disabled', () => {
+      mockDomainConfSvc.isConfigEnabled.mockReturnValue(false)
+      expect(service.isDialogEnabled('profileVerification')).toBe(false)
+    })
+  })
 
   describe('mandatoryDetails', () => {
-    it('should not open dialog if user profile update is within 90 days', () => {
-      const currentTime = new Date().getTime();
-      const oneDayAgo = currentTime - (1 * 24 * 60 * 60 * 1000);
-      
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = oneDayAgo.toString();
+    it('should skip the verification dialog and call getOrgDetails when dialog is disabled', () => {
+      mockDomainConfSvc.isConfigEnabled.mockReturnValue(false)
+      const getOrgDetailsSpy = jest.spyOn(service, 'getOrgDetails').mockImplementation(() => undefined)
 
-      service.mandatoryDetails();
+      service.mandatoryDetails(false)
 
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
+      expect(mockDialog.open).not.toHaveBeenCalled()
+      expect(getOrgDetailsSpy).toHaveBeenCalledWith(false)
+    })
 
-    it('should open dialog if user profile update is beyond 90 days', () => {
-      const currentTime = new Date().getTime();
-      const ninetyDaysAgo = currentTime - (91 * 24 * 60 * 60 * 1000);
-      
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = ninetyDaysAgo.toString();
+    it('should call getOrgDetails without opening the dialog when the last prompt was recent', () => {
+      const recentTime = Date.now() - 1 * 24 * 60 * 60 * 1000
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = recentTime.toString()
+      const getOrgDetailsSpy = jest.spyOn(service, 'getOrgDetails').mockImplementation(() => undefined)
 
-      const mockDialogRef = {
-        afterClosed: jest.fn(() => ({
-          subscribe: jest.fn((callback) => callback({ action: 'update' }))
-        }))
-      };
-      mockDialog.open.mockReturnValue(mockDialogRef);
+      service.mandatoryDetails(true)
 
-      service.mandatoryDetails();
+      expect(mockDialog.open).not.toHaveBeenCalled()
+      expect(getOrgDetailsSpy).toHaveBeenCalledWith(true)
+    })
+
+    it('should open the dialog when the last prompt is older than 90 days', () => {
+      const oldTime = Date.now() - 91 * 24 * 60 * 60 * 1000
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = oldTime.toString()
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(null), close: jest.fn() })
+
+      service.mandatoryDetails(false)
 
       expect(mockDialog.open).toHaveBeenCalledWith(
         expect.any(Function),
@@ -126,83 +185,61 @@ describe('CommonDataService', () => {
           panelClass: 'profile-verification-dialog-container',
           disableClose: true,
           maxWidth: '95vw',
-          width: '500px'
+          width: '500px',
         })
-      );
-    });
+      )
+    })
 
-    it('should open dialog if lastProfileVerificationPromptDate is null', () => {
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null;
+    it('should open the dialog when lastProfileVerificationPromptDate is null', () => {
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null
+      mockDialog.open.mockReturnValue({ afterClosed: () => of(null), close: jest.fn() })
 
-      const mockDialogRef = {
-        afterClosed: jest.fn(() => ({
-          subscribe: jest.fn((callback) => callback({ action: 'update' }))
-        }))
-      };
-      mockDialog.open.mockReturnValue(mockDialogRef);
+      service.mandatoryDetails(false)
 
-      service.mandatoryDetails();
+      expect(mockDialog.open).toHaveBeenCalled()
+    })
 
-      expect(mockDialog.open).toHaveBeenCalled();
-    });
+    it('should navigate to the mandatory section and close the dialog when the result action is update', () => {
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null
+      const dialogRefClose = jest.fn()
+      mockDialog.open.mockReturnValue({ afterClosed: () => of({ action: 'update' }), close: dialogRefClose })
 
-    it('should navigate to mandatorySection when dialog action is update', (done) => {
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null;
+      service.mandatoryDetails(false)
 
-      const mockDialogRef = {
-        afterClosed: jest.fn(() => ({
-          subscribe: jest.fn((callback) => {
-            callback({ action: 'update' });
-          })
-        })),
-        close: jest.fn()
-      };
-      mockDialog.open.mockReturnValue(mockDialogRef);
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/person-profile/me'],
+        { fragment: 'mandatorySection', queryParams: { source: 'mandatoryUpdate' } }
+      )
+      expect(dialogRefClose).toHaveBeenCalled()
+    })
 
-      service.mandatoryDetails();
+    it('should call callExtPatchProfile when the result action is verify', () => {
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null
+      mockDialog.open.mockReturnValue({ afterClosed: () => of({ action: 'verify' }), close: jest.fn() })
+      const patchSpy = jest.spyOn(service, 'callExtPatchProfile').mockImplementation(() => undefined)
 
-      setTimeout(() => {
-        expect(mockRouter.navigate).toHaveBeenCalledWith(
-          ['/app/person-profile/me'],
-          { fragment: 'mandatorySection' }
-        );
-        expect(mockDialogRef.close).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
+      service.mandatoryDetails(true)
 
-    it('should call callExtPatchProfile when dialog action is verify', (done) => {
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null;
-      
-      jest.spyOn(service, 'callExtPatchProfile');
+      expect(patchSpy).toHaveBeenCalledWith(true)
+    })
 
-      const mockDialogRef = {
-        afterClosed: jest.fn(() => ({
-          subscribe: jest.fn((callback) => {
-            callback({ action: 'verify' });
-          })
-        }))
-      };
-      mockDialog.open.mockReturnValue(mockDialogRef);
+    it('should do nothing extra when the result has no recognized action', () => {
+      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = null
+      mockDialog.open.mockReturnValue({ afterClosed: () => of({ action: 'close' }), close: jest.fn() })
+      const patchSpy = jest.spyOn(service, 'callExtPatchProfile').mockImplementation(() => undefined)
 
-      service.mandatoryDetails();
+      service.mandatoryDetails(false)
 
-      setTimeout(() => {
-        expect(service.callExtPatchProfile).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-  });
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+      expect(patchSpy).not.toHaveBeenCalled()
+    })
+  })
 
   describe('callExtPatchProfile', () => {
-    it('should call editProfileDetails with correct request structure', () => {
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback({ result: { response: 'SUCCESS' } }))
-      });
+    it('should show a success snackbar and update lastProfileVerificationPromptDate on success with personalDetails present', () => {
+      const getOrgDetailsSpy = jest.spyOn(service, 'getOrgDetails').mockImplementation(() => undefined)
 
-      jest.spyOn(service, 'getOrgDetails');
-
-      service.callExtPatchProfile();
+      service.callExtPatchProfile(false)
 
       expect(mockUserProfileService.editProfileDetails).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -210,274 +247,420 @@ describe('CommonDataService', () => {
             userId: 'user-123',
             profileDetails: expect.objectContaining({
               personalDetails: expect.objectContaining({
-                lastProfileVerificationPromptDate: expect.any(String)
-              })
-            })
-          })
+                lastProfileVerificationPromptDate: expect.any(String),
+              }),
+            }),
+          }),
         })
-      );
-    });
-
-    it('should show success snackbar message on successful API response', () => {
-      const mockResponse = { result: { response: 'SUCCESS' } };
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockResponse))
-      });
-
-      service.callExtPatchProfile();
-
+      )
       expect(mockMatSnackBar.open).toHaveBeenCalledWith(
-        'Profile verification  updated successfully',
-        'X',
-        expect.any(Object)
-      );
-    });
+        'Profile verification  updated successfully', 'X', service.configSuccess
+      )
+      expect(mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate).toEqual(expect.any(String))
+      expect(getOrgDetailsSpy).toHaveBeenCalledWith(false)
+    })
 
-    it('should update configSvc.unMappedUser with new timestamp on success', () => {
-      const mockResponse = { result: { response: 'SUCCESS' } };
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockResponse))
-      });
+    it('should not throw when personalDetails is absent on success', () => {
+      mockConfigSvc.unMappedUser.profileDetails = undefined
+      const getOrgDetailsSpy = jest.spyOn(service, 'getOrgDetails').mockImplementation(() => undefined)
 
-      jest.spyOn(service, 'getOrgDetails');
+      expect(() => service.callExtPatchProfile(true)).not.toThrow()
+      expect(getOrgDetailsSpy).toHaveBeenCalledWith(true)
+    })
 
-      service.callExtPatchProfile();
+    it('should not show a snackbar and still call getOrgDetails on a non-success response', () => {
+      mockUserProfileService.editProfileDetails.mockReturnValue(of({ result: { response: 'FAILED' } }))
+      const getOrgDetailsSpy = jest.spyOn(service, 'getOrgDetails').mockImplementation(() => undefined)
 
-      expect(mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate).toBeTruthy();
-    });
+      service.callExtPatchProfile(false)
 
-    it('should call getOrgDetails after profile update', () => {
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback({ result: { response: 'SUCCESS' } }))
-      });
-
-      jest.spyOn(service, 'getOrgDetails');
-
-      service.callExtPatchProfile();
-
-      expect(service.getOrgDetails).toHaveBeenCalled();
-    });
-
-    it('should pass timestamp as string to API', () => {
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn()
-      });
-
-      jest.spyOn(service, 'getOrgDetails');
-
-      service.callExtPatchProfile();
-
-      const callArgs = mockUserProfileService.editProfileDetails.mock.calls[0][0];
-      expect(typeof callArgs.request.profileDetails.personalDetails.lastProfileVerificationPromptDate).toBe('string');
-    });
-  });
+      expect(mockMatSnackBar.open).not.toHaveBeenCalled()
+      expect(getOrgDetailsSpy).toHaveBeenCalledWith(false)
+    })
+  })
 
   describe('getOrgDetails', () => {
-    it('should call readOrgData with correct request structure', () => {
-      mockUserProfileService.readOrgData.mockReturnValue({
-        subscribe: jest.fn()
-      });
+    it('should call readCustomattributeDetails when the cached unMappedUser has popup-eligible custom fields', () => {
+      mockConfigSvc.unMappedUser.rootOrg = {
+        customfieldsdata: { isPopupEnabled: true, customFieldsCount: 1, customFieldIds: ['f1'] },
+      }
+      const readCustomSpy = jest.spyOn(service, 'readCustomattributeDetails').mockImplementation(() => undefined)
 
-      service.getOrgDetails();
+      service.getOrgDetails(false)
 
-      expect(mockUserProfileService.readOrgData).toHaveBeenCalledWith({
-        request: { organisationId: 'org-456' }
-      });
-    });
+      expect(readCustomSpy).toHaveBeenCalledWith(false)
+      expect(mockUserProfileService.readOrgData).not.toHaveBeenCalled()
+    })
 
-    it('should call readCustomattributeDetails when isPopupEnabled and customFieldsCount > 0', (done) => {
-      const mockOrgResponse = {
+    it('should update player status and check mandatory notification when cached unMappedUser is not popup-eligible', () => {
+      mockConfigSvc.unMappedUser.rootOrg = { customfieldsdata: { isPopupEnabled: false } }
+      const updatePlayerStatusSpy = jest.spyOn(service, 'updatePlayerStatus')
+      const checkSpy = jest.spyOn(service, 'checkAndShowMandatoryNotification').mockImplementation(() => undefined)
+
+      const result = service.getOrgDetails(true)
+
+      expect(updatePlayerStatusSpy).toHaveBeenCalledWith(true)
+      expect(checkSpy).toHaveBeenCalled()
+      expect(result).toBe(false)
+    })
+
+    it('should fetch org data via the API and call readCustomattributeDetails when popup-eligible', () => {
+      mockConfigSvc.unMappedUser = {}
+      mockUserProfileService.readOrgData.mockReturnValue(of({
         result: {
           response: {
-            customfieldsdata: {
-              isPopupEnabled: true,
-              customFieldsCount: 1,
-              customFieldIds: ['field-1', 'field-2']
-            }
-          }
-        }
-      };
+            customfieldsdata: { isPopupEnabled: true, customFieldsCount: 1, customFieldIds: ['f1'] },
+          },
+        },
+      }))
+      const readCustomSpy = jest.spyOn(service, 'readCustomattributeDetails').mockImplementation(() => undefined)
 
-      mockUserProfileService.readOrgData.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockOrgResponse))
-      });
+      service.getOrgDetails(false)
 
-      jest.spyOn(service, 'readCustomattributeDetails');
+      expect(mockUserProfileService.readOrgData).toHaveBeenCalledWith({ request: { organisationId: 'org-456' } })
+      expect(readCustomSpy).toHaveBeenCalledWith(false)
+    })
 
-      service.getOrgDetails();
+    it('should update player status and check mandatory notification via the API path when not popup-eligible', () => {
+      mockConfigSvc.unMappedUser = {}
+      mockUserProfileService.readOrgData.mockReturnValue(of({
+        result: { response: { customfieldsdata: { isPopupEnabled: false } } },
+      }))
+      const updatePlayerStatusSpy = jest.spyOn(service, 'updatePlayerStatus')
+      const checkSpy = jest.spyOn(service, 'checkAndShowMandatoryNotification').mockImplementation(() => undefined)
 
-      setTimeout(() => {
-        expect(service.readCustomattributeDetails).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
+      service.getOrgDetails(false)
 
-    it('should not call readCustomattributeDetails when isPopupEnabled is false', (done) => {
-      const mockOrgResponse = {
-        result: {
-          response: {
-            customfieldsdata: {
-              isPopupEnabled: false,
-              customFieldsCount: 0,
-              customFieldIds: []
-            }
-          }
-        }
-      };
+      expect(updatePlayerStatusSpy).toHaveBeenCalledWith(false)
+      expect(checkSpy).toHaveBeenCalled()
+    })
 
-      mockUserProfileService.readOrgData.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockOrgResponse))
-      });
+    it('should log and swallow errors from the API path', () => {
+      mockConfigSvc.unMappedUser = {}
+      mockUserProfileService.readOrgData.mockReturnValue(throwError(() => new Error('fail')))
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
-      jest.spyOn(service, 'readCustomattributeDetails');
-
-      service.getOrgDetails();
-
-      setTimeout(() => {
-        expect(service.readCustomattributeDetails).not.toHaveBeenCalled();
-        done();
-      }, 0);
-    });
-
-    it('should handle error when readOrgData fails', () => {
-      const mockError = new Error('API Error');
-      mockUserProfileService.readOrgData.mockReturnValue({
-        subscribe: jest.fn((_successCallback, errorCallback) => {
-          errorCallback(mockError);
-        })
-      });
-
-      const result = service.getOrgDetails();
-
-      expect(result).toBe(false);
-    });
-  });
+      expect(() => service.getOrgDetails(false)).not.toThrow()
+      expect(errorSpy).toHaveBeenCalled()
+    })
+  })
 
   describe('readCustomattributeDetails', () => {
-    it('should call readCustomattributeDetails API with correct parameters', () => {
-      mockUserProfileService.readCustomattributeDetails.mockReturnValue({
-        subscribe: jest.fn()
-      });
+    it('should redirect to the custom profile when customFieldValues is empty', () => {
+      mockUserProfileService.readCustomattributeDetails.mockReturnValue(
+        of({ result: { response: { customFieldValues: [] } } })
+      )
+      const redirectSpy = jest.spyOn(service, 'redirectToCustomProfile').mockImplementation(() => undefined)
 
-      service.readCustomattributeDetails();
+      service.readCustomattributeDetails(false)
 
-      expect(mockUserProfileService.readCustomattributeDetails).toHaveBeenCalledWith(
-        'user-123',
-        'org-456'
-      );
-    });
+      expect(mockUserProfileService.readCustomattributeDetails).toHaveBeenCalledWith('user-123', 'org-456')
+      expect(redirectSpy).toHaveBeenCalled()
+    })
 
-    it('should redirect to custom profile when customFieldValues is empty', (done) => {
-      const mockResponse = {
-        result: {
-          response: {
-            customFieldValues: []
-          }
-        }
-      };
+    it('should update player status and check mandatory notification when customFieldValues is non-empty', () => {
+      mockUserProfileService.readCustomattributeDetails.mockReturnValue(
+        of({ result: { response: { customFieldValues: [{ id: 'f1', value: 'v1' }] } } })
+      )
+      const redirectSpy = jest.spyOn(service, 'redirectToCustomProfile').mockImplementation(() => undefined)
+      const updatePlayerStatusSpy = jest.spyOn(service, 'updatePlayerStatus')
+      const checkSpy = jest.spyOn(service, 'checkAndShowMandatoryNotification').mockImplementation(() => undefined)
 
-      mockUserProfileService.readCustomattributeDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockResponse))
-      });
+      service.readCustomattributeDetails(true)
 
-      jest.spyOn(service, 'redirectToCustomProfile');
+      expect(redirectSpy).not.toHaveBeenCalled()
+      expect(updatePlayerStatusSpy).toHaveBeenCalledWith(true)
+      expect(checkSpy).toHaveBeenCalled()
+    })
 
-      service.readCustomattributeDetails();
+    it('should log and swallow errors', () => {
+      mockUserProfileService.readCustomattributeDetails.mockReturnValue(throwError(() => new Error('fail')))
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
-      setTimeout(() => {
-        expect(service.redirectToCustomProfile).toHaveBeenCalled();
-        done();
-      }, 0);
-    });
+      expect(() => service.readCustomattributeDetails(false)).not.toThrow()
+      expect(errorSpy).toHaveBeenCalled()
+    })
+  })
 
-    it('should return false when customFieldValues has data', (done) => {
-      const mockResponse = {
-        result: {
-          response: {
-            customFieldValues: [{ fieldId: 'field-1', value: 'value-1' }]
-          }
-        }
-      };
+  describe('fetchMandatoryNotification', () => {
+    it('should set showMandatoryNotification to false when the dialog is disabled', () => {
+      mockDomainConfSvc.isConfigEnabled.mockReturnValue(false)
 
-      mockUserProfileService.readCustomattributeDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockResponse))
-      });
+      service.fetchMandatoryNotification()
 
-      jest.spyOn(service, 'redirectToCustomProfile');
+      expect(service.showMandatoryNotification).toBe(false)
+      expect(mockMandatoryNotificationsService.getMandatoryNotification).not.toHaveBeenCalled()
+    })
 
-      const result = service.readCustomattributeDetails();
+    it('should store the notification and open the modal for a valid unread notification', () => {
+      mockMandatoryNotificationsService.getMandatoryNotification.mockReturnValue(
+        of({ notification_id: 'n1', read: false })
+      )
+      const openModalSpy = jest.spyOn(service, 'openMandatoryNotificationModal').mockImplementation(() => undefined)
 
-      setTimeout(() => {
-        expect(service.redirectToCustomProfile).not.toHaveBeenCalled();
-        expect(result).toBe(false);
-        done();
-      }, 0);
-    });
+      service.fetchMandatoryNotification()
 
-    it('should handle error when readCustomattributeDetails fails', () => {
-      const mockError = new Error('API Error');
-      mockUserProfileService.readCustomattributeDetails.mockReturnValue({
-        subscribe: jest.fn((_successCallback, errorCallback) => {
-          errorCallback(mockError);
-        })
-      });
+      expect(service.mandatoryNotificationData).toEqual({ notification_id: 'n1', read: false })
+      expect(service.showMandatoryNotification).toBe(true)
+      expect(openModalSpy).toHaveBeenCalled()
+    })
 
-      const result = service.readCustomattributeDetails();
+    it('should keep showMandatoryNotification false when the notification is already read', () => {
+      mockMandatoryNotificationsService.getMandatoryNotification.mockReturnValue(
+        of({ notification_id: 'n1', read: true })
+      )
 
-      expect(result).toBe(false);
-    });
-  });
+      service.fetchMandatoryNotification()
 
-  describe('configSuccess property', () => {
-    it('should have correct snackbar configuration', () => {
-      expect(service.configSuccess).toEqual({
-        panelClass: 'style-success',
-        duration: 20000,
-        horizontalPosition: 'center',
-        verticalPosition: 'bottom'
-      });
-    });
-  });
+      expect(service.showMandatoryNotification).toBe(false)
+    })
 
-  describe('edge cases', () => {
-    it('should handle missing profileDetails in unMappedUser', () => {
-      mockConfigSvc.unMappedUser.profileDetails = undefined;
-      
-      const newService = new CommonDataService(
-        mockRouter,
-        mockConfigSvc,
-        mockUserProfileService,
-        mockDialog,
-        mockMatSnackBar
-      );
+    it('should keep showMandatoryNotification false when the response is empty', () => {
+      mockMandatoryNotificationsService.getMandatoryNotification.mockReturnValue(of({}))
 
-      expect(newService.rootOrgId).toBe('org-456');
-    });
+      service.fetchMandatoryNotification()
 
-    it('should calculate time difference correctly for edge case at exactly 90 days', () => {
-      const currentTime = new Date().getTime();
-      const exactlyNinetyDays = currentTime - (90 * 24 * 60 * 60 * 1000);
-      
-      mockConfigSvc.unMappedUser.profileDetails.personalDetails.lastProfileVerificationPromptDate = exactlyNinetyDays.toString();
+      expect(service.showMandatoryNotification).toBe(false)
+    })
 
-      service.mandatoryDetails();
+    it('should log and set showMandatoryNotification to false on error', () => {
+      mockMandatoryNotificationsService.getMandatoryNotification.mockReturnValue(throwError(() => new Error('fail')))
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
 
-      // At exactly 90 days, should not trigger (only > 90 days)
-      expect(mockDialog.open).not.toHaveBeenCalled();
-    });
+      service.fetchMandatoryNotification()
 
-    it('should handle response case-insensitively for SUCCESS check', () => {
-      const mockResponse = { result: { response: 'success' } }; // lowercase
-      mockUserProfileService.editProfileDetails.mockReturnValue({
-        subscribe: jest.fn((callback) => callback(mockResponse))
-      });
+      expect(service.showMandatoryNotification).toBe(false)
+      expect(errorSpy).toHaveBeenCalled()
+    })
+  })
 
-      jest.spyOn(service, 'getOrgDetails');
+  describe('openMandatoryNotificationModal', () => {
+    it('should return early when the modal is already open', () => {
+      service.isMandatoryModalOpen = true
+      service.showMandatoryNotification = true
+      service.openMandatoryNotificationModal()
+      expect(mockDialog.open).not.toHaveBeenCalled()
+    })
 
-      service.callExtPatchProfile();
+    it('should return early when showMandatoryNotification is false', () => {
+      service.isMandatoryModalOpen = false
+      service.showMandatoryNotification = false
+      service.openMandatoryNotificationModal()
+      expect(mockDialog.open).not.toHaveBeenCalled()
+    })
 
-      // The code uses toUpperCase() so this should match
-      expect(mockMatSnackBar.open).toHaveBeenCalled();
-    });
-  });
-});
+    it('should return early when isPlayer is true', () => {
+      service.showMandatoryNotification = true
+      service.isPlayer = true
+      service.openMandatoryNotificationModal()
+      expect(mockDialog.open).not.toHaveBeenCalled()
+    })
+
+    it('should return early when the dialog is disabled', () => {
+      service.showMandatoryNotification = true
+      mockDomainConfSvc.isConfigEnabled.mockReturnValue(false)
+      service.openMandatoryNotificationModal()
+      expect(mockDialog.open).not.toHaveBeenCalled()
+    })
+
+    it('should navigate and mark as read when the result is accepted and marking succeeds', () => {
+      service.showMandatoryNotification = true
+      service.mandatoryNotificationData = {
+        notification_id: 'n1',
+        created_at: 'now',
+        type: 'assessment',
+        message: { data: { assessmentId: 'a1', primaryCategory: 'cat', collectionId: 'c1', collectionType: 'ct', batchId: 'b1' } },
+      }
+      mockDialog.open.mockReturnValue({ afterClosed: () => of('accepted') })
+      mockMandatoryNotificationsService.markMandatoryAsRead.mockReturnValue(of({ responseCode: 'OK' }))
+
+      service.openMandatoryNotificationModal()
+
+      expect(service.isMandatoryModalOpen).toBe(false)
+      expect(mockMandatoryNotificationsService.markMandatoryAsRead).toHaveBeenCalledWith({
+        request: { id: 'n1', created_at: 'now', type: 'assessment' },
+      })
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/viewer/practice/', 'a1'],
+        { queryParams: { primaryCategory: 'cat', collectionId: 'c1', collectionType: 'ct', batchId: 'b1' } }
+      )
+    })
+
+    it('should not navigate when marking as read does not respond OK', () => {
+      service.showMandatoryNotification = true
+      service.mandatoryNotificationData = { notification_id: 'n1', created_at: 'now', type: 'assessment' }
+      mockDialog.open.mockReturnValue({ afterClosed: () => of('accepted') })
+      mockMandatoryNotificationsService.markMandatoryAsRead.mockReturnValue(of({ responseCode: 'FAILED' }))
+
+      service.openMandatoryNotificationModal()
+
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should log the error and set a re-trigger timer when marking as read fails', () => {
+      service.showMandatoryNotification = true
+      service.mandatoryNotificationData = { notification_id: 'n1', created_at: 'now', type: 'assessment' }
+      mockDialog.open.mockReturnValue({ afterClosed: () => of('accepted') })
+      mockMandatoryNotificationsService.markMandatoryAsRead.mockReturnValue(throwError(() => new Error('fail')))
+      const errorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined)
+
+      service.openMandatoryNotificationModal()
+
+      expect(errorSpy).toHaveBeenCalled()
+      expect(service.showMandatoryNotification).toBe(false)
+      expect(service.lastNotificationActionTime).toEqual(expect.any(Number))
+    })
+
+    it('should set showMandatoryNotification to false and set a timer when the result is not accepted', () => {
+      service.showMandatoryNotification = true
+      service.mandatoryNotificationData = { notification_id: 'n1' }
+      mockDialog.open.mockReturnValue({ afterClosed: () => of('rejected') })
+
+      service.openMandatoryNotificationModal()
+
+      expect(service.showMandatoryNotification).toBe(false)
+      expect(service.lastNotificationActionTime).toEqual(expect.any(Number))
+    })
+  })
+
+  describe('checkAndShowMandatoryNotification', () => {
+    it('should skip entirely when isPlayer is true', () => {
+      service.isPlayer = true
+      const fetchSpy = jest.spyOn(service, 'fetchMandatoryNotification').mockImplementation(() => undefined)
+
+      service.checkAndShowMandatoryNotification()
+
+      expect(fetchSpy).not.toHaveBeenCalled()
+    })
+
+    it('should skip entirely when the modal is already open', () => {
+      service.isMandatoryModalOpen = true
+      const fetchSpy = jest.spyOn(service, 'fetchMandatoryNotification').mockImplementation(() => undefined)
+
+      service.checkAndShowMandatoryNotification()
+
+      expect(fetchSpy).not.toHaveBeenCalled()
+    })
+
+    it('should fetch the notification when there is no lastNotificationActionTime (elapsed time exceeds duration)', () => {
+      service.lastNotificationActionTime = null
+      const fetchSpy = jest.spyOn(service, 'fetchMandatoryNotification').mockImplementation(() => undefined)
+
+      service.checkAndShowMandatoryNotification()
+
+      expect(service.showMandatoryNotification).toBe(true)
+      expect(fetchSpy).toHaveBeenCalled()
+    })
+
+    it('should fetch the notification when elapsed time is above the popup duration', () => {
+      service.popupDuration = 10
+      service.lastNotificationActionTime = Date.now() - 20 * 1000
+      const fetchSpy = jest.spyOn(service, 'fetchMandatoryNotification').mockImplementation(() => undefined)
+
+      service.checkAndShowMandatoryNotification()
+
+      expect(fetchSpy).toHaveBeenCalled()
+    })
+
+    it('should not fetch the notification when elapsed time is below the popup duration', () => {
+      service.popupDuration = 7200
+      service.lastNotificationActionTime = Date.now()
+      const fetchSpy = jest.spyOn(service, 'fetchMandatoryNotification').mockImplementation(() => undefined)
+
+      service.checkAndShowMandatoryNotification()
+
+      expect(fetchSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('updatePlayerStatus', () => {
+    it('should set isPlayer to the given value', () => {
+      service.updatePlayerStatus(true)
+      expect(service.isPlayer).toBe(true)
+    })
+  })
+
+  describe('checkAndCacheNlw2026Eligibility', () => {
+    it('should cache the value from the profile when defined', () => {
+      service.checkAndCacheNlw2026Eligibility({ profileDetails: { additionalProperties: { isNlw2026Certified: true } } })
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'true')
+    })
+
+    it('should cache false when the value is undefined', () => {
+      service.checkAndCacheNlw2026Eligibility({ profileDetails: { additionalProperties: {} } })
+      expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'false')
+    })
+  })
+
+  describe('getLanguageBasedContentUrl', () => {
+    it('should resolve content using the mapped language', () => {
+      mockConfigSvc.unMappedUser.profileDetails.ministryOrStateOrgName = 'Odisha'
+      const result = service.getLanguageBasedContentUrl('welcomeBanner')
+      expect(result).toBe('odia-banner')
+    })
+
+    it('should fall back to english when there is no language mapping', () => {
+      mockConfigSvc.unMappedUser.profileDetails.ministryOrStateOrgName = 'Unmapped'
+      const result = service.getLanguageBasedContentUrl('welcomeBanner')
+      expect(result).toBe('english-banner')
+    })
+  })
+
+  describe('getNlw2026CertifiedStatus', () => {
+    it('should return the cached value from localStorage when present', done => {
+      mockLocalStorage.getItem.mockReturnValue('true')
+
+      service.getNlw2026CertifiedStatus().subscribe((result: boolean) => {
+        expect(result).toBe(true)
+        expect(mockHttp.get).not.toHaveBeenCalled()
+        done()
+      })
+    })
+
+    it('should read from configSvc and cache it when not cached but present on the profile', done => {
+      mockConfigSvc.unMappedUser.profileDetails.additionalProperties = { isNlw2026Certified: false }
+
+      service.getNlw2026CertifiedStatus().subscribe((result: boolean) => {
+        expect(result).toBe(false)
+        expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'false')
+        expect(mockHttp.get).not.toHaveBeenCalled()
+        done()
+      })
+    })
+
+    it('should call the API and resolve a matched profile when neither cached nor on configSvc but a userId exists', done => {
+      mockHttp.get.mockReturnValue(of({
+        result: { response: { profileDetails: { additionalProperties: { isNlw2026Certified: true } } } },
+      }))
+
+      service.getNlw2026CertifiedStatus().subscribe((result: boolean) => {
+        expect(mockHttp.get).toHaveBeenCalledWith('/apis/proxies/v8/api/user/v2/read/user-123')
+        expect(result).toBe(true)
+        expect(mockConfigSvc.unMappedUser).toEqual({ profileDetails: { additionalProperties: { isNlw2026Certified: true } } })
+        expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'true')
+        done()
+      })
+    })
+
+    it('should return false and cache false when the API response has no certification value', done => {
+      mockHttp.get.mockReturnValue(of({ result: { response: { profileDetails: { additionalProperties: {} } } } }))
+
+      service.getNlw2026CertifiedStatus().subscribe((result: boolean) => {
+        expect(result).toBe(false)
+        expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'false')
+        done()
+      })
+    })
+
+    it('should return false and cache false when there is no userId at all', done => {
+      mockConfigSvc.unMappedUser = {}
+
+      service.getNlw2026CertifiedStatus().subscribe((result: boolean) => {
+        expect(result).toBe(false)
+        expect(mockLocalStorage.setItem).toHaveBeenCalledWith('isNlw2026Certified', 'false')
+        expect(mockHttp.get).not.toHaveBeenCalled()
+        done()
+      })
+    })
+  })
+})

@@ -51,6 +51,10 @@ export class HomeV2Component implements OnInit {
     if (!pillsSection || pillsSection.visibilityMode !== VisibilityMode.Visible) {
       return
     }
+    pillsSection.pills = pillsSection.pills?.filter((pill: any) => pill.visibilityMode === VisibilityMode.Visible)
+    if (!pillsSection.pills?.length) {
+      return
+    }
 
     this.homePageSvc.getUserContentInfo().pipe(
       catchError(() => of(null)),
