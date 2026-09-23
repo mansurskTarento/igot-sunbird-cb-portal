@@ -222,13 +222,17 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   selectedTabIndex: any = 0
   // Achievement section view switch: 'stats' shows the stats card, 'leaderboard' the karma leaderboard
   achievementView: 'stats' | 'leaderboard' = 'stats'
-  // My Statistics cards. Same four metrics the My Achievements sidebar section shows, so the two
+  // My Statistics cards. Same metrics the My Achievements sidebar section shows, so the two
   // never disagree; values are filled in by setAchievementStats().
   achievementStats: { key: string, label: string, value: string, icon: string }[] = [
     { key: 'karmaPoints', label: 'profileInfo.youEarned', value: '0 KP', icon: '/assets/icons/hubs-v2/karmapoints.svg' },
     { key: 'rank', label: 'profileInfo.youreRank', value: '--', icon: '/assets/icons/hubs-v2/trophi.svg' },
     { key: 'badges', label: 'leftNavBar.yourEarned', value: '0 Badges', icon: '/assets/icons/hubs-v2/badges.svg' },
     { key: 'learningHours', label: 'leftNavBar.learningHours', value: '0h 0m', icon: '/assets/icons/hubs-v2/badge.svg' },
+    {
+      key: 'walletBalance', label: 'NetworkV2Profile.walletBalance', value: '0 KC',
+      icon: '/assets/icons/karmawallet-v2/leftnavKarmacoing.svg',
+    },
   ]
   insightsDataLoading = false
   insightsData: any
@@ -451,6 +455,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.setStatValue('karmaPoints', `${_.get(info, 'karmaPoints', 0)} KP`)
       this.setStatValue('badges', `${_.get(info, 'badgeCount', 0)} Badges`)
       this.setStatValue('learningHours', this.toHoursAndMinutes(_.get(info, 'timeSpentOnCompletedCourses', 0)))
+      this.setStatValue('walletBalance', `${_.get(info, 'walletBalance', 0)} KC`)
     } catch (_e) { /* keep the placeholder values */ }
 
     this.homePageSvc.getLearnerLeaderboardCached()
