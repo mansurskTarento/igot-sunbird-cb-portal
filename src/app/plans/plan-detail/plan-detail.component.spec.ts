@@ -271,9 +271,12 @@ describe('PlanDetailComponent', () => {
 
   describe('assessment state', () => {
     const withAssessment = () =>
-      plansSvc.readPlan.mockReturnValue(of(rawPlan({ comprehensiveAssessment: 'do_ca' })))
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({
+        contentList: [{ identifier: 'do_1', mandatory: true }, { identifier: 'do_2', mandatory: false }],
+        comprehensiveAssessment: 'do_ca',
+      })))
 
-    it('stays locked while any course is outstanding', async () => {
+    it('stays locked while a mandatory course is outstanding', async () => {
       withAssessment()
       component.ngOnInit()
       await settle()
@@ -281,14 +284,27 @@ describe('PlanDetailComponent', () => {
       expect(component.assessmentState()).toBe('locked')
     })
 
-    it('unlocks once every course is complete', async () => {
+    it('unlocks once every mandatory course is complete', async () => {
       withAssessment()
       enrollSvc.fetchEnrollContentData.mockReturnValue(of({
-        result: { courses: [{ collectionId: 'do_1', status: 2 }, { collectionId: 'do_2', status: 2 }] },
+        result: { courses: [{ collectionId: 'do_1', status: 2 }] },
       }))
       component.ngOnInit()
       await settle()
 
+      expect(component.assessmentState()).toBe('available')
+    })
+
+    it('ignores an outstanding optional course', async () => {
+      withAssessment()
+      enrollSvc.fetchEnrollContentData.mockReturnValue(of({
+        result: { courses: [{ collectionId: 'do_1', completionPercentage: 100 }] },
+      }))
+      component.ngOnInit()
+      await settle()
+
+      // do_2 is untouched, and still the assessment opens.
+      expect(component.completedCourses()).toBe(1)
       expect(component.assessmentState()).toBe('available')
     })
 
@@ -303,14 +319,38 @@ describe('PlanDetailComponent', () => {
       expect(component.assessmentState()).toBe('completed')
     })
 
-    // An empty plan must not unlock on a vacuous "all zero courses are done".
-    it('stays locked for a plan with no courses', async () => {
+    it('gates on a mandatory course even when its metadata never resolved', async () => {
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({
+        contentList: [{ identifier: 'do_missing', mandatory: true }],
+        comprehensiveAssessment: 'do_ca',
+      })))
+      dictionarySvc.getContents.mockReturnValue(of({ do_ca: { identifier: 'do_ca' } }))
+      component.ngOnInit()
+      await settle()
+
+      expect(component.courses()).toEqual([])
+      expect(component.assessmentState()).toBe('locked')
+    })
+
+    // Nothing mandatory means nothing to wait on, so the assessment is open from the start.
+    it('is available for a plan with no mandatory course', async () => {
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({
+        contentList: [{ identifier: 'do_1', mandatory: false }],
+        comprehensiveAssessment: 'do_ca',
+      })))
+      component.ngOnInit()
+      await settle()
+
+      expect(component.assessmentState()).toBe('available')
+    })
+
+    it('is available for a plan with no courses at all', async () => {
       plansSvc.readPlan.mockReturnValue(of(rawPlan({ contentList: [], comprehensiveAssessment: 'do_ca' })))
       dictionarySvc.getContents.mockReturnValue(of({ do_ca: { identifier: 'do_ca' } }))
       component.ngOnInit()
       await settle()
 
-      expect(component.assessmentState()).toBe('locked')
+      expect(component.assessmentState()).toBe('available')
     })
   })
 

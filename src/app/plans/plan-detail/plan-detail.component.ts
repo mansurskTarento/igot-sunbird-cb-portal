@@ -174,17 +174,32 @@ export class PlanDetailComponent implements OnInit {
     this.caCourses().filter(course => this.isCompleted(course.identifier)).length)
 
   /**
-   * The assessment unlocks once every course in the plan is complete. The read response says
-   * nothing about this, so it is derived — an empty plan leaves it locked rather than
-   * unlocking on a vacuous "all zero courses done".
+   * Ids of the courses that gate the assessment: the ones the plan marks `mandatory`.
+   *
+   * Taken from the plan rather than from `courses()`, because a card is only built for content
+   * the dictionary resolved — gating on the cards would silently drop a mandatory course whose
+   * metadata failed to load, and unlock the assessment early.
+   */
+  readonly gatingCourseIds = computed<string[]>(() =>
+    (this.raw()?.contentList ?? [])
+      .filter(item => !!item?.mandatory && !!item?.identifier)
+      .map(item => item.identifier))
+
+  /**
+   * The assessment unlocks once every MANDATORY course in the plan is complete. The read
+   * response says nothing about the state itself, so it is derived from that flag — the same
+   * rule the assessment's own TOC page applies, so the two screens cannot disagree.
+   *
+   * Optional courses never gate it, and a plan with nothing mandatory has nothing to wait on,
+   * so its assessment is available from the start.
    */
   readonly assessmentState = computed<AssessmentState>(() => {
     const assessment = this.assessment()
     if (assessment && this.isCompleted(assessment.identifier)) {
       return 'completed'
     }
-    const total = this.totalCourses()
-    return total > 0 && this.completedCourses() === total ? 'available' : 'locked'
+    const gating = this.gatingCourseIds()
+    return gating.every(identifier => this.isCompleted(identifier)) ? 'available' : 'locked'
   })
 
   readonly assessmentStateKey = computed(() => {
