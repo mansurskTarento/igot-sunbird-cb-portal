@@ -9,10 +9,10 @@ import { ViewerDataService } from '@sunbird-cb/toc'
 import _ from 'lodash'
 
 @Component({
-    selector: 'ws-app-gyaan-player',
-    templateUrl: './gyaan-player.component.html',
-    styleUrls: ['./gyaan-player.component.scss'],
-    standalone: false
+  selector: 'ws-app-gyaan-player',
+  templateUrl: './gyaan-player.component.html',
+  styleUrls: ['./gyaan-player.component.scss'],
+  standalone: false
 })
 export class GyaanPlayerComponent implements OnInit {
   resourceData: any
@@ -37,10 +37,10 @@ export class GyaanPlayerComponent implements OnInit {
   selectedSectorId = ''
 
   constructor(private viewerDataSvc: ViewerDataService,
-              private configSvc: ConfigurationsService,
-              private route: ActivatedRoute,
-              public titleCasePipe: TitleCasePipe,
-              public translate: TranslateService, private router: Router) {
+    private configSvc: ConfigurationsService,
+    private route: ActivatedRoute,
+    public titleCasePipe: TitleCasePipe,
+    public translate: TranslateService, private router: Router) {
     this.playerPreview = !!this.route.snapshot.queryParams.playerPreview
     this.collectionId = this.route.snapshot.queryParams.collectionId || ''
     if (this.route.parent && this.route.parent.snapshot.data.pageData
@@ -103,11 +103,11 @@ export class GyaanPlayerComponent implements OnInit {
         _queryParams['key'] = this.resourceData.resourceCategory.toLowerCase()
       }
       this.titles = [
-        { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
-        {
-          title: this.titleCasePipe.transform(this.resourceData.resourceCategory), disableTranslate: true,
-          queryParams: _queryParams, url: '/app/amrit-gyaan-kosh/view-all', icon: '',
-        },
+        // { title: 'Gyaan Karmayogi', url: '/app/amrit-gyaan-kosh/all', icon: 'menu_book' },
+        // {
+        //   title: this.titleCasePipe.transform(this.resourceData.resourceCategory), disableTranslate: true,
+        //   queryParams: _queryParams, url: '/app/amrit-gyaan-kosh/view-all', icon: '',
+        // },
         { title: this.resourceData.name, url: 'none', icon: '' },
       ]
     }
@@ -121,7 +121,7 @@ export class GyaanPlayerComponent implements OnInit {
     // Set up observer to check if instructions are long enough to require "View More"
     setTimeout(() => {
       this.checkInstructionsLength()
-    },         100)
+    }, 100)
 
     this.handleSubsector(this.resourceData?.sectorDetails_v1?.[0] || [])
   }
@@ -138,9 +138,17 @@ export class GyaanPlayerComponent implements OnInit {
     }
     return ''
   }
+  // returns false only when the config explicitly disables the related content strip
+  get isRelatedContentSectionEnabled(): boolean {
+    return this.configSvc?.globalConfig?.agkPlayerPaage?.relatedResources?.enabled !== false
+  }
+
   // the below method is used to form releated content request
   getRelatedContent() {
-    if (this.resourceData && this.pageConfig.stripConfig) {
+    if (!this.isRelatedContentSectionEnabled) {
+      return
+    }
+    if (this.resourceData && this.pageConfig?.stripConfig) {
       const negetContent: any = {
         'name': {
           '!=': [

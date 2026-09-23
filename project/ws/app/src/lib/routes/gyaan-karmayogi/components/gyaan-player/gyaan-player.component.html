@@ -150,15 +150,17 @@
         </ng-container>
     </div>
 </div>
-<div class="flex flex-center filter-section  pb-4 bg-primary"  *ngIf="displayContents">
-    <div class="container-balanced w-full">
-        <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between">  
-           <ng-container *ngIf="relatedContentStrip">
-                    <div class="w-full mt-4">
-                        <ws-widget-content-strip-with-tabs [widgetData]="relatedContentStrip"></ws-widget-content-strip-with-tabs>
-                    </div>
-           </ng-container>
+<ng-container *ngIf="isRelatedContentSectionEnabled">
+    <div class="flex flex-center filter-section  pb-4 bg-primary"  *ngIf="displayContents">
+        <div class="container-balanced w-full">
+            <div class="flex gap-2 pl-4 pr-4 md:pl-0 md:pr-0 flex-wrap items-end justify-between">
+               <ng-container *ngIf="relatedContentStrip">
+                        <div class="w-full mt-4">
+                            <ws-widget-content-strip-with-tabs [widgetData]="relatedContentStrip"></ws-widget-content-strip-with-tabs>
+                        </div>
+               </ng-container>
+            </div>
         </div>
     </div>
-</div>
+</ng-container>
 <ws-app-share-toc *ngIf="enableShare" [rootOrgId]="rootOrgId" [content]="resourceData" [contentLink]="resourceLink" (resetEnableShare)="resetEnableShare($event)"></ws-app-share-toc>
