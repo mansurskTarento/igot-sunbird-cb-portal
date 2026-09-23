@@ -756,7 +756,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         this.searchRequestCommunities.orderDirection = 'desc'
       } else if (this.seeAllResult === SearchCategory.People) {
         delete this.searchRequestPeoples?.sort_by?.firstName
-        this.searchRequestPeoples.sort_by.createdOn = 'desc'
+        this.searchRequestPeoples.sort_by.createdDate = 'desc'
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by.createdOn = 'desc'
       }
@@ -1373,6 +1373,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       } else if (this.seeAllResult === SearchCategory.Events) {
         this.searchRequestEvents.request.sort_by = {}
         await this.searchEvents()
+      } else if (this.seeAllResult === SearchCategory.People) {
+        this.searchRequestPeoples.sort_by = {}
+        await this.searchPeople()
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by = {}
         await this.searchResources()
@@ -1399,7 +1402,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         await this.searchcommunities()
       } else if (this.seeAllResult === SearchCategory.People) {
         delete this.searchRequestPeoples?.sort_by?.firstName
-        this.searchRequestPeoples.sort_by.createdOn = 'desc'
+        this.searchRequestPeoples.sort_by.createdDate = 'desc'
         await this.searchPeople()
       } else if (this.seeAllResult === SearchCategory.Resources) {
         this.searchRequestResources.request.sort_by.createdOn = 'desc'
