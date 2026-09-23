@@ -498,7 +498,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   /* Merged, not replaced: the home page tour keeps video_visited / skipped in the same object */
   private markWalletTourVisited(walletTour: any) {
     const userId = this.configSvc.unMappedUser && this.configSvc.unMappedUser.id
-    const karmaWalletTour = { ...walletTour, visited: true }
+    const karmaWalletTour = { ...walletTour, visited: true, video_visited:true }
     /* kept in step in memory, the read api only runs once per session */
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
