@@ -42,7 +42,7 @@
     <label class="krd__label" for="krd-amount">Karma Point to convert</label>
     <div class="krd-amount" [class.krd-amount--error]="errorMessage">
       <img class="krd-amount__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
-      <input id="krd-amount" class="krd-amount__input" type="number" min="0" inputmode="numeric" pattern="[0-9]*"
+      <input id="krd-amount" class="krd-amount__input" type="text" maxlength="5" inputmode="numeric" pattern="[0-9]*"
         [ngModel]="amount" (ngModelChange)="onAmountChange($event)"
         (keydown)="allowOnlyNumbers($event)"
         [disabled]="convertAll || isBlocked"

@@ -48,7 +48,7 @@ export class KarmaCoinsInfoDialogComponent {
     {
       icon: this.icons.badgeKarmaWallet,
       value: '80',
-      caption: 'Coins left 100 points stay',
+      caption: 'Coins left',
     },
   ]
 

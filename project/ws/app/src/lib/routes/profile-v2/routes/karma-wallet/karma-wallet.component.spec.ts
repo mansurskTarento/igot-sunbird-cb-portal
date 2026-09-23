@@ -393,6 +393,27 @@ describe('KarmaWalletComponent', () => {
     expect(endAfter(new Date(2026, 0, 10))).toBe('2025-12-31')
   })
 
+  /* One month at a time: the newest stands open, and opening another closes it */
+  it('should open the newest month and only that one', () => {
+    expect(component.groups[0].expanded).toBe(true)
+    expect(component.groups.slice(1).every(group => !group.expanded)).toBe(true)
+  })
+
+  it('should close the open month when another one is opened', () => {
+    /* A window wide enough to hold both July and August, so there are two to switch between */
+    component.selectPeriod('custom')
+    component.onCustomStartChange(new Date(2026, 6, 1))
+    component.onCustomEndChange(new Date(2026, 7, 26))
+    const [first, second] = component.groups
+    expect(component.groups.length).toBe(2)
+
+    component.toggleGroup(second)
+
+    expect(second.expanded).toBe(true)
+    expect(first.expanded).toBe(false)
+    expect(component.groups.filter(group => group.expanded).length).toBe(1)
+  })
+
   it('should keep a month collapsed across a tab change', () => {
     const group = component.groups[0]
     component.toggleGroup(group)
