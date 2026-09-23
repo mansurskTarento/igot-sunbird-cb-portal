@@ -61,16 +61,17 @@ export class PlansService {
   }
 
   /**
-   * One plan by id, normalised to the shape the CBPlan user dictionary uses — which is what
-   * UserCbpPlansService caches in IndexedDB and what every plan consumer already reads.
+   * One plan by id, normalised to the shape every plan consumer on this side reads.
    *
-   * The two endpoints describe the same plan differently, so a screen that can be fed by
-   * either (the detail page resolves from the cache first and falls back here) would otherwise
-   * have to branch on which one answered:
+   * The API names differ from the portal's, so a screen that can be fed by either the read
+   * endpoint or the CBPlan V4 cache (the detail page resolves from the cache first and falls
+   * back here) would otherwise have to branch on which one answered:
    *
-   *   read endpoint          dictionary / cache
-   *   id                     planId
-   *   caLinkedId             comprehensiveAssessment
+   *   API (read + dictionary)    portal
+   *   id / planId                planId
+   *   caLinkedId                 comprehensiveAssessment
+   *
+   * PlanDetailComponent.toReadResult does the same mapping for cached dictionary plans.
    *
    * `contentList` carries content ids only; their metadata comes from the content dictionary,
    * and `comprehensiveAssessment` is a single content id resolved the same way.

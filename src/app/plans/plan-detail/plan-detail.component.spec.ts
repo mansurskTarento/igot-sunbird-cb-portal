@@ -57,7 +57,7 @@ const cachedPlan = (over: any = {}) => ({
   isApar: true,
   planType: null,
   contentList: [{ identifier: 'do_1', mandatory: true }, { identifier: 'do_2', mandatory: false }],
-  comprehensiveAssessment: null,
+  caLinkedId: null,
   createdByOrgId: 'org-1',
   createdByOrgName: 'Department of Testing',
   createdByOrgLogo: null,
@@ -488,6 +488,27 @@ describe('PlanDetailComponent', () => {
       expect(plansSvc.readPlan).not.toHaveBeenCalled()
       expect(component.courses().length).toBe(2)
       expect(component.plan()?.title).toBe('plan ttitle')
+    })
+
+    it('reads a cached plan CA from caLinkedId, the name the dictionary now sends', async () => {
+      userCbpPlansSvc.getCacheEntry.mockResolvedValue(
+        cacheEntry({ aparPlanList: [cachedPlan({ caLinkedId: 'do_ca' })] }))
+      fromUrl('2026-27', 'apar')
+      component.ngOnInit()
+      await settle()
+
+      expect(plansSvc.readPlan).not.toHaveBeenCalled()
+      expect(dictionarySvc.getContents).toHaveBeenCalledWith(['do_1', 'do_2', 'do_ca'])
+    })
+
+    it('still reads comprehensiveAssessment off a plan cached before the rename', async () => {
+      userCbpPlansSvc.getCacheEntry.mockResolvedValue(
+        cacheEntry({ aparPlanList: [cachedPlan({ caLinkedId: undefined, comprehensiveAssessment: 'do_ca' })] }))
+      fromUrl('2026-27', 'apar')
+      component.ngOnInit()
+      await settle()
+
+      expect(dictionarySvc.getContents).toHaveBeenCalledWith(['do_1', 'do_2', 'do_ca'])
     })
 
     it('finds the plan whichever of the three lists it sits in', async () => {
