@@ -183,7 +183,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   referenceDate = new Date()
 
   private transactions: IKarmaCoinTransaction[] = []
-  private collapsedKeys = new Set<string>()
+  private expandedKey: string | null = null
   private readonly historyRequest$ = new Subject<IKarmaTransactionsRequest>()
   private readonly destroy$ = new Subject<void>()
   private autoStartWalkthrough = false
@@ -441,12 +441,10 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   toggleGroup(group: IKarmaCoinTxnGroup) {
-    group.expanded = !group.expanded
-    if (group.expanded) {
-      this.collapsedKeys.delete(group.key)
-    } else {
-      this.collapsedKeys.add(group.key)
-    }
+    this.expandedKey = group.expanded ? '' : group.key
+    this.groups.forEach(row => {
+      row.expanded = row.key === this.expandedKey
+    })
   }
 
   viewUnredeemedKarmaPoints() {
@@ -500,7 +498,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   /* Merged, not replaced: the home page tour keeps video_visited / skipped in the same object */
   private markWalletTourVisited(walletTour: any) {
     const userId = this.configSvc.unMappedUser && this.configSvc.unMappedUser.id
-    const karmaWalletTour = { ...walletTour, visited: true }
+    const karmaWalletTour = { ...walletTour, visited: true, video_visited:true }
     /* kept in step in memory, the read api only runs once per session */
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
@@ -830,7 +828,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
         grouped.set(key, {
           key,
           label: `${MONTH_LABELS[date.getMonth()]} ${date.getFullYear()}`,
-          expanded: !this.collapsedKeys.has(key),
+          expanded: false,
           transactions: [],
         })
       }
@@ -845,6 +843,13 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     groups.sort((a, b) => a.key < b.key ? 1 : (a.key > b.key ? -1 : 0))
     groups.forEach(group => {
       group.transactions.sort((a, b) => a.date < b.date ? 1 : (a.date > b.date ? -1 : 0))
+    })
+    /* the newest month stands open until the user picks another one - or closes them all */
+    const stillThere = this.expandedKey !== null &&
+      (this.expandedKey === '' || groups.some(group => group.key === this.expandedKey))
+    this.expandedKey = stillThere ? this.expandedKey : (groups.length ? groups[0].key : null)
+    groups.forEach(group => {
+      group.expanded = group.key === this.expandedKey
     })
     this.groups = groups
   }
