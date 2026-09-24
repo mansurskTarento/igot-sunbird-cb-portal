@@ -207,6 +207,14 @@ export class PlanDetailComponent implements OnInit {
     return gating.every(identifier => this.isCompleted(identifier)) ? 'available' : 'locked'
   })
 
+  readonly assessmentStateIcon = computed(() => {
+    switch (this.assessmentState()) {
+      case 'completed': return 'check'
+      case 'available': return 'lock_open'
+      default: return 'lock'
+    }
+  })
+
   readonly assessmentStateKey = computed(() => {
     switch (this.assessmentState()) {
       case 'completed': return 'cardcontentv2.completed'

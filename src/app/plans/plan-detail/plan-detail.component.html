@@ -62,7 +62,7 @@
           <div class="plan-panel__row">
             <dt>{{ 'planDetail.comprehensiveAssessment' | translate }}</dt>
             <dd class="plan-panel__value plan-status" [class]="'plan-status--' + assessmentState()">
-              <span class="plan-status__dot" aria-hidden="true"></span>
+              <mat-icon class="plan-status__icon" aria-hidden="true">{{ assessmentStateIcon() }}</mat-icon>
               {{ assessmentStateKey() | translate }}
             </dd>
           </div>

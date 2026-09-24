@@ -203,7 +203,7 @@
   font: 600 12px 'Noto Sans';
   white-space: nowrap;
 
-  /* currentColor drives the dot, so each state needs one declaration. */
+  /* currentColor drives the icon, so each state needs one declaration. */
   &--locked {
     color: var(--text-system-text-error);
   }
@@ -216,11 +216,12 @@
     color: var(--text-system-text-success);
   }
 
-  &__dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    background: currentColor;
+  &__icon {
+    width: 14px;
+    height: 14px;
+    font-size: 14px;
+    line-height: 14px;
+    color: currentColor;
     flex-shrink: 0;
   }
 }
