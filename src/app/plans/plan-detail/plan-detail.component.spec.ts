@@ -8,7 +8,6 @@ jest.mock('@sunbird-cb/utils-v2', () => ({ WidgetEnrollService: class { } }), { 
 jest.mock('@sunbird-cb/consumption', () => ({
   CardType: { CourseCard: 'courseCard', PlanCard: 'planCard' },
   CardTransformerService: class { },
-  CommonMethodsService: class { },
   ContentDictionaryService: class { },
   UserCbpPlansService: class { },
 }), { virtual: true })
@@ -16,7 +15,6 @@ jest.mock('@sunbird-cb/consumption', () => ({
 import { WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import {
   CardTransformerService,
-  CommonMethodsService,
   ContentDictionaryService,
   UserCbpPlansService,
 } from '@sunbird-cb/consumption'
@@ -144,7 +142,6 @@ describe('PlanDetailComponent', () => {
         { provide: ContentDictionaryService, useValue: dictionarySvc },
         { provide: CardTransformerService, useValue: transformer },
         { provide: WidgetEnrollService, useValue: enrollSvc },
-        { provide: CommonMethodsService, useValue: { getCourseUnitIds: () => '[]' } },
         { provide: require('@ngx-translate/core').TranslateService, useValue: translate },
       ],
     })
@@ -614,9 +611,11 @@ describe('PlanDetailComponent', () => {
 
   // ── CA courses ─────────────────────────────────────────────────────────────
   describe('mandatory courses count as CA', () => {
-    const withMandatory = () => plansSvc.readPlan.mockReturnValue(of(rawPlan({
-      contentList: [{ identifier: 'do_1', mandatory: true }, { identifier: 'do_2', mandatory: false }],
-    })))
+    const withMandatory = (over: any = { comprehensiveAssessment: 'do_ca' }) =>
+      plansSvc.readPlan.mockReturnValue(of(rawPlan({
+        contentList: [{ identifier: 'do_1', mandatory: true }, { identifier: 'do_2', mandatory: false }],
+        ...over,
+      })))
 
     it('marks a mandatory course CA on the card itself, where the chip reads it', async () => {
       withMandatory()
@@ -654,8 +653,33 @@ describe('PlanDetailComponent', () => {
       expect(component.caCourses()).toEqual([])
     })
 
-    it('carries the flag through the cached path too', async () => {
+    // Regression: a plan with no CA linked still marks courses mandatory, and those picked up
+    // the CA chip and a "CA Courses Completed: 0 of 1" row.
+    it('flags nothing as CA when the plan links no CA, mandatory or not', async () => {
+      withMandatory({})
+      component.ngOnInit()
+      await settle()
+
+      expect((component.courses()[0] as any).isCA).toBeUndefined()
+      expect((component.courses()[0].metadata as any).isCA).toBeUndefined()
+      expect(component.caCourses()).toEqual([])
+      expect(component.assessment()).toBeNull()
+    })
+
+    it('flags nothing as CA on a cached plan whose caLinkedId is null', async () => {
       userCbpPlansSvc.getCacheEntry.mockResolvedValue(cacheEntry({ aparPlanList: [cachedPlan()] }))
+      queryParamMap.next({ get: (key: string) => (key === 'planYear' ? '2026-27' : null) })
+      component.ngOnInit()
+      await settle()
+
+      expect(plansSvc.readPlan).not.toHaveBeenCalled()
+      expect((component.courses()[0] as any).isCA).toBeUndefined()
+      expect(component.caCourses()).toEqual([])
+    })
+
+    it('carries the flag through the cached path too', async () => {
+      userCbpPlansSvc.getCacheEntry.mockResolvedValue(
+        cacheEntry({ aparPlanList: [cachedPlan({ caLinkedId: 'do_ca' })] }))
       queryParamMap.next({ get: (key: string) => (key === 'planYear' ? '2026-27' : null) })
       component.ngOnInit()
       await settle()

@@ -9,7 +9,6 @@ import {
   CardTransformerService,
   CardType,
   CardViewModel,
-  CommonMethodsService,
   ContentDictionaryService,
   IBreadcrumbItem,
   IUserCbpPlan,
@@ -41,7 +40,6 @@ export class PlanDetailComponent implements OnInit {
   private readonly cardTransformer = inject(CardTransformerService)
   private readonly enrollSvc = inject(WidgetEnrollService)
   private readonly userCbpPlansSvc = inject(UserCbpPlansService)
-  private readonly commonSvc = inject(CommonMethodsService)
   private readonly translate = inject(TranslateService)
   private readonly destroyRef = inject(DestroyRef)
 
@@ -82,7 +80,6 @@ export class PlanDetailComponent implements OnInit {
     })
     return map
   })
-  private readonly caCourseIds = signal<string[]>([])
   private readonly langTick = signal(0)
   /**
    * Listing plan-type key handed over in the URL by the card that was clicked, used only
@@ -163,11 +160,19 @@ export class PlanDetailComponent implements OnInit {
   readonly completedCourses = computed(() =>
     this.courses().filter(course => this.isCompleted(course.identifier)).length)
 
-  /** CA courses are flagged the same way the course card flags them. */
+  /**
+   * The courses this plan's comprehensive assessment covers — flagged in applyContents from the
+   * plan's own `mandatory` marks, and only when the plan actually links a CA.
+   *
+   * Deliberately NOT the `comprehensiveAssessmentCourseUnits` list CommonMethodsService keeps:
+   * that holds the course units of every CA assigned to the user, so a plan with no CA of its
+   * own showed "CA Courses Completed" for courses some other plan's CA happened to cover.
+   */
   readonly caCourses = computed(() => {
-    const caIds = this.caCourseIds()
-    return this.courses().filter(course =>
-      caIds.includes(course.identifier) || !!(course.metadata as any)?.isCA)
+    if (!this.raw()?.comprehensiveAssessment) {
+      return []
+    }
+    return this.courses().filter(course => !!(course.metadata as any)?.isCA)
   })
 
   readonly completedCaCourses = computed(() =>
@@ -213,7 +218,6 @@ export class PlanDetailComponent implements OnInit {
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.primeTranslations()
-    this.caCourseIds.set(this.parseCaCourseIds())
 
     // Both maps, because the plan year in the query string decides whether this page needs
     // the read API at all — see resolvePlan$. distinctUntilChanged keeps an unrelated query
@@ -376,6 +380,10 @@ export class PlanDetailComponent implements OnInit {
       ...(planType === 'AICBP' ? { planTypeV2: 'AICBP' } : {}),
     }
 
+    // `mandatory` only means "covered by the CA" when there is a CA. A plan without one can
+    // still mark courses mandatory, and those must not pick up the CA chip or the rail count.
+    const hasCa = !!raw.comprehensiveAssessment
+
     const toCard = (id: string, mandatory = false): CardViewModel | null => {
       const content = contents?.[id]
       if (!content) {
@@ -400,7 +408,7 @@ export class PlanDetailComponent implements OnInit {
     // PlansService.normaliseContentList — so this works cached or fetched.
     this.courses.set(
       raw.contentList
-        .map(item => toCard(item?.identifier, !!item?.mandatory))
+        .map(item => toCard(item?.identifier, hasCa && !!item?.mandatory))
         .filter((card): card is CardViewModel => !!card))
 
     this.assessment.set(raw.comprehensiveAssessment ? toCard(raw.comprehensiveAssessment) : null)
@@ -454,16 +462,6 @@ export class PlanDetailComponent implements OnInit {
       return false
     }
     return entry.completionPercentage === 100 || entry.status === 2
-  }
-
-  /** Ids of the user's CA course units, stored by CommonMethodsService as a JSON string. */
-  private parseCaCourseIds(): string[] {
-    try {
-      const parsed = JSON.parse(this.commonSvc.getCourseUnitIds() || '[]')
-      return Array.isArray(parsed) ? parsed : []
-    } catch {
-      return []
-    }
   }
 
   /** The loaded plan's own type, or the URL's hint while it is still loading. */

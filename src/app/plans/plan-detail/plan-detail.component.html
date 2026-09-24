@@ -29,7 +29,7 @@
     <!-- ── Courses in the plan ─────────────────────────────── -->
     <div class="plan-detail__courses">
       @for (course of courses(); track course.identifier) {
-      <sb-uic-card-course-v2 [content]="course" [cbPlanMapData]="cbPlanMapData()"></sb-uic-card-course-v2>
+      <sb-uic-card-course-v2 [content]="course" [cbPlanMapData]="cbPlanMapData()" [caFromContentOnly]="true"></sb-uic-card-course-v2>
       } @empty {
       <div class="plan-detail__empty">
         <img src="/assets/icons/no-data.svg" alt="" aria-hidden="true" />
