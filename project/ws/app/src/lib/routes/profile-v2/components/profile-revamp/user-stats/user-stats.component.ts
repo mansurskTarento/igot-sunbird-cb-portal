@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core'
 import { UserStats } from '../../../models/profile-revamp.model'
 import { Router } from '@angular/router'
-import { EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { EventService, TelemetryService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 
 const WALLET_BALANCE_IDENTIFIER = 'walletBalance'
 
@@ -21,7 +21,9 @@ export class UserStatsComponent implements OnInit {
 
   constructor(
     private router: Router,
-    private eventService: EventService
+    private eventService: EventService,
+    private utilitySvc: UtilityService,
+    private telemetrySvc: TelemetryService
   ) { }
 
   ngOnInit() {
@@ -29,6 +31,8 @@ export class UserStatsComponent implements OnInit {
 
   viewAll(state: UserStats) {
     if (state.identifier === WALLET_BALANCE_IDENTIFIER) {
+      this.utilitySvc.setRouteData([{ module: 'Profile', pageId: 'app/person-profile/me' }])
+      this.telemetrySvc.sendEmptyObjectForNextInteract()
       this.eventService.raiseInteractTelemetry(
         {
           type: WsEvents.EnumInteractTypes.CLICK,
@@ -38,6 +42,7 @@ export class UserStatsComponent implements OnInit {
         {},
         {
           pageId: 'app/person-profile/me',
+          module: 'Profile'
         }
       )
     }

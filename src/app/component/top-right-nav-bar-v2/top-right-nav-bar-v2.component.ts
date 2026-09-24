@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs'
 
 import { HomePageService } from '../../services/home-page.service'
 import { ZohoSupportService } from '../../services/zoho-support.service'
-import { ConfigurationsService, EventService, MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, MultilingualTranslationsService, TelemetryService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 import { DialogBoxComponent } from './../dialog-box/dialog-box.component'
 import { DialogBoxComponent as ZohoDialogComponent } from '@ws/app'
 import { ConfirmDialogComponent } from '@sunbird-cb/collection'
@@ -110,6 +110,8 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   private rootService = inject(RootService)
   themeSvc = inject(ThemeService)
   private btnSettingsSvc = inject(BtnSettingsService)
+  private utilitySvc = inject(UtilityService)
+  private telemetrySvc = inject(TelemetryService)
 
   private dialogRef: any
   private subs: Subscription[] = []
@@ -182,10 +184,15 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
   }
 
   goToKarmaWallet(): void {
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: '/page/home' }])
+    this.telemetrySvc.sendEmptyObjectForNextInteract()
     this.events.raiseInteractTelemetry(
       { type: 'click', subType: 'home-page-header', id: 'wallet-icon' },
       {},
-      { pageId: 'page/home' }
+      {
+        pageId: '/page/home',
+        module: WsEvents.EnumTelemetrymodules.HOME
+      }
     )
     this.router.navigate(['/app/person-profile/karma-wallet'])
   }
