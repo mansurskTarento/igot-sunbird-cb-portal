@@ -205,7 +205,7 @@ export class PlanDetailComponent implements OnInit {
   readonly assessmentStateKey = computed(() => {
     switch (this.assessmentState()) {
       case 'completed': return 'cardcontentv2.completed'
-      case 'available': return 'planDetail.available'
+      case 'available': return 'planDetail.unlocked'
       default: return 'planDetail.locked'
     }
   })
@@ -350,7 +350,13 @@ export class PlanDetailComponent implements OnInit {
       // V4 sends null where the read endpoint omits the field. Falsy either way, but the
       // declared types here are `string | undefined`, so the nulls are dropped.
       planType: plan.planType || undefined,
-      comprehensiveAssessment: plan.comprehensiveAssessment || undefined,
+      // The dictionary now sends the CA id as `caLinkedId` (it used to be
+      // `comprehensiveAssessment`); the library caches plans verbatim, so an entry written
+      // before the rename can still carry the old name.
+      comprehensiveAssessment:
+        (plan as IUserCbpPlan & { caLinkedId?: string | null }).caLinkedId
+        || plan.comprehensiveAssessment
+        || undefined,
     }
   }
 
