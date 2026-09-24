@@ -10,6 +10,7 @@ import { DomainConfService } from '@sunbird-cb/utils-v2'
 
 export class HomePageService {
   closeDialogPop = new Subject()
+  walletBalanceUpdated = new Subject<number>()
   private leaderboardData$: Observable<any> | null = null
 
   constructor(

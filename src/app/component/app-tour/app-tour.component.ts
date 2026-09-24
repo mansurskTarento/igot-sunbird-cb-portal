@@ -5,6 +5,7 @@ import { UtilityService, EventService, WsEvents, ConfigurationsService } from '@
 import { UserProfileService } from '@ws/app'
 import { TranslateService } from '@ngx-translate/core'
 import { AppTourVideoComponent } from '../app-tour-video/app-tour-video.component'
+import { isKarmaWalletTourSnoozed, snoozeKarmaWalletTour } from './karma-wallet-tour-snooze'
 
 // the header wallet entry point the coach mark points at, newest markup first
 const WALLET_ANCHOR_SELECTORS = ['.karma-wallet-btn', '.karma-coins-chip']
@@ -254,8 +255,9 @@ export class AppTourComponent implements OnChanges {
     const profileDetails = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
     const getStarted = (profileDetails && profileDetails.get_started_tour_v2) || {}
     this.getStartedPending = !(getStarted.visited || getStarted.skipped)
-    this.karmaWalletVideoPending = this.karmaWalletTourStatus().video_visited !== true
-    this.karmaWalletTourPending = this.karmaWalletTourStatus().visited !== true
+    const snoozed = isKarmaWalletTourSnoozed(this.configSvc.unMappedUser && this.configSvc.unMappedUser.id)
+    this.karmaWalletVideoPending = !snoozed && this.karmaWalletTourStatus().video_visited !== true
+    this.karmaWalletTourPending = !snoozed && this.karmaWalletTourStatus().visited !== true
     this.startVideoIndex = (!this.getStartedPending && this.karmaWalletVideoPending) ? 1 : 0
   }
   /* Recorded as the video starts, not when it finishes: someone who plays it and closes the
@@ -361,15 +363,17 @@ export class AppTourComponent implements OnChanges {
   }
 
   exploreWalletTour(): void {
-    this.persistWalletTour({ visited: true, skipped: false, video_visited: !this.karmaWalletVideoPending })
+    this.persistWalletTour({ visited: true, skipped: false, video_visited: true })
     this.raiseWalkthroughStartTelemetry()
     this.finishWalletCoachMark()
     this.router.navigate([KARMA_WALLET_ROUTE], { queryParams: { walkthrough: 'true' } })
   }
 
   skipWalletTour(): void {
-    // visited stays false, so the prompt comes back on the next load
-    this.persistWalletTour({ visited: false, skipped: true, video_visited: !this.karmaWalletVideoPending })
+    this.persistWalletTour({ visited: !this.karmaWalletVideoPending, skipped: true, video_visited: !this.karmaWalletVideoPending })
+    if (this.karmaWalletVideoPending) {
+      snoozeKarmaWalletTour(this.configSvc.unMappedUser.id)
+    }
     this.raiseTemeletyInterat('karma-wallet-coachmark-skip', 'karma-wallet')
     this.finishWalletCoachMark()
   }

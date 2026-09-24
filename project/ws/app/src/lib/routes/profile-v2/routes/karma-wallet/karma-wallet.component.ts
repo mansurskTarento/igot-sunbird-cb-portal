@@ -30,6 +30,7 @@ import {
   TKarmaWalletPeriod,
 } from './karma-wallet.model'
 import { KarmaWalletService } from './karma-wallet.service'
+import { HomePageService } from 'src/app/services/home-page.service'
 import { IKarmaTourAction, IKarmaTourStep } from './karma-wallet-tour.model'
 import { KarmaWalletTourComponent } from './karma-wallet-tour.component'
 
@@ -64,10 +65,6 @@ const MONTH_NAMES = [
 
 function shortMonth(index: number): string {
   return (MONTH_NAMES[index] || '').slice(0, 3)
-}
-
-function displayDate(date: Date): string {
-  return `${date.getDate()} ${shortMonth(date.getMonth())} ${date.getFullYear()}`
 }
 
 @Component({
@@ -204,6 +201,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     private karmaWalletSvc: KarmaWalletService,
     private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
+    private homePageSvc: HomePageService,
   ) { }
 
   /* Every API failure on this page is reported here and nowhere else */
@@ -331,13 +329,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return this.groups.some(group => group.transactions.length > 0)
   }
 
-  /* An empty custom range names its own dates, so the user can see what to widen */
   get emptyMessage(): string {
-    if (this.activePeriod === 'custom' && this.customStart && this.customEnd) {
-      return `No transactions between ${displayDate(this.customStart)} and ` +
-        `${displayDate(this.customEnd)}. Try a different date range.`
-    }
-    return 'No Karma Coin transactions yet.'
+    return 'No transactions found for the selected date range. Please try a different date range.'
   }
 
   openKarmaCoinsInfo() {
@@ -729,6 +722,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
     ).subscribe({
       next: summary => {
+        this.homePageSvc.walletBalanceUpdated.next(summary.walletBalance)
         this.summary = summary
         this.summaryLoading = false
         this.openConvertOnce()

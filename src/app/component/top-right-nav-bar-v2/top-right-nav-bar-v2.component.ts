@@ -153,6 +153,12 @@ export class TopRightNavBarV2Component implements OnInit, OnDestroy {
     }
 
     this.subs.push(
+      this.homePageService.walletBalanceUpdated.subscribe((walletBalance: number) => {
+        this.karmaCoins.set(walletBalance || 0)
+      })
+    )
+
+    this.subs.push(
       this.homePageService.closeDialogPop.subscribe((data: any) => {
         if (data) {
           this.dialogRef?.close()
