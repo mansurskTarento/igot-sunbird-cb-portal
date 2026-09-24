@@ -30,6 +30,7 @@ import {
   TKarmaWalletPeriod,
 } from './karma-wallet.model'
 import { KarmaWalletService } from './karma-wallet.service'
+import { HomePageService } from 'src/app/services/home-page.service'
 import { IKarmaTourAction, IKarmaTourStep } from './karma-wallet-tour.model'
 import { KarmaWalletTourComponent } from './karma-wallet-tour.component'
 
@@ -200,6 +201,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     private karmaWalletSvc: KarmaWalletService,
     private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
+    private homePageSvc: HomePageService,
   ) { }
 
   /* Every API failure on this page is reported here and nowhere else */
@@ -720,6 +722,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       takeUntil(this.destroy$),
     ).subscribe({
       next: summary => {
+        this.homePageSvc.walletBalanceUpdated.next(summary.walletBalance)
         this.summary = summary
         this.summaryLoading = false
         this.openConvertOnce()

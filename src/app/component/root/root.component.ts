@@ -414,6 +414,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
       this.mobileTopHeaderVisibilityStatus = status
     })
+    this.homePageSvc.walletBalanceUpdated.subscribe((walletBalance: number) => {
+      this.updateAchievementWalletBalance(walletBalance)
+    })
     this.configSvc.updateTourGuideMethod(this.showTour)
     // this.route.queryParams
     //   .subscribe(_params => {
@@ -751,6 +754,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.navBarOpenStatusBasedOnNav.set(false)
       this.leftNavBarIsOpen.set(false)
     }
+  }
+
+  private updateAchievementWalletBalance(walletBalance: number) {
+    const coinsItem = this.achievementsSection?.items?.find((item: any) => item.code === 'karma_coins')
+    if (!coinsItem) {
+      return
+    }
+    coinsItem.value = `${walletBalance || 0} Karma Coins`
+    this.sendDetailsChangedEvent(this.achievementsSection)
   }
 
   sendDetailsChangedEvent(newAchievements: any) {

@@ -15,6 +15,7 @@ import {
   IKarmaWalletSummary,
 } from './karma-wallet.model'
 import { KarmaWalletService, toCoinRow } from './karma-wallet.service'
+import { HomePageService } from 'src/app/services/home-page.service'
 
 /**
  * No TestBed and no shared mock module: the component is plain constructor injection, so it
@@ -127,6 +128,7 @@ describe('KarmaWalletComponent', () => {
   }
   /* karma_wallet_tour drives the first-visit info popup */
   let configStub: { unMappedUser: any }
+  let homePageStub: { walletBalanceUpdated: { next: jest.Mock } }
   /* What the redeem dialog closes with, per test */
   let dialogResult: any
 
@@ -144,6 +146,7 @@ describe('KarmaWalletComponent', () => {
     serviceStub as unknown as KarmaWalletService,
     snackBarStub as unknown as MatSnackBar,
     configStub as unknown as ConfigurationsService,
+    homePageStub as unknown as HomePageService,
   )
 
   /* A component already loaded against the 26 Aug 2026 anchor */
@@ -170,12 +173,28 @@ describe('KarmaWalletComponent', () => {
     configStub = {
       unMappedUser: { id: 'user-1', profileDetails: { karma_wallet_tour: { visited: true } } },
     }
+    homePageStub = { walletBalanceUpdated: { next: jest.fn() } }
     impressionSpy.mockClear()
     component = load()
   })
 
   it('should create', () => {
     expect(component).toBeTruthy()
+  })
+
+  it('should hand the summary wallet balance to the header and left nav, even from a zero balance', () => {
+    localStorage.setItem('userEnrollmentCount', JSON.stringify({
+      userCourseEnrolmentInfo: { walletBalance: 0, karmaPoints: 88 },
+    }))
+    homePageStub.walletBalanceUpdated.next.mockClear()
+
+    load()
+
+    const stored = JSON.parse(localStorage.getItem('userEnrollmentCount') || '{}')
+    expect(stored.userCourseEnrolmentInfo).toEqual({ walletBalance: 472, karmaPoints: 88 })
+    expect(configStub.unMappedUser.walletBalance).toBe(472)
+    expect(homePageStub.walletBalanceUpdated.next).toHaveBeenCalledWith(472)
+    localStorage.removeItem('userEnrollmentCount')
   })
 
   /* First landing: the info popup introduces Karma Coins and the visit is recorded */
