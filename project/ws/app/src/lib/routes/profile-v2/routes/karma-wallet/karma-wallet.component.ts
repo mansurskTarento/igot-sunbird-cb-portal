@@ -66,10 +66,6 @@ function shortMonth(index: number): string {
   return (MONTH_NAMES[index] || '').slice(0, 3)
 }
 
-function displayDate(date: Date): string {
-  return `${date.getDate()} ${shortMonth(date.getMonth())} ${date.getFullYear()}`
-}
-
 @Component({
   selector: 'ws-app-karma-wallet',
   templateUrl: './karma-wallet.component.html',
@@ -331,13 +327,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return this.groups.some(group => group.transactions.length > 0)
   }
 
-  /* An empty custom range names its own dates, so the user can see what to widen */
   get emptyMessage(): string {
-    if (this.activePeriod === 'custom' && this.customStart && this.customEnd) {
-      return `No transactions between ${displayDate(this.customStart)} and ` +
-        `${displayDate(this.customEnd)}. Try a different date range.`
-    }
-    return 'No Karma Coin transactions yet.'
+    return 'No transactions found for the selected date range. Please try a different date range.'
   }
 
   openKarmaCoinsInfo() {
