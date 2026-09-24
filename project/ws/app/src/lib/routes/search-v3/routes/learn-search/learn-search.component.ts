@@ -362,7 +362,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
       const enrollmentDetailsFromDB = _.get(this.enrollmentDetails, 'result.response', null)
       if (enrollmentDetailsFromDB) {
-        for (const content of result.result.content) {
+        for (const content of result?.result?.content) {
           const enrollmentDetails = enrollmentDetailsFromDB[content.identifier]
           if (content?.completionSurveyLink && content?.identifier && enrollmentDetails && enrollmentDetails?.completionPercentage === 100) {
             const sID = content.completionSurveyLink.split('surveys/')
