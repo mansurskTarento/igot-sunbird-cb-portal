@@ -13,6 +13,10 @@ import { environment } from 'src/environments/environment'
 })
 export class GlobalSearchComponent implements OnInit {
   searchParam = { query: '', nlp: '', searchCategory: '' };
+  // Full list parsed from the (now possibly comma-separated) `category` query param. searchParam
+  // keeps a single searchCategory (the first entry) for the existing single-category downstream
+  // consumers (learn-search, etc.), which are not rewritten in this step.
+  searchCategories: string[] = [];
   userValue = '';
   searchparamFilters: any
   filtersPanel!: string | null
@@ -48,6 +52,10 @@ export class GlobalSearchComponent implements OnInit {
       this.configService.compentency[environment.compentencyVersionKey]
     this.activated.queryParamMap.subscribe((queryParams) => {
       this.userValue = ''
+      this.searchCategories = (queryParams.get('category') || '')
+        .split(',')
+        .map((c) => c.trim())
+        .filter(Boolean)
       if (queryParams.has('tab')) {
         const tabn = queryParams.get('tab')
         this.tabs.forEach((t: any, index: number) => {
@@ -60,14 +68,14 @@ export class GlobalSearchComponent implements OnInit {
         this.searchParam = {
           query: queryParams.get('q') || '',
           nlp: queryParams.get('search') || '',
-          searchCategory: queryParams.get('category') || ''
+          searchCategory: this.searchCategories[0] || ''
         }
       }
       if (queryParams.has('t')) {
         this.searchParam = {
           query: 'moderatedCourses',
           nlp: queryParams.get('search') || '',
-          searchCategory: queryParams.get('category') || ''
+          searchCategory: this.searchCategories[0] || ''
 
         }
         this.userValue = 'moderatedCourses'

@@ -372,6 +372,33 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       })
       expect(component.selectedSearchCategory()).toBe(SearchCategory.Courses)
     })
+
+    it('parses a comma-separated category param into selectedSearchCategories', () => {
+      component.initialize()
+      queryParamMapSubject.next({
+        has: (key: string) => key === 'category',
+        get: (key: string) => (key === 'category' ? 'courses,events' : null),
+      })
+      expect(component.selectedSearchCategories()).toEqual(['courses', 'events'])
+    })
+
+    it('parses a single-value category param into a single-item list', () => {
+      component.initialize()
+      queryParamMapSubject.next({
+        has: (key: string) => key === 'category',
+        get: (key: string) => (key === 'category' ? 'courses' : null),
+      })
+      expect(component.selectedSearchCategories()).toEqual(['courses'])
+    })
+
+    it('defaults selectedSearchCategories to Courses when the category param is absent', () => {
+      component.initialize()
+      queryParamMapSubject.next({
+        has: () => false,
+        get: () => null,
+      })
+      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
+    })
   })
 
   describe('onSearchSubmit', () => {
@@ -652,6 +679,49 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       component.processRecentSearchText(query)
       expect(mockRouter.navigate).toHaveBeenCalledWith([], expect.objectContaining({ relativeTo: mockActivatedRoute.parent }))
     })
+
+    it('joins every category from a multi-category history record', () => {
+      component.ref = (() => 'home') as any
+      const query = {
+        nlp_search_query: 'free',
+        search_category: ['courses', 'events', 'external-contents', 'peoples'],
+      }
+      component.processRecentSearchText(query)
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/globalsearch'],
+        expect.objectContaining({ queryParams: expect.objectContaining({ category: 'courses,events,external-contents,peoples' }) })
+      )
+    })
+
+    it('joins two categories from a history record', () => {
+      component.ref = (() => 'home') as any
+      const query = { nlp_search_query: 'angular', search_category: ['courses', 'events'] }
+      component.processRecentSearchText(query)
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/globalsearch'],
+        expect.objectContaining({ queryParams: expect.objectContaining({ category: 'courses,events' }) })
+      )
+    })
+
+    it('falls back to null when the history record has no categories', () => {
+      component.ref = (() => 'home') as any
+      const query = { nlp_search_query: 'testing', search_category: [] }
+      component.processRecentSearchText(query)
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/globalsearch'],
+        expect.objectContaining({ queryParams: expect.objectContaining({ category: null }) })
+      )
+    })
+
+    it('falls back to null when search_category is missing entirely', () => {
+      component.ref = (() => 'home') as any
+      const query = { nlp_search_query: 'testing' }
+      expect(() => component.processRecentSearchText(query)).not.toThrow()
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/globalsearch'],
+        expect.objectContaining({ queryParams: expect.objectContaining({ category: null }) })
+      )
+    })
   })
 
   describe('processSearchText', () => {
@@ -670,6 +740,16 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       component.processSearchText('angular')
       expect(mockRouter.navigate).toHaveBeenCalledWith([], expect.objectContaining({ relativeTo: mockActivatedRoute.parent }))
     })
+
+    it('joins multiple selected categories into a comma-separated category param', () => {
+      component.ref = (() => 'home') as any
+      component.selectedSearchCategories.set([SearchCategory.Courses, SearchCategory.Events, SearchCategory.ExternalContents])
+      component.processSearchText('testing')
+      expect(mockRouter.navigate).toHaveBeenCalledWith(
+        ['/app/globalsearch'],
+        expect.objectContaining({ queryParams: expect.objectContaining({ category: 'courses,events,external-contents' }) })
+      )
+    })
   })
 
   describe('clearSearchText', () => {
@@ -686,20 +766,26 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
   })
 
-  describe('selectSearchCategory', () => {
-    it('sets the category and re-runs the query when one exists', async () => {
-      component.queryControl.setValue('angular')
-      const updateSpy = jest.spyOn(component, 'updateQuery').mockResolvedValue(undefined)
-      await component.selectSearchCategory(SearchCategory.Events)
-      expect(component.selectedSearchCategory()).toBe(SearchCategory.Events)
-      expect(updateSpy).toHaveBeenCalledWith('angular')
+  describe('toggleSearchCategory', () => {
+    it('adds a category to the selection without navigating', () => {
+      const updateSpy = jest.spyOn(component, 'updateQuery')
+      component.selectedSearchCategories.set([SearchCategory.Courses])
+      component.toggleSearchCategory(SearchCategory.Events)
+      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses, SearchCategory.Events])
+      expect(updateSpy).not.toHaveBeenCalled()
+      expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
 
-    it('does nothing without an existing query', async () => {
-      component.queryControl.setValue('')
-      const updateSpy = jest.spyOn(component, 'updateQuery')
-      await component.selectSearchCategory(SearchCategory.Events)
-      expect(updateSpy).not.toHaveBeenCalled()
+    it('removes a selected category when more than one is selected', () => {
+      component.selectedSearchCategories.set([SearchCategory.Courses, SearchCategory.Events])
+      component.toggleSearchCategory(SearchCategory.Events)
+      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
+    })
+
+    it('does not unselect the last remaining category', () => {
+      component.selectedSearchCategories.set([SearchCategory.Courses])
+      component.toggleSearchCategory(SearchCategory.Courses)
+      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
     })
   })
 

@@ -91,6 +91,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   allSearchResults = signal<any[]>([]);
   nlpSearchValue = signal<any>(null);
   selectedSearchCategory = signal<string>(SearchCategory.Courses);
+  selectedSearchCategories = signal<string[]>([SearchCategory.Courses]);
   openSearchTemplate = signal(false);
   loaderSearching = signal(false);
   responseNlpQuery = signal('');
@@ -263,6 +264,16 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         this.selectedSearchCategory.set(queryParam.get('category') || SearchCategory.Courses)
       } else {
         this.selectedSearchCategory.set(SearchCategory.Courses)
+      }
+
+      if (queryParam.has('category')) {
+        const categories = (queryParam.get('category') || '')
+          .split(',')
+          .map((c) => c.trim())
+          .filter(Boolean)
+        this.selectedSearchCategories.set(categories.length ? categories : [SearchCategory.Courses])
+      } else {
+        this.selectedSearchCategories.set([SearchCategory.Courses])
       }
 
       const isAutoCompleteAllowed = this.activated.snapshot.data.searchPageData
@@ -561,7 +572,9 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     document.getElementById('global-search-input')?.blur()
     const queryParams = {
       q: query?.nlp_search_query ? query?.nlp_search_query?.trim() : '',
-      category: query?.search_category[0] || null,
+      category: Array.isArray(query?.search_category) && query.search_category.length
+        ? query.search_category.join(',')
+        : null,
       p: null,
       f: null,
       tab: null,
@@ -588,7 +601,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     const queryParams = {
       q: query ? query?.trim() : '',
       search: query && this.responseNlpQuery() ? this.responseNlpQuery() : null,
-      category: this.selectedSearchCategory() || null,
+      category: this.selectedSearchCategories().join(',') || null,
       p: null,
       f: null,
       tab: null,
@@ -618,11 +631,16 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.updateQuery('')
   }
 
-  async selectSearchCategory(category: string) {
-    if (this.queryControl.value) {
-      this.selectedSearchCategory.set(category)
-      this.updateQuery(this.queryControl.value)
+  toggleSearchCategory(category: string) {
+    const current = this.selectedSearchCategories()
+    if (current.includes(category)) {
+      // At least one category must always remain selected
+      if (current.length > 1) {
+        this.selectedSearchCategories.set(current.filter((c) => c !== category))
+      }
+      return
     }
+    this.selectedSearchCategories.set([...current, category])
   }
 
   async searchFromQuery(query: string) {

@@ -24,9 +24,10 @@
         }
 
         <input matInput type="text" role="combobox" class="global-search-input-element" accesskey="S" #searchInput
-          matTooltipClass="right-nav-tooltip" [matTooltip]="placeHolder()" id="global-search-input" i18n-placeholder="search content"
-          [placeholder]="placeHolder()" i18-aria-label aria-label="search content" (focus)="openSearchTemplateF()"
-          [formControl]="queryControl" maxlength="100" (input)="loaderSearching.set(true)" autocomplete="off" />
+          matTooltipClass="right-nav-tooltip" [matTooltip]="placeHolder()" id="global-search-input"
+          i18n-placeholder="search content" [placeholder]="placeHolder()" i18-aria-label aria-label="search content"
+          (focus)="openSearchTemplateF()" [formControl]="queryControl" maxlength="100"
+          (input)="loaderSearching.set(true)" autocomplete="off" />
 
         <div class="search-actions" matSuffix>
           @if (queryControl.value && !loaderSearching()) {
@@ -51,9 +52,9 @@
           <mat-chip-listbox class="mat-chip-list-content" [multiple]="false" [hideSingleSelectionIndicator]="true">
             @for (category of categories; track category.value) {
             <mat-chip-option [removable]="false" [highlighted]="false" [disableRipple]="true" [selectable]="false"
-              [selected]="category.value === selectedSearchCategory()" (click)="selectSearchCategory(category.value)"
-              class="category-chip"
-              [ngClass]="{'selected-search-category active': category.value === selectedSearchCategory()}">
+              [selected]="selectedSearchCategories().includes(category.value)"
+              (click)="toggleSearchCategory(category.value)" class="category-chip"
+              [ngClass]="{'selected-search-category active': selectedSearchCategories().includes(category.value)}">
               @if (category.icon) {
               <mat-icon [svgIcon]="category.icon" class="mr-1 categories-icon"></mat-icon>
               }

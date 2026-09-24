@@ -185,6 +185,49 @@ describe('GlobalSearchComponent', () => {
     expect(component.userValue).toBe('moderatedCourses');
   });
 
+  it('should parse a comma-separated category param into searchCategories', () => {
+    // Arrange
+    mockActivatedRoute.queryParamMap = of(createParamMap({
+      q: 'search-term',
+      category: 'courses,events,external-contents'
+    }));
+
+    // Act
+    component.ngOnInit();
+
+    // Assert
+    expect(component.searchCategories).toEqual(['courses', 'events', 'external-contents']);
+    expect(component.searchParam.searchCategory).toBe('courses');
+  });
+
+  it('should parse a single-value category param into a single-item searchCategories list', () => {
+    // Arrange
+    mockActivatedRoute.queryParamMap = of(createParamMap({
+      q: 'search-term',
+      category: 'courses'
+    }));
+
+    // Act
+    component.ngOnInit();
+
+    // Assert
+    expect(component.searchCategories).toEqual(['courses']);
+  });
+
+  it('should default searchCategories to an empty list when category param is absent', () => {
+    // Arrange
+    mockActivatedRoute.queryParamMap = of(createParamMap({
+      q: 'search-term'
+    }));
+
+    // Act
+    component.ngOnInit();
+
+    // Assert
+    expect(component.searchCategories).toEqual([]);
+    expect(component.searchParam.searchCategory).toBe('');
+  });
+
   it('should update selectedTab when "tab" query param is present', () => {
     // Arrange
     mockActivatedRoute.queryParamMap = of(createParamMap({
