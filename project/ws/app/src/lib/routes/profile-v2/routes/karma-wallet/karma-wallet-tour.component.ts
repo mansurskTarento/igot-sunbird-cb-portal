@@ -75,7 +75,7 @@ export class KarmaWalletTourComponent implements OnDestroy {
     if (this.busy) {
       return
     }
-    /* The last step's primary reads 'Ok', and reports itself as such */
+    /* The last step's primary reads 'Done'; it still reports 'ok' so step-6-ok telemetry keeps matching */
     this.action.emit({ step: this.index + 1, action: this.isLast ? 'ok' : 'next' })
     if (this.isLast) {
       this.close('completed')
@@ -135,6 +135,7 @@ export class KarmaWalletTourComponent implements OnDestroy {
       this.measureHandle = 0
     }
     document.body.classList.remove('kwt-tour-active')
+    this.host.nativeElement.remove()
   }
 
   private async enterStep() {
@@ -155,9 +156,7 @@ export class KarmaWalletTourComponent implements OnDestroy {
     this.radius = step.radius === undefined ? 12 : step.radius
     this.cdr.detectChanges()
     this.applyPopoverWidth()
-    if (window.innerWidth <= NARROW_VIEWPORT && !this.isTargetOnScreen()) {
-      this.scrollTargetBelowPopover()
-    }
+    this.bringTargetIntoView()
     /* Two frames: one for any scroll to settle, one for the layout it triggered */
     await this.nextFrame()
     await this.nextFrame()
@@ -200,20 +199,71 @@ export class KarmaWalletTourComponent implements OnDestroy {
     }
   }
 
-  private scrollTargetBelowPopover() {
+  private bringTargetIntoView() {
     if (!this.target) {
       return
     }
+    if (window.innerWidth <= NARROW_VIEWPORT) {
+      if (!this.isTargetOnScreen()) {
+        this.scrollTargetBelowPopover()
+      }
+      return
+    }
+    /* The convert dialog's steps: a fixed layer does not move when the page scrolls */
+    if (this.isInFixedLayer(this.target)) {
+      return
+    }
+    const inset = this.topInset()
+    if (this.target.getBoundingClientRect().top < inset || !this.isTargetOnScreen()) {
+      this.scrollTargetTo(inset + SPOT_PAD + VIEWPORT_MARGIN)
+    }
+  }
+
+  private scrollTargetBelowPopover() {
     const vh = window.innerHeight
     const el = this.host.nativeElement.querySelector('.kwt__popover') as HTMLElement | null
     const h = el ? el.offsetHeight : 200
-    const desiredTop = Math.min(h + ARROW_GAP + SPOT_PAD + VIEWPORT_MARGIN, vh * 0.6)
+    this.scrollTargetTo(Math.min(h + ARROW_GAP + SPOT_PAD + VIEWPORT_MARGIN, vh * 0.6))
+  }
+
+  private scrollTargetTo(desiredTop: number) {
+    if (!this.target) {
+      return
+    }
     const delta = this.target.getBoundingClientRect().top - desiredTop
     if (Math.abs(delta) > 4) {
       document.body.classList.remove('kwt-scroll-lock')
-      window.scrollBy(0, delta)
+      window.scrollBy({ top: delta, left: 0, behavior: 'instant' })
       document.body.classList.add('kwt-scroll-lock')
     }
+  }
+
+  private isInFixedLayer(el: HTMLElement): boolean {
+    for (let node: HTMLElement | null = el; node; node = node.parentElement) {
+      if (getComputedStyle(node).position === 'fixed') {
+        return true
+      }
+    }
+    return false
+  }
+  private topInset(): number {
+    if (!this.target || typeof document.elementsFromPoint !== 'function') {
+      return 0
+    }
+    const r = this.target.getBoundingClientRect()
+    const x = Math.min(Math.max(r.left + r.width / 2, 0), window.innerWidth - 1)
+    const vh = window.innerHeight
+    let inset = 0
+    for (const el of document.elementsFromPoint(x, 1)) {
+      if (this.host.nativeElement.contains(el) || getComputedStyle(el).position !== 'fixed') {
+        continue
+      }
+      const bottom = el.getBoundingClientRect().bottom
+      if (bottom < vh / 2) {
+        inset = Math.max(inset, bottom)
+      }
+    }
+    return inset
   }
 
   private applyPopoverWidth() {

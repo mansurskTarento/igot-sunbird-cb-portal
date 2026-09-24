@@ -130,7 +130,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       radius: 6,
     },
     {
-      selector: '.krd__body',
+      selector: '.krd__entry',
       title: 'Type an amount to convert',
       body: `Enter how many Karma Points you'd like to convert. "Convertible this month" shows
         your monthly limit of up to 300 KP and how many points are already pending conversion.`,
