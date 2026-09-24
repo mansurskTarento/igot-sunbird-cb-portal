@@ -20,37 +20,39 @@
   </div>
 
   <div class="krd__body">
+    <div class="krd__entry">
 
-    <!-- Monthly cap -->
-    <section class="krd-cap">
-      <div class="krd-cap__row">
-        <span class="krd-cap__label">Convertible this month</span>
-        <span class="krd-cap__value">{{ summary.convertibleThisMonth | number }}</span>
-      </div>
-      <div class="krd-cap__track">
-        <span class="krd-cap__fill" [style.width.%]="progressPercent"></span>
-      </div>
-      <div class="krd-cap__row krd-cap__row--foot">
-        <span class="krd-cap__hint">
-          {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
-        </span>
-        <span class="krd-cap__hint">Resets {{ resetOnLabel }}</span>
-      </div>
-    </section>
+      <!-- Monthly cap -->
+      <section class="krd-cap">
+        <div class="krd-cap__row">
+          <span class="krd-cap__label">Convertible this month</span>
+          <span class="krd-cap__value">{{ summary.convertibleThisMonth | number }}</span>
+        </div>
+        <div class="krd-cap__track">
+          <span class="krd-cap__fill" [style.width.%]="progressPercent"></span>
+        </div>
+        <div class="krd-cap__row krd-cap__row--foot">
+          <span class="krd-cap__hint">
+            {{ summary.convertedThisMonth | number }} KP converted in {{ currentMonthLabel }}
+          </span>
+          <span class="krd-cap__hint">Resets {{ resetOnLabel }}</span>
+        </div>
+      </section>
 
-    <!-- Amount -->
-    <label class="krd__label" for="krd-amount">Karma Point to convert</label>
-    <div class="krd-amount" [class.krd-amount--error]="errorMessage">
-      <img class="krd-amount__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
-      <input id="krd-amount" class="krd-amount__input" type="text" maxlength="5" inputmode="numeric" pattern="[0-9]*"
-        [ngModel]="amount" (ngModelChange)="onAmountChange($event)"
-        (keydown)="allowOnlyNumbers($event)"
-        [disabled]="convertAll || isBlocked"
-        aria-label="Karma Points to convert"
-        [attr.aria-invalid]="!!errorMessage" [attr.aria-describedby]="errorMessage ? 'krd-error' : null">
+      <!-- Amount -->
+      <label class="krd__label" for="krd-amount">Karma Point to convert</label>
+      <div class="krd-amount" [class.krd-amount--error]="errorMessage">
+        <img class="krd-amount__icon" [src]="icons.karmaPoints" alt="" aria-hidden="true">
+        <input id="krd-amount" class="krd-amount__input" type="text" maxlength="5" inputmode="numeric" pattern="[0-9]*"
+          [ngModel]="amount" (ngModelChange)="onAmountChange($event)"
+          (keydown)="allowOnlyNumbers($event)"
+          [disabled]="convertAll || isBlocked"
+          aria-label="Karma Points to convert"
+          [attr.aria-invalid]="!!errorMessage" [attr.aria-describedby]="errorMessage ? 'krd-error' : null">
+      </div>
+
+      <p class="krd-error" id="krd-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
     </div>
-
-    <p class="krd-error" id="krd-error" role="alert" *ngIf="errorMessage">{{ errorMessage }}</p>
 
     <label class="krd-check">
       <input class="krd-check__box" type="checkbox" [checked]="convertAll"
