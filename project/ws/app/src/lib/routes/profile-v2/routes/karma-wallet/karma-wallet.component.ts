@@ -228,7 +228,15 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     this.initialLoaded[part] = true
     if (this.initialLoaded.summary && this.initialLoaded.history) {
       this.initialLoadDone = true
-      this.openInfoOnFirstVisit(this.startWalkthroughOnce())
+      const infoRef = this.openInfoOnFirstVisit(this.startWalkthroughOnce())
+      if (infoRef) {
+        infoRef.afterClosed().subscribe((closedVia: any) => {
+          if (closedVia !== 'walkthrough') {
+            this.openConvertOnce()
+          }
+        })
+        return
+      }
       this.openConvertOnce()
     }
   }
@@ -335,6 +343,10 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return this.summaryLoading || !!this.summaryError || this.loadErrorShown
   }
 
+  get walletLoadFailed(): boolean {
+    return !!this.summaryError || this.loadErrorShown
+  }
+
   get canRedeem(): boolean {
     return this.summary.redeemEnabled && !this.pendingConversion
   }
@@ -394,8 +406,8 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return 'No transactions found for the selected date range. Please try a different date range.'
   }
 
-  openKarmaCoinsInfo() {
-    this.dialog.open(KarmaCoinsInfoDialogComponent, {
+  openKarmaCoinsInfo(): MatDialogRef<KarmaCoinsInfoDialogComponent> {
+    const infoRef = this.dialog.open(KarmaCoinsInfoDialogComponent, {
       width: '608px',
       maxWidth: '94vw',
       maxHeight: '90vh',
@@ -403,12 +415,14 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
       panelClass: 'kci-dialog-panel',
       backdropClass: 'kci-dialog-backdrop',
       scrollStrategy: new NoopScrollStrategy(),
-    }).afterClosed().subscribe((closedVia: any) => {
+    })
+    infoRef.afterClosed().subscribe((closedVia: any) => {
       /* The dialog reports which control dismissed it; fall back if it closed some other way */
       if (closedVia === 'walkthrough') {
         this.startWalkthrough()
       }
     })
+    return infoRef
   }
 
   selectTab(tab: IKarmaWalletTab['value']) {
@@ -538,21 +552,20 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
 
   /* First landing on the wallet: introduce Karma Coins, then never again for this user.
      `alreadyOpen` is the ?walkthrough=true link having opened the same dialog a moment ago. */
-  private openInfoOnFirstVisit(alreadyOpen: boolean) {
+  private openInfoOnFirstVisit(alreadyOpen: boolean): MatDialogRef<KarmaCoinsInfoDialogComponent> | null {
     const walletTour = this.walletTourStatus()
-    if (walletTour.visited === true) {
-      return
+    if (walletTour.visited === true && walletTour.skipped !== true) {
+      return null
     }
-    if (!alreadyOpen) {
-      this.openKarmaCoinsInfo()
-    }
+    const infoRef = alreadyOpen ? null : this.openKarmaCoinsInfo()
     this.markWalletTourVisited(walletTour)
+    return infoRef
   }
 
   /* Merged, not replaced: the home page tour keeps video_visited / skipped in the same object */
   private markWalletTourVisited(walletTour: any) {
     const userId = this.configSvc.unMappedUser && this.configSvc.unMappedUser.id
-    const karmaWalletTour = { ...walletTour, visited: true, video_visited:true }
+    const karmaWalletTour = { ...walletTour, visited: true, video_visited:true, skipped: false }
     /* kept in step in memory, the read api only runs once per session */
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       this.configSvc.unMappedUser.profileDetails.karma_wallet_tour = karmaWalletTour
@@ -585,7 +598,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   private openConvertOnce() {
-    if (!this.autoOpenConvert) {
+    if (!this.autoOpenConvert || this.loadErrorShown) {
       return
     }
     this.autoOpenConvert = false
@@ -673,7 +686,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
   }
 
   onTourFinished() {
-    this.closeConvertDialogForTour()
+    this.closeConvertDialogForTour().then(() => this.openConvertOnce())
   }
 
   private openConvertDialogForTour(): Promise<void> {

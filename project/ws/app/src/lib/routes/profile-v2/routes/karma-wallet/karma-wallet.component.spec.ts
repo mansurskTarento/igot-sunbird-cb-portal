@@ -212,9 +212,35 @@ describe('KarmaWalletComponent', () => {
     expect(serviceStub.updateProfileDetails).toHaveBeenCalledWith({
       request: {
         userId: 'user-1',
-        profileDetails: { karma_wallet_tour: { visited: true, skipped: false } },
+        profileDetails: { karma_wallet_tour: { visited: true, skipped: false, video_visited: true } },
       },
     })
+  })
+
+  it('should treat the home coach mark Skip as not yet visited, once', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: true, skipped: true, video_visited: true }
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).toHaveBeenCalledTimes(1)
+    expect(serviceStub.updateProfileDetails).toHaveBeenCalledWith({
+      request: {
+        userId: 'user-1',
+        profileDetails: { karma_wallet_tour: { visited: true, skipped: false, video_visited: true } },
+      },
+    })
+    expect(configStub.unMappedUser.profileDetails.karma_wallet_tour.skipped).toBe(false)
+  })
+
+  it('should stay quiet after the home coach mark Explore', () => {
+    configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: true, skipped: false, video_visited: true }
+    dialogStub.open.mockClear()
+
+    load()
+
+    expect(dialogStub.open).not.toHaveBeenCalled()
+    expect(serviceStub.updateProfileDetails).not.toHaveBeenCalled()
   })
 
   /* The home page tour keeps video_visited in the same object - the patch must not drop it */
@@ -263,7 +289,7 @@ describe('KarmaWalletComponent', () => {
 
     expect(dialogStub.open).toHaveBeenCalledTimes(1)
     const patched = serviceStub.updateProfileDetails.mock.calls[0][0]
-    expect(patched.request.profileDetails.karma_wallet_tour).toEqual({ visited: true })
+    expect(patched.request.profileDetails.karma_wallet_tour).toEqual({ visited: true, skipped: false, video_visited: true })
   })
 
   it('should not break the page when recording the visit fails', () => {
@@ -575,6 +601,18 @@ describe('KarmaWalletComponent', () => {
       expect(failing.showSummarySkeleton).toBe(true)
     })
 
+    it('should hide the empty history message when the summary call fails', () => {
+      serviceStub.getWalletSummary.mockReturnValue(throwError(() => ({ status: 500, error: {} })))
+
+      expect(load().walletLoadFailed).toBe(true)
+    })
+
+    it('should hide the empty history message when the history call fails', () => {
+      serviceStub.getTransactions.mockReturnValue(throwError(() => ({ status: 500, error: {} })))
+
+      expect(load().walletLoadFailed).toBe(true)
+    })
+
     it('should close the other wallet dialogs and stop a running tour first', () => {
       const failing = build()
       const tourStub = { start: jest.fn(), stop: jest.fn() }
@@ -674,6 +712,67 @@ describe('KarmaWalletComponent', () => {
         expect(opened(KarmaRedeemDialogComponent)).toBe(1)
         expect(errorPopups().length).toBe(0)
       })
+
+      describe('first visit from the course page insufficient coins popup', () => {
+        let info$: Subject<any>
+
+        beforeEach(() => {
+          arriveWith('convert')
+          configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: false }
+          info$ = new Subject<any>()
+          dialogStub.open.mockImplementation((dialog: any) => dialog === KarmaCoinsInfoDialogComponent
+            ? { afterClosed: () => info$ }
+            : { afterClosed: () => of(undefined), afterOpened: () => of(undefined), close: jest.fn() })
+        })
+
+        it('should show What is Karma Coins first and hold the convert dialog', () => {
+          load()
+
+          expect(opened(KarmaCoinsInfoDialogComponent)).toBe(1)
+          expect(opened(KarmaRedeemDialogComponent)).toBe(0)
+        })
+
+        it('should open the convert dialog once the info popup is closed', () => {
+          load()
+          info$.next('i-understand')
+
+          expect(opened(KarmaRedeemDialogComponent)).toBe(1)
+        })
+
+        it('should open the convert dialog after the walkthrough when Start Walkthrough is chosen', async () => {
+          const walletPage = build()
+          const tourStub = { start: jest.fn(), stop: jest.fn() }
+          ;(walletPage as any).tour = tourStub
+          walletPage.referenceDate = new Date(2026, 7, 26)
+          walletPage.ngOnInit()
+
+          info$.next('walkthrough')
+          expect(tourStub.start).toHaveBeenCalled()
+          expect(opened(KarmaRedeemDialogComponent)).toBe(0)
+
+          walletPage.onTourFinished()
+          await Promise.resolve()
+          expect(opened(KarmaRedeemDialogComponent)).toBe(1)
+        })
+
+        it('should not hold anything back when the wallet was visited before', () => {
+          configStub.unMappedUser.profileDetails.karma_wallet_tour = { visited: true }
+
+          load()
+
+          expect(opened(KarmaCoinsInfoDialogComponent)).toBe(0)
+          expect(opened(KarmaRedeemDialogComponent)).toBe(1)
+        })
+
+        it('should not open the convert dialog after the info popup without ?convert=true', () => {
+          routeStub.snapshot.queryParamMap.get = jest.fn(() => null)
+
+          load()
+          info$.next('i-understand')
+
+          expect(opened(KarmaRedeemDialogComponent)).toBe(0)
+        })
+      })
     })
 
     it('should keep the one-year lookback refusal in the snackbar, not the popup', () => {
@@ -685,6 +784,7 @@ describe('KarmaWalletComponent', () => {
         'You can view history for up to the last 1 year only.', 'X', { duration: 5000 })
       expect(errorPopups().length).toBe(0)
       expect(component.showSummarySkeleton).toBe(false)
+      expect(component.walletLoadFailed).toBe(false)
     })
   })
 
