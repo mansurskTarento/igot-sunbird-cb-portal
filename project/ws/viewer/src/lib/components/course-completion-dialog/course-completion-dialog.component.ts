@@ -20,6 +20,8 @@ export class CourseCompletionDialogComponent implements OnInit {
   badge: any = null
   collectionId = ''
   showStarRating = true
+  comprehensiveAssessmentCategory = 'Comprehensive Assessment'
+
   constructor(
     private ratingSvc: RatingService,
     private tocSvc: AppTocService,
@@ -79,6 +81,10 @@ export class CourseCompletionDialogComponent implements OnInit {
   //  2. the active route's resolved pageData (when a viewer route has one)
   //  3. the cached global toc form as last resort
   private resolveStarRatingVisibility() {
+    if (this.isComprehensiveAssessment) {
+      this.showStarRating = false
+      return
+    }
     const stashedTocConfig = (this.tocSvc as any).tocPageConfig
     if (stashedTocConfig?.uiVisibility?.rightPanel) {
       this.showStarRating = stashedTocConfig.uiVisibility.rightPanel.starRating !== false
@@ -154,5 +160,9 @@ export class CourseCompletionDialogComponent implements OnInit {
 
   translateLabels(label: string, type: any) {
     return this.langtranslations.translateLabelWithoutspace(label, type, '')
+  }
+
+  get isComprehensiveAssessment(): boolean {
+    return this.data?.courseCategory === this.comprehensiveAssessmentCategory
   }
 }

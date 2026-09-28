@@ -79,25 +79,28 @@
           [bindingClass]="'rounded mb-2'"></ws-widget-skeleton-loader>
       </ng-container>
       </ng-container>
-      <div color="secondary" *ngIf="contentCompletionPercent >= 50 && tocConfig?.playerUiConfig?.rating" class="flex mat-body-2 flex-middle font-bold-imp px-2 cursor-pointer" (click)="openFeedbackDialog()">
-        <mat-icon *ngIf="!forPreview"
-          class=" icon-margin mat-icon notranslate material-icons mat-icon-no-color mr-2 blue-color">star</mat-icon>
-        <ng-container *ngIf="!userRating && !forPreview">
-          <span class="mr-1 blue-color">{{'apptocsinglepage.rateNow' | translate}}</span>
-          <!-- <span class="lowercase">
-            <ng-container *ngIf="content?.primaryCategory === primaryCategory.PROGRAM">
-              {{content?.primaryCategory}}
-            </ng-container>
-            <ng-container *ngIf="content?.primaryCategory === primaryCategory.COURSE ||
-              content.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL">
-              course
-            </ng-container>
-          </span> -->
-        </ng-container>
-        <ng-container *ngIf="userRating && !forPreview">
-          <span class="mr-1 blue-color"> {{'apptocsinglepage.editRating' | translate}} </span>
-        </ng-container>
-      </div>
+      @if(!isComprehensiveAssessment) {
+        <div color="secondary" *ngIf="contentCompletionPercent >= 50 && tocConfig?.playerUiConfig?.rating"
+          class="flex mat-body-2 flex-middle font-bold-imp px-2 cursor-pointer" (click)="openFeedbackDialog()">
+          <mat-icon *ngIf="!forPreview"
+            class=" icon-margin mat-icon notranslate material-icons mat-icon-no-color mr-2 blue-color">star</mat-icon>
+          <ng-container *ngIf="!userRating && !forPreview">
+            <span class="mr-1 blue-color">{{'apptocsinglepage.rateNow' | translate}}</span>
+            <!-- <span class="lowercase">
+              <ng-container *ngIf="content?.primaryCategory === primaryCategory.PROGRAM">
+                {{content?.primaryCategory}}
+              </ng-container>
+              <ng-container *ngIf="content?.primaryCategory === primaryCategory.COURSE ||
+                content.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL">
+                course
+              </ng-container>
+            </span> -->
+          </ng-container>
+          <ng-container *ngIf="userRating && !forPreview">
+            <span class="mr-1 blue-color"> {{'apptocsinglepage.editRating' | translate}} </span>
+          </ng-container>
+        </div>
+      }
       <div (click)="onClickOfShare()" *ngIf="canShare && !forPreview && tocConfig?.playerUiConfig?.share !== false"
         class="flex flex-row cursor-pointer items-center justify-end gap-2 share-tag margin-left-l">
         <mat-icon class="blue-color">share</mat-icon>
@@ -155,25 +158,27 @@
           [bindingClass]="'rounded mb-2'"></ws-widget-skeleton-loader>
       </ng-container>
       </ng-container>
-      <div color="secondary" *ngIf="contentCompletionPercent >= 50 && tocConfig?.playerUiConfig?.rating" class="flex mat-body-2 flex-middle font-bold-imp px-2" (click)="openFeedbackDialog()">
-        <mat-icon
-          class=" icon-margin mat-icon notranslate material-icons mat-icon-no-color mr-2 blue-color">star</mat-icon>
-        <ng-container *ngIf="!userRating && !forPreview">
-          <span class="mr-1 blue-color">{{'apptocsinglepage.rateNow' | translate}}</span>
-          <!-- <span class="lowercase">
-            <ng-container *ngIf="content?.primaryCategory === primaryCategory.PROGRAM">
-              {{content?.primaryCategory}}
-            </ng-container>
-            <ng-container *ngIf="content?.primaryCategory === primaryCategory.COURSE ||
-              content.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL">
-              course
-            </ng-container>
-          </span> -->
-        </ng-container>
-        <ng-container *ngIf="userRating && !forPreview">
-          <span> {{'apptocsinglepage.editRating' | translate}} </span>
-        </ng-container>
-      </div>
+      @if(!isComprehensiveAssessment) {
+        <div color="secondary" *ngIf="contentCompletionPercent >= 50 && tocConfig?.playerUiConfig?.rating" class="flex mat-body-2 flex-middle font-bold-imp px-2" (click)="openFeedbackDialog()">
+          <mat-icon
+            class=" icon-margin mat-icon notranslate material-icons mat-icon-no-color mr-2 blue-color">star</mat-icon>
+          <ng-container *ngIf="!userRating && !forPreview">
+            <span class="mr-1 blue-color">{{'apptocsinglepage.rateNow' | translate}}</span>
+            <!-- <span class="lowercase">
+              <ng-container *ngIf="content?.primaryCategory === primaryCategory.PROGRAM">
+                {{content?.primaryCategory}}
+              </ng-container>
+              <ng-container *ngIf="content?.primaryCategory === primaryCategory.COURSE ||
+                content.primaryCategory === primaryCategory.MANDATORY_COURSE_GOAL">
+                course
+              </ng-container>
+            </span> -->
+          </ng-container>
+          <ng-container *ngIf="userRating && !forPreview">
+            <span> {{'apptocsinglepage.editRating' | translate}} </span>
+          </ng-container>
+        </div>
+      }
       <!-- <div (click)="onClickOfShare()" class="flex flex-row cursor-pointer items-center justify-end gap-2 share-tag margin-left-l">
         <mat-icon class="blue-color">share</mat-icon>
       </div> -->
