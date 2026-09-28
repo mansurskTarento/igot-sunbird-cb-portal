@@ -83,6 +83,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   redirectPath = '/page/home'
   // primaryCategory = NsContent.EPrimaryCategory
   contentPrimaryCategory: any
+  comprehensiveAssessmentCategory = 'Comprehensive Assessment'
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -620,7 +621,7 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   openFeedbackDialog(contentP?: any): void {
-     if (this.tocConfig?.uiVisibility?.rightPanel?.starRating === false) {
+    if (this.tocConfig?.uiVisibility?.rightPanel?.starRating === false) {
       return
     }
     const MLID = this.activatedRoute.snapshot.queryParams.MLId ?
@@ -674,8 +675,13 @@ export class ViewerTopBarComponent implements OnInit, OnDestroy, OnChanges {
     this.enableShare = false
   }
 
+  get isComprehensiveAssessment(): boolean {
+    return this.contentReadData?.courseCategory === this.comprehensiveAssessmentCategory
+  }
+
   checkRatingAndApply() {
     this.checkProgressAndGenerateCertificate()
+    if (this.isComprehensiveAssessment) return
     if (!this.userRating && this.contentCompletionPercent >= 100) {
       this.openFeedbackDialog(this.userRating)
     }
