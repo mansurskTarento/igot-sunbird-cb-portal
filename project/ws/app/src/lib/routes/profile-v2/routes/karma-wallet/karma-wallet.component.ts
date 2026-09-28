@@ -800,7 +800,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
         let enrollList: any
         if (localStorage.getItem('userEnrollmentCount')) {
           enrollList = JSON.parse(localStorage.getItem('userEnrollmentCount') || '')
-          if (enrollList && enrollList.userCourseEnrolmentInfo && enrollList.userCourseEnrolmentInfo.walletBalance) {
+          if (enrollList && enrollList.userCourseEnrolmentInfo) {
             enrollList.userCourseEnrolmentInfo.walletBalance = summary.walletBalance
           }
           localStorage.removeItem('userEnrollmentCount')
