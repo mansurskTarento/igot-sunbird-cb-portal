@@ -351,6 +351,126 @@ describe('LearnSearchComponent (No TestBed)', () => {
       // resetAllSearchParams would have cleared combinedFacets to []; explore tab skips that reset
       expect(component.isExploreContentTab).toBe(true)
     })
+
+    // Phase 2: multi-category search (searchCategories.length > 1)
+    it('searches only the selected categories when searchCategories has more than one entry', async () => {
+      const component = createComponent({})
+      component.searchQuery = { query: 'new', nlp: '', searchCategory: SearchCategory.Courses }
+      component.searchCategories = [SearchCategory.Courses, SearchCategory.Events]
+      await component.ngOnChanges({
+        searchQuery: {
+          currentValue: { query: 'new', searchCategory: SearchCategory.Courses },
+          previousValue: { query: 'old', searchCategory: '' },
+        },
+        searchCategories: { currentValue: [SearchCategory.Courses, SearchCategory.Events], previousValue: [] },
+      } as any)
+
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCoursesv4).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchConnections).not.toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCommunity).not.toHaveBeenCalled()
+      expect(mockSearchV3Service.searchResource).not.toHaveBeenCalled()
+      expect(mockSearchV3Service.searchExternalContent).not.toHaveBeenCalled()
+      // Reuses the existing "all categories" section layout (headers + See All Results per
+      // section), not the single-category full "see all" pagination view
+      expect(component.seeAllResult).toBe('')
+      expect(component.searchContentLoader).toBe(false)
+    })
+
+    it('re-searches when only searchCategories changes even if the first entry stays the same', async () => {
+      const component = createComponent({})
+      component.searchQuery = { query: 'new', nlp: '', searchCategory: SearchCategory.Courses }
+      component.searchCategories = [SearchCategory.Courses, SearchCategory.Events]
+      await component.ngOnChanges({
+        searchQuery: {
+          currentValue: { query: 'new', searchCategory: SearchCategory.Courses },
+          previousValue: { query: 'new', searchCategory: SearchCategory.Courses },
+        },
+        searchCategories: {
+          currentValue: [SearchCategory.Courses, SearchCategory.Events],
+          previousValue: [SearchCategory.Courses],
+        },
+      } as any)
+
+      expect(mockSearchV3Service.searchCoursesv4).toHaveBeenCalled()
+    })
+
+    it('respects a category disabled by global config inside a multi-category selection', async () => {
+      mockConfigSvc.globalConfig.searchCategories = { [SearchCategory.Events]: false }
+      const component = createComponent({})
+      component.searchQuery = { query: 'new', nlp: '', searchCategory: SearchCategory.Courses }
+      component.searchCategories = [SearchCategory.Courses, SearchCategory.Events]
+      await component.ngOnChanges({
+        searchQuery: {
+          currentValue: { query: 'new', searchCategory: SearchCategory.Courses },
+          previousValue: { query: 'old', searchCategory: '' },
+        },
+        searchCategories: { currentValue: [SearchCategory.Courses, SearchCategory.Events], previousValue: [] },
+      } as any)
+
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCoursesv4).not.toHaveBeenCalled()
+    })
+
+    it('uses the existing single-category seeAllResults path when only one category is selected', async () => {
+      const component = createComponent({})
+      component.searchQuery = { query: 'new', nlp: '', searchCategory: SearchCategory.Courses }
+      component.searchCategories = [SearchCategory.Courses]
+      await component.ngOnChanges({
+        searchQuery: {
+          currentValue: { query: 'new', searchCategory: SearchCategory.Courses },
+          previousValue: { query: 'old', searchCategory: '' },
+        },
+        searchCategories: { currentValue: [SearchCategory.Courses], previousValue: [] },
+      } as any)
+
+      expect(component.seeAllResult).toBe(SearchCategory.Courses)
+    })
+  })
+
+  // ---------------------------------------------------------------------
+  // isMultiCategorySearch / searchEnabledCategories
+  // ---------------------------------------------------------------------
+  describe('isMultiCategorySearch', () => {
+    it('is false for zero or one selected category', () => {
+      const component = createComponent({})
+      component.searchCategories = []
+      expect(component.isMultiCategorySearch).toBe(false)
+      component.searchCategories = [SearchCategory.Courses]
+      expect(component.isMultiCategorySearch).toBe(false)
+    })
+
+    it('is true for more than one selected category', () => {
+      const component = createComponent({})
+      component.searchCategories = [SearchCategory.Courses, SearchCategory.Events]
+      expect(component.isMultiCategorySearch).toBe(true)
+    })
+  })
+
+  describe('searchEnabledCategories', () => {
+    it('searches every enabled category when no restriction is given', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      await component.searchEnabledCategories()
+
+      expect(mockSearchV3Service.searchCoursesv5).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCoursesv4).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchConnections).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCommunity).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchResource).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchExternalContent).toHaveBeenCalled()
+      expect(component.searchContentLoader).toBe(false)
+    })
+
+    it('restricts search to the given categories', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      await component.searchEnabledCategories([SearchCategory.Resources])
+
+      expect(mockSearchV3Service.searchResource).toHaveBeenCalled()
+      expect(mockSearchV3Service.searchCoursesv5).not.toHaveBeenCalled()
+      expect(mockSearchV3Service.searchConnections).not.toHaveBeenCalled()
+    })
   })
 
   // ---------------------------------------------------------------------

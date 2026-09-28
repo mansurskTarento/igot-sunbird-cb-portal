@@ -88,6 +88,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   filterQueryTopic = '';
 
   searchCategory = '';
+  // Full category list parsed from the (possibly comma-separated) `category` query param - see
+  // Phase 1's serialization in search-input-home-v4.component.ts. Length > 1 means multiple
+  // pills were selected in Search V4, which switches this panel into a read-only category list.
+  searchCategories: string[] = [];
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
@@ -192,6 +196,19 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.isExploreContentTab = !!params['tab']
 
     this.searchCategory = params['category']
+    this.searchCategories = (params['category'] || '')
+      .split(',')
+      .map((c: string) => c.trim())
+      .filter(Boolean)
+
+    if (this.isMultiCategorySearch) {
+      // Multi-pill selection from Search V4: show only the selected categories, in URL order,
+      // as a plain list - no checkbox tree, no "Filter By" header, no selection interaction.
+      this.categoryType = this.searchCategories
+        .map((cat) => this.categoryTypeDup.find((type) => type.name === cat))
+        .filter(Boolean) as any[]
+      return
+    }
 
     if (this.searchCategory) {
       this.categoryType = this.categoryTypeDup.filter(
@@ -465,6 +482,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
   togoleThemes(competency: any) {
     competency['showAll'] = !competency['showAll']
+  }
+
+  get isMultiCategorySearch(): boolean {
+    return this.searchCategories.length > 1
   }
 
   get filtersAppliedCount(): number {

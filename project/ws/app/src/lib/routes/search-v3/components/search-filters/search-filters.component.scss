@@ -221,6 +221,14 @@
   width: 100%
 }
 
+.selected-category-item {
+  /* stylelint-disable */
+  font: 400 14px Lato;
+  /* stylelint-enable */
+  line-height: 16.8px;
+  color: $overleyDarkBackground;
+}
+
 @media (max-width: 959px) {
   .filter-sidebar {
     padding: 1rem 1rem 4rem 1rem !important;

@@ -54,6 +54,10 @@ import { ContentDictionaryService } from '@sunbird-cb/consumption'
 })
 export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() searchQuery!: { query: string; nlp: string; searchCategory: string }
+  // Full category list parsed by GlobalSearchComponent from the (possibly comma-separated)
+  // `category` query param. searchQuery.searchCategory only ever carries the first entry, so
+  // this is what drives the Phase 2 multi-category branch below.
+  @Input() searchCategories: string[] = [];
   @Input() userValue = '';
   @Input() paramFilters: any = [];
   @Input() filtersPanel!: string
@@ -238,12 +242,17 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       return
     }
 
+    const searchCategoriesChanged = !!changes['searchCategories'] &&
+      (changes['searchCategories'].currentValue || []).join(',') !==
+      (changes['searchCategories'].previousValue || []).join(',')
+
     if (
       (changes.searchQuery &&
         changes.searchQuery.currentValue?.query !==
         changes.searchQuery.previousValue?.query) ||
       changes.searchQuery.currentValue?.searchCategory !==
-      changes.searchQuery.previousValue?.searchCategory
+      changes.searchQuery.previousValue?.searchCategory ||
+      searchCategoriesChanged
     ) {
       this.searchContentLoader = true
       if (!this.isExploreContentTab) {
@@ -256,18 +265,16 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         path: 'Search',
       }
 
-      if (changes.searchQuery.currentValue?.searchCategory) {
+      if (this.isMultiCategorySearch) {
+        // Phase 2: only the pills selected in Search V4 - reuses the existing "no category"
+        // multi-section layout below (seeAllResult stays '' from resetAllSearchParams), just
+        // restricted to the selected categories instead of every enabled one.
+        await this.searchEnabledCategories(this.searchCategories)
+      } else if (changes.searchQuery.currentValue?.searchCategory) {
         const category = changes.searchQuery.currentValue?.searchCategory || ''
         this.seeAllResults(category)
       } else {
-        if (this.isCategoryEnabled(SearchCategory.Courses)) { await this.searchCourses() }
-        if (this.isCategoryEnabled(SearchCategory.Events)) { await this.searchEvents() }
-        if (this.isCategoryEnabled(SearchCategory.People)) { await this.searchPeople() }
-        if (this.isCategoryEnabled(SearchCategory.Communities)) { await this.searchcommunities() }
-        if (this.isCategoryEnabled(SearchCategory.Resources)) { await this.searchResources() }
-        if (this.isCategoryEnabled(SearchCategory.ExternalContents)) { await this.searchExternalContents() }
-
-        this.searchContentLoader = false
+        await this.searchEnabledCategories()
       }
 
       this.updateNoResultMessage(this.statedata.param)
@@ -1063,6 +1070,27 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (!searchConfig) { return true }
     const key = categoryValue || 'all'
     return searchConfig[key] !== false
+  }
+
+  get isMultiCategorySearch(): boolean {
+    return this.searchCategories.length > 1
+  }
+
+  // Searches every category enabled in global-config, optionally restricted to onlyCategories
+  // (Phase 2's multi-pill selection). Leaves seeAllResult untouched ('' from resetAllSearchParams),
+  // which is what makes the template render one header+cards section per populated category.
+  async searchEnabledCategories(onlyCategories?: string[]) {
+    const shouldSearch = (category: string) =>
+      this.isCategoryEnabled(category) && (!onlyCategories || onlyCategories.includes(category))
+
+    if (shouldSearch(SearchCategory.Courses)) { await this.searchCourses() }
+    if (shouldSearch(SearchCategory.Events)) { await this.searchEvents() }
+    if (shouldSearch(SearchCategory.People)) { await this.searchPeople() }
+    if (shouldSearch(SearchCategory.Communities)) { await this.searchcommunities() }
+    if (shouldSearch(SearchCategory.Resources)) { await this.searchResources() }
+    if (shouldSearch(SearchCategory.ExternalContents)) { await this.searchExternalContents() }
+
+    this.searchContentLoader = false
   }
 
   async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {

@@ -231,6 +231,75 @@ describe('SearchFiltersComponent', () => {
     component.setCategoryType = originalSetCategoryType;
   });
 
+  describe('multi-category search (Phase 2)', () => {
+    beforeEach(() => {
+      component.categoryTypeDup = [...CATEGORY_TYPE];
+    });
+
+    it('isMultiCategorySearch is false when zero or one category is selected', () => {
+      component.searchCategories = [];
+      expect(component.isMultiCategorySearch).toBe(false);
+      component.searchCategories = [SearchCategory.Courses];
+      expect(component.isMultiCategorySearch).toBe(false);
+    });
+
+    it('isMultiCategorySearch is true when more than one category is selected', () => {
+      component.searchCategories = [SearchCategory.Courses, SearchCategory.Events];
+      expect(component.isMultiCategorySearch).toBe(true);
+    });
+
+    it('builds a read-only categoryType list, in URL order, for multiple selected categories', () => {
+      activatedRouteMock.snapshot.queryParams = {
+        category: `${SearchCategory.Events},${SearchCategory.Courses},${SearchCategory.ExternalContents}`,
+      };
+
+      component.setCategoryType();
+
+      expect(component.searchCategories).toEqual([
+        SearchCategory.Events,
+        SearchCategory.Courses,
+        SearchCategory.ExternalContents,
+      ]);
+      expect(component.categoryType.map((c: any) => c.name)).toEqual([
+        SearchCategory.Events,
+        SearchCategory.Courses,
+        SearchCategory.ExternalContents,
+      ]);
+    });
+
+    it('omits unknown category names from the read-only list', () => {
+      activatedRouteMock.snapshot.queryParams = {
+        category: `${SearchCategory.Courses},unknown-category,${SearchCategory.Events}`,
+      };
+
+      component.setCategoryType();
+
+      expect(component.categoryType.map((c: any) => c.name)).toEqual([
+        SearchCategory.Courses,
+        SearchCategory.Events,
+      ]);
+    });
+
+    it('parses a single-value category param into a single-item searchCategories list and keeps the existing single-category path', () => {
+      activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Courses };
+
+      component.setCategoryType();
+
+      expect(component.searchCategories).toEqual([SearchCategory.Courses]);
+      expect(component.isMultiCategorySearch).toBe(false);
+      expect(component.categoryType[0].name).toBe(SearchCategory.Courses);
+    });
+
+    it('defaults searchCategories to an empty list when the category param is absent', () => {
+      activatedRouteMock.snapshot.queryParams = {};
+
+      component.setCategoryType();
+
+      expect(component.searchCategories).toEqual([]);
+      expect(component.isMultiCategorySearch).toBe(false);
+    });
+  });
+
   it('should toggle showMore flags correctly', () => {
     component.competencyThemeKey = 'v1.theme';
     component.competencySubThemeKey = 'v1.subtheme';
