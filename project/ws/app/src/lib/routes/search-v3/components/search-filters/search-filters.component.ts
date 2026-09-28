@@ -31,10 +31,10 @@ import { environment } from '../../../../../../../../../src/environments/environ
 import { ActivatedRoute } from '@angular/router'
 import { MatRadioChange } from '@angular/material/radio'
 @Component({
-    selector: 'ws-app-search-filters',
-    templateUrl: './search-filters.component.html',
-    styleUrls: ['./search-filters.component.scss'],
-    standalone: false
+  selector: 'ws-app-search-filters',
+  templateUrl: './search-filters.component.html',
+  styleUrls: ['./search-filters.component.scss'],
+  standalone: false
 })
 export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Input() newfacets!: any
@@ -42,6 +42,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Output() appliedFilter = new EventEmitter<{ [key: string]: any }>();
   @Output() constructQueryParam = new EventEmitter<string>();
   @Output() applyFilterFromLearn = new EventEmitter<{ [key: string]: any }>();
+  @Output() categorySelected = new EventEmitter<string>();
   @Input() karmayogiBadge: any
   competencyFactet: any
   @Input() typesOfEvents: any
@@ -202,11 +203,11 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       .filter(Boolean)
 
     if (this.isMultiCategorySearch) {
-      // Multi-pill selection from Search V4: show only the selected categories, in URL order,
-      // as a plain list - no checkbox tree, no "Filter By" header, no selection interaction.
-      this.categoryType = this.searchCategories
-        .map((cat) => this.categoryTypeDup.find((type) => type.name === cat))
-        .filter(Boolean) as any[]
+      // Multi-pill selection from Search V4: show only the selected categories, as a plain
+      // list - no checkbox tree, no "Filter By" header, no selection interaction. Ordered to
+      this.categoryType = this.categoryTypeDup.filter((type) =>
+        this.searchCategories.includes(type.name)
+      )
       return
     }
 
@@ -503,7 +504,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const returnedData = _.flatMap(data, (values, key) =>
       values.map((value) => ({
         type: key,
-        value: value === 'Courses' ? 'Contents' : this.formatValue(value),
+        value: this.getFilterChipValue(value),
       }))
     )
     this.categoriseByFacet(returnedData)
@@ -533,6 +534,19 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       return this.formatSectorName(value)
     }
     return this.capitalizeFirstLetter(value)
+  }
+
+  private getFilterChipValue(value: string): string {
+    if (value === 'Courses') {
+      return 'Contents'
+    }
+    if (value === 'Resources') {
+      return 'Amrit Gyaan Kosh'
+    }
+    if (value === 'External Contents') {
+      return 'Marketplace'
+    }
+    return this.formatValue(value)
   }
 
   private reverseFormatSectorName(formattedName: string): string {

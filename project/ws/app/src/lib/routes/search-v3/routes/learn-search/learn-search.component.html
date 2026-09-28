@@ -9,7 +9,8 @@
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
                     (appliedFilter)="applySearchFilter($event)" [typesOfEvents]="typesOfEventsFilters"
                     [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"
-                    (applyFilterFromLearn)="applyFilterFromLearn($event)"></ws-app-search-filters>
+                    (applyFilterFromLearn)="applyFilterFromLearn($event)"
+                    (categorySelected)="scrollToCategory($event)"></ws-app-search-filters>
             </ng-container>
         </mat-sidenav>
 
@@ -52,13 +53,13 @@
                             <p class="contents-title-top text-dark mb-0">
                                 <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
-                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.resources' | translate:{
+                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.agk' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
                             </p>
                         </ng-container>
                         <ng-container *ngIf="seeAllResult === 'external-contents'">
                             <p class="contents-title-top text-dark mb-0">
-                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.externalContent' |
+                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.marketPlace' |
                                     translate:{ count: externalSearchTotalCount } }}</span>
                             </p>
                         </ng-container>
@@ -111,7 +112,7 @@
                     <!-- Content Card -->
                     <ng-container
                         *ngIf="courseSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
-                        <div class="search-content-card">
+                        <div class="search-content-card scroll-section" id="courses">
                             <p class="mat-subheading-1 mt-4 font-bold-imp text-dark"
                                 *ngIf="(seeAllResult === '' || seeAllResult === 'courses') && isExploreContentTab">
                                 <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count:
@@ -135,8 +136,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && courseSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': courseSearchResults.length < 3}">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="this.courseSearchTotalCount"
@@ -151,7 +151,7 @@
                     <!-- event Card -->
                     <ng-container
                         *ngIf="eventSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'events')">
-                        <div class="search-event-card">
+                        <div class="search-event-card scroll-section" id="events">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{
                                 'learnsearch.event' | translate:{ count: eventSearchTotalCount } }}</p>
                             <ng-container *ngFor="let event of eventsSearchResults; let index = index">
@@ -166,8 +166,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && eventSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': eventsSearchResults.length < 3}">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="this.eventSearchTotalCount"
@@ -188,7 +187,7 @@
                     </ng-container>
                     <ng-container
                         *ngIf="peopleSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'peoples')">
-                        <div class="search-people-card overflow-x-hidden">
+                        <div class="search-people-card overflow-x-hidden scroll-section" id="peoples">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
                                 {{ 'learnsearch.peoples' | translate:{ count: peopleSearchTotalCount } }}
                             </p>
@@ -220,8 +219,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && peopleSearchTotalCount > initialPaginationSize">
                                 <div class="mt-4">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="this.peopleSearchTotalCount"
@@ -235,7 +233,7 @@
                     <!-- Communities  -->
                     <ng-container
                         *ngIf="communitiesSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'communities')">
-                        <div class="communities-people-card overflow-x-hidden mb-3">
+                        <div class="communities-people-card overflow-x-hidden mb-3 scroll-section" id="communities">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
                                 {{ 'learnsearch.communities' | translate:{ count: communitiesSearchTotalCount } }}
                             </p>
@@ -265,8 +263,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && communitiesSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': communitiesSearchResults.length < 3}">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="this.communitiesSearchTotalCount"
@@ -281,11 +278,11 @@
                     <!-- Resource  -->
                     <ng-container
                         *ngIf="resourcesSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'resources')">
-                        <div class="search-content-card">
+                        <div class="search-content-card scroll-section" id="resources">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
-                                <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' | translate:{
+                                <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.agk' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
-                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.resources' | translate:{
+                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.agk' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of resourcesSearchResults; let index = index">
@@ -302,8 +299,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && resourcesSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': resourcesSearchResults.length < 3}">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="this.resourcesSearchTotalCount"
@@ -318,9 +314,9 @@
                     <!-- External Card -->
                     <ng-container
                         *ngIf="externalSearchTotalCount > 0 && (seeAllResult === '' || seeAllResult === 'external-contents')">
-                        <div class="search-content-card">
+                        <div class="search-content-card scroll-section" id="external-contents">
                             <p *ngIf="seeAllResult === ''" class="mat-subheading-1 mt-4 font-bold-imp text-dark">
-                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.externalContent' |
+                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.marketPlace' |
                                     translate:{ count: externalSearchTotalCount } }}</span>
                             </p>
                             <ng-container *ngFor="let course of externalSearchResults; let index = index">
@@ -335,8 +331,7 @@
                             </p>
                             <ng-container *ngIf="seeAllResult && externalSearchTotalCount > initialPaginationSize">
                                 <div [ngClass]="{'md:mt-72': externalSearchResults.length < 3}">
-                                    <ws-app-pagination class="learn-search-pagination"
-                                        [compactMobilePagination]="true"
+                                    <ws-app-pagination class="learn-search-pagination" [compactMobilePagination]="true"
                                         [defaultPaginationSize]="initialPaginationSize"
                                         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
                                         [totalItemsCount]="externalSearchTotalCount"

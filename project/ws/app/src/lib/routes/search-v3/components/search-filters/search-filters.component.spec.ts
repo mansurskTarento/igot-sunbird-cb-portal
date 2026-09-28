@@ -1,10 +1,11 @@
 import { SimpleChange, SimpleChanges } from '@angular/core';
+import { of } from 'rxjs';
 import { SearchFiltersComponent } from './search-filters.component';
 import {
   CATEGORY_TYPE,
   TypeOfEvents,
 } from '../../../../../../../author/src/lib/constants/constant';
-import { SearchCategory } from '../../models/search-v3.model';
+import { FacetType, SearchCategory } from '../../models/search-v3.model';
 
 describe('SearchFiltersComponent', () => {
   let component: SearchFiltersComponent;
@@ -83,10 +84,21 @@ describe('SearchFiltersComponent', () => {
         queryParamMap: createMockParamMap(),
         paramMap: createMockParamMap(),
       },
+      // ngOnInit subscribes to this directly (not the snapshot) to track the explore-content tab
+      queryParams: of({}),
     };
 
     configSvcMock = {
       compentency: {
+        // ngOnInit reads environment.compentencyVersionKey (the real, unmocked module - setting
+        // `(global as any).environment` below does not intercept the ES import), which resolves
+        // to '' in this jsdom test environment, so that key must exist here too.
+        '': {
+          vKey: 'v1',
+          vCompetencyArea: 'area',
+          vCompetencyTheme: 'theme',
+          vCompetencySubTheme: 'subtheme',
+        },
         testKey: {
           vKey: 'v1',
           vCompetencyArea: 'area',
@@ -248,22 +260,42 @@ describe('SearchFiltersComponent', () => {
       expect(component.isMultiCategorySearch).toBe(true);
     });
 
-    it('builds a read-only categoryType list, in URL order, for multiple selected categories', () => {
+    it('builds a read-only categoryType list for multiple selected categories', () => {
       activatedRouteMock.snapshot.queryParams = {
         category: `${SearchCategory.Events},${SearchCategory.Courses},${SearchCategory.ExternalContents}`,
       };
 
       component.setCategoryType();
 
+      // searchCategories keeps the raw URL order (still used to drive which categories are
+      // searched/shown at all)...
       expect(component.searchCategories).toEqual([
         SearchCategory.Events,
         SearchCategory.Courses,
         SearchCategory.ExternalContents,
       ]);
+      // ...but categoryType (what the left filter list actually renders) is reordered to match
+      // the fixed right-hand result section order: courses, events, ..., external-contents.
       expect(component.categoryType.map((c: any) => c.name)).toEqual([
-        SearchCategory.Events,
         SearchCategory.Courses,
+        SearchCategory.Events,
         SearchCategory.ExternalContents,
+      ]);
+    });
+
+    it('orders the read-only list like the right-hand result sections regardless of URL order', () => {
+      activatedRouteMock.snapshot.queryParams = {
+        // Deliberately out of the CATEGORY_TYPE/right-content order (courses, events, peoples,
+        // communities, resources, external-contents)
+        category: `${SearchCategory.Resources},${SearchCategory.People},${SearchCategory.Courses}`,
+      };
+
+      component.setCategoryType();
+
+      expect(component.categoryType.map((c: any) => c.name)).toEqual([
+        SearchCategory.Courses,
+        SearchCategory.People,
+        SearchCategory.Resources,
       ]);
     });
 
@@ -297,6 +329,12 @@ describe('SearchFiltersComponent', () => {
 
       expect(component.searchCategories).toEqual([]);
       expect(component.isMultiCategorySearch).toBe(false);
+    });
+
+    it('emits categorySelected with the clicked category value', () => {
+      const emitSpy = jest.spyOn(component.categorySelected, 'emit');
+      component.categorySelected.emit(SearchCategory.Events);
+      expect(emitSpy).toHaveBeenCalledWith(SearchCategory.Events);
     });
   });
 
@@ -1011,6 +1049,505 @@ describe('SearchFiltersComponent', () => {
       component.filterQueryThemes = 'nonexistent';
       const result = component.getFilteredThemes(competency);
       expect(result).toEqual([]);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // ngOnInit
+  // ---------------------------------------------------------------------
+  describe('ngOnInit', () => {
+    it('sets the compentency keys and does not reset filters outside explore-content', () => {
+      activatedRouteMock.queryParams = of({ tab: 'search' });
+      component.selectedFilters = { courses: ['x'] };
+      component.ngOnInit();
+      expect(component.competencyAreaNameKey).toBe('v1.area');
+      expect(component.isExploreContentTab).toBe(false);
+      expect(component.selectedFilters).toEqual({ courses: ['x'] });
+    });
+
+    it('resets selectedFilters and selectedFilterChips when the tab is explore-content', () => {
+      activatedRouteMock.queryParams = of({ tab: 'explore-content' });
+      component.selectedFilters = { courses: ['x'] };
+      component.selectedFilterChips = [{ type: 'courses', value: 'x' }];
+      component.ngOnInit();
+      expect(component.isExploreContentTab).toBe(true);
+      expect(component.selectedFilters).toEqual({});
+      expect(component.selectedFilterChips).toEqual([]);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // ngOnDestroy
+  // ---------------------------------------------------------------------
+  describe('ngOnDestroy', () => {
+    it('unsubscribes without throwing', () => {
+      expect(() => component.ngOnDestroy()).not.toThrow();
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // ngOnChanges - sectorId/nestedCategory/typesOfEvents branches
+  // ---------------------------------------------------------------------
+  describe('ngOnChanges (facet-driven branches)', () => {
+    it('returns early when sectorId facets exist but no courses category is found', () => {
+      (component as any).formatFacets = () => ({ sectorId: [{ name: 'a' }] });
+      component.categoryTypeDup = [];
+      const changes: SimpleChanges = {
+        newfacets: new SimpleChange(null, [[{ name: 'sectorId', values: [] }]], true),
+      };
+      expect(() => component.ngOnChanges(changes)).not.toThrow();
+    });
+
+    it('maps nestedCategory facets onto the matching categoryTypeDup entry', () => {
+      (component as any).formatFacets = () => ({ nestedCategory: [{ name: 'sector-fw_sector_health-care', count: 2, isChecked: false }] });
+      component.categoryTypeDup = [{ name: 'nestedCategory', filters: [] }] as any;
+      activatedRouteMock.snapshot.queryParams = {};
+      const changes: SimpleChanges = {
+        newfacets: new SimpleChange(null, [[{ name: 'nestedCategory', values: [] }]], true),
+      };
+      component.ngOnChanges(changes);
+      expect((component.categoryTypeDup[0] as any).filters[0].displayName).toBe('Health Care');
+    });
+
+    it('applies the typesOfEvents input when it changes', () => {
+      component.typesOfEvents = [{ name: 'live' }];
+      const changes: SimpleChanges = {
+        typesOfEvents: new SimpleChange(null, [{ name: 'live' }], true),
+      };
+      component.ngOnChanges(changes);
+      expect(component.formattedFacets['typeOfEvents']).toEqual([{ name: 'live' }]);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // formatSectorName
+  // ---------------------------------------------------------------------
+  describe('formatSectorName', () => {
+    it('strips the sector-fw_sector_ prefix and title-cases the remainder', () => {
+      expect(component.formatSectorName('sector-fw_sector_information-technology')).toBe('Information Technology');
+    });
+
+    it('title-cases a name that has no prefix', () => {
+      expect(component.formatSectorName('health-care')).toBe('Health Care');
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // setCategoryType (real implementation - the legacy test earlier overrides it)
+  // ---------------------------------------------------------------------
+  describe('setCategoryType (real implementation)', () => {
+    beforeEach(() => {
+      component.categoryTypeDup = JSON.parse(JSON.stringify(CATEGORY_TYPE));
+    });
+
+    it('marks the matching single category checked and records the search query', () => {
+      activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Events, q: 'angular' };
+      component.setCategoryType();
+      expect(component.searchQuery).toBe('angular');
+      expect(component.categoryType[0].name).toBe(SearchCategory.Events);
+      expect(component.categoryType[0].isChecked).toBe(true);
+      expect(component.selectedFilters[SearchCategory.Events]).toBeDefined();
+    });
+
+    it('falls back to a synthetic case-study entry when CATEGORY_TYPE has none', () => {
+      activatedRouteMock.snapshot.queryParams = { category: 'case-study' };
+      component.setCategoryType();
+      expect(component.categoryType[0]).toEqual(
+        expect.objectContaining({ name: 'case-study', displayName: 'Case study' })
+      );
+    });
+
+    it('sets typeOfEvents facets for the Events category', () => {
+      activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Events };
+      component.typesOfEvents = [{ name: 'live' }];
+      component.setCategoryType();
+      expect(component.formattedFacets['typeOfEvents']).toEqual([{ name: 'live' }]);
+    });
+
+    it('resets selectedFilters when the category changes from the previous one', () => {
+      component.searchCategory = SearchCategory.Courses;
+      component.selectedFilters = { courses: ['x'] };
+      activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Events };
+      component.setCategoryType();
+      expect(component.selectedFilters['courses']).toBeUndefined();
+      expect(component.selectedFilters[SearchCategory.Events]).toBeDefined();
+    });
+
+    it('marks the All category checked when no category param is present', () => {
+      activatedRouteMock.snapshot.queryParams = {};
+      component.setCategoryType();
+      expect(component.categoryType.find((c: any) => c.name === SearchCategory.All)?.isChecked).toBe(true);
+    });
+
+    it('does not check the category while in the explore-content tab', () => {
+      // Normalize explicitly: an earlier test elsewhere in this file mutates the shared
+      // CATEGORY_TYPE constant's `isChecked` in place (a pre-existing test-hygiene issue, not
+      // something this test should depend on), so don't assume the clone starts at false.
+      const dup = component.categoryTypeDup as any[];
+      dup.find((c: any) => c.name === SearchCategory.Courses).isChecked = false;
+      activatedRouteMock.snapshot.queryParams = { category: SearchCategory.Courses, tab: 'explore-content' };
+      component.setCategoryType();
+      expect(component.categoryType[0].isChecked).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // setCourseCategoryType / checkForFilter
+  // ---------------------------------------------------------------------
+  describe('setCourseCategoryType', () => {
+    beforeEach(() => {
+      component.categoryTypeDup = JSON.parse(JSON.stringify(CATEGORY_TYPE));
+      component.categoryType = [{ isChecked: true }] as any;
+      component.selectedFilters = {};
+    });
+
+    it('checks the top-level category when its name matches directly', () => {
+      component.setCourseCategoryType('events');
+      const dup = component.categoryTypeDup as any[];
+      expect(dup.find((c: any) => c.name === 'events').isChecked).toBe(true);
+    });
+
+    it('recurses into nested filters to check a matching leaf and unchecks the placeholder entry', () => {
+      component.setCourseCategoryType('Course');
+      const dup = component.categoryTypeDup as any[];
+      const courses = dup.find((c: any) => c.name === 'courses');
+      expect(courses.isChecked).toBe(true);
+      expect((component.categoryType[0] as any).isChecked).toBe(false);
+      expect(component.selectedFilters['Course']).toBe('Course');
+    });
+
+    it('unchecks a leaf that does not match the content type', () => {
+      component.setCourseCategoryType('Course');
+      const dup = component.categoryTypeDup as any[];
+      const courseGroup = dup.find((c: any) => c.name === 'courses').filters
+        .find((f: any) => f.name === 'course');
+      const notMatched = courseGroup.filters.find((f: any) => f.name === 'Moderated Course');
+      expect(notMatched.isChecked).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // toggleShowMore (sections not already covered above)
+  // ---------------------------------------------------------------------
+  describe('toggleShowMore (remaining sections)', () => {
+    const cases: Array<[any, string]> = [
+      [FacetType.courseCategory, 'showAllContents'],
+      [FacetType.sectorNames_v1, 'showAllSectors'],
+      [FacetType.sectorId, 'showAllSectors'],
+      [FacetType.sectorNameResource, 'showAllSectors'],
+      [FacetType.subSectorNames_v1, 'showAllSubSectors'],
+      [FacetType.subSectorId, 'showAllSubSectors'],
+      [FacetType.subSectorNameResource, 'showAllSubSectors'],
+      [FacetType.resourceCategory, 'showResourceCategory'],
+      [FacetType.contentPartners, 'showAllContentPartners'],
+      [FacetType.topic, 'showAllTopic'],
+      [FacetType.topicName, 'showAllTopic'],
+    ];
+
+    it.each(cases)('toggles %s via %s', (section: any, flag: any) => {
+      (component as any)[flag] = false;
+      component.toggleShowMore(section);
+      expect((component as any)[flag]).toBe(true);
+    });
+
+    it('does nothing for an unrecognised section', () => {
+      expect(() => component.toggleShowMore('unknown-section')).not.toThrow();
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // translateActualLabels
+  // ---------------------------------------------------------------------
+  describe('translateActualLabels', () => {
+    it('delegates to the translation service', () => {
+      const result = component.translateActualLabels('label', 'type');
+      expect(langTranslationsMock.translateActualLabel).toHaveBeenCalledWith('label', 'type', '');
+      expect(result).toBe('Translated Label');
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // capitalizeFirstLetter
+  // ---------------------------------------------------------------------
+  describe('capitalizeFirstLetter', () => {
+    it('capitalizes the first letter only', () => {
+      expect(component.capitalizeFirstLetter('hello world')).toBe('Hello world');
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // formatFacets (real implementation - not the per-test override used above)
+  // ---------------------------------------------------------------------
+  describe('formatFacets (real implementation)', () => {
+    it('returns an empty object for empty input', () => {
+      expect(component.formatFacets([])).toEqual({});
+    });
+
+    it('buckets duration values into labelled ranges', () => {
+      const result = component.formatFacets([
+        [{ name: FacetType.Duration, values: [{ name: '900', count: 2 }, { name: '4000', count: 1 }] }],
+      ]);
+      expect(result[FacetType.Duration]).toEqual([
+        { name: '0 - 30 mins', count: 2, isChecked: false },
+        { name: '60 - 90 mins', count: 1, isChecked: false },
+      ]);
+    });
+
+    it('buckets avgRating values against every threshold they clear', () => {
+      const result = component.formatFacets([
+        [{ name: FacetType.AvgRating, values: [{ name: '4.6', count: 3 }] }],
+      ]);
+      expect(result[FacetType.AvgRating]).toEqual([
+        { name: '4.5', count: 3, isChecked: false },
+        { name: '4.0', count: 3, isChecked: false },
+        { name: '3.5', count: 3, isChecked: false },
+        { name: '3.0', count: 3, isChecked: false },
+      ]);
+    });
+
+    it('formats any other facet type as a plain name/count list', () => {
+      const result = component.formatFacets([
+        [{ name: 'language', values: [{ name: 'english', count: 4 }] }],
+      ]);
+      expect(result['language']).toEqual([{ name: 'english', count: 4, isChecked: false }]);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // onSelectionFilter
+  // ---------------------------------------------------------------------
+  describe('onSelectionFilter', () => {
+    it('adds the option to selectedFilters when checked and emits appliedFilter', () => {
+      const emitSpy = jest.spyOn(component.appliedFilter, 'emit');
+      component.onSelectionFilter({ checked: true } as any, { name: 'english' }, 'language');
+      expect(component.selectedFilters.language).toEqual(['english']);
+      expect(emitSpy).toHaveBeenCalled();
+    });
+
+    it('does not duplicate an already-selected option', () => {
+      component.selectedFilters = { language: ['english'] };
+      component.onSelectionFilter({ checked: true } as any, { name: 'english' }, 'language');
+      expect(component.selectedFilters.language).toEqual(['english']);
+    });
+
+    it('removes the option and emits constructQueryParam for a known top-level category', () => {
+      component.categoryTypeDup = JSON.parse(JSON.stringify(CATEGORY_TYPE));
+      component.selectedFilters = { [SearchCategory.Courses]: [SearchCategory.Courses] };
+      const constructSpy = jest.spyOn(component.constructQueryParam, 'emit');
+      component.onSelectionFilter({ checked: false } as any, { name: SearchCategory.Courses }, SearchCategory.Courses);
+      expect(component.selectedFilters[SearchCategory.Courses]).toBeUndefined();
+      expect(constructSpy).toHaveBeenCalledWith('');
+    });
+
+    it('turns off isAllContentSelected when a contentType filter is applied', () => {
+      component.isAllContentSelected = true;
+      component.onSelectionFilter({ checked: true } as any, { name: 'Course' }, 'contentType');
+      expect(component.isAllContentSelected).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // onTypesOfEventsChange
+  // ---------------------------------------------------------------------
+  describe('onTypesOfEventsChange', () => {
+    it('sets the selected radio option and marks matching event options as checked', () => {
+      component.formattedFacets = { typeOfEvents: [{ name: 'live', isChecked: false }, { name: 'upcoming', isChecked: false }] };
+      const emitSpy = jest.spyOn(component.appliedFilter, 'emit');
+      component.onTypesOfEventsChange({} as any, { name: 'live' }, 'typeOfEvents');
+      expect(component.selectedFilters.typeOfEvents).toEqual(['live']);
+      expect(component.formattedFacets.typeOfEvents[0].isChecked).toBe(true);
+      expect(component.formattedFacets.typeOfEvents[1].isChecked).toBe(false);
+      expect(emitSpy).toHaveBeenCalled();
+    });
+
+    it('does nothing to formattedFacets when there are no matching event options', () => {
+      component.formattedFacets = {};
+      expect(() => component.onTypesOfEventsChange({} as any, { name: 'live' }, 'typeOfEvents')).not.toThrow();
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // togoleThemes
+  // ---------------------------------------------------------------------
+  describe('togoleThemes', () => {
+    it('toggles the showAll flag on the given competency', () => {
+      const competency: any = { showAll: false };
+      component.togoleThemes(competency);
+      expect(competency.showAll).toBe(true);
+      component.togoleThemes(competency);
+      expect(competency.showAll).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // refactorFilterData (real implementation - beforeEach above overrides the instance method)
+  // ---------------------------------------------------------------------
+  describe('refactorFilterData (real implementation)', () => {
+    it('returns an empty array for non-object input', () => {
+      const result = SearchFiltersComponent.prototype.refactorFilterData.call(component, null as any);
+      expect(result).toEqual([]);
+    });
+
+    it('flattens filters into type/value pairs and relabels Courses as Contents', () => {
+      const result = SearchFiltersComponent.prototype.refactorFilterData.call(component, {
+        [FacetType.Language]: ['Courses', 'english'],
+      });
+      expect(result).toEqual([
+        { type: FacetType.Language, value: 'Contents' },
+        { type: FacetType.Language, value: 'English' },
+      ]);
+    });
+
+    it('formats a sector-prefixed value through formatSectorName', () => {
+      const result = SearchFiltersComponent.prototype.refactorFilterData.call(component, {
+        sectorId: ['sector-fw_sector_health-care'],
+      });
+      expect(result).toEqual([{ type: 'sectorId', value: 'Health Care' }]);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // filtersAppliedCount
+  // ---------------------------------------------------------------------
+  describe('filtersAppliedCount', () => {
+    it('counts only non-empty array filters', () => {
+      component.selectedFilters = { language: ['en'], organisation: [], courses: ['x'] };
+      expect(component.filtersAppliedCount).toBe(2);
+    });
+
+    it('is zero when there are no selected filters', () => {
+      component.selectedFilters = {};
+      expect(component.filtersAppliedCount).toBe(0);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // categoriseByFacet
+  // ---------------------------------------------------------------------
+  describe('categoriseByFacet', () => {
+    it('flags visibility sections that have matching facet data', () => {
+      component.showAllLanguage = false;
+      component.showAllOrganisation = false;
+      component.categoriseByFacet([{ type: FacetType.Language, value: 'English' }]);
+      expect(component.showAllLanguage).toBe(true);
+      expect(component.showAllOrganisation).toBe(false);
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // clearAllFilters
+  // ---------------------------------------------------------------------
+  describe('clearAllFilters', () => {
+    it('clears selectedFilters, unchecks categoryType/facets, and emits events', () => {
+      component.categoryType = [{ name: 'courses', isChecked: true, filters: [{ isChecked: true }] }] as any;
+      component.formattedFacets = { language: [{ name: 'english', isChecked: true }] };
+      component.selectedFilters = { courses: ['x'] };
+      component.isExploreContentTab = false;
+      const appliedSpy = jest.spyOn(component.appliedFilter, 'emit');
+      const constructSpy = jest.spyOn(component.constructQueryParam, 'emit');
+      component.clearAllFilters();
+      expect(component.selectedFilters.courses).toEqual([]);
+      expect((component.categoryType[0] as any).isChecked).toBe(false);
+      expect((component.categoryType[0] as any).filters[0].isChecked).toBe(false);
+      expect(component.formattedFacets.language[0].isChecked).toBe(false);
+      expect(component.selectedFilterChips).toEqual([]);
+      expect(appliedSpy).toHaveBeenCalled();
+      expect(constructSpy).toHaveBeenCalledWith('');
+    });
+
+    it('sets isAllContentSelected instead of unchecking categoryType in the explore-content tab', () => {
+      component.isExploreContentTab = true;
+      component.isAllContentSelected = false;
+      component.selectedFilters = {};
+      component.formattedFacets = {};
+      const constructSpy = jest.spyOn(component.constructQueryParam, 'emit');
+      component.clearAllFilters();
+      expect(component.isAllContentSelected).toBe(true);
+      expect(constructSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  // ---------------------------------------------------------------------
+  // clearFilterChip
+  // ---------------------------------------------------------------------
+  describe('clearFilterChip', () => {
+    beforeEach(() => {
+      component.categoryTypeDup = JSON.parse(JSON.stringify(CATEGORY_TYPE));
+    });
+
+    it('clears all filters when the chip type is a known top-level category', () => {
+      component.categoryType = JSON.parse(JSON.stringify(CATEGORY_TYPE));
+      const clearAllSpy = jest.spyOn(component, 'clearAllFilters');
+      component.clearFilterChip({ type: SearchCategory.Courses, value: 'Contents' });
+      expect(clearAllSpy).toHaveBeenCalled();
+    });
+
+    it('reverse-formats a sectorId chip value back into its raw facet name', () => {
+      component.categoryType = [];
+      component.formattedFacets = { sectorId: [{ name: 'sector-fw_sector_health-care', isChecked: true }] };
+      component.selectedFilters = { sectorId: ['sector-fw_sector_health-care'] };
+      component.clearFilterChip({ type: 'sectorId', value: 'Health Care' });
+      expect(component.formattedFacets.sectorId[0].isChecked).toBe(false);
+    });
+
+    it('also treats "case-study" as a known category when the current search category is case-study', () => {
+      component.categoryType = [{ name: 'case-study', displayName: 'Case study', filters: [] }] as any;
+      component.searchCategory = 'case-study';
+      const clearAllSpy = jest.spyOn(component, 'clearAllFilters');
+      component.clearFilterChip({ type: 'case-study', value: 'Case study' });
+      expect(clearAllSpy).toHaveBeenCalled();
+    });
+
+    it('lowercases a sectorDetails_v1.subSectorName chip value before clearing it', () => {
+      component.categoryType = [];
+      component.formattedFacets = { 'sectorDetails_v1.subSectorName': [{ name: 'health care', isChecked: true }] };
+      component.selectedFilters = { 'sectorDetails_v1.subSectorName': ['health care'] };
+      component.clearFilterChip({ type: 'sectorDetails_v1.subSectorName', value: 'HEALTH CARE' });
+      expect(component.formattedFacets['sectorDetails_v1.subSectorName'][0].isChecked).toBe(false);
+    });
+
+    it('clears a matching facet filter outside the category tree', () => {
+      component.categoryType = [];
+      component.formattedFacets = { language: [{ name: 'english', isChecked: true }] };
+      component.selectedFilters = { language: ['english'] };
+      const appliedSpy = jest.spyOn(component.appliedFilter, 'emit');
+      component.clearFilterChip({ type: 'language', value: 'English' });
+      expect(component.formattedFacets.language[0].isChecked).toBe(false);
+      expect(component.selectedFilters.language).toEqual([]);
+      expect(appliedSpy).toHaveBeenCalled();
+    });
+
+    it('retries with the exact-case value when the lowercase lookup misses', () => {
+      component.categoryType = [];
+      component.formattedFacets = { language: [{ name: 'English', isChecked: true }] };
+      component.selectedFilters = { language: ['English'] };
+      component.clearFilterChip({ type: 'language', value: 'English' });
+      expect(component.formattedFacets.language[0].isChecked).toBe(false);
+    });
+
+    it('pulls the lowercase sector-prefixed value in the recursive fallback branch', () => {
+      component.categoryType = [];
+      component.formattedFacets = {};
+      component.categoryTypeDup = [
+        { name: SearchCategory.Courses, filters: [{ name: 'sector-fw_sector_health-care', isChecked: true, filters: [] }] },
+      ] as any;
+      component.selectedFilters = { courseCategory: ['sector-fw_sector_health-care'] };
+      component.clearFilterChip({ type: 'courseCategory', value: 'sector-fw_sector_Health-Care' });
+      expect(component.selectedFilters.courseCategory).toBeUndefined();
+    });
+
+    it('falls back to the recursive course-filter search when no direct facet match exists', () => {
+      component.categoryType = [];
+      component.formattedFacets = {};
+      component.selectedFilters = { courseCategory: ['Course'] };
+      component.clearFilterChip({ type: 'courseCategory', value: 'Course' });
+      const dup = component.categoryTypeDup as any[];
+      const courseLeaf = dup
+        .find((c: any) => c.name === 'courses').filters
+        .find((f: any) => f.name === 'course').filters
+        .find((f: any) => f.name === 'Course');
+      expect(courseLeaf.isChecked).toBe(false);
+      expect(component.selectedFilters.courseCategory).toBeUndefined();
     });
   });
 });

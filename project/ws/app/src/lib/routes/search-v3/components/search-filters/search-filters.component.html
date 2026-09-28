@@ -874,7 +874,8 @@
     <ng-template #multiCategorySelectedList>
         <p class="mat-subheading-1 mt-4 font-bold-imp text-dark">{{'searchfilters.categoryType' | translate}} </p>
         <div class="selected-search-categories">
-            <p class="selected-category-item" *ngFor="let category of categoryType">
+            <p class="selected-category-item cursor-pointer" *ngFor="let category of categoryType"
+                (click)="categorySelected.emit(category?.name)">
                 {{ category?.displayName }}
             </p>
         </div>

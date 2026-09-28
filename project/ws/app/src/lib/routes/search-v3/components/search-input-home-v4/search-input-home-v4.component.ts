@@ -21,6 +21,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { MatChipsModule } from '@angular/material/chips'
+import { MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDividerModule } from '@angular/material/divider'
 import { TranslateModule } from '@ngx-translate/core'
 
@@ -67,6 +68,7 @@ interface SearchCategoryItem {
     MatMenuModule,
     MatTooltipModule,
     MatChipsModule,
+    MatCheckboxModule,
     MatDividerModule,
     MatListModule
   ],
@@ -114,7 +116,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     { label: 'Events', value: SearchCategory.Events, icon: 'calender-event' },
     { label: 'People', value: SearchCategory.People, icon: 'people-search' },
     {
-      label: 'External Contents',
+      label: 'Marketplace',
       value: SearchCategory.ExternalContents,
       icon: 'video-library',
     },
@@ -124,7 +126,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       icon: 'menu_book',
     },
     {
-      label: 'Resources',
+      label: 'Amrit Gyaan Kosh',
       value: SearchCategory.Resources,
       icon: 'diversity_3',
     },

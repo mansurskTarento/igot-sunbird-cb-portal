@@ -74,37 +74,38 @@
     flex-wrap: nowrap !important;
   }
 
-    .mat-mdc-form-field-flex {
-      height: 36px;
-      align-items: center;
-      display: flex !important;
-      flex-wrap: nowrap;
-    }
-    .mat-mdc-form-field-infix {
-      min-height: 36px !important;
-      padding: 0 0 6px 0 !important;
-      flex: 1 1 auto;
-      min-width: 0;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-    }
+  .mat-mdc-form-field-flex {
+    height: 36px;
+    align-items: center;
+    display: flex !important;
+    flex-wrap: nowrap;
+  }
+
+  .mat-mdc-form-field-infix {
+    min-height: 36px !important;
+    padding: 0 0 6px 0 !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+  }
 
   .mat-mdc-form-field-subscript-wrapper {
     display: none;
   }
 
-    input.global-search-input-element,
-    .mdc-text-field__input.global-search-input-element {
-      margin-top: 8px;
-      padding-left: 1.5rem !important;
-      flex: 1 1 auto;
-      min-width: 0;
-      width: auto;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
+  input.global-search-input-element,
+  .mdc-text-field__input.global-search-input-element {
+    margin-top: 8px;
+    padding-left: 1.5rem !important;
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .search-v3 .lang-btn {
@@ -181,27 +182,30 @@
 
       .mdc-evolution-chip__action {
         background-color: var(--surface-tertiary, $matListHoverBg) !important;
+        padding-left: 5px !important;
       }
     }
   }
 
-  .mat-mdc-chip.selected-search-category {
-    background-color: var(--environment-button-primary-filled-primary) !important;
-    color: var(--text-button-text-primary-white) !important;
-
-    .mdc-evolution-chip__action {
-      background-color: var(--environment-button-primary-filled-primary) !important;
-    }
-
-    .mdc-evolution-chip__text-label {
-      color: var(--text-button-text-primary-white) !important;
-    }
-
-    mat-icon {
-      color: var(--text-button-text-primary-white) !important;
-      vertical-align: middle;
-    }
-  }
+  // Selected state is now shown via the checkbox instead of this background fill. Kept
+  // (commented out, not deleted) in case a future state needs the background treatment back.
+  // .mat-mdc-chip.selected-search-category {
+  //   background-color: var(--environment-button-primary-filled-primary) !important;
+  //   color: var(--text-button-text-primary-white) !important;
+  //
+  //   .mdc-evolution-chip__action {
+  //     background-color: var(--environment-button-primary-filled-primary) !important;
+  //   }
+  //
+  //   .mdc-evolution-chip__text-label {
+  //     color: var(--text-button-text-primary-white) !important;
+  //   }
+  //
+  //   mat-icon {
+  //     color: var(--text-button-text-primary-white) !important;
+  //     vertical-align: middle;
+  //   }
+  // }
 
   // MDC replacement for .mat-chip-list-wrapper
   .mat-mdc-chip-set {
@@ -224,6 +228,21 @@
   .mdc-evolution-chip__text-label {
     color: inherit !important;
   }
+
+  .mat-mdc-chip .mdc-evolution-chip__action {
+    border: none !important;
+    background-color: #EEF1F6 !important;
+  }
+
+  .mat-mdc-checkbox .mat-internal-form-field {
+    width: 20px;
+    margin-right: 10px;
+  }
+
+  .mat-mdc-standard-chip .mdc-evolution-chip__action--primary {
+    padding-left: 5px !important;
+  }
+
 }
 
 // ===============================
