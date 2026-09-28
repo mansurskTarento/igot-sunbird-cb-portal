@@ -455,6 +455,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
         // this.commonDataSvc.fetchMandatoryNotification()
+        // clicking the karmayogi icon from the explore screen redirects here without
+        // going through onNavItemClicked, so the explore highlight would otherwise stick
+        if (this.menuBarDetails.activeItemCode === 'explore') {
+          this.menuBarDetails.activeItemCode = ''
+        }
       } else {
         this.isHomePage.set(false)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)

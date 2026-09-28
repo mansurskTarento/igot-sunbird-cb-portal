@@ -375,9 +375,8 @@ export class PlansShowAllComponent implements OnInit {
           PLAN_TYPES.some(type => type.key === typeParam) ? (typeParam as PlanFilterKey) : 'apar')
 
         const yearParam = params.get('planYear')
-        const year = this.planYearOptions().some(option => option.value === yearParam)
-          ? (yearParam as string)
-          : this.userCbpPlansSvc.getCurrentPlanYear()
+        const isYearChosen = this.planYearOptions().some(option => option.value === yearParam)
+        const year = isYearChosen ? (yearParam as string) : this.userCbpPlansSvc.getCurrentPlanYear()
         this.planYear.set(year)
 
         const pageParam = Number(params.get('page'))
@@ -389,7 +388,7 @@ export class PlansShowAllComponent implements OnInit {
         // The year is the only param that changes WHICH plans are loaded; plan type, page
         // and page size are all narrowings of a dataset already in memory.
         if (year !== this.loadedYear()) {
-          this.loadPlans(year)
+          this.loadPlans(year, false, isYearChosen)
         }
       })
   }
@@ -419,8 +418,13 @@ export class PlansShowAllComponent implements OnInit {
    * Cache-first by design — UserCbpPlansService serves a valid IndexedDB entry and only
    * POSTs on a miss or an expired TTL, so flipping between years the user has already
    * visited costs nothing. Pass `callApi` to force the network (the pull-to-refresh case).
+   *
+   * The service answers an empty year with the nearest earlier year that has plans. That
+   * is only wanted for the default view: `exactYear` is set when the year came from the
+   * URL — picked in the toolbar, or linked to — and then another year's plans mean this
+   * year has none, so the page shows "No plans" instead of passing them off as this year's.
    */
-  private loadPlans(year: string, callApi = false): void {
+  private loadPlans(year: string, callApi = false, exactYear = true): void {
     this.loading.set(true)
     this.loadedYear.set(year)
 
@@ -431,10 +435,29 @@ export class PlansShowAllComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: IUserCbpPlanCacheEntry) => {
+          // A year switched away from while this was in flight.
+          if (year !== this.loadedYear()) {
+            return
+          }
+          if (data.planYear && data.planYear !== year) {
+            if (exactYear) {
+              this.planData.set(null)
+              this.loading.set(false)
+              return
+            }
+            // Default view fell back: show that year in the toolbar and pin it in the URL,
+            // so the next param change reads it as chosen rather than falling back again.
+            this.loadedYear.set(data.planYear)
+            this.planYear.set(data.planYear)
+            this.patchQueryParams({ planYear: data.planYear }, true)
+          }
           this.planData.set(data)
           this.loading.set(false)
         },
         error: () => {
+          if (year !== this.loadedYear()) {
+            return
+          }
           this.planData.set(null)
           this.loading.set(false)
         },
@@ -551,11 +574,12 @@ export class PlansShowAllComponent implements OnInit {
     }
   }
 
-  private patchQueryParams(params: Record<string, string | number>): void {
+  private patchQueryParams(params: Record<string, string | number>, replaceUrl = false): void {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: params,
       queryParamsHandling: 'merge',
+      replaceUrl,
     })
   }
 }

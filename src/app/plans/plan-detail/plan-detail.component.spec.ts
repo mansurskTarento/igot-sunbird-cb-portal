@@ -610,14 +610,14 @@ describe('PlanDetailComponent', () => {
   })
 
   // ── CA courses ─────────────────────────────────────────────────────────────
-  describe('mandatory courses count as CA', () => {
+  describe('mandatory courses in a plan with a linked CA count as CA', () => {
     const withMandatory = (over: any = { comprehensiveAssessment: 'do_ca' }) =>
       plansSvc.readPlan.mockReturnValue(of(rawPlan({
         contentList: [{ identifier: 'do_1', mandatory: true }, { identifier: 'do_2', mandatory: false }],
         ...over,
       })))
 
-    it('marks a mandatory course CA on the card itself, where the chip reads it', async () => {
+    it('marks only the mandatory course CA on the card itself, where the chip reads it', async () => {
       withMandatory()
       component.ngOnInit()
       await settle()
@@ -635,6 +635,14 @@ describe('PlanDetailComponent', () => {
       expect((component.courses()[1].metadata as any).isCA).toBeUndefined()
     })
 
+    it('does not tag the assessment card itself as a CA course', async () => {
+      withMandatory()
+      component.ngOnInit()
+      await settle()
+
+      expect((component.assessment() as any).isCA).toBeUndefined()
+    })
+
     it('counts mandatory courses in the rail, completed ones separately', async () => {
       withMandatory()
       enrollSvc.fetchEnrollContentData.mockReturnValue(
@@ -646,7 +654,7 @@ describe('PlanDetailComponent', () => {
       expect(component.completedCaCourses()).toBe(1)
     })
 
-    it('leaves a plan with no mandatory course out of the CA count', async () => {
+    it('leaves a plan with no CA out of the CA count', async () => {
       component.ngOnInit()
       await settle()
 
