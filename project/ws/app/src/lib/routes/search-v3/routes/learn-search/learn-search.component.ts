@@ -1573,10 +1573,18 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  // Phase 2 multi-category filter list: category is the same canonical value (e.g. 'courses',
-  // 'external-contents') used as the id on that category's result section below.
+  private readonly headerClearance = 160
   scrollToCategory(category: string): void {
-    document.getElementById(category)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const element = document.getElementById(category)
+    if (!element) {
+      return
+    }
+    if (category === 'courses') {
+      const targetTop = window.pageYOffset + element.getBoundingClientRect().top - this.headerClearance
+      window.scrollTo({ top: Math.max(targetTop, 0), behavior: 'smooth' })
+      return
+    }
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
   constructQueryParam(category: any) {
