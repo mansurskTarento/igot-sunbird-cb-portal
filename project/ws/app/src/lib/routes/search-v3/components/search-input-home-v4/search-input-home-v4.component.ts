@@ -374,6 +374,13 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     }
   }
 
+  selectRecentSearchQuery(query: any) {
+    this.queryControl.setValue(query?.search_query || '')
+    if (this.searchInput) {
+      this.searchInput.nativeElement.focus()
+    }
+  }
+
   private processSearchByCategory(category: string, nlpSearchQuery: string, query: any) {
     switch (category) {
       case 'courses':

@@ -532,6 +532,26 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
   })
 
+  describe('selectRecentSearchQuery', () => {
+    it('only prefills the query control with the selected search text', () => {
+      const searchCoursesSpy = jest.spyOn(component as any, 'searchCourses').mockImplementation(() => { })
+      const updateRecentSpy = jest.spyOn(component, 'updateRecentSearchQuery')
+      const query = { search_category: ['courses'], nlp_search_query: 'kw', search_query: 'keyword text' }
+
+      component.selectRecentSearchQuery(query)
+
+      expect(component.queryControl.value).toBe('keyword text')
+      expect(searchCoursesSpy).not.toHaveBeenCalled()
+      expect(updateRecentSpy).not.toHaveBeenCalled()
+    })
+
+    it('clears the query control when the query has no search_query', () => {
+      component.queryControl.setValue('old value')
+      component.selectRecentSearchQuery({ search_category: ['courses'], nlp_search_query: 'kw' })
+      expect(component.queryControl.value).toBe('')
+    })
+  })
+
   describe('category search helpers', () => {
     const query = { search_category: ['courses'], nlp_search_query: 'kw' }
 
