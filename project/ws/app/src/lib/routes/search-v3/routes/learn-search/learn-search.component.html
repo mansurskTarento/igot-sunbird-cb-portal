@@ -8,7 +8,7 @@
             <ng-container>
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
                     (appliedFilter)="applySearchFilter($event)" [typesOfEvents]="typesOfEventsFilters"
-                    [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"
+                    [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event, true)"
                     (applyFilterFromLearn)="applyFilterFromLearn($event)"
                     (categorySelected)="scrollToCategory($event)"></ws-app-search-filters>
             </ng-container>

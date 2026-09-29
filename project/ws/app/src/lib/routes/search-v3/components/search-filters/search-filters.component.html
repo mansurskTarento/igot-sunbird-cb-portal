@@ -3,13 +3,13 @@
         <div class="flex items-center justify-between">
             <p class="mat-subheading-1 margin-bottom-s font-bold-imp text-dark">{{'searchfilters.filterBy' | translate}}
             </p>
-            <button *ngIf="filtersAppliedCount > 0" mat-flat-button (click)="clearAllFilters()"
+            <button *ngIf="showClearAllControls" mat-flat-button (click)="clearAllFilters()"
                 class="margin-bottom-s clear-all-btn text-sm font-normal">
                 {{'gyaanKarmayogi.clearAll' | translate}}</button>
         </div>
 
-        <div class="filter-list flex items-center flex-wrap gap-2" *ngIf="filtersAppliedCount > 0">
-            <ng-container *ngFor="let item of selectedFilterChips">
+        <div class="filter-list flex items-center flex-wrap gap-2" *ngIf="showClearAllControls">
+            <ng-container *ngFor="let item of visibleFilterChips">
                 <div class="filter-pill flex items-center">
                     <span class="font-normal text-xs" [matTooltip]="item?.value">{{item?.value}}</span>
                     <button mat-icon-button color="primary" (click)="clearFilterChip(item)">

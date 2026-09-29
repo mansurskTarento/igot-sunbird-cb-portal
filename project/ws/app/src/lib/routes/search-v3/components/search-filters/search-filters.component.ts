@@ -28,7 +28,7 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox'
 import { NsContent } from '@sunbird-cb/collection'
 import { environment } from '../../../../../../../../../src/environments/environment'
-import { ActivatedRoute } from '@angular/router'
+import { ActivatedRoute, Router } from '@angular/router'
 import { MatRadioChange } from '@angular/material/radio'
 @Component({
   selector: 'ws-app-search-filters',
@@ -93,12 +93,14 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   // Phase 1's serialization in search-input-home-v4.component.ts. Length > 1 means multiple
   // pills were selected in Search V4, which switches this panel into a read-only category list.
   searchCategories: string[] = [];
+  showCategoryFilter = false;
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
+    private router: Router,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService,
@@ -197,11 +199,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.isExploreContentTab = !!params['tab']
 
     this.searchCategory = params['category']
+    const selectedCategories = (params['selectedCategories'] || '').trim()
+    if (selectedCategories) {
+      this.showCategoryFilter = true
+    } else {
+      this.showCategoryFilter = false
+    }
     this.searchCategories = (params['category'] || '')
       .split(',')
       .map((c: string) => c.trim())
       .filter(Boolean)
-
     if (this.isMultiCategorySearch) {
       // Multi-pill selection from Search V4: show only the selected categories, as a plain
       // list - no checkbox tree, no "Filter By" header, no selection interaction. Ordered to
@@ -457,7 +464,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     const types = this.categoryTypeDup.map((category) => category.name)
     if (types.includes(type) && !option.isChecked) {
-      this.constructQueryParam.emit('')
+      this.constructQueryParam.emit(this.activated.snapshot.queryParams['category'] || '')
     }
 
     if (categoryType === 'contentType' && this.isAllContentSelected) {
@@ -493,6 +500,17 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     return Object.entries(this.selectedFilters).filter(
       ([_, arr]) => Array.isArray(arr) && arr.length > 0
     ).length
+  }
+
+  get showClearAllControls(): boolean {
+    return this.showCategoryFilter ? this.filtersAppliedCount > 0 : this.filtersAppliedCount > 1
+  }
+
+  get visibleFilterChips() {
+    if (this.showCategoryFilter || !this.selectedFilterChips) {
+      return this.selectedFilterChips
+    }
+    return this.selectedFilterChips.slice(1)
   }
 
   refactorFilterData(
@@ -662,12 +680,20 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   clearAllFilters() {
+    const keepChip = !this.showCategoryFilter ? this.selectedFilterChips?.[0] : null
+
     Object.keys(this.selectedFilters).forEach((key) => {
+      if (keepChip && key === keepChip.type) {
+        return
+      }
       this.selectedFilters[key] = []
     })
 
     if (!this.isExploreContentTab) {
       _.forEach(this.categoryType, (category) => {
+        if (keepChip && category.name === keepChip.type) {
+          return
+        }
         category.isChecked = false
         _.forEach(category.filters, (filter) => {
           filter.isChecked = false
@@ -683,11 +709,27 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       })
     })
 
-    this.appliedFilter.emit(this.selectedFilters)
-    this.selectedFilterChips = []
+    this.selectedFilterChips = keepChip ? [keepChip] : []
+
+    const isNavigatingToRestoreCategory = !this.isExploreContentTab && this.showCategoryFilter
+    if (!isNavigatingToRestoreCategory) {
+      this.appliedFilter.emit(this.selectedFilters)
+    }
 
     if (!this.isExploreContentTab) {
-      this.constructQueryParam.emit('')
+      if (this.showCategoryFilter) {
+        const restoredCategory = this.activated.snapshot.queryParams['selectedCategories'] || null
+        this.router.navigate([], {
+          relativeTo: this.activated,
+          queryParams: {
+            category: restoredCategory,
+            selectedCategories: null,
+          },
+          queryParamsHandling: 'merge',
+        })
+      } else {
+        this.constructQueryParam.emit(this.activated.snapshot.queryParams['category'] || '')
+      }
     }
   }
 

@@ -868,15 +868,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestExternal.filterCriteriaMap[this.competencySubThemeKey] = selectedFilters[key]
           this.compentencyKeyExist = true
         } else if (key === SearchCategory.Events) {
-          this.constructQueryParam('events')
+          this.constructQueryParam('events', true)
           this.seeAllResult = SearchCategory.Events
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Courses) {
-          this.constructQueryParam('courses')
+          this.constructQueryParam('courses', true)
           this.seeAllResult = SearchCategory.Courses
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Resources) {
-          this.constructQueryParam('resources')
+          this.constructQueryParam('resources', true)
           this.seeAllResult = SearchCategory.Resources
           this.applyFilterToCaategoryType()
         }
@@ -885,11 +885,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ]
         } else if (key === SearchCategory.People) {
-          this.constructQueryParam('peoples')
+          this.constructQueryParam('peoples', true)
           this.seeAllResult = SearchCategory.People
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Communities) {
-          this.constructQueryParam('communities')
+          this.constructQueryParam('communities', true)
           this.seeAllResult = SearchCategory.Communities
           this.applyFilterToCaategoryType()
         } else if (key === 'typeOfEvents') {
@@ -984,7 +984,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ]
         }
         else if (key === SearchCategory.ExternalContents) {
-          this.constructQueryParam(SearchCategory.ExternalContents)
+          this.constructQueryParam(SearchCategory.ExternalContents, true)
           this.seeAllResult = SearchCategory.ExternalContents
           this.applyFilterToCaategoryType()
         }
@@ -1587,7 +1587,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     element.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }
 
-  constructQueryParam(category: any) {
+  constructQueryParam(category: any, fromFilters = false) {
     const params = this.activated.snapshot.queryParams
 
     this.queryParams = {
@@ -1595,6 +1595,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       search: params['search'] || null,
       category: category || null,
       tab: null
+    }
+    if (!fromFilters) {
+      this.queryParams['selectedCategories'] = params['category'] || null
     }
     this.queryParamChange.emit(this.queryParams)
   }
