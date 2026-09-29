@@ -256,7 +256,7 @@
     </div>
 
     <!-- A failed history call is reported in the snackbar, so this stays a plain empty state -->
-    <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError">
+    <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError && !walletLoadFailed">
       {{ emptyMessage }}
     </div>
 

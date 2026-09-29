@@ -8,7 +8,8 @@
         thead {
             background-color: #1B4CA1 !important;
 
-            th.mat-header-cell {
+            th.mat-header-cell,
+            th.mat-mdc-header-cell {
                 color: #ffffff !important;
                 font-size: 14px;
             }

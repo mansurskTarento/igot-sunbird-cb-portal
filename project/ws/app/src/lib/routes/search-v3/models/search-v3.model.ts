@@ -72,6 +72,7 @@ export class Filters {
 
 export class SortBy {
   createdOn?: string
+  createdDate?: string
   startDate?: string
   avgRating?: string
   firstName?: string

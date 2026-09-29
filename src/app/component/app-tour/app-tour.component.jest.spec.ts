@@ -490,6 +490,21 @@ describe('AppTourComponent (No TestBed)', () => {
 
       expect(Storage.prototype.setItem).not.toHaveBeenCalledWith('karmaWalletTourSnoozed', expect.anything())
     })
+
+    it('should save visited and skipped when the video was played, paused, closed and Skip clicked', () => {
+      component.karmaWalletVideoPending = true
+      component.onWalletVideoStarted()
+      component.closeModal()
+
+      component.skipWalletTour()
+
+      expect(mockUserProfileSvc.editProfileDetails).toHaveBeenLastCalledWith({
+        request: {
+          userId: 'user-123',
+          profileDetails: { karma_wallet_tour: { visited: true, skipped: true, video_visited: true } },
+        },
+      })
+    })
   })
 
   describe('video popup finished earlier in this session', () => {
