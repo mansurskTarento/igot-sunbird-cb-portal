@@ -193,6 +193,16 @@ describe('KarmaWalletComponent', () => {
     expect(homePageStub.walletBalanceUpdated.next).toHaveBeenCalledWith(472)
   })
 
+  it('should update the stored wallet balance the leaderboard reads, even from 0 on a first convert', () => {
+    localStorage.setItem('userEnrollmentCount', JSON.stringify({ userCourseEnrolmentInfo: { walletBalance: 0, karmaPoints: 192 } }))
+
+    load()
+
+    const stored = JSON.parse(localStorage.getItem('userEnrollmentCount') || '{}')
+    expect(stored.userCourseEnrolmentInfo).toEqual({ walletBalance: 472, karmaPoints: 192 })
+    localStorage.removeItem('userEnrollmentCount')
+  })
+
   it('should keep the user read wallet balance in step with the summary', () => {
     configStub.unMappedUser.walletBalance = 4
 
