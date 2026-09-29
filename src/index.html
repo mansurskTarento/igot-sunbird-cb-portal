@@ -63,24 +63,19 @@
     guarantees window.env is at least an object before anything reads it.
   -->
   <script>
-    // window['envReady'] = fetch('/assets/env.json', { cache: 'no-cache' })
-    //   .then(function (response) {
-    //     if (!response.ok) {
-    //       throw new Error('Response status: ' + response.status)
-    //     }
-    //     return response.json()
-    //   })
-    //   .then(function (envJson) {
-    //     window['env'] = Object.assign(window['env'] || {}, envJson)
-    //   })
-    //   .catch(function (error) {
-    //     console.error('Error in fetching env json', error)
-    //   })
-
-    // env.json is no longer required. // Keep envReady for backward compatibility so existing code does not break.
-    window['envReady'] = Promise.resolve().then(() => {
-      window['env'] = window['env'] || {}
-    });
+    window['envReady'] = fetch('/assets/env.json', { cache: 'no-cache' })
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error('Response status: ' + response.status)
+        }
+        return response.json()
+      })
+      .then(function (envJson) {
+        window['env'] = Object.assign(window['env'] || {}, envJson)
+      })
+      .catch(function (error) {
+        console.error('Error in fetching env json', error)
+      })
   </script>
   <script>window.git_build = '{git-hash}';</script>
   <script>window.git_branch = '{git-branch}';</script>

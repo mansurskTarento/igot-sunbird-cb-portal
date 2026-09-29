@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http'
 import { catchError, map, Observable, of, tap } from 'rxjs'
 
 import { environment } from '../../../src/environments/environment'
+import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 const API_END_POINTS = {
   FORM_READ: '/apis/proxies/v8/formsConfig/v1/read',
 }
@@ -11,7 +12,7 @@ const API_END_POINTS = {
 })
 export class FormEnvConfigService {
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private configSvc: ConfigurationsService) { }
 
   /**
    * Loads environment values from FormConfig API.
@@ -20,6 +21,7 @@ export class FormEnvConfigService {
    * they are explicitly included in API_ENVIRONMENT_KEYS.
    */
   async loadEnvironmentConfig(): Promise<void> {
+    console.log('configSvc--', this.configSvc)
     try {
       let payload = {
         "request": {
