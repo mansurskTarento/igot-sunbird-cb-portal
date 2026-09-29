@@ -76,12 +76,12 @@
     //   .catch(function (error) {
     //     console.error('Error in fetching env json', error)
     //   })
-
-    // env.json is no longer required. // Keep envReady for backward compatibility so existing code does not break.
-    window['envReady'] = Promise.resolve().then(() => {
-      window['env'] = window['env'] || {}
-    });
+    window['env'] = {
+      portalRoles: 'PUBLIC,DASHBOARD_ADMIN,VOLUNTEER',
+      recaptchaKey: '6LfY0l0gAAAAAAgmOgNn-VEW5jwu_-AyXTTH8gq4'
+    };
   </script>
+
   <script>window.git_build = '{git-hash}';</script>
   <script>window.git_branch = '{git-branch}';</script>
   <META HTTP-EQUIV='content-type' CONTENT='text/html; charset=UTF-8'>

@@ -75,17 +75,16 @@ import { KarmaLeaderboardV2Module } from './home/home-v2/karma-leaderboard-v2/ka
 import { AppNavBarV2Component } from './component/app-nav-bar-v2/app-nav-bar-v2.component'
 import { GuidedTourModule, GuidedTourService } from 'igot-cb-tour-guide'
 import { AppTourSharedModule } from './component/app-tour/app-tour-shared.module'
-import { FormEnvConfigService } from './services/form-env-config.service'
 // @Injectable()
 // export class HammerConfig extends GestureConfig {
 //   buildHammer(element: HTMLElement) {
 //     return new GestureConfig({ touchAction: 'pan-y' }).buildHammer(element)
 //   }
 // }
-const appInitializer = (initSvc: InitService, logger: LoggerService, formConfigService: FormEnvConfigService) => async () => {
+const appInitializer = (initSvc: InitService, logger: LoggerService) => async () => {
   try {
     // Load dynamic configuration first
-    await formConfigService.loadEnvironmentConfig()
+
     await initSvc.init()
   } catch (error) {
     logger.error('ERROR DURING APP INITIALIZATION >', error)
@@ -171,7 +170,7 @@ export function HttpLoaderFactory(http: HttpClient) {
   bootstrap: [RootComponent],
   providers: [
     {
-      deps: [InitService, LoggerService, FormEnvConfigService],
+      deps: [InitService, LoggerService],
       multi: true,
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
