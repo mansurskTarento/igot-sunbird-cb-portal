@@ -70,7 +70,7 @@
                             <span>{{'cardshublist.exploreAllContent' | translate}}</span>
                         </div>
                     </ng-container>
-                    <div class="sort-search ml-auto" *ngIf="!screenSizeIsLtMedium">
+                    <div class="sort-search ml-auto" *ngIf="!screenSizeIsLtMedium && searchCategories.length === 1">
                         <ws-app-search-sort-input [category]="seeAllResult" [isExploreContentTab]="isExploreContentTab"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
@@ -81,7 +81,7 @@
                         id="ws-auth-root-home-btn-menu" name="ws-auth-root-home-btn-menu">
                         <mat-icon>menu</mat-icon>
                     </button>
-                    <div class="sort-search ml-auto">
+                    <div class="sort-search ml-auto" *ngIf="searchCategories.length === 1">
                         <ws-app-search-sort-input [category]="seeAllResult"
                             (searchSorter)="onChangeSortSearch($event)"></ws-app-search-sort-input>
                     </div>
