@@ -531,22 +531,12 @@ describe('PlansShowAllComponent', () => {
       expect(component.cards().map(c => c.identifier)).toEqual(['early', 'late', 'undated'])
     })
 
-    it('keeps undated plans last when sorting descending', async () => {
-      build({ planType: 'cbp' }, byDate)
-      component.ngOnInit()
-      await flush()
-
-      component.onSortChange(1)
-
-      expect(component.cards().map(c => c.identifier)).toEqual(['late', 'early', 'undated'])
-    })
-
     it('sorts by name without a request, returning to page one', async () => {
       build({ planType: 'cbp', page: '2' }, byDate)
       component.ngOnInit()
       await flush()
 
-      component.onSortChange(2)
+      component.onSortChange(1)
 
       expect(component.cards().map(c => c.title)).toEqual(['alpha', 'mango', 'zebra'])
       expect(component.currentPage()).toBe(1)

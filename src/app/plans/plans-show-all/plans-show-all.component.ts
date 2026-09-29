@@ -50,7 +50,6 @@ const PLAN_TYPES: IPlanTypeMeta[] = [
  */
 const SORT_OPTIONS = [
   { labelKey: 'plansShowAll.sortDueDateAsc', field: 'endDate' as const, direction: 1 },
-  { labelKey: 'plansShowAll.sortDueDateDesc', field: 'endDate' as const, direction: -1 },
   { labelKey: 'plansShowAll.sortNameAsc', field: 'title' as const, direction: 1 },
   { labelKey: 'plansShowAll.sortNameDesc', field: 'title' as const, direction: -1 },
 ]
