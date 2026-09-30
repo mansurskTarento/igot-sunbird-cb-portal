@@ -32,6 +32,7 @@ import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
 import { IndexedDbService } from '@sunbird-cb/utils-v2'
+import { FormEnvConfigService } from './form-env-config.service'
 /* tslint:enable */
 
 const ENROLMENT_DICTIONARY_API = '/apis/proxies/v8/user/v1/learning/dictionary'
@@ -69,6 +70,7 @@ export class InitService {
     private contentDictionarySvc: ContentDictionaryService,
     private formSvc: FormExtService,
     private indexedDbSvc: IndexedDbService,
+    private formConfigService: FormEnvConfigService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,
@@ -182,6 +184,7 @@ export class InitService {
     this.updateProfileSubscription = this.configSvc.updateProfileObservable.subscribe(async (value: boolean) => {
       if (value) {
         await this.fetchUserDetails()
+
       }
     })
     // public / preview / creator (editMode) routes have no auth session:
@@ -600,6 +603,7 @@ export class InitService {
       }
 
       try {
+        await this.formConfigService.loadEnvironmentConfig()
         userPidProfile = await this.http
           .get<any>(profileUrl)
           .pipe(map((res: any) => {
@@ -724,6 +728,7 @@ export class InitService {
 
       const profileByIdUrl = `${profileBaseUrl}/${this.configSvc.unMappedUser.id}`
       try {
+        await this.formConfigService.loadEnvironmentConfig()
         userPidProfile = await this.http
           .get<any>(profileByIdUrl)
           .pipe(map((res: any) => {
