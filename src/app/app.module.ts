@@ -83,6 +83,8 @@ import { AppTourSharedModule } from './component/app-tour/app-tour-shared.module
 // }
 const appInitializer = (initSvc: InitService, logger: LoggerService) => async () => {
   try {
+    // Load dynamic configuration first
+
     await initSvc.init()
   } catch (error) {
     logger.error('ERROR DURING APP INITIALIZATION >', error)
