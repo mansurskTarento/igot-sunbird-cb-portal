@@ -12,7 +12,6 @@ export class RedirectGuard {
   constructor(private domainSvc: DomainConfService, private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    debugger
     const envKey = route.data['externalUrlEnvKey']
     const externalUrl = envKey ? (environment as { [key: string]: any })[envKey] : route.data['externalUrl']
     if (externalUrl) {
