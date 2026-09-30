@@ -136,10 +136,8 @@
   width: 100vw;
 }
 
-@media all and (display-mode: fullscreen) {
-  .video-player {
-    height: 93vh;
-  }
+:fullscreen .video-player {
+  height: 93vh;
 }
 
 .html-viewer-container {

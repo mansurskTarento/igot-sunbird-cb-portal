@@ -260,6 +260,7 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
     private eventService: EventService,
     private telemetrySvc: TelemetryService
   ) {
+    //this.loadRegistrationEnvironment()
 
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -2442,4 +2443,29 @@ export class PublicSignupComponent implements OnInit, OnDestroy {
       this.heirarchyObject = _.find(this.masterData.organisation, { identifier: event.value })
     }
   }
+
+
+  // private loadRegistrationEnvironment(): void {
+
+  //   (window as any)['envReady'] = fetch('/assets/env.json', {
+  //     cache: 'no-cache'
+  //   })
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error('Response status: ' + response.status)
+  //       }
+
+  //       return response.json()
+  //     })
+  //     .then((envJson) => {
+  //       (window as any)['env'] = Object.assign(
+  //         (window as any)['env'] || {},
+  //         envJson
+  //       )
+  //     })
+  //     .catch((error) => {
+  //       console.error('Error in fetching env json', error)
+  //     })
+
+  // }
 }
