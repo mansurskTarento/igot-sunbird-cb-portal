@@ -361,7 +361,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
         get: (key: string) => (key === 'q' ? 'typescript' : SearchCategory.Events),
       })
       expect(component.queryControl.value).toBe('typescript')
-      expect(component.selectedSearchCategory()).toBe(SearchCategory.Events)
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Events])
     })
 
     it('defaults the category to Courses when absent from the route params', () => {
@@ -370,16 +370,16 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
         has: () => false,
         get: () => null,
       })
-      expect(component.selectedSearchCategory()).toBe(SearchCategory.Courses)
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Courses])
     })
 
-    it('parses a comma-separated category param into selectedSearchCategories', () => {
+    it('parses a comma-separated category param into selectedSearchCategory', () => {
       component.initialize()
       queryParamMapSubject.next({
         has: (key: string) => key === 'category',
         get: (key: string) => (key === 'category' ? 'courses,events' : null),
       })
-      expect(component.selectedSearchCategories()).toEqual(['courses', 'events'])
+      expect(component.selectedSearchCategory()).toEqual(['courses', 'events'])
     })
 
     it('parses a single-value category param into a single-item list', () => {
@@ -388,16 +388,16 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
         has: (key: string) => key === 'category',
         get: (key: string) => (key === 'category' ? 'courses' : null),
       })
-      expect(component.selectedSearchCategories()).toEqual(['courses'])
+      expect(component.selectedSearchCategory()).toEqual(['courses'])
     })
 
-    it('defaults selectedSearchCategories to Courses when the category param is absent', () => {
+    it('defaults selectedSearchCategory to Courses when the category param is absent', () => {
       component.initialize()
       queryParamMapSubject.next({
         has: () => false,
         get: () => null,
       })
-      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Courses])
     })
   })
 
@@ -479,12 +479,21 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
 
     it('creates a recent search entry', async () => {
       component.queryControl.setValue('kw query')
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       await component.createRecent('kw')
       expect(mockGbSearchSvc.recentCreate).toHaveBeenCalledWith(expect.objectContaining({
         nlpSearchQuery: 'kw',
         searchQuery: 'kw query',
-        searchCategory: SearchCategory.Courses,
+        searchCategory: [SearchCategory.Courses],
+      }))
+    })
+
+    it('creates a recent search entry with multiple selected categories', async () => {
+      component.queryControl.setValue('kw query')
+      component.selectedSearchCategory.set([SearchCategory.Courses, SearchCategory.Events])
+      await component.createRecent('kw')
+      expect(mockGbSearchSvc.recentCreate).toHaveBeenCalledWith(expect.objectContaining({
+        searchCategory: [SearchCategory.Courses, SearchCategory.Events],
       }))
     })
   })
@@ -763,7 +772,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
 
     it('joins multiple selected categories into a comma-separated category param', () => {
       component.ref = (() => 'home') as any
-      component.selectedSearchCategories.set([SearchCategory.Courses, SearchCategory.Events, SearchCategory.ExternalContents])
+      component.selectedSearchCategory.set([SearchCategory.Courses, SearchCategory.Events, SearchCategory.ExternalContents])
       component.processSearchText('testing')
       expect(mockRouter.navigate).toHaveBeenCalledWith(
         ['/app/globalsearch'],
@@ -789,23 +798,31 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
   describe('toggleSearchCategory', () => {
     it('adds a category to the selection without navigating', () => {
       const updateSpy = jest.spyOn(component, 'updateQuery')
-      component.selectedSearchCategories.set([SearchCategory.Courses])
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       component.toggleSearchCategory(SearchCategory.Events)
-      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses, SearchCategory.Events])
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Courses, SearchCategory.Events])
       expect(updateSpy).not.toHaveBeenCalled()
       expect(mockRouter.navigate).not.toHaveBeenCalled()
     })
 
     it('removes a selected category when more than one is selected', () => {
-      component.selectedSearchCategories.set([SearchCategory.Courses, SearchCategory.Events])
+      component.selectedSearchCategory.set([SearchCategory.Courses, SearchCategory.Events])
       component.toggleSearchCategory(SearchCategory.Events)
-      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Courses])
     })
 
     it('does not unselect the last remaining category', () => {
-      component.selectedSearchCategories.set([SearchCategory.Courses])
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       component.toggleSearchCategory(SearchCategory.Courses)
-      expect(component.selectedSearchCategories()).toEqual([SearchCategory.Courses])
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Courses])
+    })
+
+    it('keeps the selection in display order regardless of click order', () => {
+      component.selectedSearchCategory.set([SearchCategory.People])
+      component.toggleSearchCategory(SearchCategory.Events)
+      // Events is rendered before People in `categories`, so it must lead even though it
+      // was clicked second
+      expect(component.selectedSearchCategory()).toEqual([SearchCategory.Events, SearchCategory.People])
     })
   })
 
@@ -818,7 +835,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('uses the v5 course search for the Courses category', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       mockGbSearchSvc.searchCoursesv5.mockResolvedValue({ result: { content: [{ id: 1 }] } })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchCoursesv5).toHaveBeenCalled()
@@ -827,7 +844,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('falls back to v4 course search for a non-Courses category', async () => {
-      component.selectedSearchCategory.set(SearchCategory.All)
+      component.selectedSearchCategory.set([SearchCategory.All])
       mockGbSearchSvc.searchCoursesv4.mockResolvedValue({ result: { Event: [{ id: 2 }] } })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchCoursesv4).toHaveBeenCalled()
@@ -836,37 +853,37 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('sets empty results when the course search returns no matching keys', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       mockGbSearchSvc.searchCoursesv5.mockResolvedValue({ result: {} })
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('propagates the rejection when the course search rejects, since .catch() with no handler does not suppress it', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       mockGbSearchSvc.searchCoursesv5.mockRejectedValue(new Error('fail'))
       await expect(component.searchFromQuery('angular')).rejects.toThrow('fail')
     })
 
     it('builds Programs, CaseStudy, Events and Resources filters', async () => {
       mockGbSearchSvc.searchCoursesv4.mockResolvedValue({ result: {} })
-      component.selectedSearchCategory.set(SearchCategory.Programs)
+      component.selectedSearchCategory.set([SearchCategory.Programs])
       await component.searchFromQuery('angular')
 
-      component.selectedSearchCategory.set(SearchCategory.CaseStudy)
+      component.selectedSearchCategory.set([SearchCategory.CaseStudy])
       await component.searchFromQuery('angular')
 
-      component.selectedSearchCategory.set(SearchCategory.Events)
+      component.selectedSearchCategory.set([SearchCategory.Events])
       await component.searchFromQuery('angular')
 
-      component.selectedSearchCategory.set(SearchCategory.Resources)
+      component.selectedSearchCategory.set([SearchCategory.Resources])
       await component.searchFromQuery('angular')
 
       expect(mockGbSearchSvc.searchCoursesv4).toHaveBeenCalledTimes(4)
     })
 
     it('searches people and stores the response content', async () => {
-      component.selectedSearchCategory.set(SearchCategory.People)
+      component.selectedSearchCategory.set([SearchCategory.People])
       mockGbSearchSvc.searchConnections.mockResolvedValue({ result: { response: { content: [{ id: 3 }] } } })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchConnections).toHaveBeenCalled()
@@ -874,21 +891,21 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('clears results when the people search has no content', async () => {
-      component.selectedSearchCategory.set(SearchCategory.People)
+      component.selectedSearchCategory.set([SearchCategory.People])
       mockGbSearchSvc.searchConnections.mockResolvedValue({ result: { response: { content: [] } } })
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('clears results when the people search rejects', async () => {
-      component.selectedSearchCategory.set(SearchCategory.People)
+      component.selectedSearchCategory.set([SearchCategory.People])
       mockGbSearchSvc.searchConnections.mockRejectedValue(new Error('fail'))
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('searches communities and stores the response data', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Communities)
+      component.selectedSearchCategory.set([SearchCategory.Communities])
       mockGbSearchSvc.searchCommunity.mockResolvedValue({ result: { search_results: { data: [{ id: 4 }] } } })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchCommunity).toHaveBeenCalled()
@@ -896,21 +913,21 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('clears results when the community search has no data', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Communities)
+      component.selectedSearchCategory.set([SearchCategory.Communities])
       mockGbSearchSvc.searchCommunity.mockResolvedValue({ result: {} })
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('clears results when the community search rejects', async () => {
-      component.selectedSearchCategory.set(SearchCategory.Communities)
+      component.selectedSearchCategory.set([SearchCategory.Communities])
       mockGbSearchSvc.searchCommunity.mockRejectedValue(new Error('fail'))
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('searches external content and stores the response data', async () => {
-      component.selectedSearchCategory.set(SearchCategory.ExternalContents)
+      component.selectedSearchCategory.set([SearchCategory.ExternalContents])
       mockGbSearchSvc.searchExternalContent.mockResolvedValue({ data: [{ id: 5 }] })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchExternalContent).toHaveBeenCalled()
@@ -918,14 +935,14 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('clears results when external content search has no data', async () => {
-      component.selectedSearchCategory.set(SearchCategory.ExternalContents)
+      component.selectedSearchCategory.set([SearchCategory.ExternalContents])
       mockGbSearchSvc.searchExternalContent.mockResolvedValue({ data: [] })
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
     })
 
     it('clears results when external content search rejects', async () => {
-      component.selectedSearchCategory.set(SearchCategory.ExternalContents)
+      component.selectedSearchCategory.set([SearchCategory.ExternalContents])
       mockGbSearchSvc.searchExternalContent.mockRejectedValue(new Error('fail'))
       await component.searchFromQuery('angular')
       expect(component.allSearchResults()).toEqual([])
@@ -938,25 +955,25 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('returns the first name for a people result', () => {
-      component.selectedSearchCategory.set(SearchCategory.People)
+      component.selectedSearchCategory.set([SearchCategory.People])
       expect(component.getResultName({ personalDetails: { firstname: 'Ann' } })).toBe('Ann')
       expect(component.getResultName({ firstName: 'Bob' })).toBe('Bob')
     })
 
     it('returns the community name for a communities result', () => {
-      component.selectedSearchCategory.set(SearchCategory.Communities)
+      component.selectedSearchCategory.set([SearchCategory.Communities])
       expect(component.getResultName({ communityName: 'Devs' })).toBe('Devs')
     })
 
     it('returns the name for any other category', () => {
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       expect(component.getResultName({ name: 'Course 1' })).toBe('Course 1')
     })
   })
 
   describe('redirectToContent', () => {
     it('routes to the user profile for a people result', () => {
-      component.selectedSearchCategory.set(SearchCategory.People)
+      component.selectedSearchCategory.set([SearchCategory.People])
       const profileSpy = jest.spyOn(component, 'goToUserProfile').mockImplementation(() => { })
       component.redirectToContent({ userId: '1' })
       expect(profileSpy).toHaveBeenCalled()
@@ -964,14 +981,14 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
     })
 
     it('does nothing extra for a communities result', () => {
-      component.selectedSearchCategory.set(SearchCategory.Communities)
+      component.selectedSearchCategory.set([SearchCategory.Communities])
       const redirectSpy = jest.spyOn(component, 'getRedirectUrlData')
       component.redirectToContent({ communityName: 'Devs' })
       expect(redirectSpy).not.toHaveBeenCalled()
     })
 
     it('resolves the redirect url for any other category', () => {
-      component.selectedSearchCategory.set(SearchCategory.Courses)
+      component.selectedSearchCategory.set([SearchCategory.Courses])
       const redirectSpy = jest.spyOn(component, 'getRedirectUrlData').mockResolvedValue(undefined)
       component.redirectToContent({ identifier: '1' })
       expect(redirectSpy).toHaveBeenCalled()

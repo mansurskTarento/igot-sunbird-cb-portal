@@ -92,8 +92,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   searchQuery = signal('');
   allSearchResults = signal<any[]>([]);
   nlpSearchValue = signal<any>(null);
-  selectedSearchCategory = signal<string>(SearchCategory.Courses);
-  selectedSearchCategories = signal<string[]>([SearchCategory.Courses]);
+  selectedSearchCategory = signal<string[]>([SearchCategory.Courses]);
   openSearchTemplate = signal(false);
   loaderSearching = signal(false);
   responseNlpQuery = signal('');
@@ -263,19 +262,13 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         this.queryControl.setValue(queryParam.get('q') || '')
       }
       if (queryParam.has('category')) {
-        this.selectedSearchCategory.set(queryParam.get('category') || SearchCategory.Courses)
-      } else {
-        this.selectedSearchCategory.set(SearchCategory.Courses)
-      }
-
-      if (queryParam.has('category')) {
         const categories = (queryParam.get('category') || '')
           .split(',')
           .map((c) => c.trim())
           .filter(Boolean)
-        this.selectedSearchCategories.set(categories.length ? categories : [SearchCategory.Courses])
+        this.selectedSearchCategory.set(categories.length ? categories : [SearchCategory.Courses])
       } else {
-        this.selectedSearchCategories.set([SearchCategory.Courses])
+        this.selectedSearchCategory.set([SearchCategory.Courses])
       }
 
       const isAutoCompleteAllowed = this.activated.snapshot.data.searchPageData
@@ -317,7 +310,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       const reqBody = {
         nlpSearchQuery: query?.nlp_search_query,
         searchQuery: query?.search_query,
-        searchCategory: query?.search_category[0]
+        searchCategory: query?.search_category
       }
       await this.searchV3Service.recentCreate(reqBody).then(() => {
         this.processRecentSearchText(query)
@@ -338,7 +331,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     const reqBody = {
       nlpSearchQuery: data,
       searchQuery: this.queryControl?.value,
-      searchCategory: this.selectedSearchCategory() ? this.selectedSearchCategory() : 'all'
+      searchCategory: this.selectedSearchCategory().length ? this.selectedSearchCategory() : [SearchCategory.All]
     }
 
     await this.searchV3Service.recentCreate(
@@ -610,7 +603,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     const queryParams = {
       q: query ? query?.trim() : '',
       search: query && this.responseNlpQuery() ? this.responseNlpQuery() : null,
-      category: this.selectedSearchCategories().join(',') || null,
+      category: this.selectedSearchCategory().join(',') || null,
       p: null,
       f: null,
       tab: null,
@@ -641,15 +634,24 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   }
 
   toggleSearchCategory(category: string) {
-    const current = this.selectedSearchCategories()
+    const current = this.selectedSearchCategory()
     if (current.includes(category)) {
       // At least one category must always remain selected
       if (current.length > 1) {
-        this.selectedSearchCategories.set(current.filter((c) => c !== category))
+        this.selectedSearchCategory.set(current.filter((c) => c !== category))
       }
       return
     }
-    this.selectedSearchCategories.set([...current, category])
+    // Keep the selection in display order (as the pills are rendered), not insertion order
+    const updated = new Set([...current, category])
+    this.selectedSearchCategory.set(
+      this.categories.map((c) => c.value).filter((value) => updated.has(value))
+    )
+  }
+
+  private primarySearchCategory(): string {
+    const current = this.selectedSearchCategory()
+    return current.length ? current[0] : SearchCategory.Courses
   }
 
   async searchFromQuery(query: string) {
@@ -663,7 +665,9 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     const searchRequest = new SearchV4Request([])
     searchRequest.request.query = query
 
-    switch (this.selectedSearchCategory()) {
+    const primaryCategory = this.primarySearchCategory()
+
+    switch (primaryCategory) {
       case SearchCategory.Courses:
         searchRequest.request.filters.courseCategory = 'course'
         break
@@ -695,11 +699,11 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         break
     }
 
-    courseSearchResult = this.selectedSearchCategory() === SearchCategory.Courses
+    courseSearchResult = primaryCategory === SearchCategory.Courses
       ? await this.searchV3Service.searchCoursesv5(searchRequest).catch()
       : await this.searchV3Service.searchCoursesv4(searchRequest).catch()
 
-    if (this.selectedSearchCategory() === SearchCategory.People) {
+    if (primaryCategory === SearchCategory.People) {
       const searchRequest = new SearchPeoplesRequest()
       searchRequest.query = query
       const result = await this.searchV3Service.searchConnections(searchRequest)
@@ -713,7 +717,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         this.allSearchResults.set([])
       }
       return
-    } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
+    } else if (primaryCategory === SearchCategory.Communities) {
       const searchRequestCommunities = new SearchCommunitiesRequest([])
       searchRequestCommunities.searchString = query
       const result = await this.searchV3Service
@@ -729,7 +733,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         this.allSearchResults.set([])
       }
       return
-    } else if (this.selectedSearchCategory() === SearchCategory.ExternalContents) {
+    } else if (primaryCategory === SearchCategory.ExternalContents) {
       const searchRequestExternal = new SearchExternalRequest([])
       searchRequestExternal.searchString = query || ''
       const result = await this.searchV3Service
@@ -763,9 +767,9 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       return ''
     }
 
-    if (this.selectedSearchCategory() === SearchCategory.People) {
+    if (this.primarySearchCategory() === SearchCategory.People) {
       return result.personalDetails?.firstname ?? result.firstName ?? ''
-    } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
+    } else if (this.primarySearchCategory() === SearchCategory.Communities) {
       return result.communityName ?? ''
     } else {
       return result.name ?? ''
@@ -775,9 +779,9 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   redirectToContent(result: any) {
     this.openSearchTemplate.set(false)
 
-    if (this.selectedSearchCategory() === SearchCategory.People) {
+    if (this.primarySearchCategory() === SearchCategory.People) {
       this.goToUserProfile(result)
-    } else if (this.selectedSearchCategory() === SearchCategory.Communities) {
+    } else if (this.primarySearchCategory() === SearchCategory.Communities) {
       // TODO: Route community
     } else {
       this.getRedirectUrlData(result)
