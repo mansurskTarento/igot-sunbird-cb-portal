@@ -2,6 +2,7 @@
     <mat-sidenav-container autosize class="container-balanced search-nav-container" [hasBackdrop]="screenSizeIsLtMedium"
         (backdropClick)="sideNavBarOpened = false">
         <mat-sidenav [mode]="screenSizeIsLtMedium ? 'over' : 'side'" [(opened)]="sideNavBarOpened" position="start"
+            autoFocus="dialog"
             class="custom-sidenav filter-container-search"
             *ngIf="((combinedFacets.length > 0 ||
         ((courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0) && !searchContentLoader && !searchPeopleLoader) || filtersPanel === 'show')">

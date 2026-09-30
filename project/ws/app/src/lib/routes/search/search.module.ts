@@ -57,6 +57,7 @@ import { MatToolbarModule } from '@angular/material/toolbar'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { TranslateModule } from '@ngx-translate/core'
 import { SearchV3Module } from '../search-v3/search-v3.module'
+import { SearchInputHomeV4Component } from '../search-v3/components/search-input-home-v4/search-input-home-v4.component'
 
 @NgModule({
   declarations: [
@@ -120,6 +121,7 @@ import { SearchV3Module } from '../search-v3/search-v3.module'
     UserAutocompleteModule,
     TranslateModule,
     SearchV3Module,
+    SearchInputHomeV4Component,
   ],
   exports: [ItemTileComponent, SearchInputComponent, SearchInputHomeComponent],
   providers: [],
