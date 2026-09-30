@@ -12,7 +12,6 @@ import { LoginGuard } from './guards/login.guard'
 import { RedirectGuard } from './guards/redirect.guard'
 import { TncAppResolverService } from './services/tnc-app-resolver.service'
 import { TncPublicResolverService } from './services/tnc-public-resolver.service'
-import { environment } from 'src/environments/environment'
 import { AppHierarchyResolverService } from './services/app-hierarchy-resolver.service'
 import { AppEnrollmentResolverService } from './services/app-enrollment-resolver.service'
 import { AppContentResolverService } from './services/app-content-read-resolver.service'
@@ -53,7 +52,9 @@ const routes: Routes = [
     canActivate: [RedirectGuard],
     component: RedirectGuard,
     data: {
-      externalUrl: environment.staticHomePageUrl,
+      // resolved in RedirectGuard at activation: environment.staticHomePageUrl is
+      // filled in by the env form read during startup, after this file is evaluated
+      externalUrlEnvKey: 'staticHomePageUrl',
     },
   },
   {

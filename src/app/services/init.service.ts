@@ -228,10 +228,14 @@ export class InitService {
         await this.fetchStartUpDetails()
       } else if (window.location.href.includes('editMode=true') && window.location.href.includes('_rc')) {
         await this.fetchStartUpDetails()
+      } else {
+        // public routes have no session: the protected env read would 419
+        await this.formConfigService.loadPublicEnvironmentConfig()
       }
 
       // detail: depends only on userID
     } catch (e) {
+      await this.formConfigService.loadPublicEnvironmentConfig()
       this.settingsSvc.initializePrefChanges(environment.production)
       this.updateNavConfig()
       this.isAnonymousTelemetry = true

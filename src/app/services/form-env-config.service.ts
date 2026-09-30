@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
-import { catchError, map, Observable, of, tap } from 'rxjs'
+import { catchError, firstValueFrom, map, Observable, of, tap } from 'rxjs'
 
 import { environment } from '../../../src/environments/environment'
 import { ConfigurationsService } from '@sunbird-cb/utils-v2'
 const API_END_POINTS = {
   FORM_READ: '/apis/proxies/v8/formsConfig/v1/read',
+  PUBLIC_FORM_READ: '/apis/v1/form/read',
 }
 @Injectable({
   providedIn: 'root',
@@ -60,6 +61,36 @@ export class FormEnvConfigService {
   }
 
 
+
+  /**
+   * Loads environment values for a user without a session. The protected
+   * formsConfig read returns 419 for them, so this uses the public form read.
+   * Falls back to the static global.env.json, and keeps env.json values if both fail.
+   */
+  async loadPublicEnvironmentConfig(): Promise<void> {
+    const payload = {
+      request: {
+        type: 'page',
+        subType: 'globalenv',
+        action: 'portal_global_env_config',
+        component: 'portal',
+        rootOrgId: '*',
+      },
+    }
+    try {
+      const formConfig = await firstValueFrom(
+        this.http.post<any>(API_END_POINTS.PUBLIC_FORM_READ, payload).pipe(
+          map((rData: any) => rData?.result?.form?.data),
+          catchError(() => this.http.get<any>(`/assets/configurations/global.env.json`)),
+        ),
+      )
+      if (formConfig) {
+        this.setApiEnvironmentValues(formConfig)
+      }
+    } catch (error) {
+      console.error('Error while loading public environment configuration', error)
+    }
+  }
 
   private setApiEnvironmentValues(formConfig: any): void {
 
