@@ -21,7 +21,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 import { MatChipsModule } from '@angular/material/chips'
-import { MatCheckboxModule } from '@angular/material/checkbox'
+import { MatCheckboxChange, MatCheckboxModule } from '@angular/material/checkbox'
 import { MatDividerModule } from '@angular/material/divider'
 import { TranslateModule } from '@ngx-translate/core'
 
@@ -647,6 +647,15 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.selectedSearchCategory.set(
       this.categories.map((c) => c.value).filter((value) => updated.has(value))
     )
+  }
+
+  onCategoryCheckboxChange(event: MatCheckboxChange, category: string) {
+    const current = this.selectedSearchCategory()
+    if (current.includes(category) && current.length === 1) {
+      event.source.checked = true
+      return
+    }
+    this.toggleSearchCategory(category)
   }
 
   private primarySearchCategory(): string {
