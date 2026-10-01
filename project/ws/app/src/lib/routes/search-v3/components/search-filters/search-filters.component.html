@@ -876,7 +876,7 @@
         <div class="selected-search-categories">
             <p class="selected-category-item cursor-pointer" *ngFor="let category of categoryType"
                 (click)="categorySelected.emit(category?.name)">
-                {{ category?.displayName }}
+                {{ category?.displayName }}<ng-container *ngIf="category?.name && categoryCounts?.[category.name] !== undefined"> ({{ categoryCounts[category.name] }})</ng-container>
             </p>
         </div>
     </ng-template>

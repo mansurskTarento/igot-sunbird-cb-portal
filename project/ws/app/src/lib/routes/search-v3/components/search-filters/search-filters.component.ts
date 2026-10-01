@@ -46,6 +46,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   @Input() karmayogiBadge: any
   competencyFactet: any
   @Input() typesOfEvents: any
+  @Input() categoryCounts: { [key: string]: number } = {}
 
   private subscription: Subscription = new Subscription();
   queryParams: any

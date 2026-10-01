@@ -231,7 +231,7 @@
 
   .mat-mdc-chip .mdc-evolution-chip__action {
     border: none !important;
-    background-color: #EEF1F6 !important;
+    background-color: var(--surface-secondary) !important;
   }
 
   .mat-mdc-checkbox .mat-internal-form-field {

@@ -92,6 +92,20 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   resourcesSearchTotalCount = 0;
   externalSearchTotalCount = 0;
 
+  get categoryCounts(): { [key: string]: number } {
+    if (this.searchContentLoader || this.searchPeopleLoader) {
+      return {}
+    }
+    return {
+      courses: this.courseSearchTotalCount,
+      events: this.eventSearchTotalCount,
+      peoples: this.peopleSearchTotalCount,
+      communities: this.communitiesSearchTotalCount,
+      resources: this.resourcesSearchTotalCount,
+      'external-contents': this.externalSearchTotalCount,
+    }
+  }
+
   courseSearchResults: any[] = [];
   eventsSearchResults: any[] = [];
   peoplesSearchResults: any[] = [];
