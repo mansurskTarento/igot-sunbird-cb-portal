@@ -13,10 +13,27 @@
   font-weight: bold !important;
 }
 
+.result-meta {
+  height: 49px
+}
+
+.uniform-heading {
+  /* stylelint-disable */
+  font: 600 20px Montserrat;
+  /* stylelint-enable */
+  margin-top: 0;
+}
+
 // Phase 2 left-filter-click-to-scroll (scrollToCategory): keeps the scrolled-to section's
 // heading clear of the sticky top header instead of landing flush with the viewport top.
 .scroll-section {
-  scroll-margin-top: 78px;
+  scroll-margin-top: 100px;
+}
+
+// Uniform gap between sections. "courses" is excluded because its heading only shows
+// conditionally and its real header lives above in the separate .contents-title-top block.
+.scroll-section {
+  margin-top: 70px;
 }
 
 .filternames {
@@ -211,6 +228,7 @@
   /* stylelint-enable */
   font-weight: 400;
   line-height: 16.8px;
+  margin-bottom: 0px !important;
 }
 
 .mt-4 {

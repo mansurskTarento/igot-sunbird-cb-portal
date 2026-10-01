@@ -868,15 +868,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           this.searchRequestExternal.filterCriteriaMap[this.competencySubThemeKey] = selectedFilters[key]
           this.compentencyKeyExist = true
         } else if (key === SearchCategory.Events) {
-          this.constructQueryParam('events', true)
+          this.constructQueryParam('events')
           this.seeAllResult = SearchCategory.Events
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Courses) {
-          this.constructQueryParam('courses', true)
+          this.constructQueryParam('courses')
           this.seeAllResult = SearchCategory.Courses
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Resources) {
-          this.constructQueryParam('resources', true)
+          this.constructQueryParam('resources')
           this.seeAllResult = SearchCategory.Resources
           this.applyFilterToCaategoryType()
         }
@@ -885,11 +885,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             ...selectedFilters[key],
           ]
         } else if (key === SearchCategory.People) {
-          this.constructQueryParam('peoples', true)
+          this.constructQueryParam('peoples')
           this.seeAllResult = SearchCategory.People
           this.applyFilterToCaategoryType()
         } else if (key === SearchCategory.Communities) {
-          this.constructQueryParam('communities', true)
+          this.constructQueryParam('communities')
           this.seeAllResult = SearchCategory.Communities
           this.applyFilterToCaategoryType()
         } else if (key === 'typeOfEvents') {
@@ -984,7 +984,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           ]
         }
         else if (key === SearchCategory.ExternalContents) {
-          this.constructQueryParam(SearchCategory.ExternalContents, true)
+          this.constructQueryParam(SearchCategory.ExternalContents)
           this.seeAllResult = SearchCategory.ExternalContents
           this.applyFilterToCaategoryType()
         }
@@ -1573,21 +1573,21 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
-  private readonly headerClearance = 160
+  // One shared, manually computed offset for every category so they all land at the exact
+  // same distance from the header, rather than depending on scrollIntoView/scroll-margin-top,
+  // which can differ slightly between sections depending on each one's own box model.
+  private readonly categoryScrollClearance = 123
+
   scrollToCategory(category: string): void {
     const element = document.getElementById(category)
     if (!element) {
       return
     }
-    if (category === 'courses') {
-      const targetTop = window.pageYOffset + element.getBoundingClientRect().top - this.headerClearance
-      window.scrollTo({ top: Math.max(targetTop, 0), behavior: 'smooth' })
-      return
-    }
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const targetTop = window.pageYOffset + element.getBoundingClientRect().top - this.categoryScrollClearance
+    window.scrollTo({ top: Math.max(targetTop, 0), behavior: 'smooth' })
   }
 
-  constructQueryParam(category: any, fromFilters = false) {
+  constructQueryParam(category: any) {
     const params = this.activated.snapshot.queryParams
 
     this.queryParams = {
@@ -1595,9 +1595,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       search: params['search'] || null,
       category: category || null,
       tab: null
-    }
-    if (!fromFilters) {
-      this.queryParams['selectedCategories'] = params['category'] || null
     }
     this.queryParamChange.emit(this.queryParams)
   }

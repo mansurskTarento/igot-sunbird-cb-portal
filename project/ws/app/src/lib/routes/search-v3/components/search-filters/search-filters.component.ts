@@ -28,7 +28,7 @@ import {
 import { MatCheckboxChange } from '@angular/material/checkbox'
 import { NsContent } from '@sunbird-cb/collection'
 import { environment } from '../../../../../../../../../src/environments/environment'
-import { ActivatedRoute, Router } from '@angular/router'
+import { ActivatedRoute } from '@angular/router'
 import { MatRadioChange } from '@angular/material/radio'
 @Component({
   selector: 'ws-app-search-filters',
@@ -93,14 +93,12 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   // Phase 1's serialization in search-input-home-v4.component.ts. Length > 1 means multiple
   // pills were selected in Search V4, which switches this panel into a read-only category list.
   searchCategories: string[] = [];
-  showCategoryFilter = false;
   searchQuery = '';
   isExploreContentTab = false
   isAllContentSelected = true
   constructor(
     // private searchSrvc: GbSearchService,
     private activated: ActivatedRoute,
-    private router: Router,
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService,
@@ -199,12 +197,6 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     this.isExploreContentTab = !!params['tab']
 
     this.searchCategory = params['category']
-    const selectedCategories = (params['selectedCategories'] || '').trim()
-    if (selectedCategories) {
-      this.showCategoryFilter = true
-    } else {
-      this.showCategoryFilter = false
-    }
     this.searchCategories = (params['category'] || '')
       .split(',')
       .map((c: string) => c.trim())
@@ -503,14 +495,11 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   get showClearAllControls(): boolean {
-    return this.showCategoryFilter ? this.filtersAppliedCount > 0 : this.filtersAppliedCount > 1
+    return this.filtersAppliedCount > 1
   }
 
   get visibleFilterChips() {
-    if (this.showCategoryFilter || !this.selectedFilterChips) {
-      return this.selectedFilterChips
-    }
-    return this.selectedFilterChips.slice(1)
+    return this.selectedFilterChips?.slice(1) ?? []
   }
 
   refactorFilterData(
@@ -680,7 +669,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   clearAllFilters() {
-    const keepChip = !this.showCategoryFilter ? this.selectedFilterChips?.[0] : null
+    const keepChip = this.selectedFilterChips?.[0]
 
     Object.keys(this.selectedFilters).forEach((key) => {
       if (keepChip && key === keepChip.type) {
@@ -710,26 +699,10 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     })
 
     this.selectedFilterChips = keepChip ? [keepChip] : []
-
-    const isNavigatingToRestoreCategory = !this.isExploreContentTab && this.showCategoryFilter
-    if (!isNavigatingToRestoreCategory) {
-      this.appliedFilter.emit(this.selectedFilters)
-    }
+    this.appliedFilter.emit(this.selectedFilters)
 
     if (!this.isExploreContentTab) {
-      if (this.showCategoryFilter) {
-        const restoredCategory = this.activated.snapshot.queryParams['selectedCategories'] || null
-        this.router.navigate([], {
-          relativeTo: this.activated,
-          queryParams: {
-            category: restoredCategory,
-            selectedCategories: null,
-          },
-          queryParamsHandling: 'merge',
-        })
-      } else {
-        this.constructQueryParam.emit(this.activated.snapshot.queryParams['category'] || '')
-      }
+      this.constructQueryParam.emit(this.activated.snapshot.queryParams['category'] || '')
     }
   }
 
