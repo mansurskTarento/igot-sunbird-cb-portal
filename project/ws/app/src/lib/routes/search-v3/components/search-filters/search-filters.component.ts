@@ -15,6 +15,7 @@ import { TranslateService } from '@ngx-translate/core'
 import {
   ConfigurationsService,
   MultilingualTranslationsService,
+  TelemetryService,
 } from '@sunbird-cb/utils-v2'
 import {
   CATEGORY_TYPE,
@@ -103,6 +104,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService,
+    private telemetrySvc: TelemetryService,
 
   ) {
     if (localStorage.getItem('websiteLanguage')) {
@@ -440,6 +442,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       if (!this.selectedFilters[categoryType].includes(type)) {
         this.selectedFilters[categoryType].push(type)
       }
+      this.raiseFilterInteractTelemetry(categoryType, type)
     } else {
       this.selectedFilters[categoryType] = this.selectedFilters[
         categoryType
@@ -478,7 +481,76 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     this.appliedFilter.emit(this.selectedFilters)
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters)
+    this.raiseFilterInteractTelemetry(radioType, type)
+  }
 
+  private resolveFilterSubtype(categoryType: string): string {
+    const topLevelCategoryNames = this.categoryTypeDup
+      .map((category: any) => category.name)
+      .filter((name: string) => name)
+    if (topLevelCategoryNames.includes(categoryType)) {
+      return 'content-type'
+    }
+    switch (categoryType) {
+      case 'contentType':
+        return 'content-type'
+      case 'avgRating':
+        return 'ratings'
+      case 'language':
+        return 'languages'
+      case 'organisation':
+        return 'organisation'
+      case this.competencyAreaNameKey:
+        return 'competency-area'
+      case this.competencyThemeKey:
+        return 'competency-theme'
+      case this.competencySubThemeKey:
+        return 'competency-sub-theme'
+      case 'typeOfEvents':
+        return 'type-of-events'
+      case 'profileDetails.professionalDetails.designation':
+        return 'designation'
+      default:
+        return this.toHyphenCase(categoryType)
+    }
+  }
+
+  private toHyphenCase(value: string): string {
+    return String(value)
+      .replace(/\./g, '-')
+      .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+      .toLowerCase()
+  }
+
+  private normalizeFilterId(value: string): string {
+    return String(value || '').trim().toLowerCase().replace(/[\s_]+/g, '-')
+  }
+
+  private raiseFilterInteractTelemetry(categoryType: string, value: string) {
+    const queryParams = this.activated.snapshot.queryParams
+    const actualQuery = queryParams['q'] || ''
+    const correctedQuery = queryParams['search'] || ''
+    const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
+    const subType = this.resolveFilterSubtype(categoryType)
+    const id = subType === 'ratings'
+      ? `rating-${this.normalizeFilterId(value)}`
+      : this.normalizeFilterId(value)
+
+    this.telemetrySvc.raiseInteractWithEnv(
+      {
+        type: 'click',
+        subType,
+        id,
+        pageid: '/app/globalsearch',
+      },
+      {
+        id: correctedQuery || actualQuery,
+        type: isCorrected ? 'search-query-corrected' : 'search-query-not-corrected',
+        rollup: { l1: actualQuery },
+      },
+      'Search',
+      [],
+    )
   }
 
   togoleThemes(competency: any) {
@@ -905,6 +977,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
     this.appliedFilter.emit(this.selectedFilters)
     this.selectedFilterChips = this.refactorFilterData(this.selectedFilters)
+    this.raiseFilterInteractTelemetry('contentType', 'all-content')
   }
 
   getSelectedFilter(item: any) {

@@ -591,8 +591,25 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         // console.log('Final currentDataRoute', this.currentRouteData)
         this.utilitySvc.setRouteData(this.currentRouteData)
         const pageContext = this.utilitySvc.routeData
-        const data = {
+        const queryParams = this.route.snapshot.queryParams
+        const isGlobalSearch = this.currentRouteData.some((rd: any) => rd && rd.pageKey === 'globalsearch')
+        let data: any = {
           pageContext,
+        }
+        if (isGlobalSearch && queryParams.q) {
+          const actualQuery = queryParams.q
+          const correctedQuery = queryParams.search
+          const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
+          data = {
+            pageContext: { ...pageContext, module: 'Search' },
+            object: {
+              id: correctedQuery || actualQuery,
+              type: isCorrected ? 'search-query-corrected' : 'search-query-not-corrected',
+              rollup: { l1: actualQuery },
+            },
+            tags: queryParams.category ? queryParams.category.split(',') : [],
+            edata: { type: 'page' },
+          }
         }
         const objectType = this.route.snapshot.queryParams.primaryCategory || ''
         this.raiseAppStartTelemetry()

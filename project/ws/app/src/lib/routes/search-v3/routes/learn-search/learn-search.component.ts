@@ -1086,6 +1086,23 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     return searchConfig[key] !== false
   }
 
+  isCategoryActive(categoryValue: string): boolean {
+    if (!this.isCategoryEnabled(categoryValue)) {
+      return false
+    }
+    if (this.searchCategories.length > 1) {
+      return this.searchCategories.includes(categoryValue)
+    }
+    return true
+  }
+
+  // Drives the result-meta header's visibility: once loading settles, show it as long as
+  // some category was actually part of the search, regardless of whether it found anything.
+  get hasActiveSearchCategory(): boolean {
+    return ['courses', 'events', 'peoples', 'communities', 'resources', 'external-contents']
+      .some(category => this.isCategoryActive(category))
+  }
+
   get isMultiCategorySearch(): boolean {
     return this.searchCategories.length > 1
   }

@@ -19,7 +19,7 @@
             <div #contentWrapper class="ml-2 md:ml-4 md:mr-0 mr-2 content-wrapper">
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     [ngClass]="{'my-3': screenSizeIsLtMedium, 'mb-4': !isExploreContentTab}"
-                    *ngIf="(courseSearchTotalCount + eventSearchTotalCount + peopleSearchTotalCount + communitiesSearchTotalCount + resourcesSearchTotalCount + externalSearchTotalCount) > 0">
+                    *ngIf="!searchContentLoader && !searchPeopleLoader && hasActiveSearchCategory">
                     <!-- <ng-container *ngIf="!isExploreContentTab">
                         <div class="">
                             <span class="brand-color">“{{(courseSearchTotalCount + eventSearchTotalCount +
@@ -33,7 +33,7 @@
                             <p class="contents-title-top text-dark mb-0" id="courses">
                                 <span *ngIf="courseSearchTotalCount === 1">{{ 'learnsearch.content' | translate:{ count:
                                     courseSearchTotalCount } }}</span>
-                                <span *ngIf="courseSearchTotalCount > 1">{{ 'learnsearch.contents' | translate:{ count:
+                                <span *ngIf="courseSearchTotalCount !== 1">{{ 'learnsearch.contents' | translate:{ count:
                                     courseSearchTotalCount } }}</span>
                             </p>
                         </ng-container>
@@ -53,14 +53,13 @@
                             <p class="contents-title-top text-dark mb-0">
                                 <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.resource' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
-                                <span *ngIf="resourcesSearchTotalCount > 1">{{ 'searchfilters.agk' | translate:{
+                                <span *ngIf="resourcesSearchTotalCount !== 1">{{ 'searchfilters.agk' | translate:{
                                     count: resourcesSearchTotalCount } }}</span>
                             </p>
                         </ng-container>
                         <ng-container *ngIf="seeAllResult === 'external-contents'">
                             <p class="contents-title-top text-dark mb-0">
-                                <span *ngIf="externalSearchTotalCount > 0">{{ 'searchfilters.marketPlace' |
-                                    translate:{ count: externalSearchTotalCount } }}</span>
+                                {{ 'searchfilters.marketPlace' | translate:{ count: externalSearchTotalCount } }}
                             </p>
                         </ng-container>
                     </div>
@@ -111,7 +110,7 @@
                 <ng-container>
                     <!-- Content Card -->
                     <ng-container
-                        *ngIf="!searchContentLoader && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
+                        *ngIf="!searchContentLoader && isCategoryActive('courses') && (seeAllResult === '' || seeAllResult === 'courses' || seeAllResult === 'case-study')">
                         <div class="search-content-card">
                             <p class="uniform-heading text-dark"
                                 *ngIf="(seeAllResult === '' || seeAllResult === 'courses') && isExploreContentTab">
@@ -152,7 +151,7 @@
                     </ng-container>
 
                     <!-- event Card -->
-                    <ng-container *ngIf="!searchContentLoader && (seeAllResult === '' || seeAllResult === 'events')">
+                    <ng-container *ngIf="!searchContentLoader && isCategoryActive('events') && (seeAllResult === '' || seeAllResult === 'events')">
                         <div class="search-event-card scroll-section" id="events">
                             <p *ngIf="seeAllResult === ''" class="uniform-heading text-dark">{{
                                 'learnsearch.event' | translate:{ count: eventSearchTotalCount } }}</p>
@@ -190,7 +189,7 @@
                             </div>
                         </div>
                     </ng-container>
-                    <ng-container *ngIf="!searchPeopleLoader && (seeAllResult === '' || seeAllResult === 'peoples')">
+                    <ng-container *ngIf="!searchPeopleLoader && isCategoryActive('peoples') && (seeAllResult === '' || seeAllResult === 'peoples')">
                         <div class="search-people-card overflow-x-hidden scroll-section" id="peoples">
                             <p *ngIf="seeAllResult === ''" class="uniform-heading text-dark">
                                 {{ 'learnsearch.peoples' | translate:{ count: peopleSearchTotalCount } }}
@@ -239,7 +238,7 @@
 
                     <!-- Communities  -->
                     <ng-container
-                        *ngIf="!searchContentLoader && (seeAllResult === '' || seeAllResult === 'communities')">
+                        *ngIf="!searchContentLoader && isCategoryActive('communities') && (seeAllResult === '' || seeAllResult === 'communities')">
                         <div class="communities-people-card overflow-x-hidden mb-3 scroll-section" id="communities">
                             <p *ngIf="seeAllResult === ''" class="uniform-heading text-dark">
                                 {{ 'learnsearch.communities' | translate:{ count: communitiesSearchTotalCount } }}
@@ -287,7 +286,7 @@
                     </ng-container>
 
                     <!-- Resource  -->
-                    <ng-container *ngIf="!searchContentLoader && (seeAllResult === '' || seeAllResult === 'resources')">
+                    <ng-container *ngIf="!searchContentLoader && isCategoryActive('resources') && (seeAllResult === '' || seeAllResult === 'resources')">
                         <div class="search-content-card scroll-section" id="resources">
                             <p *ngIf="seeAllResult === ''" class="uniform-heading text-dark">
                                 <span *ngIf="resourcesSearchTotalCount === 1">{{ 'searchfilters.agk' | translate:{
@@ -327,7 +326,7 @@
 
                     <!-- External Card -->
                     <ng-container
-                        *ngIf="!searchContentLoader && (seeAllResult === '' || seeAllResult === 'external-contents')">
+                        *ngIf="!searchContentLoader && isCategoryActive('external-contents') && (seeAllResult === '' || seeAllResult === 'external-contents')">
                         <div class="search-content-card scroll-section" id="external-contents">
                             <p *ngIf="seeAllResult === ''" class="uniform-heading text-dark">
                                 {{ 'searchfilters.marketPlace' | translate:{ count: externalSearchTotalCount } }}
