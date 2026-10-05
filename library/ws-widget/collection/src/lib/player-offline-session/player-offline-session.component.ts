@@ -27,7 +27,7 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   enableTelemetry = false
   tocConfig = null
   tocConfigSubscription: Subscription | null = null
-  widgetSessionContentSubscription: Subscription | null = null
+  widgetSessionContentSubscription: Subscription | any = null
   sessionContentData: any = null
   constructor(
     private widgetContentSvc: WidgetContentService,
@@ -40,35 +40,28 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   ngOnInit() {
     this.tocConfigSubscription = this.widgetContentSvc.tocConfigData.subscribe((data: any) => {
       this.tocConfig = data
-      console.log('this.content================>', this.tocConfig)
     })
-    this.widgetSessionContentSubscription =
-      this.widgetContentSvc.sessionContentData.subscribe((data: any) => {
+    this.widgetSessionContentSubscription = this.widgetContentSvc.sessionContentData.subscribe((data: any) => {
 
-        console.log('widget content session data---', data)
+      if (data && Object.prototype.hasOwnProperty.call(data, 'sessionContentDetail')) {
+        // key exists
 
-        if (data && Object.prototype.hasOwnProperty.call(data, 'sessionContentDetail')) {
-          // key exists
-
-          this.sessionContentData =
-            this.sanitizer.bypassSecurityTrustResourceUrl(data?.sessionContentDetail)
-        } else {
-          this.sessionContentData = null
-        }
-      })
+        this.sessionContentData =
+          this.sanitizer.bypassSecurityTrustResourceUrl(data?.sessionContentDetail)
+      } else {
+        this.sessionContentData = null
+      }
+    })
     // TODO:When player is fully implemented put initial functions here
   }
 
   ngOnChanges() {
-    console.log('this.widgetData================>', this.widgetData)
     if (this.widgetData && this.widgetData.content) {
       this.content = this.widgetData.content
-      console.log('this.content================>', this.content)
     }
   }
 
   ngAfterViewInit() {
-    console.log('this.widgetData================>', this.widgetData)
     if (this.widgetData.content) {
       this.content = this.widgetData.content
     }

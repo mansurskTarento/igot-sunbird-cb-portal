@@ -25,7 +25,6 @@ export class AttendanceCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log('this.session', this.session)
     // this.route.data.subscribe(data => {
     //   this.pageConfig = data.pageData.data
     //   console.log(this.pageConfig)
