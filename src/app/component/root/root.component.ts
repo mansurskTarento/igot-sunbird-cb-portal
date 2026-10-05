@@ -115,7 +115,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   // Add more prefixes here when another route needs the same treatment.
   fullWidthMobileRoutes = ['/app/learn/bharat-kalp']
   isFullWidthMobileRoute = signal(false)
-  surfaceBackgroundRoutes = ['/app/person-profile/karma-wallet','/app/plans']
+  surfaceBackgroundRoutes = ['/app/person-profile/karma-wallet', '/app/plans']
   usesSurfaceBackground = signal(false)
   navBarOpenStatusBasedOnNav = signal(true)
   openStatusUserSelection = signal(true)
@@ -1110,8 +1110,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     if (subType) {
       const telemetrySubTypeKey = subType as keyof typeof WsEvents.EnumTelemetrySubType
-      if (WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]) {
-        eData.subType = WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]
+      const hasTelemetrySubTypeKey = Object.prototype.hasOwnProperty.call(
+        WsEvents.EnumTelemetrySubType,
+        telemetrySubTypeKey
+      )
+      const telemetrySubType = hasTelemetrySubTypeKey
+        ? WsEvents.EnumTelemetrySubType[telemetrySubTypeKey]
+        : Object.values(WsEvents.EnumTelemetrySubType).find(value => value === subType)
+      if (telemetrySubType) {
+        eData.subType = telemetrySubType
       }
     }
     this.eventSvc.raiseInteractTelemetry(
