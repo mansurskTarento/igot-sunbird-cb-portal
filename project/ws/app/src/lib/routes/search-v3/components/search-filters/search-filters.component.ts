@@ -393,15 +393,21 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
 
         formattedFacets[key] = formattedRatings
       } else {
-        formattedFacets[key] = Object.entries(values).map(([name, count]) => ({
-          name,
-          count,
-          isChecked: false,
-        }))
+        formattedFacets[key] = Object.entries(values)
+          .filter(([name]) => key !== FacetType.courseCategory || !this.isHiddenCourseCategory(name))
+          .map(([name, count]) => ({
+            name,
+            count,
+            isChecked: false,
+          }))
       }
     })
 
     return formattedFacets
+  }
+
+  isHiddenCourseCategory(name: string): boolean {
+    return (name || '').trim().toLowerCase() === 'comprehensive assessment'
   }
 
   capitalizeFirstLetter(str: string): string {
