@@ -89,7 +89,8 @@
   } @else if (cards().length) {
   <div class="plans-grid" [class.plans-grid--list]="isLtMedium()">
     @for (card of cards(); track card.identifier) {
-    <sb-uic-card-plan-v2 [plan]="card" [layout]="isLtMedium() ? 'landscape' : 'portrait'"></sb-uic-card-plan-v2>
+    <sb-uic-card-plan-v2 [plan]="card" [layout]="isLtMedium() ? 'landscape' : 'portrait'"
+      [config]="planCardConfig()"></sb-uic-card-plan-v2>
     }
   </div>
 

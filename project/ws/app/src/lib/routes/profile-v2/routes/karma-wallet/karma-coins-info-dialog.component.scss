@@ -145,6 +145,53 @@ $kci-font: 'Noto Sans', sans-serif;
   color: var(--environment-icon-overall-secondary-bandw);
 }
 
+// Marketplace confirmation has its own Figma layout. Keeping every override under
+// .kci-confirm prevents the explainer dialog above from changing with it.
+.kci-confirm {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 48px 23px;
+  overflow-y: auto;
+  background: #ffffff;
+  text-align: center;
+}
+
+.kci-confirm__close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+}
+
+.kci-confirm .kci__close-icon {
+  color: #1d1d1d;
+}
+
+.kci-confirm__image {
+  display: block;
+  width: 221px;
+  height: auto;
+  max-width: 100%;
+}
+
+.kci .kci-confirm__title {
+  margin: 24px 0 18px;
+  color: #0f1f4b;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 28px;
+}
+
+.kci .kci-confirm__text {
+  max-width: 480px;
+  margin: 0;
+  color: #424242;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 19px;
+}
+
 // ── Worked example ──────────────────────────────────────
 .kci-work {
   padding: 16px;
@@ -287,8 +334,22 @@ $kci-font: 'Noto Sans', sans-serif;
   }
 }
 
+.kci .kci-confirm__cta {
+  margin-top: 26px;
+  padding-right: 20px;
+  padding-left: 20px;
+  border-radius: 4px;
+  background: var(--color-primary-500);
+  color: #ffffff;
+
+  &:hover {
+    background: var(--color-primary-600);
+  }
+}
+
 // ── Responsive ──────────────────────────────────────────
 @media screen and (max-width: 599px) {
+
   .kci__header,
   .kci__body {
     padding-left: 16px;
@@ -297,6 +358,11 @@ $kci-font: 'Noto Sans', sans-serif;
 
   .kci__pair {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .kci-confirm {
+    padding-right: 16px;
+    padding-left: 16px;
   }
 
 }

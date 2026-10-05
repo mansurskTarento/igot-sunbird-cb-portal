@@ -5,15 +5,20 @@ import { BehaviorSubject, Subject, of } from 'rxjs'
 
 // The real library bundles pull @project-sunbird/telemetry-sdk, which jest cannot resolve
 // under jsdom. Factory mocks keep them from ever being executed.
-jest.mock('@sunbird-cb/utils-v2', () => ({ ValueService: class { } }), { virtual: true })
+jest.mock('@sunbird-cb/utils-v2', () => ({
+  ValueService: class { },
+  EventService: class { },
+  WsEvents: { EnumInteractTypes: { CLICK: 'click' }, EnumTelemetrymodules: { LEARN: 'learn' } },
+}), { virtual: true })
 jest.mock('@sunbird-cb/consumption', () => ({
+  ContentApiService: class { },
   CardType: { CourseCard: 'courseCard', PlanCard: 'planCard' },
   CardTransformerService: class { },
   UserCbpPlansService: class { },
 }), { virtual: true })
 
-import { ValueService } from '@sunbird-cb/utils-v2'
-import { CardTransformerService, UserCbpPlansService } from '@sunbird-cb/consumption'
+import { EventService, ValueService } from '@sunbird-cb/utils-v2'
+import { CardTransformerService, ContentApiService, UserCbpPlansService } from '@sunbird-cb/consumption'
 import { PlansService } from '../services/plans.service'
 import { PlansShowAllComponent } from './plans-show-all.component'
 
@@ -62,7 +67,12 @@ describe('PlansShowAllComponent', () => {
   /** The component resolves its data from a promise, so let the microtask queue drain. */
   const flush = () => new Promise(resolve => setTimeout(resolve, 0))
 
+  let eventSvc: any
+  let cardClicks: Subject<any>
+
   const build = (initialParams: Record<string, string> = {}, resolved = entry()) => {
+    eventSvc = { raiseInteractTelemetry: jest.fn() }
+    cardClicks = new Subject()
     // Tests that need different query params rebuild the component; TestBed refuses to be
     // reconfigured once it has been used, so reset it first.
     TestBed.resetTestingModule()
@@ -115,6 +125,8 @@ describe('PlansShowAllComponent', () => {
         { provide: UserCbpPlansService, useValue: cbpSvc },
         { provide: CardTransformerService, useValue: transformer },
         { provide: ValueService, useValue: { isLtMedium$: of(false) } },
+        { provide: EventService, useValue: eventSvc },
+        { provide: ContentApiService, useValue: { cardClickDetails$: cardClicks } },
         { provide: MatDialog, useValue: { open: jest.fn() } },
         { provide: require('@ngx-translate/core').TranslateService, useValue: translate },
       ],
@@ -531,22 +543,12 @@ describe('PlansShowAllComponent', () => {
       expect(component.cards().map(c => c.identifier)).toEqual(['early', 'late', 'undated'])
     })
 
-    it('keeps undated plans last when sorting descending', async () => {
-      build({ planType: 'cbp' }, byDate)
-      component.ngOnInit()
-      await flush()
-
-      component.onSortChange(1)
-
-      expect(component.cards().map(c => c.identifier)).toEqual(['late', 'early', 'undated'])
-    })
-
     it('sorts by name without a request, returning to page one', async () => {
       build({ planType: 'cbp', page: '2' }, byDate)
       component.ngOnInit()
       await flush()
 
-      component.onSortChange(2)
+      component.onSortChange(1)
 
       expect(component.cards().map(c => c.title)).toEqual(['alpha', 'mango', 'zebra'])
       expect(component.currentPage()).toBe(1)
@@ -780,6 +782,33 @@ describe('PlansShowAllComponent', () => {
       component.ngOnInit()
 
       expect(component.breadcrumbData()[2].title).toBe('plansShowAll.aiCbpDraftPlan')
+    })
+  })
+
+  // ── Telemetry ──────────────────────────────────────────────────────────────
+  describe('plan card click telemetry', () => {
+    it('tells each card which plan type it is clicked from', () => {
+      build({ planType: 'cbp' })
+      component.ngOnInit()
+      expect(component.planCardConfig()).toEqual({ cardClickDetails: { subType: 'cbp-plans' } })
+    })
+
+    it('raises an interact event for the plan a card publishes', () => {
+      build()
+      component.ngOnInit()
+      cardClicks.next({ subType: 'apar-plans', id: 'p1', identifier: 'p1', type: 'Plan' })
+      expect(eventSvc.raiseInteractTelemetry).toHaveBeenCalledWith(
+        { type: 'click', subType: 'apar-plans', id: 'p1' },
+        { id: 'p1', type: 'Plan' },
+        { pageIdExt: 'plans', module: 'learn' },
+      )
+    })
+
+    it('ignores a publication with no plan id', () => {
+      build()
+      component.ngOnInit()
+      cardClicks.next({ subType: 'apar-plans' })
+      expect(eventSvc.raiseInteractTelemetry).not.toHaveBeenCalled()
     })
   })
 })

@@ -1,5 +1,5 @@
-import { Component, ViewEncapsulation } from '@angular/core'
-import { MatDialogRef } from '@angular/material/dialog'
+import { Component, Inject, Optional, ViewEncapsulation } from '@angular/core'
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog'
 
 const ICON_BASE = '/assets/icons/karmawallet-v2'
 
@@ -27,6 +27,7 @@ export class KarmaCoinsInfoDialogComponent {
     karmaCoin: `${ICON_BASE}/karmacoin.svg`,
     bell: `${ICON_BASE}/bell.svg`,
     karmaPoints: '/assets/icons/home-v2/karma-badge.svg',
+    marketplaceComingSoon: '/assets/icons/home-v2/karma-marketplace-coming-soon.svg',
   }
 
   readonly flowSteps: IKarmaFlowStep[] = [
@@ -52,9 +53,12 @@ export class KarmaCoinsInfoDialogComponent {
     },
   ]
 
-  constructor(private dialogRef: MatDialogRef<KarmaCoinsInfoDialogComponent>) { }
+  constructor(
+    private dialogRef: MatDialogRef<KarmaCoinsInfoDialogComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) readonly data: { redeemConfirmation?: boolean } | null = null,
+  ) { }
 
-  close(via: 'close-icon' | 'i-understand' | 'walkthrough' = 'close-icon') {
+  close(via: 'close-icon' | 'i-understand' | 'walkthrough' | 'proceed' = 'close-icon') {
     this.dialogRef.close(via)
   }
 }
