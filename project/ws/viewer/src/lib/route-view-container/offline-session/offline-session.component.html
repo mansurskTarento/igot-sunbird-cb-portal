@@ -3,12 +3,12 @@
         <div class="w-full">
             <mat-card>
                 <mat-card-content>
-                <div id="fullScreenContainer" class=" p-5" style="min-height: 78vh;">
-                    <ng-container   *ngIf="isFetchingDataComplete" [wsResolverWidget]="widgetResolverOfflineSessionData"></ng-container>
-                </div>
+                    <div id="fullScreenContainer" style="min-height: 78vh;">
+                        <ng-container *ngIf="isFetchingDataComplete"
+                            [wsResolverWidget]="widgetResolverOfflineSessionData"></ng-container>
+                    </div>
                 </mat-card-content>
             </mat-card>
         </div>
     </div>
 </div>
-  

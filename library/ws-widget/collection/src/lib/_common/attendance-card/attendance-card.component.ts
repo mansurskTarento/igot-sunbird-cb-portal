@@ -7,10 +7,10 @@ import _ from 'lodash'
 import { AttendanceHelperComponent } from '../attendance-helper/attendance-helper.component'
 
 @Component({
-    selector: 'ws-widget-attendance-card',
-    templateUrl: './attendance-card.component.html',
-    styleUrls: ['./attendance-card.component.scss'],
-    standalone: false
+  selector: 'ws-widget-attendance-card',
+  templateUrl: './attendance-card.component.html',
+  styleUrls: ['./attendance-card.component.scss'],
+  standalone: false
 })
 export class AttendanceCardComponent implements OnInit {
 
@@ -25,6 +25,7 @@ export class AttendanceCardComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    console.log('this.session', this.session)
     // this.route.data.subscribe(data => {
     //   this.pageConfig = data.pageData.data
     //   console.log(this.pageConfig)

@@ -10,12 +10,13 @@ import { NsWidgetResolver, WidgetBaseComponent } from '@sunbird-cb/resolver'
 import { Subscription } from 'rxjs'
 import { IWidgetsPlayerOfflineSessionData } from './player-offline-session.model'
 import { WidgetContentService } from '@sunbird-cb/toc'
+import { DomSanitizer } from '@angular/platform-browser'
 
 @Component({
-    selector: 'ws-widget-player-offline-session',
-    templateUrl: './player-offline-session.component.html',
-    styleUrls: ['./player-offline-session.component.scss'],
-    standalone: false
+  selector: 'ws-widget-player-offline-session',
+  templateUrl: './player-offline-session.component.html',
+  styleUrls: ['./player-offline-session.component.scss'],
+  standalone: false
 })
 export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   implements OnInit, AfterViewInit, OnDestroy, OnChanges, NsWidgetResolver.IWidgetData<any> {
@@ -26,9 +27,12 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   enableTelemetry = false
   tocConfig = null
   tocConfigSubscription: Subscription | null = null
-
+  widgetSessionContentSubscription: Subscription | null = null
+  sessionContentData: any = null
   constructor(
     private widgetContentSvc: WidgetContentService,
+    private sanitizer: DomSanitizer
+
   ) {
     super()
   }
@@ -36,17 +40,35 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
   ngOnInit() {
     this.tocConfigSubscription = this.widgetContentSvc.tocConfigData.subscribe((data: any) => {
       this.tocConfig = data
+      console.log('this.content================>', this.tocConfig)
     })
+    this.widgetSessionContentSubscription =
+      this.widgetContentSvc.sessionContentData.subscribe((data: any) => {
+
+        console.log('widget content session data---', data)
+
+        if (data && Object.prototype.hasOwnProperty.call(data, 'sessionContentDetail')) {
+          // key exists
+
+          this.sessionContentData =
+            this.sanitizer.bypassSecurityTrustResourceUrl(data?.sessionContentDetail)
+        } else {
+          this.sessionContentData = null
+        }
+      })
     // TODO:When player is fully implemented put initial functions here
   }
 
   ngOnChanges() {
+    console.log('this.widgetData================>', this.widgetData)
     if (this.widgetData && this.widgetData.content) {
       this.content = this.widgetData.content
+      console.log('this.content================>', this.content)
     }
   }
 
   ngAfterViewInit() {
+    console.log('this.widgetData================>', this.widgetData)
     if (this.widgetData.content) {
       this.content = this.widgetData.content
     }
@@ -61,6 +83,9 @@ export class PlayerOfflineSessionComponent extends WidgetBaseComponent
     }
     if (this.tocConfigSubscription) {
       this.tocConfigSubscription.unsubscribe()
+    }
+    if (this.widgetSessionContentSubscription) {
+      this.widgetSessionContentSubscription.unsubscribe()
     }
   }
 }
