@@ -347,7 +347,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   async searchCourses() {
     if (this.searchRequestCourse && this.searchRequestCourse['request'] && Object.keys(this.searchRequestCourse['request']['filters'])) {
       if (this.searchRequestCourse['request']['filters']['courseCategory']?.length === 0) {
-        this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment"] }
+        this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment", "comprehensive assessment"] }
       }
       if (this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
         this.searchRequestCourse['request']['facets'] = _.uniq(this.searchRequestCourse['request']['facets'])

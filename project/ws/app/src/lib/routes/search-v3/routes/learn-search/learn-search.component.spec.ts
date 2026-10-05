@@ -458,7 +458,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       component.searchRequestCourse.request.filters.courseCategory = []
       await component.searchCourses()
       expect(component.searchRequestCourse.request.filters.courseCategory).toEqual({
-        '!=': ['pre enrolment assessment'],
+        '!=': ['pre enrolment assessment', 'comprehensive assessment'],
       })
     })
 
