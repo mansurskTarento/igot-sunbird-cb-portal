@@ -142,6 +142,7 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
     this.isMobile = this.utilitySvc.isMobile
     this.userInfo = this.configSvc && this.configSvc.userProfile
     if (this.userInfo?.professionalDetails && this.userInfo?.professionalDetails?.length) {
@@ -809,10 +810,10 @@ export class ViewerTocComponent implements OnInit, OnDestroy {
         // empty array
         return nodes
       }
-        // node is an array with items
-        node.forEach((child: any) => {
-          this.getLeafNodes(child, nodes)
-        })
+      // node is an array with items
+      node.forEach((child: any) => {
+        this.getLeafNodes(child, nodes)
+      })
 
     } else if (node) {
       // node is a single object
