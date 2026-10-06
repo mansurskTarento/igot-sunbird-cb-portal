@@ -29,7 +29,8 @@
     <!-- ── Courses in the plan ─────────────────────────────── -->
     <div class="plan-detail__courses">
       @for (course of courses(); track course.identifier) {
-      <sb-uic-card-course-v2 [content]="course" [cbPlanMapData]="cbPlanMapData()" [caFromContentOnly]="true"></sb-uic-card-course-v2>
+      <sb-uic-card-course-v2 [content]="course" [cbPlanMapData]="cbPlanMapData()" [caFromContentOnly]="true"
+        [config]="courseCardConfig"></sb-uic-card-course-v2>
       } @empty {
       <div class="plan-detail__empty">
         <img src="/assets/icons/no-data.svg" alt="" aria-hidden="true" />
@@ -95,7 +96,8 @@
            draws its own media area for an assessment that has no poster of its own, so this
            page no longer builds a panel by hand for that case. -->
       @if (assessment(); as ca) {
-      <sb-uic-card-course-v2 [content]="ca" [assessmentState]="assessmentState()"></sb-uic-card-course-v2>
+      <sb-uic-card-course-v2 [content]="ca" [assessmentState]="assessmentState()"
+        [config]="assessmentCardConfig"></sb-uic-card-course-v2>
       }
     </aside>
   </div>

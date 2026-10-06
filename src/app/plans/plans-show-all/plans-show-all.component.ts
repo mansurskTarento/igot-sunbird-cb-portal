@@ -1,16 +1,17 @@
 import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core'
 import { ActivatedRoute, Router } from '@angular/router'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
-import { from } from 'rxjs'
+import { Observable, from } from 'rxjs'
 import { MatDialog } from '@angular/material/dialog'
 import { TranslateService } from '@ngx-translate/core'
-import { ValueService } from '@sunbird-cb/utils-v2'
+import { EventService, ValueService, WsEvents } from '@sunbird-cb/utils-v2'
 import {
   CardType,
   CardTransformerService,
   FilterConfig,
   IBreadcrumbItem,
   IUserCbpPlan,
+  ContentApiService,
   IUserCbpPlanCacheEntry,
   PlanCardViewModel,
   SelectedFilters,
@@ -50,7 +51,6 @@ const PLAN_TYPES: IPlanTypeMeta[] = [
  */
 const SORT_OPTIONS = [
   { labelKey: 'plansShowAll.sortDueDateAsc', field: 'endDate' as const, direction: 1 },
-  { labelKey: 'plansShowAll.sortDueDateDesc', field: 'endDate' as const, direction: -1 },
   { labelKey: 'plansShowAll.sortNameAsc', field: 'title' as const, direction: 1 },
   { labelKey: 'plansShowAll.sortNameDesc', field: 'title' as const, direction: -1 },
 ]
@@ -74,6 +74,8 @@ export class PlansShowAllComponent implements OnInit {
   private readonly valueSvc = inject(ValueService)
   private readonly dialog = inject(MatDialog)
   private readonly translate = inject(TranslateService)
+  private readonly events = inject(EventService)
+  private readonly contentApiSvc = inject(ContentApiService)
   private readonly destroyRef = inject(DestroyRef)
 
   readonly planTypes = PLAN_TYPES
@@ -298,6 +300,12 @@ export class PlansShowAllComponent implements OnInit {
     planTypeKey: [this.planTypeKey()],
   }))
 
+  /**
+   * Handed to each plan card so it publishes its click (CardPlanV2Component.emitDetails) —
+   * the card publishes nothing without `cardClickDetails`.
+   */
+  readonly planCardConfig = computed(() => ({ cardClickDetails: { subType: `${this.planTypeKey()}-plans` } }))
+
   readonly skeletonRows = computed(() => Array.from({ length: Math.min(this.pageSize(), 8) }, () => 0))
 
   /**
@@ -361,6 +369,13 @@ export class PlansShowAllComponent implements OnInit {
   // ── Lifecycle ──────────────────────────────────────────────────────────────
   ngOnInit(): void {
     this.primeTranslations()
+
+    // Cast for the same reason as `loadPlans`: the library's Observable comes
+    // from its own copy of rxjs and will not pipe through the portal's operators.
+    const cardClicks$ = this.contentApiSvc.cardClickDetails$ as unknown as Observable<any>
+    cardClicks$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(details => this.raisePlanClickTelemetry(details))
 
     this.valueSvc.isLtMedium$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -512,6 +527,26 @@ export class PlansShowAllComponent implements OnInit {
 
   onPageChange(event: { currentPage: number, limit: number }): void {
     this.patchQueryParams({ page: event.currentPage, pageSize: event.limit })
+  }
+
+  /**
+   * Interact telemetry for a plan opened from the listing.
+   *
+   * Raised off the card's own click publication (see `planCardConfig`) rather than a
+   * `(click)` on the card's host: the card navigates in its click handler, and the router can
+   * finish that navigation in microtasks — destroying this page before the click bubbles up
+   * to a host listener. The card publishes synchronously, before it navigates.
+   */
+  private raisePlanClickTelemetry(details: any): void {
+    const planId = details?.identifier
+    if (!planId) {
+      return
+    }
+    this.events.raiseInteractTelemetry(
+      { type: WsEvents.EnumInteractTypes.CLICK, subType: details.subType, id: planId },
+      { id: planId, type: 'Plan' },
+      { pageIdExt: 'plans', module: WsEvents.EnumTelemetrymodules.LEARN },
+    )
   }
 
   // ── Filter handlers ────────────────────────────────────────────────────────

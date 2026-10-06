@@ -347,7 +347,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   async searchCourses() {
     if (this.searchRequestCourse && this.searchRequestCourse['request'] && Object.keys(this.searchRequestCourse['request']['filters'])) {
       if (this.searchRequestCourse['request']['filters']['courseCategory']?.length === 0) {
-        this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment"] }
+        this.searchRequestCourse['request']['filters']['courseCategory'] = { "!=": ["pre enrolment assessment", "comprehensive assessment"] }
       }
       if (this.searchRequestCourse['request']['facets'] && this.searchRequestCourse['request']['facets'].length) {
         this.searchRequestCourse['request']['facets'] = _.uniq(this.searchRequestCourse['request']['facets'])
@@ -362,9 +362,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     if (result.result && result.result.content && Array.isArray(result.result.content)) {
       const formContextList: any[] = []
       const formRefMap: Record<string, any> = {}
+      const identifiers: string[] = result.result.content
+        .map((c: any) => c.identifier)
+        .filter(Boolean)
+      enrichedContent = identifiers.length
+        ? (await forkJoin(identifiers.map((id: string) => this.contentDictionarySvc.getContent(id))).toPromise() as any[]).filter(Boolean)
+        : []
       const enrollmentDetailsFromDB = _.get(this.enrollmentDetails, 'result.response', null)
       if (enrollmentDetailsFromDB) {
-        for (const content of result?.result?.content) {
+        for (const content of enrichedContent) {
           const enrollmentDetails = enrollmentDetailsFromDB[content.identifier]
           if (content?.completionSurveyLink && content?.identifier && enrollmentDetails && enrollmentDetails?.completionPercentage === 100) {
             const sID = content.completionSurveyLink.split('surveys/')
