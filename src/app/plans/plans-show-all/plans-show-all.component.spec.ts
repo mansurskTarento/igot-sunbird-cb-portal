@@ -205,6 +205,78 @@ describe('PlansShowAllComponent', () => {
     })
   })
 
+  // ── The service falls back to an earlier year when the asked one is empty ──
+  describe('earlier-year fallback', () => {
+    /** 2026-27 was asked for; the service answered with 2025-26's plans. */
+    const fellBack = () => ({
+      ...entry({ aparPlanList: [plan('p1', { isApar: true, planYear: '2025-26' })] }),
+      planYear: '2025-26',
+      requestedPlanYear: '2026-27',
+    })
+
+    it('shows no plans for a year chosen in the URL that came back as another year', async () => {
+      build({ planYear: '2026-27' }, fellBack())
+      component.ngOnInit()
+      await flush()
+
+      expect(component.cards()).toEqual([])
+      expect(component.totalCount()).toBe(0)
+      expect(component.planYear()).toBe('2026-27')
+      expect(component.loading()).toBe(false)
+      expect(router.navigate).not.toHaveBeenCalled()
+    })
+
+    it('keeps the fallback on the default view, and moves the toolbar to that year', async () => {
+      build({}, fellBack())
+      component.ngOnInit()
+      await flush()
+
+      expect(component.cards().map(card => card.identifier)).toEqual(['p1'])
+      expect(component.planYear()).toBe('2025-26')
+      expect(router.navigate).toHaveBeenCalledWith([], expect.objectContaining({
+        queryParams: { planYear: '2025-26' },
+        replaceUrl: true,
+      }))
+    })
+
+    it('does not refetch when the pinned fallback year lands in the URL', async () => {
+      build({}, fellBack())
+      component.ngOnInit()
+      await flush()
+      queryParamMap.next(params({ planYear: '2025-26' }))
+
+      expect(cbpSvc.getUserCbpPlansAsync).toHaveBeenCalledTimes(1)
+    })
+
+    it('then shows no plans when the user picks the empty year from the toolbar', async () => {
+      build({}, fellBack())
+      component.ngOnInit()
+      await flush()
+      queryParamMap.next(params({ planYear: '2026-27' }))
+      await flush()
+
+      expect(cbpSvc.getUserCbpPlansAsync).toHaveBeenLastCalledWith(false, { planYear: '2026-27' })
+      expect(component.cards()).toEqual([])
+      expect(component.planYear()).toBe('2026-27')
+    })
+
+    it('ignores a response for a year already switched away from', async () => {
+      let resolveFirst: (value: any) => void = () => undefined
+      build({ planYear: '2026-27' })
+      cbpSvc.getUserCbpPlansAsync
+        .mockReturnValueOnce(new Promise(resolve => { resolveFirst = resolve }))
+        .mockResolvedValueOnce({ ...entry(), planYear: '2025-26', requestedPlanYear: '2025-26' })
+      component.ngOnInit()
+      queryParamMap.next(params({ planYear: '2025-26' }))
+      await flush()
+      resolveFirst(entry({ aparPlanList: [plan('late', { isApar: true })] }))
+      await flush()
+
+      expect(component.cards()).toEqual([])
+      expect(component.planYear()).toBe('2025-26')
+    })
+  })
+
   // ── The three lists come pre-split; picking one IS the plan-type filter ────
   describe('plan type', () => {
     const populated = entry({

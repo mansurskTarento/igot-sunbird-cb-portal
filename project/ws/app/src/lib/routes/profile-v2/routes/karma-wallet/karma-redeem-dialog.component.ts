@@ -150,6 +150,9 @@ export class KarmaRedeemDialogComponent implements OnInit, OnDestroy {
 
   /* True from the POST until the conversion is confirmed, failed, or given up on */
   get errorMessage(): string {
+    if (this.data && this.data.forTour) {
+      return ''
+    }
     if (this.isBlocked) {
       return this.blockedMessage
     }

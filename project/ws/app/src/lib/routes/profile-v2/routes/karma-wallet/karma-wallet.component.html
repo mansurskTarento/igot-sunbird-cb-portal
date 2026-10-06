@@ -35,9 +35,9 @@
   <section class="kw__stats" aria-label="Karma coin summary"
     [attr.aria-busy]="summaryLoading ? 'true' : null">
 
-    <!-- Skeleton until the summary resolves. Inside the same section so the grid, and the
-         walkthrough's .kw__stats anchor, are there either way. -->
-    <ng-container *ngIf="summaryLoading; else summarySettled">
+    <!-- Skeleton until the summary resolves, and in place of the cards if it fails. Inside the same
+         section so the grid, and the walkthrough's .kw__stats anchor, are there either way. -->
+    <ng-container *ngIf="showSummarySkeleton; else statCards">
       <div class="kw-stat kw-stat--skeleton" *ngFor="let slot of skeletonSlots; let i = index"
         aria-hidden="true">
         <span class="kw-skel kw-skel--label"></span>
@@ -48,22 +48,6 @@
         <span class="kw-skel kw-skel--hint"></span>
       </div>
     </ng-container>
-
-    <!-- Settled either way: the failed call gets a standing retry where the cards would be,
-         rather than a snackbar the user cannot act on once it has gone. -->
-    <ng-template #summarySettled>
-      <div class="kw-stats-error" *ngIf="summaryError; else statCards" role="alert">
-        <mat-icon class="kw-stats-error__icon" aria-hidden="true">error_outline</mat-icon>
-        <div class="kw-stats-error__text">
-          <div class="kw-stats-error__title">Something went wrong</div>
-          <div class="kw-stats-error__detail">{{ summaryError }}</div>
-        </div>
-        <!-- --retry, not --ghost: the walkthrough anchors step 4 on the first .kw__btn--ghost
-             in the document, and that has to stay the header's Convert button. -->
-        <button type="button" class="kw__btn kw__btn--retry kw-stats-error__retry"
-          (click)="retrySummary()">Retry</button>
-      </div>
-    </ng-template>
 
     <ng-template #statCards>
     <div class="kw-stat">
@@ -130,15 +114,22 @@
   <ng-template #lastCard let-txn let-credit="credit">
     <div class="kw-last__card" [ngClass]="'kw-last__card--' + txnState(txn)" role="status">
       <span class="kw-last__spinner" *ngIf="txnState(txn) === 'progress'" aria-hidden="true"></span>
-      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'success'">check_circle</mat-icon>
-      <mat-icon class="kw-last__icon" *ngIf="txnState(txn) === 'failed'">error</mat-icon>
+      <img class="kw-last__icon" *ngIf="txnState(txn) === 'success'" [src]="icons.success" alt="" aria-hidden="true">
+      <img class="kw-last__icon" *ngIf="txnState(txn) === 'failed'" [src]="icons.invalid" alt="" aria-hidden="true">
 
       <div class="kw-last__body" [ngSwitch]="txnState(txn)">
         <ng-container *ngSwitchCase="'progress'">
           <p class="kw-last__title" *ngIf="credit">Coins Earned &middot; In Progress ( {{ txnPoints(txn) | number }} KP
             &rarr; {{ txnCoins(txn) | number }} KC )</p>
-          <p class="kw-last__title" *ngIf="!credit">Coins Redeemed &middot; In Progress ( {{ txnCoins(txn) | number }}
-            KC )</p>
+          <p class="kw-last__title kw-last__title--one-line" *ngIf="!credit">
+            <span class="kw-last__title-fixed">Coins Redeemed &middot; In Progress ( {{ txnCoins(txn) | number }} KC</span>
+            <ng-container *ngIf="txn.courseName">
+              <span class="kw-last__title-fixed">&nbsp;for&nbsp;</span>
+              <span class="kw-last__course" #courseName [matTooltip]="txn.courseName"
+                [matTooltipDisabled]="isNotTruncated(courseName)">{{ txn.courseName }}</span>
+            </ng-container>
+            <span class="kw-last__title-fixed">&nbsp;)</span>
+          </p>
           <p class="kw-last__text">Please refresh this page to view the status of your latest transaction.</p>
         </ng-container>
 
@@ -265,7 +256,7 @@
     </div>
 
     <!-- A failed history call is reported in the snackbar, so this stays a plain empty state -->
-    <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError">
+    <div class="kw__empty" *ngIf="!loading && !hasTransactions && !customError && !walletLoadFailed">
       {{ emptyMessage }}
     </div>
 

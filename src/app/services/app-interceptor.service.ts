@@ -5,6 +5,7 @@ import { ConfigurationsService, AuthKeycloakService } from '@sunbird-cb/utils-v2
 import { catchError } from 'rxjs/operators'
 import { MatSnackBar } from '@angular/material/snack-bar'
 import { NOTIFICATION_TIME } from '@sunbird-cb/collection'
+import { clearKarmaWalletTourSnooze } from '../component/app-tour/karma-wallet-tour-snooze'
 // import 'rxjs/add/operator/do'
 
 @Injectable({
@@ -83,6 +84,7 @@ export class AppInterceptorService implements HttpInterceptor {
                   if (localStorage.getItem('telemetrySessionId')) {
                     localStorage.removeItem('telemetrySessionId')
                   }
+                  clearKarmaWalletTourSnooze()
                   // Only redirect if we are not already sitting on the login entry point.
                   // Without this, a login URL that fails to leave the SPA - e.g. the
                   // service worker answering /protected/** with cached index.html - makes

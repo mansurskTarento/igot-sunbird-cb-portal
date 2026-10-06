@@ -71,6 +71,13 @@ describe('toCoinRow against a live transactions payload', () => {
     expect(toCoinRow(missing).description).toBe('')
   })
 
+  it('should carry the course name an in-progress redemption sends at the top level', () => {
+    const inProgress = {
+      ...RESPONSE_ROWS[1], addinfo: '', status: 'IN_PROGRESS', courseName: 'AI-Powered Retail Operations',
+    }
+    expect(toCoinRow(inProgress).courseName).toBe('AI-Powered Retail Operations')
+  })
+
   it('should title-case an actionType it has no mapping for', () => {
     const unknown = { ...RESPONSE_ROWS[0], actionType: 'SOME_NEW_ACTION' }
     expect(toCoinRow(unknown).title).toBe('Some New Action')

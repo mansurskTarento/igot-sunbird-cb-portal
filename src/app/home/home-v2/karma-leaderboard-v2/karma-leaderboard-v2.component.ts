@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, input, output } from '@angular/core'
-import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+import { ConfigurationsService, EventService, TelemetryService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 import { HomePageService } from '../../../services/home-page.service'
 import { UserProfileService } from '../../../../../project/ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import moment from 'moment'
@@ -51,6 +51,8 @@ export class KarmaLeaderboardV2Component implements OnInit {
   private readonly configSvc = inject(ConfigurationsService)
   private readonly userProfileSvc = inject(UserProfileService)
   private readonly eventSvc = inject(EventService)
+  private readonly telemetrySvc = inject(TelemetryService)
+  private readonly utilitySvc = inject(UtilityService)
 
   ngOnInit() {
     this.currentUserId = (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) || ''
@@ -177,16 +179,26 @@ export class KarmaLeaderboardV2Component implements OnInit {
 
   onKarmaCoinsNavBtnClick() {
     this.close.emit()
+    this.utilitySvc.setRouteData([{ module: 'Home', pageId: 'page/home' }])
+    this.telemetrySvc.sendEmptyObjectForNextInteract()
     this.eventSvc.raiseInteractTelemetry(
-      { id: 'wallet-balance', type: WsEvents.EnumInteractTypes.CLICK, subType: 'my-achievements' },
+      {
+        id: 'wallet-balance',
+        type: WsEvents.EnumInteractTypes.CLICK,
+        subType: 'my-achievements'
+      },
       {},
-      { pageId: 'page/home' }
+      {
+        module: WsEvents.EnumTelemetrymodules.HOME,
+      }
     )
   }
 
   private raiseImpressionTelemetry() {
     this.eventSvc.raiseInteractTelemetry(
-      { id: 'karma-leaderboard-impression', type: WsEvents.EnumInteractTypes.CLICK, subType: 'leaderboard-loaded' },
+      {
+        id: 'karma-leaderboard-impression', type: WsEvents.EnumInteractTypes.CLICK, subType: 'leaderboard-loaded'
+      },
       {},
       { module: WsEvents.EnumTelemetrymodules.KARMAPOINTS }
     )

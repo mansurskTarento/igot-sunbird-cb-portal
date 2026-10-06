@@ -8,6 +8,7 @@ export interface IKarmaTourStep {
   before?: () => Promise<void> | void
   onBack?: () => Promise<void> | void
   radius?: number
+  scrollAnchor?: string
 }
 
 /** Which control the user pressed. 'ok' is the last step's primary, 'next' every other's. */

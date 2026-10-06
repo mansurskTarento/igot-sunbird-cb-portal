@@ -117,5 +117,6 @@ export function toCoinRow(txn: IKarmaCoinTransactionApi): IKarmaCoinTransaction 
     debit: isCredit ? 0 : txn.amount,
     balance: txn.balanceAfter,
     type: isCredit ? 'earned' : 'redeemed',
+    courseName: txn.courseName,
   }
 }

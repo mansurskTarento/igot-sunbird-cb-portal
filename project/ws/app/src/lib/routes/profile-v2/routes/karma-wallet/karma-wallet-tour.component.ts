@@ -101,6 +101,12 @@ export class KarmaWalletTourComponent implements OnDestroy {
     this.close('skipped')
   }
 
+  stop() {
+    if (this.active) {
+      this.close('skipped')
+    }
+  }
+
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.active) {
@@ -214,23 +220,33 @@ export class KarmaWalletTourComponent implements OnDestroy {
       return
     }
     const inset = this.topInset()
+    const anchorSelector = this.step && this.step.scrollAnchor
+    const anchor = anchorSelector && document.querySelector(anchorSelector) as HTMLElement | null
+    if (anchor) {
+      this.scrollTargetTo(inset + SPOT_PAD + VIEWPORT_MARGIN, anchor)
+      return
+    }
+    if (this.basePlacement === 'top') {
+      this.scrollTargetBelowPopover(inset)
+      return
+    }
     if (this.target.getBoundingClientRect().top < inset || !this.isTargetOnScreen()) {
       this.scrollTargetTo(inset + SPOT_PAD + VIEWPORT_MARGIN)
     }
   }
 
-  private scrollTargetBelowPopover() {
+  private scrollTargetBelowPopover(inset = 0) {
     const vh = window.innerHeight
     const el = this.host.nativeElement.querySelector('.kwt__popover') as HTMLElement | null
     const h = el ? el.offsetHeight : 200
-    this.scrollTargetTo(Math.min(h + ARROW_GAP + SPOT_PAD + VIEWPORT_MARGIN, vh * 0.6))
+    this.scrollTargetTo(Math.min(inset + h + ARROW_GAP + SPOT_PAD + VIEWPORT_MARGIN, vh * 0.6))
   }
 
-  private scrollTargetTo(desiredTop: number) {
-    if (!this.target) {
+  private scrollTargetTo(desiredTop: number, el: HTMLElement | null = this.target) {
+    if (!el) {
       return
     }
-    const delta = this.target.getBoundingClientRect().top - desiredTop
+    const delta = el.getBoundingClientRect().top - desiredTop
     if (Math.abs(delta) > 4) {
       document.body.classList.remove('kwt-scroll-lock')
       window.scrollBy({ top: delta, left: 0, behavior: 'instant' })

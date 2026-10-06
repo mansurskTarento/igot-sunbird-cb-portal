@@ -69,6 +69,14 @@ describe('KarmaWalletTourComponent', () => {
     expect(document.body.classList.contains('kwt-scroll-lock')).toBe(true)
   })
 
+  it('should leave room above a web target whose popover sits on top of it', async () => {
+    anchor('kw__history', 460, 700)
+    await component.start([step('.kw__history', 'top')])
+
+    /* popover 200 + ARROW_GAP 14 + SPOT_PAD 6 + VIEWPORT_MARGIN 12 */
+    expect(scrollBy).toHaveBeenCalledWith(scrolledBy(460 - 232))
+  })
+
   it('should leave a web target alone when it is already in view', async () => {
     anchor('kw__stats', 155, 165)
     await component.start([step('.kw__stats')])
@@ -82,6 +90,31 @@ describe('KarmaWalletTourComponent', () => {
     await component.start([step('.kw__history', 'right')])
 
     expect(scrollBy).toHaveBeenCalledWith(scrolledBy(-318))
+  })
+
+  it('should bring a step\'s scroll anchor back into view even when its target is on screen', async () => {
+    anchor('kw__header', -40, 60)
+    anchor('kw__stats', 40, 165)
+    await component.start([{ ...step('.kw__stats'), scrollAnchor: '.kw__header' }])
+
+    expect(scrollBy).toHaveBeenCalledWith(scrolledBy(-40 - 18))
+  })
+
+  it('should line the anchor up with the top even when the page already shows it', async () => {
+    anchor('kw__header', 187, 60)
+    anchor('kw__stats', 250, 165)
+    setViewport(1280, 900)
+    await component.start([{ ...step('.kw__stats'), scrollAnchor: '.kw__header' }])
+
+    expect(scrollBy).toHaveBeenCalledWith(scrolledBy(187 - 18))
+  })
+
+  it('should scroll the anchor, not the target, to the top when the target is below the fold', async () => {
+    anchor('kw__header', 300, 60)
+    anchor('kw__stats', 500, 165)
+    await component.start([{ ...step('.kw__stats'), scrollAnchor: '.kw__header' }])
+
+    expect(scrollBy).toHaveBeenCalledWith(scrolledBy(300 - 18))
   })
 
   it('should land a web target below a fixed header rather than under it', async () => {

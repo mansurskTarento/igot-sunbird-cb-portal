@@ -44,7 +44,7 @@ describe('KarmaRedeemDialogComponent', () => {
   }
 
   /* Builds the dialog. `data` null takes the fallback fetch; a summary takes the hand-over. */
-  const build = (data: { summary: IKarmaWalletSummary } | null = null) =>
+  const build = (data: { summary: IKarmaWalletSummary, forTour?: boolean } | null = null) =>
     new KarmaRedeemDialogComponent(
       dialogRefStub as unknown as MatDialogRef<KarmaRedeemDialogComponent>,
       serviceStub as unknown as KarmaWalletService,
@@ -136,6 +136,16 @@ describe('KarmaRedeemDialogComponent', () => {
     expect(component.amount).toBe(5000)
     expect(component.canConvert).toBe(false)
     expect(component.errorMessage).not.toBe('')
+  })
+
+  it('should show no error while the walkthrough is driving it', () => {
+    const tourDialog = build({ summary: { ...SUMMARY, redeemEnabled: false }, forTour: true })
+    tourDialog.ngOnInit()
+
+    expect(tourDialog.isBlocked).toBe(true)
+    expect(tourDialog.errorMessage).toBe('')
+    tourDialog.onAmountChange(5000)
+    expect(tourDialog.errorMessage).toBe('')
   })
 
   it('should still correct a negative amount to zero', () => {

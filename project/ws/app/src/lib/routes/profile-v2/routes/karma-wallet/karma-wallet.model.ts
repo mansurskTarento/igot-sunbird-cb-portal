@@ -41,6 +41,7 @@ export interface IKarmaRedeemRequest {
 /* What the wallet page hands the convert dialog, so the dialog need not refetch the summary */
 export interface IKarmaRedeemDialogData {
   summary: IKarmaWalletSummary
+  forTour?: boolean
 }
 
 /* The redeem call answers with the outcome itself - there is no status endpoint to poll */
@@ -113,6 +114,7 @@ export interface IKarmaCoinTransactionApi {
   status?: string
   /* POINTS_CONVERSION only: the Karma Points side of the conversion */
   pointsToConvert?: number
+  courseName?: string
 }
 
 export interface IKarmaTransactionsResponse {
@@ -144,6 +146,7 @@ export interface IKarmaCoinTransaction {
   debit: number
   balance: number
   type: TKarmaCoinTxnType
+  courseName?: string
 }
 
 export interface IKarmaCoinTxnGroup {

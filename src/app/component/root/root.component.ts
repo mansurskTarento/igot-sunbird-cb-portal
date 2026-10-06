@@ -63,6 +63,7 @@ import { LibNotificationsService } from '@sunbird-cb/notification'
 import { HomePageService } from '../../services/home-page.service'
 import { trigger, style, animate, transition } from '@angular/animations'
 import { DialogBoxComponent } from '../dialog-box/dialog-box.component'
+import { isKarmaWalletTourSnoozed } from '../app-tour/karma-wallet-tour-snooze'
 import * as _ from 'lodash'
 
 // Anchor on the "Achievement" heading in profile-view-v2, scrolled to from the bottom nav
@@ -205,8 +206,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     }
     if (this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails) {
       const karmaWalletTour = this.configSvc.unMappedUser.profileDetails.karma_wallet_tour
-      this.karmaWalletVideoPending = !karmaWalletTour || karmaWalletTour.video_visited !== true
-      this.karmaWalletTourPending = !karmaWalletTour || karmaWalletTour.visited !== true
+      const snoozed = isKarmaWalletTourSnoozed(this.configSvc.unMappedUser.id)
+      this.karmaWalletVideoPending = !snoozed && (!karmaWalletTour || karmaWalletTour.video_visited !== true)
+      this.karmaWalletTourPending = !snoozed && (!karmaWalletTour || karmaWalletTour.visited !== true)
     }
     this.mobileAppsSvc.init()
     this.openIntro()
@@ -412,6 +414,9 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     this.mobileAppsSvc.mobileTopHeaderVisibilityStatus.subscribe((status: any) => {
       this.mobileTopHeaderVisibilityStatus = status
     })
+    this.homePageSvc.walletBalanceUpdated.subscribe((walletBalance: number) => {
+      this.updateAchievementWalletBalance(walletBalance)
+    })
     this.configSvc.updateTourGuideMethod(this.showTour)
     // this.route.queryParams
     //   .subscribe(_params => {
@@ -450,6 +455,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(true)
         // Fetch mandatory notification when navigating to home
         // this.commonDataSvc.fetchMandatoryNotification()
+        // clicking the karmayogi icon from the explore screen redirects here without
+        // going through onNavItemClicked, so the explore highlight would otherwise stick
+        if (this.menuBarDetails.activeItemCode === 'explore') {
+          this.menuBarDetails.activeItemCode = ''
+        }
       } else {
         this.isHomePage.set(false)
         this.mobileAppsSvc.clearGlobalSearchForHomePage.next(false)
@@ -766,6 +776,15 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.navBarOpenStatusBasedOnNav.set(false)
       this.leftNavBarIsOpen.set(false)
     }
+  }
+
+  private updateAchievementWalletBalance(walletBalance: number) {
+    const coinsItem = this.achievementsSection?.items?.find((item: any) => item.code === 'karma_coins')
+    if (!coinsItem) {
+      return
+    }
+    coinsItem.value = `${walletBalance || 0} Karma Coins`
+    this.sendDetailsChangedEvent(this.achievementsSection)
   }
 
   sendDetailsChangedEvent(newAchievements: any) {
