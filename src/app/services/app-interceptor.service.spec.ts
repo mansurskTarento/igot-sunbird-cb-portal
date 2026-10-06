@@ -1,7 +1,9 @@
 import { HttpErrorResponse, HttpRequest } from '@angular/common/http'
 import { of, throwError } from 'rxjs'
 import { AppInterceptorService } from './app-interceptor.service'
+import { clearKarmaWalletTourSnooze } from '../component/app-tour/karma-wallet-tour-snooze'
 
+jest.mock('../component/app-tour/karma-wallet-tour-snooze', () => ({ clearKarmaWalletTourSnooze: jest.fn() }))
 jest.mock('@sunbird-cb/collection', () => ({ NOTIFICATION_TIME: 1000 }))
 jest.mock('@sunbird-cb/utils-v2', () => ({ ConfigurationsService: class { }, AuthKeycloakService: class { } }))
 
@@ -16,6 +18,11 @@ describe('AppInterceptorService', () => {
     new AppInterceptorService(configSvc, snackBar, authSvc, locale)
 
   const handledRequest = () => next.handle.mock.calls[next.handle.mock.calls.length - 1][0] as HttpRequest<any>
+
+  afterEach(() => {
+    jest.restoreAllMocks()
+    ;(clearKarmaWalletTourSnooze as jest.Mock).mockClear()
+  })
 
   beforeEach(() => {
     configSvc = {
@@ -145,15 +152,33 @@ describe('AppInterceptorService', () => {
       expect(failWith(error)).toBe(error)
     })
 
-    it('status 419 clears localStorage and rethrows', () => {
-      const clearSpy = jest.spyOn(Storage.prototype, 'clear').mockImplementation(() => undefined)
+    it('status 419 removes telemetrySessionId when present and rethrows', () => {
+      const removeSpy = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => undefined)
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue('session-1')
       const error = new HttpErrorResponse({ status: 419 })
       expect(failWith(error)).toBe(error)
-      expect(clearSpy).toHaveBeenCalled()
+      expect(removeSpy).toHaveBeenCalledWith('telemetrySessionId')
+    })
+
+    it('status 419 leaves storage alone when telemetrySessionId is absent', () => {
+      const removeSpy = jest.spyOn(Storage.prototype, 'removeItem').mockImplementation(() => undefined)
+      jest.spyOn(Storage.prototype, 'getItem').mockReturnValue(null)
+      failWith(new HttpErrorResponse({ status: 419 }))
+      expect(removeSpy).not.toHaveBeenCalled()
+    })
+
+    it('status 419 clears the karma wallet tour snooze', () => {
+      failWith(new HttpErrorResponse({ status: 419 }))
+      expect(clearKarmaWalletTourSnooze).toHaveBeenCalled()
+    })
+
+    it('status 419 no longer wipes all of localStorage', () => {
+      const clearSpy = jest.spyOn(Storage.prototype, 'clear').mockImplementation(() => undefined)
+      failWith(new HttpErrorResponse({ status: 419 }))
+      expect(clearSpy).not.toHaveBeenCalled()
     })
 
     it('status 419 does not redirect when already on the login path', () => {
-      jest.spyOn(Storage.prototype, 'clear').mockImplementation(() => undefined)
       const error = new HttpErrorResponse({
         status: 419,
         error: { redirectUrl: location.pathname },
