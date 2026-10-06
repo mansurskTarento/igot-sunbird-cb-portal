@@ -44,7 +44,7 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
-import { ContentDictionaryService } from '@sunbird-cb/consumption'
+// import { ContentDictionaryService } from '@sunbird-cb/consumption'
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -150,7 +150,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private userService: WidgetUserService,
     private networkV2Service: NetworkV2Service,
     private indexedDbService: IndexedDbService,
-    private contentDictionarySvc: ContentDictionaryService,
+    // private contentDictionarySvc: ContentDictionaryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
