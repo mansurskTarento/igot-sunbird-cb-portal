@@ -152,9 +152,9 @@ describe('AppInterceptorService', () => {
     })
 
     it('status 419 clears localStorage and sessionStorage and rethrows', () => {
-      localStorage.setItem('telemetrySessionId', 'session-1')
-      localStorage.setItem('karmaWalletTourSnoozed', 'user-1')
-      sessionStorage.setItem('someSessionKey', 'value')
+      localStorage.setItem('testkey1', 'session-1')
+      localStorage.setItem('testkey2', 'user-1')
+      sessionStorage.setItem('testkey3', 'true')
       const error = new HttpErrorResponse({ status: 419 })
       expect(failWith(error)).toBe(error)
       expect(localStorage.length).toBe(0)
