@@ -7,6 +7,7 @@ import {
   SimpleChanges,
   Output,
   EventEmitter,
+  signal,
 } from '@angular/core'
 import { GbSearchService } from '../../services/gb-search.service'
 import { IndexedDbService } from '@sunbird-cb/utils-v2'
@@ -14,6 +15,7 @@ import {
   ConfigurationsService,
   EventService,
   MultilingualTranslationsService,
+  UtilityService,
   ValueService,
 } from '@sunbird-cb/utils-v2'
 import { ActivatedRoute, Router } from '@angular/router'
@@ -44,7 +46,26 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
-import { ContentDictionaryService } from '@sunbird-cb/consumption'
+// import { ContentDictionaryService } from '@sunbird-cb/consumption'
+
+// Matches the `seeAllResult`/`isCategoryActive` section keys used throughout this component's template.
+export enum SearchResultCardCategory {
+  Courses = 'courses',
+  Events = 'events',
+  Peoples = 'peoples',
+  Communities = 'communities',
+  Resources = 'resources',
+  ExternalContents = 'external-contents',
+}
+
+const SEARCH_RESULT_CARD_SUBTYPE: { [key in SearchResultCardCategory]: string } = {
+  [SearchResultCardCategory.Courses]: 'search-result-card-content',
+  [SearchResultCardCategory.Events]: 'search-result-card-events',
+  [SearchResultCardCategory.Peoples]: 'search-result-card-people',
+  [SearchResultCardCategory.Communities]: 'search-result-card-communities',
+  [SearchResultCardCategory.Resources]: 'search-result-card-resources',
+  [SearchResultCardCategory.ExternalContents]: 'search-result-card-external-content',
+}
 
 @Component({
   selector: 'ws-app-learn-search',
@@ -156,6 +177,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   isExploreContentTab = false;
   applySelectedFilters: any = []
   compentencyKeyExist = false
+  isGlobalSearch = signal(false)
+  readonly resultCardCategory = SearchResultCardCategory
   constructor(
     private searchV3Service: GbSearchService,
     private configSvc: ConfigurationsService,
@@ -168,7 +191,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private userService: WidgetUserService,
     private networkV2Service: NetworkV2Service,
     private indexedDbService: IndexedDbService,
-    private contentDictionarySvc: ContentDictionaryService,
+    private utilitySvc: UtilityService,
+    // private contentDictionarySvc: ContentDictionaryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -186,6 +210,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnInit() {
+    this.setIsGlobalSearch()
     if (
       this.configSvc.userProfile &&
       this.configSvc.userProfile.departmentName
@@ -216,6 +241,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.getFetchIgotSpecializationPrograms()
     // this.fetchCbpPlan()
     localStorage.removeItem(SearchConstantLocalStorage.SortType)
+  }
+
+  setIsGlobalSearch() {
+    this.isGlobalSearch.set(this.router.url.includes('app/globalsearch'))
   }
 
   async loadEnrollmentDetailsFromCache() {
@@ -306,12 +335,15 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       : userDetails.firstname
   }
 
-  applyTelemetry(event: any, index: number) {
-    this.raiseTelemetry(event, index)
+  applyTelemetry(event: any, index: number, category: SearchResultCardCategory) {
+    this.raiseTelemetry(event, index, category)
   }
 
-  raiseTelemetry(content: any, i: number) {
-    if (content) {
+  raiseTelemetry(content: any, i: number, category: SearchResultCardCategory) {
+    if (!content) {
+      return
+    }
+    if (!this.isGlobalSearch()) {
       this.events.raiseInteractTelemetry(
         {
           type: 'click',
@@ -327,7 +359,31 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
         },
         {}
       )
+      return
     }
+
+    const actualQuery = this.searchQuery?.query || ''
+    const correctedQuery = this.searchQuery?.nlp || ''
+    const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
+
+    // Forces context.env to 'Search' for this interact call - raiseInteractTelemetry's own
+    // pageContext argument is only honored for edata.pageid, not for env (see TelemetryService's
+    // addInteractListener, which reads env from utilitySvc.routeData rather than the per-call
+    // pageContext override). Safe to mutate: the next real navigation always resets it.
+    this.utilitySvc.setRouteData([{ module: 'Search', pageId: 'app/globalsearch' }])
+    this.events.raiseInteractTelemetry(
+      {
+        type: 'click',
+        subType: SEARCH_RESULT_CARD_SUBTYPE[category],
+        id: content.identifier || '',
+      },
+      {
+        id: correctedQuery || actualQuery,
+        type: isCorrected ? 'search-query-corrected' : 'search-query-not-corrected',
+        rollup: { l1: actualQuery },
+      },
+      { module: 'Search' }
+    )
   }
 
   ngOnDestroy() {

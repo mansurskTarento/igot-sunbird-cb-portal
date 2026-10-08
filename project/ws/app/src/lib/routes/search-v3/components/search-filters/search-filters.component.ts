@@ -16,6 +16,7 @@ import {
   ConfigurationsService,
   MultilingualTranslationsService,
   TelemetryService,
+  UtilityService,
 } from '@sunbird-cb/utils-v2'
 import {
   CATEGORY_TYPE,
@@ -105,6 +106,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     private langtranslations: MultilingualTranslationsService, // private router: Router
     private configSvc: ConfigurationsService,
     private telemetrySvc: TelemetryService,
+    private utilitySvc: UtilityService
 
   ) {
     if (localStorage.getItem('websiteLanguage')) {
@@ -527,6 +529,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   private raiseFilterInteractTelemetry(categoryType: string, value: string) {
+    this.utilitySvc.setRouteData([{ module: 'Search', pageId: 'page/home' }])
     const queryParams = this.activated.snapshot.queryParams
     const actualQuery = queryParams['q'] || ''
     const correctedQuery = queryParams['search'] || ''
@@ -541,7 +544,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         type: 'click',
         subType,
         id,
-        pageid: '/app/globalsearch',
+        pageid: '/page/home',
       },
       {
         id: correctedQuery || actualQuery,

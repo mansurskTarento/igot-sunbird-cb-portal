@@ -30,10 +30,11 @@
   scroll-margin-top: 100px;
 }
 
-// Uniform gap between sections. "courses" is excluded because its heading only shows
-// conditionally and its real header lives above in the separate .contents-title-top block.
-.scroll-section {
-  margin-top: 70px;
+// Uniform gap between sections, as flex-gap instead of margin-top on .scroll-section - a
+// margin stays even when a section is hidden (not searched/no longer selected), leaving a
+// stray gap above whichever section renders next. Gap only appears between actual siblings.
+.search-sections {
+  gap: 70px;
 }
 
 .filternames {
