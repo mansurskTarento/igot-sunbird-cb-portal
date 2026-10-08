@@ -46,7 +46,7 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
-// import { ContentDictionaryService } from '@sunbird-cb/consumption'
+import { ContentDictionaryService } from '@sunbird-cb/consumption'
 
 // Matches the `seeAllResult`/`isCategoryActive` section keys used throughout this component's template.
 export enum SearchResultCardCategory {
@@ -192,7 +192,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private networkV2Service: NetworkV2Service,
     private indexedDbService: IndexedDbService,
     private utilitySvc: UtilityService,
-    // private contentDictionarySvc: ContentDictionaryService,
+    private contentDictionarySvc: ContentDictionaryService,
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
