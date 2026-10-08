@@ -13,6 +13,8 @@ describe('SearchFiltersComponent', () => {
   let activatedRouteMock: any;
   let configSvcMock: any;
   let langTranslationsMock: any;
+  let telemetrySvcMock: any;
+  let utilitySvcMock: any;
   let originalLocalStorage: any;
 
   const mockFacets = [
@@ -112,6 +114,9 @@ describe('SearchFiltersComponent', () => {
       translateActualLabel: jest.fn().mockReturnValue('Translated Label'),
     };
 
+    telemetrySvcMock = { raiseInteractWithEnv: jest.fn() };
+    utilitySvcMock = { setRouteData: jest.fn() };
+
     // Set up environment mock
     (global as any).environment = mockEnvironment;
 
@@ -120,7 +125,9 @@ describe('SearchFiltersComponent', () => {
       activatedRouteMock,
       translateServiceMock,
       langTranslationsMock,
-      configSvcMock
+      configSvcMock,
+      telemetrySvcMock,
+      utilitySvcMock
     );
 
     // Mock component methods that use lodash

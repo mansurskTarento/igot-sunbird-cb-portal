@@ -14,6 +14,22 @@ jest.mock('@ws/author', () => ({
   ],
 }))
 
+// `@sunbird-cb/utils-v2` and `@sunbird-cb/consumption` resolve from the sibling sb-cb-ui-components
+// checkout, whose transitive deps (telemetry SDK, ckeditor5, ...) Jest cannot load. The component
+// only uses their services as injected types, so lightweight stubs keep this spec isolated.
+jest.mock('@sunbird-cb/utils-v2', () => ({
+  IndexedDbService: jest.fn(),
+  ConfigurationsService: jest.fn(),
+  EventService: jest.fn(),
+  MultilingualTranslationsService: jest.fn(),
+  UtilityService: jest.fn(),
+  ValueService: jest.fn(),
+}), { virtual: true })
+
+jest.mock('@sunbird-cb/consumption', () => ({
+  ContentDictionaryService: jest.fn(),
+}), { virtual: true })
+
 // `@sunbird-cb/collection` is not published to node_modules in this workspace at all (only its
 // sibling packages are). The component only uses `WidgetUserService` and `NsContent` as TS types,
 // but ts-jest keeps the import statement at runtime, so it must be virtually mocked to resolve.
@@ -42,6 +58,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
   let mockUserService: any
   let mockNetworkV2Service: any
   let mockIndexedDbService: any
+  let mockUtilitySvc: any
   let mockContentDictionarySvc: any
 
   const defaultCourseResult = { result: { content: [], count: 0, facets: [] } }
@@ -65,6 +82,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       mockUserService,
       mockNetworkV2Service,
       mockIndexedDbService,
+      mockUtilitySvc,
       mockContentDictionarySvc,
     )
   }
@@ -111,7 +129,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       get: jest.fn().mockReturnValue(of('No results found')),
     }
 
-    mockRouter = { navigate: jest.fn() }
+    mockRouter = { navigate: jest.fn(), url: '/app/search/learn' }
 
     mockLangtranslations = { translateLabel: jest.fn().mockReturnValue('translated-label') }
 
@@ -124,6 +142,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       setEnrollmentDetails: jest.fn().mockResolvedValue(undefined),
     }
 
+    mockUtilitySvc = { setRouteData: jest.fn() }
     mockContentDictionarySvc = { getContent: jest.fn((id: string) => of({ identifier: id, name: `content-${id}` })) }
   })
 
@@ -643,6 +662,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
         toPromise: jest.fn().mockResolvedValue({ result: { response: [{ contextId: 'c1', submitted: true }] } }),
       })
       const component = createComponent({})
+      component.enrollmentDetails = { result: { response: { c1: { completionPercentage: 100 } } } }
       await component.searchCourses()
 
       expect(mockSearchV3Service.getApplicationsById).toHaveBeenCalledWith({
@@ -1270,12 +1290,14 @@ describe('LearnSearchComponent (No TestBed)', () => {
   // ---------------------------------------------------------------------
   describe('scrollToCategory', () => {
     it('scrolls the matching section into view when the element exists', () => {
-      const scrollIntoViewMock = jest.fn()
-      jest.spyOn(document, 'getElementById').mockReturnValue({ scrollIntoView: scrollIntoViewMock } as any)
+      const getBoundingClientRect = jest.fn().mockReturnValue({ top: 0 })
+      jest.spyOn(document, 'getElementById').mockReturnValue({ getBoundingClientRect } as any)
+      const scrollToMock = jest.fn()
+      window.scrollTo = scrollToMock as any
       const component = createComponent({})
       component.scrollToCategory(SearchCategory.Events)
       expect(document.getElementById).toHaveBeenCalledWith(SearchCategory.Events)
-      expect(scrollIntoViewMock).toHaveBeenCalledWith({ behavior: 'smooth', block: 'start' })
+      expect(scrollToMock).toHaveBeenCalledWith({ top: 0, behavior: 'smooth' })
     })
 
     it('does nothing when no section with that id exists', () => {
@@ -1615,7 +1637,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       ['RecentlyAdded + Courses', SortType.RecentlyAdded, SearchCategory.Courses, (c: any) => c.searchRequestCourse.request.sort_by.createdOn, 'desc'],
       ['RecentlyAdded + Events', SortType.RecentlyAdded, SearchCategory.Events, (c: any) => c.searchRequestEvents.request.sort_by.startDate, 'desc'],
       ['RecentlyAdded + Communities', SortType.RecentlyAdded, SearchCategory.Communities, (c: any) => c.searchRequestCommunities.orderDirection, 'desc'],
-      ['RecentlyAdded + People', SortType.RecentlyAdded, SearchCategory.People, (c: any) => c.searchRequestPeoples.sort_by.createdOn, 'desc'],
+      ['RecentlyAdded + People', SortType.RecentlyAdded, SearchCategory.People, (c: any) => c.searchRequestPeoples.sort_by.createdDate, 'desc'],
       ['RecentlyAdded + Resources', SortType.RecentlyAdded, SearchCategory.Resources, (c: any) => c.searchRequestResources.request.sort_by.createdOn, 'desc'],
       ['RecentlyAdded + ExternalContents', SortType.RecentlyAdded, SearchCategory.ExternalContents, (c: any) => c.searchRequestExternal.orderBy, 'createdOn'],
       ['HighestRated + none', SortType.HighestRated, '', (c: any) => c.searchRequestCourse.request.sort_by.avgRating, 'desc'],
