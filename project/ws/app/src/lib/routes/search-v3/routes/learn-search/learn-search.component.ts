@@ -10,10 +10,10 @@ import {
   signal,
 } from '@angular/core'
 import { GbSearchService } from '../../services/gb-search.service'
-import { IndexedDbService } from '@sunbird-cb/utils-v2'
 import {
   ConfigurationsService,
   EventService,
+  IndexedDbService,
   MultilingualTranslationsService,
   UtilityService,
   ValueService,
@@ -103,7 +103,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   veifiedKarmayogi = false;
   noResultMessage = '';
   recommendedUsers: any
-  seeAllResult: string = '';
+  seeAllResult = '';
   allResultsDepartmentName = new Set<string>();
 
   courseSearchTotalCount = 0;
@@ -170,7 +170,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   queryParams: any
   typesOfEventsFilters: any
   competencyFactet: any = [];
-  searchSortFilter: string = '';
+  searchSortFilter = '';
   searchPeopleLoader = false;
   filtersChipFromLearn: string[] = [];
   shouldReturnFromHere = false
@@ -264,10 +264,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.configSvc.unMappedUser.profileDetails
     ) {
       this.veifiedKarmayogi =
-        this.configSvc.unMappedUser.profileDetails.profileStatus &&
-          this.configSvc.unMappedUser.profileDetails.profileStatus === 'VERIFIED'
-          ? true
-          : false
+        this.configSvc.unMappedUser.profileDetails.profileStatus === 'VERIFIED'
     }
     if (changes['paramFilters'] && changes['paramFilters'].currentValue && changes['paramFilters'].currentValue.length) {
       this.searchContentLoader = true
@@ -355,7 +352,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
           id: content.identifier || '',
           type: content.contentType,
           rollup: {},
-          ver: content.version ? `${content.version}${''}` : '',
+          ver: content.version ? `${content.version}` : '',
         },
         {}
       )
@@ -388,9 +385,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy() {
     if (this.defaultSideNavBarOpenedSubscription) {
-      if (this.defaultSideNavBarOpenedSubscription) {
-        this.defaultSideNavBarOpenedSubscription.unsubscribe()
-      }
+      this.defaultSideNavBarOpenedSubscription.unsubscribe()
     }
 
     this.destroy$.next()
@@ -644,11 +639,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     for (const element of competency) {
       if (this.seeAllResult === SearchCategory.Courses) {
         if (filterFlag) {
-          // const searchRequestCourse = new SearchV4Request([
-          //   this.competencyAreaNameKey,
-          //   this.competencyThemeKey,
-          //   this.competencySubThemeKey,
-          // ]);
           this.searchRequestCourse.request.query = this.statedata?.param
           this.searchRequestCourse.request.filters[this.competencyAreaNameKey] =
             element
@@ -1183,11 +1173,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.searchContentLoader = false
   }
 
-  async applyFilterFromLearn(selectedFilters: { [key: string]: any }) {
-    console.log('selectedFilters', selectedFilters)
-
-  }
-
   // Delete the empty request param from resuest body
   deleteFilterKeys() {
     const removeEmpty = (obj: any, keys: string[], isObjectCheck = false) => {
@@ -1704,12 +1689,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     let serverTime = moment()
     serverTime = serverTime.add(5, 'hours').add(30, 'minutes')
-    serverTime.format('YYYY-MM-DD HH:mm:ss'),
-      // Display the server time
       /* tslint:disable */
-      // console.log("Server Time: ", serverTime.format('YYYY-MM-DD HH:mm:ss'));
-      // console.log('eventName', eventName)
-      // console.log('userIdentifier', userIdentifier)
 
 
 
@@ -1736,13 +1716,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
             (currentTime <= eventEndDate &&
               currentTime >= evenStarttDate)
           ) {
-            console.log('in live')
             if (this.typesOfEventsFilters.includes('live')) {
               event.showLive = true
               processedEvents.push(event)
             }
           } else {
-            console.log('in upcoming')
             if (this.typesOfEventsFilters.includes('upcoming')) {
               processedEvents.push(event)
             }
@@ -1811,7 +1789,6 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       })
     }
 
-    console.log('Event counts by type:', eventCounts)
     this.typesOfEventsFilters = eventCounts
   }
 

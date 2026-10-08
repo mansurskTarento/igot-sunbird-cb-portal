@@ -948,18 +948,6 @@ describe('LearnSearchComponent (No TestBed)', () => {
   })
 
   // ---------------------------------------------------------------------
-  // applyFilterFromLearn
-  // ---------------------------------------------------------------------
-  describe('applyFilterFromLearn', () => {
-    it('logs the selected filters without throwing', async () => {
-      const component = createComponent({})
-      const logSpy = jest.spyOn(console, 'log').mockImplementation()
-      await component.applyFilterFromLearn({ a: [1] })
-      expect(logSpy).toHaveBeenCalled()
-    })
-  })
-
-  // ---------------------------------------------------------------------
   // deleteFilterKeys
   // ---------------------------------------------------------------------
   describe('deleteFilterKeys', () => {

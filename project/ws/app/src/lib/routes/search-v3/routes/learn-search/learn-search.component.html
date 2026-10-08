@@ -9,7 +9,7 @@
                 <ws-app-search-filters [urlparamFilters]="paramFilters" [newfacets]="combinedFacets"
                     (appliedFilter)="applySearchFilter($event)" [typesOfEvents]="typesOfEventsFilters"
                     [karmayogiBadge]="veifiedKarmayogi" (constructQueryParam)="constructQueryParam($event)"
-                    (applyFilterFromLearn)="applyFilterFromLearn($event)" [categoryCounts]="categoryCounts"
+                    [categoryCounts]="categoryCounts"
                     (categorySelected)="scrollToCategory($event)"></ws-app-search-filters>
             </ng-container>
         </mat-sidenav>
