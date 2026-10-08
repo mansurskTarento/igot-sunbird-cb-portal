@@ -425,6 +425,23 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     return infoRef
   }
 
+  openRedeemConfirmation() {
+    this.dialog.open(KarmaCoinsInfoDialogComponent, {
+      data: { redeemConfirmation: true },
+      width: '608px',
+      maxWidth: '94vw',
+      maxHeight: '90vh',
+      autoFocus: false,
+      panelClass: 'kci-dialog-panel',
+      backdropClass: 'kci-dialog-backdrop',
+      scrollStrategy: new NoopScrollStrategy(),
+    }).afterClosed().subscribe(closedVia => {
+      if (closedVia === 'proceed') {
+        this.useKarmaCoins()
+      }
+    })
+  }
+
   selectTab(tab: IKarmaWalletTab['value']) {
     if (this.activeTab === tab) {
       return

@@ -1,13 +1,25 @@
 <div class="kci">
 
-  <header class="kci__header">
+  <section class="kci-confirm" *ngIf="data?.redeemConfirmation">
+    <button type="button" class="kci__close kci-confirm__close" (click)="close('close-icon')" aria-label="Close">
+      <mat-icon class="kci__close-icon">close</mat-icon>
+    </button>
+    <img class="kci-confirm__image" [src]="icons.marketplaceComingSoon" alt="" aria-hidden="true">
+    <h2 class="kci-confirm__title">Exciting Opportunities Coming Soon!</h2>
+    <p class="kci-confirm__text">We’re working on bringing some courses to the platform, where you can use your Karma
+      Coins and access more learning opportunities. In the meantime, keep exploring the courses currently available
+      in the marketplace.</p>
+    <button type="button" class="kci__cta kci-confirm__cta" (click)="close('proceed')">Visit Marketplace</button>
+  </section>
+
+  <header class="kci__header" *ngIf="!data?.redeemConfirmation">
     <h2 class="kci__title">What is Karma Coins?</h2>
     <button type="button" class="kci__close" (click)="close('close-icon')" aria-label="Close">
       <mat-icon class="kci__close-icon">close</mat-icon>
     </button>
   </header>
 
-  <div class="kci__body">
+  <div class="kci__body" *ngIf="!data?.redeemConfirmation">
 
     <!-- Points vs coins -->
     <div class="kci__pair">
@@ -50,7 +62,7 @@
     </section>
   </div>
 
-  <footer class="kci__footer">
+  <footer class="kci__footer" *ngIf="!data?.redeemConfirmation">
     <button type="button" class="kci__cta" (click)="close('walkthrough')">Start Walkthrough</button>
   </footer>
 </div>

@@ -4,11 +4,12 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { Observable, combineLatest, forkJoin, from, of } from 'rxjs'
 import { catchError, distinctUntilChanged, map, switchMap } from 'rxjs/operators'
 import { TranslateService } from '@ngx-translate/core'
-import { WidgetEnrollService } from '@sunbird-cb/utils-v2'
+import { EventService, WidgetEnrollService, WsEvents } from '@sunbird-cb/utils-v2'
 import {
   CardTransformerService,
   CardType,
   CardViewModel,
+  ContentApiService,
   ContentDictionaryService,
   IBreadcrumbItem,
   IUserCbpPlan,
@@ -41,6 +42,8 @@ export class PlanDetailComponent implements OnInit {
   private readonly enrollSvc = inject(WidgetEnrollService)
   private readonly userCbpPlansSvc = inject(UserCbpPlansService)
   private readonly translate = inject(TranslateService)
+  private readonly events = inject(EventService)
+  private readonly contentApiSvc = inject(ContentApiService)
   private readonly destroyRef = inject(DestroyRef)
 
   // ── State ──────────────────────────────────────────────────────────────────
@@ -227,6 +230,13 @@ export class PlanDetailComponent implements OnInit {
   ngOnInit(): void {
     this.primeTranslations()
 
+    // Cast for the same reason as the dictionary read below: the library's Observable comes
+    // from its own copy of rxjs and will not pipe through the portal's operators.
+    const cardClicks$ = this.contentApiSvc.cardClickDetails$ as unknown as Observable<any>
+    cardClicks$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(details => this.raiseCourseClickTelemetry(details))
+
     // Both maps, because the plan year in the query string decides whether this page needs
     // the read API at all — see resolvePlan$. distinctUntilChanged keeps an unrelated query
     // param change from re-running the whole load.
@@ -250,6 +260,53 @@ export class PlanDetailComponent implements OnInit {
           this.loading.set(false)
         }
       })
+  }
+
+  // ── Telemetry ──────────────────────────────────────────────────────────────
+  /**
+   * Handed to the course cards so they publish their click (CardCourseV2Component.emitDetails)
+   * — the card publishes nothing without `cardClickDetails`.
+   */
+  readonly courseCardConfig = { cardClickDetails: { subType: 'plan-course' } }
+  readonly assessmentCardConfig = { cardClickDetails: { subType: 'plan-assessment' } }
+
+  /**
+   * Interact telemetry for a course (or the assessment) opened from this plan.
+   *
+   * Raised off the card's own click publication rather than a `(click)` on the card's host:
+   * the card navigates in its click handler, and the router can finish that navigation in
+   * microtasks — destroying this page before the click bubbles up to a host listener.
+   *
+   * The page id is passed in full because the card's emitDetails() rewrites the shared route
+   * data to the home page's before it publishes.
+   */
+  private raiseCourseClickTelemetry(details: any): void {
+    const contentId = details?.identifier
+    if (!contentId) {
+      return
+    }
+    this.events.raiseInteractTelemetry(
+      { type: WsEvents.EnumInteractTypes.CLICK, subType: details.subType, id: contentId },
+      {
+        id: contentId,
+        type: details.primaryCategory || 'Course',
+        // The plan the course was opened from, so the event can be tied back to it.
+        rollup: { l1: this.plan()?.identifier ?? this.raw()?.id ?? '' },
+      },
+      { pageId: this.pageId, module: WsEvents.EnumTelemetrymodules.LEARN },
+    )
+  }
+
+  /**
+   * This route's page id as the page-load impression carries it: RootComponent collects each
+   * snapshot's `data` from the root down and UtilityService.routeData joins their pageIds.
+   */
+  private get pageId(): string {
+    return this.route.snapshot.pathFromRoot
+      .map(snapshot => snapshot.data?.['pageId'])
+      .filter(Boolean)
+      .map(id => `/${id}`)
+      .join('')
   }
 
   // ── Data ───────────────────────────────────────────────────────────────────

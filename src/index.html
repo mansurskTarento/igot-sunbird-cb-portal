@@ -63,20 +63,25 @@
     guarantees window.env is at least an object before anything reads it.
   -->
   <script>
-    window['envReady'] = fetch('/assets/env.json', { cache: 'no-cache' })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('Response status: ' + response.status)
-        }
-        return response.json()
-      })
-      .then(function (envJson) {
-        window['env'] = Object.assign(window['env'] || {}, envJson)
-      })
-      .catch(function (error) {
-        console.error('Error in fetching env json', error)
-      })
+    // window['envReady'] = fetch('/assets/env.json', { cache: 'no-cache' })
+    //   .then(function (response) {
+    //     if (!response.ok) {
+    //       throw new Error('Response status: ' + response.status)
+    //     }
+    //     return response.json()
+    //   })
+    //   .then(function (envJson) {
+    //     window['env'] = Object.assign(window['env'] || {}, envJson)
+    //   })
+    //   .catch(function (error) {
+    //     console.error('Error in fetching env json', error)
+    //   })
+    window['env'] = {
+      portalRoles: 'PUBLIC,DASHBOARD_ADMIN,VOLUNTEER',
+      recaptchaKey: '6LfY0l0gAAAAAAgmOgNn-VEW5jwu_-AyXTTH8gq4'
+    };
   </script>
+
   <script>window.git_build = '{git-hash}';</script>
   <script>window.git_branch = '{git-branch}';</script>
   <META HTTP-EQUIV='content-type' CONTENT='text/html; charset=UTF-8'>

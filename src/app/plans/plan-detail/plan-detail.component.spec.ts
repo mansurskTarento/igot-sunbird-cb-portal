@@ -4,19 +4,25 @@ import { BehaviorSubject, Subject, of } from 'rxjs'
 
 // The real library bundles pull @project-sunbird/telemetry-sdk, which jest cannot resolve
 // under jsdom. Factory mocks keep them from ever being executed.
-jest.mock('@sunbird-cb/utils-v2', () => ({ WidgetEnrollService: class { } }), { virtual: true })
+jest.mock('@sunbird-cb/utils-v2', () => ({
+  WidgetEnrollService: class { },
+  EventService: class { },
+  WsEvents: { EnumInteractTypes: { CLICK: 'click' }, EnumTelemetrymodules: { LEARN: 'learn' } },
+}), { virtual: true })
 jest.mock('@sunbird-cb/consumption', () => ({
+  ContentApiService: class { },
   CardType: { CourseCard: 'courseCard', PlanCard: 'planCard' },
   CardTransformerService: class { },
   ContentDictionaryService: class { },
   UserCbpPlansService: class { },
 }), { virtual: true })
 
-import { WidgetEnrollService } from '@sunbird-cb/utils-v2'
+import { EventService, WidgetEnrollService } from '@sunbird-cb/utils-v2'
 import {
   CardTransformerService,
   ContentDictionaryService,
   UserCbpPlansService,
+  ContentApiService,
 } from '@sunbird-cb/consumption'
 import { PlansService } from '../services/plans.service'
 import { PlanDetailComponent } from './plan-detail.component'
@@ -84,7 +90,12 @@ describe('PlanDetailComponent', () => {
   let enrollSvc: any
   let translate: any
 
+  let eventSvc: any
+  let cardClicks: Subject<any>
+
   const build = () => {
+    eventSvc = { raiseInteractTelemetry: jest.fn() }
+    cardClicks = new Subject()
     paramMap = new BehaviorSubject({ get: (_k: string) => 'plan-1' })
     queryParamMap = new BehaviorSubject({ get: (_k: string) => null })
 
@@ -136,12 +147,20 @@ describe('PlanDetailComponent', () => {
     TestBed.configureTestingModule({
       providers: [
         PlanDetailComponent,
-        { provide: ActivatedRoute, useValue: { paramMap, queryParamMap } },
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            paramMap, queryParamMap,
+            snapshot: { pathFromRoot: [{ data: {} }, { data: { pageId: 'app/plans' } }, { data: { pageId: 'app/plans/:id' } }] },
+          },
+        },
         { provide: PlansService, useValue: plansSvc },
         { provide: UserCbpPlansService, useValue: userCbpPlansSvc },
         { provide: ContentDictionaryService, useValue: dictionarySvc },
         { provide: CardTransformerService, useValue: transformer },
         { provide: WidgetEnrollService, useValue: enrollSvc },
+        { provide: EventService, useValue: eventSvc },
+        { provide: ContentApiService, useValue: { cardClickDetails$: cardClicks } },
         { provide: require('@ngx-translate/core').TranslateService, useValue: translate },
       ],
     })
@@ -696,6 +715,27 @@ describe('PlanDetailComponent', () => {
       // cachedPlan() marks do_1 mandatory and do_2 not.
       expect((component.courses()[0] as any).isCA).toBe(true)
       expect((component.courses()[1] as any).isCA).toBeUndefined()
+    })
+  })
+
+  // ── Telemetry ──────────────────────────────────────────────────────────────
+  describe('course card click telemetry', () => {
+    it('raises an interact event for the course a card publishes, rolled up to the plan', async () => {
+      component.ngOnInit()
+      await settle()
+      cardClicks.next({ subType: 'plan-course', identifier: 'c1', primaryCategory: 'Course' })
+      expect(eventSvc.raiseInteractTelemetry).toHaveBeenCalledWith(
+        { type: 'click', subType: 'plan-course', id: 'c1' },
+        { id: 'c1', type: 'Course', rollup: { l1: 'plan-1' } },
+        // In full: the card rewrites the shared route data to the home page's before publishing.
+        { pageId: '/app/plans/app/plans/:id', module: 'learn' },
+      )
+    })
+
+    it('ignores a publication with no content id', () => {
+      component.ngOnInit()
+      cardClicks.next({ subType: 'plan-course' })
+      expect(eventSvc.raiseInteractTelemetry).not.toHaveBeenCalled()
     })
   })
 })
