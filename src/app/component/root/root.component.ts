@@ -22,6 +22,7 @@ import {
   Router,
   ActivatedRoute,
   ActivatedRouteSnapshot,
+  Params,
 } from '@angular/router'
 import { BreakpointObserver } from '@angular/cdk/layout'
 // import { interval, concat, timer } from 'rxjs'
@@ -590,37 +591,16 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       }
 
       if (event instanceof NavigationEnd) {
-        // let snapshot = this.router.routerState.firstChild(this.activatedRoute).snapshot
-        // console.log('this.route.snapshot :: ', this.route.snapshot)
         const snapshot = this.route.snapshot
-        // console.log('root.snapshot.root.firstChild ', snapshot.root.firstChild)
-        // console.log('firstChild ', snapshot.firstChild)
         const firstChild = snapshot.root.firstChild
         this.getChildRouteData(snapshot, firstChild)
-        // tslint:disable-next-line: no-console
-        // console.log('Final currentDataRoute', this.currentRouteData)
         this.utilitySvc.setRouteData(this.currentRouteData)
         const pageContext = this.utilitySvc.routeData
         const queryParams = this.route.snapshot.queryParams
-        const isGlobalSearch = this.currentRouteData.some((rd: any) => rd && rd.pageKey === 'globalsearch')
-        let data: any = {
-          pageContext,
-        }
-        if (isGlobalSearch && queryParams.q) {
-          const actualQuery = queryParams.q
-          const correctedQuery = queryParams.search
-          const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
-          data = {
-            pageContext: { ...pageContext, module: 'Search' },
-            object: {
-              id: correctedQuery || actualQuery,
-              type: isCorrected ? 'search-query-corrected' : 'search-query-not-corrected',
-              rollup: { l1: actualQuery },
-            },
-            tags: queryParams.category ? queryParams.category.split(',') : [],
-            edata: { type: 'page' },
-          }
-        }
+        const isGlobalSearch = this.currentRouteData.some((rd: any) => rd?.pageKey === 'globalsearch')
+        const data = isGlobalSearch && queryParams.q
+          ? this.buildSearchImpressionData(pageContext, queryParams)
+          : { pageContext }
         const objectType = this.route.snapshot.queryParams.primaryCategory || ''
         this.raiseAppStartTelemetry()
         if (data.pageContext.pageId && data.pageContext.module) {
@@ -651,6 +631,22 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
       this.disableHeightOnTop = false
     }
 
+  }
+
+  private buildSearchImpressionData(pageContext: any, queryParams: Params) {
+    const actualQuery = queryParams.q
+    const correctedQuery = queryParams.search
+    const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
+    return {
+      pageContext: { ...pageContext, module: 'Search' },
+      object: {
+        id: correctedQuery || actualQuery,
+        type: isCorrected ? 'search-query-corrected' : 'search-query-not-corrected',
+        rollup: { l1: actualQuery },
+      },
+      tags: queryParams.category ? queryParams.category.split(',') : [],
+      edata: { type: 'page' },
+    }
   }
 
   setAchivements() {
