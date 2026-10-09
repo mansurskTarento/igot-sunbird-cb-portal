@@ -597,11 +597,11 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         this.utilitySvc.setRouteData(this.currentRouteData)
         const pageContext = this.utilitySvc.routeData
         const queryParams = _.get(this.route.snapshot, 'queryParams')
-        const isGlobalSearch = this.currentRouteData ? this.currentRouteData.some((rd: any) => rd?.pageKey === 'globalsearch') : false
+        const isGlobalSearch = this.currentRouteData.some((rd: any) => rd?.pageKey === 'globalsearch')
         const data = isGlobalSearch && queryParams?.q
           ? this.buildSearchImpressionData(pageContext, queryParams)
           : { pageContext }
-        const objectType = _.get(this.route.snapshot, 'queryParams.primaryCategory', '') || ''
+        const objectType = _.get(this.route.snapshot, 'queryParams.primaryCategory', '')
         this.raiseAppStartTelemetry()
         if (data.pageContext.pageId && data.pageContext.module) {
           this.telemetrySvc.impression(data, objectType)
