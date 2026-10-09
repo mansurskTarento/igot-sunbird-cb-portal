@@ -17,6 +17,13 @@
         <mat-sidenav-content #mainContainer class="custom-sidecontent"
             [ngClass]="{'full': filtersPanel && filtersPanel ==='hide'}">
             <div #contentWrapper class="ml-2 md:ml-4 md:mr-0 mr-2 content-wrapper">
+                <ng-container *ngIf="showREsultsCorrection()">
+                    <div class="showingResult mt-4 mb-6">{{ 'learnsearch.showingResultsFor' | translate }}
+                        <span class="searchQuery">
+                            &ldquo;{{ searchQuery?.nlp }}&rdquo;
+                        </span>
+                    </div>
+                </ng-container>
                 <div class="result-meta flex items-center justify-between flex-wrap"
                     [ngClass]="{'my-3': screenSizeIsLtMedium, 'mb-4': !isExploreContentTab}"
                     *ngIf="!searchContentLoader && !searchPeopleLoader && hasActiveSearchCategory && isCategoryActive('courses')">
@@ -128,7 +135,8 @@
                                         [class.global-search-blended-program-card]="course?.primaryCategory === 'Blended Program' || course?.contentType === 'Blended Program'"
                                         [content]="course" [enrollment]="enrollmentDetails"
                                         [igotSpecializationPrograms]="igotSpecializationPrograms"
-                                        (telemetry)="applyTelemetry($event, index, resultCardCategory.Courses)" [cbpPlans]="cbpPlanList"
+                                        (telemetry)="applyTelemetry($event, index, resultCardCategory.Courses)"
+                                        [cbpPlans]="cbpPlanList"
                                         [unenrolledCourses]="unenrolledCourses"></ws-app-course-content-card>
                                 </ng-container>
                                 <p class="see-all-results text-center font-normal brand-color cursor-pointer"
@@ -205,7 +213,8 @@
                                         <div class="card-container mr-6"
                                             *ngFor="let user of peoplesSearchResults; let index=index">
                                             <ws-app-people-connection-card class="mr-4 mb-5" [user]="user"
-                                                (telemetry)="applyTelemetry($event, index, resultCardCategory.Peoples)" [category]="seeAllResult"
+                                                (telemetry)="applyTelemetry($event, index, resultCardCategory.Peoples)"
+                                                [category]="seeAllResult"
                                                 (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                         </div>
                                     </ws-utils-horizontal-scroller>
@@ -215,7 +224,8 @@
                                     <div class="flex flex-wrap gap-x-6 gap-y-3 items-center justify-start">
                                         <div class="card-container flex-grow" *ngFor="let user of peoplesSearchResults">
                                             <ws-app-people-connection-card class="mb-5" [user]="user"
-                                                [category]="seeAllResult" (telemetry)="applyTelemetry($event, index, resultCardCategory.Peoples)"
+                                                [category]="seeAllResult"
+                                                (telemetry)="applyTelemetry($event, index, resultCardCategory.Peoples)"
                                                 (connection)="connectionUpdatePeopleCard($event)"></ws-app-people-connection-card>
                                         </div>
                                     </div>
@@ -340,7 +350,8 @@
                             <ng-container *ngIf="externalSearchTotalCount > 0; else noCategoryData">
                                 <ng-container *ngFor="let course of externalSearchResults; let index = index">
                                     <ws-app-course-content-card [content]="course" [enrollment]="enrollmentDetails"
-                                        (telemetry)="applyTelemetry($event, index, resultCardCategory.ExternalContents)" [cbpPlans]="cbpPlanList"
+                                        (telemetry)="applyTelemetry($event, index, resultCardCategory.ExternalContents)"
+                                        [cbpPlans]="cbpPlanList"
                                         [unenrolledCourses]="unenrolledCourses"></ws-app-course-content-card>
                                 </ng-container>
                                 <p class="see-all-results text-center font-normal brand-color cursor-pointer"

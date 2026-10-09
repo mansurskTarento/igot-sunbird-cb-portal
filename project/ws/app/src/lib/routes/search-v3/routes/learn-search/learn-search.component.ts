@@ -178,6 +178,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   applySelectedFilters: any = []
   compentencyKeyExist = false
   isGlobalSearch = signal(false)
+  showREsultsCorrection = signal(false)
   readonly resultCardCategory = SearchResultCardCategory
   constructor(
     private searchV3Service: GbSearchService,
@@ -247,6 +248,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.isGlobalSearch.set(this.router.url.includes('app/globalsearch'))
   }
 
+  setResultsCorrection() {
+    this.showREsultsCorrection.set(this.searchQuery?.query?.toLowerCase() !== this.searchQuery?.nlp?.toLowerCase())
+  }
   async loadEnrollmentDetailsFromCache() {
     try {
       const cachedData = await this.indexedDbService.getEnrollmentDetails()
@@ -259,6 +263,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async ngOnChanges(changes: SimpleChanges) {
+    this.setResultsCorrection()
     if (
       this.configSvc.unMappedUser &&
       this.configSvc.unMappedUser.profileDetails
@@ -1689,44 +1694,44 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
     let serverTime = moment()
     serverTime = serverTime.add(5, 'hours').add(30, 'minutes')
-      /* tslint:disable */
+    /* tslint:disable */
 
 
 
-      events.forEach((event: any) => {
-        if (
-          event.startDate &&
-          event.endDate &&
-          event.startTime &&
-          event.endTime
+    events.forEach((event: any) => {
+      if (
+        event.startDate &&
+        event.endDate &&
+        event.startTime &&
+        event.endTime
+      ) {
+        // Conver current time into milliseconds
+        let currentTime = new Date(serverTime.toString()).getTime() / 1000
+        // Combining date and time for start event
+        let evenStarttDate =
+          new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
+        // Combining date and time for end event
+        let eventEndDate =
+          new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
+        if (currentTime > eventEndDate) {
+          if (this.typesOfEventsFilters.includes('past events')) {
+            processedEvents.push(event)
+          }
+        } else if (
+          (currentTime <= eventEndDate &&
+            currentTime >= evenStarttDate)
         ) {
-          // Conver current time into milliseconds
-          let currentTime = new Date(serverTime.toString()).getTime() / 1000
-          // Combining date and time for start event
-          let evenStarttDate =
-            new Date(`${event.startDate} ${event.startTime}`).getTime() / 1000
-          // Combining date and time for end event
-          let eventEndDate =
-            new Date(`${event.endDate} ${event.endTime}`).getTime() / 1000
-          if (currentTime > eventEndDate) {
-            if (this.typesOfEventsFilters.includes('past events')) {
-              processedEvents.push(event)
-            }
-          } else if (
-            (currentTime <= eventEndDate &&
-              currentTime >= evenStarttDate)
-          ) {
-            if (this.typesOfEventsFilters.includes('live')) {
-              event.showLive = true
-              processedEvents.push(event)
-            }
-          } else {
-            if (this.typesOfEventsFilters.includes('upcoming')) {
-              processedEvents.push(event)
-            }
+          if (this.typesOfEventsFilters.includes('live')) {
+            event.showLive = true
+            processedEvents.push(event)
+          }
+        } else {
+          if (this.typesOfEventsFilters.includes('upcoming')) {
+            processedEvents.push(event)
           }
         }
-      })
+      }
+    })
     return processedEvents
   }
 

@@ -52,6 +52,17 @@
   }
 }
 
+.showingResult {
+  /* stylelint-disable */
+  font: 600 17px Montserrat;
+  /* stylelint-enable */
+  color: var(--color-tertiary-300);
+
+  .searchQuery {
+    color: var(--color-tertiary-500) !important;
+  }
+}
+
 .custom-sidecontent {
   //   width: 73%;
   min-height: 94vh;
