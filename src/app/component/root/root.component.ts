@@ -598,6 +598,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
         const pageContext = this.utilitySvc.routeData
         const queryParams = _.get(this.route.snapshot, 'queryParams')
         const isGlobalSearch = this.currentRouteData.some((rd: any) => rd?.pageKey === 'globalsearch')
+          && queryParams?.tab !== 'explore-content'
         const data = isGlobalSearch && queryParams?.q
           ? this.buildSearchImpressionData(pageContext, queryParams)
           : { pageContext }

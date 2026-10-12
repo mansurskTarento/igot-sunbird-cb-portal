@@ -1,5 +1,6 @@
 import { RootComponent } from './root.component'
 import { of, Subject, BehaviorSubject } from 'rxjs'
+import { NavigationEnd } from '@angular/router'
 
 describe('RootComponent (No TestBed)', () => {
   let component: RootComponent
@@ -19,7 +20,6 @@ describe('RootComponent (No TestBed)', () => {
   let mockChangeDetector: any
   let mockUtilitySvc: any
   let mockUrlService: any
-  let mockIGOTAIService: any
   let mockCommonDataSvc: any
   let mockLibNotificationsService: any
   let mockHomePageSvc: any
@@ -125,10 +125,6 @@ describe('RootComponent (No TestBed)', () => {
       setPreviousUrl: jest.fn(),
     }
 
-    mockIGOTAIService = {
-      iGOTAIConfigReadData: jest.fn().mockReturnValue(of({ web: { aiTutor: true } })),
-    }
-
     mockCommonDataSvc = {
       mandatoryDetails: jest.fn(),
     }
@@ -166,6 +162,7 @@ describe('RootComponent (No TestBed)', () => {
       mockSwUpdate,
       mockDialog,
       mockHttp,
+      {} as any,
       mockConfigSvc,
       mockValueSvc,
       mockTelemetrySvc,
@@ -176,10 +173,12 @@ describe('RootComponent (No TestBed)', () => {
       mockChangeDetector,
       mockUtilitySvc,
       mockUrlService,
-      mockIGOTAIService,
       mockCommonDataSvc,
+      {} as any,
+      {} as any,
       mockLibNotificationsService,
-      mockHomePageSvc
+      mockHomePageSvc,
+      { observe: jest.fn().mockReturnValue(of({ matches: false })) } as any
     )
   })
 
@@ -490,7 +489,7 @@ describe('RootComponent (No TestBed)', () => {
 
   describe('raiseTelemetryExploreContent', () => {
     it('should call raiseInteractTelemetry', () => {
-      component.raiseTelemetryExploreContent()
+      component.raiseTelemetryExploreContent('explore-content')
       expect(mockEventSvc.raiseInteractTelemetry).toHaveBeenCalledWith(
         expect.objectContaining({ id: 'explore-content' }),
         {},
@@ -578,17 +577,37 @@ describe('RootComponent (No TestBed)', () => {
     })
   })
 
-  describe('iGOTAIConfig', () => {
-    it('should call iGOTAIService.iGOTAIConfigReadData', async () => {
-      await (component as any).iGOTAIConfig()
-      expect(mockIGOTAIService.iGOTAIConfigReadData).toHaveBeenCalled()
-      expect(component.iGOTAIConfigLoaded).toBe(true)
+  describe('search impression on NavigationEnd', () => {
+    const emitNavigationEnd = (tab?: string) => {
+      mockRoute.snapshot.queryParams = { q: 'java', ...(tab ? { tab } : {}) }
+      mockRoute.snapshot.root.firstChild = {
+        data: { pageId: 'globalsearch', module: 'search', pageKey: 'globalsearch' },
+        firstChild: null,
+      }
+      routerEventsSubject.next(new NavigationEnd(1, '/app/globalsearch', '/app/globalsearch'))
+    }
+
+    beforeEach(() => {
+      jest.spyOn(localStorage, 'getItem').mockReturnValue(null)
+      document.getElementById = jest.fn().mockReturnValue({
+        classList: { add: jest.fn(), remove: jest.fn() },
+      })
+      component.ngOnInit()
     })
 
-    it('should set iGOTAIConfigLoaded to false on 404', async () => {
-      mockIGOTAIService.iGOTAIConfigReadData.mockReturnValue(of({ error: { status: 404 } }))
-      await (component as any).iGOTAIConfig()
-      expect(component.iGOTAIConfigLoaded).toBe(false)
+    it('builds search impression data for global search', () => {
+      emitNavigationEnd()
+      expect(mockTelemetrySvc.impression).toHaveBeenCalledWith(
+        expect.objectContaining({ edata: { type: 'page' } }),
+        expect.anything(),
+      )
+    })
+
+    it('does not build search impression data when tab=explore-content', () => {
+      emitNavigationEnd('explore-content')
+      const [data] = mockTelemetrySvc.impression.mock.calls[0]
+      expect(data.edata).toBeUndefined()
     })
   })
+
 })
