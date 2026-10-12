@@ -23,7 +23,7 @@
 
 
 
-  <div
+  <div class="chatbot-panel"
     [ngClass]="enableIGOTAIFlag || enableSupportAI ?  (fullScreenChatFlag ? 'chatbot-with-ai-full' : ( (maximizeChatFlag ? 'chatbot-with-ai' : 'chatbot-with-ai-min'))) : 'chatbot'"
     (clickOutside)="clickOutside()" *ngIf="!showIcon">
     <div class="chatbot-wrapper">
