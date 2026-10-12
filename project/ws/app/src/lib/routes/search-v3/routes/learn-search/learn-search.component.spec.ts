@@ -60,6 +60,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
   let mockIndexedDbService: any
   let mockUtilitySvc: any
   let mockContentDictionarySvc: any
+  let mockEnrolementDictionarySvc: any
 
   const defaultCourseResult = { result: { content: [], count: 0, facets: [] } }
   const defaultEventResult = { result: { count: 0, facets: [], Event: [] } }
@@ -84,6 +85,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       mockIndexedDbService,
       mockUtilitySvc,
       mockContentDictionarySvc,
+      mockEnrolementDictionarySvc,
     )
   }
 
@@ -129,7 +131,14 @@ describe('LearnSearchComponent (No TestBed)', () => {
       get: jest.fn().mockReturnValue(of('No results found')),
     }
 
-    mockRouter = { navigate: jest.fn(), url: '/app/search/learn' }
+    mockRouter = {
+      navigate: jest.fn(),
+      url: '/app/search/learn',
+      parseUrl: jest.fn((url: string) => ({
+        queryParams: Array.from(new URL(url, 'http://localhost').searchParams.entries()).reduce(
+          (acc: any, [k, v]) => ({ ...acc, [k]: v }), {}),
+      })),
+    }
 
     mockLangtranslations = { translateLabel: jest.fn().mockReturnValue('translated-label') }
 
@@ -143,6 +152,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
     }
 
     mockUtilitySvc = { setRouteData: jest.fn() }
+    mockEnrolementDictionarySvc = { getEnrolementDictionary: jest.fn().mockReturnValue(of(null)) }
     mockContentDictionarySvc = { getContent: jest.fn((id: string) => of({ identifier: id, name: `content-${id}` })) }
   })
 
@@ -194,7 +204,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
       expect(component.defaultThumbnail).toBe('thumb.png')
       expect(component.statedata).toEqual({ param: 'abc', path: 'Search' })
       expect(mockUserService.fetchCbpPlanList).toHaveBeenCalled()
-      expect(mockSearchV3Service.enrollmentDictionary).toHaveBeenCalled()
+      expect(mockEnrolementDictionarySvc.getEnrolementDictionary).toHaveBeenCalled()
       expect(mockSearchV3Service.microCredentialsSearch).toHaveBeenCalled()
     })
 
@@ -566,6 +576,29 @@ describe('LearnSearchComponent (No TestBed)', () => {
     })
   })
 
+  describe('setIsGlobalSearch', () => {
+    it('is true on the global search route', () => {
+      mockRouter.url = '/app/globalsearch?q=java'
+      const component = createComponent({})
+      component.setIsGlobalSearch()
+      expect(component.isGlobalSearch()).toBe(true)
+    })
+
+    it('is false on the global search route when tab=explore-content', () => {
+      mockRouter.url = '/app/globalsearch?q=java&tab=explore-content'
+      const component = createComponent({})
+      component.setIsGlobalSearch()
+      expect(component.isGlobalSearch()).toBe(false)
+    })
+
+    it('is false outside the global search route', () => {
+      mockRouter.url = '/app/search/learn?q=java'
+      const component = createComponent({})
+      component.setIsGlobalSearch()
+      expect(component.isGlobalSearch()).toBe(false)
+    })
+  })
+
   describe('navigateTo', () => {
     it('navigates to the given route', () => {
       const component = createComponent({})
@@ -662,7 +695,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
         toPromise: jest.fn().mockResolvedValue({ result: { response: [{ contextId: 'c1', submitted: true }] } }),
       })
       const component = createComponent({})
-      component.enrollmentDetails = { result: { response: { c1: { completionPercentage: 100 } } } }
+      component.enrollmentDetails = { c1: { completionPercentage: 100 } }
       await component.searchCourses()
 
       expect(mockSearchV3Service.getApplicationsById).toHaveBeenCalledWith({
@@ -1215,14 +1248,14 @@ describe('LearnSearchComponent (No TestBed)', () => {
   // ---------------------------------------------------------------------
   describe('checkCourseEnrollmentAndCbpPlan', () => {
     it('stores enrollmentDetails in IndexedDB when a response is present', () => {
-      mockSearchV3Service.enrollmentDictionary.mockReturnValue(of({ result: { response: { a: 1 } } }))
+      mockEnrolementDictionarySvc.getEnrolementDictionary.mockReturnValue(of({ a: 1 }))
       const component = createComponent({})
       component.checkCourseEnrollmentAndCbpPlan()
       expect(mockIndexedDbService.setEnrollmentDetails).toHaveBeenCalledWith({ a: 1 })
     })
 
     it('does not touch IndexedDB when there is no response', () => {
-      mockSearchV3Service.enrollmentDictionary.mockReturnValue(of({}))
+      mockEnrolementDictionarySvc.getEnrolementDictionary.mockReturnValue(of(null))
       const component = createComponent({})
       component.checkCourseEnrollmentAndCbpPlan()
       expect(mockIndexedDbService.setEnrollmentDetails).not.toHaveBeenCalled()
@@ -1230,7 +1263,7 @@ describe('LearnSearchComponent (No TestBed)', () => {
 
     it('logs an error when storing to IndexedDB fails', async () => {
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-      mockSearchV3Service.enrollmentDictionary.mockReturnValue(of({ result: { response: { a: 1 } } }))
+      mockEnrolementDictionarySvc.getEnrolementDictionary.mockReturnValue(of({ a: 1 }))
       mockIndexedDbService.setEnrollmentDetails.mockRejectedValue(new Error('fail'))
       const component = createComponent({})
       component.checkCourseEnrollmentAndCbpPlan()

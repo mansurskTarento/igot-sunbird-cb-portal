@@ -1141,6 +1141,13 @@ describe('RootComponent', () => {
       expect(mockTelemetrySvc.impression).toHaveBeenCalledWith({ pageContext: { pageId: 'home', module: 'home' } }, '')
     })
 
+    it('should use the plain page context for global search with tab=explore-content', () => {
+      mockRoute.snapshot.root.firstChild = { data: { pageKey: 'globalsearch' }, firstChild: null }
+      mockRoute.snapshot.queryParams = { q: 'java', tab: 'explore-content' }
+      emitEnd('/app/globalsearch')
+      expect(mockTelemetrySvc.impression).toHaveBeenCalledWith({ pageContext: { pageId: 'home', module: 'home' } }, '')
+    })
+
     it('should use the plain page context for non search pages with a query', () => {
       mockRoute.snapshot.root.firstChild = { data: { pageKey: 'home' }, firstChild: null }
       mockRoute.snapshot.queryParams = { q: 'java' }

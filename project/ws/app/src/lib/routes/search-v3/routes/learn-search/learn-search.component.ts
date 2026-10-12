@@ -38,7 +38,7 @@ import {
   SearchResourceMimeType,
   SearchExternalRequest
 } from '../../models/search-v3.model'
-import { forkJoin, Subject } from 'rxjs'
+import { forkJoin, Observable, Subject } from 'rxjs'
 import {
   NsContent,
   WidgetUserService,
@@ -46,7 +46,7 @@ import {
 import { environment } from '../../../../../../../../../src/environments/environment'
 import { NetworkV2Service } from '../../../network-v2/services/network-v2.service'
 import moment from 'moment'
-import { ContentDictionaryService } from '@sunbird-cb/consumption'
+import { ContentDictionaryService, EnrolementDictionaryService } from '@sunbird-cb/consumption'
 
 // Matches the `seeAllResult`/`isCategoryActive` section keys used throughout this component's template.
 export enum SearchResultCardCategory {
@@ -194,6 +194,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     private indexedDbService: IndexedDbService,
     private utilitySvc: UtilityService,
     private contentDictionarySvc: ContentDictionaryService,
+    private enrolementDictionarySvc: EnrolementDictionaryService
   ) {
     if (localStorage.getItem('websiteLanguage')) {
       this.translate.setDefaultLang('en')
@@ -245,7 +246,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   setIsGlobalSearch() {
-    this.isGlobalSearch.set(this.router.url.includes('app/globalsearch'))
+    const isExploreContentTab = this.router.parseUrl(this.router.url).queryParams['tab'] === 'explore-content'
+    this.isGlobalSearch.set(this.router.url.includes('app/globalsearch') && !isExploreContentTab)
   }
 
   setResultsCorrection() {
@@ -376,7 +378,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.events.raiseInteractTelemetry(
       {
         type: 'click',
-        subType: SEARCH_RESULT_CARD_SUBTYPE[category],
+        subType: SEARCH_RESULT_CARD_SUBTYPE[category] + `-${i + 1}`,
         id: content.identifier || '',
       },
       {
@@ -445,7 +447,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       enrichedContent = identifiers.length
         ? (await forkJoin(identifiers.map((id: string) => this.contentDictionarySvc.getContent(id))).toPromise() as any[]).filter(Boolean)
         : []
-      const enrollmentDetailsFromDB = _.get(this.enrollmentDetails, 'result.response', null)
+      const enrollmentDetailsFromDB = this.enrollmentDetails
       if (enrollmentDetailsFromDB) {
         for (const content of enrichedContent) {
           const enrollmentDetails = enrollmentDetailsFromDB[content.identifier]
@@ -1611,15 +1613,17 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
 
   checkCourseEnrollmentAndCbpPlan() {
     forkJoin({
-      enrollmentDetails: this.searchV3Service.enrollmentDictionary(),
+      // Cast: the consumption library bundles its own rxjs copy, so its Observable type
+      // is not assignable to the portal's rxjs Observable.
+      enrollmentDetails: this.enrolementDictionarySvc.getEnrolementDictionary() as unknown as Observable<any>,
       cbpPlan: this.userService.fetchCbpPlanList(),
     }).subscribe((responses) => {
       this.enrollmentDetails = responses.enrollmentDetails || {}
       this.cbpPlanList = responses.cbpPlan || []
 
       // Store enrollmentDetails in IndexedDB
-      if (responses.enrollmentDetails && responses.enrollmentDetails.result && responses.enrollmentDetails.result.response) {
-        this.indexedDbService.setEnrollmentDetails(responses.enrollmentDetails.result.response)
+      if (responses.enrollmentDetails) {
+        this.indexedDbService.setEnrollmentDetails(responses.enrollmentDetails)
           .catch(error => console.error('Failed to store enrollmentDetails in IndexedDB:', error))
       }
     })

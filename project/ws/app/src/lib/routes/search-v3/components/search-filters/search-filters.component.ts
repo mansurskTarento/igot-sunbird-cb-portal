@@ -544,7 +544,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
         type: 'click',
         subType,
         id,
-        pageid: '/page/home',
+        pageid: '/app/globalsearch',
       },
       {
         id: correctedQuery || actualQuery,
