@@ -721,6 +721,33 @@
       min-width: 0;
       box-sizing: border-box;
     }
+
+    .card-meta-row>.right-section-row,
+    .card-meta-row>.right-section-column {
+      max-width: none;
+    }
+
+    .download-certificate-course {
+      width: 88px;
+      min-width: 88px;
+      max-width: 88px;
+      flex-shrink: 0;
+      gap: 4px;
+      box-sizing: border-box;
+      overflow: hidden;
+
+      mat-icon {
+        flex-shrink: 0;
+      }
+
+      span {
+        display: block;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
   }
 }
 

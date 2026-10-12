@@ -21,7 +21,6 @@ import { CertificateService } from '../../../certificate/services/certificate.se
 import { Router } from '@angular/router'
 import { CommonMethodsService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import { IndexedDbService } from '@sunbird-cb/utils-v2'
-import * as _ from 'lodash'
 
 const MILLISECONDS_IN_A_DAY = 1000 * 60 * 60 * 24
 const NEW_CONTENT_THRESHOLD_DAYS = 14
@@ -94,7 +93,13 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
         // You can use this enrollment record as needed
         // For example, update courseEnrollment
         if (!this.courseEnrollment) {
-          this.courseEnrollment = enrollmentRecord
+          this.courseEnrollment = {
+            ...enrollmentRecord,
+            issuedCertificates: enrollmentRecord.issuedCertificates ||
+              (enrollmentRecord.certificateId ? [{ identifier: enrollmentRecord.certificateId }] : []),
+            completionPercentage: enrollmentRecord.completionPercentage ??
+              (Number(enrollmentRecord.status) === 2 ? 100 : enrollmentRecord.completionPercentage),
+          }
         }
       }
     }
@@ -210,17 +215,10 @@ export class CourseContentCardComponent implements OnInit, OnChanges {
   }
 
   get lockSurvey(): boolean {
-    if (
-      _.get(this.configSvc, 'instanceConfig.completionSurvey.enabled') &&
-      this.courseEnrollment &&
-      this.courseEnrollment.completedOn >= _.get(this.configSvc.instanceConfig, 'completionSurvey.startDate') &&
-      this.content &&
-      this.content.completionSurveyLink &&
-      this.content.surveyCompletionStatus === false
-    ) {
-      return true
-    }
-    return false
+    return Boolean(
+      this.content?.completionSurveyLink &&
+      this.content?.surveyCompletionStatus === false
+    )
   }
 
   generateCompetencySubThemeString(): string {
