@@ -15,9 +15,8 @@ import { NsCardContent } from '@sunbird-cb/collection'
 import { TranslateService } from '@ngx-translate/core'
 import { MultilingualTranslationsService } from '@sunbird-cb/utils-v2'
 
-import { WidgetUserServiceLib } from '@sunbird-cb/consumption'
+import { EnrolementDictionaryService, WidgetUserServiceLib } from '@sunbird-cb/consumption'
 import { IndexedDbService } from '@sunbird-cb/utils-v2'
-import { InitService } from '../../services/init.service'
 dayjs.extend(isSameOrBefore)
 dayjs.extend(isSameOrAfter)
 dayjs.extend(isBetween)
@@ -30,10 +29,10 @@ dayjs.extend(isBetween)
 const PLAN_DURATION_OVERDUE = NsCardContent.ACBPConst.OVERDUE
 const PLAN_DURATION_UPCOMING = 'upcoming'
 @Component({
-    selector: 'ws-cbp-plan',
-    templateUrl: './cbp-plan.component.html',
-    styleUrls: ['./cbp-plan.component.scss'],
-    standalone: false
+  selector: 'ws-cbp-plan',
+  templateUrl: './cbp-plan.component.html',
+  styleUrls: ['./cbp-plan.component.scss'],
+  standalone: false
 })
 export class CbpPlanComponent implements OnInit {
   cbpConfig: any
@@ -114,7 +113,7 @@ export class CbpPlanComponent implements OnInit {
     private translate: TranslateService,
     private langtranslations: MultilingualTranslationsService,
     private indexedDbSvc: IndexedDbService,
-    private initSvc: InitService
+    private enrolementDictionarySvc: EnrolementDictionaryService
 
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
@@ -410,7 +409,7 @@ export class CbpPlanComponent implements OnInit {
         this.enrolmentDictionary = cached
         return cached
       }
-      this.enrolmentDictionary = await this.initSvc.fetchEnrolmentDictionary()
+      this.enrolmentDictionary = await this.enrolementDictionarySvc.getEnrolementDictionary()
       return this.enrolmentDictionary
     } catch {
       // no enrolment data => cards simply render without a progress tag. Deliberately not
