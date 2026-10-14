@@ -495,7 +495,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     }
     switch (categoryType) {
       case 'contentType':
-        return 'content-type'
+        return 'category-type'
       case 'avgRating':
         return 'ratings'
       case 'language':
@@ -536,7 +536,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     const isCorrected = !!(correctedQuery && correctedQuery !== actualQuery)
     const subType = this.resolveFilterSubtype(categoryType)
     const id = subType === 'ratings'
-      ? `rating-${this.normalizeFilterId(value)}`
+      ? `${this.normalizeFilterId(value)}`
       : this.normalizeFilterId(value)
 
     this.telemetrySvc.raiseInteractWithEnv(
