@@ -53,6 +53,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isIgotOrg = false
   isNotMyUser = false
   isNotMyUserAndIgotOrg = false
+  isNotMyUserAndNotIgotOrg = false
   myBadgesCount: any = 0
   userStats: UserStats[] = [
     {
@@ -503,6 +504,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
+      this.isNotMyUserAndNotIgotOrg = (this.isNotMyUser && !this.isIgotOrg)
       if (!this.isNotMyUserAndIgotOrg && _.get(this.profileConfig, 'rightSection.enabled') && _.get(this.profileConfig, 'rightSection.recommendedCommunities.enabled', false)) {
         // this.getRecommendedUsers()
         this.getRecommendedCommunitesList()

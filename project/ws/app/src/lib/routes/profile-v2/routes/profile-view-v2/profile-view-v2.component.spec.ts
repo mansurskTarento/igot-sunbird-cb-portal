@@ -1,3 +1,4 @@
+import { of } from 'rxjs';
 import { ProfileViewV2Component } from './profile-view-v2.component';
 
 // Mock all dependencies
@@ -10,6 +11,9 @@ const mockDialog = {
 
 const mockActivatedRoute = {
   data: { subscribe: jest.fn() },
+  fragment: { subscribe: jest.fn() },
+  queryParamMap: of({ get: () => null }),
+  snapshot: { queryParamMap: { get: () => null } },
   parent: { snapshot: { data: { pageData: { data: {} } } } }
 };
 
@@ -24,6 +28,9 @@ const mockProfileV2RevampService = {
   updateEntriesOfProfile: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
   fetchProfileEntries: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
   connectToNetwork: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
+  getConnectionStatus: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
+  listAchievements: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
+  getOrgSearch: jest.fn().mockReturnValue(of({ result: { response: { content: [] } } })),
   getInsightsData: jest.fn().mockReturnValue({ pipe: jest.fn().mockReturnValue({ subscribe: jest.fn() }) }),
   updateDegree: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
   updateInstitution: jest.fn().mockReturnValue({ subscribe: jest.fn() }),
@@ -50,6 +57,30 @@ const mockBreakpointObserver = {
 const mockTranslateService = {
   setDefaultLang: jest.fn(),
   use: jest.fn()
+};
+
+const mockDatePipe = {
+  transform: jest.fn()
+};
+
+const mockEvents = {
+  raiseInteractTelemetry: jest.fn()
+};
+
+const mockMultilingualTranslationsService = {
+  languageSelectedObservable: { subscribe: jest.fn() }
+};
+
+const mockCommonDataService = {
+  getNlw2026CertifiedStatus: jest.fn().mockReturnValue({ pipe: jest.fn().mockReturnValue({ subscribe: jest.fn() }) })
+};
+
+const mockRouter = {};
+
+const mockNetCoreService = {};
+
+const mockHomePageService = {
+  getLearnerLeaderboardCached: jest.fn().mockReturnValue({ pipe: jest.fn().mockReturnValue({ subscribe: jest.fn() }) })
 };
 
 describe('ProfileViewV2Component', () => {
@@ -114,7 +145,14 @@ describe('ProfileViewV2Component', () => {
       mockPipeImgUrl as any,
       mockConfigSvc as any,
       mockBreakpointObserver as any,
-      mockTranslateService as any
+      mockTranslateService as any,
+      mockDatePipe as any,
+      mockEvents as any,
+      mockMultilingualTranslationsService as any,
+      mockCommonDataService as any,
+      mockRouter as any,
+      mockNetCoreService as any,
+      mockHomePageService as any
     );
   });
 
@@ -126,30 +164,30 @@ describe('ProfileViewV2Component', () => {
     it('should initialize with default values', () => {
       expect(component.isCurrentUser).toBe(false);
       expect(component.userId).toBe('');
-      expect(component.profileCompletion).toBe(0);
+      expect(component.profileCompletionPercentage).toBe(0);
       expect(component.activeRoutId).toBe('about-me');
       expect(component.connectionStatus).toBe('Connect');
-      expect(component.userStats).toHaveLength(3);
+      expect(component.userStats).toHaveLength(5);
       expect(component.profileRoutes).toHaveLength(5);
     });
 
     it('should call initialization methods on ngOnInit', () => {
       const getProfileDetailsSpy = jest.spyOn(component, 'getProfileDetailsFromRoutes').mockImplementation();
+      const getAchievementsSpy = jest.spyOn(component, 'getAchievements').mockImplementation();
+      const setAchievementStatsSpy = jest.spyOn(component, 'setAchievementStats').mockImplementation();
       const getSendApprovalSpy = jest.spyOn(component, 'getSendApprovalStatus').mockImplementation();
       const getRejectedSpy = jest.spyOn(component, 'getRejectedStatus').mockImplementation();
       const getGroupDataSpy = jest.spyOn(component, 'getGroupData').mockImplementation();
-      const loadDesignationsSpy = jest.spyOn(component, 'loadDesignations').mockImplementation();
-      const checkIsMentorSpy = jest.spyOn(component, 'checkIsMentor').mockImplementation();
       const getInsightsDataSpy = jest.spyOn(component, 'getInsightsData').mockImplementation();
 
       component.ngOnInit();
 
       expect(getProfileDetailsSpy).toHaveBeenCalled();
+      expect(getAchievementsSpy).toHaveBeenCalled();
+      expect(setAchievementStatsSpy).toHaveBeenCalled();
       expect(getSendApprovalSpy).toHaveBeenCalled();
       expect(getRejectedSpy).toHaveBeenCalled();
       expect(getGroupDataSpy).toHaveBeenCalled();
-      expect(loadDesignationsSpy).toHaveBeenCalled();
-      expect(checkIsMentorSpy).toHaveBeenCalled();
       expect(getInsightsDataSpy).toHaveBeenCalled();
     });
 
@@ -160,6 +198,71 @@ describe('ProfileViewV2Component', () => {
 
       expect(mockTranslateService.setDefaultLang).toHaveBeenCalledWith('en');
       expect(mockTranslateService.use).toHaveBeenCalledWith('fr');
+    });
+  });
+
+  describe('Not-my-user org flags (isNotMyUserAndIgotOrg / isNotMyUserAndNotIgotOrg)', () => {
+    const setUnMappedUser = (profileStatus: string, departmentName: string) => {
+      (mockConfigSvc as any).unMappedUser = {
+        profileDetails: {
+          profileStatus,
+          employmentDetails: { departmentName }
+        }
+      };
+      (mockActivatedRoute.data as any).subscribe = (cb: any) => cb({});
+    };
+
+    beforeEach(() => {
+      jest.spyOn(component, 'patchProfileDetails').mockImplementation();
+      jest.spyOn(component, 'setUserStats').mockImplementation();
+      jest.spyOn(component, 'patchEntries').mockImplementation();
+      jest.spyOn(component, 'checkIsMentor').mockImplementation();
+    });
+
+    afterEach(() => {
+      delete (mockConfigSvc as any).unMappedUser;
+      mockActivatedRoute.data.subscribe = jest.fn();
+    });
+
+    it('sets isNotMyUserAndIgotOrg true and isNotMyUserAndNotIgotOrg false for a not-my-user profile in the IGOT org', () => {
+      setUnMappedUser('not-my-user', 'IGOT');
+
+      component.getProfileDetailsFromRoutes();
+
+      expect(component.isNotMyUser).toBe(true);
+      expect(component.isIgotOrg).toBe(true);
+      expect(component.isNotMyUserAndIgotOrg).toBe(true);
+      expect(component.isNotMyUserAndNotIgotOrg).toBe(false);
+    });
+
+    it('sets isNotMyUserAndNotIgotOrg true and isNotMyUserAndIgotOrg false for a not-my-user profile outside the IGOT org', () => {
+      setUnMappedUser('not-my-user', 'Some Other Department');
+
+      component.getProfileDetailsFromRoutes();
+
+      expect(component.isNotMyUser).toBe(true);
+      expect(component.isIgotOrg).toBe(false);
+      expect(component.isNotMyUserAndIgotOrg).toBe(false);
+      expect(component.isNotMyUserAndNotIgotOrg).toBe(true);
+    });
+
+    it('keeps both flags false for the current/own user', () => {
+      setUnMappedUser('active', 'Some Other Department');
+
+      component.getProfileDetailsFromRoutes();
+
+      expect(component.isNotMyUser).toBe(false);
+      expect(component.isNotMyUserAndIgotOrg).toBe(false);
+      expect(component.isNotMyUserAndNotIgotOrg).toBe(false);
+    });
+
+    it('evaluates profileStatus and departmentName case-insensitively', () => {
+      setUnMappedUser('Not-My-User', 'igot');
+
+      component.getProfileDetailsFromRoutes();
+
+      expect(component.isNotMyUserAndIgotOrg).toBe(true);
+      expect(component.isNotMyUserAndNotIgotOrg).toBe(false);
     });
   });
 
@@ -186,9 +289,7 @@ describe('ProfileViewV2Component', () => {
     });
 
     it('should generate initials correctly for single name', () => {
-      component.profesionalDetails = {
-        personalDetails: { firstname: 'John' }
-      };
+      component.primaryDetails = { firstname: 'John' };
 
       component.getInitials();
 
@@ -196,9 +297,7 @@ describe('ProfileViewV2Component', () => {
     });
 
     it('should generate initials correctly for multiple names', () => {
-      component.profesionalDetails = {
-        personalDetails: { firstname: 'John Doe' }
-      };
+      component.primaryDetails = { firstname: 'John Doe' };
 
       component.getInitials();
 
@@ -206,8 +305,8 @@ describe('ProfileViewV2Component', () => {
     });
 
     it('should set profile completion graph', () => {
-      component.profileCompletion = 75;
-      
+      component.profileCompletionPercentage = 75;
+
       component.setProfileCompletionGraph();
 
       expect(document.documentElement.style.setProperty).toHaveBeenCalledWith('--i', '61.75');
@@ -219,14 +318,20 @@ describe('ProfileViewV2Component', () => {
       component.profileData = {
         karmaPoints: 100,
         certificateCount: 5,
-        postCount: 10
+        postCount: 10,
+        badgeCount: 2
       };
 
       component.setUserStats();
 
-      expect(component.userStats[0].totalPoints).toBe(100);
-      expect(component.userStats[1].totalPoints).toBe(5);
-      expect(component.userStats[2].totalPoints).toBe(10);
+      const byIdentifier = (identifier: string): any =>
+        component.userStats.find((stat: any) => stat.identifier === identifier);
+
+      expect(byIdentifier('karmaPoints').totalPoints).toBe(100);
+      expect(byIdentifier('certificateCount').totalPoints).toBe(5);
+      expect(byIdentifier('postCount').totalPoints).toBe(10);
+      expect(byIdentifier('myBadges').totalPoints).toBe(2);
+      expect(component.myBadgesCount).toBe(2);
     });
   });
 
@@ -293,14 +398,14 @@ describe('ProfileViewV2Component', () => {
 
     it('should generate achievements form body', () => {
       const achievements = { title: 'Test Achievement', year: '2023' };
-      const oldDetails = { uuid: 'test-uuid' };
-      component.userId = 'test-user';
+      const oldDetails = { id: 'test-id' };
 
       const result = component.generateAchievementsFormBody(achievements, oldDetails);
 
-      expect(result.request.userId).toBe('test-user');
-      expect(result.request.achievements[0].uuid).toBe('test-uuid');
-      expect(result.request.achievements[0].title).toBe('Test Achievement');
+      expect(result.request.contextType).toBe('achievements');
+      expect(result.request.source).toBe('igot');
+      expect(result.request.contextData).toBe(achievements);
+      expect(result.request.id).toBe('test-id');
     });
   });
 
@@ -308,8 +413,10 @@ describe('ProfileViewV2Component', () => {
     it('should fetch profile details', () => {
       const mockResponse = {
         result: {
-          profiledetails: { personalDetails: { firstname: 'John' } },
-          profileCompletion: 80
+          response: {
+            profiledetails: { personalDetails: { firstname: 'John' } },
+            profileCompletionPercentage: 80
+          }
         }
       };
       mockProfileV2RevampService.fetchProfile.mockReturnValue({
@@ -321,7 +428,12 @@ describe('ProfileViewV2Component', () => {
 
       component.fetchProfileDetails();
 
-      expect(mockProfileV2RevampService.fetchProfile).toHaveBeenCalledWith('test-user');
+      expect(mockProfileV2RevampService.fetchProfile).toHaveBeenCalledWith(
+        expect.objectContaining({ urlConfigPath: 'profileV1Basic' }),
+        'test-user',
+        true
+      );
+      expect(component.profileCompletionPercentage).toBe(80);
       expect(patchSpy).toHaveBeenCalled();
     });
 
@@ -350,46 +462,37 @@ describe('ProfileViewV2Component', () => {
 
       expect(component.groupsList).toEqual(['Group1', 'Group2']);
     });
-
-    it('should load designations', () => {
-      const mockData = { responseData: ['Designation1', 'Designation2'] };
-      mockProfileV2RevampService.getDesignations.mockReturnValue({
-        subscribe: jest.fn().mockImplementation((callback) => callback(mockData))
-      });
-
-      component.loadDesignations();
-
-      expect(component.designationsList).toEqual(['Designation1', 'Designation2']);
-    });
   });
 
   describe('Connection Operations', () => {
     it('should send connection request', () => {
       component.userId = 'target-user';
-      component.primaryDetails = { departmentName: 'Target Department' };
+      component.primaryDetails = { firstname: 'Target User', departmentName: 'Target Department' };
       mockProfileV2RevampService.connectToNetwork.mockReturnValue({
         subscribe: jest.fn().mockImplementation(({ next }) => next({}))
       });
 
       const openSnackbarSpy = jest.spyOn(component, 'openSnackbar' as any).mockImplementation();
+      const getConnectionStatusSpy = jest.spyOn(component, 'getConnectionStatus').mockImplementation();
 
       component.sendConnectionRequest();
 
       expect(mockProfileV2RevampService.connectToNetwork).toHaveBeenCalledWith({
         connectionId: 'target-user',
         userIdFrom: 'test-user-id',
-        userNameFrom: 'test-user-id',
+        userNameFrom: '',
         userDepartmentFrom: 'Test Department',
         userIdTo: 'target-user',
-        userNameTo: 'target-user',
+        userNameTo: 'Target User',
         userDepartmentTo: 'Target Department'
       });
-      expect(component.connectionStatus).toBe('Pending');
+      expect(getConnectionStatusSpy).toHaveBeenCalled();
       expect(openSnackbarSpy).toHaveBeenCalledWith('Connection request sent successfully');
     });
 
     it('should handle connection request error', () => {
       component.userId = 'target-user';
+      component.primaryDetails = { firstname: 'Target User', departmentName: 'Target Department' };
       mockProfileV2RevampService.connectToNetwork.mockReturnValue({
         subscribe: jest.fn().mockImplementation(({ error }) => error({}))
       });
@@ -399,11 +502,6 @@ describe('ProfileViewV2Component', () => {
       component.sendConnectionRequest();
 
       expect(openSnackbarSpy).toHaveBeenCalledWith('Something went wrong while sending connection request');
-    });
-
-    it('should block profile', () => {
-      component.blockProfile();
-      expect(component.connectionStatus).toBe('Unblock');
     });
   });
 
@@ -432,7 +530,10 @@ describe('ProfileViewV2Component', () => {
     });
 
     it('should check if user is mentor', () => {
+      component.profileData = { roles: ['mentor'] };
+
       component.checkIsMentor();
+
       expect(component.isMentor).toBe(true);
     });
 
@@ -547,7 +648,6 @@ describe('ProfileViewV2Component', () => {
     it('should handle transfer request', () => {
       component.profesionalDetails = { profileDetails: { name: 'Test' } };
       component.groupsList = ['Group1'];
-      component.designationsList = ['Designation1'];
 
       component.handleTransferRequest();
 
@@ -621,15 +721,16 @@ describe('ProfileViewV2Component', () => {
       const oldDetails = { uuid: 'test-uuid' };
       component.userId = 'test-user';
 
-      mockProfileV2RevampService.updateDegree.mockReturnValue({ toPromise: () => Promise.resolve() });
+      mockProfileV2RevampService.updateDegree.mockReturnValue(of({}));
 
       const result = await component.generateEducationalQualificationsFormBody(educationalQualifications, oldDetails);
 
       expect(result.request.educationalQualifications[0].degree).toBe('Custom Degree');
       expect(result.request.educationalQualifications[0].uuid).toBe('test-uuid');
-      expect(mockProfileV2RevampService.updateDegree).toHaveBeenCalledWith({
-        degreeName: 'Custom Degree'
-      });
+      expect(mockProfileV2RevampService.updateDegree).toHaveBeenCalledWith(
+        { degreeName: 'Custom Degree' },
+        expect.objectContaining({ urlConfigPath: 'updateDegree' })
+      );
     });
 
     it('should generate educational qualifications form body with other institute', async () => {
@@ -643,14 +744,15 @@ describe('ProfileViewV2Component', () => {
       };
       component.userId = 'test-user';
 
-      mockProfileV2RevampService.updateInstitution.mockReturnValue({ toPromise: () => Promise.resolve() });
+      mockProfileV2RevampService.updateInstitution.mockReturnValue(of({}));
 
       const result = await component.generateEducationalQualificationsFormBody(educationalQualifications, {});
 
       expect(result.request.educationalQualifications[0].institutionName).toBe('Custom Institute');
-      expect(mockProfileV2RevampService.updateInstitution).toHaveBeenCalledWith({
-        institutionName: 'Custom Institute'
-      });
+      expect(mockProfileV2RevampService.updateInstitution).toHaveBeenCalledWith(
+        { institutionName: 'Custom Institute' },
+        expect.objectContaining({ urlConfigPath: 'updateInstitution' })
+      );
     });
   });
 
@@ -700,7 +802,7 @@ describe('ProfileViewV2Component', () => {
 
       const updateSpy = jest.spyOn(component, 'updateProfileDetails').mockImplementation();
 
-      component.generateBasicProfileFormBody(result, false);
+      component.generateBasicProfileFormBody(result);
 
       expect(updateSpy).toHaveBeenCalled();
     });

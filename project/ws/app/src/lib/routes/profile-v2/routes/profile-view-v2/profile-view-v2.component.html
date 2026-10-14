@@ -227,6 +227,24 @@
           </div>
         </div>
       </ng-container>
+      <ng-container *ngIf="isNotMyUserAndNotIgotOrg && profileConfig?.notMyUserWarning?.enabled">
+        <div class="px-5">
+          <div class="not-my-user-container mt-8">
+            <div class="not-my-user-content">
+              <div>
+                <mat-icon class="warning-icon" [ngStyle]="{'color':'red'}">warning</mat-icon>
+              </div>
+              <div class="not-my-user-data">
+                <p>
+                  <span>{{ 'home.notMyUser1' | translate }}</span>
+                  <b>{{ 'home.notMyUser2' | translate }}</b>.
+                  <span>{{ 'home.notMyUser3' | translate }}</span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
       <!-- #endregion (not my user warning) -->
       <!-- #endregion (profile details ) -->
     </div>
