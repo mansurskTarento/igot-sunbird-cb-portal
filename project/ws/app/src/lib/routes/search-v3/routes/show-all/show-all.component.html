@@ -63,7 +63,7 @@
         [defaultPaginationSize]="initialPaginationSize"
         [defaultPaginationSizeOptions]="initialPaginationSizeOptions"
         [totalItemsCount]="courses?.length"
-        [currentPage]="1"
+        [currentPage]="currentPage"
         (pageChange)="onPageChange($event)"
       ></ws-app-pagination>
     </ng-container>

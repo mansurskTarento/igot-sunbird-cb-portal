@@ -275,6 +275,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (changes['paramFilters'] && changes['paramFilters'].currentValue && changes['paramFilters'].currentValue.length) {
       this.searchContentLoader = true
+      this.resetPagination()
       this.searchRequestCourse.request.filters.courseCategory = changes['paramFilters'].currentValue[0].subType
       this.seeAllResult = SearchCategory.Courses
       this.eventSearchTotalCount = 0
@@ -302,6 +303,7 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       searchCategoriesChanged
     ) {
       this.searchContentLoader = true
+      this.resetPagination()
       if (!this.isExploreContentTab) {
         this.resetAllSearchParams()
       }
@@ -1411,6 +1413,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   async onPageChange(event: PageChangeEmitter) {
+    // keep parent state in sync so the pagination keeps the selected page when re-rendered
+    this.initialPaginationPage = event.currentPage
+    this.initialPaginationSize = event.limit
     this.searchContentLoader = true
     this.scrollToTop()
 
