@@ -286,6 +286,23 @@ describe('LearnSearchComponent (No TestBed)', () => {
       expect(component.veifiedKarmayogi).toBe(false)
     })
 
+    it('resets pagination to page 1 when the search category changes', async () => {
+      jest.useFakeTimers()
+      const component = createComponent({})
+      component.initialPaginationPage = 4
+      component.searchQuery = { query: 'a', nlp: '', searchCategory: 'Event' }
+      const promise = component.ngOnChanges({
+        searchQuery: {
+          currentValue: { query: 'a', searchCategory: 'Event' },
+          previousValue: { query: 'a', searchCategory: 'Course' },
+        },
+      } as any)
+      expect(component.initialPaginationPage).toBe(2)
+      jest.runAllTimers()
+      await promise
+      expect(component.initialPaginationPage).toBe(1)
+    })
+
     it('handles the paramFilters change branch', async () => {
       const component = createComponent({})
       component.searchQuery = { query: 'a', nlp: '', searchCategory: '' }
@@ -1147,6 +1164,17 @@ describe('LearnSearchComponent (No TestBed)', () => {
       component.seeAllResult = SearchCategory.Communities
       await component.onPageChange(event)
       expect(mockSearchV3Service.searchCommunity).toHaveBeenCalled()
+    })
+
+    it('keeps the selected page and page size in sync with the pagination', async () => {
+      const component = createComponent({})
+      jest.spyOn(window, 'scrollTo').mockImplementation()
+      component.seeAllResult = SearchCategory.Courses
+      await component.onPageChange({ currentPage: 3, previousPage: 2, limit: 20 })
+      expect(component.initialPaginationPage).toBe(3)
+      expect(component.initialPaginationSize).toBe(20)
+      expect(component.searchRequestCourse.request.offset).toBe(40)
+      expect(component.searchRequestCourse.request.limit).toBe(20)
     })
   })
 
