@@ -13,7 +13,8 @@ export class AppRetryInterceptorService implements HttpInterceptor {
   private maxAttempts = 1
   private scalingDuration = 5000
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if (req.body && req.body.excludeRetry) {
+    // POST is not idempotent — a retry could create duplicates, so fail on the first error
+    if (req.method === 'POST' || req.body?.excludeRetry) {
       return next.handle(req)
     }
     return next.handle(req).pipe(retryWhen(this.genericRetryStrategy()))

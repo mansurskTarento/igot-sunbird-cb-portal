@@ -6,6 +6,7 @@ import { AvatarPhotoModule } from './../avatar-photo/avatar-photo.module'
 import { SlidersDynamicModule } from './../../sliders-dynamic/sliders-dynamic.module'
 import { PipeDurationTransformModule, PipeOrdinalModule } from '@sunbird-cb/utils-v2'
 import { WeeklyClapsModule } from '../weekly-claps/weekly-claps.module'
+import { SkeletonLoaderModule } from '../skeleton-loader/skeleton-loader.module'
 import { TranslateModule } from '@ngx-translate/core'
 import { MatDialogModule } from '@angular/material/dialog'
 import { MatIconModule } from '@angular/material/icon'
@@ -27,7 +28,8 @@ import { MatTooltipModule } from '@angular/material/tooltip'
         TranslateModule,
         PipeOrdinalModule,
         MatButtonModule,
-        MatTooltipModule
+        MatTooltipModule,
+        SkeletonLoaderModule,
     ],
     exports: [
         ProfileCardStatsComponent,

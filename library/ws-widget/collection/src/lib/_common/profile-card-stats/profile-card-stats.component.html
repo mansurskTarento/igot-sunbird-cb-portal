@@ -99,7 +99,7 @@
               </div>
               <div class="stats-leader flex gap-2 items-center justify-center">
                 <div class="stats-leader mt-2 flex gap-2 items-center">
-                  <img src="/assets/icons/home/karma-badge.svg" alt="icon" width="24" height="24"><span>{{countdata?.karmaPoints || '--'}}</span>
+                  <img src="/assets/icons/home/karma-badge.svg" alt="icon" width="24" height="24"><span *ngIf="countdata; else statSkeleton">{{countdata?.karmaPoints || '--'}}</span>
                 </div>
               </div>
             </div>
@@ -141,7 +141,7 @@
                 </div>
                 <div class="stats-leader mt-2 flex gap-2 items-center justify-center">
                   <img class="cursor-pointer" width="24" height="24" src="assets/icons/badges/Medal.svg" />
-                  <span>{{countdata?.badgeCount}}</span>
+                  <span *ngIf="countdata; else statSkeleton">{{countdata?.badgeCount}}</span>
               </div>
             </div>
           </div>
@@ -211,6 +211,10 @@
 <div class="profile-user-stats md:my-0 my-3" *ngIf="profileData?.displayOnlyStats">
   <ng-container [ngTemplateOutlet]="statsDetails"></ng-container>
 </div>
+
+<ng-template #statSkeleton>
+  <ws-widget-skeleton-loader [width]="'34px'" [height]="'16px'" [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
+</ng-template>
 
 <ng-template #statsDetails>
   <div class="user-data-list flex flex-middle flex-between ">

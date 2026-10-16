@@ -41,6 +41,7 @@ export class CommonDataService {
   popupDuration: any = 7200
   isPlayer: boolean = false
   lastNotificationActionTime: number | null = null
+  private validatedCustomFieldsSignature = ''
 
   constructor(
     private router: Router,
@@ -148,7 +149,7 @@ export class CommonDataService {
       const customFieldsCount = _.get(res, 'rootOrg.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
       const customFieldsLength = _.get(res, 'rootOrg.customfieldsdata.customFieldIds', [])
       if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
-        return this.readCustomattributeDetails(isPlayer)
+        return this.readCustomattributeDetails(isPlayer, customFieldsLength)
       }
       this.updatePlayerStatus(isPlayer)
       this.checkAndShowMandatoryNotification()
@@ -157,11 +158,11 @@ export class CommonDataService {
     }
     this.userProfileService.readOrgData(request).subscribe((res: any) => {
       this.configSvc.orgReadData = res?.result?.response
-      const isPopupEnabled = _.get(res, 'result?.response?.customfieldsdata?.isPopupEnabled') ? true : false
-      const customFieldsCount = _.get(res, 'result?.response?.customfieldsdata?.customFieldsCount', 0) as number > 0 ? true : false
-      const customFieldsLength = _.get(res, 'result?.response?.customfieldsdata?.customFieldIds', [])
+      const isPopupEnabled = _.get(res, 'result.response.customfieldsdata.isPopupEnabled') ? true : false
+      const customFieldsCount = _.get(res, 'result.response.customfieldsdata.customFieldsCount', 0) as number > 0 ? true : false
+      const customFieldsLength = _.get(res, 'result.response.customfieldsdata.customFieldIds', [])
       if (isPopupEnabled && customFieldsCount && customFieldsLength?.length > 0) {
-        return this.readCustomattributeDetails(isPlayer)
+        return this.readCustomattributeDetails(isPlayer, customFieldsLength)
       }
       this.updatePlayerStatus(isPlayer)
       this.checkAndShowMandatoryNotification()
@@ -173,7 +174,7 @@ export class CommonDataService {
     })
 
   }
-  readCustomattributeDetails(isPlayer: boolean) {
+  readCustomattributeDetails(isPlayer: boolean, customFieldIds: string[] = []) {
     this.userProfileService.readCustomattributeDetails(this.configSvc.unMappedUser.id, this.rootOrgId).subscribe((res: any) => {
       const customFieldValues = _.get(res, 'result.response.customFieldValues', [])
       if (customFieldValues && customFieldValues.length === 0) {
@@ -183,12 +184,55 @@ export class CommonDataService {
 
       this.updatePlayerStatus(isPlayer)
       this.checkAndShowMandatoryNotification()
-      return false
+      this.checkMandatoryCustomFields(customFieldIds, customFieldValues)
 
     }, error => {
       console.error('Error fetching custom attribute details:', error)
       return false
     })
+  }
+
+  private checkMandatoryCustomFields(customFieldIds: string[], customFieldValues: any[]): void {
+    if (!customFieldIds?.length) {
+      return
+    }
+    const signature = JSON.stringify([this.configSvc.unMappedUser?.id, this.rootOrgId, customFieldIds, customFieldValues])
+    if (this.validatedCustomFieldsSignature === signature) {
+      return
+    }
+
+    const payload = {
+      filterCriteriaMap: {
+        organisationId: this.rootOrgId,
+        isEnabled: true,
+        customFieldId: customFieldIds,
+      },
+      pageNumber: 0,
+      pageSize: 50,
+      orderDirection: 'DESC',
+      orderBy: 'updatedOn',
+      facets: [],
+    }
+
+    this.userProfileService.fetchCustomFields(payload).subscribe((res: any) => {
+      const customFields = _.get(res, 'result.searchResults.data', [])
+      const isMissing = customFields.filter((field: any) => field?.isActive && field?.isMandatory).some((field: any) => {
+        const savedField = customFieldValues.find((item: any) => item?.attributeName === field.attributeName)
+        if (!savedField) return true
+        if (field.type === 'text') return !String(savedField.value || '').trim()
+
+        const values = savedField.values || []
+        const levels = (field.originalCustomFieldData || []).map((item: any) => item?.name).filter(Boolean)
+        return !values.length || levels.some((level: string) => !values.some((item: any) =>
+          item?.attributeName?.toLocaleLowerCase() === level.toLocaleLowerCase() && String(item?.value || '').trim()
+        ))
+      })
+      if (isMissing) {
+        this.redirectToCustomProfile()
+        return
+      }
+      this.validatedCustomFieldsSignature = signature
+    }, () => undefined)
   }
 
   fetchMandatoryNotification() {

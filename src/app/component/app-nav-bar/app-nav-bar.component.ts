@@ -1,9 +1,10 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core'
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { Router, NavigationStart, NavigationEnd } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
 
-import { IBtnAppsConfig, CustomTourService, WidgetUserService } from '@sunbird-cb/collection'
+import { IBtnAppsConfig, CustomTourService, WidgetUserService, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { NsWidgetResolver } from '@sunbird-cb/resolver'
 import { ConfigurationsService, DomainConfService, EventService, MultilingualTranslationsService, NsInstanceConfig, NsPage, WsEvents } from '@sunbird-cb/utils-v2'
 
@@ -22,6 +23,7 @@ import { NotificationsService } from '../../services/notifications.service'
   standalone: false
 })
 export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef)
   @Input() mode: 'top' | 'bottom' = 'top'
   @Input() headerFooterConfigData: any
   hideKPOnNav = false
@@ -84,7 +86,8 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     private userSvc: WidgetUserService,
     private notificationsService: NotificationsService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc: DomainConfService
+    private readonly domainConfSvc: DomainConfService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
     if (this.configSvc.restrictedFeatures) {
@@ -194,10 +197,15 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     })
 
     this.startTour()
-    this.enrollInterval = setInterval(() => {
-      this.getKarmaCount()
-      // tslint:disable-next-line
-    }, 1000)
+    // skeleton while the summary is in flight, re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        if (!loading) {
+          this.getKarmaCount()
+        }
+        this.karmaPointLoading = loading
+      })
 
     this.urlService.previousUrl$.subscribe((previousUrl: string) => {
       this.previousUrl = previousUrl
