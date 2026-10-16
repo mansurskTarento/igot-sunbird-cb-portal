@@ -118,7 +118,8 @@ describe('AppNavBarComponent (No TestBed)', () => {
       mockUserSvc,
       mockNotificationsService,
       mockLibNotificationsService,
-      mockDomainConfSvc
+      mockDomainConfSvc,
+      { ready$: of(undefined) } as any,
     )
   })
 

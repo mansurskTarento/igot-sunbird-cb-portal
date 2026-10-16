@@ -25,7 +25,7 @@ import {
 } from '@angular/router'
 import { BreakpointObserver } from '@angular/cdk/layout'
 // import { interval, concat, timer } from 'rxjs'
-import { BtnPageBackService } from '@sunbird-cb/collection'
+import { BtnPageBackService, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { HttpClient } from '@angular/common/http'
 import {
   AuthKeycloakService,
@@ -40,7 +40,6 @@ import {
   // NsInstanceConfig,
 } from '@sunbird-cb/utils-v2'
 import { delay, first, catchError, map, filter } from 'rxjs/operators'
-import { combineLatest } from 'rxjs'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { RootService } from './root.service'
 
@@ -54,7 +53,7 @@ import { SwUpdate } from '@angular/service-worker'
 import { environment } from '../../../environments/environment'
 import { MatDialog } from '@angular/material/dialog'
 import { DialogConfirmComponent } from '../dialog-confirm/dialog-confirm.component'
-import { concat, interval, of } from 'rxjs'
+import { combineLatest, concat, interval, of, Subscription } from 'rxjs'
 // import { iGOTAIService } from './../../services/igot-ai.service'
 import { CommonDataService } from '../../services/common-data.service'
 import { UserRestrictionService } from '../../services/user-restriction.service'
@@ -106,6 +105,7 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   menuBarDetails: any = {}
   private achievementsSection: any = null
   private achievementRankRequested = false
+  private achievementsSummarySub?: Subscription
   leftNavBarIsOpen = signal(true)
   showKarmaLeaderboard = signal(false)
   hideFooterSection = signal(false)
@@ -151,8 +151,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     public domainConfSvc: DomainConfService,
     private libNotificationsService: LibNotificationsService,
     private homePageSvc: HomePageService,
-    private breakpointObserver: BreakpointObserver
-
+    private breakpointObserver: BreakpointObserver,
+    private enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     effect(() => {
       if (this.leftNavBarIsOpen()) {
@@ -639,8 +639,23 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
   setAchivements() {
     const menuBarDetails = JSON.parse(JSON.stringify(this.menuBarDetails))
     const achievements = menuBarDetails?.navSections?.find((section: any) => section.sectionKey === 'my_achievements')
-    achievements['sectionLoading'] = true
-    this.sendDetailsChangedEvent(achievements)
+    if (!achievements) {
+      return
+    }
+    // the enrolment summary loads in the background — skeleton while it is in flight, and
+    // refill from localStorage every time it lands (it can start after the sidebar renders)
+    this.achievementsSummarySub?.unsubscribe()
+    this.achievementsSummarySub = this.enrollmentSummaryState.loading$.subscribe(loading => {
+      if (loading) {
+        achievements.sectionLoading = true
+        this.sendDetailsChangedEvent(achievements)
+      } else {
+        this.fillAchievements(achievements)
+      }
+    })
+  }
+
+  private fillAchievements(achievements: any) {
     if (achievements) {
       try {
         const raw = localStorage.getItem('userEnrollmentCount')

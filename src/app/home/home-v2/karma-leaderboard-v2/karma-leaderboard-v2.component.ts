@@ -1,4 +1,5 @@
-import { Component, OnInit, inject, input, output } from '@angular/core'
+import { Component, OnInit, inject, input, output, DestroyRef } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { ConfigurationsService, EventService, TelemetryService, UtilityService, WsEvents } from '@sunbird-cb/utils-v2'
 import { HomePageService } from '../../../services/home-page.service'
 import { UserProfileService } from '../../../../../project/ws/app/src/lib/routes/user-profile/services/user-profile.service'
@@ -7,7 +8,7 @@ import { RouterModule } from '@angular/router'
 import { MatIconModule } from '@angular/material/icon'
 import { MatButtonModule } from '@angular/material/button'
 import { MatTooltipModule } from '@angular/material/tooltip'
-import { AvatarPhotoModule } from '@sunbird-cb/collection'
+import { AvatarPhotoModule, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { TranslateModule } from '@ngx-translate/core'
 import { TitleCasePipe } from '@angular/common'
 
@@ -19,6 +20,7 @@ import { TitleCasePipe } from '@angular/common'
   imports: [RouterModule, MatIconModule, MatButtonModule, MatTooltipModule, AvatarPhotoModule, TranslateModule, TitleCasePipe],
 })
 export class KarmaLeaderboardV2Component implements OnInit {
+  private readonly destroyRef = inject(DestroyRef)
 
   readonly close = output<void>()
   readonly embedded = input(false)
@@ -34,6 +36,8 @@ export class KarmaLeaderboardV2Component implements OnInit {
   year: any = null
   myKarmaPoints = 0
   myKarmaCoins = 0
+  // the enrolment summary (karma points / coins) loads in the background after startup
+  summaryLoading = true
 
   // Celebration banner
   showOverlay = false
@@ -53,11 +57,26 @@ export class KarmaLeaderboardV2Component implements OnInit {
   private readonly eventSvc = inject(EventService)
   private readonly telemetrySvc = inject(TelemetryService)
   private readonly utilitySvc = inject(UtilityService)
+  private readonly enrollmentSummaryState = inject(EnrollmentSummaryStateService)
 
   ngOnInit() {
     this.currentUserId = (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) || ''
     this.currentUserProfile = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
 
+    // skeleton while the summary is in flight, re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        this.summaryLoading = loading
+        if (!loading) {
+          this.readEnrollmentSummary()
+        }
+      })
+    this.setLeaderboardUnavailableCopy()
+    this.loadLeaderboard()
+  }
+
+  private readEnrollmentSummary() {
     try {
       const raw = localStorage.getItem('userEnrollmentCount')
       if (raw) {
@@ -66,9 +85,7 @@ export class KarmaLeaderboardV2Component implements OnInit {
         this.myKarmaCoins = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.walletBalance) || 0
       }
     } catch (_e) { /* ignore */ }
-
-    this.setLeaderboardUnavailableCopy()
-    this.loadLeaderboard()
+    this.summaryLoading = false
   }
 
   private setLeaderboardUnavailableCopy() {

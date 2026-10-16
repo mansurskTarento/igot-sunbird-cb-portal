@@ -516,7 +516,9 @@
               <img class="ach-stat-icon" [src]="stat.icon" alt="" aria-hidden="true">
               <div class="ach-stat-text">
                 <span class="ach-stat-label">{{ stat.label | translate }}</span>
-                <span class="ach-stat-value">{{ stat.value }}</span>
+                <ws-widget-skeleton-loader *ngIf="achievementSummaryLoading && stat.key !== 'rank'; else statValue"
+                  [width]="'64px'" [height]="'18px'" [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
+                <ng-template #statValue><span class="ach-stat-value">{{ stat.value }}</span></ng-template>
               </div>
             </div>
           </div>

@@ -32,6 +32,7 @@ import {
 } from './karma-wallet.model'
 import { KarmaWalletService } from './karma-wallet.service'
 import { HomePageService } from 'src/app/services/home-page.service'
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { IKarmaTourAction, IKarmaTourStep } from './karma-wallet-tour.model'
 import { KarmaWalletTourComponent } from './karma-wallet-tour.component'
 
@@ -213,6 +214,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
     private homePageSvc: HomePageService,
+    private enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {
@@ -814,15 +816,18 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     ).subscribe({
       next: summary => {
 
-        let enrollList: any
-        if (localStorage.getItem('userEnrollmentCount')) {
-          enrollList = JSON.parse(localStorage.getItem('userEnrollmentCount') || '')
-          if (enrollList?.userCourseEnrolmentInfo) {
-            enrollList.userCourseEnrolmentInfo['walletBalance'] = summary?.walletBalance || 0
+        // wait for the startup enrolment summary, otherwise it would land later and overwrite this
+        this.enrollmentSummaryState.ready$.subscribe(() => {
+          let enrollList: any
+          if (localStorage.getItem('userEnrollmentCount')) {
+            enrollList = JSON.parse(localStorage.getItem('userEnrollmentCount') || '')
+            if (enrollList?.userCourseEnrolmentInfo) {
+              enrollList.userCourseEnrolmentInfo['walletBalance'] = summary?.walletBalance || 0
+            }
+            localStorage.removeItem('userEnrollmentCount')
+            localStorage.setItem('userEnrollmentCount', JSON.stringify(enrollList))
           }
-          localStorage.removeItem('userEnrollmentCount')
-          localStorage.setItem('userEnrollmentCount', JSON.stringify(enrollList))
-        }
+        })
 
         if (this.configSvc?.unMappedUser) {
           this.configSvc.unMappedUser['walletBalance'] = summary?.walletBalance || 0

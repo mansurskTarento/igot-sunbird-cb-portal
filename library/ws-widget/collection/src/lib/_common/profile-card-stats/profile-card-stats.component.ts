@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core'
+import { Component, EventEmitter, Input, OnInit, Output, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { Router } from '@angular/router'
 import {
   ConfigurationsService, MultilingualTranslationsService,
@@ -7,6 +8,7 @@ import {
 import { InfoDialogComponent } from '../info-dialog/info-dialog.component'
 import { MatDialog } from '@angular/material/dialog'
 import { HomePageService } from '../../_services/home-page.service'
+import { EnrollmentSummaryStateService } from '../../_services/enrollment-summary-state.service'
 
 @Component({
     selector: 'ws-widget-profile-card-stats',
@@ -16,6 +18,7 @@ import { HomePageService } from '../../_services/home-page.service'
     standalone: false
 })
 export class ProfileCardStatsComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef)
   @Input() isLoading = false
   @Input() displayStats = false
   @Input() insightsData: any
@@ -41,13 +44,16 @@ export class ProfileCardStatsComponent implements OnInit {
   currentUserRank: any
   currentUserId: any
   profileNudgeUsername = ''
-  constructor(private configSvc: ConfigurationsService,
+  constructor(
+    private configSvc: ConfigurationsService,
     private router: Router,
     private pipDuration: PipeDurationTransformPipe,
     private langtranslations: MultilingualTranslationsService,
     private homePageSvc: HomePageService,
     private eventService: EventService,
-    private dialog: MatDialog) { }
+    private dialog: MatDialog,
+    private enrollmentSummaryState: EnrollmentSummaryStateService,
+  ) { }
 
   ngOnInit() {
     this.userInfo = this.configSvc && this.configSvc?.userProfile
@@ -61,9 +67,6 @@ export class ProfileCardStatsComponent implements OnInit {
     const hasEnabledStats = this.profileData?.profileStats?.some((stat: any) => stat.enable) ||
       this.profileData?.karmaPoints?.enabled || this.profileData?.badges?.enabled
     if (hasEnabledStats) {
-      this.enrollInterval = setInterval(() => {
-        this.getCounts()
-      }, 1000)
       this.fetchAndMergeData()
     }
     // this.getCounts()
@@ -214,8 +217,19 @@ export class ProfileCardStatsComponent implements OnInit {
   }
   async fetchAndMergeData(): Promise<void> {
     await this.getEventEnrollData()
-    await this.getCounts()
-    this.mergeCounts()
+    // skeleton while the summary is in flight (the templates key off countdata / mergedCountData),
+    // re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        if (loading) {
+          this.countdata = undefined
+          this.mergedCountData = undefined
+          return
+        }
+        this.getCounts()
+        this.mergeCounts()
+      })
   }
 
   gotoUserProfile() {
