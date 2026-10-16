@@ -347,6 +347,20 @@ describe('ProfileKarmapointsComponent', () => {
       expect(langStub.translateLabel).not.toHaveBeenCalled()
     })
 
+    it.each([
+      'SELF_REGISTRATION',
+      'CUSTOM_REGISTRATION',
+      'BULK_REGISTRATION',
+    ])('should title a %s record User Registration', operationType => {
+      expect(component.getTitle(row({ operation_type: operationType }))).toBe('User Registration')
+      expect(langStub.translateLabel).not.toHaveBeenCalled()
+    })
+
+    it('should not title other registration operation types User Registration', () => {
+      expect(component.getTitle(row({ operation_type: 'REGISTRATION' }))).toBe('Registration')
+      expect(component.getTitle(row({ operation_type: 'SELF_REGISTRATION_BONUS' }))).toBe('Self Registration Bonus')
+    })
+
     it('should return No Title when there is no record', () => {
       expect(component.getTitle(null)).toBe('No Title')
       expect(component.getTitle(undefined)).toBe('No Title')
