@@ -2,6 +2,10 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
+    // the base tsconfig strips comments and disables source maps; without maps jest's
+    // coverage lines point into the comment-stripped output and land on the wrong source lines
+    "sourceMap": true,
+    "removeComments": false,
     "types": [
       "jest",
       "node"

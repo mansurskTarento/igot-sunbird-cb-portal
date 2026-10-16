@@ -88,7 +88,11 @@
       <img src="/assets/icons/home-v2/karma-badge.svg" alt="" class="klb-earned-icon" aria-hidden="true">
       <div class="klb-earned-text">
         <span class="klb-earned-label">{{ 'karmaLeaderboard.youveEarned' | translate }}</span>
+        @if (summaryLoading) {
+        <span class="klb-skeleton klb-sk-line klb-sk-earned" aria-hidden="true"></span>
+        } @else {
         <span class="klb-earned-val">{{ myKarmaPoints }} {{ 'karmaLeaderboard.karmaPoints' | translate }}</span>
+        }
       </div>
     </div>
     <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-points']"
@@ -111,7 +115,11 @@
       <img src="/assets/icons/karmawallet-v2/karmacoin.svg" alt="" class="klb-earned-icon" aria-hidden="true">
       <div class="klb-earned-text">
         <span class="klb-earned-label">Wallet Balance</span>
+        @if (summaryLoading) {
+        <span class="klb-skeleton klb-sk-line klb-sk-earned" aria-hidden="true"></span>
+        } @else {
         <span class="klb-earned-val">{{ myKarmaCoins }} {{ 'karmaLeaderboard.karmaCoins' | translate }}</span>
+        }
       </div>
     </div>
     <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-wallet']"

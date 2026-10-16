@@ -150,6 +150,7 @@ describe('KarmaWalletComponent', () => {
     snackBarStub as unknown as MatSnackBar,
     configStub as unknown as ConfigurationsService,
     homePageStub as unknown as HomePageService,
+    { ready$: of(undefined) } as any,
   )
 
   /* A component already loaded against the 26 Aug 2026 anchor */
