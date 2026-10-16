@@ -22,13 +22,12 @@ import _ from 'lodash'
 import { firstValueFrom, forkJoin, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
-import { NPSGridService } from '@sunbird-cb/collection'
+import { BtnSettingsService, EnrollmentSummaryStateService, NPSGridService } from '@sunbird-cb/collection'
 import { ContentDictionaryService } from '@sunbird-cb/consumption'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
-import { BtnSettingsService, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
 import { IndexedDbService } from '@sunbird-cb/utils-v2'
@@ -71,7 +70,7 @@ export class InitService {
     private formSvc: FormExtService,
     private indexedDbSvc: IndexedDbService,
     private formConfigService: FormEnvConfigService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,

@@ -52,7 +52,7 @@ export class ProfileCardStatsComponent implements OnInit {
     private homePageSvc: HomePageService,
     private eventService: EventService,
     private dialog: MatDialog,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
 
   ngOnInit() {

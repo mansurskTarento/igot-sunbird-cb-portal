@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private matSnackBar: MatSnackBar,
     private events: EventService,
     public domainConfSvc: DomainConfService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}

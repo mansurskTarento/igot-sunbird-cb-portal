@@ -283,7 +283,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private router: Router,
     private netCoreService: NetCoreService,
     private homePageSvc: HomePageService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')

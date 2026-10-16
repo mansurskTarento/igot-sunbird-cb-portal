@@ -42,7 +42,7 @@ export class KarmaLeaderboardComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private userProfileSvc: UserProfileService,
     private eventSvc: EventService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
 
   ngOnInit() {

@@ -215,7 +215,7 @@ export class KarmaWalletComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private configSvc: ConfigurationsService,
     private homePageSvc: HomePageService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
 
   private openSnackbar(primaryMsg: string, duration: number = 5000) {

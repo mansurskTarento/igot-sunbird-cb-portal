@@ -163,8 +163,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
     private domainConfSvc: DomainConfService,
     private themeSvc: ThemeService,
     private restrictionSvc: UserRestrictionService,
-    private breakpointObserver: BreakpointObserver,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
 

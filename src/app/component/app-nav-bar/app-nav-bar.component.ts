@@ -86,8 +86,8 @@ export class AppNavBarComponent implements OnInit, OnChanges, OnDestroy {
     private userSvc: WidgetUserService,
     private notificationsService: NotificationsService,
     private libNotificationsService: LibNotificationsService,
-    private domainConfSvc: DomainConfService,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly domainConfSvc: DomainConfService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
     if (this.configSvc.restrictedFeatures) {

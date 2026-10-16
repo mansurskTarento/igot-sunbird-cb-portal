@@ -151,8 +151,8 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     public domainConfSvc: DomainConfService,
     private libNotificationsService: LibNotificationsService,
     private homePageSvc: HomePageService,
-    private breakpointObserver: BreakpointObserver,
-    private enrollmentSummaryState: EnrollmentSummaryStateService,
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     effect(() => {
       if (this.leftNavBarIsOpen()) {
@@ -645,14 +645,18 @@ export class RootComponent implements OnInit, AfterViewInit, AfterViewChecked {
     // the enrolment summary loads in the background — skeleton while it is in flight, and
     // refill from localStorage every time it lands (it can start after the sidebar renders)
     this.achievementsSummarySub?.unsubscribe()
-    this.achievementsSummarySub = this.enrollmentSummaryState.loading$.subscribe(loading => {
-      if (loading) {
-        achievements.sectionLoading = true
-        this.sendDetailsChangedEvent(achievements)
-      } else {
-        this.fillAchievements(achievements)
-      }
-    })
+    const loading$ = this.enrollmentSummaryState.loading$
+    this.achievementsSummarySub = loading$
+      .pipe(filter(loading => loading))
+      .subscribe(() => this.showAchievementsSkeleton(achievements))
+    this.achievementsSummarySub.add(loading$
+      .pipe(filter(loading => !loading))
+      .subscribe(() => this.fillAchievements(achievements)))
+  }
+
+  private showAchievementsSkeleton(achievements: any) {
+    achievements.sectionLoading = true
+    this.sendDetailsChangedEvent(achievements)
   }
 
   private fillAchievements(achievements: any) {
