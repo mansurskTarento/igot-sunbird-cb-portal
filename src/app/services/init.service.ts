@@ -211,12 +211,7 @@ export class InitService {
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
-        // the enrolment summary must not block app load: fire it in the background and let the
-        // widgets that read `userEnrollmentCount` show a skeleton until it settles
-        this.enrollmentSummaryState.start()
-        this.fetchUserEnrollDetails()
-          .catch((err: any) => this.logger.warn('InitService: Failed to load enrolment summary', err))
-          .finally(() => this.enrollmentSummaryState.done())
+        this.loadEnrollmentSummaryInBackground()
         // pre-load the content dictionary only when enabled via global-config apis.content.dictionary
         if (this.configSvc.globalConfig?.apis?.content?.dictionary?.enabled) {
           this.contentDictionarySvc.getDictionary().subscribe({
@@ -410,6 +405,18 @@ export class InitService {
       this.configSvc.globalConfigLoadFailed = true
     }
     return this.configSvc.globalConfig
+  }
+
+  /**
+   * The enrolment summary must not block app load: fire it in the background and let the
+   * widgets that read `userEnrollmentCount` show a skeleton until it settles.
+   */
+  loadEnrollmentSummaryInBackground(): Promise<void> {
+    this.enrollmentSummaryState.start()
+    return this.fetchUserEnrollDetails()
+      .then(() => undefined)
+      .catch((err: any) => this.logger.warn('InitService: Failed to load enrolment summary', err))
+      .finally(() => this.enrollmentSummaryState.done())
   }
 
   /**
