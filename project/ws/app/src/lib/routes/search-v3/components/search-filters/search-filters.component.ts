@@ -74,6 +74,7 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
   showAllSubSectors: boolean = false;
   showAllContentPartners: boolean = false;
   showAllTopic: boolean = false;
+  private autoExpandedFacets = new Set<string>()
 
   selectedFilterChips: any
   filterQueryOrganisation = '';
@@ -607,8 +608,16 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
       { key: FacetType.topicName, enableKey: 'showAllTopic' },
     ]
 
+    // Auto-expand a list only when a facet gets its first selection. Re-running this on every
+    // facet/filter change must not overwrite the user's own See More / See Less choice.
     visibilityMap.forEach(({ key, enableKey }) => {
-      (this as any)[enableKey] = groupedData[key]?.length > 0 || false
+      const hasSelection = groupedData[key]?.length > 0
+      if (hasSelection && !this.autoExpandedFacets.has(key)) {
+        this.autoExpandedFacets.add(key);
+        (this as any)[enableKey] = true
+      } else if (!hasSelection) {
+        this.autoExpandedFacets.delete(key)
+      }
     })
   }
 

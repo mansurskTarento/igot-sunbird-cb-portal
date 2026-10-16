@@ -1439,6 +1439,38 @@ describe('SearchFiltersComponent', () => {
       expect(component.showAllLanguage).toBe(true);
       expect(component.showAllOrganisation).toBe(false);
     });
+
+    it('does not collapse an expanded list when a selection change re-runs it', () => {
+      component.showAllOrganisation = true;
+      component.categoriseByFacet([{ type: FacetType.Language, value: 'English' }]);
+      expect(component.showAllOrganisation).toBe(true);
+    });
+
+    it('keeps See Less collapsed after the user collapses a list that has a selection', () => {
+      const chips = [{ type: FacetType.Language, value: 'English' }];
+      component.categoriseByFacet(chips);
+      expect(component.showAllLanguage).toBe(true);
+      component.toggleShowMore('language');
+      expect(component.showAllLanguage).toBe(false);
+      component.categoriseByFacet(chips);
+      expect(component.showAllLanguage).toBe(false);
+    });
+
+    it('auto-expands again once the selection was cleared and re-added', () => {
+      const chips = [{ type: FacetType.Language, value: 'English' }];
+      component.categoriseByFacet(chips);
+      component.toggleShowMore('language');
+      component.categoriseByFacet([]);
+      component.categoriseByFacet(chips);
+      expect(component.showAllLanguage).toBe(true);
+    });
+
+    it('keeps an expanded list expanded across onSelectionFilter in another facet', () => {
+      component.formattedFacets = { language: [{ name: 'english', count: 1, isChecked: false }] };
+      component.showAllSectors = true;
+      component.onSelectionFilter({ checked: true } as any, component.formattedFacets.language[0], 'language');
+      expect(component.showAllSectors).toBe(true);
+    });
   });
 
   // ---------------------------------------------------------------------
