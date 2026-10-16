@@ -1,3 +1,4 @@
+import { TestBed } from '@angular/core/testing'
 import { AppNavBarComponent } from './app-nav-bar.component'
 import { of, Subject, BehaviorSubject } from 'rxjs'
 
@@ -16,9 +17,13 @@ describe('AppNavBarComponent (No TestBed)', () => {
   let mockLibNotificationsService: any
   let mockDomainConfSvc: any
   let routerEventsSubject: Subject<any>
+  let summaryLoading$: BehaviorSubject<boolean>
 
   beforeEach(() => {
+    // ngOnInit starts a logo setInterval it never clears — keep it from leaking across tests
+    jest.useFakeTimers()
     routerEventsSubject = new Subject()
+    summaryLoading$ = new BehaviorSubject<boolean>(false)
 
     mockDomSanitizer = {
       bypassSecurityTrustResourceUrl: jest.fn().mockImplementation((val: any) => val),
@@ -49,8 +54,8 @@ describe('AppNavBarComponent (No TestBed)', () => {
 
     mockTourService = {
       createPopupTour: jest.fn().mockReturnValue({}),
-      startTour: jest.fn(),
-      cancelTour: jest.fn(),
+      startPopupTour: jest.fn(),
+      cancelPopupTour: jest.fn(),
       isTourComplete: true,
     }
 
@@ -84,29 +89,30 @@ describe('AppNavBarComponent (No TestBed)', () => {
     }
 
     mockNotificationsService = {
-      fetchMyNotifications: jest.fn().mockReturnValue(of({ totalCount: 5 })),
-      getMyNotificationsCount: jest.fn().mockReturnValue(of(5)),
+      getNotificationsData: jest.fn().mockReturnValue(of({ result: { unread: 5 } })),
     }
 
     mockLibNotificationsService = {
-      notificationCount$: new BehaviorSubject(3),
-      updateUnreadCount: jest.fn(),
+      unreadCount$: new BehaviorSubject(3),
     }
 
     mockDomainConfSvc = {
       getDomainAppLogo: jest.fn().mockReturnValue('/assets/logo.svg'),
       getDomainRedirectPath: jest.fn().mockReturnValue('/page/home'),
+      isConfigEnabled: jest.fn().mockReturnValue(false),
+      getGlobalConfig: jest.fn().mockReturnValue({}),
     }
 
-    jest.spyOn(localStorage, 'getItem').mockImplementation((key: string) => {
+    jest.spyOn(Storage.prototype, 'getItem').mockImplementation((key: string) => {
       if (key === 'websiteLanguage') return null
       if (key === 'activeRoute') return 'home'
       if (key === 'userEnrollmentCount') return null
       return null
     })
-    jest.spyOn(localStorage, 'setItem').mockImplementation(() => { })
+    jest.spyOn(Storage.prototype, 'setItem').mockImplementation(() => { })
 
-    component = new AppNavBarComponent(
+    // the component injects DestroyRef, which needs an injection context
+    component = TestBed.runInInjectionContext(() => new AppNavBarComponent(
       mockDomSanitizer,
       mockConfigSvc,
       mockTourService,
@@ -119,11 +125,13 @@ describe('AppNavBarComponent (No TestBed)', () => {
       mockNotificationsService,
       mockLibNotificationsService,
       mockDomainConfSvc,
-      { ready$: of(undefined) } as any,
-    )
+      { loading$: summaryLoading$.asObservable() } as any,
+    ))
   })
 
   afterEach(() => {
+    jest.clearAllTimers()
+    jest.useRealTimers()
     jest.restoreAllMocks()
     if (component.enrollInterval) {
       clearInterval(component.enrollInterval)
@@ -190,17 +198,45 @@ describe('AppNavBarComponent (No TestBed)', () => {
     })
   })
 
+  describe('karma points from the background enrolment summary', () => {
+    const stored = JSON.stringify({ userCourseEnrolmentInfo: { karmaPoints: 120 } })
+
+    it('should show the skeleton while the summary is loading', () => {
+      summaryLoading$.next(true)
+      component.ngOnInit()
+      expect(component.karmaPointLoading).toBe(true)
+    })
+
+    it('should read the karma points once the summary lands', () => {
+      summaryLoading$.next(true)
+      component.ngOnInit()
+      jest.spyOn(Storage.prototype, 'getItem')
+        .mockImplementation((key: string) => (key === 'userEnrollmentCount' ? stored : null))
+      summaryLoading$.next(false)
+      expect(component.karmaPointLoading).toBe(false)
+      expect(component.countdata).toBe(120)
+    })
+  })
+
   describe('cancelTour', () => {
-    it('should call tourService.cancelTour', () => {
+    it('should cancel the popup tour when one is open', () => {
+      component.popupTour = {}
       component.cancelTour()
-      expect(mockTourService.cancelTour).toHaveBeenCalled()
+      expect(mockTourService.cancelPopupTour).toHaveBeenCalled()
+    })
+
+    it('should do nothing when no popup tour is open', () => {
+      component.popupTour = undefined
+      component.cancelTour()
+      expect(mockTourService.cancelPopupTour).not.toHaveBeenCalled()
     })
   })
 
   describe('startTour', () => {
-    it('should call tourService.startTour', () => {
+    // the auto-start is switched off in the component (its body is commented out)
+    it('should not start a popup tour', () => {
       component.startTour()
-      expect(mockTourService.startTour).toHaveBeenCalled()
+      expect(mockTourService.startPopupTour).not.toHaveBeenCalled()
     })
   })
 })
