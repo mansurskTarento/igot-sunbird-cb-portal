@@ -212,7 +212,9 @@
   <ng-container [ngTemplateOutlet]="statsDetails"></ng-container>
 </div>
 
-<ng-template #statSkeleton><span class="skeleton-box" style="width:34px;height:16px"></span></ng-template>
+<ng-template #statSkeleton>
+  <ws-widget-skeleton-loader [width]="'34px'" [height]="'16px'" [bindingClass]="'flex rounded'"></ws-widget-skeleton-loader>
+</ng-template>
 
 <ng-template #statsDetails>
   <div class="user-data-list flex flex-middle flex-between ">

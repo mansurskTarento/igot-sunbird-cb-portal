@@ -82,7 +82,7 @@
       <div class="klb-earned-text">
         <span class="klb-earned-label">{{ 'karmaLeaderboard.youveEarned' | translate }}</span>
         <span class="klb-earned-val" *ngIf="!summaryLoading; else earnedSkeleton">{{ myKarmaPoints }} {{ 'karmaLeaderboard.karmaPoints' | translate }}</span>
-        <ng-template #earnedSkeleton><span class="klb-skeleton klb-sk-line" style="display:block;width:96px;margin-top:4px" aria-hidden="true"></span></ng-template>
+        <ng-template #earnedSkeleton><span class="klb-skeleton klb-sk-line klb-sk-earned" aria-hidden="true"></span></ng-template>
       </div>
     </div>
     <button mat-icon-button class="klb-nav-btn" [routerLink]="['/app/person-profile/karma-points']"

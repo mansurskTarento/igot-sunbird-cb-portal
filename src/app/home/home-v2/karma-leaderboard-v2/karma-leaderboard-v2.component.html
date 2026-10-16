@@ -89,7 +89,7 @@
       <div class="klb-earned-text">
         <span class="klb-earned-label">{{ 'karmaLeaderboard.youveEarned' | translate }}</span>
         @if (summaryLoading) {
-        <span class="klb-skeleton klb-sk-line" style="display:block;width:96px;margin-top:4px" aria-hidden="true"></span>
+        <span class="klb-skeleton klb-sk-line klb-sk-earned" aria-hidden="true"></span>
         } @else {
         <span class="klb-earned-val">{{ myKarmaPoints }} {{ 'karmaLeaderboard.karmaPoints' | translate }}</span>
         }
@@ -116,7 +116,7 @@
       <div class="klb-earned-text">
         <span class="klb-earned-label">Wallet Balance</span>
         @if (summaryLoading) {
-        <span class="klb-skeleton klb-sk-line" style="display:block;width:96px;margin-top:4px" aria-hidden="true"></span>
+        <span class="klb-skeleton klb-sk-line klb-sk-earned" aria-hidden="true"></span>
         } @else {
         <span class="klb-earned-val">{{ myKarmaCoins }} {{ 'karmaLeaderboard.karmaCoins' | translate }}</span>
         }
