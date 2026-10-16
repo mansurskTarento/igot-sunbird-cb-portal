@@ -351,6 +351,19 @@ describe('ProfileKarmapointsComponent', () => {
       expect(component.getTitle(null)).toBe('No Title')
       expect(component.getTitle(undefined)).toBe('No Title')
     })
+
+    it('should return No Title when the record has no operation type', () => {
+      expect(component.getTitle(row({ operation_type: undefined }))).toBe('No Title')
+      expect(component.getTitle(row({ operation_type: null }))).toBe('No Title')
+      expect(component.getTitle(row({ operation_type: '' }))).toBe('No Title')
+      expect(component.getTitle({})).toBe('No Title')
+    })
+
+    it('should not translate a record that has no operation type', () => {
+      component.getTitle({})
+
+      expect(langStub.translateLabel).not.toHaveBeenCalled()
+    })
   })
 
   describe('translateLabels', () => {

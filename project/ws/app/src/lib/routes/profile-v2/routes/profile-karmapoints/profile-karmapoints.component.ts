@@ -102,7 +102,7 @@ export class ProfileKarmapointsComponent implements OnInit {
       // return 'First Enrollment'
       return this.translateLabels('First Enrollment', 'profileKarmapoints', '')
     }
-    return `${row ? row.operation_type.split('_').map((word:any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : 'No Title'}`
+    return `${row && row.operation_type ? row.operation_type.split('_').map((word:any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : 'No Title'}`
   }
 
   translateLabels(label: string, type: any, subtype: any) {
