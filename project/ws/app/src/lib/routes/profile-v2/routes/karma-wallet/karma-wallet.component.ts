@@ -32,7 +32,8 @@ import {
 } from './karma-wallet.model'
 import { KarmaWalletService } from './karma-wallet.service'
 import { HomePageService } from 'src/app/services/home-page.service'
-import { EnrollmentSummaryStateService } from '@sunbird-cb/collection'
+// deep import: the package root would pull the whole widget library (and jspdf) into this module
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection/src/lib/_services/enrollment-summary-state.service'
 import { IKarmaTourAction, IKarmaTourStep } from './karma-wallet-tour.model'
 import { KarmaWalletTourComponent } from './karma-wallet-tour.component'
 

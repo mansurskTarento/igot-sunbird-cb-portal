@@ -29,7 +29,8 @@ import { CommonDataService } from '../../../../routes/services/common-data.servi
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 // Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
 import { HomePageService } from 'src/app/services/home-page.service'
-import { EnrollmentSummaryStateService } from '@sunbird-cb/collection'
+// deep import: the package root would pull the whole widget library (and jspdf) into this module
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection/src/lib/_services/enrollment-summary-state.service'
 //#endregion
 
 @Component({

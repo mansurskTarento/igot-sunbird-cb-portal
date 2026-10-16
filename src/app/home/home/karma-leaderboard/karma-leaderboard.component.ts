@@ -1,7 +1,8 @@
 import { Component, OnInit, DestroyRef, inject } from '@angular/core'
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
-import { EnrollmentSummaryStateService } from '@sunbird-cb/collection'
+// deep import: the package root would pull the whole widget library (and jspdf) into this module
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection/src/lib/_services/enrollment-summary-state.service'
 import { HomePageService } from '../../../services/home-page.service'
 import { UserProfileService } from '../../../../../project/ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import moment from 'moment'
