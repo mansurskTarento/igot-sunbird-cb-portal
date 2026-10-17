@@ -75,6 +75,14 @@ export class ViewCustomFieldsComponent {
   }
 
   getOrgDetails() {
+    const profileCustomFieldIds = _.get(this.configService, 'unMappedUser.rootOrg.customfieldsdata.customFieldIds')
+    if (Array.isArray(profileCustomFieldIds)) {
+      this.customAttrListIds = Array.from(new Set(profileCustomFieldIds.filter(Boolean)))
+      if (this.customAttrListIds?.length) {
+        this.getCustomAttributes()
+      }
+      return
+    }
     const request = {
       request: { organisationId: this.orgId },
     }
@@ -114,7 +122,7 @@ export class ViewCustomFieldsComponent {
       defaultUrl: ''
     }
     this.userProfileService.fetchCustomFields(payload, configDetails).subscribe((res: any) => {
-      this.customAttrList = _.get(res, 'result.searchResults.data', [])
+      this.customAttrList = _.uniqBy(_.get(res, 'result.searchResults.data', []), 'customFieldId')
       if (this.customAttrList && this.customAttrList.length > 0) {
         this.readCustomattributeDetails()
       }
