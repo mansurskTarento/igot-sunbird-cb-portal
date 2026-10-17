@@ -841,6 +841,13 @@
   border-radius: 4px;
 }
 
+// placeholder for the "You've earned" value while the enrolment summary loads
+.klb-sk-earned {
+  display: block;
+  width: 96px;
+  margin-top: 4px;
+}
+
 .klb-sk-line-full {
   width: 100%;
 }

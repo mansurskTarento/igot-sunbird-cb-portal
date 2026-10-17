@@ -372,7 +372,9 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (enrollmentDetailsFromDB) {
         for (const content of enrichedContent) {
           const enrollmentDetails = enrollmentDetailsFromDB[content.identifier]
-          if (content?.completionSurveyLink && content?.identifier && enrollmentDetails && enrollmentDetails?.completionPercentage === 100) {
+          if (content?.completionSurveyLink && content?.identifier && enrollmentDetails &&
+            (Number(enrollmentDetails?.completionPercentage) === 100 ||
+              (_.isNil(enrollmentDetails?.completionPercentage) && Number(enrollmentDetails?.status) === 2))) {
             const sID = content.completionSurveyLink.split('surveys/')
             const formId = sID[1]
 
@@ -1516,6 +1518,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       if (responses.enrollmentDetails && responses.enrollmentDetails.result && responses.enrollmentDetails.result.response) {
         this.indexedDbService.setEnrollmentDetails(responses.enrollmentDetails.result.response)
           .catch(error => console.error('Failed to store enrollmentDetails in IndexedDB:', error))
+      }
+      if (this.courseSearchResults.some(content => content?.completionSurveyLink &&
+        _.isNil(content?.surveyCompletionStatus))) {
+        this.searchCourses()
       }
     })
   }

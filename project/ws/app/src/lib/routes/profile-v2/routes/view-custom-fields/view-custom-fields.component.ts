@@ -54,10 +54,12 @@ export class ViewCustomFieldsComponent {
               behavior: 'smooth',
               block: 'center',
             })
-            setTimeout(() => {
-              this.handleEditCustomDetails()
-            }, 1000)
           }
+          setTimeout(() => {
+            if (document.getElementById(fragment)) {
+              this.handleEditCustomDetails()
+            }
+          }, 1000)
         }, 500)
       }
     })

@@ -1,4 +1,5 @@
-import { Component, computed, effect, input, OnChanges, OnDestroy, OnInit, output, signal, SimpleChanges } from '@angular/core'
+import { Component, computed, effect, input, OnChanges, OnDestroy, OnInit, output, signal, SimpleChanges, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { CommonModule } from '@angular/common'
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser'
 import { Router, NavigationEnd, NavigationStart, RouterModule } from '@angular/router'
@@ -8,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon'
 import { MatMenuModule } from '@angular/material/menu'
 import { MatTooltipModule } from '@angular/material/tooltip'
 
-import { IBtnAppsConfig, CustomTourService, WidgetUserService, BtnProfileModule } from '@sunbird-cb/collection'
+import { IBtnAppsConfig, CustomTourService, WidgetUserService, BtnProfileModule, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 import { NsWidgetResolver, WidgetResolverModule } from '@sunbird-cb/resolver'
 import {
   ConfigurationsService,
@@ -54,6 +55,7 @@ import { BreakpointObserver } from '@angular/cdk/layout'
   styleUrl: './app-nav-bar-v2.component.scss'
 })
 export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef)
   // Inputs using Angular 20 input() signal
   mode = input<'top' | 'bottom'>('top');
   showKarmaLeaderboard = input<boolean>(false)
@@ -161,7 +163,8 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
     private domainConfSvc: DomainConfService,
     private themeSvc: ThemeService,
     private restrictionSvc: UserRestrictionService,
-    private breakpointObserver: BreakpointObserver
+    private readonly breakpointObserver: BreakpointObserver,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.btnAppsConfig = { ...this.basicBtnAppsConfig }
 
@@ -308,9 +311,15 @@ export class AppNavBarV2Component implements OnInit, OnChanges, OnDestroy {
     })
 
     this.startTour()
-    this.enrollInterval = setInterval(() => {
-      this.getKarmaCount()
-    }, 1000)
+    // skeleton while the summary is in flight, re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        if (!loading) {
+          this.getKarmaCount()
+        }
+        this.karmaPointLoading.set(loading)
+      })
 
     this.urlService.previousUrl$.subscribe((previousUrl: string) => {
       this.previousUrl.set(previousUrl)

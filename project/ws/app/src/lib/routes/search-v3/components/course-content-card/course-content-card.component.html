@@ -90,6 +90,7 @@
                                 <ng-container
                                     *ngIf="isCardElementEnabled('downloadCertificate') && courseEnrollment && courseEnrollment?.issuedCertificates && courseEnrollment?.completionPercentage === 100">
                                     <div matRipple (click)="downloadCertificate(courseEnrollment)"
+                                        matTooltip="Download Certificate" matTooltipPosition="above"
                                         class="download-certificate-course font-stats flex items-center gap-1 px-1 pt-1 rounded cursor-pointer"
                                         [ngClass]="{'lock-download-certificate-course': lockSurvey}">
                                         <ng-container *ngIf="!lockSurvey; else lockedSurvey">

@@ -112,6 +112,7 @@ export * from './lib/discuss-strip-multiple/discuss-strip-multiple.module'
 export * from './lib/discuss-strip-multiple/discuss-strip-multiple.model'
 
 export * from './lib/_services/widget-user.service'
+export * from './lib/_services/enrollment-summary-state.service'
 export * from './lib/_services/widget-user.model'
 export * from './lib/collection.config'
 export * from './lib/content-assign/content-assign.service'
