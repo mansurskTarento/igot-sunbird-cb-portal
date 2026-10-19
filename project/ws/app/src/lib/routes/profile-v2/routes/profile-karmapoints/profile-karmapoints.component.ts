@@ -21,6 +21,7 @@ export class ProfileKarmapointsComponent implements OnInit {
   lastDate: any = moment(new Date()).valueOf()
   showLoader = false
   showMoreBtn = false
+  readonly userRegistrationOperationTypes = ['SELF_REGISTRATION', 'CUSTOM_REGISTRATION', 'BULK_REGISTRATION']
 
   constructor(
     private configSvc: ConfigurationsService,
@@ -101,6 +102,9 @@ export class ProfileKarmapointsComponent implements OnInit {
     if (row && row.operation_type === 'FIRST_ENROLMENT') {
       // return 'First Enrollment'
       return this.translateLabels('First Enrollment', 'profileKarmapoints', '')
+    }
+    if (row && this.userRegistrationOperationTypes.includes(row.operation_type)) {
+      return 'User Registration'
     }
     return `${row && row.operation_type ? row.operation_type.split('_').map((word:any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : 'No Title'}`
   }
