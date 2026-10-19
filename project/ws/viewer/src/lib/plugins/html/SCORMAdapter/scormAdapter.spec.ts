@@ -335,6 +335,68 @@ describe('SCORMAdapterService', () => {
       expect(api.GetErrorString(403)).toBe('Data Model Element Value Not Initialized')
     })
 
+    it('initialises a resumed session even though the restore wrote Initialized: true', () => {
+      store.setItem('Initialized', true)
+      store.setItem('cmi.suspend_data', 'state-blob')
+
+      expect(api.Initialize('')).toBe('true')
+      expect(api.GetLastError()).toBe('0')
+      expect(api.GetValue('cmi.entry')).toBe('resume')
+    })
+
+    it('reports only the last call\'s error, so an earlier one is not read as a failure', () => {
+      api.Initialize('')
+      api.GetValue('cmi.location')
+      expect(api.GetLastError()).toBe('403')
+
+      expect(api.SetValue('cmi.location', 'p1')).toBe('true')
+      expect(api.GetLastError()).toBe('0')
+    })
+
+    it.each([
+      ['cmi._version', '1.0'],
+      ['cmi.mode', 'normal'],
+      ['cmi.credit', 'credit'],
+      ['cmi.entry', 'ab-initio'],
+      ['cmi.completion_status', 'unknown'],
+      ['cmi.success_status', 'unknown'],
+      ['cmi.learner_id', USER_ID],
+      ['cmi.launch_data', ''],
+      ['cmi.total_time', 'PT0H0M0S'],
+      ['cmi.time_limit_action', 'continue,no message'],
+      ['cmi.learner_preference.audio_level', '1'],
+      ['cmi.interactions._count', '0'],
+      ['cmi.objectives._count', '0'],
+    ])('answers the driver start-up read %s with %p', (element, expected) => {
+      api.Initialize('')
+
+      expect(api.GetValue(element)).toBe(expected)
+      expect(api.GetLastError()).toBe('0')
+    })
+
+    it('prefers what the package wrote over the LMS default', () => {
+      api.Initialize('')
+      api.SetValue('cmi.completion_status', 'incomplete')
+
+      expect(api.GetValue('cmi.completion_status')).toBe('incomplete')
+    })
+
+    it('counts collection entries by the indexes the package wrote', () => {
+      api.Initialize('')
+      api.SetValue('cmi.objectives.0.id', 'a')
+      api.SetValue('cmi.objectives.2.id', 'c')
+
+      expect(api.GetValue('cmi.objectives._count')).toBe('3')
+    })
+
+    it('starts a fresh 2004 session when the content changes', () => {
+      api.Initialize('')
+      service.contentId = CONTENT_B
+
+      expect(api.Initialize('')).toBe('true')
+      expect(api.GetLastError()).toBe('0')
+    })
+
     it('uses the 2004 error table, where the 4xx codes differ from 1.2', () => {
       // 401 is "Not implemented" in 1.2 but "Undefined Data Model Element" in 2004
       expect(api.GetErrorString(401)).toBe('Undefined Data Model Element')

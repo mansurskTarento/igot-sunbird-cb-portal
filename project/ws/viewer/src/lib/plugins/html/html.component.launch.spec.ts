@@ -151,4 +151,61 @@ describe('HtmlComponent launch file selection', () => {
     await expect(pick(null)).resolves.toEqual(
       expect.objectContaining({ file: 'index_lms.html' }))
   })
+
+  describe('window.API_1484_11', () => {
+    const manifest2004 = (href: string) => `<?xml version="1.0"?>
+<manifest xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_v1p3">
+  <metadata><schema>ADL SCORM</schema><schemaversion>2004 3rd Edition</schemaversion></metadata>
+  <resources>
+    <resource identifier="r1" type="webcontent" adlcp:scormType="sco" href="${href}"/>
+  </resources>
+</manifest>`
+    const scorm2004Api = { Initialize: () => 'true' }
+    const publish = (file: string, entryFile: string | null) =>
+      (component as any).publishScorm2004Api(ROOT.replace(/\/$/, ''), file, entryFile) as Promise<void>
+
+    beforeEach(() => {
+      (component as any).scormAdapterService = { scorm2004Api }
+      delete (window as any).API_1484_11
+    })
+
+    afterEach(() => {
+      delete (window as any).API_1484_11
+    })
+
+    // do_1146535896697487361561: Rise's driver is set to SCORM2004 only, so launched at
+    // its SCO it needs API_1484_11 or stops with "unable to acquire LMS API".
+    it('publishes it when the 2004 manifest SCO is launched', async () => {
+      files['imsmanifest.xml'] = manifest2004('scormdriver/indexAPI.html')
+      await publish('scormdriver/indexAPI.html', 'scormcontent/index.html')
+      expect((window as any).API_1484_11).toBe(scorm2004Api)
+    })
+
+    it('does not publish it for a SCORM 1.2 manifest', async () => {
+      files['imsmanifest.xml'] = manifest('index_lms.html')
+      await publish('index_lms.html', 'index.html')
+      expect((window as any).API_1484_11).toBeUndefined()
+    })
+
+    it('does not publish it when initFile is launched, nor read the package', async () => {
+      (window as any).API_1484_11 = scorm2004Api
+      files['imsmanifest.xml'] = manifest2004('scormdriver/indexAPI.html')
+      await publish('scormcontent/index.html', 'scormcontent/index.html')
+      expect((window as any).API_1484_11).toBeUndefined()
+      expect(requested).toEqual([])
+    })
+
+    it('does not publish it when there is no manifest', async () => {
+      await publish('index.html', null)
+      expect((window as any).API_1484_11).toBeUndefined()
+    })
+
+    it('reads the manifest once for the launch file and the version check', async () => {
+      files['imsmanifest.xml'] = manifest2004('scormdriver/indexAPI.html')
+      files['scormdriver/indexAPI.html'] = '<html></html>'
+      await pick('scormcontent/index.html')
+      await publish('scormdriver/indexAPI.html', 'scormcontent/index.html')
+      expect(requested.filter(r => r === 'GET imsmanifest.xml')).toHaveLength(1)
+    })
+  })
 })
