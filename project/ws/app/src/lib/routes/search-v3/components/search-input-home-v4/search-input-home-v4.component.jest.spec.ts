@@ -410,6 +410,52 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       expect(event.preventDefault).toHaveBeenCalled()
       expect(updateSpy).toHaveBeenCalledWith('react')
     })
+
+    it('trims the query before searching', () => {
+      const event = { preventDefault: jest.fn() } as any
+      const updateSpy = jest.spyOn(component, 'updateQuery').mockResolvedValue(undefined)
+      component.queryControl.setValue('  react  ')
+      component.onSearchSubmit(event)
+      expect(updateSpy).toHaveBeenCalledWith('react')
+    })
+
+    it.each(['', '   ', null])('does not search for blank query %p', (value) => {
+      const event = { preventDefault: jest.fn() } as any
+      const updateSpy = jest.spyOn(component, 'updateQuery').mockResolvedValue(undefined)
+      component.queryControl.setValue(value)
+      component.onSearchSubmit(event)
+      expect(event.preventDefault).toHaveBeenCalled()
+      expect(updateSpy).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('isSearchEnabled', () => {
+    it.each([
+      ['', false],
+      ['   ', false],
+      [null, false],
+      [' a ', true],
+      ['react', true],
+    ])('for %p returns %p', (value, expected) => {
+      component.queryControl.setValue(value as string | null)
+      expect(component.isSearchEnabled).toBe(expected)
+    })
+  })
+
+  describe('submitSearch', () => {
+    it('calls updateQuery with trimmed text', () => {
+      const updateSpy = jest.spyOn(component, 'updateQuery').mockResolvedValue(undefined)
+      component.queryControl.setValue(' angular ')
+      component.submitSearch()
+      expect(updateSpy).toHaveBeenCalledWith('angular')
+    })
+
+    it('does nothing for whitespace-only text', () => {
+      const updateSpy = jest.spyOn(component, 'updateQuery').mockResolvedValue(undefined)
+      component.queryControl.setValue('   ')
+      component.submitSearch()
+      expect(updateSpy).not.toHaveBeenCalled()
+    })
   })
 
   describe('updateQuery', () => {
@@ -789,7 +835,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       component.clearSearchText()
       jest.runAllTimers()
       expect(resetSpy).toHaveBeenCalled()
-      expect(updateSpy).toHaveBeenCalledWith('')
+      expect(updateSpy).not.toHaveBeenCalled()
       expect(component.openSearchTemplate()).toBe(true)
       jest.useRealTimers()
     })

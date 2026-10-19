@@ -282,9 +282,24 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     })
   }
 
+  get trimmedQuery(): string {
+    return (this.queryControl?.value || '').trim()
+  }
+
+  get isSearchEnabled(): boolean {
+    return this.trimmedQuery.length > 0
+  }
+
   onSearchSubmit(event: Event) {
     event.preventDefault()
-    this.updateQuery(this.queryControl.value || '')
+    this.submitSearch()
+  }
+
+  submitSearch() {
+    const query = this.trimmedQuery
+    if (query.length > 0) {
+      this.updateQuery(query)
+    }
   }
 
   async updateQuery(query: string) {
@@ -630,7 +645,6 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
       this.openSearchTemplate.set(true)
     }, 0)
     this.queryControl.reset()
-    this.updateQuery('')
   }
 
   toggleSearchCategory(category: string) {
