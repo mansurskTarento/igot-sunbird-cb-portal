@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs'
+import { join } from 'path'
 import { of, Subject } from 'rxjs'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ElementRef, inject } from '@angular/core'
@@ -1137,6 +1139,31 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       ;(component as any).searchSubscription = undefined
       ;(component as any).querySubscription = undefined
       expect(() => component.ngOnDestroy()).not.toThrow()
+    })
+  })
+
+  // The component uses ViewEncapsulation.None, so its styles are global. These guard the mobile
+  // layout of the search panel and make sure those rules can't leak onto other pages that reuse
+  // the same class names (.search-container, .search-categories).
+  describe('mobile styles', () => {
+    const scss = readFileSync(join(__dirname, 'search-input-home-v4.component.scss'), 'utf8')
+    const mobileBlock = scss.slice(scss.indexOf('@media (max-width: 768px) {'))
+
+    it('keeps the search panel aligned with the search bar and in the page flow', () => {
+      expect(mobileBlock).toMatch(
+        /ws-app-search-v4-input-home \.search-container \{[^}]*position: static;[^}]*width: 100%;[^}]*min-width: 0;/
+      )
+    })
+
+    it('compacts the category chips', () => {
+      expect(mobileBlock).toMatch(
+        /ws-app-search-v4-input-home \.search-categories \{[^}]*--mat-checkbox-state-layer-size: 24px;/
+      )
+    })
+
+    it('no longer uses fixed min-widths for small screens', () => {
+      expect(scss).not.toMatch(/@media \(max-width: 360px\)/)
+      expect(scss).not.toMatch(/@media \(min-width:\s*361px\) and \(max-width: 480px\)/)
     })
   })
 })
