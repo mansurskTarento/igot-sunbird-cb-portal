@@ -67,6 +67,15 @@ const SEARCH_RESULT_CARD_SUBTYPE: { [key in SearchResultCardCategory]: string } 
   [SearchResultCardCategory.ExternalContents]: 'search-result-card-external-content',
 }
 
+const ZERO_RESULT_CATEGORY_LABELS: { [key in SearchResultCardCategory]: string } = {
+  [SearchResultCardCategory.Courses]: 'Courses',
+  [SearchResultCardCategory.Events]: 'Events',
+  [SearchResultCardCategory.Peoples]: 'People',
+  [SearchResultCardCategory.Communities]: 'Communities',
+  [SearchResultCardCategory.Resources]: 'Amrit Gyaan Kosh',
+  [SearchResultCardCategory.ExternalContents]: 'Marketplace',
+}
+
 @Component({
   selector: 'ws-app-learn-search',
   templateUrl: './learn-search.component.html',
@@ -112,6 +121,10 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
   communitiesSearchTotalCount = 0;
   resourcesSearchTotalCount = 0;
   externalSearchTotalCount = 0;
+  // Labels of the searched categories that returned no results; rendered as one clubbed message.
+  zeroResultCategories: string[] = [];
+  // Number of categories actually searched in the multi-section layout.
+  searchedCategoriesCount = 0;
 
   get categoryCounts(): { [key: string]: number } {
     if (this.searchContentLoader || this.searchPeopleLoader) {
@@ -1174,14 +1187,46 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     const shouldSearch = (category: string) =>
       this.isCategoryEnabled(category) && (!onlyCategories || onlyCategories.includes(category))
 
-    if (shouldSearch(SearchCategory.Courses)) { await this.searchCourses() }
-    if (shouldSearch(SearchCategory.Events)) { await this.searchEvents() }
-    if (shouldSearch(SearchCategory.People)) { await this.searchPeople() }
-    if (shouldSearch(SearchCategory.Communities)) { await this.searchcommunities() }
-    if (shouldSearch(SearchCategory.Resources)) { await this.searchResources() }
-    if (shouldSearch(SearchCategory.ExternalContents)) { await this.searchExternalContents() }
+    this.searchedCategoriesCount = [
+      SearchCategory.Courses, SearchCategory.Events, SearchCategory.People,
+      SearchCategory.Communities, SearchCategory.Resources, SearchCategory.ExternalContents,
+    ].filter(shouldSearch).length
+
+    if (shouldSearch(SearchCategory.Courses)) {
+      await this.searchCourses()
+      this.trackZeroResult(SearchResultCardCategory.Courses, this.courseSearchTotalCount)
+    }
+    if (shouldSearch(SearchCategory.Events)) {
+      await this.searchEvents()
+      this.trackZeroResult(SearchResultCardCategory.Events, this.eventSearchTotalCount)
+    }
+    if (shouldSearch(SearchCategory.People)) {
+      await this.searchPeople()
+      this.trackZeroResult(SearchResultCardCategory.Peoples, this.peopleSearchTotalCount)
+    }
+    if (shouldSearch(SearchCategory.Communities)) {
+      await this.searchcommunities()
+      this.trackZeroResult(SearchResultCardCategory.Communities, this.communitiesSearchTotalCount)
+    }
+    if (shouldSearch(SearchCategory.Resources)) {
+      await this.searchResources()
+      this.trackZeroResult(SearchResultCardCategory.Resources, this.resourcesSearchTotalCount)
+    }
+    if (shouldSearch(SearchCategory.ExternalContents)) {
+      await this.searchExternalContents()
+      this.trackZeroResult(SearchResultCardCategory.ExternalContents, this.externalSearchTotalCount)
+    }
 
     this.searchContentLoader = false
+  }
+
+  // Keeps zeroResultCategories in sync: adds the category label when its count is empty, removes it otherwise.
+  trackZeroResult(category: SearchResultCardCategory, count: number) {
+    const label = ZERO_RESULT_CATEGORY_LABELS[category]
+    this.zeroResultCategories = this.zeroResultCategories.filter(item => item !== label)
+    if (!count) {
+      this.zeroResultCategories.push(label)
+    }
   }
 
   // Delete the empty request param from resuest body
@@ -1362,8 +1407,31 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       await this.searchExternalContents()
       this.combinedFacets = [this.externalFacets]
     }
+    this.trackSingleCategoryResult(category)
     // this.scrollToTop();
     this.searchContentLoader = false
+  }
+
+  // Single-category (see all) search: keeps the zero-result state in sync with the one searched category.
+  trackSingleCategoryResult(category: string) {
+    const counts: { [key: string]: number } = {
+      [SearchCategory.Courses]: this.courseSearchTotalCount,
+      [SearchCategory.CaseStudy]: this.courseSearchTotalCount,
+      [SearchCategory.Events]: this.eventSearchTotalCount,
+      [SearchCategory.People]: this.peopleSearchTotalCount,
+      [SearchCategory.Communities]: this.communitiesSearchTotalCount,
+      [SearchCategory.Resources]: this.resourcesSearchTotalCount,
+      [SearchCategory.ExternalContents]: this.externalSearchTotalCount,
+    }
+    if (!(category in counts)) {
+      return
+    }
+    this.zeroResultCategories = []
+    this.searchedCategoriesCount = 1
+    this.trackZeroResult(
+      (category === SearchCategory.CaseStudy ? SearchCategory.Courses : category) as SearchResultCardCategory,
+      counts[category]
+    )
   }
 
   resetAllSearchParams() {
@@ -1406,6 +1474,8 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
     this.communitiesSearchTotalCount = 0
     this.resourcesSearchTotalCount = 0
     this.externalSearchTotalCount = 0
+    this.zeroResultCategories = []
+    this.searchedCategoriesCount = 0
 
     this.seeAllResult = ''
     this.allResultsDepartmentName = new Set<string>()

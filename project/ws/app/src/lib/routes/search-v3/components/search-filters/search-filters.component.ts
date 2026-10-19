@@ -561,6 +561,13 @@ export class SearchFiltersComponent implements OnInit, OnDestroy, OnChanges {
     competency['showAll'] = !competency['showAll']
   }
 
+  // Selected categories without results are hidden; counts are empty while loading, so all show then.
+  get visibleSelectedCategories(): any[] {
+    return (this.categoryType || []).filter(
+      (category: any) => this.categoryCounts?.[category?.name] !== 0
+    )
+  }
+
   get isMultiCategorySearch(): boolean {
     return this.searchCategories.length > 1
   }
