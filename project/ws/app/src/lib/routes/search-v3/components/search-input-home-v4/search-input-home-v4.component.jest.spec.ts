@@ -1151,13 +1151,13 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
 
     it('keeps the search panel aligned with the search bar and in the page flow', () => {
       expect(mobileBlock).toMatch(
-        /ws-app-search-v4-input-home \.search-container \{[^}]*position: static;[^}]*width: 100%;[^}]*min-width: 0;/
+        /\.search-input-home-v4 \.search-container \{[^}]*position: static;[^}]*width: 100%;[^}]*min-width: 0;/
       )
     })
 
     it('compacts the category chips', () => {
       expect(mobileBlock).toMatch(
-        /ws-app-search-v4-input-home \.search-categories \{[^}]*--mat-checkbox-state-layer-size: 24px;/
+        /\.search-input-home-v4 \.search-categories \{[^}]*--mat-checkbox-state-layer-size: 24px;/
       )
     })
 

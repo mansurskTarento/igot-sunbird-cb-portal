@@ -416,7 +416,7 @@ mat-list-item {
   line-height: 1;
 }
 
-ws-app-search-v4-input-home .recent_link {
+.search-input-home-v4 .recent_link {
   min-width: 0;
 
   span {
@@ -465,14 +465,14 @@ ws-app-search-v4-input-home .recent_link {
 }
 
 @media (max-width: 768px) {
-  ws-app-search-v4-input-home .search-container {
+  .search-input-home-v4 .search-container {
     position: static;
     width: 100%;
     min-width: 0;
     max-width: none;
   }
 
-  ws-app-search-v4-input-home .search-categories {
+  .search-input-home-v4 .search-categories {
     --mat-checkbox-state-layer-size: 24px;
     --mat-chip-container-height: 28px;
     --mat-chip-label-text-size: 12px;
