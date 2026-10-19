@@ -519,6 +519,95 @@ describe('LearnSearchComponent (No TestBed)', () => {
     })
   })
 
+  describe('zeroResultCategories', () => {
+    it('trackZeroResult adds the label once when the count is 0', () => {
+      const component = createComponent({})
+      component.trackZeroResult('peoples', 0)
+      component.trackZeroResult('peoples', 0)
+      expect(component.zeroResultCategories).toEqual(['People'])
+    })
+
+    it('trackZeroResult removes the label when results exist', () => {
+      const component = createComponent({})
+      component.trackZeroResult('resources', 0)
+      component.trackZeroResult('resources', 5)
+      expect(component.zeroResultCategories).toEqual([])
+    })
+
+    it('searchEnabledCategories collects every empty category', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      component.zeroResultCategories = ['stale']
+      jest.spyOn(component, 'searchCourses').mockImplementation(async () => { component.courseSearchTotalCount = 4 })
+      jest.spyOn(component, 'searchEvents').mockImplementation(async () => { component.eventSearchTotalCount = 0 })
+      jest.spyOn(component, 'searchPeople').mockImplementation(async () => { component.peopleSearchTotalCount = 0 })
+      jest.spyOn(component, 'searchcommunities').mockImplementation(async () => { component.communitiesSearchTotalCount = 2 })
+      jest.spyOn(component, 'searchResources').mockImplementation(async () => { component.resourcesSearchTotalCount = 0 })
+      jest.spyOn(component, 'searchExternalContents').mockImplementation(async () => { component.externalSearchTotalCount = 0 })
+      await component.searchEnabledCategories()
+      expect(component.zeroResultCategories).toEqual(['stale', 'Events', 'People', 'Amrit Gyaan Kosh', 'Marketplace'])
+    })
+
+    it('stores how many categories were searched', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      await component.searchEnabledCategories()
+      expect(component.searchedCategoriesCount).toBe(6)
+      await component.searchEnabledCategories([SearchCategory.Resources, SearchCategory.Events])
+      expect(component.searchedCategoriesCount).toBe(2)
+    })
+
+    it('trackSingleCategoryResult marks an empty single category', () => {
+      const component = createComponent({})
+      component.peopleSearchTotalCount = 0
+      component.trackSingleCategoryResult(SearchCategory.People)
+      expect(component.searchedCategoriesCount).toBe(1)
+      expect(component.zeroResultCategories).toEqual(['People'])
+    })
+
+    it('trackSingleCategoryResult clears state when the category has results', () => {
+      const component = createComponent({})
+      component.zeroResultCategories = ['People']
+      component.courseSearchTotalCount = 5
+      component.trackSingleCategoryResult(SearchCategory.CaseStudy)
+      expect(component.searchedCategoriesCount).toBe(1)
+      expect(component.zeroResultCategories).toEqual([])
+    })
+
+    it('trackSingleCategoryResult ignores unknown categories', () => {
+      const component = createComponent({})
+      component.trackSingleCategoryResult('unknown')
+      expect(component.searchedCategoriesCount).toBe(0)
+      expect(component.zeroResultCategories).toEqual([])
+    })
+
+    it('seeAllResults updates the zero-result state', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      jest.spyOn(component, 'searchResources').mockImplementation(async () => { component.resourcesSearchTotalCount = 0 })
+      await component.seeAllResults(SearchCategory.Resources)
+      expect(component.searchedCategoriesCount).toBe(1)
+      expect(component.zeroResultCategories).toEqual(['Amrit Gyaan Kosh'])
+    })
+
+    it('does not track categories that were not searched', async () => {
+      const component = createComponent({})
+      component.statedata = { param: 'q', path: 'Search' }
+      jest.spyOn(component, 'searchResources').mockImplementation(async () => { component.resourcesSearchTotalCount = 0 })
+      await component.searchEnabledCategories([SearchCategory.Resources])
+      expect(component.zeroResultCategories).toEqual(['Amrit Gyaan Kosh'])
+    })
+
+    it('resetAllSearchParams clears zeroResultCategories', () => {
+      const component = createComponent({})
+      component.zeroResultCategories = ['People']
+      component.searchedCategoriesCount = 3
+      component.resetAllSearchParams()
+      expect(component.zeroResultCategories).toEqual([])
+      expect(component.searchedCategoriesCount).toBe(0)
+    })
+  })
+
   // ---------------------------------------------------------------------
   // getName
   // ---------------------------------------------------------------------

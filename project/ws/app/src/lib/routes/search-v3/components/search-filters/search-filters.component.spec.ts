@@ -262,6 +262,23 @@ describe('SearchFiltersComponent', () => {
       expect(component.isMultiCategorySearch).toBe(false);
     });
 
+    it('visibleSelectedCategories hides categories whose count is 0', () => {
+      (component as any).categoryType = [{ name: 'courses' }, { name: 'events' }, { name: 'peoples' }];
+      component.categoryCounts = { courses: 3, events: 0 };
+      expect((component as any).visibleSelectedCategories.map((c: any) => c.name)).toEqual(['courses', 'peoples']);
+    });
+
+    it('visibleSelectedCategories shows everything while counts are empty', () => {
+      (component as any).categoryType = [{ name: 'courses' }, { name: 'events' }];
+      component.categoryCounts = {};
+      expect((component as any).visibleSelectedCategories.length).toBe(2);
+    });
+
+    it('visibleSelectedCategories handles missing categoryType', () => {
+      (component as any).categoryType = undefined;
+      expect((component as any).visibleSelectedCategories).toEqual([]);
+    });
+
     it('isMultiCategorySearch is true when more than one category is selected', () => {
       component.searchCategories = [SearchCategory.Courses, SearchCategory.Events];
       expect(component.isMultiCategorySearch).toBe(true);
