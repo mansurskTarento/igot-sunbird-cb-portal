@@ -132,18 +132,6 @@
   max-width: 710px;
   min-width: 530px;
 
-  @media (min-width:481px) and (max-width: 768px) {
-    min-width: 375px;
-  }
-
-  @media (max-width: 360px) {
-    min-width: 240px;
-  }
-
-  @media (min-width:361px) and (max-width: 480px) {
-    min-width: 340px;
-  }
-
   @media (min-width:769px) and (max-width: 920px) {
     min-width: 400px;
   }
@@ -428,6 +416,16 @@ mat-list-item {
   line-height: 1;
 }
 
+ws-app-search-v4-input-home .recent_link {
+  min-width: 0;
+
+  span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
 .recent-search-list {
   width: 100% !important;
 
@@ -464,6 +462,21 @@ mat-list-item {
 // Fix chip focus overlay
 .mat-mdc-chip-focus-overlay {
   display: none;
+}
+
+@media (max-width: 768px) {
+  ws-app-search-v4-input-home .search-container {
+    position: static;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+  }
+
+  ws-app-search-v4-input-home .search-categories {
+    --mat-checkbox-state-layer-size: 24px;
+    --mat-chip-container-height: 28px;
+    --mat-chip-label-text-size: 12px;
+  }
 }
 
 // Responsive: shrink the search button on small screens instead of letting it overlap
