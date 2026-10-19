@@ -113,6 +113,8 @@ export class SCORMAdapterService {
     this.id = id
     // A new content is a new SCORM session.
     this.scorm2004Terminated = false
+    this.scorm2004Initialized = false
+    this.scorm2004LastError = 0
   }
 
   get contentId() {
@@ -383,21 +385,41 @@ export class SCORMAdapterService {
   // method names cannot mistake one version's surface for the other's.
   private scorm2004ApiObject: any = null
   private scorm2004Terminated = false
+  // Initialize() checks this rather than the store's 'Initialized' key: loadDataV2 writes
+  // Initialized: true back on every restore, so a resumed session's first Initialize()
+  // answered "false" / 103 Already Initialized and the driver gave up.
+  private scorm2004Initialized = false
+  // GetLastError answers for the last 2004 call only. The 1.2 error list is append-only,
+  // so through it every call after the first error looked failed to a 2004 driver.
+  private scorm2004LastError = 0
 
   get scorm2004Api(): any {
     if (!this.scorm2004ApiObject) {
       this.scorm2004ApiObject = {
-        Initialize: (_param?: string) => this.scorm2004Initialize(),
-        Terminate: (_param?: string) => this.scorm2004Terminate(),
-        GetValue: (element: string) => this.scorm2004GetValue(element),
-        SetValue: (element: string, value: string) => this.scorm2004SetValue(element, value),
-        Commit: (_param?: string) => this.scorm2004Commit(),
-        GetLastError: () => `${this.LMSGetLastError() || 0}`,
+        Initialize: (_param?: string) => this.scorm2004Call(() => this.scorm2004Initialize()),
+        Terminate: (_param?: string) => this.scorm2004Call(() => this.scorm2004Terminate()),
+        GetValue: (element: string) => this.scorm2004Call(() => this.scorm2004GetValue(element)),
+        SetValue: (element: string, value: string) =>
+          this.scorm2004Call(() => this.scorm2004SetValue(element, value)),
+        Commit: (_param?: string) => this.scorm2004Call(() => this.scorm2004Commit()),
+        GetLastError: () => `${this.scorm2004LastError}`,
         GetErrorString: (code: any) => this.lookupError(scorm2004Errors, Number(code), 'errorString'),
         GetDiagnostic: (code: any) => this.lookupError(scorm2004Errors, Number(code), 'diagnostic'),
       }
     }
     return this.scorm2004ApiObject
+  }
+
+  // Runs one 2004 API call with its own error state: 0 unless this call raised one.
+  private scorm2004Call(call: () => string): string {
+    this.scorm2004LastError = 0
+    const errorsBefore = JSON.parse(this.store.getItem('errors') || '[]').length
+    const result = call()
+    const errors = JSON.parse(this.store.getItem('errors') || '[]')
+    if (errors.length > errorsBefore) {
+      this.scorm2004LastError = Number(errors[errors.length - 1]) || 0
+    }
+    return result
   }
 
   // 2004 requires the string "true"/"false", not booleans. Its drivers are stricter about
@@ -407,12 +429,13 @@ export class SCORMAdapterService {
       this._setError(104)
       return SCORM_FALSE
     }
-    if (this._isInitialized()) {
+    if (this.scorm2004Initialized) {
       this._setError(103)
       return SCORM_FALSE
     }
     this.store.contentKey = this.contentId
     this.store.setItem('Initialized', true)
+    this.scorm2004Initialized = true
     this.updateScormInitialized(scormLMSStatus.LMSPositive)
     return SCORM_TRUE
   }
@@ -450,11 +473,61 @@ export class SCORMAdapterService {
     }
     const value = this.store.getItem(element)
     if (value === null || value === undefined || value === "") {
+      const supplied = this.scorm2004LmsValue(element)
+      if (supplied !== null) {
+        return supplied
+      }
       // 2004 distinguishes "no such value yet" from a general failure.
       this._setError(403)
       return ""
     }
     return `${value}`
+  }
+
+  /**
+   * The value the LMS supplies for an element the package has not written yet.
+   *
+   * A 2004 driver reads these during its boot handshake; answering them "" with 403 left
+   * it without a mode, entry or status. Elements with no defined default (cmi.location,
+   * cmi.suspend_data, cmi.score.* ...) still answer 403, which is the conformant answer.
+   */
+  private scorm2004LmsValue(element: string): string | null {
+    const profile: any = (this.configSvc && this.configSvc.userProfile) || {}
+    switch (element) {
+      case 'cmi._version': return '1.0'
+      case 'cmi.mode': return 'normal'
+      case 'cmi.credit': return 'credit'
+      case 'cmi.entry':
+        return (this.store.getItem('cmi.suspend_data') || this.store.getItem('cmi.location')) ? 'resume' : 'ab-initio'
+      case 'cmi.completion_status': return 'unknown'
+      case 'cmi.success_status': return 'unknown'
+      case 'cmi.learner_id': return `${profile.userId || ''}`
+      case 'cmi.learner_name':
+        return `${profile.userName || [profile.firstName, profile.lastName].filter(Boolean).join(' ') || ''}`
+      case 'cmi.launch_data': return ''
+      case 'cmi.total_time': return 'PT0H0M0S'
+      case 'cmi.time_limit_action': return 'continue,no message'
+      case 'cmi.learner_preference.audio_level': return '1'
+      case 'cmi.learner_preference.language': return ''
+      case 'cmi.learner_preference.delivery_speed': return '1'
+      case 'cmi.learner_preference.audio_captioning': return '0'
+    }
+    if (element.endsWith('._count')) {
+      // Entries in a collection, by the highest index the package has written under it.
+      const prefix = element.substring(0, element.length - '_count'.length)
+      const data: any = this.store.getAll() || {}
+      let count = 0
+      for (const key of Object.keys(data)) {
+        if (key.startsWith(prefix)) {
+          const index = Number(key.substring(prefix.length).split('.')[0])
+          if (!isNaN(index)) {
+            count = Math.max(count, index + 1)
+          }
+        }
+      }
+      return `${count}`
+    }
+    return null
   }
 
   private scorm2004SetValue(element: string, value: string): string {
