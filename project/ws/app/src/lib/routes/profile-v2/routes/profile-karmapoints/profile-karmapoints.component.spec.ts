@@ -79,6 +79,10 @@ describe('ProfileKarmapointsComponent', () => {
       expect(component.showMoreBtn).toBe(false)
     })
 
+    it('should list the operation types titled User Registration', () => {
+      expect(component.userRegistrationOperationTypes).toEqual(['SELF_REGISTRATION', 'CUSTOM_REGISTRATION', 'BULK_REGISTRATION'])
+    })
+
     it('should start paging from the current time', () => {
       const before = Date.now()
       const built = build()
@@ -359,6 +363,13 @@ describe('ProfileKarmapointsComponent', () => {
     it('should not title other registration operation types User Registration', () => {
       expect(component.getTitle(row({ operation_type: 'REGISTRATION' }))).toBe('Registration')
       expect(component.getTitle(row({ operation_type: 'SELF_REGISTRATION_BONUS' }))).toBe('Self Registration Bonus')
+    })
+
+    it('should take the User Registration types from userRegistrationOperationTypes', () => {
+      (component as any).userRegistrationOperationTypes = ['SSO_REGISTRATION']
+
+      expect(component.getTitle(row({ operation_type: 'SSO_REGISTRATION' }))).toBe('User Registration')
+      expect(component.getTitle(row({ operation_type: 'SELF_REGISTRATION' }))).toBe('Self Registration')
     })
 
     it('should return No Title when there is no record', () => {
