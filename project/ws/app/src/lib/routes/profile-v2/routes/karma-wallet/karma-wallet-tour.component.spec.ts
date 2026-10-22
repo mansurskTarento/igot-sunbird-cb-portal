@@ -222,4 +222,151 @@ describe('KarmaWalletTourComponent', () => {
 
     expect(scrollBy).not.toHaveBeenCalled()
   })
+
+  describe('lifecycle and navigation', () => {
+    let finished: jest.Mock
+    let actions: jest.Mock
+
+    beforeEach(() => {
+      finished = jest.fn()
+      actions = jest.fn()
+      component.finished.subscribe(finished)
+      component.action.subscribe(actions)
+      anchor('one', 100, 50)
+      anchor('two', 200, 50)
+    })
+
+    it('should ignore an empty step list', async () => {
+      await component.start([])
+      await component.start(undefined as any)
+      expect(component.active).toBe(false)
+    })
+
+    it('should walk forward, back and finish with an ok on the last step', async () => {
+      await component.start([step('.one'), step('.two', 'left')])
+      expect(component.active).toBe(true)
+      expect(component.isFirst).toBe(true)
+      expect(component.step!.selector).toBe('.one')
+
+      await component.back()
+      expect(actions).not.toHaveBeenCalled()
+
+      await component.next()
+      expect(component.index).toBe(1)
+      expect(component.isLast).toBe(true)
+      expect(actions).toHaveBeenLastCalledWith({ step: 1, action: 'next' })
+
+      await component.back()
+      expect(component.index).toBe(0)
+      expect(actions).toHaveBeenLastCalledWith({ step: 2, action: 'back' })
+
+      await component.next()
+      await component.next()
+      expect(actions).toHaveBeenLastCalledWith({ step: 2, action: 'ok' })
+      expect(finished).toHaveBeenCalledWith('completed')
+      expect(component.active).toBe(false)
+    })
+
+    it('should run the before and onBack hooks and block navigation while busy', async () => {
+      const before = jest.fn()
+      const onBack = jest.fn()
+      await component.start([step('.one'), { ...step('.two'), before, onBack }])
+      await component.next()
+      expect(before).toHaveBeenCalled()
+
+      component.busy = true
+      await component.next()
+      await component.back()
+      expect(component.index).toBe(1)
+      component.busy = false
+
+      await component.back()
+      expect(onBack).toHaveBeenCalled()
+    })
+
+    it('should complete when the next anchor is missing', async () => {
+      await component.start([step('.one'), step('.missing')])
+      await component.next()
+      expect(finished).toHaveBeenCalledWith('completed')
+    })
+
+    it('should complete when there is no current step', async () => {
+      component.steps = []
+      await (component as any).enterStep()
+      expect(finished).toHaveBeenCalledWith('completed')
+    })
+
+    it('should report skip and stop, but only stop an active tour', async () => {
+      component.stop()
+      expect(finished).not.toHaveBeenCalled()
+
+      await component.start([step('.one')])
+      component.skip()
+      expect(actions).toHaveBeenLastCalledWith({ step: 1, action: 'skip' })
+      expect(finished).toHaveBeenCalledWith('skipped')
+
+      await component.start([step('.one')])
+      component.stop()
+      expect(finished).toHaveBeenCalledTimes(2)
+    })
+
+    it('should skip on Escape only while active', async () => {
+      component.onEscape()
+      expect(finished).not.toHaveBeenCalled()
+
+      await component.start([step('.one')])
+      component.onEscape()
+      expect(finished).toHaveBeenCalledWith('skipped')
+    })
+
+    it('should re-measure once per frame on viewport changes while active', async () => {
+      component.onViewportChange()
+      expect((component as any).measureHandle).toBe(0)
+
+      await component.start([step('.one')])
+      const measure = jest.spyOn(component as any, 'measure')
+      component.onViewportChange()
+      component.onViewportChange()
+      await new Promise(resolve => setTimeout(resolve, 50))
+      expect(measure).toHaveBeenCalledTimes(1)
+    })
+
+    it('should compensate the scrollbar gutter while locked and restore it afterwards', async () => {
+      document.body.style.paddingRight = '3px'
+      await component.start([step('.one')])
+      expect(document.body.style.paddingRight).toBe('1280px')
+      expect(document.body.classList.contains('kwt-scroll-lock')).toBe(true)
+
+      component.skip()
+      expect(document.body.style.paddingRight).toBe('3px')
+      expect(document.body.classList.contains('kwt-scroll-lock')).toBe(false)
+    })
+
+    it('should cancel a pending frame and clear timers on destroy', async () => {
+      await component.start([step('.one')])
+      const cancel = jest.spyOn(window, 'cancelAnimationFrame')
+      ;(component as any).measureHandle = 5
+      component.ngOnDestroy()
+      expect(cancel).toHaveBeenCalledWith(5)
+      expect((component as any).measureHandle).toBe(0)
+      expect(component.active).toBe(false)
+    })
+
+    it('should flip the popover to the opposite side or the roomier one when the preferred has no room', async () => {
+      setViewport(1280, 300)
+      anchor('tall', 0, 280)
+      await component.start([step('.tall', 'bottom')])
+      expect(['top', 'left', 'right', 'bottom']).toContain(component.placement)
+
+      setViewport(390, 700)
+      await component.start([step('.one', 'left')])
+      expect(component.placement).not.toBe('left')
+      expect(component.popoverWidth).toBe(390 - 2 * 8)
+    })
+
+    it('should honour an explicit spotlight radius', async () => {
+      await component.start([{ ...step('.one'), radius: 6 }])
+      expect(component.radius).toBe(6)
+    })
+  })
 })

@@ -1288,7 +1288,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     // volunteer-restricted fields (employeeId, ehrmsId, dateOfRetirement,
     // governmentService) can be hidden there
     if (
-      dialogData.header.toLowerCase() === 'other details'
+      dialogData.header?.toLowerCase() === 'other details'
       && dialogData.editConfig
       && dialogData.editConfig.isDynamicDialog
       && !this.isVolunteerUser
