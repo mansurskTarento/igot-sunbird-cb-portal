@@ -1,4 +1,5 @@
-import { AfterViewInit, Component, HostListener, OnInit } from '@angular/core'
+import { AfterViewInit, Component, HostListener, OnInit, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { HttpErrorResponse } from '@angular/common/http'
 import { ActivatedRoute, Router } from '@angular/router'
 import { TranslateService } from '@ngx-translate/core'
@@ -13,7 +14,7 @@ import { takeUntil } from 'rxjs/operators'
 import { ConfigurationsService, DomainConfService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
 import { MobileAppsService } from '../../services/mobile-apps.service'
 import { UserProfileService } from '@ws/app'
-import { BtnSettingsService } from '@sunbird-cb/collection'
+import { BtnSettingsService, EnrollmentSummaryStateService } from '@sunbird-cb/collection'
 
 // import { NotificationComponent } from './notification/notification.component'
 
@@ -41,6 +42,7 @@ const INITIAL_VISIBLE_STRIPS = 5
   standalone: false
 })
 export class HomeComponent implements OnInit, AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef)
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -54,6 +56,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     private matSnackBar: MatSnackBar,
     private events: EventService,
     public domainConfSvc: DomainConfService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
   private destroySubject$ = new Subject()
   widgetData = {}
@@ -282,9 +285,14 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.handleDefaultFontSetting()
 
     if (this.homePageData?.karmaPointsPanel?.enabled) {
-      this.enrollInterval = setInterval(() => {
-        this.getEnrollmentData()
-      }, 1000)
+      // the summary loads in the background — (re-)read it every time it lands
+      this.enrollmentSummaryState.loading$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(loading => {
+          if (!loading) {
+            this.getEnrollmentData()
+          }
+        })
     }
 
     if (localStorage.getItem('websiteLanguage')) {

@@ -22,13 +22,12 @@ import _ from 'lodash'
 import { firstValueFrom, forkJoin, of } from 'rxjs'
 import { catchError, map } from 'rxjs/operators'
 import { v4 as uuid } from 'uuid'
-import { NPSGridService } from '@sunbird-cb/collection'
+import { BtnSettingsService, EnrollmentSummaryStateService, NPSGridService } from '@sunbird-cb/collection'
 import { ContentDictionaryService } from '@sunbird-cb/consumption'
 import moment from 'moment'
 import { TranslateService } from '@ngx-translate/core'
 import { SbUiResolverService } from '@sunbird-cb/resolver-v2'
 import { NetCoreService } from './netcore.service'
-import { BtnSettingsService } from '@sunbird-cb/collection'
 import { CommonDataService } from './common-data.service'
 import { FormExtService } from './form-ext.service'
 import { FormEnvConfigService } from './form-env-config.service'
@@ -67,6 +66,7 @@ export class InitService {
     private contentDictionarySvc: ContentDictionaryService,
     private formSvc: FormExtService,
     private formConfigService: FormEnvConfigService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
 
     @Inject(APP_BASE_HREF) private baseHref: string,
     domSanitizer: DomSanitizer,
@@ -207,7 +207,7 @@ export class InitService {
       this.setTelemetrySessionId()
       if (!path.startsWith('/public') && !isPublic) {
         await this.fetchStartUpDetails()
-        await this.fetchUserEnrollDetails()
+        this.loadEnrollmentSummaryInBackground()
         // pre-load the content dictionary only when enabled via global-config apis.content.dictionary
         if (this.configSvc.globalConfig?.apis?.content?.dictionary?.enabled) {
           this.contentDictionarySvc.getDictionary().subscribe({
@@ -398,6 +398,18 @@ export class InitService {
     return this.configSvc.globalConfig
   }
 
+  /**
+   * The enrolment summary must not block app load: fire it in the background and let the
+   * widgets that read `userEnrollmentCount` show a skeleton until it settles.
+   */
+  loadEnrollmentSummaryInBackground(): Promise<void> {
+    this.enrollmentSummaryState.start()
+    return this.fetchUserEnrollDetails()
+      .then(() => undefined)
+      .catch((err: any) => this.logger.warn('InitService: Failed to load enrolment summary', err))
+      .finally(() => this.enrollmentSummaryState.done())
+  }
+
   private async fetchUserEnrollDetails(): Promise<NsInstanceConfig.IConfig> {
     const enrollmentSummaryConfig = this.configSvc.globalConfig?.apis?.user?.userEnrollmentSummary
     if (!enrollmentSummaryConfig?.enabled) {
@@ -534,9 +546,18 @@ export class InitService {
       console.warn('First login API is disabled')
       return
     }
+    // login/entry records a login, so call it once per login session, not on every refresh.
+    // The flag is keyed by userId and lives in localStorage, which logout / session expiry clear
+    const userId = this.configSvc.userProfile?.userId
+    if (userId && localStorage.getItem('loginEntryLogged') === userId) {
+      return
+    }
     const isFirstEverLogin = !localStorage.getItem('firsLogin')
     try {
       const res: any = await firstValueFrom(this.http.get<any>(firstLoginUrl))
+      if (userId) {
+        localStorage.setItem('loginEntryLogged', userId)
+      }
       if (res && res.result && isFirstEverLogin) {
         this.configSvc.isNewUser = this.resolveIsNewUser(res.result)
         localStorage.setItem('firsLogin', 'true')

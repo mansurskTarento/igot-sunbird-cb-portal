@@ -21,6 +21,7 @@ export class ProfileKarmapointsComponent implements OnInit {
   lastDate: any = moment(new Date()).valueOf()
   showLoader = false
   showMoreBtn = false
+  readonly userRegistrationOperationTypes = ['SELF_REGISTRATION', 'CUSTOM_REGISTRATION', 'BULK_REGISTRATION']
 
   constructor(
     private configSvc: ConfigurationsService,
@@ -72,12 +73,12 @@ export class ProfileKarmapointsComponent implements OnInit {
   getName(row: any) {
     if (row && row.addinfo && row.context_type === 'Course') {
       const info = JSON.parse(row.addinfo)
-      return info.COURSENAME ? info.COURSENAME : 'No course'
+      return info.COURSENAME ? info.COURSENAME : ''
     }  if (row && row.addinfo && row.context_type.toLowerCase() === 'event') {
       const info = JSON.parse(row.addinfo)
-      return info.EVENTNAME ? info.EVENTNAME : 'No event'
+      return info.EVENTNAME ? info.EVENTNAME : ''
     }
-    return 'No course'
+    return ''
   }
 
   getAdditonInfo(row: any) {
@@ -102,7 +103,10 @@ export class ProfileKarmapointsComponent implements OnInit {
       // return 'First Enrollment'
       return this.translateLabels('First Enrollment', 'profileKarmapoints', '')
     }
-    return `${row ? row.operation_type.split('_').join(' ') : 'No Title'}`
+    if (row && this.userRegistrationOperationTypes.includes(row.operation_type)) {
+      return 'User Registration'
+    }
+    return `${row && row.operation_type ? row.operation_type.split('_').map((word:any) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()).join(' ') : 'No Title'}`
   }
 
   translateLabels(label: string, type: any, subtype: any) {

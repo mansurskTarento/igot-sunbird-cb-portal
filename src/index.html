@@ -37,7 +37,6 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://cdn.userway.org" crossorigin>
-  <link rel="preconnect" href="https://js.zohostatic.in" crossorigin>
   <link rel="preconnect" href="https://cdnt.netcoresmartech.com">
 
   <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
@@ -94,8 +93,13 @@
     therefore been non-functional in production.  To restore it: add the files to
     angular.json `assets` and load them from the contact page only, not globally.
 
-    MOVED BELOW: the zohostatic jQuery and UserWay widget tags are now attached by the
-    idle-loader at the end of <body> instead of loading during initial page load.
+    MOVED BELOW: the UserWay widget tag is now attached by the idle-loader at the end
+    of <body> instead of loading during initial page load.
+
+    REMOVED: the global js.zohostatic.in/.../jqueryandencoder.ffa5afd5124fbedceea9.js tag.
+    Zoho rotated that hashed URL and it now 404s. Nothing needed it anyway: the only Zoho
+    form is the help-centre one, which is rendered via [innerHTML] (so its own <script>
+    tags never run) and is driven entirely by ZohoFormService, which does not use jQuery.
   -->
   <script defer src='//cdnt.netcoresmartech.com/smartechclient.js'></script>
   <script>
@@ -180,7 +184,6 @@
     Nothing here is needed for first paint:
       - UserWay  : viewer.component.ts only reads the `.userway_p2` element inside a
                    setTimeout, so it does not need the widget present at bootstrap.
-      - Zoho     : jqueryandencoder.js only backs the web-to-case form handler.
 
     The `timeout` on requestIdleCallback caps the delay so the accessibility widget
     still appears promptly on a busy main thread; it is deliberately NOT gated behind
@@ -200,10 +203,6 @@
           // attribute. Pin a hash here again only if you also self-host a fixed copy.
           src: 'https://cdn.userway.org/widget.js',
           attrs: { 'data-account': 'pam3S93IQ7' },
-        },
-        {
-          src: 'https://js.zohostatic.in/support/app/js/jqueryandencoder.ffa5afd5124fbedceea9.js',
-          integrity: 'sha384-WxjccFdarXj9qC3CXtilb+x2qSQA3CMFOjT6vA0CkfexBVqYRAISERxH45f5VnmM',
         },
       ]
 
@@ -245,7 +244,7 @@
       }
 
       // Hard backstop, independent of `load`. The load event waits on every subresource
-      // (Google Fonts, the Zoho and Netcore CDNs), so a single hung third-party request
+      // (Google Fonts, the Netcore CDN), so a single hung third-party request
       // would otherwise strand the accessibility widget indefinitely - the idle timeout
       // above cannot help, because its clock only starts once `load` has fired.
       window.setTimeout(attachOnce, 5000)

@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnInit, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { ConfigurationsService, EventService, WsEvents } from '@sunbird-cb/utils-v2'
+// deep import: the package root would pull the whole widget library (and jspdf) into this module
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection/src/lib/_services/enrollment-summary-state.service'
 import { HomePageService } from '../../../services/home-page.service'
 import { UserProfileService } from '../../../../../project/ws/app/src/lib/routes/user-profile/services/user-profile.service'
 import moment from 'moment'
@@ -11,6 +14,7 @@ import moment from 'moment'
   standalone: false,
 })
 export class KarmaLeaderboardComponent implements OnInit {
+  private readonly destroyRef = inject(DestroyRef)
 
   loading = true
   rank1: any = null
@@ -22,6 +26,8 @@ export class KarmaLeaderboardComponent implements OnInit {
   monthName = ''
   year: any = null
   myKarmaPoints = 0
+  // the enrolment summary (karma points) loads in the background after startup
+  summaryLoading = true
 
   // Celebration banner
   showOverlay = false
@@ -36,12 +42,26 @@ export class KarmaLeaderboardComponent implements OnInit {
     private configSvc: ConfigurationsService,
     private userProfileSvc: UserProfileService,
     private eventSvc: EventService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) { }
 
   ngOnInit() {
     this.currentUserId = (this.configSvc.unMappedUser && this.configSvc.unMappedUser.id) || ''
     this.currentUserProfile = this.configSvc.unMappedUser && this.configSvc.unMappedUser.profileDetails
 
+    // skeleton while the summary is in flight, re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        this.summaryLoading = loading
+        if (!loading) {
+          this.readEnrollmentSummary()
+        }
+      })
+    this.loadLeaderboard()
+  }
+
+  private readEnrollmentSummary() {
     try {
       const raw = localStorage.getItem('userEnrollmentCount')
       if (raw) {
@@ -49,8 +69,7 @@ export class KarmaLeaderboardComponent implements OnInit {
         this.myKarmaPoints = (parsed && parsed.userCourseEnrolmentInfo && parsed.userCourseEnrolmentInfo.karmaPoints) || 0
       }
     } catch (_e) { /* ignore */ }
-
-    this.loadLeaderboard()
+    this.summaryLoading = false
   }
 
   get isCurrentUserInTop3(): boolean {
