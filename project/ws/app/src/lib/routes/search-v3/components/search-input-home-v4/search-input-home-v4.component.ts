@@ -259,9 +259,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.disableMenu.set(isNotMyUser && isIgotOrg)
 
     this.activated.queryParamMap.subscribe((queryParam) => {
-      if (queryParam.has('q')) {
-        this.queryControl.setValue(queryParam.get('q') || '')
-      }
+      this.queryControl.setValue(queryParam.has('q') ? (queryParam.get('q') || '') : '')
       if (queryParam.has('category')) {
         const categories = (queryParam.get('category') || '')
           .split(',')

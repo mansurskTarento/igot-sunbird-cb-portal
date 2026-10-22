@@ -373,6 +373,26 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       expect(component.selectedSearchCategory()).toEqual([SearchCategory.Events])
     })
 
+    it('clears the query control when the q param is absent', () => {
+      component.queryControl.setValue('previous', { emitEvent: false })
+      component.initialize()
+      queryParamMapSubject.next({
+        has: () => false,
+        get: () => 'ignored',
+      })
+      expect(component.queryControl.value).toBe('')
+    })
+
+    it('falls back to an empty query when the q param has no value', () => {
+      component.queryControl.setValue('previous', { emitEvent: false })
+      component.initialize()
+      queryParamMapSubject.next({
+        has: (key: string) => key === 'q',
+        get: () => null,
+      })
+      expect(component.queryControl.value).toBe('')
+    })
+
     it('defaults the category to Courses when absent from the route params', () => {
       component.initialize()
       queryParamMapSubject.next({
