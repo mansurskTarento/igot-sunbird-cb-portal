@@ -2235,6 +2235,17 @@ ws-widget-btn-page-back-nav .mat-mdc-icon-button {
   min-width: 14em !important;
 }
 
+// Scroll on the full-screen overlay wrapper so the scrollbar sits at the viewport's right edge
+.cdk-global-overlay-wrapper:has(.profile-verification-dialog-container) {
+  overflow: auto;
+}
+
+// auto margins keep the dialog centered, and stay reachable when taller than the viewport
+.profile-verification-dialog-container.cdk-overlay-pane {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 .profile-verification-dialog-container .mat-mdc-dialog-container {
   background: transparent !important;
   box-shadow: none !important;
