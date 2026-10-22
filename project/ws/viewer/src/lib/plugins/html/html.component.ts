@@ -71,6 +71,9 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // packageRoot -> launch file from imsmanifest.xml ('' when the manifest could not be
   // read, so a failed lookup is not retried on every ngOnChanges for the same content).
   private launchFileCache: Record<string, string> = {}
+  // packageRoot -> imsmanifest.xml request, so the launch-file lookup and the SCORM 2004
+  // check share one fetch.
+  private manifestCache: Record<string, Promise<string | null>> = {}
   // Identifier the current iframeUrl was built for. ngOnChanges fires for any input
   // change, and rebuilding the URL appends a fresh ?timestamp, which reloads the iframe
   // and restarts the SCORM session from the top - so only build it once per content.
@@ -122,15 +125,10 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   ) {
     // SCORM 1.2 content discovers window.API. Only this one is published.
     //
-    // window.API_1484_11 (SCORM 2004) is deliberately NOT published, even though the
-    // adapter carries a shim for it. A driver searches for the 2004 API *first* and only
-    // falls back to 1.2, so publishing it takes every package that would happily have
-    // bound 1.2 - which is all of them, up to now - and moves it onto the 2004 path.
-    // That path is a flat pass-through to the 1.2 key-value store: it has no 2004 data
-    // model, so cmi.mode, cmi.entry, cmi.completion_status, cmi.learner_id and the
-    // collection counts all answer "" with error 403 during the driver's boot handshake,
-    // and the package fails to finish initialising. Publish it again only once
-    // scorm2004GetValue actually implements the 2004 data model.
+    // window.API_1484_11 (SCORM 2004) is NOT published here. A driver searches for the
+    // 2004 API *first*, so publishing it for everyone would move every package that binds
+    // 1.2 today onto the 2004 path. It is published per launch instead, only where a 2004
+    // driver is launched - see publishScorm2004Api.
     (window as any).API = this.scormAdapterService
     // if (window.addEventListener) {
     window.addEventListener('message', this.receiveMessage.bind(this))
@@ -244,6 +242,7 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   ngOnDestroy() {
     window.removeEventListener('message', this.receiveMessage)
     window.removeEventListener('onmessage', this.receiveMessage)
+    delete (window as any).API_1484_11
     if (this.mutationObserver) {
       this.mutationObserver.disconnect()
       this.mutationObserver = null
@@ -1028,8 +1027,12 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
     const sameOriginRoot = this.ensureSameOriginUrl(packageRoot)
     const commit = (file: string, source: string) => {
       const url = `${sameOriginRoot}/${file}?timestamp=${new Date().getTime()}`
-      console.log('[SCORM] launch file:', file, source)
-      this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(url)
+      // The driver looks for the API once, while it boots, so it has to be in place
+      // before the iframe is created.
+      this.publishScorm2004Api(sameOriginRoot, file, entryFile).then(() => {
+        console.log('[SCORM] launch file:', file, source)
+        this.iframeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(url)
+      })
     }
 
     const cached = this.launchFileCache[sameOriginRoot]
@@ -1043,6 +1046,48 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
       commit(picked.file, picked.source)
       // tslint:disable-next-line: align
     }).catch(() => commit(entryFile || 'index.html', '(fallback)'))
+  }
+
+  /**
+   * Publishes window.API_1484_11 when the file being launched is the manifest's SCO (not
+   * initFile) and the manifest declares SCORM 2004; withdraws it otherwise.
+   *
+   * Rise publishes strLMSStandard = "SCORM2004" in scormdriver/driverOptions.js, so once
+   * the player launches scormdriver/indexAPI.html the driver looks for API_1484_11 and
+   * nothing else. With only window.API published it stops with "unable to acquire LMS
+   * API" and the content never starts (do_1146535896697487361561).
+   *
+   * Launches of initFile and SCORM 1.2 packages are untouched: they keep window.API only,
+   * exactly as before.
+   */
+  private publishScorm2004Api(sameOriginRoot: string, file: string, entryFile: string | null): Promise<void> {
+    const withdraw = () => { delete (window as any).API_1484_11 }
+    if (entryFile && this.isSameFile(file, entryFile)) {
+      withdraw()
+      return Promise.resolve()
+    }
+    return this.fetchManifestXml(sameOriginRoot)
+      .then(xml => {
+        if (xml && this.isScorm2004Manifest(xml)) {
+          console.log('[SCORM] launching a SCORM 2004 SCO - publishing window.API_1484_11')
+          ; (window as any).API_1484_11 = this.scormAdapterService.scorm2004Api
+        } else {
+          withdraw()
+        }
+      })
+      .catch(withdraw)
+  }
+
+  // <schemaversion> is "1.2" for SCORM 1.2 and "2004 3rd Edition" / "CAM 1.3" for 2004.
+  private isScorm2004Manifest(manifestXml: string): boolean {
+    const xml = new DOMParser().parseFromString(manifestXml, 'application/xml')
+    if (xml.getElementsByTagName('parsererror').length) {
+      return false
+    }
+    const version = Array.from(xml.getElementsByTagName('schemaversion'))
+      .map(node => (node.textContent || '').trim().toLowerCase())
+      .find(text => text !== '')
+    return !!version && (version.indexOf('2004') > -1 || version.indexOf('cam 1.3') > -1)
   }
 
   // initFile wins. It is the entry the publisher recorded for this content and the file
@@ -1335,6 +1380,13 @@ export class HtmlComponent implements OnInit, OnChanges, OnDestroy {
   // imsmanifest.xml as text, or null when it is not there or could not be read. A package
   // published as plain web content has no manifest at all, so a miss here is normal.
   private fetchManifestXml(sameOriginRoot: string): Promise<string | null> {
+    if (!this.manifestCache[sameOriginRoot]) {
+      this.manifestCache[sameOriginRoot] = this.requestManifestXml(sameOriginRoot)
+    }
+    return this.manifestCache[sameOriginRoot]
+  }
+
+  private requestManifestXml(sameOriginRoot: string): Promise<string | null> {
     return fetch(`${sameOriginRoot}/imsmanifest.xml`, { cache: 'no-cache' })
       .then(res => {
         if (!res.ok) {

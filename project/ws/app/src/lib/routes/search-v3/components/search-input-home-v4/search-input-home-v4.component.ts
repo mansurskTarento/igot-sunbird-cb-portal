@@ -26,7 +26,7 @@ import { MatDividerModule } from '@angular/material/divider'
 import { TranslateModule } from '@ngx-translate/core'
 
 import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
-import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs'
+import { debounceTime, distinctUntilChanged, forkJoin, lastValueFrom, Subscription } from 'rxjs'
 import { SearchServService } from '../../../search/services/search-serv.service'
 import { GbSearchService } from '../../services/gb-search.service'
 import {
@@ -42,7 +42,7 @@ import {
   SearchResourceMimeType,
   SearchV4Request,
 } from '../../models/search-v3.model'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { ContentDictionaryService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import { MobileAppsService } from './../../../services/mobile-apps.service'
 import { MatAutocompleteModule } from '@angular/material/autocomplete'
 import { MatListModule } from '@angular/material/list'
@@ -145,6 +145,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
   private contSvc = inject(WidgetContentLibService);
   private mobileAppsService = inject(MobileAppsService);
   private domainConfSvc = inject(DomainConfService)
+  private contentDictionarySvc = inject(ContentDictionaryService);
 
   @HostListener('document:click', ['$event'])
   onClickOutside(event: Event) {
@@ -258,9 +259,7 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.disableMenu.set(isNotMyUser && isIgotOrg)
 
     this.activated.queryParamMap.subscribe((queryParam) => {
-      if (queryParam.has('q')) {
-        this.queryControl.setValue(queryParam.get('q') || '')
-      }
+      this.queryControl.setValue(queryParam.has('q') ? (queryParam.get('q') || '') : '')
       if (queryParam.has('category')) {
         const categories = (queryParam.get('category') || '')
           .split(',')
@@ -722,9 +721,18 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
         break
     }
 
-    courseSearchResult = primaryCategory === SearchCategory.Courses
-      ? await this.searchV3Service.searchCoursesv5(searchRequest).catch()
-      : await this.searchV3Service.searchCoursesv4(searchRequest).catch()
+    if (primaryCategory === SearchCategory.Courses) {
+      const result = await this.searchV3Service.searchCoursesv5(searchRequest).catch()
+      if (Array.isArray(result?.result?.content)) {
+        courseSearchResult = {
+          result: {
+            content: await this.enrichCourseContent(result.result.content)
+          }
+        }
+      }
+    } else {
+      courseSearchResult = await this.searchV3Service.searchCoursesv4(searchRequest).catch()
+    }
 
     if (primaryCategory === SearchCategory.People) {
       const searchRequest = new SearchPeoplesRequest()
@@ -783,6 +791,19 @@ export class SearchInputHomeV4Component implements OnInit, OnDestroy {
     this.allSearchResults.set(
       validKeys.length ? courseSearchResult.result[validKeys[0]] : []
     )
+  }
+
+  private async enrichCourseContent(content: any[]): Promise<any[]> {
+    const identifiers: string[] = content
+      .map((c: any) => c.identifier)
+      .filter(Boolean)
+    if (!identifiers.length) {
+      return []
+    }
+    const enriched = await lastValueFrom(
+      forkJoin(identifiers.map((id: string) => this.contentDictionarySvc.getContent(id)))
+    )
+    return (enriched as any[]).filter(Boolean)
   }
 
   getResultName(result: any): string {

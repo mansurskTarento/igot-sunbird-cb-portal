@@ -1,5 +1,6 @@
 //#region (imports)
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core'
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild, DestroyRef, inject } from '@angular/core'
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop'
 import { UserStats, achievement, educationalQualifications, profileRoutes } from '../../models/profile-revamp.model'
 import { MatDialog } from '@angular/material/dialog'
 import { CoverPhotoEditPopupComponent } from '../../components/profile-revamp/cover-photo-edit-popup/cover-photo-edit-popup.component'
@@ -28,6 +29,8 @@ import { CommonDataService } from '../../../../routes/services/common-data.servi
 import { NetCoreService } from '../../../../routes/services/netcore.service'
 // Same instance the embedded karma leaderboard uses, so the two share one cached leaderboard call
 import { HomePageService } from 'src/app/services/home-page.service'
+// deep import: the package root would pull the whole widget library (and jspdf) into this module
+import { EnrollmentSummaryStateService } from '@sunbird-cb/collection/src/lib/_services/enrollment-summary-state.service'
 //#endregion
 
 @Component({
@@ -38,6 +41,7 @@ import { HomePageService } from 'src/app/services/home-page.service'
   standalone: false
 })
 export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy {
+  private readonly destroyRef = inject(DestroyRef)
 
   //#region (global variables)
   destroySubject$ = new Subject()
@@ -53,6 +57,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   isIgotOrg = false
   isNotMyUser = false
   isNotMyUserAndIgotOrg = false
+  isNotMyUserAndNotIgotOrg = false
   myBadgesCount: any = 0
   userStats: UserStats[] = [
     {
@@ -234,6 +239,8 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       icon: '/assets/icons/karmawallet-v2/leftnavKarmacoing.svg',
     },
   ]
+  // every stat except rank comes off the enrolment summary, which loads in the background
+  achievementSummaryLoading = true
   insightsDataLoading = false
   insightsData: any
   // weekList for the weekly claps card, derived from the insights payload (see buildWeeklyClapsData)
@@ -276,6 +283,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     private router: Router,
     private netCoreService: NetCoreService,
     private homePageSvc: HomePageService,
+    private readonly enrollmentSummaryState: EnrollmentSummaryStateService,
   ) {
     this.langtranslations.languageSelectedObservable.subscribe(() => {
       this.translateService.setDefaultLang('hi')
@@ -449,14 +457,23 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
   // Karma points, badges and learning hours all come off the cached enrolment payload the rest of
   // the app reads (see the My Achievements sidebar section); only the rank needs the leaderboard.
   setAchievementStats() {
-    try {
-      const raw = localStorage.getItem('userEnrollmentCount')
-      const info = raw ? _.get(JSON.parse(raw), 'userCourseEnrolmentInfo', {}) : {}
-      this.setStatValue('karmaPoints', `${_.get(info, 'karmaPoints', 0)} KP`)
-      this.setStatValue('badges', `${_.get(info, 'badgeCount', 0)} Badges`)
-      this.setStatValue('learningHours', this.toHoursAndMinutes(_.get(info, 'timeSpentOnCompletedCourses', 0)))
-      this.setStatValue('walletBalance', `${_.get(info, 'walletBalance', 0)} KC`)
-    } catch (_e) { /* keep the placeholder values */ }
+    // skeleton while the summary is in flight, re-read every time it lands
+    this.enrollmentSummaryState.loading$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(loading => {
+        this.achievementSummaryLoading = loading
+        if (loading) {
+          return
+        }
+        try {
+          const raw = localStorage.getItem('userEnrollmentCount')
+          const info = raw ? _.get(JSON.parse(raw), 'userCourseEnrolmentInfo', {}) : {}
+          this.setStatValue('karmaPoints', `${_.get(info, 'karmaPoints', 0)} KP`)
+          this.setStatValue('badges', `${_.get(info, 'badgeCount', 0)} Badges`)
+          this.setStatValue('learningHours', this.toHoursAndMinutes(_.get(info, 'timeSpentOnCompletedCourses', 0)))
+          this.setStatValue('walletBalance', `${_.get(info, 'walletBalance', 0)} KC`)
+        } catch (_e) { /* keep the placeholder values */ }
+      })
 
     this.homePageSvc.getLearnerLeaderboardCached()
       .pipe(takeUntil(this.destroySubject$))
@@ -503,6 +520,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
       this.isIgotOrg = _.get(this.configSvc, 'unMappedUser.profileDetails.employmentDetails.departmentName', '').toLowerCase() === 'igot' ? true : false
       this.isNotMyUser = _.get(this.configSvc, 'unMappedUser.profileDetails.profileStatus', '').toLowerCase() === 'not-my-user' ? true : false
       this.isNotMyUserAndIgotOrg = (this.isNotMyUser && this.isIgotOrg)
+      this.isNotMyUserAndNotIgotOrg = (this.isNotMyUser && !this.isIgotOrg)
       if (!this.isNotMyUserAndIgotOrg && _.get(this.profileConfig, 'rightSection.enabled') && _.get(this.profileConfig, 'rightSection.recommendedCommunities.enabled', false)) {
         // this.getRecommendedUsers()
         this.getRecommendedCommunitesList()
@@ -1270,7 +1288,7 @@ export class ProfileViewV2Component implements OnInit, AfterViewInit, OnDestroy 
     // volunteer-restricted fields (employeeId, ehrmsId, dateOfRetirement,
     // governmentService) can be hidden there
     if (
-      dialogData.header.toLowerCase() === 'other details'
+      dialogData.header?.toLowerCase() === 'other details'
       && dialogData.editConfig
       && dialogData.editConfig.isDynamicDialog
       && !this.isVolunteerUser

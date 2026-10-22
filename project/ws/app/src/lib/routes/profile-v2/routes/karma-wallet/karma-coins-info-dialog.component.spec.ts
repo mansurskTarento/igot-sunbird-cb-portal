@@ -28,7 +28,7 @@ describe('KarmaCoinsInfoDialogComponent', () => {
       'Karma Points earned',
       'Karma Coins received',
       'Redeemed for a course',
-      'Coins left 100 points stay',
+      'Coins left',
     ])
   })
 

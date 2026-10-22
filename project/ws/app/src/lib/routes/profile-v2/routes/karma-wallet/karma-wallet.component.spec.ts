@@ -150,6 +150,7 @@ describe('KarmaWalletComponent', () => {
     snackBarStub as unknown as MatSnackBar,
     configStub as unknown as ConfigurationsService,
     homePageStub as unknown as HomePageService,
+    { ready$: of(undefined) } as any,
   )
 
   /* A component already loaded against the 26 Aug 2026 anchor */
@@ -1172,5 +1173,191 @@ describe('KarmaWalletComponent', () => {
     const formatted = new Intl.DateTimeFormat('en-GB', options).format(new Date(2026, 7, 8))
 
     expect(formatted).toBe('08/08/2026')
+  })
+
+  describe('coverage of derived state and dialogs', () => {
+    const txn = (over: any = {}): IKarmaCoinTransaction => ({
+      transactionId: 'T', date: 0, amount: 5, credit: 5, debit: 0, balance: 1,
+      title: '', description: '', type: 'earned', ...over,
+    } as any)
+
+    it('should stop reacting to history requests once destroyed', () => {
+      component.ngOnDestroy()
+      serviceStub.getTransactions.mockClear()
+
+      component.selectTab('earned')
+
+      expect(serviceStub.getTransactions).not.toHaveBeenCalled()
+    })
+
+    it('should report whether the monthly limit has been reached', () => {
+      component.summary = { ...SUMMARY, convertibleThisMonth: 0, convertedThisMonth: 300, monthlyCap: 300 }
+      expect(component.monthlyLimitReached).toBe(true)
+      component.summary = { ...SUMMARY, convertibleThisMonth: 10 }
+      expect(component.monthlyLimitReached).toBe(false)
+    })
+
+    it('should label the cap reset date from the api, falling back to next month', () => {
+      expect(component.capResetsOnLabel).toBe('1 Sep')
+      component.summary = { ...SUMMARY, capResetsOn: '' }
+      component.referenceDate = new Date(2026, 11, 5)
+      expect(component.capResetsOnLabel).toBe('1 Jan')
+    })
+
+    it('should derive the pending conversion banner figures', () => {
+      component.pendingConversion = null
+      expect(component.pendingConversionCoins).toBe(0)
+      expect(component.pendingConversionPoints).toBe(0)
+      component.pendingConversion = txn({ amount: 4 })
+      expect(component.pendingConversionPoints).toBe(4)
+      component.pendingConversion = txn({ amount: 4, pointsToConvert: 6 })
+      expect(component.pendingConversionPoints).toBe(6)
+      component.pendingConversion = txn({ amount: 4, pointsToConvert: null })
+      expect(component.pendingConversionPoints).toBe(4)
+    })
+
+    it('should classify a row state, points and coins', () => {
+      expect(component.txnState(null)).toBe('')
+      expect(component.txnState(txn({ status: 'in_progress' }))).toBe('progress')
+      expect(component.txnState(txn({ status: 'Failed' }))).toBe('failed')
+      expect(component.txnState(txn())).toBe('success')
+      expect(component.txnPoints(null)).toBe(0)
+      expect(component.txnPoints(txn({ pointsConverted: 9 }))).toBe(9)
+      expect(component.txnPoints(txn({ pointsToConvert: 8 }))).toBe(8)
+      expect(component.txnPoints(txn())).toBe(5)
+      expect(component.txnCoins(null)).toBe(0)
+      expect(component.txnCoins(txn())).toBe(5)
+      expect(component.isFailed(txn({ status: 'FAILED' }))).toBe(true)
+      expect(component.isFailed(txn())).toBe(false)
+    })
+
+    it('should tell whether an element is truncated', () => {
+      expect(component.isNotTruncated(null as any)).toBe(true)
+      expect(component.isNotTruncated({ scrollWidth: 10, clientWidth: 20 } as any)).toBe(true)
+      expect(component.isNotTruncated({ scrollWidth: 30, clientWidth: 20 } as any)).toBe(false)
+    })
+
+    it('should expose the empty message and the selectable date window', () => {
+      expect(component.emptyMessage).toContain('No transactions found')
+      expect(component.maxSelectableDate).toBe(component.referenceDate)
+      expect(component.minSelectableDate).toEqual(new Date(2025, 7, 26))
+    })
+
+    it('should go on to Karma Tracks only when the redeem confirmation is proceeded', () => {
+      dialogResult = 'proceed'
+      component.openRedeemConfirmation()
+      expect(routerStub.navigate).toHaveBeenCalledWith(['/app/seeAll'], expect.anything())
+
+      routerStub.navigate.mockClear()
+      dialogResult = 'close-icon'
+      component.openRedeemConfirmation()
+      expect(routerStub.navigate).not.toHaveBeenCalled()
+    })
+
+    it('should ignore re-selecting the active tab', () => {
+      serviceStub.getTransactions.mockClear()
+      component.selectTab('all')
+      expect(serviceStub.getTransactions).not.toHaveBeenCalled()
+    })
+
+    it('should reopen the calendar when Custom Date is picked again', () => {
+      jest.useFakeTimers()
+      const open = jest.fn()
+      component.selectPeriod('custom')
+      jest.runAllTimers()
+      component.customStartPicker = { open } as any
+      component.selectPeriod('custom')
+      jest.runAllTimers()
+      expect(open).toHaveBeenCalled()
+      component.customStartPicker = undefined
+      component.selectPeriod('custom')
+      jest.runAllTimers()
+      expect(open).toHaveBeenCalledTimes(1)
+      jest.useRealTimers()
+    })
+
+    it('should clear the custom error when a bound is cleared', () => {
+      component.customError = 'x'
+      component.onCustomStartChange(null)
+      expect(component.customError).toBe('')
+      component.onCustomEndChange(null)
+      expect(component.customError).toBe('')
+    })
+
+    it('should skip the profile patch when there is no user id', () => {
+      configStub.unMappedUser = { profileDetails: { karma_wallet_tour: { visited: false } } }
+      serviceStub.updateProfileDetails.mockClear()
+      load()
+      expect(serviceStub.updateProfileDetails).not.toHaveBeenCalled()
+    })
+
+    it('should drive the convert dialog from the tour steps', async () => {
+      const close = jest.fn()
+      dialogStub.open.mockImplementation(() => ({
+        afterClosed: () => of(undefined), afterOpened: () => of(undefined), close,
+      }))
+      await component.tourSteps[4].before!()
+      await component.tourSteps[4].before!()
+      expect(dialogStub.open).toHaveBeenCalledTimes(1)
+
+      await component.tourSteps[4].onBack!()
+      expect(close).toHaveBeenCalledTimes(1)
+      await component.tourSteps[4].onBack!()
+      expect(close).toHaveBeenCalledTimes(1)
+    })
+
+    it('should close the tour dialog and open convert once the tour finishes', async () => {
+      const close = jest.fn()
+      dialogStub.open.mockImplementation(() => ({
+        afterClosed: () => of(undefined), afterOpened: () => of(undefined), close,
+      }))
+      await component.tourSteps[4].before!()
+      component.onTourFinished()
+      await Promise.resolve()
+      await Promise.resolve()
+      expect(close).toHaveBeenCalled()
+    })
+
+    it('should start a conversion from the dialog and reload once it is accepted', () => {
+      dialogResult = { converting: { requestId: 'r', pointsToConvert: 5 } }
+      component.redeemKarmaPoints()
+      expect(serviceStub.redeem).toHaveBeenCalledWith({ request: { requestId: 'r', pointsToConvert: 5 } })
+      expect(component.converting).toBe(true)
+
+      serviceStub.getWalletSummary.mockClear()
+      component.closeConverting()
+      expect(component.converting).toBe(false)
+      expect(serviceStub.getWalletSummary).toHaveBeenCalled()
+    })
+
+    it('should not reload when a closed conversion was never accepted', () => {
+      serviceStub.getWalletSummary.mockClear()
+      component.closeConverting()
+      expect(serviceStub.getWalletSummary).not.toHaveBeenCalled()
+    })
+
+    it('should surface a FAILED conversion result and an api error', () => {
+      dialogResult = { converting: { requestId: 'r', pointsToConvert: 5 } }
+      serviceStub.redeem.mockReturnValueOnce(of({ status: 'FAILED', errorMessage: 'nope' }))
+      component.redeemKarmaPoints()
+      expect(snackBarStub.open).toHaveBeenCalledWith('nope', 'X', { duration: 5000 })
+      expect(component.converting).toBe(false)
+
+      serviceStub.redeem.mockReturnValueOnce(of({ status: 'FAILED' }))
+      component.redeemKarmaPoints()
+      expect(snackBarStub.open).toHaveBeenLastCalledWith(
+        'We could not convert your Karma Points. Please try again.', 'X', { duration: 5000 })
+
+      serviceStub.redeem.mockReturnValueOnce(throwError(() => ({ error: { params: { errmsg: 'boom' } } })))
+      component.redeemKarmaPoints()
+      expect(snackBarStub.open).toHaveBeenLastCalledWith('boom', 'X', { duration: 5000 })
+    })
+
+    it('should refresh summary and history after a redeemed dialog result', () => {
+      dialogResult = { redeemed: true }
+      serviceStub.getWalletSummary.mockClear()
+      component.redeemKarmaPoints()
+      expect(serviceStub.getWalletSummary).toHaveBeenCalled()
+    })
   })
 })

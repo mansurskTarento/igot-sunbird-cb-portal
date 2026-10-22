@@ -4,7 +4,7 @@ import { of, Subject } from 'rxjs'
 import { ActivatedRoute, Router } from '@angular/router'
 import { ElementRef, inject } from '@angular/core'
 import { ConfigurationsService, DomainConfService } from '@sunbird-cb/utils-v2'
-import { WidgetContentLibService } from '@sunbird-cb/consumption'
+import { ContentDictionaryService, WidgetContentLibService } from '@sunbird-cb/consumption'
 import { SearchServService } from '../../../search/services/search-serv.service'
 import { GbSearchService } from '../../services/gb-search.service'
 import { MobileAppsService } from './../../../services/mobile-apps.service'
@@ -26,6 +26,7 @@ jest.mock('@ws/author', () => ({
 // stub class keeps this spec isolated from that unrelated dependency breakage.
 jest.mock('@sunbird-cb/consumption', () => ({
   WidgetContentLibService: class WidgetContentLibService { },
+  ContentDictionaryService: class ContentDictionaryService { },
 }))
 
 // GbSearchService, SearchServService and MobileAppsService are exercised in full by their own
@@ -76,6 +77,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
   let mockContSvc: any
   let mockMobileAppsSvc: any
   let mockDomainConfSvc: any
+  let mockContentDictionarySvc: any
   let queryParamMapSubject: Subject<any>
 
   const createComponent = () => new SearchInputHomeV4Component()
@@ -139,6 +141,10 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       clearGlobalSearchForHomePage: new Subject<any>(),
     }
 
+    mockContentDictionarySvc = {
+      getContent: jest.fn((id: string) => of({ identifier: id, name: `name-${id}` })),
+    }
+
     mockDomainConfSvc = {
       isConfigEnabled: jest.fn().mockReturnValue(true),
       isApiEnabled: jest.fn().mockReturnValue(true),
@@ -157,6 +163,7 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       if (token === WidgetContentLibService) { return mockContSvc }
       if (token === MobileAppsService) { return mockMobileAppsSvc }
       if (token === DomainConfService) { return mockDomainConfSvc }
+      if (token === ContentDictionaryService) { return mockContentDictionarySvc }
       return undefined
     })
 
@@ -364,6 +371,26 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       })
       expect(component.queryControl.value).toBe('typescript')
       expect(component.selectedSearchCategory()).toEqual([SearchCategory.Events])
+    })
+
+    it('clears the query control when the q param is absent', () => {
+      component.queryControl.setValue('previous', { emitEvent: false })
+      component.initialize()
+      queryParamMapSubject.next({
+        has: () => false,
+        get: () => 'ignored',
+      })
+      expect(component.queryControl.value).toBe('')
+    })
+
+    it('falls back to an empty query when the q param has no value', () => {
+      component.queryControl.setValue('previous', { emitEvent: false })
+      component.initialize()
+      queryParamMapSubject.next({
+        has: (key: string) => key === 'q',
+        get: () => null,
+      })
+      expect(component.queryControl.value).toBe('')
     })
 
     it('defaults the category to Courses when absent from the route params', () => {
@@ -882,13 +909,48 @@ describe('SearchInputHomeV4Component (No TestBed)', () => {
       expect(mockGbSearchSvc.searchCoursesv5).not.toHaveBeenCalled()
     })
 
-    it('uses the v5 course search for the Courses category', async () => {
+    it('uses the v5 course search and enriches results via the content dictionary', async () => {
       component.selectedSearchCategory.set([SearchCategory.Courses])
-      mockGbSearchSvc.searchCoursesv5.mockResolvedValue({ result: { content: [{ id: 1 }] } })
+      mockGbSearchSvc.searchCoursesv5.mockResolvedValue({
+        result: { content: [{ identifier: 'do_1' }, { name: 'no-id' }, { identifier: 'do_2' }] },
+      })
       await component.searchFromQuery('angular')
       expect(mockGbSearchSvc.searchCoursesv5).toHaveBeenCalled()
       expect(mockGbSearchSvc.searchCoursesv4).not.toHaveBeenCalled()
-      expect(component.allSearchResults()).toEqual([{ id: 1 }])
+      expect(mockContentDictionarySvc.getContent).toHaveBeenCalledTimes(2)
+      expect(mockContentDictionarySvc.getContent).toHaveBeenCalledWith('do_1')
+      expect(mockContentDictionarySvc.getContent).toHaveBeenCalledWith('do_2')
+      expect(component.allSearchResults()).toEqual([
+        { identifier: 'do_1', name: 'name-do_1' },
+        { identifier: 'do_2', name: 'name-do_2' },
+      ])
+    })
+
+    it('drops falsy content dictionary responses from the enriched list', async () => {
+      component.selectedSearchCategory.set([SearchCategory.Courses])
+      mockGbSearchSvc.searchCoursesv5.mockResolvedValue({
+        result: { content: [{ identifier: 'do_1' }, { identifier: 'do_2' }] },
+      })
+      mockContentDictionarySvc.getContent.mockImplementation((id: string) =>
+        of(id === 'do_1' ? null : { identifier: id }))
+      await component.searchFromQuery('angular')
+      expect(component.allSearchResults()).toEqual([{ identifier: 'do_2' }])
+    })
+
+    it('skips the content dictionary when no course has an identifier', async () => {
+      component.selectedSearchCategory.set([SearchCategory.Courses])
+      mockGbSearchSvc.searchCoursesv5.mockResolvedValue({ result: { content: [{ id: 1 }] } })
+      await component.searchFromQuery('angular')
+      expect(mockContentDictionarySvc.getContent).not.toHaveBeenCalled()
+      expect(component.allSearchResults()).toEqual([])
+    })
+
+    it('skips enrichment when the v5 response has no content array', async () => {
+      component.selectedSearchCategory.set([SearchCategory.Courses])
+      mockGbSearchSvc.searchCoursesv5.mockResolvedValue({ result: { content: 'bad' } })
+      await component.searchFromQuery('angular')
+      expect(mockContentDictionarySvc.getContent).not.toHaveBeenCalled()
+      expect(component.allSearchResults()).toEqual([])
     })
 
     it('falls back to v4 course search for a non-Courses category', async () => {
