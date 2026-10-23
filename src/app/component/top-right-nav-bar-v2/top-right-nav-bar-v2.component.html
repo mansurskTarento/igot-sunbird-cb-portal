@@ -17,7 +17,7 @@
       }
     </div>
     <mat-menu #menu="matMenu" xPosition="before" class="my-notifications" (closed)="onMenuClosed()">
-      <div class="p-4 w-[353px] bg-white rounded-[10px] font-normal cursor-default">
+      <div class="notification-container p-4 w-[353px] bg-white rounded-[10px] font-normal cursor-default">
         @if (showDropdown()) {
         <sb-uin-notification-dropdown [showIcon]="true" (viewAllClick)="viewAllClick($event)"
           [unRead]="notificationsCount()">
