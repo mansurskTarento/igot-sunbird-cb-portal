@@ -51,7 +51,9 @@ $color-config: (
     warn: mat.m2-define-palette(mat.$m2-red-palette),
 );
 
-$typography-config: mat.m2-define-typography-config();
+// No typography here: the app's Lato/Montserrat config in src/styles/mat-typography.scss
+// owns the --mat-*-font tokens. A typography config on these themes would re-emit them as
+// Material's Roboto defaults under .theme-igot.day-mode/.night-mode, which outranks `html`.
 $density-config: 0;
 
 /* ---------------------------------------------------
@@ -59,12 +61,10 @@ $density-config: 0;
 --------------------------------------------------- */
 
 $light-theme: mat.m2-define-light-theme((color: $color-config,
-            typography: $typography-config,
             density: $density-config,
         ));
 
 $dark-theme: mat.m2-define-dark-theme((color: $color-config,
-            typography: $typography-config,
             density: $density-config,
         ));
 
