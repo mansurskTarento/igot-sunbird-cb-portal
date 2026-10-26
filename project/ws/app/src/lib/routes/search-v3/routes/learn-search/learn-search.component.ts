@@ -301,6 +301,11 @@ export class LearnSearchComponent implements OnInit, OnChanges, OnDestroy {
       this.searchContentLoader = false
       this.filtersChipFromLearn = changes['paramFilters'].currentValue[0].subType
       return
+    } else {
+
+      this.filtersChipFromLearn = []
+      this.sideNavBarOpened = true
+      this.searchRequestCourse.request.filters.courseCategory = []
     }
 
     const searchCategoriesChanged = !!changes['searchCategories'] &&
